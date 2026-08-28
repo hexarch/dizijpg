@@ -193,7 +193,20 @@ export const AYAR = {
   // eşiğe bakılmadan bildirilir. Raporda bu kör nokta AÇIKÇA yazılır.
   //
   // `genel` 3 URL → örnek değil SAYIM (tamamı denetlenir).
-  PANEL: { icerik: 250, bolum: 250, genel: 25 },
+  // `kisi` 200 / 10.524 = %1,9 örnekleme. 28 Ağu 2026'ya kadar bu aile HİÇ
+  // ÖLÇÜLMÜYORDU: `/kisi/` ve `/sirket/` `genel` kovasına düşüyordu ve o
+  // kovanın paneli 25'ti. Yani site haritasının %58'i (10.748 URL) 25 URL'lik
+  // bir panelle "ölçülüyor" görünüyor, aslında ölçülmüyordu — üstelik gerçek
+  // genel sayfaları (ana/gozat/kesfet/gizlilik, 4 URL) da o kovada boğuluyordu.
+  // Kişi ailesi gösterimlerin %82'sini üretiyor (1.540/1.881, 28 gün), yani
+  // izlemenin en büyük kör noktasıydı.
+  //
+  // `sirket` 50 / 224 = %22 örnekleme. Küçük evren, yüksek çözünürlük ucuz.
+  //
+  // Toplam 775 → kotanın (2.000/gün) %39'u, `AZAMI_DENETIM` 900'ün altında.
+  // Önceki 525'ten yükseldi ama tavanın %61'i hâlâ boş: elle denetim ve ikinci
+  // koşu için yer kalıyor.
+  PANEL: { icerik: 250, bolum: 250, kisi: 200, sirket: 50, genel: 25 },
 
   /// Denetim hızı (istek/sn). Tavan 600/dk = 10/sn; 3/sn ile 500 URL ≈ 2,8 dk.
   /// Tavana dayanmıyoruz: 429 yenilebilir bir hata değil, GÜNLÜK kotayı da
@@ -309,7 +322,15 @@ export const AYAR = {
   /// Durum dosyası biçim sürümü. Biçim değişirse eski dosya YOK SAYILIR
   /// (karşılaştırma yapılmaz, yeni temel yazılır) — yarı uyumlu bir dosyayı
   /// karşılaştırmak sahte "değişim" üretirdi.
-  DURUM_SURUM: 1,
+  ///
+  /// 1 → 2 (28 Ağu 2026): `kisi` ve `sirket` kendi aileleri oldu. Sürüm
+  /// ARTIRILMASAYDI dünkü dosyada bu aileler bulunmaz, `dun.arama.sayfa?.[aile]
+  /// ?? 0` sıfır dönerdi ve "SIFIR BARİYERİ — kisi ailesinde gösterim alan
+  /// sayfa 0 → 704, bu aile arama sonuçlarında İLK KEZ görünüyor" diye
+  /// YANLIŞ bir alarm postalanırdı. Aile arama sonuçlarında yeni değil;
+  /// yeni olan bizim onu ÖLÇÜYOR olmamız. Sürümü artırmak eski dosyayı yok
+  /// saydırır, temiz bir temel yazdırır ve koşu "ilk koşu" diye etiketlenir.
+  DURUM_SURUM: 2,
 };
 
 const BURASI = path.dirname(fileURLToPath(import.meta.url));
@@ -707,7 +728,15 @@ export async function urlDenetle(mulk, url, jeton, ayar = AYAR, getirici = fetch
 export const AYAR_AILE = {
   icerik: /^\/icerik\/(tv|movie)\/\d+/,
   bolum: /^\/dizi\/\d+\/sezon\/\d+\/bolum\/\d+/,
-  genel: /^\/(|gozat|kesfet|kisi\/\d+|sirket\/\d+|listeler\/\d+|gonderi\/\d+)$/,
+  // 28 Ağu 2026'da `genel`den AYRILDI. Kendi site haritaları var
+  // (`sitemap-kisi-1.xml` 10.524 URL, `sitemap-sirket-1.xml` 224) ve arama
+  // davranışları birbirinden de `genel`den de TAMAMEN farklı: kişi ailesi
+  // 704 sayfada 1.540 gösterim / 1 tıklama (TO %0,06, konum 42), şirket 27
+  // sayfada 43 gösterim / 3 tıklama (TO %6,98). Tek kovada toplamak ikisini
+  // de görünmez yapıyordu — `bolum`u `icerik`ten ayırma gerekçesinin aynısı.
+  kisi: /^\/kisi\/\d+/,
+  sirket: /^\/sirket\/\d+/,
+  genel: /^\/(|gozat|kesfet|gizlilik|listeler\/\d+|gonderi\/\d+)$/,
 };
 
 /** URL → aile adı. Eşleşmeyen her şey `genel` sayılır (kova kaybolmasın). */
@@ -718,8 +747,11 @@ export function siniflandir(url) {
   } catch {
     return 'genel';
   }
-  if (AYAR_AILE.icerik.test(yol)) return 'icerik';
-  if (AYAR_AILE.bolum.test(yol)) return 'bolum';
+  // `genel` BİLEREK denenmez: eşleşmeyen her şeyin düştüğü kova o, yani
+  // kalıbı belge niteliğinde. Yeni bir aile eklemek = buraya bir satır.
+  for (const ad of Object.keys(AYAR_AILE)) {
+    if (ad !== 'genel' && AYAR_AILE[ad].test(yol)) return ad;
+  }
   return 'genel';
 }
 
@@ -791,14 +823,20 @@ export function panelSec(urller, boy, oncekiUrller = null) {
 
 /** Aileleri ayırıp her birine kendi panelini kurar. */
 export function panelleriKur(urller, oncekiPanel = {}, ayar = AYAR) {
-  const aile = { icerik: [], bolum: [], genel: [] };
-  for (const u of urller) aile[siniflandir(u)].push(u);
+  // Aile listesi ELLE YAZILMAZ, `AYAR_AILE`den türer. 28 Ağu 2026'ya kadar
+  // `{icerik, bolum, genel}` diye sabitti; yeni aile eklendiğinde
+  // `aile[siniflandir(u)]` TANIMSIZ olur ve `.push` PATLARDI.
+  const aile = {};
+  for (const ad of Object.keys(AYAR_AILE)) aile[ad] = [];
+  for (const u of urller) (aile[siniflandir(u)] ??= []).push(u);
   const panel = {};
   for (const ad of Object.keys(ayar.PANEL)) {
     panel[ad] = panelSec(aile[ad] || [], ayar.PANEL[ad],
       oncekiPanel[ad] ? Object.keys(oncekiPanel[ad]) : null);
   }
-  return { panel, evren: { icerik: aile.icerik.length, bolum: aile.bolum.length, genel: aile.genel.length } };
+  const evren = {};
+  for (const ad of Object.keys(aile)) evren[ad] = aile[ad].length;
+  return { panel, evren };
 }
 
 // ===========================================================================

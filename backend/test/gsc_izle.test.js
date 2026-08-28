@@ -636,15 +636,32 @@ test('panelleriKur aileleri AYIRIR (katmanlı örnekleme)', () => {
   const urller = [
     ...sahteUrl(3000, 'https://dizijpg.com/icerik/tv/'),
     ...Array.from({ length: 9000 }, (_, i) => `https://dizijpg.com/dizi/${i}/sezon/1/bolum/1`),
+    ...sahteUrl(10000, 'https://dizijpg.com/kisi/'),
+    ...sahteUrl(224, 'https://dizijpg.com/sirket/'),
     'https://dizijpg.com/',
   ];
   const { panel, evren } = panelleriKur(urller, {}, AYAR);
   assert.equal(evren.icerik, 3000);
   assert.equal(evren.bolum, 9000);
-  assert.equal(panel.icerik.length, AYAR.PANEL.icerik);
-  assert.equal(panel.bolum.length, AYAR.PANEL.bolum);
-  assert.ok(panel.icerik.every((u) => siniflandir(u) === 'icerik'));
-  assert.ok(panel.bolum.every((u) => siniflandir(u) === 'bolum'));
+  assert.equal(evren.kisi, 10000);
+  assert.equal(evren.sirket, 224);
+  assert.equal(evren.genel, 1);
+  for (const ad of Object.keys(AYAR.PANEL)) {
+    const beklenen = Math.min(AYAR.PANEL[ad], evren[ad]);
+    assert.equal(panel[ad].length, beklenen, `${ad} paneli`);
+    assert.ok(panel[ad].every((u) => siniflandir(u) === ad),
+      `${ad} paneline başka aileden URL sızmış`);
+  }
+});
+
+test('panel toplamı kota tavanının ALTINDA kalır', () => {
+  // Kota mülk başına 2.000 denetim/gün; `AZAMI_DENETIM` sert tavan.
+  // Yeni aile eklerken panel büyütmek KOLAY, kotayı aşmak SESSİZDİR:
+  // 429 yenilebilir bir hata değil, günlük kotayı da yakar.
+  const toplam = Object.values(AYAR.PANEL).reduce((a, b) => a + b, 0);
+  assert.ok(toplam <= AYAR.AZAMI_DENETIM,
+    `panel toplamı ${toplam} > AZAMI_DENETIM ${AYAR.AZAMI_DENETIM}`);
+  assert.ok(toplam <= 1000, `panel toplamı ${toplam} — kotanın yarısını aşıyor`);
 });
 
 test('KATMANLI olmasaydı içerik ailesi görünmez olurdu (gerekçenin kanıtı)', () => {
@@ -659,9 +676,18 @@ test('siniflandir: aileler doğru ayrılıyor, tanınmayan yol GENELE düşer', 
   assert.equal(siniflandir('https://dizijpg.com/icerik/movie/603'), 'icerik');
   assert.equal(siniflandir('https://dizijpg.com/icerik/tv/1396/'), 'icerik');
   assert.equal(siniflandir('https://dizijpg.com/dizi/1396/sezon/5/bolum/16'), 'bolum');
-  assert.equal(siniflandir('https://dizijpg.com/kisi/102426'), 'genel');
+  // 28 Ağu 2026'ya kadar kişi/şirket `genel`e düşüyordu — site haritasının
+  // %58'i (10.748 URL) 25 URL'lik bir panelle "ölçülüyor" görünüyordu.
+  assert.equal(siniflandir('https://dizijpg.com/kisi/102426'), 'kisi');
+  assert.equal(siniflandir('https://dizijpg.com/sirket/420'), 'sirket');
+  assert.equal(siniflandir('https://dizijpg.com/gozat'), 'genel');
   assert.equal(siniflandir('bozuk url'), 'genel', 'hiçbir URL kaybolmamalı');
-  assert.deepEqual(Object.keys(AYAR_AILE).sort(), ['bolum', 'genel', 'icerik']);
+  assert.deepEqual(Object.keys(AYAR_AILE).sort(),
+    ['bolum', 'genel', 'icerik', 'kisi', 'sirket']);
+  // Her ailenin paneli OLMALI: panelsiz aile sessizce ölçülmez.
+  for (const ad of Object.keys(AYAR_AILE)) {
+    assert.ok(AYAR.PANEL[ad] > 0, `${ad} ailesinin paneli yok`);
+  }
 });
 
 test('locCoz site haritası XML\'ini çözer', () => {
@@ -802,7 +828,11 @@ test('aramaAnalitigi: sayfaları AİLEYE göre sayar, tıklama/gösterim toplar'
   assert.equal(r.tamam, true);
   assert.equal(r.gosterim, 77);
   assert.equal(r.tiklama, 1);
-  assert.deepEqual(r.sayfa, { icerik: 2, bolum: 1, genel: 0 });
+  // Aile anahtarları `AYAR_AILE`den türer: kişi/şirket 28 Ağu 2026'da
+  // eklendiği için gösterim almasalar da 0 ile listede DURURLAR — sıfır
+  // görünmesi, ailenin ölçüldüğünün kanıtı.
+  assert.deepEqual(r.sayfa,
+    { icerik: 2, bolum: 1, kisi: 0, sirket: 0, genel: 0 });
 });
 
 test('aramaAnalitigi `dataState: all` KULLANMAZ (kesinleşmemiş veri sahte düşüş üretir)', () => {

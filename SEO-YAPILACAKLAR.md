@@ -1,10 +1,128 @@
 # dizi.jpg — SEO yapılacaklar
 
-> Sürüm **4.0** · 27 Ağustos 2026 — **Search Console yeni tur + ilk organik tıklamalar**  
+> Sürüm **5.0** · 28 Ağustos 2026 — **trafik dikleşti; ölçümün kör noktası kapatıldı**  
 > Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda · ⛔ yapılmayacak  
 >
 > Bu belge bir görev listesi değil, **karar belgesidir**. Neden / neden değil yazılır. Atlanan maddenin gerekçesi buraya işlenir.  
 > Strateji ve GSC tablolarının anlatımı: `SEO-PLANI.md` v3.0 (23 Ağu).
+
+---
+
+## 0.0 v5.0 NE DEĞİŞTİ — TRAFİK DİKLEŞTİ, İZLEME KÖR NOKTASI KAPANDI (28 Ağustos 2026)
+
+### Ölçüm (GSC API, son 28 gün, 26 Ağu'da bitiyor — veri ~2 gün gecikmeli)
+
+| Ölçüm | 27 Ağu (v4.0) | **28 Ağu (v5.0)** |
+|---|---|---|
+| Tıklama / gösterim / konum | 9 / 715 / 44,6 | **42 / 1.881 / 42,8** (TO %2,23) |
+| Önceki 28 gün | — | **0 / 0** — tüm trafik yeni |
+| Site haritası toplam | 18.208 | **18.410** (son okuma 28 Ağu, hata 0) |
+
+**Günlük eğri — kırılma 21-23 Ağustos:**
+
+```
+10-20 Ağu    0 tık ·   ~9 gös/gün   konum 62-76
+21-22 Ağu    0 tık ·    31 gös/gün  konum 41-48   ← konum sıçraması
+23 Ağu       2 tık ·   114 gösterim konum 41,4
+24 Ağu       7 tık ·   416 gösterim konum 38,2
+25 Ağu      15 tık ·   588 gösterim konum 42,0
+26 Ağu      18 tık ·   578 gösterim konum 41,4
+```
+
+Ortalama konum ~70'ten ~41'e indi ve gösterim 10 katına çıktı. Bu, SSR/nginx
+bot düzeltmesinin ve harita turunun ARDINDAN geldi.
+
+### AİLE TABLOSU — para kazandıran aile en az indekslenen aile
+
+| aile | haritada | gösterim alan | tık | TO | konum | indeks (25'lik örneklem) |
+|---|---|---|---|---|---|---|
+| **bölüm** | 5.154 | 178 (%3,5) | **39** | **%13,04** | 29,0 | **1/25 (%4)** |
+| kişi | 10.524 | 704 | 1 | %0,06 | 42,4 | 6/25 (%24) |
+| içerik | 2.460 | 87 | 0 | %0,00 | 60,9 | 4/25 (%16) |
+| şirket | 224 | 27 | 3 | %6,98 | 42,6 | — |
+
+Bölüm sayfaları tıklamaların **39/42**'sini üretiyor ve %13 TO ile açık ara en
+iyi çeviren aile — ama örneklemde 23/25'i "URL is unknown to Google".
+
+### ⛔ YAPILMAYAN: "kişi haritasını kes, tarama bütçesini bölüme kaydır"
+
+Öneri gündeme geldi ve **REDDEDİLDİ** — ölçüm değil TAHMİNDİ. Alt haritalar
+GSC'ye tek tek bildirilince ortaya çıkan veri gerekçeyi çürüttü:
+
+```
+sitemap-bolum-1.xml    5.198 URL · son okuma 28 Ağu · hata 0
+sitemap-kisi-1.xml    10.524 URL · son okuma 28 Ağu · hata 0
+sitemap-icerik-1.xml   2.460 URL · son okuma 28 Ağu · hata 0
+```
+
+Google bölüm haritasını **zaten okuyor**, bugün, hatasız. Yani bölüm
+sayfalarının bilinmemesi bir TESLİMAT sorunu değil; Google'ın tarama
+SIRALAMASI. Kişi haritasını kesmenin bunu düzelteceğine dair elde tek bir
+kanıt yok, ve kişi ailesi 1.540 gösterim üretiyor. Kesme, ölçülmemiş bir
+hipotez uğruna ölçülmüş bir varlığı feda etmek olurdu.
+
+**Kullanıcının itirazı yerindeydi** ("500k sayfa var, taradığı 900"): 900
+Google'ın taraması değil, BİZİM URL Inspection ölçüm kotamız. Google'a
+bildirilen 18.410 URL; veritabanındaki ~79 bin potansiyel bölüm sayfası zaten
+haritaya KONMUYOR (kalite süzgeci + `seo_kazanan_bolum` istisnası).
+
+### ✅🚀 YAPILAN 1 — `gsc_izle.js` artık cron'da
+
+21 Ağu'dan beri çalışmadığı bulunmuştu; 28 Ağu'da **cron'da satırı hiç
+olmadığı** ortaya çıktı — yalnız elle koşuyordu, yani izleme sessizdi.
+
+```
+30 6 * * * docker exec dizijpg-api node gsc_izle.js >> /var/log/dizijpg-gsc.log 2>&1
+```
+
+Saat 06:30: yedek (04:00) ve cf-ip-tazele (04:30) ile çakışmıyor. `docker`
+`/usr/bin`'de, cron'un varsayılan PATH'i görüyor (aynı biçimdeki `isitici.js`
+satırının günlüğüyle doğrulandı). Yanında `/etc/logrotate.d/dizijpg` eklendi:
+GSC ve ısıtıcı günlükleri **hiç dönmüyordu** (haftalık, 8 kopya, sıkıştırmalı).
+
+### ✅🚀 YAPILAN 2 — alt site haritaları GSC'ye tek tek bildirildi
+
+Bugüne dek yalnız `sitemap.xml` (indeks) bildirilmişti. İndeks, Google'ın alt
+haritaları OKUMASINA yeter ama Search Console RAPORLAMASI aile bazında
+açılmaz. Beş alt harita ayrı ayrı bildirildi; artık her ailenin "kaç URL
+bildirildi / son ne zaman okundu / kaç hata" satırı ayrı görünüyor. Yukarıdaki
+tabloyu mümkün kılan da bu oldu.
+
+### ✅ YAPILAN 3 — izlemenin kendi kör noktası kapatıldı
+
+Alt haritaları bildirirken bulundu: `gsc_izle.js` yalnız üç aile tanıyordu
+(`icerik`, `bolum`, `genel`). `/kisi/` ve `/sirket/` **`genel` kovasına
+düşüyordu** ve o kovanın paneli **25 URL**'ydi. Yani:
+
+* Site haritasının **%58'i** (10.748 URL) 25 URL'lik bir panelle "ölçülüyor"
+  görünüyor, aslında ölçülmüyordu.
+* Gösterimlerin **%82'sini** üreten kişi ailesi izlemede hiç yoktu.
+* Gerçek genel sayfaları (ana/gozat/kesfet/gizlilik, 4 URL) de o kovada
+  boğuluyordu.
+
+Cron'a bağlamak, bu hâliyle her sabah yapısal olarak eksik bir rapor
+üretecekti. `kisi` ve `sirket` kendi aileleri yapıldı, kendi panellerini aldı:
+
+```
+PANEL: { icerik: 250, bolum: 250, kisi: 200, sirket: 50, genel: 25 }   → 775
+```
+
+775, kotanın (2.000/gün) %39'u ve `AZAMI_DENETIM` 900'ün altında; tavanın
+%61'i elle denetim ve ikinci koşu için boş kalıyor. Aile listesi artık ELLE
+yazılmıyor, `AYAR_AILE`den türüyor — yeni aile eklenince `panelleriKur`
+sessizce patlamasın diye.
+
+**`DURUM_SURUM` 1 → 2.** Artırılmasaydı dünkü durum dosyasında yeni aileler
+bulunmaz, `dun.arama.sayfa?.[aile] ?? 0` sıfır döner ve *"SIFIR BARİYERİ —
+kisi ailesinde gösterim alan sayfa 0 → 704, bu aile arama sonuçlarında İLK KEZ
+görünüyor"* diye **yanlış bir alarm postalanırdı**. Aile arama sonuçlarında
+yeni değil; yeni olan bizim onu ölçüyor olmamız.
+
+### ⬜ SIRADAKİ SORU (veri bekliyor)
+
+Bölüm ailesinde %4 indeks oranının sebebi ne? Artık aile bazlı GSC raporu ve
+günlük izleme var; birkaç günlük veri birikince "keşfedildi–taranmadı" kovası
+bölüm ailesinde ne yapıyor GÖRÜLEBİLECEK. Karar ondan sonra.
 
 ---
 
