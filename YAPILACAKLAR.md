@@ -1,6 +1,72 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-29 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-29 — 🚀 Yönetim paneli: SOL MODÜL MENÜSÜ + "her yer tıklanabilir"
+
+Kullanıcı: "hadi admin panelini geliştirelim, bir kere her yer tıklanabilir
+olmalı, veriler takip edilebilmeli, kullanıcılar takip edilebilmeli, en
+önemlisi hareketlerde harekete yönlendirme yok — mesela son yorumlara
+tıklayınca o postu div olarak açabilirsin … sola modüller koy, herşey yukarıda
+olmasın, ilgili şeyleri ilgili modüllerde topla".
+
+**ÖNCEKİ HÂL (ölçüldü):** 17 sekme üst barda tek satırdı ve dar ekranda üç
+satıra sarıyordu; "Hareketler" sayfasındaki dört liste (son yorumlar, son
+izlemeler, kitaplık eklemeleri, yeni kayıtlar) ÖLÜ METİNDİ — yalnız kullanıcı
+adı bir yere gidiyordu, gönderinin kendisine ve yapıma HİÇBİR yol yoktu.
+Yapım adları, şikayet hedefleri, hatadaki kullanıcı, geri bildirim sahibi,
+büyümedeki "en çok izlenenler" ve algoritma önizlemesindeki gönderi kimlikleri
+de tıklanamıyordu.
+
+- **Sol modül menüsü.** 17 sayfa beş modülde toplandı: Genel Bakış · Topluluk ·
+  Moderasyon · İletişim · Sistem. Menü tek kaynaktan (`MODULLER` dizisi)
+  üretilir; sayfa gösterimi, rozetler ve derin bağlantı hepsi oradan gelir.
+  Sayfa değişince `#hash` yazılır — yenileme ve tarayıcı geri tuşu artık aynı
+  sayfada kalır (`ui-ux-pro-max` → Navigation/"Back Button": geçmiş bozulmamalı).
+  Dar ekranda menü ☰ ile açılan çekmeceye döner (perde + öğe seçince kapanır).
+- **Gönderi modalı (`#g-modal`, yeni uç `GET /admin/gonderi/:id`).** İstenen
+  "postu div olarak aç" bu. Tam metin, medya, yazar, yapım bağlamı, ÜST
+  gönderi, başlıktaki yanıt zinciri, beğenenler ve gönderiye düşen şikayetler.
+  Yanıtlar KÖKE bağlanır: bir yanıta tıklansa da başlığın tamamı görünür.
+- **Yapım modalı (`#i-modal`, yeni uç `GET /admin/icerik/:tur/:tmdbId`).**
+  Afiş/özet/puan, izleme–izleyen–gönderi–yazar sayaçları, kitaplık durumu
+  dağılımı, en çok izleyenler ve o yapıma yazılan gönderiler (hepsi tıklanır).
+- **Tıklanabilirlik her yerde aynı dile oturdu:** `kBag` (kullanıcı), `iBag`
+  (yapım), `gBag` (gönderi). Satırın kendisi de bir hedef açar; satır içindeki
+  bağlantılar `event.stopPropagation()` ile ayrılır (yoksa yapıma tıklayınca
+  gönderi açılırdı). Klavye ile de açılır (`role="button"` + Enter).
+- **Modal yığını.** kullanıcı → gönderi → yapım → gönderi zinciri kurulabiliyor;
+  "← Geri" bir öncekine döner, Kapat/Esc hepsini kapatır.
+- **Üst arama kutusu.** `#123` → gönderi, `tv/1399` · `movie/550` → yapım,
+  diğer her şey → kullanıcı araması (ad + e-posta, ok tuşları + Enter).
+- **Tıklanabilir hâle getirilen diğer yerler:** Gönderiler sekmesi kartları,
+  şikayet hedefi ve şikayet eden, hata kaydındaki kullanıcı, geri bildirim
+  sahibi, büyümedeki en çok izlenenler, eksik süreler tablosundaki yapım adı,
+  algoritma önizlemesindeki gönderi/yazar, mail detayındaki kullanıcı.
+- **Tarayıcı testinde yakalanan gerçek hata:** dar ekran medya sorgusunda
+  `.yan-ac{display:inline-flex}` unutulmuştu — ☰ hiç görünmüyor, menü ekran
+  dışında kalıyor ve telefonda panel gezilemiyordu. Düzeltildi; kural artık
+  testle bekçileniyor.
+- **Kanıt (CLAUDE.md md.7):**
+  · `backend/test/admin_modul_tiklama.test.js` — 17 test, hepsi yeşil
+    (menü ↔ bölüm eşleşmesi, hash yönlendirme, 44px dokunma hedefi, ☰ kuralı,
+    satır tıklaması, stopPropagation, düşmanca kullanıcı adıyla XSS kaçışı,
+    arama kutusu ayrıştırması, uçların `adminKisit` ve girdi doğrulaması).
+  · `npm test` (backend) **2008/2008 yeşil**, `node --check server.js` temiz.
+  · CANLI uçtan uca curl: yetkisiz istek 403 · `gonderi/abc` 400 ·
+    `gonderi/999999999` 404 · `icerik/person/1` 400 · `icerik/tv/0` 400 ·
+    `gonderi/5286` üst gönderi + yanıt zinciri + TMDB adını döndürdü ·
+    `icerik/tv/1405` 666 izleme / 7 kişi / 13 gönderi.
+  · CANLI tarayıcı turu: 17 sayfanın hepsi açıldı, JS hatası yok, yatay taşma
+    yok; hareket satırı → gönderi modalı, "Dexter" adı → yapım modalı (satır
+    tetiklenmedi), "← Geri" → gönderi, arama "umran" + Enter → kullanıcı
+    modalı, şikayet hedefi → gönderi modalı; dar ekran çekmecesi
+    -252px → 0 → -252px ölçüldü.
+- **Sunucu:** `server.js` + `admin.html` `/opt/dizijpg`e kopyalandı,
+  `docker-compose up -d --build api` ile canlıya alındı. Şema değişmedi
+  (migrasyon gerekmedi); iki yeni uç da salt okunur.
+- **Not:** çeviri disiplini (md.4) uygulanmadı — panel TEK DİLLİ (Türkçe),
+  45 dilli sözlüğe hiç bağlı değil. Yeni metinlerin tamamı panel içinde kaldı.
+
 ## 2026-08-29 — 🚀 Masaüstünde akıştaki paylaşım kutusu okuma kolonuna oturdu
 
 Kullanıcı: "web masaüstünde akıştaki yorum yap kısmı çok büyük onu doğru

@@ -365,6 +365,10 @@ test('panel: "örneklem eksik" uyarısı GÖRÜNÜR — sayıyı okuyan sınır�
   assert.match(govde, /yalnız bildirime izin verenleri görür/);
   assert.match(govde, /Web kullanıcısı bu tabloda hiç yoktur/);
   assert.match(govde, /İSTEK sayar, kişi saymaz/);
-  assert.ok(ADMIN.includes('data-sekme="cihazlar"'), 'sekme düğmesi yok');
-  assert.ok(ADMIN.includes("if(s==='cihazlar') cihazlariYukle()"), 'sekme yükleyiciye bağlanmamış');
+  // 28 Ağu 2026: sekmeler üst bardan SOL MODÜL MENÜSÜNE taşındı ve menü
+  // JS'teki MODULLER listesinden üretiliyor. Güvence aynı: sayfa menüde
+  // olacak, bölümü olacak ve yükleyicisine bağlı olacak.
+  assert.match(ADMIN, /\{k:'cihazlar',[^}]*yukle:\(\)=>cihazlariYukle\(\)\}/,
+    'cihazlar sayfası sol menüde yok ya da yükleyiciye bağlanmamış');
+  assert.ok(ADMIN.includes('<section id="s-cihazlar"'), 'cihazlar bölümü yok');
 });

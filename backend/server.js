@@ -16826,7 +16826,7 @@ app.get('/admin/hareketler', adminKisit, sarici(async (_req, res) => {
   const [yorumlar, izlemeler, durumlar, yeniler, cevrimici] = await Promise.all([
     havuz.query(
       `SELECT y.id, y.tur, y.tmdb_id, y.sezon, y.bolum, LEFT(y.metin,140) AS metin,
-              cardinality(y.medya) AS medya_sayi, y.goruntulenme, y.tarih,
+              cardinality(y.medya) AS medya_sayi, y.goruntulenme, y.tarih, y.ust_id,
               k.kullanici_adi,
               (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni
        FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
@@ -18484,6 +18484,134 @@ app.post('/admin/kullanici-ban', adminKisit, sarici(async (req, res) => {
     `INSERT INTO yasak_kayitlari (kullanici_id, eylem, sebep, yonetici)
      VALUES ($1,'kaldir',$2,$3)`, [id, sebepTemizle(sebep) || null, yonetici]);
   res.json({ durum: 'ok' });
+}));
+
+// ---------- panel: gönderi ve içerik detayı (28 Ağu 2026) ----------
+// Sorun: panelde "son yorumlar" gibi HAREKET listeleri ölü metindi — bir
+// satıra tıklayınca hiçbir şey açılmıyordu, yönetici gönderinin tamamını,
+// yanıtlarını veya hangi yapıma yazıldığını göremiyordu. Bu iki uç, panelin
+// her yerindeki gönderi/yapım referansını TIKLANABİLİR yapar; içerik sayfadan
+// kopmadan bir modal (div) içinde açılır.
+//
+// Salt okunurlar: silme/ban gibi eylemler var olan uçlarda kalır.
+// Mahremiyet: yalnız zaten panelde görülebilen alanlar döner (DM YOK).
+
+// Yapım adını önbellekli TMDB'den çöz. Hata yutulur: ad bulunamazsa panel
+// "#<id>" gösterir, sayfa yine açılır.
+async function panelYapimBilgi(tur, tmdbId) {
+  if (tur !== 'tv' && tur !== 'movie') return null;
+  try {
+    const v = await tmdbGetir(`/${tur}/${tmdbId}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
+    return {
+      ad: v.name || v.title || null,
+      afis: v.poster_path || null,
+      yil: (v.first_air_date || v.release_date || '').slice(0, 4) || null,
+      ozet: (v.overview || '').slice(0, 400) || null,
+      puan: v.vote_average ?? null,
+      populerlik: v.popularity ?? null,
+    };
+  } catch { return null; }
+}
+
+app.get('/admin/gonderi/:id', adminKisit, sarici(async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({ hata: 'Geçersiz id' });
+  }
+  const alanlar = `y.id, y.tur, y.tmdb_id, y.sezon, y.bolum, y.metin, y.medya,
+       y.spoiler, y.goruntulenme, y.tarih, y.ust_id, y.kaynak_dil,
+       k.id AS kullanici_id, k.kullanici_adi, k.avatar, k.yasakli,
+       (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
+       (SELECT count(*)::int FROM sikayetler s
+         WHERE s.tur='yorum' AND s.hedef_id=y.id) AS sikayet`;
+  const g = await havuz.query(
+    `SELECT ${alanlar} FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
+      WHERE y.id=$1`, [id]);
+  if (!g.rows.length) return res.status(404).json({ hata: 'Gönderi bulunamadı' });
+  const gonderi = g.rows[0];
+  // Yanıtlar KÖKE bağlanır (server.js gönderi yazma yolu ust_id'yi köke
+  // sabitliyor), yani bir yanıta tıklansa bile tüm başlık görünür.
+  const kok = gonderi.ust_id || gonderi.id;
+  const [ust, yanitlar, begenenler, sikayetler, yapim] = await Promise.all([
+    gonderi.ust_id
+      ? havuz.query(
+        `SELECT ${alanlar} FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
+          WHERE y.id=$1`, [gonderi.ust_id])
+      : Promise.resolve({ rows: [] }),
+    havuz.query(
+      `SELECT ${alanlar} FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
+        WHERE y.ust_id=$1 ORDER BY y.id ASC LIMIT 60`, [kok]),
+    havuz.query(
+      `SELECT k.kullanici_adi, b.tarih FROM yorum_begeniler b
+         JOIN kullanicilar k ON k.id=b.kullanici_id
+        WHERE b.yorum_id=$1 ORDER BY b.tarih DESC LIMIT 30`, [id]),
+    havuz.query(
+      `SELECT s.id, s.sebep, s.durum, s.tarih, k.kullanici_adi AS eden
+         FROM sikayetler s LEFT JOIN kullanicilar k ON k.id=s.sikayet_eden_id
+        WHERE s.tur='yorum' AND s.hedef_id=$1 ORDER BY s.id DESC LIMIT 20`, [id]),
+    panelYapimBilgi(gonderi.tur, gonderi.tmdb_id),
+  ]);
+  res.json({
+    gonderi,
+    ust: ust.rows[0] || null,
+    yanitlar: yanitlar.rows,
+    begenenler: begenenler.rows,
+    sikayetler: sikayetler.rows,
+    yapim,
+  });
+}));
+
+// Yapım (dizi/film) detayı: panelde geçen HER içerik adı buraya bağlanır.
+// "Kim izledi, kim yazdı, kaç kişide hangi durumda" tek modalde.
+app.get('/admin/icerik/:tur/:tmdbId', adminKisit, sarici(async (req, res) => {
+  const tur = req.params.tur;
+  const tmdbId = parseInt(req.params.tmdbId, 10);
+  if (tur !== 'tv' && tur !== 'movie') {
+    return res.status(400).json({ hata: 'Geçersiz tür' });
+  }
+  if (!gecerliTmdb(tmdbId)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const [yapim, sayilar, durumlar, izleyenler, gonderiler] = await Promise.all([
+    panelYapimBilgi(tur, tmdbId),
+    havuz.query(
+      `SELECT
+         (SELECT count(*)::int FROM izlemeler
+           WHERE tur=$1 AND tmdb_id=$2) AS izleme,
+         (SELECT count(DISTINCT kullanici_id)::int FROM izlemeler
+           WHERE tur=$1 AND tmdb_id=$2) AS izleyen_kisi,
+         (SELECT count(*)::int FROM yorumlar
+           WHERE tur=$1 AND tmdb_id=$2) AS gonderi,
+         (SELECT count(DISTINCT kullanici_id)::int FROM yorumlar
+           WHERE tur=$1 AND tmdb_id=$2) AS yazar`,
+      [tur, tmdbId]),
+    havuz.query(
+      `SELECT durum, count(*)::int sayi FROM durumlar
+        WHERE tur=$1 AND tmdb_id=$2 GROUP BY durum ORDER BY 2 DESC`,
+      [tur, tmdbId]),
+    havuz.query(
+      `SELECT k.kullanici_adi, count(*)::int bolum, max(i.tarih) AS son
+         FROM izlemeler i JOIN kullanicilar k ON k.id=i.kullanici_id
+        WHERE i.tur=$1 AND i.tmdb_id=$2
+        GROUP BY k.kullanici_adi ORDER BY 2 DESC, 3 DESC LIMIT 30`,
+      [tur, tmdbId]),
+    havuz.query(
+      `SELECT y.id, y.sezon, y.bolum, LEFT(y.metin,220) AS metin,
+              cardinality(y.medya) AS medya_sayi, y.goruntulenme, y.tarih,
+              y.ust_id, k.kullanici_adi,
+              (SELECT count(*)::int FROM yorum_begeniler b
+                WHERE b.yorum_id=y.id) AS begeni
+         FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
+        WHERE y.tur=$1 AND y.tmdb_id=$2 ORDER BY y.id DESC LIMIT 30`,
+      [tur, tmdbId]),
+  ]);
+  res.json({
+    tur,
+    tmdb_id: tmdbId,
+    yapim,
+    sayilar: sayilar.rows[0],
+    durumlar: durumlar.rows,
+    izleyenler: izleyenler.rows,
+    gonderiler: gonderiler.rows,
+  });
 }));
 
 // ---------- ilk açılış karşılama akışı (md. 25) ----------

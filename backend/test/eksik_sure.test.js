@@ -86,9 +86,10 @@ test('sure_doldur upsert hâlâ DO UPDATE: TMDB gerçeği elle girişi ezebilmel
 });
 
 test('panel: sekme düğmesi, bölüm ve yükleyici bağlı', () => {
-  assert.match(ADMIN, /data-sekme="sureler"/);
+  // 28 Ağu 2026: üst sekme çubuğu SOL MODÜL MENÜSÜNE dönüştü; menü JS'teki
+  // MODULLER listesinden üretiliyor. Güvence değişmedi.
+  assert.match(ADMIN, /\{k:'sureler',[^}]*yukle:\(\)=>sureleriYukle\(\)\}/);
   assert.match(ADMIN, /id="s-sureler"/);
-  assert.match(ADMIN, /if\(s==='sureler'\) sureleriYukle\(\)/);
   assert.match(ADMIN, /min="1" max="1000"/);
 });
 
