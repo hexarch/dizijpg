@@ -18,6 +18,8 @@ import 'begenenler.dart';
 import 'etiket.dart';
 import 'gonderi_istatistik.dart' show gonderiIstatistikAc;
 import 'kesfet_akis.dart' show ReelsGorunumu, yanitlariAc;
+import 'paylas_yorum.dart';
+import 'giris_istem.dart';
 import 'ortak.dart';
 import 'paylas.dart' show gonderiPaylas;
 import 'yorumlar.dart' show BolumRozeti;
@@ -470,7 +472,109 @@ class _AkisEkraniState extends State<AkisEkrani>
       ),
       // Arama çubuğu akıştan KALDIRILDI (kullanıcı isteği): arama Ana
       // Sayfa'da (AramaCubugu) duruyor, akış yalnız gönderilere ayrıldı.
-      body: govde,
+      //
+      // PAYLAŞIM KUTUSU ÜST BARIN HEMEN ALTINDA, akışın DIŞINDA (28 Ağu 2026,
+      // kullanıcı isteği). Listenin İÇİNE (ilk öğe olarak) koymak daha az kod
+      // olurdu ama kutu kaydırınca yukarı kaçardı; kullanıcı "üst barın
+      // altında" dedi — yani sabit.
+      body: Column(
+        children: [
+          _PaylasKutusu(
+            onPaylasildi: () {
+              // Yeni yorum akışta görünsün: paylaşımdan SONRA tazele.
+              _yukle();
+            },
+          ),
+          Expanded(child: govde),
+        ],
+      ),
+    );
+  }
+}
+
+/// AKIŞTAKİ PAYLAŞIM KUTUSU — solda avatar, ortada dokunulabilir alan.
+///
+/// KULLANICI İSTEĞİ (28 Ağu 2026): "akışta üst barın altında sol tarafta
+/// profil resmi ortada input alanı 'izlediğin dizi ve film hakkında yorum
+/// paylaş' yazacak içinde, tıklayınca alttan modal aç".
+///
+/// GERÇEK BİR `TextField` DEĞİL — ve bu bilinçli. İçine yazmaya başlayan
+/// kullanıcı, metnini yazdıktan SONRA "önce dizi seç" duvarına çarpardı.
+/// Kutu bir DÜĞMEDİR: dokununca paylaşım sayfası açılır, içerik seçimi ve
+/// metin orada BİRLİKTE istenir. Görünüşü giriş alanı gibi çünkü işlevi o —
+/// ama sözleşmesi "buraya dokun", "buraya yaz" değil.
+class _PaylasKutusu extends StatelessWidget {
+  final VoidCallback onPaylasildi;
+  const _PaylasKutusu({required this.onPaylasildi});
+
+  @override
+  Widget build(BuildContext context) {
+    // Avatar oturumdan OKUNUR (kabuk.dart'taki yardımcı `@visibleForTesting`;
+    // dışarıdan çağrılmaz). Aynı alan, aynı dönüşüm.
+    //
+    // SAĞLAYICI YOKSA ÇÖKMEZ: bu ekran widget testlerinde `Provider<Oturum>`
+    // olmadan da kuruluyor (bkz. masaustu_mesaj_gezinme_test.dart) ve kutu
+    // yüzünden bütün ekran patlıyordu. Avatar yoksa yedek ikon çizilir —
+    // `kabukAvatarUrl` ile aynı savunma.
+    Object? ham;
+    try {
+      ham = context.watch<Oturum>().kullanici?['avatar'];
+    } on ProviderNotFoundException {
+      ham = null;
+    }
+    final avatar = ham is String && ham.trim().isNotEmpty
+        ? dosyaUrl(ham)
+        : null;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: DiziRenkler.kart,
+            backgroundImage: avatar == null
+                ? null
+                : CachedNetworkImageProvider(
+                    avatar,
+                    headers: gorselBasliklari(avatar),
+                  ),
+            child: avatar == null
+                ? Icon(Icons.person, size: 20, color: DiziRenkler.metin38)
+                : null,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Semantics(
+              button: true,
+              label: 'İzlediğin dizi ve film hakkında yorum paylaş'.c,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(22),
+                onTap: () async {
+                  if (!girisGerekli(context)) return;
+                  if (await paylasYorumAc(context)) onPaylasildi();
+                },
+                child: Container(
+                  // Dokunma hedefi 44 px (ux md.2): yükseklik dolgudan gelir.
+                  constraints: const BoxConstraints(minHeight: 44),
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  decoration: BoxDecoration(
+                    color: DiziRenkler.kart,
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(color: DiziRenkler.metin12),
+                  ),
+                  child: Text(
+                    'İzlediğin dizi ve film hakkında yorum paylaş'.c,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 13, color: DiziRenkler.metin54),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
