@@ -1,6 +1,60 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-29 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-29 — 📏 SEO/GEO ölçüm turu: İKİ "ANA BULGU" ÇÜRÜDÜ, iş yapılmadı
+
+Bu tur bilerek **ölçüm turu**dur: yapısal değişiklik yok, iki yanlış hüküm
+düzeltildi. Ayrıntı `SEO-YAPILACAKLAR.md` v5.1 §0.0 ve `GEO-PLANI.md` v1.4 §0.3.
+
+- ✅ **SEO — v5.0'ın açık sorusu kapandı.** *"Bölüm ailesi neden %3,5
+  indeksli?"* Hipotez (iç bağlantı giriş noktası zayıf) **çürüdü**: Googlebot
+  (66.249.79.x) son 48 saatte **463 tekil bölüm sayfası** çekti, hepsi 200; dizi
+  sayfaları 43-90 bölüm linki veriyor. Gerçek sebep ölçüldü: çekilen 463 URL'in
+  **413'ü (%89) mevcut haritada YOK** — 25 Ağu kesmesiyle çıkarılan eski kümeden.
+  Haritadan tekdüze 12 URL örneğinin **12/12'si hiç taranmamış** (`lastCrawlTime`
+  boş), Googlebot'un çektiği 12 URL'in **10'u indeksli (%83)**. "%3,5" arıza
+  değil, **takvim**.
+- ✅ **SEO — "bölüm %13 TO ile en iyi çeviren aile" cümlesi DAİRESEL çıktı.**
+  39 tıklamanın 39'u da `seo_kazanan_bolum`un 19 satırından; o tablo tıklamayla
+  doldurulan bir tablo. Haritanın geri kalan 5.127 URL'i 30 günde 7 gösterim,
+  0 tıklama üretti.
+- ⛔ **Yapılmadı 1:** kesilen bölüm sayfalarını `noindex` yapmak. Ölçüm o kümenin
+  **av havuzu** olduğunu gösterdi — 19 kazananın hepsi oradan geldi, kesilen küme
+  haritadakinin iki katı gösterim üretiyor (195 vs 104), 49 sayfası konum ≤10'da.
+  `noindex` boru hattını geri dönüşsüz kilitlerdi.
+- ⛔ **Yapılmadı 2:** kazanan eşiğini gösterime indirmek. Sayfa başına ~1,25
+  gösterim; 0 tıklama burada "talep yok" değil, **istatistik yok** demek.
+- ⛔ **Yapılmadı 3:** `sitemap-genel.xml` lastmod (§6.6). Dürüst bir değer yok;
+  4 URL için `lastmod`u yalancı alana çevirmeye değmez.
+- ✅ **GEO — §6.1'in ana bulgusu da yanlıştı.** *"Cevap botları düzeltmeden önce
+  hiç içerik sayfası çekmemişti"* tek günlük pencereden çıkarılmış. 15 günlük
+  seri: **Claude-SearchBot 20-22 Ağustos'ta 65.793 içerik sayfası çekti ve
+  hepsinde ~4.727 baytlık BOŞ KABUK aldı** (nginx düzeltmesinden 5 gün önce).
+  23 Ağustos'tan beri tek bir içerik sayfası çekmiyor; son 48 saatte 30 isteğinin
+  30'u da `/sitemap.xml`. §0.1'in "boş sayfa KALICI kanaat olur" uyarısı
+  gerçekleşmiş.
+- ⛔ **Yapılmadı 4:** yeniden taramaya zorlamak için `lastmod`ları toptan ileri
+  almak. Beyan yalan olurdu ve **çalışan** kanalı (Googlebot) riske atardı.
+- ✅🚀 **`araclar/geo-olcum.sh` iki kusuru düzeltildi + sunucuya kuruldu.**
+  (1) Yol regex'indeki `bolum` öneki **ölü daldı** — bölüm yolu `/dizi/...` ile
+  başlıyor, `/bolum/` ile değil; 28 Ağu'da canlıya çıkan bölüm SSS'i ölçülmeden
+  kalacaktı. (2) `trend` kipi eklendi: tek günlük bakış 28 Ağu'da "kazanım geri
+  gitti" yanılgısı üretti; seri, 66 binlik kabuk taramasını da ortaya çıkardı.
+- ✅ **GEO §3 yeniden doğrulandı** (origin, CF atlanarak): dört yüzey × altı
+  cevap botu + Googlebot → **200, 11.714-16.215 B, `FAQPage` dördünde de var**.
+  GPTBot ve Chrome 12.680 B kabuk alıyor, SSS yok — cloaking kilidi ve
+  `ai-train=no` bozulmadı.
+- ⬜ **GEO §6.2 (aylık elle sorgu turu) yine koşulmadı.** Vadesi 28 Eylül; bir
+  gün sonra tekrar kıyası bozar, üstelik cevap kesin sıfır (motorlar sayfaları
+  okumuyor). Ayrıca üç motorda oturum açmış tarayıcı ister — arka planda çalışan
+  ajanın kullanıcı hesabında yapacağı iş değil. **Elle koşulacak.**
+- ⬜ **Kalan tek ölçülmüş darboğaz: dış bağlantı = 0** (§4.6). Yan bulgu bunu
+  pekiştiriyor: `/icerik/tv/1396` sitenin en zengin sayfası (16 KB SSR, FAQPage,
+  AggregateRating, Review) ve GSC verdict'i **"Tarandı - dizine eklenmedi"**.
+  Reddin sebebi şema eksikliği değil; kaldıraç otorite.
+- ⬜ **Keşif kuyruğu 21.394** GSC API'de yok, yalnız panelde. 1 Eylül randevusu
+  duruyor; v5.1 ölçümü **düşmesini** bekletiyor.
+
 ## 2026-08-29 — 🚀 Yönetim paneli: SOL MODÜL MENÜSÜ + "her yer tıklanabilir"
 
 Kullanıcı: "hadi admin panelini geliştirelim, bir kere her yer tıklanabilir

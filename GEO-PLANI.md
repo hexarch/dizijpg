@@ -1,6 +1,9 @@
 # dizi.jpg — GEO (Üretken Motor Optimizasyonu) Planı
 
-> Sürüm **1.3** · 28 Ağustos 2026 — **§5 bitti (üç yüzeye SSS), §2/§6 kararları kapandı, bayat ⬜ işaretleri düzeltildi**
+> Sürüm **1.4** · 29 Ağustos 2026 — **§6.1'in ANA BULGUSU ÇÜRÜDÜ (bkz. §0.3): cevap
+> botları düzeltmeden ÖNCE 65.793 içerik sayfası çekmiş ve HEPSİNDE boş kabuk almış**
+>
+> Sürüm 1.3 · 28 Ağustos 2026 — §5 bitti (üç yüzeye SSS), §2/§6 kararları kapandı
 > Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda · ⛔ yapılmayacak
 >
 > Bu belge bir görev listesi değil, **karar belgesidir** — `SEO-YAPILACAKLAR.md`
@@ -43,6 +46,80 @@ Yani §3 (nginx regex) gereksiz bir iş değil, **tek gerçek iş**miş.
 **GERİYE KALAN TEK ENGEL: `Claude-User`.** CF onu `AI Crawler` (eğitim)
 kategorisine koymuş — oysa kardeşleri `ChatGPT-User` ve `Perplexity-User`
 `AI Assistant` sayılıp açık. Detay ve karar: §2.
+
+---
+
+## 0.3 ⚠ DÜZELTME — §6.1'İN ANA BULGUSU DA YANLIŞTI (29 Ağu 2026)
+
+§6.1 şunu iddia ediyordu: *"ANA BULGU — cevap botları düzeltmeden ÖNCE HİÇ
+İÇERİK SAYFASI ÇEKMEMİŞTİ."* **Bu yanlış**, ve yanlışlığın sebebi §0.0'daki
+hatanın KARDEŞİ: ölçüm penceresi **tek gündü** (27 Ağu 00:00–19:20).
+
+15 günlük seriye bakınca (`geo-olcum.sh trend`, dondurulmuş loglar dahil):
+
+| gün | cevap botu isteği | içerik sayfası | ort. yanıt |
+|---|---|---|---|
+| 14-19 Ağu | 23-40/gün | 0-2 | — |
+| **20 Ağu** | 2.495 | **2.464** | **4.726 B** |
+| **21 Ağu** | 53.411 | **53.368** | **4.726 B** |
+| **22 Ağu** | 9.998 | **9.961** | **4.728 B** |
+| 23-25 Ağu | 30-263 | **0** | — |
+| 26 Ağu | 42 | 10 | — |
+| 27 Ağu (düzeltme günü) | 46 | 21 | — |
+| 28 Ağu | 31 | 2 | — |
+
+**Üçü de `Claude-SearchBot`.** Toplam **65.793 içerik sayfası**, 20-22 Ağustos'ta,
+yani nginx düzeltmesinden **BEŞ GÜN ÖNCE**.
+
+**HEPSİ BOŞ KABUK ALDI.** Kanıt bu belgenin kendi ölçü çubuğu: §6.1'de
+*"İnsan referansı: Chrome istekleri `/icerik/tv/*` için sabit 4.725/4.727 bayt
+(= kabuk)"* yazıyor. Bu üç günün ortalaması **4.726–4.728 bayt** — kabuğun
+imzası, üç hane hassasiyetle.
+
+### NE ANLAMA GELİYOR
+
+§0.1'in kendi uyarısı gerçekleşmiş, ve biz fark etmemişiz:
+
+> *"engel kalkar kalkmaz gelen İLK tarama boş kabuk görür ve motor 'bu sitede
+> içerik yok' diye kaydeder — 403'ten kötüdür, çünkü 403 geçici sayılır,
+> **boş sayfa KALICI kanaat olur**."*
+
+Sıralamayı "önce arka, sonra kapı" diye kurmamızın sebebi tam buydu. Ama kapı
+zaten açıkmış (§0.0) ve tarama **20 Ağustos'ta gelmiş**. Yani korktuğumuz şey
+önlem almadan önce OLMUŞ.
+
+**DAVRANIŞ BUNU DOĞRULUYOR:** Claude-SearchBot 23 Ağustos'tan bu yana tek bir
+içerik sayfası çekmedi. Son 48 saatte **30 istek attı, 30'u da `/sitemap.xml`**
+(dizin dosyası, 597 B) — bir tane bile alt haritaya ya da sayfaya inmedi.
+Siteyi taramış, 66 bin boş sayfa görmüş, kesmiş.
+
+### ⛔ YAPILMAYAN: `lastmod`'ları yeniden taramaya zorlamak için ileri almak
+
+Akla gelen ilk çözüm: 18.410 URL'in `lastmod`unu bugüne çekip "her şey
+değişti" demek. **Reddedildi**, ölçülmüş iki gerekçeyle:
+
+1. **Beyan yalan olurdu.** 27 Ağu'da değişen şey içerik DEĞİL, o içeriğin bota
+   ULAŞTIRILMASIYDI. `lastmod` içerik değişim tarihidir; canlı haritada da öyle
+   (`sitemap-icerik-1.xml` 2.460/2.460 URL'de `lastmod` var ve tarihler gerçek
+   değişim günleri).
+2. **Çalışan kanalı bozardı.** Googlebot bugün bölüm ailesinde günde ~250 sayfa
+   çekiyor ve haritayı hatasız okuyor. `lastmod` güvenilirliğini harcamak,
+   ÇALIŞAN tarayıcıyı kaybetme riskiyle ÇALIŞMAYAN tarayıcıyı geri kazanma
+   kumarıdır. `SITEMAP_BOLUM_SORGU` yorumundaki kural burada da geçerli:
+   ölçekte bozulan bir harita sinyali "haritanın tamamının güvenilirliğini
+   bitirir".
+
+**Bunun yerine: BEKLE VE ÖLÇ.** Ortaya çıkan tahmin yanlışlanabilir —
+*"Claude-SearchBot içerik taramasına kendiliğinden dönecek mi?"* Kanal 1
+(`geo-olcum.sh trend`) bunu doğrudan gösterir. Dönmezse ve OAI-SearchBot
+dönerse, fark bizim değil sağlayıcının kararıdır; o zaman da yapılacak iş
+harita hilesi değil §4.6 (dış görünürlük) olur.
+
+> **DERS (yönteme yazıldı, §0.0'ınkinin yanına):** GEO'da **tek günlük pencere
+> hüküm verdirmez.** §0.0 sahte UA ile ölçtüğü için yanıldı; §6.1 tek güne
+> baktığı için yanıldı. İkisi de "ölçtüm" diyordu. Kural: bot trafiği SEYREK ve
+> PATLAMALIDIR — en az 14 günlük seri okunmadan "bot şunu yapmıyor" denmez.
+> `geo-olcum.sh trend` bu yüzden yazıldı.
 
 ---
 ## 0. Yönetici özeti — İKİ DUVAR
@@ -228,6 +305,30 @@ ORIGIN ÖLÇÜMÜ (CF atlanarak, `--resolve dizijpg.com:443:127.0.0.1`):
 
 Yedek: `/etc/nginx/sites-available/dizijpg.com.yedek-geo-20260827`.
 
+### ✅ YENİDEN DOĞRULAMA — 29 Ağustos 2026, DÖRT YÜZEY × DOKUZ İSTEMCİ
+
+27 Ağu doğrulaması yalnız `/icerik/tv/1396`e bakmıştı. 28 Ağu'da SSS üç yüzeye
+daha açıldığı için ölçüm **dört yüzeye** genişletildi. Origin'den
+(`--resolve dizijpg.com:443:127.0.0.1`, CF atlanarak), `?n=$RANDOM` ile:
+
+| İstemci | `/icerik/tv/1396` | `/kisi/17419` | `/sirket/4` | `/dizi/1396/sezon/5/bolum/14` |
+|---|---|---|---|---|
+| OAI-SearchBot | 200 · 16.215 B · SSS✓ | 200 · 15.794 B · SSS✓ | 200 · 11.714 B · SSS✓ | 200 · 11.997 B · SSS✓ |
+| ChatGPT-User | aynı | aynı | aynı | aynı |
+| PerplexityBot | aynı | aynı | aynı | aynı |
+| Perplexity-User | aynı | aynı | aynı | aynı |
+| Claude-User | aynı | aynı | aynı | aynı |
+| Claude-SearchBot | aynı | aynı | aynı | aynı |
+| Googlebot | aynı | aynı | aynı | aynı |
+| **GPTBot** (eğitim) | 200 · **12.680 B · SSS✗** | aynı | aynı | aynı |
+| **Chrome** (insan) | 200 · **12.680 B · SSS✗** | aynı | aynı | aynı |
+
+**Üç şey birden kanıtlandı:** (1) altı cevap botu da dört yüzeyde tam SSR
+alıyor; (2) `FAQPage` **dördünde de** basılıyor — yani §5'in `/kisi/`,
+`/sirket/` ve bölüm SSS'i gerçekten bota gidiyor; (3) eğitim botu ve insan
+**aynı** 12.680 baytlık kabuğu alıyor, yani §10 md.4 cloaking kilidi ve
+`ai-train=no` beyanı bozulmadı.
+
 > DIŞARIDAN TEST ETME TUZAĞI: `curl https://dizijpg.com` ile bu UA'lar hâlâ
 > **403** döner — çünkü Cloudflare istekleri nginx'e ulaştırmıyor (§2). Bu
 > adımın doğrulaması ancak origin'den yapılabilir.
@@ -374,6 +475,12 @@ vermek cloaking'dir; görünür `<dl>` tam da bu yüzden zorunlu.
 - **KAPININ AÇILMA KOŞULU:** §6.2 turu bir kez çalıştırılıp GSC'de yeni
   yüzeylerin sorguları göründüğünde (gerçekçi olarak 1-2 hafta) bu madde
   ölçülmüş adaylarla açılır.
+- 🔒 **29 Ağu 2026 — KAPI HÂLÂ KAPALI, ve artık ÜÇÜNCÜ bir kilit var.** §0.3
+  ölçtü: iki büyük cevap motorundan biri (Claude-SearchBot) 23 Ağustos'tan beri
+  hiç içerik sayfası çekmiyor, öteki (OAI-SearchBot) 28 Ağustos'ta 0 çekti.
+  SSS'i şimdi genişletmek, **okunmayan bir sayfaya soru eklemek** olur:
+  maliyet kesin, ölçüm imkânsız. Önce kanal 1'de içerik taramasının döndüğü
+  görülmeli. Bu, aynı §5.1'in "veri kapısı" kuralının GEO tarafındaki karşılığı.
 - Eski §5 metni (karar gerekçeleriyle) aşağıda duruyor:
 
 ### Özgün §5 kararları
@@ -414,12 +521,49 @@ gösteren resmî bir panel yok.** Kurulacak üç kanal:
 yanıttı). Doğrusu: başlangıçta kanal 1 sıfırdı çünkü botlar **boş kabuk**
 alıyordu; kanal 2 ve 3 ise henüz veri üretecek kadar zaman geçmemişti.
 
-**Kanalların bugünkü hâli (28 Ağu 2026):**
+**Kanalların bugünkü hâli (29 Ağu 2026):**
 | Kanal | Durum | Son değer |
 |---|---|---|
-| 1 — sunucu logu | ✅ kuruldu (`araclar/geo-olcum.sh`) | 27 Ağu: OAI-SearchBot 20 içerik sayfası |
+| 1 — sunucu logu | ✅ kuruldu · **29 Ağu'da `trend` kipi eklendi** (`araclar/geo-olcum.sh`) | 28 Ağu: 31 istek / 2 içerik · 15 günlük seri §0.3'te |
 | 2 — atıf trafiği (`Referer`) | ✅ kuruldu (aynı betik) | **0** — beklenen (§8) |
-| 3 — elle sorgu turu | ✅ liste sabitlendi (§6.2) | ⬜ **henüz çalıştırılmadı** — SSS bugün çıktı, motorlar sayfaları görmedi; şimdi çalıştırmak kesin sıfır verir |
+| 3 — elle sorgu turu | ✅ liste sabitlendi (§6.2) | ⬜ **hâlâ çalıştırılmadı — VADESİ GELMEDİ, bkz. §6.3** |
+
+### ⚠ 29 AĞU 2026 — ÖLÇÜM ARACININ KENDİ İKİ KUSURU (ölçülerek bulundu)
+
+`gsc_izle.js`in `genel` kovası dersinin aynısı, bu kez GEO tarafında:
+
+1. **Yol regex'inde `bolum` öneki ÖLÜ DALDI.** `^/(icerik|kisi|sirket|bolum)/`
+   yazıyordu; oysa bölüm sayfasının yolu `/dizi/<id>/sezon/<s>/bolum/<b>` —
+   ilk segment **`dizi`**. Kanıt: birinci segmenti `/bolum/` olan istek sayısı
+   28+27 Ağu'da **0**, yani dal tanımı gereği hiç çalışmamış. Sayıyı bugüne
+   dek BOZMADI (cevap botları henüz hiç bölüm sayfası çekmedi) ama bölüm SSS'i
+   28 Ağu'da canlıya çıktığı için **tam ölçmek istediğimiz yüzey görünmez
+   kalacaktı**. `dizi` ile değiştirildi.
+2. **Tek günlük bakış yanlış alarm üretiyor.** 28 Ağu koşusu
+   "OAI-SearchBot istek=9 içerik=0" dedi; 27 Ağu'da aynı bot 20 içerik sayfası
+   çekmişti. Tek güne bakan okuyucu "kazanım geri gitti" sanır — ve §0.3'teki
+   66 binlik kabuk taraması da tam bu yüzden 28 Ağu'da görülmedi. `trend` kipi
+   eklendi: dondurulmuş loglar dâhil günlük seri basar.
+
+---
+
+## 6.3 ⬜ KANAL 3 NEDEN BUGÜN DE KOŞULMADI (29 Ağu 2026)
+
+Madde açık bırakıldı; **gerekçe tembellik değil, ölçüm takvimi:**
+
+- **Vadesi gelmedi.** §6.2 turu **aylık** tanımlandı ve başlangıç değeri
+  28 Ağu'da SIFIR olarak yazıldı. Bir gün sonra tekrarlamak yeni bilgi üretmez;
+  aynı sabit listeyi ayda birden sık sormak kıyası bozar.
+- **Cevap kesin olarak sıfır çıkardı, ve bu sefer SEBEBİ BİLİNİYOR.** §0.3:
+  Claude-SearchBot 23 Ağustos'tan beri içerik çekmiyor, OAI-SearchBot 28
+  Ağustos'ta 0 sayfa çekti. Motorun indeksinde okumadığı bir sayfa yok;
+  sorulacak sorunun cevabı ölçülmeden bellidir.
+- **İLK GERÇEK TUR: ~28 Eylül 2026.** Kayıt yeri
+  `yapilacaklar/geo-sorgu-turu-2026-09.md` (§6.2 biçimi).
+- ⚠ **Bu ajanın erişemediği kanal.** Tur üç motorda (ChatGPT, Perplexity,
+  Google AI Mode) **oturum açmış bir tarayıcı** ister. Otomasyon kullanıcının
+  kendi hesaplarında işlem yapmak demektir; arka planda çalışan bir ajan bunu
+  kullanıcı onayı olmadan yapmaz. Tur **elle** koşulmalı.
 
 ---
 
@@ -436,7 +580,13 @@ Kanal 1 (sunucu logu) kuruldu ve **ilk gerçek veriyi verdi**. Ölçüm penceres
 | PerplexityBot / Perplexity-User | 2 / 2 | 0 | kendi testimiz |
 | Claude-User | 2 | 0 | kendi testimiz (CF hâlâ engelli, bkz. §2) |
 
-**ANA BULGU — cevap botları düzeltmeden ÖNCE HİÇ İÇERİK SAYFASI ÇEKMEMİŞTİ.**
+> ⛔ **29 AĞU 2026: AŞAĞIDAKİ "ANA BULGU" ÇÜRÜDÜ — bkz. §0.3.** Doğru olan
+> yalnız 27 Ağustos günü içindir. 15 günlük seride Claude-SearchBot 20-22
+> Ağustos'ta **65.793 içerik sayfası** çekmiş ve hepsinde **boş kabuk** almıştır.
+> Aşağıdaki cümle tek günlük pencereden çıkarılmış bir genellemedir; kayıt
+> olarak duruyor, HÜKÜM olarak GEÇERSİZ.
+
+~~**ANA BULGU — cevap botları düzeltmeden ÖNCE HİÇ İÇERİK SAYFASI ÇEKMEMİŞTİ.**~~
 12:18 öncesi tüm gerçek istekler yalnız `/robots.txt` ve `/sitemap.xml`.
 12:18'den sonra OAI-SearchBot (74.7.x = OpenAI ASN) **22 içerik sayfası** çekti:
 11× `/icerik/tv/…`, 6× `/kisi/…`, 5× `/sirket/…`. Hepsi 200.

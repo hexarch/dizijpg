@@ -1,10 +1,169 @@
 # dizi.jpg — SEO yapılacaklar
 
-> Sürüm **5.0** · 28 Ağustos 2026 — **trafik dikleşti; ölçümün kör noktası kapatıldı**  
+> Sürüm **5.1** · 29 Ağustos 2026 — **v5.0'ın AÇIK SORUSU ÖLÇÜLDÜ: hipotez çürüdü,
+> "%3,5 indeks" bir ölçüm yapaylığı çıktı, "bölüm %13 TO" ise DAİRESEL** (bkz. §0.0)
+>
+> Sürüm 5.0 · 28 Ağustos 2026 — trafik dikleşti; ölçümün kör noktası kapatıldı  
 > Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda · ⛔ yapılmayacak  
 >
 > Bu belge bir görev listesi değil, **karar belgesidir**. Neden / neden değil yazılır. Atlanan maddenin gerekçesi buraya işlenir.  
 > Strateji ve GSC tablolarının anlatımı: `SEO-PLANI.md` v3.0 (23 Ağu).
+
+---
+
+## 0.0 v5.1 NE DEĞİŞTİ — AÇIK SORU KAPANDI, HİPOTEZ ÇÜRÜDÜ (29 Ağustos 2026)
+
+v5.0 şu soruyu ölçülmemiş bırakmıştı: *"Bölüm ailesi neden yalnız %3,5
+indeksli?"* ve bir hipotez önermişti: *"bölüm sayfasına giden tek iç bağlantı
+dizi sayfasından; o da %17 indeksli, yani bağlantı grafiğinin GİRİŞ NOKTASI
+zayıf. Doğruysa çözüm bölüm haritasını büyütmek değil, içerik ailesini
+güçlendirmek."* v5.0 bilerek iş yapmamıştı. **Bugün ölçüldü. Hipotez YANLIŞ, ve
+sorunun kendisi de yanlış kurulmuş.**
+
+### ÖLÇÜM 1 — Google bölüm sayfalarını ZATEN yoğun tarıyor (hipotez çürüdü)
+
+nginx access.log, `66.249.79.x` (Google'ın resmî tarayıcı aralığı), kendi
+testlerimiz hariç:
+
+| gün | Googlebot toplam | bölüm | içerik | kişi |
+|---|---|---|---|---|
+| 14-19 Ağu | 42-283 | 0-14 | 9-211 | 0-33 |
+| 20 Ağu | 591 | 80 | 187 | 176 |
+| 21 Ağu | 2.415 | 856 | 435 | 596 |
+| 22 Ağu | 5.702 | **2.412** | 162 | 2.981 |
+| 23 Ağu | 2.062 | 371 | 217 | 1.254 |
+| 24-26 Ağu | 244-315 | 31-95 | 28-83 | 70-196 |
+| 27 Ağu | — | **288** | 279 | 83 |
+| 28 Ağu (19 saat) | — | **226** | 168 | 148 |
+
+15 günde **~4.476 bölüm isteği**, son 48 saatte **463 TEKİL bölüm sayfası**,
+hepsi **200**. "Google bölüm sayfalarına ulaşamıyor" iddiası ölçümle
+UYUŞMUYOR — bölüm, Googlebot'un en çok çektiği aile.
+
+**İç bağlantı da yerli yerinde.** Dizi sayfaları bol bol bölüm linki veriyor
+(curl, Googlebot UA): `/icerik/tv/40417` → **43** bölüm linki,
+`/icerik/tv/215709` → **82**, `/icerik/tv/32836` → **90**. Giriş noktası zayıf
+değil.
+
+### ÖLÇÜM 2 — "%3,5" bir ÖLÇÜM YAPAYLIĞI (asıl bulgu)
+
+İki örneklem, aynı gün, aynı GSC `urlInspection` ucu, 12'şer URL:
+
+| örneklem | Google çekmiş mi (`lastCrawlTime`) | indeksli |
+|---|---|---|
+| **Googlebot'un son 48 saatte ÇEKTİĞİ** bölüm URL'leri | 12/12 dolu | **10/12 PASS = %83** |
+| **Harita bölüm ailesinden TEKDÜZE rastgele** örnek | **0/12 — hiçbiri hiç taranmamış** | **0/12** |
+
+İkinci örneklemin 12/12'si Google'ın ham etiketiyle *"URL Google tarafından
+bilinmiyor"* ve `lastCrawlTime` **boş**. Yani bölüm sayfaları indekslenmiyor
+değil — **haritadaki bölüm sayfaları henüz hiç taranmamış.**
+
+**SEBEP ÖLÇÜLDÜ:** Googlebot'un son 48 saatte çektiği 463 tekil bölüm URL'inin
+**413'ü (%89) mevcut haritada YOK** — 25 Ağustos kesmesiyle çıkarılan eski
+78.484'lük kümeden. Yalnız **50'si (%11)** haritadaki 5.146 URL'den.
+
+```
+harita bölüm evreni      5.146
+Googlebot'un çektiği       463 tekil (48 saat)
+  ├─ haritada               50
+  └─ harita DIŞI           413   ← tarama bütçesinin %89'u
+```
+
+Google'ın bölüm dikkati hâlâ **kesmeden önceki keşif kuyruğunda**. Harita
+hatasız okunuyor (GSC: son okuma 28 Ağu, hata 0) ama içindeki URL'lere sıra
+gelmiyor. `panelSec` haritadan TEKDÜZE örnek aldığı için panel, yapı gereği,
+"Google'ın henüz varmadığı yer"i ölçüyor. **%3,5 bir arıza değil, bir
+takvimdir.**
+
+### ÖLÇÜM 3 — "bölüm ailesi %13 TO ile en iyi çeviren aile" DAİRESEL
+
+v5.0'ın en çok alıntılanacak cümlesi buydu. Üç kovaya ayırınca çöküyor
+(GSC sayfa boyutu, son 30 gün):
+
+| kova | sayfa | tık | gös | TO | ağırlıklı konum |
+|---|---|---|---|---|---|
+| **`seo_kazanan_bolum`** (tıklama aldığı İÇİN haritaya alınmış) | **19** | **39** | 97 | %40,2 | 13,3 |
+| haritada, kazanan değil (**5.127 URL'lik evren**) | 3 | **0** | 7 | %0 | 20,0 |
+| harita dışı (kesilen küme) | 156 | **0** | 195 | %0 | 37,2 |
+
+**39 tıklamanın 39'u da `seo_kazanan_bolum` tablosundaki 19 satırdan geliyor —
+ve o tablo tıklamaya göre doldurulmuş bir tablo.** Yani "bölüm ailesi iyi
+çeviriyor" cümlesi, "tıklama alan sayfalar tıklama alıyor" demekten ibaret.
+Haritanın geri kalan **5.127 URL'i 30 günde 7 gösterim, 0 tıklama** üretti.
+
+> **DERS (yönteme yazıldı):** Bir aileyi kendi seçilme ölçütüyle övmek DAİRESEL
+> ÖLÇÜMDÜR. `seo_kazanan_bolum` tıklamayla doldurulur; o tabloyu içeren bir
+> kümede TO okumak tanım gereği yüksek çıkar. Aile performansı ölçülürken
+> **seçim kuralına giren satırlar dışarıda bırakılır.**
+
+### ⛔ YAPILMAYAN 1 — kesilen bölüm sayfalarını `noindex` yapmak
+
+Ölçüm bunu güçlü biçimde akla getiriyordu: kesilen küme **hâlâ 200 + index**
+dönüyor (curl, Googlebot UA: 7.429–10.121 B, `noindex` YOK), tarama bütçesinin
+%89'unu yiyor ve 30 günde **0 tıklama** üretti. Üstelik §10 md.6 (*"Sitemap
+kapsamı indexable kuralla aynı tanım"*) fiilen ayrışmış durumda: 25 Ağu kesmesi
+`SITEMAP_BOLUM_SORGU`ya **dizi düzeyi** bir süzgeç ekledi
+(`d.tr_yapim OR b.sezon = d.sonraki_sezon OR kz.tmdb_id IS NOT NULL`) ama
+sayfanın `bolumOzgunIcerikVar` kuralına eklemedi.
+
+**Yine de REDDEDİLDİ — çünkü o küme israf değil, AV HAVUZU:**
+
+- `seo_kazanan_bolum`un **19 satırının hepsi** oradan geldi. Boru hattı:
+  kesilmiş sayfa indekslenir → tıklama alır → `gsc_izle.js` gece onu kazanan
+  yazar → harita ve iç bağlantı kazanır. Tablo 27 Ağu'da 6, 28 Ağu'da 19 satır:
+  **hattın çalıştığı ölçüldü.**
+- `noindex` bu hattı **geri dönüşsüz** kapatır: indekslenmeyen sayfa tıklama
+  alamaz, tıklama alamayan sayfa kazanan olamaz. Kendi kendini kilitleyen bir
+  cırcır.
+- Kesilen küme **haritadakinin iki katı gösterim** üretiyor (195 vs 104) ve
+  **49 sayfası konum ≤10'da**. Bugün sitenin arama görünürlüğünün çoğu orada.
+
+**Karar: dokunma.** §10 md.6'nın ayrışması bilinçli bir istisna olarak buraya
+yazıldı — kesme DİZİ DÜZEYİNDE harita kapsamını daraltır, sayfa düzeyinde
+indekslenebilirliği DARALTMAZ. İçerik ölçüsü iki tarafta da aynı kaldığı için
+md.6'nın asıl koruduğu tuzak ("haritada var ama noindex", B2) hâlâ imkânsız.
+
+### ⛔ YAPILMAYAN 2 — kazanan eşiğini tıklamadan GÖSTERİME indirmek
+
+Cazipti: 156 harita-dışı sayfa gösterim alıyor, 49'u konum ≤10'da, ama hiçbiri
+haritaya/iç bağlantıya giremiyor çünkü `KAZANAN_MIN_TIKLAMA = 1`.
+
+**Reddedildi — örneklem yetersiz.** O 156 sayfanın toplam gösterimi 195, yani
+**sayfa başına ~1,25**. 1 gösterimde 0 tıklama, "talep yok"un kanıtı değil;
+istatistiğin yokluğudur (%40 TO'da bile 1 gösterimin beklenen tıklaması 0,4 →
+tam sayıya 0). Eşiği gösterime indirmek, **gürültüyü sinyal sayıp** haritaya
+~156 URL eklemek olurdu — hem de kuyruk (21.394) inmemişken.
+
+`gsc_izle.js` her gece 28 günlük pencereyi okuyor; bu sayfalar gerçekten iş
+görürse eşiği **kendiliğinden** geçecekler. Doğru hamle beklemek.
+
+### 🔎 YAN BULGU — zenginlik indekslemeye YETMİYOR
+
+`/icerik/tv/1396` (Breaking Bad): sitenin en zengin sayfası — 16.215 B SSR,
+`FAQPage` + `AggregateRating` + `Review` + 9 `Person`. GSC verdict'i:
+**"Tarandı - şu anda dizine eklenmiş değil"** (son tarama 20 Ağu). Buna karşılık
+`/icerik/tv/32836` ve `/icerik/tv/30983` **PASS**.
+
+Yani reddin sebebi şema eksikliği DEĞİL. Bu, §3'teki *"⛔ Daha fazla AI özeti"*
+ve §9'daki *"puan avcılığı SEO gerekçesiyle yapılmaz"* kararlarını
+güçlendiriyor: **elde kalan kaldıraç otorite**, yani §4.6 (dış bağlantı = 0) —
+zaten §0.1'de "SIRADAKİ" diye duran madde.
+
+### ✅ DÜZELTİLEN BAYAT İŞARET
+
+**§6.8 (bot UA: GoogleOther, DuckDuckBot) ⬜ → ✅.** Canlı nginx
+`map $http_user_agent $og_bot` bloğunda **ikisi de var** (ve 27 Ağu'da altı
+cevap botu eklenmiş). Madde çoktan kapanmış, işaret bayat kalmış.
+
+### ⬜ AÇIK KALAN (bu turda ölçülemedi)
+
+- **Keşif kuyruğu 21.394 → ?** GSC "Sayfalar" raporunun bu toplamı
+  **API'de yok** (yalnız panel ekranında). §0.1'in "1 Eylül'de bak" randevusu
+  duruyor; ölçüm elle, GSC arayüzünden yapılacak. v5.1'in ölçümü bu sayının
+  **düşmesini beklememizi** söylüyor: kuyruğun tamamı kesilen kümede ve Google
+  onu günde ~250 sayfa hızıyla eritiyor.
+- **§4.6 dış bağlantı = 0.** Kod işi değil; ürün/pazarlama. v5.1'den sonra
+  sitenin ölçülmüş TEK darboğazı bu.
 
 ---
 
@@ -152,9 +311,14 @@ belirsizlik payı büyük ama sıralama net):
 Bölüm ailesinin **12/12'si** Google'ın ham etiketiyle *"URL Google tarafından
 bilinmiyor"*. Her aile %17-33 arasında indekslenirken bölüm 5-9 KAT geride.
 
-### ⬜ SIRADAKİ SORU (veri bekliyor)
+### ✅ SIRADAKİ SORU — 29 AĞU 2026'DA ÖLÇÜLDÜ, HİPOTEZ ÇÜRÜDÜ (bkz. v5.1 §0.0)
 
-Bölüm ailesi neden yalnız %3,5? Bir hipotez ölçülmeye değer: **bölüm sayfasına
+> Aşağıdaki hipotez **yanlış çıktı**: Googlebot bölüm sayfalarını zaten günde
+> ~250 tane çekiyor ve dizi sayfaları 43-90 bölüm linki veriyor. Giriş noktası
+> zayıf değil. Gerçek sebep: çekilen bölüm URL'lerinin %89'u haritada olmayan
+> ESKİ kümeden; haritadakilere henüz sıra gelmemiş. Kayıt olarak duruyor.
+
+~~Bölüm ailesi neden yalnız %3,5?~~ Bir hipotez ölçülmeye değer: **bölüm sayfasına
 giden tek iç bağlantı dizi sayfasından** (`/icerik/tv/<id>` → 51 bölüm), ama
 dizi sayfalarının kendisi de ancak %17 indeksli. Yani bağlantı grafiğinin
 GİRİŞ NOKTASI zayıf; Google bölümlere ulaşmak için önce dizi sayfasını
@@ -427,17 +591,32 @@ http→https, www→apex, trailing slash, leading zero, büyük harf ilk segment
 
 `Cache-Control: public, max-age=300, s-maxage=3600, stale-while-revalidate=86400`. 19 Ağu maddesi kapandı.
 
-### 6.6 ⬜ `sitemap-genel.xml` lastmod
+### 6.6 ⛔ `sitemap-genel.xml` lastmod — 29 Ağu 2026: YAPILMADI, gerekçesi burada
 
-Hâlâ zayıf sinyal olabilir (4 URL). Düşük öncelik; kuyruk işinden sonra.
+Ölçüldü (canlı): 4 URL'in yalnız `/gizlilik`inde `lastmod` var
+(`2026-08-14`); `/`, `/gozat`, `/kesfet`te yok — bu yüzden dizin dosyasında da
+`sitemap-genel.xml` satırı `lastmod`suz duruyor (öteki dördünde `2026-08-28`).
+
+**Yapılmadı, çünkü dürüst bir değer yok.** Bu üç sayfa TMDB popülerliğinden
+türeyen listeler; "en son ne zaman değişti" diye kaydettiğimiz bir an yok.
+Bugünün tarihini basmak `lastmod`u **her gün yalan söyleyen** bir alana
+çevirirdi — ve GEO-PLANI §0.3'te tam bu yüzden 18.410 URL'i toptan tazeleme
+fikri reddedildi: harita sinyalinin güvenilirliği ölçekte tek seferlik
+kazançtan kıymetli. Ayrıca ödül tavanı 4 URL (haritanın %0,02'si).
+
+Gerçek bir "son değişim" damgası üretilirse (ör. ana sayfa rafının imzası)
+madde açılır. O zamana kadar ⛔.
 
 ### 6.7 ⛔ `/listeler/*` index
 
 Canlı örnek `noindex,follow` (ince liste). Eşik metin uzunluğuna çekilmeden iç link **verilmez**.
 
-### 6.8 ⬜ Bot UA (GoogleOther, DuckDuckBot)
+### 6.8 ✅🚀 Bot UA (GoogleOther, DuckDuckBot)
 
-Tek satır nginx. Düşük öncelik.
+**29 Ağu 2026: madde çoktan kapanmış, işaret bayat kalmıştı.** Canlı nginx
+`map $http_user_agent $og_bot` bloğunda `GoogleOther` ve `DuckDuckBot` **var**;
+27 Ağu'da yanlarına altı cevap botu da eklendi (GEO-PLANI §3). Kilit:
+`backend/test/geo_bot_regex.test.js`.
 
 ### 6.9 ⬜ 5xx kuyruğu
 
