@@ -5598,8 +5598,62 @@ app.get('/og/listeler/:id', sarici(async (req, res) => {
 // merkezi (hub): sitemap'i tamamlar, tarama derinliğini besler.
 // NOT: `SearchAction` BASILMIYOR — /arama rotası sorgu parametresi almıyor,
 // çalışmayan bir arama URL'i bildirmek yapısal veri hatası olur.
+// Arayüz dili sayısı — ana sayfa SSS'inde geçen TEK sayı.
+//
+// SUNUCU BU BİLGİYE SAHİP DEĞİL (diller Flutter tarafında,
+// `app/lib/diller/dil_*.dart`). Sabit yazmak bayatlama riski taşır, bu yüzden
+// `seo_ana_sss.test.js` gerçek dosya sayısını SAYIP bu sabitle karşılaştırıyor:
+// yeni bir dil eklenip burası unutulursa test KIRILIR.
+const SEO_ARAYUZ_DIL = 45;
+
+// Ana sayfanın soru-cevap listesi — MARKA/KİMLİK yüzeyi.
+//
+// NEDEN (28 Ağu 2026): §6.2'nin 10. sorusu "dizi.jpg nedir?" ve cevabını
+// YALNIZ biz verebiliriz; modelin başka kaynaktan alamayacağı veri budur.
+// Buna rağmen ana sayfada tek bir soru-cevap yoktu — 7.796 baytlık sayfa bir
+// başlık, bir paragraf ve bağlantı listelerinden ibaretti.
+//
+// 2. SORU MARKA GÜVENLİĞİDİR, doldurma değil: dizi.jpg bir TAKİP uygulaması,
+// içerik yayınlamıyor. Benzer adlı korsan yayın siteleri var ve bir cevap
+// motorunun bizi onlarla karıştırıp "dizi izleme sitesi" diye tanıtması hem
+// yanlış hem zararlı olurdu. Açık, olumsuz ve tek cümlelik bir cevap bunu
+// baştan kapatır.
+//
+// SORULAR SABİT VE ÖLÇÜM GEREKTİRMEZ: hepsi kendi ürünümüz hakkında
+// doğrulanabilir olgular (ücretsizlik, dil sayısı, platformlar). §5.1'deki
+// "ölçülmüş talebe göre seç" kuralı İÇERİK sayfalarının SSS'i içindir; kendi
+// kimliğimizi anlatmak için kullanıcı sorgusu beklemeye gerek yok.
+function seoAnaSorulari() {
+  return [
+    {
+      soru: 'dizi.jpg nedir?',
+      cevap: 'dizi.jpg, izlediğin dizi ve filmleri takip ettiğin, puanlayıp'
+        + ' yorumladığın ve arkadaşlarının ne izlediğini gördüğün ücretsiz bir'
+        + ` takip uygulamasıdır; arayüzü ${SEO_ARAYUZ_DIL} dilde kullanılabilir.`,
+    },
+    {
+      soru: 'dizi.jpg üzerinden dizi ve film izlenebilir mi?',
+      cevap: 'Hayır; dizi.jpg bir takip uygulamasıdır, içerik yayınlamaz ve'
+        + " film ya da dizi oynatmaz. Sayfalarda bir yapımın Türkiye'de hangi"
+        + ' yasal platformlarda bulunduğu gösterilir (sağlayıcı verisi:'
+        + ' JustWatch).',
+    },
+    {
+      soru: 'dizi.jpg ücretsiz mi?',
+      cevap: 'Evet; dizi.jpg ücretsizdir ve uygulama içi satın alma ya da'
+        + ' abonelik içermez.',
+    },
+    {
+      soru: 'dizi.jpg hangi platformlarda kullanılabilir?',
+      cevap: 'dizi.jpg tarayıcıdan dizijpg.com adresinde ve Android uygulaması'
+        + " olarak Google Play'de kullanılabilir.",
+    },
+  ];
+}
+
 app.get('/og/ana', sarici(async (_req, res) => {
   const url = `${SITE_KOK}/`;
+  const anaSorular = seoAnaSorulari();
   let baglantilar = [];
   try {
     const d = await sitemapVerisi();
@@ -5628,7 +5682,9 @@ app.get('/og/ana', sarici(async (_req, res) => {
     tur: 'website',
     // Keşif sayfaları ana sayfadan bağlanır (SEO_KESIF_HUB gerekçesi orada):
     // sitemap'e girmedikleri için Google'ın onları bulacağı TEK yol bu.
-    govde: seoBaglantiListesi('Keşfe başla', SEO_KESIF_HUB)
+    // SSS EN ÜSTTE: sayfanın kimlik sorusu, bağlantı listelerinden önce gelir.
+    govde: seoSssGovdesi(anaSorular)
+      + seoBaglantiListesi('Keşfe başla', SEO_KESIF_HUB)
       + seoBaglantiListesi('Son yorumlanan diziler ve filmler', baglantilar),
     jsonLd: {
       '@context': 'https://schema.org',
@@ -5647,6 +5703,9 @@ app.get('/og/ana', sarici(async (_req, res) => {
           url: `${SITE_KOK}/`,
           logo: `${SITE_KOK}/icons/Icon-192.png`,
         },
+        // İçerik/kişi/firma/bölüm sayfalarıyla AYNI disiplin: ayrı `@graph`
+        // öğesi, `#sss` kimliği, WebSite/Organization içine GÖMÜLMEZ.
+        ...(seoSssJsonLd(anaSorular, url) ? [seoSssJsonLd(anaSorular, url)] : []),
       ],
     },
   }));
