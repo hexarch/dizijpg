@@ -1,5 +1,32 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-28 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-29 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-29 — 🚀 Masaüstünde akıştaki paylaşım kutusu okuma kolonuna oturdu
+
+Kullanıcı: "web masaüstünde akıştaki yorum yap kısmı çok büyük onu doğru
+ortanında yerleştirsin".
+
+- **Kök neden:** 28 Ağu'da eklenen `_PaylasKutusu` (`app/lib/ekranlar/akis.dart`)
+  `Scaffold.body`deki `Column`un DOĞRUDAN çocuğuydu. Akış kartlarını 720 dp'lik
+  ortalanmış okuma kolonuna sokan `OrtaKolon` sarmalayıcısı ise yalnız
+  `Expanded(child: govde)`yi sarıyordu — yani kutu o sınırın DIŞINDA kalıp
+  pencerenin tamamına yayılıyordu.
+- **Ölçüldü (düzeltme öncesi/sonrası):** 1440 dp ekranda kutu **1440 → 720 dp**
+  (kart zaten 720 dp'ydi); 1920 dp'de de 720 dp ve ortalanmış. Kutunun sol/sağ
+  kenarları artık `AkisKarti` ile birebir aynı hizada.
+- **Düzeltme:** kutu, akışın KENDİ kalıbına alındı —
+  `OrtaKolon(azami: masaustuKolonGenisligi, cocuk: _PaylasKutusu(...))`.
+  Yeni sabit/kalıp uydurulmadı (`ui-ux-pro-max` → Layout / "Container Width":
+  metin kolonu 65-75ch ile sınırlanmalı; 720 dp zaten o gerekçeyle seçilmişti).
+- **Telefon BOZULMADI:** `OrtaKolon` sabit genişlik değil ÜST SINIR verir;
+  720'nin altındaki pencerelerde kısıt bağlamaz, kutu tam genişlikte kalır.
+- **Kanıt (CLAUDE.md md.7):** `app/test/masaustu_orta_kolon_test.dart` içine
+  "akış PAYLAŞIM KUTUSU — kartla AYNI kolonda" grubu eklendi (4 test, hepsi
+  `tester.getRect` ile GERÇEK ölçüm): 1440/1920 dp'de kutu 720 dp + ortalanmış
+  + kart kenarlarıyla hizalı; 600/700 dp'de tam genişlik. Testin hatayı
+  GERÇEKTEN yakaladığı doğrulandı (düzeltme geri alınınca 1440 dp ölçüldü).
+- Sürüm 1.100.2+156 → **1.100.3+157** (`pubspec.yaml` + `lib/api.dart` birlikte).
+- `flutter analyze` 0 error/warning; `flutter test` 2234/2234 yeşil.
 
 ## 2026-08-28 — 🔨 OTURUM İŞ LİSTESİ (kullanıcı: "hepsi yapılmalı")
 

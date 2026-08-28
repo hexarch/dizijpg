@@ -48,6 +48,14 @@ void _ekran(WidgetTester t, double g, double y) {
   addTearDown(t.view.reset);
 }
 
+/// Akıştaki paylaşım kutusu (`_PaylasKutusu`) — sınıf `akis.dart`'a ÖZEL, o
+/// yüzden tipiyle değil adıyla bulunur. Bilerek dışa açılmadı: kutu ekranın iç
+/// parçası, uygulamanın başka yerinden kurulmuyor.
+final Finder _paylasKutusu = find.byWidgetPredicate(
+  (w) => w.runtimeType.toString() == '_PaylasKutusu',
+  description: 'akıştaki paylaşım kutusu',
+);
+
 /// Sol boşluk ≈ sağ boşluk mu (yani blok YATAYDA ORTALANMIŞ mı)?
 void _ortalanmis(Rect r, double ekranGenisligi, {String ne = 'blok'}) {
   final sol = r.left, sag = ekranGenisligi - r.right;
@@ -447,6 +455,63 @@ void main() {
           reason: 'akış kolonu 720 kalmalı (davranış değişmedi)',
         );
         _ortalanmis(r, o.width, ne: 'akış kartı');
+      });
+    }
+  });
+
+  /// KULLANICI BİLDİRİMİ (29 Ağu 2026): "web masaüstünde akıştaki yorum yap
+  /// kısmı çok büyük onu doğru ortasında yerleştirsin".
+  ///
+  /// Kutu (`_PaylasKutusu`, 28 Ağu'da eklendi) `Column`un doğrudan çocuğuydu;
+  /// [OrtaKolon] yalnız `Expanded(child: govde)`yi sarıyordu. ÖLÇÜLDÜ (düzeltme
+  /// öncesi): 1440 dp ekranda kutu 1440 dp, kart 720 dp — kutu kartın iki katı
+  /// ve sol kenarı 708 dp dışarıda. Şimdi kutu da aynı sarmalayıcıda.
+  group('akış PAYLAŞIM KUTUSU — kartla AYNI kolonda', () {
+    for (final o in [const Size(_g1440, _y900), const Size(_g1920, _y1080)]) {
+      testWidgets('${o.width.toInt()} dp: kutu 720 kolonda, kartla HİZALI', (
+        tester,
+      ) async {
+        _ekran(tester, o.width, o.height);
+        await _akis(tester);
+
+        final kutu = tester.getRect(_paylasKutusu.first);
+        expect(
+          kutu.width,
+          closeTo(masaustuKolonGenisligi, 0.5),
+          reason: 'paylaşım kutusu okuma kolonuna sığmalı',
+        );
+        _ortalanmis(kutu, o.width, ne: 'paylaşım kutusu');
+
+        // Kenarlar kartla BİREBİR tutmalı (yeni kalıp uydurulmadı).
+        final kart = tester.getRect(find.byType(AkisKarti).first);
+        expect(kutu.left, closeTo(kart.left, 0.5), reason: 'sol kenar kaymış');
+        expect(
+          kutu.right,
+          closeTo(kart.right, 0.5),
+          reason: 'sağ kenar kaymış',
+        );
+      });
+    }
+
+    /// DAR EKRAN: kısıt bağlayıcı DEĞİL, kutu tam genişlikte kalır.
+    ///
+    /// NEDEN 360/390 DEĞİL de 600/700: akış KARTININ eylem satırı
+    /// (`akis.dart`, beğeni/yanıt/görüntülenme sayaçları) testlerin
+    /// tek-boşluklu deneme yazı tipinde 360 dp'de 60 px taşıyor ve testi
+    /// düşürüyor — gerçek yazı tipinde taşma yok, bu değişiklikle de ilgisi
+    /// yok (aynı taşma düzeltme ÖNCESİ de vardı). `profil_yorum_genislik_test`
+    /// aynı sebeple 600 dp kullanıyor. Ölçüm zaten göreli: her iki genişlik de
+    /// 720 üst sınırının ALTINDA, yani sınırın bağlamadığını kanıtlıyor.
+    for (final g in [600.0, 700.0]) {
+      testWidgets('DAR EKRAN REGRESYONU: ${g.toInt()} dp kutu TAM GENİŞLİK', (
+        tester,
+      ) async {
+        _ekran(tester, g, _yMobil);
+        await _akis(tester);
+
+        final kutu = tester.getRect(_paylasKutusu.first);
+        expect(kutu.left, 0);
+        expect(kutu.width, g);
       });
     }
   });

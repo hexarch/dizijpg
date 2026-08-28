@@ -479,11 +479,29 @@ class _AkisEkraniState extends State<AkisEkrani>
       // altında" dedi — yani sabit.
       body: Column(
         children: [
-          _PaylasKutusu(
-            onPaylasildi: () {
-              // Yeni yorum akışta görünsün: paylaşımdan SONRA tazele.
-              _yukle();
-            },
+          // MASAÜSTÜNDE KUTU DA AKIŞ KOLONUNA OTURUR (29 Ağu 2026, kullanıcı
+          // isteği: "web masaüstünde akıştaki yorum yap kısmı çok büyük onu
+          // doğru ortasında yerleştirsin").
+          //
+          // Kutu `Column`un doğrudan çocuğuydu, yani `Expanded(child: govde)`
+          // içindeki [OrtaKolon] sınırının DIŞINDA kalıyordu: kartlar 720
+          // dp'lik ortalanmış kolonda dururken kutu pencerenin tamamına
+          // (1400+ dp) yayılıyor, kenarları kartlarınkiyle tutmuyordu.
+          // Yeni kalıp UYDURULMADI — akışın kendi sarmalayıcısı aynen
+          // kullanıldı, böylece kutunun ve kartların sol/sağ kenarları
+          // birebir aynı hizada.
+          //
+          // Telefon BOZULMAZ: [OrtaKolon] sabit genişlik değil ÜST SINIR
+          // verir; pencere 720'nin altındayken kısıt bağlayıcı olmaz ve kutu
+          // eskisi gibi tam genişlikte kalır.
+          OrtaKolon(
+            azami: masaustuKolonGenisligi,
+            cocuk: _PaylasKutusu(
+              onPaylasildi: () {
+                // Yeni yorum akışta görünsün: paylaşımdan SONRA tazele.
+                _yukle();
+              },
+            ),
           ),
           Expanded(child: govde),
         ],
