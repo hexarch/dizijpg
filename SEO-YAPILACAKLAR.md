@@ -118,11 +118,52 @@ kisi ailesinde gösterim alan sayfa 0 → 704, bu aile arama sonuçlarında İLK
 görünüyor"* diye **yanlış bir alarm postalanırdı**. Aile arama sonuçlarında
 yeni değil; yeni olan bizim onu ölçüyor olmamız.
 
+### ÖLÇÜLDÜ — koşu süresi ve aile bazlı indeks oranı (28 Ağu, ilk tam koşu)
+
+**Tam koşu 58 DAKİKA sürdü** (525 denetim, çıkış 0, rapor postalandı):
+
+```
+harita=18370 gösterim=1465 bölüm_sayfa=120 denetim=525
+indeksli_panel=icerik:66/250 bolum:6/250 genel:8/25 sinyal=4 posta=gitti
+süre=3480.1sn
+```
+
+Denetim başına **6,6 saniye**. Kodun kendi yorumu "3/sn ile 500 URL ≈ 2,8 dk"
+diyordu — gerçeğin **21 katı** iyimser. Darboğaz `DENETIM_SN` değil, Google'ın
+URL Inspection ucunun yanıt süresi. 775'lik panelle koşu **~90 dakika** sürer;
+cron 06:30'da başlıyor, ~08:00'de biter, hiçbir işle çakışmıyor.
+
+⚠ **"TAKILDI" TEŞHİSİ KOYMADAN ÖNCE:** koşu boyunca stdout'a tek satır düşer
+ve saatlerce sessiz görünür; süreç `do_epoll_wait`te uyur ve anlık bakışta tek
+soketi olabilir. 28 Ağu'da bu hataya **iki kez** düşüldü. Doğru kontrol
+`/proc/<pid>/fd` damgaları: yeni fd açılıyorsa süreç ilerliyordur. Bu uyarı
+`DENETIM_SN`in yanına da yazıldı.
+
+**Aile bazlı indeks oranı** (kuru koşu, 12'şer URL panel — dar örneklem,
+belirsizlik payı büyük ama sıralama net):
+
+| aile | evren | panelde indeksli | ~aile tahmini |
+|---|---|---|---|
+| şirket | 224 | 4/12 | ~75 (%33) |
+| kişi | 10.530 | 3/12 | ~2.633 (%25) |
+| içerik | 2.460 | 2/12 | ~410 (%17) |
+| **bölüm** | 5.146 | **0/12** | **~0 (%3,5 — gösterim verisinden)** |
+
+Bölüm ailesinin **12/12'si** Google'ın ham etiketiyle *"URL Google tarafından
+bilinmiyor"*. Her aile %17-33 arasında indekslenirken bölüm 5-9 KAT geride.
+
 ### ⬜ SIRADAKİ SORU (veri bekliyor)
 
-Bölüm ailesinde %4 indeks oranının sebebi ne? Artık aile bazlı GSC raporu ve
-günlük izleme var; birkaç günlük veri birikince "keşfedildi–taranmadı" kovası
-bölüm ailesinde ne yapıyor GÖRÜLEBİLECEK. Karar ondan sonra.
+Bölüm ailesi neden yalnız %3,5? Bir hipotez ölçülmeye değer: **bölüm sayfasına
+giden tek iç bağlantı dizi sayfasından** (`/icerik/tv/<id>` → 51 bölüm), ama
+dizi sayfalarının kendisi de ancak %17 indeksli. Yani bağlantı grafiğinin
+GİRİŞ NOKTASI zayıf; Google bölümlere ulaşmak için önce dizi sayfasını
+indekslemek zorunda. Doğruysa çözüm bölüm haritasını büyütmek değil, içerik
+ailesini güçlendirmek olur.
+
+Artık günlük izleme ve aile bazlı GSC raporu var; birkaç gün veri birikince
+"keşfedildi–taranmadı" kovasının bölümde ne yaptığı görülecek. Karar ondan
+sonra — bu turda hipotezle iş yapılmadı, bilerek.
 
 ---
 

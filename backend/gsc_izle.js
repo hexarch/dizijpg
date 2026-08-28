@@ -208,9 +208,24 @@ export const AYAR = {
   // koşu için yer kalıyor.
   PANEL: { icerik: 250, bolum: 250, kisi: 200, sirket: 50, genel: 25 },
 
-  /// Denetim hızı (istek/sn). Tavan 600/dk = 10/sn; 3/sn ile 500 URL ≈ 2,8 dk.
+  /// Denetim hızı (istek/sn). Tavan 600/dk = 10/sn.
   /// Tavana dayanmıyoruz: 429 yenilebilir bir hata değil, GÜNLÜK kotayı da
   /// yakan bir hata biçimi.
+  ///
+  /// ⚠ BU AYAR KOŞU SÜRESİNİ BELİRLEMİYOR — ÖLÇÜLDÜ (28 Ağu 2026, ilk tam
+  /// koşu): 525 denetim **3.480 saniye** sürdü, yani denetim başına **6,6 sn**.
+  /// Buradaki 3/sn (333 ms aralık) bunun yanında görünmez; darboğaz Google'ın
+  /// URL Inspection ucunun YANIT SÜRESİ. Eski yorum "3/sn ile 500 URL ≈ 2,8 dk"
+  /// diyordu — gerçeğin 21 KATI iyimserdi.
+  ///
+  /// PRATİK SONUÇ: 775'lik panelle koşu ~86 DAKİKA sürer. Bu bir arıza değil.
+  /// Koşu boyunca stdout'a TEK satır ("kazanan bölüm") düşer ve saatlerce
+  /// sessiz görünür; süreç `do_epoll_wait`te uyur ve anlık bakışta tek soketi
+  /// olabilir (istekler arası boşluğa denk gelirsiniz). Bu yüzden "takıldı"
+  /// TEŞHİSİ KOYMADAN ÖNCE `/proc/<pid>/fd` damgalarına bakın: yeni fd
+  /// açılıyorsa süreç ilerliyordur. 28 Ağu'da bu hataya iki kez düşüldü.
+  ///
+  /// Cron 06:30'da başlıyor → ~07:56'da biter; hiçbir işle çakışmıyor.
   DENETIM_SN: 3,
 
   /// Tek koşuda yapılabilecek EN ÇOK denetim (sert tavan). Panel ayarları
