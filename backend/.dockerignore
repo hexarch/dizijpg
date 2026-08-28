@@ -1,0 +1,40 @@
+# Docker derleme bağlamı süzgeci — 28 Ağustos 2026.
+#
+# ÖLÇÜM: dosya YOKTU ve sunucudaki bağlam dizini (/opt/dizijpg) ~20 GB'tı:
+#   yedekler/ 8,6G · medya-yedek/ 5,8G · argos-venv/ 5,1G
+# `docker build` bağlamın TAMAMINI tarlayıp daemon'a gönderdiği için server.js'te
+# tek satır değişse bile derleme 10+ dakika sürüyordu — oysa Dockerfile'ın
+# katman sırası doğru (npm ci önce, kaynak sonra), yani asıl iş saniyeler.
+#
+# NEDEN KARA LİSTE, BEYAZ LİSTE DEĞİL: Dockerfile 30'a yakın dosyayı adıyla
+# kopyalıyor ve listesi zamanla büyüyor. `*` + `!dosya` düzeni, listeye yeni
+# bir dosya eklenip buraya eklenmediğinde derlemeyi "Cannot find module" ile
+# ÇALIŞMA ANINDA kırardı (Dockerfile'daki tuzak notlarının aynısı). Kara liste
+# yalnız büyük ve derlemeyle ilgisiz olanı eler; yanılırsa derleme yavaşlar,
+# bozulmaz.
+
+# --- Devasa çalışma dizinleri (asıl sebep) ---
+yedekler/
+medya-yedek/
+argos-venv/
+
+# --- Yedek kopyalar (deploy ritüeli her değişiklikte bir tane bırakıyor) ---
+*.yedek-*
+Dockerfile.yedek-*
+server.js.yedek-*
+
+# --- Dökümler, günlükler, geçiciler ---
+*.sql.gz
+*.log
+*.tar
+*.tar.gz
+*.gpg
+
+# --- Derlemede yeniden kurulan / imaja girmemesi gereken ---
+node_modules/
+.git/
+.env
+firebase-admin.json
+
+# --- Testler imaja girmiyor (CMD onları çalıştırmıyor) ---
+test/

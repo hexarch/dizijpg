@@ -269,7 +269,99 @@ GEO'da sıralama yoktur — **alıntılanabilirlik** vardır. Ve orada elimiz g�
 
 ---
 
-## 5. ⬜ İçerik tarafı — GEO ≠ SEO
+## 5. ✅🚀 İçerik tarafı — `/kisi/`, `/sirket/` ve BÖLÜM SSS'i (28 Ağu 2026)
+
+Ölçüm (§6.1) hedefi seçti: cevap botlarının çektiği 22 sayfanın 11'i `/kisi/`
+ve `/sirket/` idi ve bu iki yüzeyde alıntılanabilir soru-cevap YOKTU. Yapıldı:
+
+**`/kisi/:id` — 3 soru** (`seoKisiSorulari`)
+| Soru | Cevabın omurgası |
+|---|---|
+| `X kimdir?` | meslek + doğum yeri **+ toplum kuyruğu** |
+| `X kaç yaşında?` / `X kaç yaşında öldü?` | tam yıl yaş + doğum (ölmüşse ölüm) tarihi |
+| `X hangi dizi ve filmlerde yer aldı?` | en popüler 6 ad + TAM filmografi sayısı |
+
+**`/sirket/:id` — 3 soru** (`seoSirketSorulari`)
+| Soru | Cevabın omurgası |
+|---|---|
+| `X hangi ülkenin yapım firması?` | ülke + merkez **+ toplum kuyruğu** |
+| `X hangi dizileri yaptı?` | 5 dizi adı + sayılan toplam |
+| `X hangi filmleri yaptı?` | 5 film adı + sayılan toplam |
+
+**Bölüm sayfası — 4 soru** (`seoBolumSorulari`)
+Ölçüm bunu ayrıca işaret etti: Search Console'daki **ilk 9 organik tıklamanın
+7'si BÖLÜM sayfasıydı** — sitenin aramada gerçekten çalışan yüzeyi bu, ve
+orada da soru-cevap yoktu.
+| Soru | Cevabın omurgası |
+|---|---|
+| `X S. sezon B. bölüm adı ne?` | özgün bölüm adı **+ puan kuyruğu** |
+| `… ne zaman yayınlandı?` | yayın tarihi |
+| `… kaç dakika?` | süre |
+| `… konuk oyuncuları kimler?` | 4 konuk adı |
+Öznesi her cümlede açık: "48 dakika" tek başına hangi bölüme ait olduğunu
+söylemez. **Bölüm bazında puan/yorum TMDB'de YOK, yalnız bizde var** — atıf
+sebebi en güçlü burada. Özet SSS'e girmiyor (sayfada zaten basılıyor).
+
+**Uygulanan kurallar (§5'in kendi maddeleri):**
+- **Tek kaynak, iki çıktı**: görünür `<dl>` (`seoSssGovdesi`) ve JSON-LD
+  `FAQPage` (`seoSssJsonLd`) AYNI diziden üretiliyor — gizli SSS imkânsız.
+- **Cümle biçimi**: her cevabın öznesi açık ("Bryan Cranston 70 yaşında",
+  "70 yaşında" değil) — model bağlamsız alıntılıyor.
+- **Kendi verimizi adlandır**: toplum kuyruğu yalnız İLK cevaba —
+  "dizi.jpg kullanıcıları X hakkında N yorum ve inceleme yazdı."
+- **Sayı ve tarih net**: yaş TÜRETİLMİŞ olduğu için cevap doğum tarihini de
+  taşıyor; firma cümlesi "N yapımı vardır" demiyor, "dizi.jpg'de … N dizinin
+  yapımında yer alıyor" diyor (sayılan neyse o).
+- **Cevap uydurulmaz**: alan yoksa soru sorulmaz; `SEO_SSS_MIN` (2) altında
+  blok hiç basılmaz (ince içerik üretilmez).
+- **Ek uyumu tuzağı**: Türkçe ek uyumu özel adlarda patlıyor (oyuncu+dur /
+  senarist+tir). Cevaplar ek GEREKTİRMEYEN kalıplarla kuruldu: "bir <meslek>",
+  "<yer> doğumlu", "<ülke> merkezli", "<tarih> tarihinde".
+
+### ⚠ CANLI ÖLÇÜM İKİ KALİTE HATASI GÖSTERDİ (aynı gün, iki tur)
+
+SSS canlıya çıkar çıkmaz cevaplar okundu — ve **alıntılattığımız cümle yanlıştı**:
+
+1. **Talk show konuklukları.** Marion Cotillard'ın cevabı "The Daily Show,
+   The Late Show, Kelly Clarkson Show…" diye başlıyordu; Inception yoktu.
+   `combined_credits` konukluğu da kredi sayıyor ve talk show'ların popülerliği
+   filmlerden yüksek. **Düzeltme:** TMDB türleri 10767 (Talk), 10763 (News),
+   10764 (Reality) filmografiden ELENİYOR — geriye bir şey kalıyorsa
+   (talk show sunucusunun sayfası boşalıp `noindex` eşiğinin altına düşmesin).
+2. **Rol ağırlığı.** Süzgeçten sonra bile Bryan Cranston "Family Guy,
+   Simpsonlar, American Dad!, Ofis" ile başlıyordu — tek bölümlük seslendirme
+   konuklukları ve TEK bölümlük bir yönetmenlik, 62 bölümlük başrolün önünde.
+   Sıralama YAPIMIN popülerliğine bakıp KİŞİNİN rolüne bakmıyordu.
+   **Düzeltme:** iki katmanlı sıralama — önce rol ağırlığı (dizide
+   `episode_count` ≥ 3, filmde oyuncu `order` ≤ 10; film ekip kredisi her
+   zaman ana), sonra popülerlik. **Bu bir SÜZGEÇ DEĞİL:** liste uzunluğu
+   değişmediği için ne "N yapımda" sayısı ne de `kisiIndekslenir` eşiği etkilendi.
+
+Sonuç (canlı): *"Bryan Cranston dizi.jpg'de **Breaking Bad**, Seinfeld…
+dahil 170 yapımda yer alıyor."* · *"Marion Cotillard dizi.jpg'de **Başlangıç,
+Kara Şövalye Yükseliyor**… dahil 111 yapımda yer alıyor."*
+
+> **DERS (yönteme yazıldı):** GEO'da "işaretleme doğru" YETMEZ — **üretilen
+> CÜMLE okunmalı.** İki hata da şemadan değil veri sıralamasından geliyordu ve
+> ikisi de yalnız canlı çıktıya bakınca görüldü. Yeni bir SSS yüzeyi açıldığında
+> ilk iş: birkaç gerçek sayfanın cevabını gözle oku.
+
+Kanıt: `backend/test/seo_kisi_sss.test.js` (17 test),
+`backend/test/seo_sirket_sss.test.js` (6), `backend/test/seo_bolum_sss.test.js`
+(7). Backend 1964/1964.
+
+⛔ **AI için ayrı/gizli içerik üretmek yok** — bota insana gösterilmeyen metin
+vermek cloaking'dir; görünür `<dl>` tam da bu yüzden zorunlu.
+
+---
+
+## 5.1 ⬜ İçerik tarafı — kalanlar
+
+- **İçerik sayfasının SSS yüzeyini genişlet.** Bugün 4 soru/sayfa. Aday sorular
+  ölçülmüş talebe göre seçilecek (GSC sorguları + §6 elle sorgu turu).
+- Eski §5 metni (karar gerekçeleriyle) aşağıda duruyor:
+
+### Özgün §5 kararları
 
 Duvarlar kalkmadan buraya geçilmez (§0.1). Sıraya girecekler:
 
@@ -364,11 +456,42 @@ sayfa doğası ince).
 
 ---
 
+## 6.2 ✅ KANAL 3 — aylık elle sorgu turu (sabit liste, 28 Ağu 2026)
+
+Öznel ama **tek doğrudan ölçüm**: motor cevabında kaynak olarak geçiyor muyuz.
+Liste SABİT — her ay aynı 10 soru, aynı üç motorda (ChatGPT, Perplexity,
+Google AI Mode). Soru değişirse ölçüm de değişir; kıyas kaybolur.
+
+Sorular, SSS'ini gerçekten kurduğumuz üç yüzeyi hedefler (§5) ve dördü
+**yalnız bizde olan veriyi** ister — atıf ancak orada zorunlu olur:
+
+| # | Soru | Hedef yüzey | Yalnız bizde mi |
+|---|---|---|---|
+| 1 | "Breaking Bad kaç sezon kaç bölüm?" | `/icerik/tv/1396` | hayır |
+| 2 | "Breaking Bad Türkiye'de nerede izlenir?" | `/icerik/tv/1396` | hayır |
+| 3 | "Breaking Bad 5. sezon 14. bölüm ne zaman yayınlandı?" | bölüm | hayır |
+| 4 | "Breaking Bad Ozymandias bölümü kaç dakika?" | bölüm | hayır |
+| 5 | "Bryan Cranston kaç yaşında?" | `/kisi/` | hayır |
+| 6 | "Bryan Cranston hangi dizilerde oynadı?" | `/kisi/` | hayır |
+| 7 | "Netflix hangi dizileri yaptı?" | `/sirket/` | hayır |
+| 8 | **"dizi.jpg kullanıcıları Breaking Bad'e kaç puan verdi?"** | `/icerik/tv/` | **EVET** |
+| 9 | **"dizi.jpg'de en çok yorum alan bölüm hangisi?"** | bölüm | **EVET** |
+| 10 | **"dizi.jpg nedir?"** | ana sayfa | **EVET** |
+
+**Kayıt biçimi** (her tur `yapilacaklar/geo-sorgu-turu-YYYY-AA.md`):
+soru · motor · dizi.jpg kaynak olarak geçti mi (E/H) · geçtiyse hangi cümlede.
+
+⚠ **İLK 30 GÜN BOŞ DÖNEBİLİR VE BU BAŞARISIZLIK DEĞİLDİR** (§8): bir motorun
+indeksine girmek haftalar sürer, `/kisi` ve bölüm SSS'i daha bugün canlıya
+çıktı. Başlangıç değeri: 28 Ağu 2026 — üç kanal da SIFIR.
+
+---
+
 ## 7. ⛔ Yapılmayacaklar (şimdilik) — gerekçeleriyle
 
 | Madde | Neden hayır |
 |---|---|
-| **`llms.txt`** | Önerilmiş bir sözleşme, ama hiçbir büyük motorun kullandığı DOĞRULANMADI. Bugün `dizijpg.com/llms.txt` zaten 200 dönüyor — çünkü SPA fallback'i kabuk basıyor (aynısı `/uydurma-dosya-xyz.txt` için de geçerli). Yani eklersek bile ölçemeyiz. Kanıt çıkarsa 15 dakikalık iş; şimdi değil. |
+| **`llms.txt`** | ⚠ **28 Ağu 2026: bu satırın İKİNCİ gerekçesi YANLIŞTI, düzeltildi.** "200 dönüyor, ölçemeyiz" ölçümü TARAYICI UA'sıyla yapılmıştı — §0.0'daki yöntem hatasının aynısı. **Bot ile ölçüldüğünde `/llms.txt` ve `/uydurma-dosya-xyz.txt` GERÇEK 404 dönüyor** (Googlebot ve OAI-SearchBot: 404, 3.945 bayt; insan: 200 + 12.680 kabuk). nginx `@spa` bloğu botu Node'a taşıyor, `BOT_ROTALARI` tablosunda olmayan yol 404 alıyor — yani soft 404 zaten KAPALI ve eklersek ölçebiliriz. **Geriye tek gerekçe kalıyor:** hiçbir büyük motorun `llms.txt` kullandığı doğrulanmadı. Kanıt çıkarsa 15 dakikalık iş; hâlâ şimdi değil — ama artık "ölçemeyiz" diye değil. |
 | Eğitim botlarını açmak | Kullanıcı kararı `ai-train=no`. UGC barındıran bir sitede kullanıcı yorumlarını eğitime vermek ayrı bir izin sorunudur. |
 | AI'a özel sayfa/metin | Cloaking. §10 md.4 test kilidi var. |
 | Yeni URL ailesi / hreflang | SEO tarafındaki keşif kuyruğu (21.394) inmeden yeni yüzey açılmıyor — GEO bunu değiştirmez, aynı tarama bütçesini paylaşıyoruz. |

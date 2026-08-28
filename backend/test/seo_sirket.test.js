@@ -34,7 +34,9 @@ const seoSirketAciklamasi = alan(
 const seoSirketYapimlari = alan(
   ['gecerliTmdb', 'SEO_SIRKET_YAPIM', 'seoSirketYapimlari'], 'seoSirketYapimlari');
 const sirketJsonLd = alan(
-  ['SITE_KOK', 'seoMetin', 'seoKirinti', 'sirketJsonLd'], 'sirketJsonLd');
+  // `seoSssJsonLd`: 28 Ağu 2026'da FAQPage düğümü @graph'a eklendi.
+  ['SITE_KOK', 'seoMetin', 'seoKirinti', 'seoSssJsonLd', 'sirketJsonLd'],
+  'sirketJsonLd');
 const ogSayfa = alan(
   ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
 

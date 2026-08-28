@@ -16,13 +16,50 @@ Bu oturumda istenen HER ŞEY. Sırayla yapılacak, biten işaretlenecek.
    kaydırmadığı sürece asla yukarı kaymamalı; klavye aç/kapa, mesaj geliyor,
    mesaj atıyorum — sürekli kayıyor". `sohbet.dart` listesi `reverse: true`
    yapıldı (çapa dipte), altı zamanlayıcılı `jumpTo` kovalaması kaldırıldı.
-4. ⬜ **Sürüm 1.99.0+150: APK + AAB derle, Play'e yükle.** (149 zaten
-   incelemede olduğu için sürüm kodu yükseltildi; `api.dart` sürümü de eşlendi.)
-5. ⬜ **2009alperon@gmail.com hesabına "founding member" etiketi ver.**
-6. ⬜ **GEO planındaki KALAN her madde sırayla** — §2 `Claude-User` kararı,
-   §5 içerik (ölçüm `/kisi/` sayfalarını işaret etti), §6 ölçüm kanalları.
-7. ⬜ **Sonra: SEO ve GEO'yu daha nasıl geliştirebiliriz** — araştır, plana
-   yaz, uygula.
+4. 🔨 **Sürüm 1.99.0+150: APK + AAB derlendi, web canlıda, Play taslağı hazır.**
+   - APK/AAB: `magaza/cikti/dizijpg-1.99.0-150.{apk,aab}` — versionCode 150,
+     gerçek yayın anahtarıyla imzalı (`CN=dizi.jpg`, debug DEĞİL).
+   - Web dağıtımı YAPILDI (paket `main.8f458c79ce16.dart.js`, brotli üretildi,
+     eski hash'ler silindi, SW sökücü yazıldı, uçtan uca doğrulandı).
+   - Play: 149 (1.98.0) 27 Ağu'da YAYINLANDI (incelemede değil) → 150 temiz bir
+     yeni sürüm. Üretim taslağı oluşturuldu, adı "150 (1.99.0)", sürüm notları
+     **11/11 dilde** girildi ve kaydedildi.
+   - ⬜ **KALAN TEK ADIM (kullanıcı):** AAB dosyasını Play Console'daki açık
+     taslağa sürükle → "İleri" → incelemeye gönder. Tarayıcı köprüsü 10 MB ile
+     sınırlı, 103 MB'lık paketi ben bırakamıyorum.
+   - 💡 Kalıcı çözüm önerisi: Play Developer API servis hesabı kurulursa
+     yükleme de betikle yapılabilir (projede şu an yalnız Firebase adminsdk
+     anahtarı var, Play API anahtarı yok).
+5. ✅ **2009alperon@gmail.com → "Founding Member" rozeti verildi.**
+   Rozet `kullanicilar.testci` bayrağıdır (`aile_rozeti.dart`, etiket
+   "Founding Member"). Hesap: `alperon2009`, id 220. Canlı API doğrulandı:
+   `/api/profil/alperon2009` → `"testci":true`.
+6. ✅🚀 **GEO planındaki kalan maddeler yapıldı** (ayrıntı `GEO-PLANI.md`):
+   - **§5 — SSS yüzeyi üç sayfaya açıldı, CANLIDA:** `/kisi/` (3 soru),
+     `/sirket/` (3), **bölüm sayfası** (4). Hepsinde görünür `<dl>` + JSON-LD
+     `FAQPage`, tek listeden üretiliyor (gizli SSS imkânsız).
+   - **§6 — üç ölçüm kanalı da kuruldu:** log + atıf (`araclar/geo-olcum.sh`),
+     ve §6.2'de aylık **sabit 10 soruluk** elle sorgu turu (4'ü yalnız bizde
+     olan veriyi istiyor: puan, yorum sayısı, "dizi.jpg nedir").
+   - **§2 `Claude-User` — KARAR: DOKUNULMADI.** Engel zone düzeyindeki
+     `Block AI Bots` kuralından türüyor; kapatmak ~15 EĞİTİM botunu birden
+     açma riski taşıyor ve bu `ai-train=no` kararıyla çelişirdi.
+     Claude-SearchBot zaten geçiyor (24 saatte 14 gerçek istek).
+   - **§7 `llms.txt` — gerekçe DÜZELTİLDİ:** "200 dönüyor, ölçemeyiz" yanlıştı
+     (tarayıcı UA'sıyla ölçülmüş). Botla ölçünce GERÇEK 404 geliyor. Karar
+     yine "şimdi değil" ama artık doğru gerekçeyle (hiçbir motorun kullandığı
+     doğrulanmadı).
+7. 🔨 **Daha fazla SEO/GEO iyileştirmesi — bulunanlar yapıldı:**
+   - ✅ **Cevap kalitesi iki tur düzeltildi** (canlı çıktı okunarak):
+     talk show/haber/realite kredileri filmografiden elendi; sıralama rol
+     ağırlığına göre katmanlandı. "Bryan Cranston → Family Guy, Simpsonlar"
+     iken artık "Breaking Bad, Seinfeld…".
+   - ✅ **Dağıtım 12 dakikadan 12 SANİYEYE indi:** `backend/.dockerignore`
+     yoktu, derleme bağlamı ~20 GB'tı (yedekler 8,6G + medya-yedek 5,8G +
+     argos-venv 5,1G) ve her `docker build` hepsini daemon'a gönderiyordu.
+   - ⬜ Sıradaki adaylar: içerik sayfasının SSS'ini ölçülmüş talebe göre
+     genişletmek (GSC sorguları + §6.2 turu), dış bağlantı 0 sorunu,
+     21.394'lük keşif kuyruğu.
 
 ---
 

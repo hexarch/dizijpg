@@ -4110,15 +4110,171 @@ const kisiIndekslenir = ({ ozgunVar, biyografi, yapimSayisi }) =>
  * dilimden önce yapılır. Aksi hâlde 6+ kayıt sitemap'e girer, sayfa 12'lik
  * dilimde süzülüp noindex yer (GSC "gönderilen URL noindex").
  */
+// TMDB tür kimlikleri: 10767 Talk, 10763 News, 10764 Reality.
+//
+// NEDEN ELENİYOR (28 Ağu 2026, GEO §5 SSS'i canlıda ölçülünce görüldü):
+// `combined_credits` konukluğu da kredi sayar ve talk show'ların popülerliği
+// filmlerden yüksek. Marion Cotillard'ın sayfasında "hangi yapımlarda yer
+// aldı" cevabı The Daily Show, Kelly Clarkson Show, Graham Norton Show diye
+// başlıyordu — Inception yerine. Cevap motoruna alıntılattığımız cümle buydu.
+// Bu, dizi/film takip sitesinde hem SEO hem GEO açısından yanlış cevap.
+const SEO_KISI_ELENEN_TUR = new Set([10767, 10763, 10764]);
+
+/** Kredi bir talk show / haber / realite konukluğu mu? */
+function kisiKonukluk(y) {
+  return (y?.genre_ids || []).some((g) => SEO_KISI_ELENEN_TUR.has(g));
+}
+
+// Kişinin yapımdaki ağırlığı: 0 = ana kadro/ekip, 1 = küçük rol/konukluk.
+//
+// NEDEN (28 Ağu 2026, SSS canlıda ölçülünce): talk show'lar elendikten SONRA
+// bile Bryan Cranston'ın cevabı "Family Guy, Simpsonlar, American Dad!, Ofis"
+// diye başlıyordu — Breaking Bad beşinci sıradaydı. Sebep, sıralamanın
+// YAPIMIN popülerliğine bakıp KİŞİNİN o yapımdaki rolüne bakmaması: tek
+// bölümlük seslendirme konukluğu, 62 bölümlük başrolün önüne geçiyordu.
+//
+// SIRALAMA DEĞİŞİR, SAYI DEĞİŞMEZ: bu bir SÜZGEÇ değil sıralama katmanıdır.
+// Liste uzunluğu aynı kaldığı için ne SSS'teki "N yapımda yer alıyor" sayısı
+// ne de `kisiIndekslenir` eşiği etkilenir — yalnız hangi altı adın öne
+// çıkacağı değişir.
+//
+// Ölçütler `combined_credits`te hazır:
+//   · dizi (tv), oyuncu VEYA ekip -> `episode_count` >= 3 ise ana kadro.
+//     EKİP DE SAYILIR (ikinci tur, aynı gün): ilk hâlde her `crew` kredisi
+//     "ana" sayılıyordu ve Cranston'ın cevabı bu kez "Ofis" ile başlıyordu —
+//     o dizinin TEK bölümünü yönetmiş. Dizide tek bölümlük yönetmenlik de
+//     tek bölümlük konukluk kadar küçük bir kredidir.
+//   · film (movie), ekip -> her zaman ana: bir filmin yönetmenliği/senaryosu
+//     bölünmez, "kaç bölüm" ölçüsü orada anlamsız.
+//   · film (movie), oyuncu -> `order` (jenerik sırası) <= 10 ise ana kadro.
+// Alan yoksa ANA kabul edilir: eksik veri yüzünden gerçek bir başrolü geriye
+// atmak, bir konukluğu öne almaktan daha kötü.
+const SEO_KISI_ANA_BOLUM = 3;   // dizide ana kadro sayılmak için en az bölüm
+const SEO_KISI_ANA_SIRA = 10;   // filmde jenerik sırası bu değere kadar ana
+
+function kisiRolAgirligi(y) {
+  const ekip = Boolean(y?.department || y?.job);
+  if (y?.media_type === 'tv') {
+    const bolum = Number(y.episode_count);
+    return Number.isFinite(bolum) && bolum < SEO_KISI_ANA_BOLUM ? 1 : 0;
+  }
+  if (ekip) return 0;
+  const sira = Number(y?.order);
+  return Number.isFinite(sira) && sira > SEO_KISI_ANA_SIRA ? 1 : 0;
+}
+
 function kisiFilmografi(v) {
   const ham = [
     ...(v.combined_credits?.cast || []),
     ...(v.combined_credits?.crew || []),
   ].filter((y) => y && (y.media_type === 'tv' || y.media_type === 'movie')
     && (y.name || y.title) && y.poster_path && gecerliTmdb(y.id));
-  return [...new Map(
+  const tekil = [...new Map(
     ham.map((y) => [`${y.media_type}:${y.id}`, y]),
-  ).values()].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+  ).values()].sort((a, b) => (kisiRolAgirligi(a) - kisiRolAgirligi(b))
+    || ((b.popularity || 0) - (a.popularity || 0)));
+  // GERİ DÜŞÜŞ ŞART: talk show sunucusunun (Graham Norton, Jimmy Fallon)
+  // filmografisi süzgeçten BOŞ çıkar. Boş liste sayfayı `noindex` eşiğinin
+  // altına iter ve var olan bir sayfayı indeksten düşürürdü — süzgeç ancak
+  // geriye bir şey kalıyorsa uygulanır.
+  const suzulmus = tekil.filter((y) => !kisiKonukluk(y));
+  return suzulmus.length ? suzulmus : tekil;
+}
+
+// Kişi SSS cevabında adı geçen yapım sayısı. 6: cümle tek satırda okunur
+// kalsın (içerik sayfasındaki `SEO_SSS_OYUNCU` = 5 ile aynı gerekçe) —
+// listenin TAMAMI zaten sayfadaki afişli blokta ve `ItemList`te duruyor.
+const SEO_KISI_SSS_YAPIM = 6;
+
+/**
+ * Doğum (ve varsa ölüm) tarihinden TAM YIL yaş. Ay/gün geçmediyse bir eksik.
+ * @param {string} bugun 'YYYY-MM-DD' — dışarıdan verilir ki test sabitlensin.
+ */
+function seoKisiYasi(dogum, olum, bugun) {
+  const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(dogum ?? '').slice(0, 10));
+  const b = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(olum || bugun || '').slice(0, 10));
+  if (!d || !b) return 0;
+  let yas = Number(b[1]) - Number(d[1]);
+  if (b[2] < d[2] || (b[2] === d[2] && b[3] < d[3])) yas -= 1;
+  return yas > 0 && yas < 130 ? yas : 0;
+}
+
+/**
+ * `/kisi/:id` sayfasının soru-cevap listesi — içerik sayfasıyla AYNI sözleşme
+ * (`[{soru, cevap}]`, düz metin, tek kaynak: görünür `<dl>` de `FAQPage` de
+ * buradan üretilir).
+ *
+ * NEDEN BU SAYFAYA DA SSS (28 Ağu 2026 — GEO-PLANI §6.1 ölçümü):
+ * nginx düzeltmesinden sonraki ilk taramada OAI-SearchBot'un çektiği 22
+ * sayfanın 11'i `/kisi/` ve `/sirket/` idi; oysa alıntılanabilir soru-cevap
+ * yüzeyi YALNIZ `/icerik/` sayfalarında vardı. Yani tarama bütçesinin yarısı
+ * cevap motoruna cümle veremeyen sayfalara gidiyordu. Aday sorular tahminle
+ * değil bu ÖLÇÜMLE seçildi.
+ *
+ * CÜMLE BİÇİMİ (GEO-PLANI §5): her cevap TEK cümlede olguyu verir ve öznesi
+ * açıktır ("Bryan Cranston bir oyuncu" — "oyuncudur" değil). Model cevabı
+ * bağlamsız alıntılıyor; öznesiz cümle alıntılandığında kime ait olduğu kayboluyor.
+ *
+ * EK VE UYUMU: Türkçe ek uyumu (oyuncu+dur / yönetmen+dir / senarist+tir)
+ * ad ve meslek birleşimlerinde patlıyor. Bu yüzden cevaplar ek GEREKTİRMEYEN
+ * kalıplarla kuruldu: "bir <meslek>", "<yer> doğumlu", "<tarih> tarihinde".
+ */
+function seoKisiSorulari({ ad, v, hamYapimlar, seo, bugun }) {
+  const sorular = [];
+  const ekle = (soru, cevap) => { if (soru && cevap) sorular.push({ soru, cevap }); };
+
+  const meslek = SEO_KISI_MESLEK[v?.known_for_department];
+  const dogumYeri = seoMetin(v?.place_of_birth);
+  const dogum = seoTarihTr(v?.birthday);
+  const olum = seoTarihTr(v?.deathday);
+
+  // 1. KİMLİK — sayfanın adını taşıyan soru; toplum kuyruğu buraya eklenir.
+  if (meslek || dogumYeri) {
+    const parcalar = [];
+    if (meslek) parcalar.push(`bir ${meslek}`);
+    if (dogumYeri) parcalar.push(`${dogumYeri} doğumlu`);
+    ekle(`${ad} kimdir?`, `${ad} ${seoVeListesi(parcalar)}.`);
+  }
+
+  // 2. YAŞ — kişi sayfalarının en çok sorulan sorusu. Cevap doğum tarihini de
+  // taşır: yaş türetilmiş bir sayı, tarih ise doğrulanabilir olgudur ve
+  // alıntı eskirse okur hangisinin sabit olduğunu görsün.
+  const yas = seoKisiYasi(v?.birthday, v?.deathday, bugun);
+  if (yas && dogum) {
+    if (v?.deathday && olum) {
+      ekle(`${ad} kaç yaşında öldü?`,
+        `${ad} ${olum} tarihinde ${yas} yaşında hayatını kaybetti`
+        + ` (doğum: ${dogum}).`);
+    } else {
+      ekle(`${ad} kaç yaşında?`, `${ad} ${yas} yaşında (doğum: ${dogum}).`);
+    }
+  } else if (dogum) {
+    ekle(`${ad} ne zaman doğdu?`, `${ad} ${dogum} tarihinde doğdu.`);
+  }
+
+  // 3. YAPIMLAR — sayfanın asıl gövdesi. Sayı TAM filmografiden gelir
+  // (basılan 12'lik dilimden değil); adlar en popüler ilk altı.
+  const adlar = (hamYapimlar || [])
+    .slice(0, SEO_KISI_SSS_YAPIM)
+    .map((y) => seoMetin(y.name || y.title))
+    .filter(Boolean);
+  const toplam = (hamYapimlar || []).length;
+  if (adlar.length) {
+    ekle(`${ad} hangi dizi ve filmlerde yer aldı?`,
+      toplam > adlar.length
+        ? `${ad} dizi.jpg'de ${seoVeListesi(adlar)} dahil ${toplam} yapımda yer alıyor.`
+        : `${ad} dizi.jpg'de ${seoVeListesi(adlar)} yapımlarında yer alıyor.`);
+  }
+
+  // TOPLUM KUYRUĞU — yalnız İLK cevaba (içerik sayfasıyla aynı disiplin).
+  // Modelin başka yerden alamayacağı veri budur; atıf sebebi de o.
+  const degerlendirme = (seo?.yorumlar?.length || 0) + (seo?.incelemeler?.length || 0);
+  if (degerlendirme && sorular.length) {
+    sorular[0].cevap += ` dizi.jpg kullanıcıları ${ad} hakkında`
+      + ` ${degerlendirme} yorum ve inceleme yazdı.`;
+  }
+
+  return sorular.length >= SEO_SSS_MIN ? sorular : [];
 }
 
 // TMDB `known_for_department` -> Türkçe meslek. Sayfa dili tr; İngilizce
@@ -4190,13 +4346,14 @@ function seoKisiAciklamasi(ad, v, yapimlar, ekler = {}) {
  * `knowsAbout`: kişinin yer aldığı yapımlar. `performerIn` diye bir schema.org
  * alanı YOKTUR; uydurulan alan doğrulayıcıda hata verir.
  */
-function kisiJsonLd({ url, ad, biyografi, gorsel, v, yapimlar }) {
+function kisiJsonLd({ url, ad, biyografi, gorsel, v, yapimlar, sss = [] }) {
   const meslek = SEO_KISI_MESLEK[v.known_for_department];
   const yapimNesneleri = yapimlar.map((y) => ({
     '@type': y.tur === 'tv' ? 'TVSeries' : 'Movie',
     name: y.ad,
     url: SITE_KOK + y.yol,
   }));
+  const sssDugumu = seoSssJsonLd(sss, url);
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -4226,6 +4383,10 @@ function kisiJsonLd({ url, ad, biyografi, gorsel, v, yapimlar }) {
           '@type': 'ListItem', position: i + 1, name: y.name, url: y.url,
         })),
       }] : []),
+      // `FAQPage` — içerik sayfasındaki disiplinin aynısı: ayrı `@graph`
+      // öğesi, `#sss` kimliğiyle adreslenebilir, `Person` içine GÖMÜLMEZ
+      // (schema.org'da Person'ın soru-cevap taşıyan özelliği yok).
+      ...(sssDugumu ? [sssDugumu] : []),
       {
         '@type': 'BreadcrumbList',
         itemListElement: seoKirinti([
@@ -4283,11 +4444,21 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
 
     // GÖRSELLER (19 Ağu 2026): profil fotoğrafı + yapım afişleri.
     // Sayfa toplamı: 1 profil + 12 yapım = 13 <= SEO_AFIS_TAVAN.
+    // SIK SORULAN SORULAR (28 Ağu 2026 — GEO-PLANI §6.1 ölçümü).
+    // TEK LİSTE, İKİ ÇIKTI: görünür `<dl>` (`seoSssGovdesi`) ve JSON-LD
+    // `FAQPage` (`kisiJsonLd` içinden) AYNI diziden üretilir; kopya metin yok.
+    const sssListesi = seoKisiSorulari({
+      ad, v, hamYapimlar, seo, bugun: seoGun(Date.now()),
+    });
+
     const govde = seoAnaGorsel(v.profile_path, `${ad} fotoğrafı`)
       + (kimlikSatirlari.length
         ? `\n<p>${htmlKacir(kimlikSatirlari.join(' · '))}</p>` : '')
       + (biyografi
         ? `\n<h2>${htmlKacir(ad)} kimdir?</h2>\n<p>${htmlKacir(biyografi)}</p>` : '')
+      // SSS BİYOGRAFİNİN HEMEN ARDINDA: uzun kuyruk sorusunun karşılığı
+      // gövdenin üst yarısında dursun (içerik sayfasındaki yerleşimle aynı).
+      + seoSssGovdesi(sssListesi)
       + seoAfisListesi(`${ad} — dizi.jpg'deki yapımları`, yapimlar,
         SEO_KISI_YAPIM_LIMIT)
       + seoDegerlendirmeGovdesi(seo, {
@@ -4325,6 +4496,7 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
       jsonLd: kisiJsonLd({
         url: `${SITE_KOK}/kisi/${kid}`, ad, biyografi,
         gorsel: tmdbGorsel(v.profile_path, 'w500'), v, yapimlar,
+        sss: sssListesi,
       }),
     }));
   } catch (e) {
@@ -4359,6 +4531,71 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
 // puan/yorumlarını basar (ortak süzgeçler: spoiler/yasaklı/gizlenmiş elenir).
 const SEO_SIRKET_YAPIM = 9;       // tür başına sayfaya basılan yapım (dizi/film)
 const SEO_SIRKET_YAPIM_MIN = 6;   // altındaysa ince sayfa -> noindex,follow
+// Firma SSS cevabında adı geçen yapım sayısı — kişi sayfasıyla aynı gerekçe
+// (cümle tek satırda okunur kalsın); tam liste zaten afişli blokta ve ItemList'te.
+const SEO_SIRKET_SSS_YAPIM = 5;
+
+/**
+ * `/sirket/:id` sayfasının soru-cevap listesi. Kişi sayfasıyla AYNI sözleşme.
+ *
+ * NEDEN (28 Ağu 2026 — GEO-PLANI §6.1): ölçümde OAI-SearchBot'un çektiği
+ * sayfaların beşte biri `/sirket/` idi ve bu yüzey elimizdeki EN İNCE SSR'dı
+ * (`/sirket/161325` yalnız 5.105 bayt). Firma sayfasının cevapladığı sorular
+ * belli — "hangi ülkenin firması", "hangi dizileri/filmleri yaptı" — ama
+ * hiçbiri soru-cevap olarak işaretlenmiyordu.
+ *
+ * EK UYUMU: kişi sayfasındaki disiplin — "<ülke> merkezli", "<ad> dizi.jpg'de"
+ * gibi ek gerektirmeyen kalıplar (Türkçe ek uyumu özel adlarda patlıyor).
+ */
+function seoSirketSorulari({ ad, firma, diziAdlari, filmAdlari, diziToplam, filmToplam, seo }) {
+  const sorular = [];
+  const ekle = (soru, cevap) => { if (soru && cevap) sorular.push({ soru, cevap }); };
+
+  // 1. KÜNYE — sayfanın kimlik sorusu; toplum kuyruğu buraya eklenir.
+  const ulke = seoUlkeAdi(firma?.origin_country);
+  const merkez = seoMetin(firma?.headquarters);
+  if (ulke) {
+    ekle(`${ad} hangi ülkenin yapım firması?`,
+      `${ad}, ${ulke} merkezli bir yapım firması`
+      + `${merkez ? ` (merkez: ${merkez})` : ''}.`);
+  } else if (merkez) {
+    ekle(`${ad} nerede kurulu?`, `${ad} merkezi ${merkez}.`);
+  }
+
+  // 2. DİZİLER — firma sayfasının en çok aranan uzun kuyruğu ("Netflix dizileri").
+  const dizi = seoSirketSssCumlesi(ad, diziAdlari, diziToplam, 'dizinin');
+  if (dizi) ekle(`${ad} hangi dizileri yaptı?`, dizi);
+
+  // 3. FİLMLER — aynı kalıp.
+  const film = seoSirketSssCumlesi(ad, filmAdlari, filmToplam, 'filmin');
+  if (film) ekle(`${ad} hangi filmleri yaptı?`, film);
+
+  const degerlendirme = (seo?.yorumlar?.length || 0) + (seo?.incelemeler?.length || 0);
+  if (degerlendirme && sorular.length) {
+    sorular[0].cevap += ` dizi.jpg kullanıcıları ${ad} yapımları hakkında`
+      + ` ${degerlendirme} yorum ve inceleme yazdı.`;
+  }
+
+  return sorular.length >= SEO_SSS_MIN ? sorular : [];
+}
+
+/**
+ * "X dizi.jpg'de A, B ve C dahil N dizinin yapımında yer alıyor."
+ *
+ * SAYI DÜRÜST: `toplam` discover'ın İLK SAYFASINDAN sayılan yapım adedidir
+ * (`seoSirketYapimlari(..., 20)`), firmanın tüm kataloğu değil. Bu yüzden
+ * cümle "toplam N yapımı vardır" DEMİYOR: "dizi.jpg'de ... N dizinin
+ * yapımında yer alıyor" diyor — sayfada gerçekten sayılabilen şey bu.
+ */
+function seoSirketSssCumlesi(ad, adlar, toplam, tur) {
+  const liste = (adlar || []).filter(Boolean);
+  if (!liste.length) return '';
+  return toplam > liste.length
+    ? `${ad} dizi.jpg'de ${seoVeListesi(liste)} dahil ${toplam} ${tur}`
+      + ' yapımında yer alıyor.'
+    : `${ad} dizi.jpg'de ${seoVeListesi(liste)} yapımında yer alıyor.`;
+}
+
 
 /**
  * `/sirket/:id` sayfası indekse girsin mi? Karar TEK BİR FONKSİYONDA
@@ -4451,7 +4688,7 @@ function seoSirketAciklamasi(ad, firma, yapimlar, ekler = {}) {
  *
  * ItemList sayfada GÖRÜNEN yapım listesinin birebir karşılığıdır.
  */
-function sirketJsonLd({ url, ad, aciklama, logo, firma, yapimlar }) {
+function sirketJsonLd({ url, ad, aciklama, logo, firma, yapimlar, sss = [] }) {
   const merkez = seoMetin(firma?.headquarters);
   const ulkeKodu = String(firma?.origin_country || '').toUpperCase();
   const yapimNesneleri = yapimlar.map((y) => ({
@@ -4459,6 +4696,7 @@ function sirketJsonLd({ url, ad, aciklama, logo, firma, yapimlar }) {
     name: y.ad,
     url: SITE_KOK + y.yol,
   }));
+  const sssDugumu = seoSssJsonLd(sss, url);
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -4486,6 +4724,9 @@ function sirketJsonLd({ url, ad, aciklama, logo, firma, yapimlar }) {
           '@type': 'ListItem', position: i + 1, name: y.name, url: y.url,
         })),
       }] : []),
+      // `FAQPage` — kişi/içerik sayfalarıyla aynı disiplin: ayrı `@graph`
+      // öğesi, `#sss` kimliği, `Organization` içine GÖMÜLMEZ.
+      ...(sssDugumu ? [sssDugumu] : []),
       {
         // "Yapım firmaları" liste rotası YOK — uydurma URL basılmaz; basamak
         // atılır (GSC item-eksik hatası). Kırıntı: ana sayfa → firma.
@@ -4562,12 +4803,24 @@ app.get('/og/sirket/:id', sarici(async (req, res) => {
       degerlendirmeAdet: seo.yorumlar.length + seo.incelemeler.length,
     });
 
+    // SIK SORULAN SORULAR (28 Ağu 2026 — GEO-PLANI §6.1). Tek liste, iki
+    // çıktı: görünür `<dl>` + JSON-LD `FAQPage` (`sirketJsonLd` içinden).
+    const sssListesi = seoSirketSorulari({
+      ad, firma, seo,
+      diziAdlari: diziler.slice(0, SEO_SIRKET_SSS_YAPIM).map((y) => y.ad),
+      filmAdlari: filmler.slice(0, SEO_SIRKET_SSS_YAPIM).map((y) => y.ad),
+      diziToplam: diziHam.length,
+      filmToplam: filmHam.length,
+    });
+
     // Sayfa toplamı: 1 logo + 9 dizi + 9 film = 19 <= SEO_AFIS_TAVAN.
     const govde = seoLogoGorseli(firma.logo_path, `${ad} logosu`)
       + (kimlikSatirlari.length
         ? `\n<p>${htmlKacir(kimlikSatirlari.join(' · '))}</p>` : '')
       + (tmdbAciklama
         ? `\n<h2>${htmlKacir(ad)} hakkında</h2>\n<p>${htmlKacir(tmdbAciklama)}</p>` : '')
+      // SSS künyeden sonra, yapım raflarından önce (kişi sayfasıyla aynı yer).
+      + seoSssGovdesi(sssListesi)
       + seoAfisListesi(`${ad} dizileri`, diziler, SEO_SIRKET_YAPIM)
       + seoAfisListesi(`${ad} filmleri`, filmler, SEO_SIRKET_YAPIM)
       + seoDegerlendirmeGovdesi(seo, {
@@ -4601,7 +4854,7 @@ app.get('/og/sirket/:id', sarici(async (req, res) => {
       jsonLd: sirketJsonLd({
         url: `${SITE_KOK}/sirket/${sid}`, ad,
         aciklama: tmdbAciklama || metaAciklama,
-        logo, firma, yapimlar,
+        logo, firma, yapimlar, sss: sssListesi,
       }),
     }));
   } catch (e) {
@@ -4930,7 +5183,62 @@ function seoSezonGezinme(nolar, b) {
  * (app/lib/yonlendirme.dart'ta yalnız bölüm rotası var) ve olmayan URL'i bota
  * bildirmek soft 404 üretir.
  */
-function bolumJsonLd({ url, diziId, diziAd, bolumAd, sezon, bolum, ozet, gorsel, bol, seo }) {
+// Bölüm SSS cevabında adı geçen konuk oyuncu sayısı.
+const SEO_BOLUM_SSS_KONUK = 4;
+
+/**
+ * `/dizi/:id/sezon/:s/bolum/:b` sayfasının soru-cevap listesi.
+ *
+ * NEDEN BURASI (28 Ağu 2026): Search Console'daki İLK 9 organik tıklamanın
+ * 7'si BÖLÜM sayfasıydı — yani sitenin arama tarafında gerçekten çalışan
+ * yüzeyi bu. Buna rağmen bölüm sayfasında alıntılanabilir soru-cevap yoktu.
+ * Kişi/firma sayfalarıyla aynı sözleşme; sorular bölümün GERÇEKTEN
+ * cevapladığı dört şey: adı, yayın tarihi, süresi, konuk oyuncuları.
+ *
+ * PUAN KUYRUĞU BURADA ÖZELLİKLE DEĞERLİ: bölüm bazında puan/yorum TMDB'de
+ * yok, yalnız bizde var. Modelin başka yerden alamayacağı veri budur.
+ */
+function seoBolumSorulari({
+  diziAd, sezon, bolum, ozgunAd, yayinGunu, sure, konuklar, puanMetni, puanAdet,
+  yorumAdet,
+}) {
+  const sorular = [];
+  const ekle = (soru, cevap) => { if (soru && cevap) sorular.push({ soru, cevap }); };
+  // Sorunun ÖZNESİ her cümlede açık: model cevabı bağlamsız alıntılıyor,
+  // "42 dakika" tek başına hangi bölüme ait olduğunu söylemez.
+  const kim = `${diziAd} dizisinin ${sezon}. sezon ${bolum}. bölümü`;
+  const konu = `${diziAd} ${sezon}. sezon ${bolum}. bölüm`;
+
+  if (ozgunAd) {
+    ekle(`${konu} adı ne?`, `${kim} "${ozgunAd}" adını taşıyor.`);
+  }
+  const tarih = seoTarihTr(yayinGunu);
+  if (tarih) {
+    ekle(`${konu} ne zaman yayınlandı?`, `${kim} ${tarih} tarihinde yayınlandı.`);
+  }
+  const dk = seoPozitif(sure);
+  if (dk) {
+    ekle(`${konu} kaç dakika?`, `${kim} ${dk} dakika sürüyor.`);
+  }
+  const adlar = (konuklar || []).slice(0, SEO_BOLUM_SSS_KONUK)
+    .map((o) => seoMetin(o?.name)).filter(Boolean);
+  if (adlar.length) {
+    ekle(`${konu} konuk oyuncuları kimler?`,
+      `${kim} konuk oyuncuları: ${seoVeListesi(adlar)}.`);
+  }
+
+  // TOPLUM KUYRUĞU — yalnız İLK cevaba (içerik/kişi/firma ile aynı disiplin).
+  const kuyruk = puanMetni
+    ? `dizi.jpg kullanıcıları bu bölüme ${puanMetni} puan verdi`
+      + ` (${seoPozitif(puanAdet)} puan${seoPozitif(yorumAdet) ? `, ${seoPozitif(yorumAdet)} yorum` : ''}).`
+    : (seoPozitif(yorumAdet)
+      ? `dizi.jpg'de bu bölüm hakkında ${seoPozitif(yorumAdet)} yorum ve inceleme var.` : '');
+  if (kuyruk && sorular.length) sorular[0].cevap += ` ${kuyruk}`;
+
+  return sorular.length >= SEO_SSS_MIN ? sorular : [];
+}
+
+function bolumJsonLd({ url, diziId, diziAd, bolumAd, sezon, bolum, ozet, gorsel, bol, seo, sss = [] }) {
   const ekip = Array.isArray(bol.crew) ? bol.crew : [];
   const yonetmenler = ekip.filter((c) => c?.job === 'Director' && c.name && gecerliTmdb(c.id));
   const yazarlar = ekip.filter((c) => c?.department === 'Writing' && c.name && gecerliTmdb(c.id));
@@ -4938,6 +5246,7 @@ function bolumJsonLd({ url, diziId, diziAd, bolumAd, sezon, bolum, ozet, gorsel,
     .filter((o) => o?.name && gecerliTmdb(o.id));
   const degerlendirmeler = seoDegerlendirmeler(seo);
   const ortalama = seoOrtalamaPuan(seo);
+  const sssDugumu = seoSssJsonLd(sss, url);
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -4964,6 +5273,9 @@ function bolumJsonLd({ url, diziId, diziAd, bolumAd, sezon, bolum, ozet, gorsel,
         ...((degerlendirmeler.length && (ortalama || degerlendirmeler.length === 1))
           ? { review: degerlendirmeler } : {}),
       },
+      // `FAQPage` — içerik/kişi/firma sayfalarıyla aynı disiplin: ayrı
+      // `@graph` öğesi, `#sss` kimliği, `TVEpisode` içine GÖMÜLMEZ.
+      ...(sssDugumu ? [sssDugumu] : []),
       {
         '@type': 'BreadcrumbList',
         itemListElement: seoKirinti([
@@ -5076,6 +5388,18 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
       ? `\n<h2>${htmlKacir(bolumAd)} özeti</h2>\n<p>${htmlKacir(ozet)}</p>` : '';
     const bolumPuani = seoOrtalamaPuan(seo);
 
+    // SIK SORULAN SORULAR (28 Ağu 2026). Tek liste, iki çıktı.
+    // ÖZET SORUYA GİRMEZ: aynı metin `ozetBlok`ta zaten var; iki kez basmak
+    // sayfa içi yineleme olurdu (içerik sayfasında da böyle).
+    const sssListesi = seoBolumSorulari({
+      diziAd, sezon: s, bolum: b, ozgunAd, yayinGunu,
+      sure: bol.runtime,
+      konuklar: Array.isArray(bol.guest_stars) ? bol.guest_stars : [],
+      puanMetni: bolumPuani ? `${bolumPuani.ratingValue}/5` : null,
+      puanAdet: bolumPuani?.ratingCount,
+      yorumAdet: seo.yorumlar.length + seo.incelemeler.length,
+    });
+
     res.type('html').send(ogSayfa({
       baslik: `${diziAd} ${s}. sezon ${b}. bölüm`
         + `${ozgunAd ? `: ${ozgunAd}` : ''} — dizi.jpg`,
@@ -5102,6 +5426,8 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
       govde: (seoBolumKaresi(bol.still_path, `${diziAd} ${s}. sezon ${b}. bölüm karesi`)
         || seoAnaGorsel(dizi.poster_path, `${diziAd} afişi`))
         + yayinBlok + ozetBlok
+        // SSS özetin hemen ardında (içerik sayfasındaki yerleşimle aynı).
+        + seoSssGovdesi(sssListesi)
         + seoDegerlendirmeGovdesi(seo, {
           incelemeBasligi: 'Bu bölüm hakkında incelemeler',
           yorumBasligi: 'Bu bölüm hakkında yorumlar',
@@ -5112,7 +5438,7 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
         diziId: id, diziAd, bolumAd, sezon: s, bolum: b,
         ozet,
         gorsel: tmdbGorsel(bol.still_path, 'w780') || tmdbGorsel(dizi.poster_path),
-        bol, seo,
+        bol, seo, sss: sssListesi,
       }),
     }));
   } catch (e) {
