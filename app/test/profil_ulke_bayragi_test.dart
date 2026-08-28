@@ -456,6 +456,28 @@ void main() {
     );
   });
 
+  testWidgets('kimlik satırındaki ikonlar arası EK boşluk YOK (ara: 0)', (
+    tester,
+  ) async {
+    // 12 px dolgu zaten 24 px görsel aralık bırakıyor. Bu 6 px, 411 dp
+    // telefonda ÜÇ bağlantının sığmasıyla sığmaması arasındaki farktı —
+    // dokunma hedefi küçültülmeden kazanıldı. Geri konursa üç bağlantılı
+    // profillerde şerit yeniden alta iner.
+    await _baskasi(
+      tester,
+      'Türkiye',
+      sosyal: const [
+        {'platform': 'instagram', 'deger': 'ali'},
+        {'platform': 'x', 'deger': 'ali'},
+      ],
+    );
+    final satir = tester.widget<SosyalSatiri>(find.byType(SosyalSatiri));
+    expect(satir.ara, 0);
+    // Dokunma hedefi KÜÇÜLMEDİ: her ikon hâlâ 44 px.
+    final ikon = tester.getRect(find.byType(InkWell).first);
+    expect(ikon.height, greaterThanOrEqualTo(44));
+  });
+
   testWidgets('360 dp + 3 sosyal: şerit ALT SATIRA iner, kaybolmaz', (
     tester,
   ) async {

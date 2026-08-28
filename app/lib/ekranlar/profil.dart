@@ -1467,8 +1467,12 @@ class ProfilKimlikBasligi extends StatelessWidget {
   /// ile AYNI değer; burada yalnız GENİŞLİK KESTİRMEK için duruyor.
   static const double sosyalHedef = 44;
 
-  /// Sosyal ikonlar arası boşluk (`SosyalSatiri`'ndeki `Wrap.spacing`).
-  static const double sosyalAra = 6;
+  /// Kimlik satırındaki sosyal ikonlar arası boşluk.
+  ///
+  /// 0 ve BİLİNÇLİ: ikonların kendi 12 px dolgusu zaten 24 px görsel aralık
+  /// bırakıyor. Bu 6 px, 411 dp telefonda üç bağlantının sığmasıyla
+  /// sığmaması arasındaki farktı (bkz. `SosyalSatiri.ara`).
+  static const double sosyalAra = 0;
 
   /// Kullanıcı adına kalması gereken EN AZ genişlik.
   ///
@@ -1550,7 +1554,7 @@ class ProfilKimlikBasligi extends StatelessWidget {
             // SATIR ZATEN 44 PX YÜKSEK: `AileRozeti` dokunma hedefi 44×44.
             // Yani sosyal ikonlar satırı UZATMIYOR, sadece genişlik yiyor;
             // dokunma hedefi küçültülmedi (ux md.2).
-            if (sosyalYanda) SosyalSatiri(sosyal: sosyal),
+            if (sosyalYanda) SosyalSatiri(sosyal: sosyal, ara: sosyalAra),
           ],
         ),
         // İKİNCİL SATIR YALNIZ AD VARKEN. Ad yoksa bu dal hiç çizilmez —

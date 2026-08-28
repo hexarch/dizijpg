@@ -145,7 +145,18 @@ SosyalPlatform? sosyalBul(String kod) {
 /// kullanıcı adı panoya kopyalanır.
 class SosyalSatiri extends StatelessWidget {
   final List<dynamic> sosyal; // [{platform, deger}]
-  const SosyalSatiri({super.key, required this.sosyal});
+
+  /// İkonlar arası EK boşluk.
+  ///
+  /// VARSAYILAN 6, KİMLİK SATIRINDA 0 (28 Ağu 2026): her ikon zaten 12 px
+  /// dolgu taşıyor, yani iki ikon arasında ek boşluk olmadan bile 24 px
+  /// görsel aralık var. Kimlik satırında bu 6 px'i vermek, 411 dp'lik
+  /// telefonda ÜÇ bağlantının yan yana sığmasıyla sığmaması arasındaki
+  /// farktı (ölçüldü: sütun 288 dp, gereken 12 dp). Dokunma hedefi
+  /// KÜÇÜLTÜLMEDİ — 44 px aynen duruyor, yalnız aradaki fazlalık kalktı.
+  final double ara;
+
+  const SosyalSatiri({super.key, required this.sosyal, this.ara = 6});
 
   Future<void> _ac(BuildContext context, SosyalPlatform p, String deger) async {
     // URL'de baştaki @ sorun çıkarır (instagram.com/@ad gibi) — soy
@@ -198,7 +209,7 @@ class SosyalSatiri extends StatelessWidget {
     ];
     if (gecerli.isEmpty) return const SizedBox.shrink();
     return Wrap(
-      spacing: 6,
+      spacing: ara,
       children: [
         for (final s in gecerli)
           Builder(
