@@ -50,6 +50,7 @@ import {
   raporMetni, konuSatiri, ozetSatiri, bayraklariCoz, pencereHesapla,
   durumOku, durumYaz, paneliDenetle, apiCagir, mulkYolu,
   siteHaritalari, aramaAnalitigi, raporGonder,
+  kazananlariCoz, kazananlariYaz, KAZANAN_MIN_TIKLAMA,
 } from '../gsc_izle.js';
 
 const KOK = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -1081,3 +1082,115 @@ function ikiGun(aile, kova, once, sonra) {
     .map((a) => [a, degisimHesapla(dun.panel[a], bugun.panel[a])]));
   return { dun, bugun };
 }
+
+// ===========================================================================
+// KAZANAN BÖLÜMLER — site haritası muafiyet listesi (28 Ağu 2026)
+// ===========================================================================
+// NEDEN: bölüm haritası bilinçli kesiliyor; muafiyet listesi 27 Ağu'da ELLE
+// dolduruldu ve ERTESİ GÜN bayatladı — tıklama alan üç bölüm haritada yoktu.
+// Bu testler listenin GSC verisinden üretilmesini ve bayatlamamasını kilitler.
+
+const satir = (yol, clicks, impressions = clicks) => ({
+  keys: [`https://dizijpg.com${yol}`], clicks, impressions,
+});
+
+test('kazananlariCoz: yalnız TIKLAMA almış BÖLÜM yolları', () => {
+  const k = kazananlariCoz([
+    satir('/dizi/30984/sezon/2/bolum/45', 9, 24),
+    satir('/dizi/61175/sezon/3/bolum/19', 2, 5),
+    // Gösterim var, tıklama YOK -> kazanan değil (32/0 alan sayfalar var).
+    satir('/kisi/77880', 0, 32),
+    satir('/dizi/1/sezon/1/bolum/1', 0, 99),
+    // Bölüm olmayan yollar hiç girmez.
+    satir('/icerik/tv/1396', 5, 5),
+    satir('/', 2, 5),
+  ]);
+  assert.deepEqual(k.map((x) => [x.tmdbId, x.sezon, x.bolum, x.tiklama]), [
+    [30984, 2, 45, 9],
+    [61175, 3, 19, 2],
+  ]);
+  assert.equal(k[0].gosterim, 24);
+});
+
+test('kazananlariCoz: tıklamaya göre AZALAN sıralı', () => {
+  const k = kazananlariCoz([
+    satir('/dizi/2/sezon/1/bolum/1', 1),
+    satir('/dizi/3/sezon/1/bolum/1', 7),
+    satir('/dizi/4/sezon/1/bolum/1', 3),
+  ]);
+  assert.deepEqual(k.map((x) => x.tmdbId), [3, 4, 2]);
+});
+
+test('kazananlariCoz: aynı bölümün iki yazımı TEK kazanan, tıklama toplanır', () => {
+  const k = kazananlariCoz([
+    satir('/dizi/9/sezon/1/bolum/2', 3, 10),
+    satir('/dizi/9/sezon/1/bolum/2/', 2, 4),   // sondaki eğik çizgi
+  ]);
+  assert.equal(k.length, 1);
+  assert.equal(k[0].tiklama, 5);
+  assert.equal(k[0].gosterim, 14);
+});
+
+test('kazananlariCoz: bozuk/negatif kimlikler elenir', () => {
+  assert.deepEqual(kazananlariCoz([
+    satir('/dizi/0/sezon/1/bolum/1', 5),
+    satir('/dizi/9/sezon/0/bolum/1', 5),
+    satir('/dizi/9/sezon/1/bolum/0', 5),
+    { keys: [], clicks: 5 },
+    {},
+  ]), []);
+});
+
+test('eşik SABİT 1: gösterim değil TIKLAMA kanıt sayılır', () => {
+  assert.equal(KAZANAN_MIN_TIKLAMA, 1);
+});
+
+test('kazananlariYaz: upsert eder, SİLMEZ ve yeni sayısını döndürür', async () => {
+  const sorgular = [];
+  const havuz = {
+    query: async (sql, par) => {
+      sorgular.push({ sql, par });
+      if (/SELECT tmdb_id/.test(sql)) {
+        return { rows: [{ tmdb_id: 30984, sezon: 2, bolum: 45 }] };
+      }
+      return { rows: [] };
+    },
+  };
+  const sonuc = await kazananlariYaz(havuz, [
+    { tmdbId: 30984, sezon: 2, bolum: 45, tiklama: 9, gosterim: 24 },
+    { tmdbId: 61175, sezon: 3, bolum: 19, tiklama: 2, gosterim: 5 },
+  ], '2026-08-26');
+  assert.deepEqual(sonuc, { yazildi: 2, yeni: 1 });
+
+  const yazmalar = sorgular.filter((q) => /INSERT INTO seo_kazanan_bolum/.test(q.sql));
+  assert.equal(yazmalar.length, 2);
+  assert.match(yazmalar[0].sql, /ON CONFLICT \(tmdb_id, sezon, bolum\) DO UPDATE/);
+  assert.deepEqual(yazmalar[0].par, [30984, 2, 45, 9, 24, '2026-08-26']);
+  // SİLME YOK: pencereden düşen bölüm yeniden öksüz kalmamalı.
+  assert.ok(!sorgular.some((q) => /DELETE/i.test(q.sql)),
+    'kazanan satırı SİLİNMEMELİ — bkz. kazananlariYaz başlığı');
+});
+
+test('kazananlariYaz: boş listede DB\'ye hiç dokunmaz', async () => {
+  let cagri = 0;
+  const havuz = { query: async () => { cagri += 1; return { rows: [] }; } };
+  assert.deepEqual(await kazananlariYaz(havuz, [], '2026-08-26'), { yazildi: 0, yeni: 0 });
+  assert.equal(cagri, 0);
+});
+
+test('aramaAnalitigi kazananları AYNI yanıttan süzer (ikinci API çağrısı YOK)', () => {
+  const bas = KAYNAK.indexOf('export async function aramaAnalitigi');
+  const govde = KAYNAK.slice(bas, bas + 2200);
+  assert.match(govde, /kazananlar: kazananlariCoz\(satirlar\)/);
+});
+
+test('main: kazanan yazımı raporu BLOKLAMAZ (DB düşse bile koşu biter)', () => {
+  const i = KAYNAK.indexOf('--- KAZANAN BÖLÜMLER ---');
+  assert.ok(i > 0, 'main içindeki kazanan bloğu bulunamadı');
+  const blok = KAYNAK.slice(i, i + 1200);
+  assert.match(blok, /try \{/);
+  assert.match(blok, /catch \(e\)/);
+  assert.ok(!/process\.exit/.test(blok),
+    'kazanan yazımı hatası koşuyu öldürmemeli');
+  assert.match(blok, /havuz\.end\(\)/, 'havuz kapatılmalı');
+});

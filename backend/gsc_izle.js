@@ -149,6 +149,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import pg from 'pg';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 
@@ -577,7 +578,98 @@ export async function aramaAnalitigi(mulk, jeton, pencere, ayar = AYAR, getirici
     ozet.gosterim += Number(r.impressions || 0);
     ozet.sayfa[siniflandir(r.keys?.[0] || '')] += 1;
   }
-  return { tamam: true, ...ozet, satirSayisi: satirlar.length };
+  // Aynı yanıttan KAZANANLARI da süz: satırlar zaten elimizde, ikinci bir
+  // API çağrısı YOK (gerekçe `kazananlariCoz` başlığında).
+  return {
+    tamam: true, ...ozet, satirSayisi: satirlar.length,
+    kazananlar: kazananlariCoz(satirlar),
+  };
+}
+
+// ===========================================================================
+// KAZANAN BÖLÜMLER — site haritası kesme kuralının MUAFİYET listesi
+// ===========================================================================
+// NEDEN VAR (28 Ağu 2026, ölçümle bulundu):
+// Bölüm site haritası bilinçli olarak kesiliyor (`SITEMAP_BOLUM_SORGU`):
+// bir bölüm haritaya ancak dizi TR yapımıysa, sezon gelecek sezonsa YA DA
+// `seo_kazanan_bolum` tablosundaysa girer. Amaç 78 binlik kuyruğu şişirmemek.
+//
+// Ama o tablo 27 Ağu'da ELLE dolduruldu (6 satır) ve ertesi gün BAYATLADI:
+// GSC 9 tıklamadan 42'ye çıktı, tıklama alan üç bölüm — /dizi/61175/sezon/3/
+// bolum/19, /dizi/67667/sezon/4/bolum/4, /dizi/68073/sezon/5/bolum/22 —
+// haritada YOKTU. Yani kesme kuralı, kazanan sayfaları yeniden öksüz
+// bırakmıştı. Elle tutulan muafiyet listesi tanımı gereği bayatlar.
+//
+// ÇÖZÜM: liste artık her gece GSC'nin KENDİ verisinden üretiliyor. Fazladan
+// API çağrısı yok — `aramaAnalitigi` zaten TÜM sayfaları tıklama/gösterimle
+// çekiyordu ve satırları atıyordu.
+//
+// EŞİK 1 TIKLAMA: "ölçülmüş performans" tanımı bu. Gösterim yetmez (32
+// gösterim/0 tıklama alan sayfalar var); tıklama, sayfanın arama sonucunda
+// gerçekten iş gördüğünün kanıtı. Tablo tanımı gereği küçük kalır.
+export const KAZANAN_YOL = /\/dizi\/(\d+)\/sezon\/(\d+)\/bolum\/(\d+)\/?$/;
+export const KAZANAN_MIN_TIKLAMA = 1;
+
+/** GSC satırlarından bölüm kazananları. Saf: ağ/DB yok, test doğrudan çağırır. */
+export function kazananlariCoz(satirlar, esik = KAZANAN_MIN_TIKLAMA) {
+  const harita = new Map();
+  for (const r of satirlar || []) {
+    const tiklama = Number(r?.clicks || 0);
+    if (tiklama < esik) continue;
+    const m = KAZANAN_YOL.exec(String(r?.keys?.[0] || ''));
+    if (!m) continue;
+    const kayit = {
+      tmdbId: Number(m[1]),
+      sezon: Number(m[2]),
+      bolum: Number(m[3]),
+      tiklama,
+      gosterim: Number(r?.impressions || 0),
+    };
+    if (!Number.isInteger(kayit.tmdbId) || kayit.tmdbId <= 0) continue;
+    if (!Number.isInteger(kayit.sezon) || kayit.sezon < 1) continue;
+    if (!Number.isInteger(kayit.bolum) || kayit.bolum < 1) continue;
+    // Aynı bölüm birden çok satırda gelirse (http/https, sondaki eğik çizgi)
+    // TIKLAMALAR TOPLANIR: aynı sayfanın iki yazımı iki kazanan değildir.
+    const anahtar = `${kayit.tmdbId}:${kayit.sezon}:${kayit.bolum}`;
+    const eski = harita.get(anahtar);
+    if (eski) {
+      eski.tiklama += kayit.tiklama;
+      eski.gosterim += kayit.gosterim;
+    } else {
+      harita.set(anahtar, kayit);
+    }
+  }
+  return [...harita.values()].sort((a, b) => b.tiklama - a.tiklama);
+}
+
+/**
+ * Kazananları tabloya yazar (upsert).
+ *
+ * SİLME YOK — BİLİNÇLİ: bir bölüm 28 günlük pencereden düşerse satırı
+ * kalmalı. Sayfa aramada bir kez iş gördüyse haritadan atılması onu yeniden
+ * öksüz bırakır; tablo zaten küçük ve `SITEMAP_BOLUM_SORGU` içerik ölçüsünü
+ * bu dalda da arıyor (içeriksiz bölüm bu tablodayken bile haritaya giremez).
+ */
+export async function kazananlariYaz(havuz, kazananlar, gun) {
+  if (!kazananlar?.length) return { yazildi: 0, yeni: 0 };
+  const oncekiler = await havuz.query('SELECT tmdb_id, sezon, bolum FROM seo_kazanan_bolum');
+  const vardi = new Set(oncekiler.rows.map((r) => `${r.tmdb_id}:${r.sezon}:${r.bolum}`));
+  let yeni = 0;
+  for (const k of kazananlar) {
+    if (!vardi.has(`${k.tmdbId}:${k.sezon}:${k.bolum}`)) yeni += 1;
+    await havuz.query(
+      `INSERT INTO seo_kazanan_bolum
+         (tmdb_id, sezon, bolum, kaynak, tiklama, gosterim, olcum_gunu)
+       VALUES ($1, $2, $3, 'gsc', $4, $5, $6)
+       ON CONFLICT (tmdb_id, sezon, bolum) DO UPDATE
+         SET tiklama = EXCLUDED.tiklama,
+             gosterim = EXCLUDED.gosterim,
+             olcum_gunu = EXCLUDED.olcum_gunu,
+             guncellendi = now()`,
+      [k.tmdbId, k.sezon, k.bolum, k.tiklama, k.gosterim, gun],
+    );
+  }
+  return { yazildi: kazananlar.length, yeni };
 }
 
 /** B-SINIFI ÖRNEKLENMİŞ ÖLÇÜM: tek URL denetimi. */
@@ -1370,6 +1462,31 @@ async function main(argv) {
   if (!arama.tamam) {
     console.error(`gsc_izle: arama analitiği okunamadı — ${arama.hata}`);
     process.exit(1);
+  }
+
+  // --- KAZANAN BÖLÜMLER ---------------------------------------------------
+  // Site haritası kesme kuralının muafiyet listesini TAZELE (gerekçe
+  // `kazananlariCoz` başlığında). RAPORU BLOKLAMAZ: DB düşse bile izleme
+  // koşusu tamamlanmalı, tek satır uyarı bırakır.
+  let kazananOzet = null;
+  if (process.env.DATABASE_URL) {
+    const havuz = new pg.Pool({
+      connectionString: process.env.DATABASE_URL,
+      max: 1,
+      connectionTimeoutMillis: 5000,
+    });
+    try {
+      kazananOzet = await kazananlariYaz(havuz, arama.kazananlar, pencere.son);
+      console.log(`gsc_izle: kazanan bölüm — ${kazananOzet.yazildi} yazıldı`
+        + `, ${kazananOzet.yeni} yeni`);
+    } catch (e) {
+      console.error('gsc_izle: kazanan bölüm yazılamadı — '
+        + hatayiKisirlastir(e?.message || e));
+    } finally {
+      await havuz.end().catch(() => {});
+    }
+  } else {
+    console.error('gsc_izle: DATABASE_URL yok — kazanan bölüm tablosu ATLANDI');
   }
 
   // --- PANEL --------------------------------------------------------------
