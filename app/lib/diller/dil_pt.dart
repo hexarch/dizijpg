@@ -1361,4 +1361,9 @@ const Map<String, String> cevirilerPt = {
   '{}. bölüm': 'Episódio {}',
   'Dizi veya film ara...': 'Pesquisar séries e filmes...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'Partilha um comentário sobre o que viste',
+  'Yapım seç (zorunlu)': 'Escolhe um título (obrigatório)',
+  'Paylaşmak için önce bir yapım seç.': 'Escolhe primeiro um título para partilhar.',
+  'Kişi': 'Pessoa',
+  'Yapım firması': 'Produtora',
+  'Yapım ara...': 'Pesquisar títulos...',
 };

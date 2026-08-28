@@ -1720,7 +1720,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       context: context,
       isScrollControlled: true,
       backgroundColor: DiziRenkler.koyuGri,
-      builder: (_) => const IcerikSecSheet(),
+      // Sohbet kartı AFİŞ çiziyor: kişi/firma bağlanamaz.
+      builder: (_) => const IcerikSecSheet(kisiVeFirma: false),
     );
     if (secilen == null) return;
     // GÖNDERMİYORUZ: seçim giriş kutusunun üstünde BEKLER, kullanıcı yazmaya

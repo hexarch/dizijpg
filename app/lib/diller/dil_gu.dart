@@ -1327,4 +1327,9 @@ const Map<String, String> cevirilerGu = {
   '{}. bölüm': 'એપિસોડ {}',
   'Dizi veya film ara...': 'શ્રેણી અને ફિલ્મો શોધો...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'તમે જે જોયું તેના વિશે ટિપ્પણી શેર કરો',
+  'Yapım seç (zorunlu)': 'શીર્ષક પસંદ કરો (ફરજિયાત)',
+  'Paylaşmak için önce bir yapım seç.': 'શેર કરવા માટે પહેલા શીર્ષક પસંદ કરો.',
+  'Kişi': 'વ્યક્તિ',
+  'Yapım firması': 'નિર્માણ કંપની',
+  'Yapım ara...': 'શીર્ષકો શોધો...',
 };

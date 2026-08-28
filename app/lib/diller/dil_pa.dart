@@ -1336,4 +1336,9 @@ const Map<String, String> cevirilerPa = {
   '{}. bölüm': 'ਐਪੀਸੋਡ {}',
   'Dizi veya film ara...': 'ਸੀਰੀਜ਼ ਅਤੇ ਫ਼ਿਲਮਾਂ ਖੋਜੋ...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'ਜੋ ਦੇਖਿਆ ਉਸ ਬਾਰੇ ਟਿੱਪਣੀ ਸਾਂਝੀ ਕਰੋ',
+  'Yapım seç (zorunlu)': 'ਸਿਰਲੇਖ ਚੁਣੋ (ਲਾਜ਼ਮੀ)',
+  'Paylaşmak için önce bir yapım seç.': 'ਸਾਂਝਾ ਕਰਨ ਲਈ ਪਹਿਲਾਂ ਸਿਰਲੇਖ ਚੁਣੋ।',
+  'Kişi': 'ਵਿਅਕਤੀ',
+  'Yapım firması': 'ਪ੍ਰੋਡਕਸ਼ਨ ਕੰਪਨੀ',
+  'Yapım ara...': 'ਸਿਰਲੇਖ ਖੋਜੋ...',
 };

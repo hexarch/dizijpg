@@ -1340,4 +1340,9 @@ const Map<String, String> cevirilerVi = {
   '{}. bölüm': 'Tập {}',
   'Dizi veya film ara...': 'Tìm phim bộ và phim lẻ...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'Chia sẻ cảm nhận về những gì bạn đã xem',
+  'Yapım seç (zorunlu)': 'Chọn tựa đề (bắt buộc)',
+  'Paylaşmak için önce bir yapım seç.': 'Hãy chọn tựa đề trước khi chia sẻ.',
+  'Kişi': 'Người',
+  'Yapım firması': 'Hãng sản xuất',
+  'Yapım ara...': 'Tìm tựa đề...',
 };

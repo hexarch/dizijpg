@@ -1361,4 +1361,9 @@ const Map<String, String> cevirilerFil = {
   '{}. bölüm': 'Episode {}',
   'Dizi veya film ara...': 'Maghanap ng serye at pelikula...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'Mag-share ng komento tungkol sa napanood mo',
+  'Yapım seç (zorunlu)': 'Pumili ng pamagat (kailangan)',
+  'Paylaşmak için önce bir yapım seç.': 'Pumili muna ng pamagat para makapag-share.',
+  'Kişi': 'Tao',
+  'Yapım firması': 'Production company',
+  'Yapım ara...': 'Maghanap ng pamagat...',
 };

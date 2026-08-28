@@ -1351,4 +1351,9 @@ const Map<String, String> cevirilerMy = {
   '{}. bölüm': 'အပိုင်း {}',
   'Dizi veya film ara...': 'ဇာတ်လမ်းတွဲနှင့် ရုပ်ရှင် ရှာပါ...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'ကြည့်ခဲ့သည့်အကြောင်း မှတ်ချက် မျှဝေပါ',
+  'Yapım seç (zorunlu)': 'ခေါင်းစဉ် ရွေးပါ (မဖြစ်မနေ)',
+  'Paylaşmak için önce bir yapım seç.': 'မျှဝေရန် ဦးစွာ ခေါင်းစဉ် ရွေးပါ။',
+  'Kişi': 'လူပုဂ္ဂိုလ်',
+  'Yapım firması': 'ထုတ်လုပ်ရေးကုမ္ပဏီ',
+  'Yapım ara...': 'ခေါင်းစဉ်များ ရှာပါ...',
 };

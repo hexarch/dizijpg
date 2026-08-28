@@ -1334,4 +1334,9 @@ const Map<String, String> cevirilerKn = {
   '{}. bölüm': 'ಸಂಚಿಕೆ {}',
   'Dizi veya film ara...': 'ಸರಣಿ ಮತ್ತು ಸಿನಿಮಾ ಹುಡುಕಿ...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'ನೀವು ನೋಡಿದ್ದರ ಬಗ್ಗೆ ಅಭಿಪ್ರಾಯ ಹಂಚಿಕೊಳ್ಳಿ',
+  'Yapım seç (zorunlu)': 'ಶೀರ್ಷಿಕೆ ಆಯ್ಕೆಮಾಡಿ (ಕಡ್ಡಾಯ)',
+  'Paylaşmak için önce bir yapım seç.': 'ಹಂಚಿಕೊಳ್ಳಲು ಮೊದಲು ಶೀರ್ಷಿಕೆ ಆಯ್ಕೆಮಾಡಿ.',
+  'Kişi': 'ವ್ಯಕ್ತಿ',
+  'Yapım firması': 'ನಿರ್ಮಾಣ ಸಂಸ್ಥೆ',
+  'Yapım ara...': 'ಶೀರ್ಷಿಕೆಗಳನ್ನು ಹುಡುಕಿ...',
 };

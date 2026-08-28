@@ -8,24 +8,55 @@ import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
 import '../tema.dart';
 
-/// Dizi/film seçme sayfası — ARAMA + LİSTE, seçince `Navigator.pop` ile
-/// TMDB kaydını döndürür (`{id, media_type, name|title, poster_path, ...}`).
+/// Yorum bağlanabilecek TMDB kaydını seçme sayfası — ARAMA + LİSTE.
+/// Seçince `Navigator.pop` ile kaydı döndürür; `media_type` alanı
+/// `yorumlar.tur` ile BİREBİR aynı değeri taşır.
 ///
-/// NEDEN ORTAK BİLEŞEN (28 Ağu 2026): bu sayfa 2 Ağu'dan beri
-/// `sohbet.dart` içinde `_IcerikSecSheet` adıyla ÖZELDİ. Akıştaki paylaşım
-/// kutusu da aynı seçiciye ihtiyaç duyunca kopyalamak yerine buraya taşındı —
-/// bu depoda kopyalanan iki ekran (kendi profilim / açık profil) tam da bu
-/// yüzden ayrışmıştı ve 21 Ağu'da tek kaynağa çekilmek zorunda kalındı.
+/// DÖRT TÜR (28 Ağu 2026, kullanıcı isteği: "sadece dizi film değil oyuncu
+/// yönetmen yapım firması vb de seçebilir"):
+///   tv · movie · person · company
+/// Bu liste keyfi değil, sunucunun `YORUM_TURLERI` sabitiyle AYNI. Sunucu
+/// `person` ve `company`yi 19 Ağu'dan beri kabul ediyordu; eksik olan tek şey
+/// istemcinin onları seçtirmemesiydi. Beşinci bir tür eklenecekse ÖNCE
+/// `YORUM_TURLERI`ne eklenmeli, yoksa gönderim 400 döner.
 ///
-/// KİŞİ SONUÇLARI ELENİR: `search/multi` kişi de döndürür ama iki çağıran da
-/// (sohbette paylaşım, akışta yorum) yalnız dizi/film bağlayabiliyor.
-/// Afişsiz kayıt da elenir: listede boş kutu görünürdü.
+/// İKİ AYRI ARAMA UCU, TEK LİSTE: `search/multi` tv/movie/person döndürür ama
+/// FİRMA DÖNDÜRMEZ — TMDB'de firma ayrı uçtadır (`search/company`). İkisi
+/// paralel çağrılır; biri düşerse öteki yine sonuç verir.
+///
+/// NEDEN ORTAK BİLEŞEN: bu sayfa 2 Ağu'dan beri `sohbet.dart` içinde
+/// `_IcerikSecSheet` adıyla ÖZELDİ. Akıştaki paylaşım kutusu da aynı seçiciye
+/// ihtiyaç duyunca kopyalamak yerine buraya taşındı — bu depoda kopyalanan iki
+/// ekran (kendi profilim / açık profil) tam da bu yüzden ayrışmıştı.
 class IcerikSecSheet extends StatefulWidget {
-  const IcerikSecSheet({super.key});
+  /// Sohbette içerik paylaşımı yalnız dizi/film bağlayabiliyor (mesaj kartı
+  /// afiş çiziyor). `false` iken kişi ve firma listelenmez.
+  final bool kisiVeFirma;
+
+  const IcerikSecSheet({super.key, this.kisiVeFirma = true});
 
   @override
   State<IcerikSecSheet> createState() => _IcerikSecSheetState();
 }
+
+/// TMDB kaydının görsel yolu — tür başına ayrı alan.
+String? tmdbGorselYolu(Map<String, dynamic> r) =>
+    (r['poster_path'] ?? r['profile_path'] ?? r['logo_path']) as String?;
+
+/// Listede görünen tür etiketi.
+String tmdbTurEtiketi(String? tur) => switch (tur) {
+  'tv' => 'Dizi'.c,
+  'movie' => 'Film'.c,
+  'person' => 'Kişi'.c,
+  'company' => 'Yapım firması'.c,
+  _ => '',
+};
+
+IconData _turIkonu(String? tur) => switch (tur) {
+  'person' => Icons.person,
+  'company' => Icons.business,
+  _ => Icons.movie_outlined,
+};
 
 class _IcerikSecSheetState extends State<IcerikSecSheet> {
   final _arama = TextEditingController();
@@ -46,26 +77,60 @@ class _IcerikSecSheetState extends State<IcerikSecSheet> {
   }
 
   Future<void> _ara(String q) async {
-    if (q.trim().length < 2) return;
+    final sorgu = q.trim();
+    if (sorgu.length < 2) return;
     if (mounted) setState(() => _araniyor = true);
-    try {
-      final d = await Api.get(
-        '/tmdb/search/multi?query=${Uri.encodeComponent(q.trim())}',
-      );
-      if (!mounted) return;
-      setState(() {
-        _sonuclar = (d['results'] as List<dynamic>)
-            .where(
-              (r) =>
-                  (r['media_type'] == 'tv' || r['media_type'] == 'movie') &&
-                  r['poster_path'] != null,
-            )
-            .toList();
-        _araniyor = false;
-      });
-    } catch (_) {
-      if (mounted) setState(() => _araniyor = false);
+    final k = Uri.encodeComponent(sorgu);
+    // PARALEL ve BAĞIMSIZ: biri patlarsa öteki yine sonuç versin.
+    final sonuc = await Future.wait([
+      Api.get(
+        '/tmdb/search/multi?query=$k',
+      ).catchError((_) => <String, dynamic>{}),
+      if (widget.kisiVeFirma)
+        Api.get(
+          '/tmdb/search/company?query=$k',
+        ).catchError((_) => <String, dynamic>{}),
+    ]);
+    if (!mounted) return;
+
+    final liste = <dynamic>[];
+    for (final r in (sonuc[0]['results'] as List<dynamic>? ?? [])) {
+      final tur = (r as Map<String, dynamic>)['media_type'];
+      final izinli =
+          tur == 'tv' ||
+          tur == 'movie' ||
+          (widget.kisiVeFirma && tur == 'person');
+      // Adsız kayıt seçilemez: `tmdb_id` doğru olsa bile kullanıcı neyi
+      // bağladığını göremez.
+      if (izinli && ((r['name'] ?? r['title']) != null)) liste.add(r);
     }
+    if (sonuc.length > 1) {
+      for (final r in (sonuc[1]['results'] as List<dynamic>? ?? [])) {
+        final m = Map<String, dynamic>.from(r as Map);
+        // `search/company` `media_type` DÖNDÜRMEZ; sözleşmeyi biz kuruyoruz.
+        m['media_type'] = 'company';
+        if (m['name'] != null) liste.add(m);
+      }
+    }
+    // TAM AD EŞLEŞMESİ ÖNE ALINIR — kararlı sıralama, gerisi bozulmaz.
+    //
+    // NEDEN (28 Ağu, emülatörde görüldü): `search/multi` sonuçları önce,
+    // firmalar SONRA ekleniyor. "netflix" arayan kullanıcı Netflix'i (firma)
+    // 20 filmin altında göremiyordu — firma seçilebilir olsa da pratikte
+    // ULAŞILAMAZDI. Ad birebir eşleşiyorsa tür ne olursa olsun başa gelir.
+    final kucuk = sorgu.toLowerCase();
+    liste.sort((a, b) {
+      int puan(dynamic r) {
+        final ad = ((r['name'] ?? r['title']) as String? ?? '').toLowerCase();
+        return ad == kucuk ? 0 : 1;
+      }
+
+      return puan(a) - puan(b);
+    });
+    setState(() {
+      _sonuclar = liste;
+      _araniyor = false;
+    });
   }
 
   @override
@@ -81,7 +146,9 @@ class _IcerikSecSheetState extends State<IcerikSecSheet> {
               autofocus: true,
               onChanged: _degisti,
               decoration: InputDecoration(
-                hintText: 'Dizi veya film ara...'.c,
+                hintText: widget.kisiVeFirma
+                    ? 'Yapım ara...'.c
+                    : 'Dizi veya film ara...'.c,
                 prefixIcon: Icon(Icons.search, color: DiziRenkler.metin),
               ),
             ),
@@ -96,23 +163,30 @@ class _IcerikSecSheetState extends State<IcerikSecSheet> {
               itemCount: _sonuclar.length,
               itemBuilder: (context, i) {
                 final r = _sonuclar[i] as Map<String, dynamic>;
-                final poster = posterUrl(
-                  r['poster_path'] as String?,
-                  boyut: 'w92',
-                );
+                final tur = r['media_type'] as String?;
+                final gorsel = posterUrl(tmdbGorselYolu(r), boyut: 'w92');
                 return ListTile(
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(6),
-                    child: SizedBox(
+                    child: Container(
                       width: 34,
                       height: 50,
-                      child: poster != null
-                          ? CachedNetworkImage(
-                              imageUrl: poster,
-                              httpHeaders: gorselBasliklari(poster),
-                              fit: BoxFit.cover,
+                      color: DiziRenkler.kart,
+                      child: gorsel == null
+                          ? Icon(
+                              _turIkonu(tur),
+                              size: 18,
+                              color: DiziRenkler.metin38,
                             )
-                          : Container(color: DiziRenkler.kart),
+                          : CachedNetworkImage(
+                              imageUrl: gorsel,
+                              httpHeaders: gorselBasliklari(gorsel),
+                              // Firma logosu şeffaf ve GENİŞ: `cover` onu
+                              // kırpıp tanınmaz hâle getirirdi.
+                              fit: tur == 'company'
+                                  ? BoxFit.contain
+                                  : BoxFit.cover,
+                            ),
                     ),
                   ),
                   title: Text(
@@ -121,7 +195,7 @@ class _IcerikSecSheetState extends State<IcerikSecSheet> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Text(
-                    r['media_type'] == 'tv' ? 'Dizi'.c : 'Film'.c,
+                    tmdbTurEtiketi(tur),
                     style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
                   ),
                   onTap: () => Navigator.pop(context, r),
@@ -135,8 +209,14 @@ class _IcerikSecSheetState extends State<IcerikSecSheet> {
   }
 }
 
-/// İçerik seçiciyi alt sayfada açar; seçilen TMDB kaydını döndürür.
-Future<Map<String, dynamic>?> icerikSecAc(BuildContext context) {
+/// Seçiciyi alt sayfada açar; seçilen TMDB kaydını döndürür.
+///
+/// [kisiVeFirma] `false` iken yalnız dizi/film listelenir (sohbette içerik
+/// paylaşımı böyle çağırır).
+Future<Map<String, dynamic>?> icerikSecAc(
+  BuildContext context, {
+  bool kisiVeFirma = true,
+}) {
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
     isScrollControlled: true,
@@ -144,6 +224,6 @@ Future<Map<String, dynamic>?> icerikSecAc(BuildContext context) {
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
     ),
-    builder: (_) => const IcerikSecSheet(),
+    builder: (_) => IcerikSecSheet(kisiVeFirma: kisiVeFirma),
   );
 }

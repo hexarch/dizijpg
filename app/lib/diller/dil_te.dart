@@ -1337,4 +1337,9 @@ const Map<String, String> cevirilerTe = {
   '{}. bölüm': 'ఎపిసోడ్ {}',
   'Dizi veya film ara...': 'సిరీస్‌లు, సినిమాలు వెతుకు...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'నువ్వు చూసిన దాని గురించి వ్యాఖ్య పంచుకో',
+  'Yapım seç (zorunlu)': 'టైటిల్ ఎంచుకో (తప్పనిసరి)',
+  'Paylaşmak için önce bir yapım seç.': 'షేర్ చేయడానికి ముందు టైటిల్ ఎంచుకో.',
+  'Kişi': 'వ్యక్తి',
+  'Yapım firması': 'నిర్మాణ సంస్థ',
+  'Yapım ara...': 'టైటిల్స్ వెతుకు...',
 };

@@ -1347,4 +1347,9 @@ const Map<String, String> cevirilerFi = {
   '{}. bölüm': 'Jakso {}',
   'Dizi veya film ara...': 'Hae sarjoja ja elokuvia...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'Jaa kommentti katsomastasi',
+  'Yapım seç (zorunlu)': 'Valitse nimike (pakollinen)',
+  'Paylaşmak için önce bir yapım seç.': 'Valitse ensin nimike jakaaksesi.',
+  'Kişi': 'Henkilö',
+  'Yapım firması': 'Tuotantoyhtiö',
+  'Yapım ara...': 'Hae nimikkeitä...',
 };

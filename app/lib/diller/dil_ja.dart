@@ -1275,4 +1275,9 @@ const Map<String, String> cevirilerJa = {
   '{}. bölüm': '第{}話',
   'Dizi veya film ara...': '作品を検索...',
   'İzlediğin dizi ve film hakkında yorum paylaş': '観た作品について感想を投稿',
+  'Yapım seç (zorunlu)': '作品を選択（必須）',
+  'Paylaşmak için önce bir yapım seç.': '共有するにはまず作品を選んでください。',
+  'Kişi': '人物',
+  'Yapım firması': '制作会社',
+  'Yapım ara...': '作品を検索...',
 };

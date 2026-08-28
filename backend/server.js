@@ -8358,7 +8358,10 @@ app.post('/auth/iki-adim/dogrula', authLimiti, girisZorunlu,
 // ---------- TMDB proxy (beyaz listeli) ----------
 const TMDB_IZINLI = [
   /^\/trending\/(tv|movie|all)\/(day|week)$/,
-  /^\/search\/(tv|movie|multi|person)$/,
+  // `company` 28 Ağu 2026: akıştaki paylaşım seçicisi yapım firmasını da
+  // bağlayabiliyor (`YORUM_TURLERI` zaten 'company' içeriyordu — eksik olan
+  // tek şey ARAMA ucuydu). `search/multi` firma DÖNDÜRMEZ, ayrı uç şart.
+  /^\/search\/(tv|movie|multi|person|company)$/,
   /^\/discover\/(tv|movie)$/,
   /^\/(tv|movie)\/\d+$/,
   /^\/tv\/\d+\/season\/\d+$/,

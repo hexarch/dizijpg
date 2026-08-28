@@ -546,7 +546,7 @@ class _PaylasKutusu extends StatelessWidget {
           Expanded(
             child: Semantics(
               button: true,
-              label: 'İzlediğin dizi ve film hakkında yorum paylaş'.c,
+              label: 'Yorum yap'.c,
               child: InkWell(
                 borderRadius: BorderRadius.circular(22),
                 onTap: () async {
@@ -564,7 +564,7 @@ class _PaylasKutusu extends StatelessWidget {
                     border: Border.all(color: DiziRenkler.metin12),
                   ),
                   child: Text(
-                    'İzlediğin dizi ve film hakkında yorum paylaş'.c,
+                    'Yorum yap'.c,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 13, color: DiziRenkler.metin54),

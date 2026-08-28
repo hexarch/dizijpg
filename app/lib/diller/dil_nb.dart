@@ -1340,4 +1340,9 @@ const Map<String, String> cevirilerNb = {
   '{}. bölüm': 'Episode {}',
   'Dizi veya film ara...': 'Søk serier og filmer...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'Del en kommentar om det du har sett',
+  'Yapım seç (zorunlu)': 'Velg en tittel (påkrevd)',
+  'Paylaşmak için önce bir yapım seç.': 'Velg først en tittel for å dele.',
+  'Kişi': 'Person',
+  'Yapım firması': 'Produksjonsselskap',
+  'Yapım ara...': 'Søk titler...',
 };

@@ -157,7 +157,10 @@ class _PaylasYorumSheetState extends State<PaylasYorumSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final poster = posterUrl(_icerik?['poster_path'] as String?, boyut: 'w92');
+    // Görsel alanı TÜRE GÖRE değişiyor (afiş / profil / logo).
+    final poster = _icerik == null
+        ? null
+        : posterUrl(tmdbGorselYolu(_icerik!), boyut: 'w92');
     return Padding(
       // Klavye açıkken kutu klavyenin ÜSTÜNDE kalsın.
       padding: EdgeInsets.only(
@@ -218,18 +221,36 @@ class _PaylasYorumSheetState extends State<PaylasYorumSheet> {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: Text(
-                          _icerik == null
-                              ? 'Dizi veya film seç (zorunlu)'.c
-                              : _icerikAdi,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: _icerik == null
-                                ? DiziRenkler.metin54
-                                : DiziRenkler.metin,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _icerik == null
+                                  ? 'Yapım seç (zorunlu)'.c
+                                  : _icerikAdi,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: _icerik == null
+                                    ? DiziRenkler.metin54
+                                    : DiziRenkler.metin,
+                              ),
+                            ),
+                            // Tür etiketi: aynı ad hem dizi hem film olabilir
+                            // ("Superman"), kullanıcı NEYİ bağladığını görsün.
+                            if (_icerik != null)
+                              Text(
+                                tmdbTurEtiketi(
+                                  _icerik!['media_type'] as String?,
+                                ),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: DiziRenkler.metin38,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                       Icon(Icons.chevron_right, color: DiziRenkler.metin38),
@@ -363,7 +384,7 @@ class _PaylasYorumSheetState extends State<PaylasYorumSheet> {
               // Düğme neden kapalı: kullanıcı tahmin etmesin.
               if (_icerik == null)
                 Text(
-                  'Paylaşmak için önce bir dizi veya film seç.'.c,
+                  'Paylaşmak için önce bir yapım seç.'.c,
                   style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
                 ),
             ],

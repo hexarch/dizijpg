@@ -1323,4 +1323,9 @@ const Map<String, String> cevirilerFa = {
   '{}. bölüm': 'قسمت {}',
   'Dizi veya film ara...': 'جستجوی سریال و فیلم...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'درباره آنچه دیده‌ای نظر بگذار',
+  'Yapım seç (zorunlu)': 'یک اثر انتخاب کن (الزامی)',
+  'Paylaşmak için önce bir yapım seç.': 'برای اشتراک‌گذاری ابتدا یک اثر انتخاب کن.',
+  'Kişi': 'شخص',
+  'Yapım firması': 'شرکت تولید',
+  'Yapım ara...': 'جستجوی آثار...',
 };

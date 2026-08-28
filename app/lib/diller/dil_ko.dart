@@ -1277,4 +1277,9 @@ const Map<String, String> cevirilerKo = {
   '{}. bölüm': '{}화',
   'Dizi veya film ara...': '시리즈와 영화 검색...',
   'İzlediğin dizi ve film hakkında yorum paylaş': '본 작품에 대한 감상을 공유하세요',
+  'Yapım seç (zorunlu)': '작품 선택 (필수)',
+  'Paylaşmak için önce bir yapım seç.': '공유하려면 먼저 작품을 선택하세요.',
+  'Kişi': '인물',
+  'Yapım firması': '제작사',
+  'Yapım ara...': '작품 검색...',
 };

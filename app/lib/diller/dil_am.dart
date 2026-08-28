@@ -1293,4 +1293,9 @@ const Map<String, String> cevirilerAm = {
   '{}. bölüm': 'ክፍል {}',
   'Dizi veya film ara...': 'ተከታታይ እና ፊልሞችን ይፈልጉ...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'ስለተመለከቱት አስተያየት ያጋሩ',
+  'Yapım seç (zorunlu)': 'ርዕስ ይምረጡ (ግዴታ)',
+  'Paylaşmak için önce bir yapım seç.': 'ለማጋራት መጀመሪያ ርዕስ ይምረጡ።',
+  'Kişi': 'ሰው',
+  'Yapım firması': 'የፕሮዳክሽን ኩባንያ',
+  'Yapım ara...': 'ርዕሶችን ይፈልጉ...',
 };

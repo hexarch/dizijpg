@@ -1333,4 +1333,9 @@ const Map<String, String> cevirilerHi = {
   '{}. bölüm': 'एपिसोड {}',
   'Dizi veya film ara...': 'सीरीज़ और फ़िल्में खोजें...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'आपने जो देखा उस पर टिप्पणी साझा करें',
+  'Yapım seç (zorunlu)': 'टाइटल चुनें (ज़रूरी)',
+  'Paylaşmak için önce bir yapım seç.': 'साझा करने के लिए पहले टाइटल चुनें।',
+  'Kişi': 'व्यक्ति',
+  'Yapım firması': 'प्रोडक्शन कंपनी',
+  'Yapım ara...': 'टाइटल खोजें...',
 };

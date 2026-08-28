@@ -1344,4 +1344,9 @@ const Map<String, String> cevirilerSw = {
   '{}. bölüm': 'Kipindi {}',
   'Dizi veya film ara...': 'Tafuta mfululizo na filamu...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'Shiriki maoni kuhusu ulichotazama',
+  'Yapım seç (zorunlu)': 'Chagua kichwa (lazima)',
+  'Paylaşmak için önce bir yapım seç.': 'Chagua kwanza kichwa ili kushiriki.',
+  'Kişi': 'Mtu',
+  'Yapım firması': 'Kampuni ya utayarishaji',
+  'Yapım ara...': 'Tafuta vichwa...',
 };

@@ -1,5 +1,5 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-27 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-28 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
 ## 2026-08-28 — 🔨 OTURUM İŞ LİSTESİ (kullanıcı: "hepsi yapılmalı")
 
@@ -64,6 +64,56 @@ Bu oturumda istenen HER ŞEY. Sırayla yapılacak, biten işaretlenecek.
    - ⬜ Sıradaki adaylar: içerik sayfasının SSS'ini ölçülmüş talebe göre
      genişletmek (GSC sorguları + §6.2 turu), dış bağlantı 0 sorunu,
      21.394'lük keşif kuyruğu.
+8. ✅ **Search Console incelendi + iki iş yapıldı.** `gsc_izle.js` 21 Ağu'dan
+   beri sessizce ÇALIŞMIYORDU: kök neden `haritaHatasi: "The operation was
+   aborted due to timeout"` — site haritaları istek anında üretiliyor (soğuk
+   8,1 sn) ve tek zaman aşımı ikisine birden yetmiyordu. Ayrı
+   `HARITA_ZAMAN_ASIMI_MS: 90000` eklendi. Servis hesabı kuruldu
+   (`GSC_SA_YOL: /app/firebase-admin.json`).
+   - İlk kapsam ölçümü: `icerik 62/250 (%24,8) · bolum 5/250 (%2) ·
+     genel 8/25 (%32)`. TIKLAMA GETİREN aile (bölüm) en az dizinli olan.
+   - Tıklama getiren 3 bölüm site haritasında YOKTU: `seo_kazanan_bolum`
+     elle alınmış eski bir anlık görüntüydü. Artık `gsc_izle.js` her turda
+     yazıyor; tablo elle 6 → 19 satıra tazelendi.
+   - `josh dallas` 32 gösterim / 0 tıklama BİR HATA DEĞİL (konum 9,4 +
+     Knowledge Panel niyeti) — bilerek dokunulmadı.
+9. ✅🚀 **Profil kimlik satırı: bayrak ve sosyal bağlantılar adın yanında.**
+   Kullanıcı: "Profildeki ülke bayrağını kullanıcı adının yanına alır mısın",
+   ardından "profile eklenen sosyal bağlantıları da bayrağın yanından dizmeye
+   başla". `ProfilKimlikBasligi` artık `LayoutBuilder` ile ölçüyor: ada en az
+   96 dp kalmıyorsa sosyaller alt satıra iniyor (360 dp + 3 sosyalde ada
+   yalnız 59 dp kalıyordu). Kimlik satırında `SosyalSatiri.ara = 0` — dokunma
+   hedefi 44 dp'de KALIYOR, yalnız aradaki boşluk kapanıyor (12 dp kazanç).
+   - ⬜ **Kullanıcıya açık soru:** 3 sosyal varken kullanıcı adı `@melis…`
+     diye kısalıyor. Böyle kalsın mı, yoksa `ara: 6`ya dönülsün mü?
+10. ✅🚀 **Akışta paylaşım kutusu (yeni özellik).** Kullanıcı: "akışta üst
+   barın altında sol tarafta profil resmi, ortada input alanı… tıklayınca
+   alttan modal aç… dizi ve film eklemek zorunda… bölümü de seçebilir… o
+   bölümün yorumlarında ve dizinin profilinde bölüm etiketiyle paylaşılmalı".
+   - Yeni: `icerik_sec.dart` (ORTAK seçici — `sohbet.dart`taki özel kopya
+     buraya taşındı), `bolum_sec.dart` (sezon→bölüm), `paylas_yorum.dart`
+     (besteci sheet). `akis.dart`a `_PaylasKutusu` eklendi.
+   - Paylaşım `POST /yorumlar`a gidiyor: yapımın kendi yorumlarında ve bölüm
+     seçildiyse o bölümün yorumlarında görünüyor — AYRI bir gönderi türü
+     YOK, var olan yorum akışını kullanıyor.
+11. ✅🚀 **Seçici DÖRT türe açıldı + "dizi/film" yerine "yapım".** Kullanıcı:
+   "sadece dizi film değil oyuncu yönetmen yapım firması vb de seçebilir ve
+   dizi ve film kullanma yapım adını kullan ve input alanına da yorum yap
+   yazılı olsun, çok uzun oldu yazı". Sürüm **1.100.2+156**.
+   - `tv · movie · person · company` — sunucunun `YORUM_TURLERI` sabitiyle
+     AYNI. Sunucu `person`/`company`yi zaten kabul ediyordu; eksik olan tek
+     şey istemcinin seçtirmemesiydi. `TMDB_IZINLI`ye `/search/company`
+     eklendi (TMDB'de firma AYRI uçtadır, `search/multi` firma DÖNDÜRMEZ).
+   - Akış kutusu metni "Yorum yap"; modal "Yapım seç (zorunlu)".
+     5 yeni anahtar × 45 dil = 225 satır.
+   - **Emülatörde yakalanan gerçek hata:** firmalar `search/multi`
+     sonuçlarından SONRA ekleniyordu; "netflix" arayan kullanıcı Netflix'i
+     20 filmin ALTINDA göremiyordu — seçilebilir ama ULAŞILAMAZ. Tam ad
+     eşleşmesi artık tür fark etmeksizin başa alınıyor (kararlı sıralama).
+     Emülatörde doğrulandı: "netflix" → Netflix/Yapım firması en üstte;
+     "tom hanks" → Tom Hanks/Kişi en üstte.
+   - Sohbette içerik paylaşımı hâlâ yalnız dizi/film (`kisiVeFirma: false`) —
+     mesaj kartı afiş çiziyor, kişi/firma orada anlamsız.
 
 ---
 

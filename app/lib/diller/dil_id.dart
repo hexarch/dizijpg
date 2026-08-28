@@ -1341,4 +1341,9 @@ const Map<String, String> cevirilerId = {
   '{}. bölüm': 'Episode {}',
   'Dizi veya film ara...': 'Cari serial dan film...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'Bagikan komentar tentang yang kamu tonton',
+  'Yapım seç (zorunlu)': 'Pilih judul (wajib)',
+  'Paylaşmak için önce bir yapım seç.': 'Pilih dulu judul untuk dibagikan.',
+  'Kişi': 'Orang',
+  'Yapım firması': 'Rumah produksi',
+  'Yapım ara...': 'Cari judul...',
 };

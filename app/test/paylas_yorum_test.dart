@@ -36,8 +36,14 @@ const _aramaSonuclari = {
       'poster_path': '/s.jpg',
     },
     {'id': 2, 'media_type': 'tv', 'name': 'Silo', 'poster_path': '/x.jpg'},
-    // Kişi: seçicide GÖRÜNMEMELİ (yoruma bağlanamaz).
-    {'id': 3, 'media_type': 'person', 'name': 'Biri', 'poster_path': '/p.jpg'},
+    {'id': 3, 'media_type': 'person', 'name': 'Biri', 'profile_path': '/p.jpg'},
+  ],
+};
+
+/// `search/company` yanıtı — `media_type` DÖNDÜRMEZ, istemci ekler.
+const _firmaSonuclari = {
+  'results': [
+    {'id': 4, 'name': 'Bir Yapım', 'logo_path': '/l.png'},
   ],
 };
 
@@ -69,6 +75,7 @@ void _sunucu() {
       return _json({'id': 99});
     }
     if (yol.contains('/search/multi')) return _json(_aramaSonuclari);
+    if (yol.contains('/search/company')) return _json(_firmaSonuclari);
     if (RegExp(r'/tmdb/tv/\d+/season/2$').hasMatch(yol)) return _json(_sezon2);
     if (RegExp(r'/tmdb/tv/\d+$').hasMatch(yol)) return _json(_diziSezonlari);
     return _json(const <String, dynamic>{});
@@ -94,7 +101,7 @@ Future<void> _ac(WidgetTester tester) async {
 
 /// Seçiciyi açıp verilen adlı sonuca dokunur.
 Future<void> _icerikSec(WidgetTester tester, String ad) async {
-  await tester.tap(find.textContaining('Dizi veya film seç'));
+  await tester.tap(find.textContaining('Yapım seç'));
   await tester.pumpAndSettle();
   await tester.enterText(find.byType(TextField).last, 'ara');
   // Seçicideki 400 ms geciktirici.
@@ -121,7 +128,7 @@ void main() {
       reason: 'içerik seçilmeden paylaşılamaz',
     );
     // Sebebi ekranda YAZIYOR: kapalı düğme tahmin ettirmemeli.
-    expect(find.textContaining('önce bir dizi veya film seç'), findsOneWidget);
+    expect(find.textContaining('önce bir yapım seç'), findsOneWidget);
   });
 
   testWidgets('METİN ZORUNLU: içerik seçili ama metin boşsa düğme KAPALI', (
@@ -132,18 +139,70 @@ void main() {
     expect(tester.widget<FilledButton>(_paylasDugmesi).onPressed, isNull);
   });
 
-  testWidgets('KİŞİ sonuçları seçicide görünmez (yoruma bağlanamaz)', (
+  testWidgets('DÖRT TÜR de listelenir: dizi, film, kişi, firma', (
     tester,
   ) async {
+    // 28 Ağu: kullanıcı "sadece dizi film değil oyuncu yönetmen yapım firması
+    // vb de seçebilir" dedi. Sunucu (`YORUM_TURLERI`) bunları zaten kabul
+    // ediyordu; eksik olan istemcinin seçtirmemesiydi.
     await _ac(tester);
-    await tester.tap(find.textContaining('Dizi veya film seç'));
+    await tester.tap(find.textContaining('Yapım seç'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField).last, 'ara');
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pump();
     expect(find.text('Superman'), findsOneWidget);
     expect(find.text('Silo'), findsOneWidget);
+    expect(find.text('Biri'), findsOneWidget);
+    expect(find.text('Bir Yapım'), findsOneWidget);
+    // Tür etiketleri: aynı ad iki türde olabilir, kullanıcı ayırt etsin.
+    expect(find.text('Kişi'), findsOneWidget);
+    expect(find.text('Yapım firması'), findsOneWidget);
+  });
+
+  testWidgets('KİŞİ: yük tur=person taşır, bölüm seçici YOK', (tester) async {
+    await _ac(tester);
+    await _icerikSec(tester, 'Biri');
+    expect(find.textContaining('Bölüm seç'), findsNothing);
+    await tester.enterText(find.byType(TextField).first, 'harika oyuncu');
+    await tester.pump();
+    await tester.tap(_paylasDugmesi);
+    await tester.pumpAndSettle();
+    final y = _gonderilen.single;
+    expect(y['tur'], 'person');
+    expect(y['tmdb_id'], 3);
+  });
+
+  testWidgets('FİRMA: yük tur=company taşır (media_type istemcide eklenir)', (
+    tester,
+  ) async {
+    await _ac(tester);
+    await _icerikSec(tester, 'Bir Yapım');
+    await tester.enterText(find.byType(TextField).first, 'iyi işler');
+    await tester.pump();
+    await tester.tap(_paylasDugmesi);
+    await tester.pumpAndSettle();
+    final y = _gonderilen.single;
+    expect(y['tur'], 'company');
+    expect(y['tmdb_id'], 4);
+  });
+
+  testWidgets('SOHBET seçicisi kişi/firma GÖSTERMEZ (kart afiş çiziyor)', (
+    tester,
+  ) async {
+    DiziRenkler.acik = false;
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: IcerikSecSheet(kisiVeFirma: false)),
+      ),
+    );
+    await tester.pump();
+    await tester.enterText(find.byType(TextField).first, 'ara');
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump();
+    expect(find.text('Superman'), findsOneWidget);
     expect(find.text('Biri'), findsNothing);
+    expect(find.text('Bir Yapım'), findsNothing);
   });
 
   testWidgets('FİLM: yük tur/tmdb_id taşır, sezon/bolum YOK', (tester) async {
@@ -282,7 +341,7 @@ void main() {
 
   testWidgets('seçiciler ortak bileşenler (kopyalanmadı)', (tester) async {
     await _ac(tester);
-    await tester.tap(find.textContaining('Dizi veya film seç'));
+    await tester.tap(find.textContaining('Yapım seç'));
     await tester.pumpAndSettle();
     expect(find.byType(IcerikSecSheet), findsOneWidget);
     await tester.enterText(find.byType(TextField).last, 'ara');
@@ -316,7 +375,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    final kutu = find.textContaining('yorum paylaş');
+    // Kısa metin (28 Ağu, kullanıcı: "çok uzun oldu yazı").
+    final kutu = find.text('Yorum yap');
     expect(kutu, findsOneWidget);
     // Üst barın ALTINDA: AppBar'ın altında başlıyor.
     final bar = tester.getRect(find.byType(AppBar));
@@ -325,5 +385,53 @@ void main() {
     await tester.tap(kutu);
     await tester.pumpAndSettle();
     expect(find.byType(PaylasYorumSheet), findsOneWidget);
+  });
+
+  testWidgets('TAM AD eşleşmesi başa gelir (firma listenin dibinde kalmasın)', (
+    tester,
+  ) async {
+    // Emülatörde görüldü: firmalar `search/multi` sonuçlarından SONRA
+    // ekleniyor; "netflix" arayan kullanıcı firmayı 20 filmin altında
+    // göremiyordu. Ad birebir eşleşiyorsa tür ne olursa olsun başa gelir.
+    Api.istemci = MockClient((istek) async {
+      final yol = istek.url.path;
+      if (yol.contains('/search/multi')) {
+        return _json({
+          'results': [
+            {'id': 7, 'media_type': 'movie', 'title': 'Netflix Tudum'},
+            {'id': 8, 'media_type': 'movie', 'title': 'Netflix Live'},
+          ],
+        });
+      }
+      if (yol.contains('/search/company')) {
+        return _json({
+          'results': [
+            {'id': 9, 'name': 'Netflix'},
+          ],
+        });
+      }
+      return _json(const <String, dynamic>{});
+    });
+    DiziRenkler.acik = false;
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: IcerikSecSheet())),
+    );
+    await tester.pump();
+    await tester.enterText(find.byType(TextField).first, 'Netflix');
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump();
+
+    // `find.text` TextField'daki yazılan metni de yakalar — satırı ListTile
+    // içinden ara.
+    Rect satir(String ad) => tester.getRect(
+      find.ancestor(of: find.text(ad), matching: find.byType(ListTile)),
+    );
+    final firma = satir('Netflix');
+    final film = satir('Netflix Tudum');
+    expect(
+      firma.top,
+      lessThan(film.top),
+      reason: 'tam ad eşleşmesi listenin başında olmalı',
+    );
   });
 }

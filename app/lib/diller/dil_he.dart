@@ -1312,4 +1312,9 @@ const Map<String, String> cevirilerHe = {
   '{}. bölüm': 'פרק {}',
   'Dizi veya film ara...': 'חפש סדרות וסרטים...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'שתף תגובה על מה שצפית',
+  'Yapım seç (zorunlu)': 'בחר כותר (חובה)',
+  'Paylaşmak için önce bir yapım seç.': 'בחר תחילה כותר כדי לשתף.',
+  'Kişi': 'אדם',
+  'Yapım firması': 'חברת הפקה',
+  'Yapım ara...': 'חפש כותרים...',
 };

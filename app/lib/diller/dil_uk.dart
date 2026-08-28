@@ -1344,4 +1344,9 @@ const Map<String, String> cevirilerUk = {
   '{}. bölüm': 'Епізод {}',
   'Dizi veya film ara...': 'Пошук серіалів і фільмів...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'Поділіться думкою про те, що дивилися',
+  'Yapım seç (zorunlu)': 'Виберіть тайтл (обовʼязково)',
+  'Paylaşmak için önce bir yapım seç.': 'Спочатку виберіть тайтл для допису.',
+  'Kişi': 'Людина',
+  'Yapım firması': 'Кінокомпанія',
+  'Yapım ara...': 'Пошук тайтлів...',
 };

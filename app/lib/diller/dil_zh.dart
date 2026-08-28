@@ -1260,4 +1260,9 @@ const Map<String, String> cevirilerZh = {
   '{}. bölüm': '第 {} 集',
   'Dizi veya film ara...': '搜索剧集和电影...',
   'İzlediğin dizi ve film hakkında yorum paylaş': '分享你看过的剧集或电影的感想',
+  'Yapım seç (zorunlu)': '选择作品（必选）',
+  'Paylaşmak için önce bir yapım seç.': '请先选择要分享的作品。',
+  'Kişi': '人物',
+  'Yapım firması': '制作公司',
+  'Yapım ara...': '搜索作品...',
 };

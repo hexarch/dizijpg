@@ -1350,4 +1350,9 @@ const Map<String, String> cevirilerHu = {
   '{}. bölüm': '{}. rész',
   'Dizi veya film ara...': 'Sorozatok és filmek keresése...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'Oszd meg a véleményed arról, amit néztél',
+  'Yapım seç (zorunlu)': 'Válassz címet (kötelező)',
+  'Paylaşmak için önce bir yapım seç.': 'Először válassz címet a megosztáshoz.',
+  'Kişi': 'Személy',
+  'Yapım firması': 'Gyártó cég',
+  'Yapım ara...': 'Címek keresése...',
 };

@@ -1332,4 +1332,9 @@ const Map<String, String> cevirilerAz = {
   '{}. bölüm': 'Bölüm {}',
   'Dizi veya film ara...': 'Serial və film axtar...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'İzlədiyin barədə şərh paylaş',
+  'Yapım seç (zorunlu)': 'Başlıq seç (mütləq)',
+  'Paylaşmak için önce bir yapım seç.': 'Paylaşmaq üçün əvvəlcə başlıq seç.',
+  'Kişi': 'Şəxs',
+  'Yapım firması': 'İstehsal şirkəti',
+  'Yapım ara...': 'Başlıq axtar...',
 };

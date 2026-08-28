@@ -1329,4 +1329,9 @@ const Map<String, String> cevirilerBn = {
   '{}. bölüm': 'পর্ব {}',
   'Dizi veya film ara...': 'সিরিজ ও সিনেমা খুঁজুন...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'যা দেখেছেন সে সম্পর্কে মন্তব্য শেয়ার করুন',
+  'Yapım seç (zorunlu)': 'একটি শিরোনাম বাছুন (আবশ্যক)',
+  'Paylaşmak için önce bir yapım seç.': 'শেয়ার করতে আগে একটি শিরোনাম বাছুন।',
+  'Kişi': 'ব্যক্তি',
+  'Yapım firması': 'প্রোডাকশন কোম্পানি',
+  'Yapım ara...': 'শিরোনাম খুঁজুন...',
 };

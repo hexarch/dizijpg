@@ -1346,4 +1346,9 @@ const Map<String, String> cevirilerMs = {
   '{}. bölüm': 'Episod {}',
   'Dizi veya film ara...': 'Cari siri dan filem...',
   'İzlediğin dizi ve film hakkında yorum paylaş': 'Kongsi komen tentang apa yang anda tonton',
+  'Yapım seç (zorunlu)': 'Pilih tajuk (wajib)',
+  'Paylaşmak için önce bir yapım seç.': 'Pilih tajuk dahulu untuk berkongsi.',
+  'Kişi': 'Orang',
+  'Yapım firması': 'Syarikat penerbitan',
+  'Yapım ara...': 'Cari tajuk...',
 };
