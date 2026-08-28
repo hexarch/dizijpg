@@ -174,7 +174,6 @@ class KesfetEkrani extends StatefulWidget {
 
 class _KesfetEkraniState extends State<KesfetEkrani> {
   Map<String, List<dynamic>>? _bolumler;
-  int _mesajSayi = 0;
 
   // --- kişiselleştirilmiş tematik raflar (21 Ağu 2026) ---
   //
@@ -209,18 +208,20 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
       ? _kisisel.sublist(_kisiselUstBlok)
       : const [];
 
+  /// Okunmamış mesaj sayısını ORTAK KAYNAĞA yazar.
+  ///
+  /// Bu ekran artık sayıyı KENDİ ÇİZMİYOR (28 Ağu 2026: üst bardaki mesaj
+  /// düğmesi kaldırıldı), ama istek YİNE DE atılıyor: alt çubuğun mesaj
+  /// rozetini ve masaüstü gezinme adasını `SohbetOlaylari.okunmamis` besliyor
+  /// ve ikisi de kendi isteğini atmıyor. Bu çağrı silinirse Ana Sayfa'da
+  /// açılan kullanıcı, sohbete girene kadar rozeti hiç görmez.
   Future<void> _mesajSayisiYukle() async {
     // Oturumsuz ziyaretçi (SEO 1.4, 14 Ağu): rozet ucu girisZorunlu, 401
     // yememek için hiç isteme. Rozet zaten 0 kalır.
     if (!Api.girisli) return;
     try {
       final d = await Api.get('/sohbetler/okunmamis');
-      // Masaüstü gezinme adasının rozeti de bu sayıdan besleniyor: ortak
-      // kaynağa yazmazsak ada bayat kalır (kendi isteğini atmıyor).
       SohbetOlaylari.okunmamis.value = (d['okunmamis'] as int?) ?? 0;
-      if (mounted) {
-        setState(() => _mesajSayi = SohbetOlaylari.okunmamis.value);
-      }
     } catch (_) {}
   }
 
@@ -597,16 +598,10 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
         icon: const Icon(Icons.grid_view_outlined),
         onPressed: () => context.push('/gozat'),
       ),
-      // Instagram tarzı DM kısayolu
-      RozetliIkon(
-        ikon: Icons.near_me_outlined,
-        sayi: _mesajSayi,
-        etiket: 'Mesajlar'.c,
-        onTap: () async {
-          await context.push('/sohbetler');
-          _mesajSayisiYukle();
-        },
-      ),
+      // MESAJLAR DÜĞMESİ KALDIRILDI (28 Ağu 2026, kullanıcı isteği) — gerekçe
+      // ve uyarı akis.dart'taki ikizinde. Kısaca: alt çubukta zaten var,
+      // rozeti de orada; ama [_mesajSayisiYukle] KALIR çünkü o rozeti besleyen
+      // ortak kaynağa (`SohbetOlaylari.okunmamis`) yazan yer burasıdır.
       const SizedBox(width: 4),
     ];
 

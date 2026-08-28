@@ -453,18 +453,18 @@ class _AkisEkraniState extends State<AkisEkrani>
               _rozetleriYukle();
             },
           ),
-          RozetliIkon(
-            // Ana Sayfa ile AYNI ikon olmak zorunda: iki üst barda aynı yere
-            // giden düğme farklı çizilirse (zarf vs kâğıt uçak) kullanıcı
-            // ikisini ayrı özellik sanıyor. Referans Ana Sayfa'daki.
-            ikon: Icons.near_me_outlined,
-            sayi: _mesajSayi,
-            etiket: 'Mesajlar'.c,
-            onTap: () async {
-              await context.push('/sohbetler');
-              _rozetleriYukle();
-            },
-          ),
+          // MESAJLAR DÜĞMESİ KALDIRILDI (28 Ağu 2026, kullanıcı isteği:
+          // "akış ve ana sayfanın sağ yukarısında mesajlar butonu varya onu
+          // kaldır artık gerek yok aşağıda var zaten").
+          //
+          // Alt çubukta `/sohbetler` zaten bir hedef ve okunmamış rozeti de
+          // orada çiziliyor — üstteki düğme aynı yere giden ikinci bir giriş,
+          // aynı sayıyı iki yerde gösteriyordu.
+          //
+          // ⚠ [_rozetleriYukle] KALDIRILMADI ve KALDIRILAMAZ: mesaj sayısını
+          // `SohbetOlaylari.okunmamis`a yazan yer orası ve ALT ÇUBUĞUN rozeti
+          // (kabuk.dart) ile masaüstü gezinme adası o ortak kaynaktan
+          // besleniyor. Sadece düğme gitti, sayaç akmaya devam ediyor.
           const SizedBox(width: 4),
         ],
       ),

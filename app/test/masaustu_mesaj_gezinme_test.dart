@@ -105,12 +105,15 @@ void main() {
     SohbetOlaylari.okunmamis.value = 0;
   });
 
-  group('1) mesaj ikonu Ana Sayfa ve Akış\'ta AYNI', () {
-    // Eskiden Akış zarf (Icons.mail_outline), Ana Sayfa kâğıt uçak
-    // (Icons.near_me_outlined) çiziyordu; aynı yere giden iki düğme farklı
-    // görünüyordu. Kaynak dosyaları karşılaştırmak yerine widget ağacını
-    // ölçüyoruz: ikon adı değişirse ekranda da değişmiş olur.
-    testWidgets('iki üst bar da kâğıt uçak ikonunu kullanır', (tester) async {
+  // 28 Ağu 2026 — KURAL TERSİNE DÖNDÜ. Kullanıcı: "akış ve ana sayfanın sağ
+  // yukarısında mesajlar butonu varya onu kaldır artık gerek yok aşağıda var
+  // zaten." Eski test "iki üst bar da AYNI mesaj ikonunu kullansın" diyordu
+  // (17 Ağu, ikonlar ayrışmıştı); artık ikisinde de HİÇ olmamalı. Düğme geri
+  // gelirse bu grup kırılır.
+  group('1) üst barlarda mesaj düğmesi YOK', () {
+    testWidgets('Ana Sayfa ve Akış üst barında mesaj ikonu çizilmez', (
+      tester,
+    ) async {
       _ekran(tester, _darG, _darY);
       for (final ekran in <Widget>[const KesfetEkrani(), const AkisEkrani()]) {
         await tester.pumpWidget(
@@ -119,13 +122,65 @@ void main() {
         await tester.pump();
         expect(
           find.byIcon(Icons.near_me_outlined),
-          findsOneWidget,
-          reason: '${ekran.runtimeType} mesaj ikonu değişmiş',
-        );
-        expect(
-          find.byIcon(Icons.mail_outline),
           findsNothing,
-          reason: '${ekran.runtimeType} hâlâ zarf ikonu çiziyor',
+          reason: '${ekran.runtimeType} üst barında mesaj düğmesi geri gelmiş',
+        );
+        // Zarf da gelmemeli: 17 Ağu'daki ikon ayrışması geri dönmesin.
+        expect(find.byIcon(Icons.mail_outline), findsNothing);
+      }
+    });
+
+    testWidgets('üst barın ÖTEKİ düğmeleri yerinde kalır', (tester) async {
+      // Toplu silme kazası olmasın: Akış'ta bildirim zili, Ana Sayfa'da Gözat
+      // düğmesi duruyor.
+      _ekran(tester, _darG, _darY);
+      await tester.pumpWidget(
+        MaterialApp(theme: diziTema(acik: false), home: const AkisEkrani()),
+      );
+      await tester.pump();
+      expect(find.byIcon(Icons.notifications_none), findsOneWidget);
+
+      await tester.pumpWidget(
+        MaterialApp(theme: diziTema(acik: false), home: const KesfetEkrani()),
+      );
+      await tester.pump();
+      expect(find.byIcon(Icons.grid_view_outlined), findsOneWidget);
+    });
+
+    testWidgets('ROZET KAYNAĞI KESİLMEDİ: sayaç yine ortak kaynağa yazılır', (
+      tester,
+    ) async {
+      // ASIL RİSK BU. Düğmeyle birlikte sayıyı çeken isteği de silmek kolaydı;
+      // o zaman ALT ÇUBUĞUN rozeti (kabuk.dart) ve masaüstü gezinme adası
+      // beslemesiz kalırdı — ikisi de kendi isteğini atmıyor,
+      // `SohbetOlaylari.okunmamis`tan okuyor.
+      Api.istemci = MockClient((istek) async {
+        if (istek.url.path.contains('/sohbetler/okunmamis')) {
+          return _json({'okunmamis': 4});
+        }
+        if (istek.url.path.contains('/bildirimler')) {
+          return _json({'okunmamis': 0});
+        }
+        return _json(const <String, dynamic>{});
+      });
+      // Yükleyici `Api.girisli` değilse hiç istek atmıyor (SEO 1.4: oturumsuz
+      // ziyaretçi rozet ucundan 401 yememeli). Oturumu KUR, yoksa test kendi
+      // kurulum eksikliğini kod hatası sanır.
+      await Api.tokenYukle();
+      _ekran(tester, _darG, _darY);
+      for (final ekran in <Widget>[const KesfetEkrani(), const AkisEkrani()]) {
+        SohbetOlaylari.okunmamis.value = 0;
+        await tester.pumpWidget(
+          MaterialApp(theme: diziTema(acik: false), home: ekran),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(
+          SohbetOlaylari.okunmamis.value,
+          4,
+          reason:
+              '${ekran.runtimeType} okunmamış sayısını ortak kaynağa'
+              ' yazmıyor — alt çubuğun rozeti bayat kalır',
         );
       }
     });
