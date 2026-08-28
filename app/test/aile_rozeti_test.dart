@@ -189,18 +189,19 @@ void main() {
     await _baskasi(tester, ulke: 'Türkiye', testci: true);
     expect(find.byType(AileRozeti), findsOneWidget);
     expect(_tik, findsOneWidget);
-    // Ülke satırı yerinde duruyor ama rozet ARTIK ORADA DEĞİL.
+    // Bayrak kimlik satırında; ülke ADI artık METİN olarak çizilmiyor
+    // (28 Ağu 2026: ayrı ülke satırı kalktı, ad ipucuna taşındı).
     expect(find.byType(UlkeBayragi), findsOneWidget);
-    expect(find.text('Türkiye'), findsOneWidget);
+    expect(find.text('Türkiye'), findsNothing);
   });
 
   testWidgets('BAŞKASININ PROFİLİ: testci false → rozet YOK', (tester) async {
     await _baskasi(tester, ulke: 'Türkiye', testci: false);
     expect(find.byType(AileRozeti), findsNothing);
     expect(_tik, findsNothing);
-    // Ülke satırı bozulmadı.
+    // Bayrak rozetten BAĞIMSIZ: rozet yokken de çizilir.
     expect(find.byType(UlkeBayragi), findsOneWidget);
-    expect(find.text('Türkiye'), findsOneWidget);
+    expect(find.text('Türkiye'), findsNothing);
   });
 
   testWidgets('ESKİ SUNUCU: testci alanı hiç yoksa rozet YOK (çökme de yok)', (
@@ -241,9 +242,15 @@ void main() {
   });
 
   // ---------------------------------------------------------------------
-  // KONUM: tik kullanıcı adının yanında, ülke satırında DEĞİL
+  // KONUM: tik VE BAYRAK kullanıcı adının yanında, AYNI SATIRDA
+  //
+  // 28 Ağu 2026 — kullanıcı isteği: "profildeki ülke bayrağını kullanıcı
+  // adının yanına alır mısın". Biyografinin altındaki ayrı ülke satırı
+  // (`UlkeSatiri`) KALDIRILDI; bayrak kimlik satırına taşındı. Bu grup eski
+  // hâlde "tik ülke satırının ÜSTÜNDE" diye kilitliyordu — kural tersine
+  // döndü, artık ikisi AYNI satırda.
   // ---------------------------------------------------------------------
-  testWidgets('tik kullanıcı adının SAĞINDA ve onunla aynı hizada', (
+  testWidgets('tik VE bayrak kullanıcı adının sağında, aynı hizada', (
     tester,
   ) async {
     await _baskasi(tester, ulke: 'Türkiye', testci: true);
@@ -261,16 +268,37 @@ void main() {
     expect(tik.left, greaterThanOrEqualTo(ad.right - 0.01));
     // Aynı satırda: dikey merkezler yakın.
     expect((tik.center.dy - ad.center.dy).abs(), lessThan(4));
-    // Ve ülke satırının ÜSTÜNDE (artık oraya ait değil).
-    final ulke = tester.getRect(find.byType(UlkeSatiri));
-    expect(tik.center.dy, lessThan(ulke.top));
+
+    // BAYRAK ARTIK AYNI SATIRDA ve tikin SAĞINDA (rozet adın hemen yanında
+    // kalır; bayrak ondan sonra gelir).
+    final bayrak = tester.getRect(find.byType(UlkeBayragi));
+    expect(bayrak.left, greaterThanOrEqualTo(tik.right - 0.01));
+    expect((bayrak.center.dy - ad.center.dy).abs(), lessThan(6));
+    // Ayrı ülke satırı ARTIK YOK — bayrak iki kez çizilmemeli.
+    expect(find.byType(UlkeSatiri), findsNothing);
+    expect(find.byType(UlkeBayragi), findsOneWidget);
   });
 
-  testWidgets('ÜLKESİ BOŞ testçi: tik yine görünür, ülke satırı çizilmez', (
+  testWidgets('BAYRAK ülke adını taşır (ayrı satır kalkınca kaybolmasın)', (
     tester,
   ) async {
-    // Canlıda işaretlenen 8 hesabın 3'ünün ülkesi boş. Rozet ülke satırına
-    // bağlı OLSAYDI bu kişiler onu hiç göremezdi.
+    // Ülke ADI eskiden bayrağın yanında yazıyordu. Satır kalkınca bayrak
+    // sessiz bir resme dönüşmemeli: ipucu + ekran okuyucu etiketi taşır.
+    await _baskasi(tester, ulke: 'Türkiye', testci: false);
+    final ipucu = tester.widget<Tooltip>(
+      find.descendant(
+        of: find.byType(UlkeBayragi),
+        matching: find.byType(Tooltip),
+      ),
+    );
+    expect(ipucu.message, 'Türkiye');
+  });
+
+  testWidgets('ÜLKESİ BOŞ testçi: tik yine görünür, bayrak çizilmez', (
+    tester,
+  ) async {
+    // Canlıda işaretlenen 8 hesabın 3'ünün ülkesi boş. Rozet ülkeye bağlı
+    // OLSAYDI bu kişiler onu hiç göremezdi.
     await _baskasi(tester, ulke: null, testci: true);
     expect(_tik, findsOneWidget);
     expect(find.byType(UlkeSatiri), findsNothing);
@@ -282,15 +310,13 @@ void main() {
   ) async {
     await _kendim(tester, ulke: '', testci: true);
     expect(_tik, findsOneWidget);
-    expect(find.byType(UlkeSatiri), findsNothing);
+    expect(find.byType(UlkeBayragi), findsNothing);
   });
 
-  testWidgets('ülkesi boş + testçi DEĞİL: ne tik ne ülke satırı', (
-    tester,
-  ) async {
+  testWidgets('ülkesi boş + testçi DEĞİL: ne tik ne bayrak', (tester) async {
     await _baskasi(tester, ulke: null, testci: false);
     expect(find.byType(AileRozeti), findsNothing);
-    expect(find.byType(UlkeSatiri), findsNothing);
+    expect(find.byType(UlkeBayragi), findsNothing);
   });
 
   // ---------------------------------------------------------------------

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../api.dart';
-import '../bayrak.dart';
 import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
 import '../seviye.dart';
@@ -225,6 +224,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                             ProfilKimlikBasligi(
                               ad: p['ad'],
                               kullaniciAdi: '${p['kullanici_adi']}',
+                              ulke: p['ulke'] as String?,
                               testci: p['testci'] == true,
                               benMi: benMi,
                               genis: masaustuMu(context),
@@ -249,13 +249,9 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                                   ilerlemeGoster: p['ben_mi'] == true,
                                 ),
                               ),
-                            // Ülke satırı. Rozet buradan ÇIKTI (artık adın
-                            // yanında) — ülke tek başına kaldı.
-                            if ((p['ulke'] as String?)?.isNotEmpty == true)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 2),
-                                child: UlkeSatiri(ulke: p['ulke'] as String),
-                              ),
+                            // ÜLKE SATIRI KALDIRILDI (28 Ağu 2026): bayrak
+                            // artık kullanıcı adının yanında — iki ekran da
+                            // AYNI bileşeni çiziyor, ayrışma olmasın.
                             const SizedBox(height: 6),
                             // Takipçi / takip / beğeni / görüntülenme —
                             // KENDİ PROFİLİMDEKİ satır içi biçim (kullanıcı

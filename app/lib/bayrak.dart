@@ -335,7 +335,12 @@ String ulkeAdi(String? ham) {
 /// alır. Bayrak bulunamazsa satır BOZULMAZ: yerine dünya ikonu çizilir, ülke
 /// metni yanında olduğu gibi kalır.
 class UlkeBayragi extends StatelessWidget {
-  const UlkeBayragi({super.key, required this.ulke, this.yukseklik = 12});
+  const UlkeBayragi({
+    super.key,
+    required this.ulke,
+    this.yukseklik = 12,
+    this.adYaninda = false,
+  });
 
   /// Profildeki ham `ulke` değeri.
   final String? ulke;
@@ -344,10 +349,32 @@ class UlkeBayragi extends StatelessWidget {
   /// (Nepal ve İsviçre dikdörtgen değil — esnetme yok).
   final double yukseklik;
 
+  /// Ülke ADI bayrağın hemen yanında yazıyor mu? ([UlkeSatiri] öyle.)
+  ///
+  /// NEDEN BU AYRIM (28 Ağu 2026): bayrak kullanıcı adının yanına taşınınca
+  /// ülke adı artık YANINDA YAZMIYOR. Eski kod `excludeFromSemantics: true`
+  /// diyordu ve gerekçesi "adı zaten yanında" idi; o gerekçe kalkınca bayrak
+  /// ekran okuyucu için SESSİZ bir resme dönüşürdü — ülke bilgisi görme
+  /// engelli kullanıcı için tamamen kaybolurdu.
+  ///
+  /// `false` iken: `Tooltip` (uzun basma/fare üstü ülke adını yazar) +
+  /// `Semantics` etiketi. `true` iken eski davranış (çift okuma olmasın).
+  final bool adYaninda;
+
   @override
   Widget build(BuildContext context) {
     final kod = ulkeKodu(ulke);
-    if (kod == null) return _yedek();
+    final gorsel = kod == null ? _yedek() : _bayrak(kod);
+    if (adYaninda) return gorsel;
+    final ad = ulkeAdi(ulke);
+    if (ad.isEmpty) return gorsel;
+    return Tooltip(
+      message: ad,
+      child: Semantics(label: ad, image: true, child: gorsel),
+    );
+  }
+
+  Widget _bayrak(String kod) {
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(2),
@@ -361,7 +388,8 @@ class UlkeBayragi extends StatelessWidget {
           height: yukseklik,
           fit: BoxFit.contain,
           filterQuality: FilterQuality.medium,
-          // Ülke adı hemen yanında yazıyor; ekran okuyucu iki kez okumasın.
+          // Etiket DIŞARIDAN veriliyor (bkz. [adYaninda]); resim kendi
+          // düğümünü açarsa ekran okuyucu aynı şeyi iki kez söyler.
           excludeFromSemantics: true,
           errorBuilder: (_, __, ___) => _yedek(),
         ),
@@ -390,7 +418,7 @@ class UlkeSatiri extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        UlkeBayragi(ulke: ulke),
+        UlkeBayragi(ulke: ulke, adYaninda: true),
         const SizedBox(width: 5),
         Flexible(
           child: Text(

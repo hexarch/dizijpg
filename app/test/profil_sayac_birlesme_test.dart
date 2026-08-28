@@ -26,6 +26,7 @@ import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/kullanici_profil.dart';
+import 'package:dizijpg/bayrak.dart';
 import 'package:dizijpg/ekranlar/profil.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
@@ -398,18 +399,21 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('ülke satırı kimlik bloğunda, sayaçların ÜSTÜNDE', (
-      tester,
-    ) async {
+    testWidgets('bayrak kimlik satırında, sayaçların ÜSTÜNDE', (tester) async {
+      // 28 Ağu 2026: ayrı ülke satırı kalktı, bayrak kullanıcı adının yanına
+      // taşındı. Sıra kuralı DEĞİŞMEDİ, ölçülen öğe değişti:
+      // ad+bayrak → takipçi/takip.
       _acikSunucu(_acikProfil());
       await _kur(tester, const KullaniciProfilEkrani(kullaniciAdi: 'baskasi'));
-      final ulke = tester.getRect(find.text('Türkiye'));
+      final bayrak = tester.getRect(find.byType(UlkeBayragi));
       final sayac = tester.getRect(find.byType(ProfilTakipSatiri));
       expect(
         sayac.top,
-        greaterThanOrEqualTo(ulke.top),
-        reason: 'kendi profilimdeki sıra: ad → ülke → takipçi/takip',
+        greaterThanOrEqualTo(bayrak.top),
+        reason: 'sıra: ad+bayrak → takipçi/takip',
       );
+      // Ülke ADI artık metin olarak çizilmiyor (ipucuna taşındı).
+      expect(find.text('Türkiye'), findsNothing);
     });
 
     testWidgets('takipçi/takip listeye GÖTÜRÜR (gizlilik kapalıyken)', (

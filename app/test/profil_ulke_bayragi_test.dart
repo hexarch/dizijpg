@@ -226,11 +226,25 @@ void main() {
     },
   );
 
+  /// Bayrağın taşıdığı ülke adı. 28 Ağu 2026'dan beri ülke ADI profilde
+  /// METİN olarak çizilmiyor — bayrak kullanıcı adının yanına taşındı ve ad
+  /// ipucuna (tooltip) geçti. Testler bu yüzden metin değil İPUCU okuyor;
+  /// yoksa "ad kayboldu" gerilemesi sessizce geçerdi.
+  String _ipucu(WidgetTester tester) => tester
+      .widget<Tooltip>(
+        find.descendant(
+          of: find.byType(UlkeBayragi),
+          matching: find.byType(Tooltip),
+        ),
+      )
+      .message!;
+
   testWidgets('BAŞKASININ PROFİLİ: ülke doluysa bayrak var, konum ikonu YOK', (
     tester,
   ) async {
     await _baskasi(tester, 'Türkiye');
-    expect(find.text('Türkiye'), findsOneWidget);
+    expect(_ipucu(tester), 'Türkiye');
+    expect(find.text('Türkiye'), findsNothing);
     expect(find.byType(UlkeBayragi), findsOneWidget);
     expect(_bayrakGorseli('tr'), findsOneWidget);
     expect(find.byIcon(Icons.location_on), findsNothing);
@@ -240,7 +254,8 @@ void main() {
     tester,
   ) async {
     await _kendim(tester, 'Almanya');
-    expect(find.text('Almanya'), findsOneWidget);
+    expect(_ipucu(tester), 'Almanya');
+    expect(find.text('Almanya'), findsNothing);
     expect(find.byType(UlkeBayragi), findsOneWidget);
     expect(_bayrakGorseli('de'), findsOneWidget);
     expect(find.byIcon(Icons.location_on), findsNothing);
@@ -263,7 +278,8 @@ void main() {
     tester,
   ) async {
     await _baskasi(tester, 'Vakanda');
-    expect(find.text('Vakanda'), findsOneWidget);
+    // Bilinmeyen ülke: ad KAYBOLMAZ, ipucunda aynen durur.
+    expect(_ipucu(tester), 'Vakanda');
     expect(find.byType(UlkeBayragi), findsOneWidget);
     // Bayrak varlığı yok; yedek dünya ikonu var; konum iğnesi yine yok.
     expect(_bayrakGorseli('vakanda'), findsNothing);
@@ -278,11 +294,13 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('360 dp: en uzun ülke adıyla bile ülke satırı taşmıyor', (
+  testWidgets('360 dp: uzun ülke adında bile KİMLİK SATIRI taşmıyor', (
     tester,
   ) async {
-    // Listedeki en uzun ad. Deneme yazı tipinde her harf 1em kare olduğu için
-    // bu, gerçek yazı tipinden çok daha zorlu bir taşma senaryosu.
+    // 28 Ağu 2026: ülke satırı kalktı, bayrak KİMLİK SATIRINA taşındı. Taşma
+    // riski de oraya taşındı — artık aynı satırda kullanıcı adı + rozet +
+    // bayrak var. Eski test ülke metninin kırpılmasını ölçüyordu; ölçülecek
+    // metin kalmadı, ama ASIL SORU aynı: satır 360 dp'de taşıyor mu?
     await _baskasi(
       tester,
       'Amerika Birleşik Devletleri',
@@ -290,31 +308,39 @@ void main() {
     );
     expect(find.byType(UlkeBayragi), findsOneWidget);
     expect(_bayrakGorseli('us'), findsOneWidget);
+    // Ad ipucuna geçti, kaybolmadı.
+    expect(_ipucu(tester), 'Amerika Birleşik Devletleri');
 
-    // Bayrak metinle aynı hizada, okunur boyutta ve ekranın içinde.
+    // Bayrak okunur boyutta ve ekranın İÇİNDE.
     final bayrak = tester.getRect(find.byType(UlkeBayragi));
     expect(bayrak.height, greaterThan(8));
     expect(bayrak.height, lessThan(20));
     expect(bayrak.left, greaterThanOrEqualTo(0));
+    expect(bayrak.right, lessThanOrEqualTo(_darEkran + 0.01));
 
-    // ASIL ÖLÇÜM: satırın kendisi taşmıyor mu? Bayrak ve ülke metni, satırın
-    // (Row) sınırları içinde kalmalı. Flexible+ellipsis kaldırılırsa metin
-    // sağa taşar ve bu beklenti kırılır.
+    // ASIL ÖLÇÜM: bayrak kimlik satırının (Row) İÇİNDE kalıyor mu?
+    // Kullanıcı adındaki `Flexible` kaldırılırsa uzun ad bayrağı ekran
+    // dışına iter ve bu beklenti kırılır.
     final satir = find
         .ancestor(of: find.byType(UlkeBayragi), matching: find.byType(Row))
         .first;
     final satirKutu = tester.getRect(satir);
-    final metinKutu = tester.getRect(find.text('Amerika Birleşik Devletleri'));
     expect(bayrak.left, greaterThanOrEqualTo(satirKutu.left));
-    expect(metinKutu.right, lessThanOrEqualTo(satirKutu.right + 0.01));
-    expect(metinKutu.right, lessThanOrEqualTo(_darEkran));
-    // Metin gerçekten kırpıldı ama kayboolmadı: görünür genişliği var.
-    expect(metinKutu.width, greaterThan(0));
+    expect(bayrak.right, lessThanOrEqualTo(satirKutu.right + 0.01));
+
+    // Kullanıcı adı kırpıldı ama KAYBOLMADI.
+    final ad = tester.getRect(
+      find.byWidgetPredicate(
+        (w) =>
+            w is Text && w.data == '@thelostvibe0' && w.style?.fontSize != null,
+        description: 'profil başlığındaki kullanıcı adı',
+      ),
+    );
+    expect(ad.width, greaterThan(0));
+    expect(ad.right, lessThanOrEqualTo(bayrak.left + 0.01));
 
     // Bu ekranda 360 dp'de KALAN tek taşma, sekme etiketlerinin deneme yazı
-    // tipiyle taşmasıdır (ülke satırı olmadan da oluşur; gerçek yazı tipinde
-    // yok). Ülke satırı kaynaklı bir taşma olmadığını yukarıdaki ölçümler
-    // kanıtlıyor. İstisnayı yutuyoruz ki test o bilinen gürültüye takılmasın.
+    // tipiyle taşmasıdır (bayraktan bağımsız; gerçek yazı tipinde yok).
     final istisna = tester.takeException();
     if (istisna != null) {
       expect(

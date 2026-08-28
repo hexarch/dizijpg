@@ -896,6 +896,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                           ProfilKimlikBasligi(
                             ad: _profil?['ad'] as Object?,
                             kullaniciAdi: kullaniciAdi,
+                            ulke: _profil?['ulke'] as String?,
                             testci: _profil?['testci'] == true,
                             benMi: true,
                             genis: genis,
@@ -924,15 +925,10 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                                 ),
                               ),
                             ),
-                          // Ülke satırı. Rozet buradan ÇIKTI (artık kullanıcı
-                          // adının yanında) — ülke tek başına kaldı.
-                          if ((_profil?['ulke'] as String?)?.isNotEmpty == true)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 3),
-                              child: UlkeSatiri(
-                                ulke: _profil!['ulke'] as String,
-                              ),
-                            ),
+                          // ÜLKE SATIRI KALDIRILDI (28 Ağu 2026, kullanıcı
+                          // isteği): bayrak artık kullanıcı adının yanında
+                          // ([ProfilKimlikBasligi]). Burada bırakmak bayrağı
+                          // aynı ekranda İKİ KEZ çizerdi.
                           const SizedBox(height: 6),
                           // Takipçi / takip / beğeni / görüntülenme.
                           //
@@ -1420,6 +1416,14 @@ class ProfilKimlikBasligi extends StatelessWidget {
   final String kullaniciAdi;
   final bool testci;
 
+  /// Ham `ulke` değeri. Bayrak KULLANICI ADININ YANINDA çizilir
+  /// (28 Ağu 2026, kullanıcı isteği: "profildeki ülke bayrağını kullanıcı
+  /// adının yanına alır mısın"). Eskiden biyografinin altında ayrı bir
+  /// satırdı (`UlkeSatiri`); o satır KALDIRILDI, bayrak buraya taşındı.
+  /// Ülke ADI kaybolmuyor: bayrak yalnız başına dururken ipucu (tooltip) ve
+  /// ekran okuyucu etiketi taşıyor (bkz. `UlkeBayragi.adYaninda`).
+  final String? ulke;
+
   /// Rozet modalinin ikinci tekil şahıs varyantı için (sunucunun `ben_mi`si).
   final bool benMi;
 
@@ -1433,6 +1437,7 @@ class ProfilKimlikBasligi extends StatelessWidget {
     super.key,
     required this.ad,
     required this.kullaniciAdi,
+    this.ulke,
     this.testci = false,
     this.benMi = false,
     this.genis = false,
@@ -1476,6 +1481,16 @@ class ProfilKimlikBasligi extends StatelessWidget {
               ),
             ),
             if (testci) AileRozeti(benMi: benMi, olcu: genis ? 22 : 19),
+            // BAYRAK EN SONDA: rozet adın hemen yanında kalmalı (doğrulama
+            // işareti kimliğe ait), bayrak ondan sonra gelir.
+            //
+            // `Flexible` YOK ve bilinçli: bayrak sabit ve küçük (14/12 px),
+            // kırpılırsa tanınmaz olur. Uzun adı kısaltan zaten baştaki
+            // `Flexible` — satır bu yüzden taşmaz.
+            if ((ulke ?? '').trim().isNotEmpty) ...[
+              const SizedBox(width: 6),
+              UlkeBayragi(ulke: ulke, yukseklik: genis ? 14 : 12),
+            ],
           ],
         ),
         // İKİNCİL SATIR YALNIZ AD VARKEN. Ad yoksa bu dal hiç çizilmez —

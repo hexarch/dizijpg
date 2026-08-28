@@ -703,6 +703,44 @@ void main() {
       expect(find.byType(UlkeBayragi), findsOneWidget);
     });
 
+    // 28 Ağu 2026 — YENİ YÜZEY: bayrak kullanıcı adının yanına taşındı ve
+    // ülke ADI artık orada METİN olarak yazmıyor, İPUCUNDA (tooltip) duruyor.
+    // Çeviri güvencesi o yüzeye de taşınmalı: aşağıdaki iki test `UlkeSatiri`
+    // içindir, bu test kullanıcının profilde GERÇEKTEN okuduğu yerdir.
+    testWidgets('İspanyolca arayüzde BAYRAK İPUCU "España" yazar', (t) async {
+      await Ceviri.sec('es');
+      await t.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(body: UlkeBayragi(ulke: 'İspanya')),
+        ),
+      );
+      await t.pump();
+      final ipucu = t.widget<Tooltip>(
+        find.descendant(
+          of: find.byType(UlkeBayragi),
+          matching: find.byType(Tooltip),
+        ),
+      );
+      expect(ipucu.message, 'España');
+    });
+
+    testWidgets('Türkçe arayüzde bayrak ipucu Türkçe kalır', (t) async {
+      await Ceviri.sec('tr');
+      await t.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(body: UlkeBayragi(ulke: 'İspanya')),
+        ),
+      );
+      await t.pump();
+      final ipucu = t.widget<Tooltip>(
+        find.descendant(
+          of: find.byType(UlkeBayragi),
+          matching: find.byType(Tooltip),
+        ),
+      );
+      expect(ipucu.message, 'İspanya');
+    });
+
     testWidgets('Türkçe arayüzde ülke satırı Türkçe kalır', (t) async {
       await Ceviri.sec('tr');
       await t.pumpWidget(

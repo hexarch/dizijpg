@@ -5,7 +5,6 @@ import 'package:dizijpg/bayrak.dart';
 import 'package:dizijpg/ekranlar/profil.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -21,9 +20,6 @@ http.Response _json(Object govde) => http.Response(
   200,
   headers: {'content-type': 'application/json; charset=utf-8'},
 );
-
-Color _yaziRengi(WidgetTester tester, Finder finder) =>
-    tester.renderObject<RenderParagraph>(finder).text.style!.color!;
 
 void main() {
   setUp(() async {
@@ -119,7 +115,12 @@ void main() {
       tester.widget<Text>(find.text('dizileri izlerim')).style?.color,
       DiziRenkler.metin,
     );
-    expect(_yaziRengi(tester, find.text('Türkiye')), DiziRenkler.metin);
+    // 28 Ağu 2026: profilde ülke ADI artık METİN olarak çizilmiyor — bayrak
+    // kullanıcı adının yanına taşındı, ad ipucuna geçti. Rengi ölçülecek bir
+    // ülke metni kalmadı; bayrağın çizildiğini doğrulamak yeter (metin rengi
+    // aşağıdaki `UlkeSatiri` testinde kilitli kalmaya devam ediyor).
+    expect(find.byType(UlkeBayragi), findsOneWidget);
+    expect(find.text('Türkiye'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
