@@ -114,6 +114,19 @@ Bu oturumda istenen HER ŞEY. Sırayla yapılacak, biten işaretlenecek.
      "tom hanks" → Tom Hanks/Kişi en üstte.
    - Sohbette içerik paylaşımı hâlâ yalnız dizi/film (`kisiVeFirma: false`) —
      mesaj kartı afiş çiziyor, kişi/firma orada anlamsız.
+12. ✅🚀 **1.100.2+156 Play'e GÖNDERİLDİ (28 Ağu).** Kullanıcı: "güncel aab
+   play store gönderelim". 150 (1.99.0) o gün ONAYLANIP YAYINLANMIŞTI
+   (177 ülke, 43 yükleme) — incelemede bekleyen bir sürüm yoktu, yeni sürüm
+   önü açıktı.
+   - AAB `magaza/cikti/dizijpg-1.100.2-156.aab` (107,7 MB), gerçek yayın
+     anahtarıyla imzalı (`CN=dizi.jpg`), `jarsigner -verify` → "jar verified".
+   - Üretim sürümü "156 (1.100.2)", hedef SDK 36, %100 sunum, tüm hedeflenen
+     ülkeler (150 ile aynı). Sürüm notları **11/11 dil**
+     (en-US, ar, de-DE, el-GR, es-ES, fr-FR, id, it-IT, pt-BR, ru-RU, tr-TR).
+   - Play "İncelenmekte olan değişiklikler" diyor; önce ~14 dakikalık hızlı
+     kontroller, sonra inceleme (genelde 7 gün).
+   - AAB'yi tarayıcı köprüsü bırakamıyor (10 MB sınırı, paket 107 MB) —
+     dosyayı kullanıcı sürükledi, taslak hazırlığını + gönderimi ben yaptım.
 
 ---
 
