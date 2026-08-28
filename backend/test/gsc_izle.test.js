@@ -1194,3 +1194,16 @@ test('main: kazanan yazımı raporu BLOKLAMAZ (DB düşse bile koşu biter)', ()
     'kazanan yazımı hatası koşuyu öldürmemeli');
   assert.match(blok, /havuz\.end\(\)/, 'havuz kapatılmalı');
 });
+
+test('harita indirmesi API\'den AYRI ve GENİŞ zaman aşımı kullanır', () => {
+  // 28 Ağu 2026, ilk gerçek koşu: haritalar istek anında ÜRETİLİYOR ve soğuk
+  // önbellekte 20 sn'yi aşabiliyor. Aşınca `urller` boş kalır, paneller
+  // kurulamaz ve indeks kapsamı kanalı SESSİZCE ölür (özet satırında 0/0).
+  assert.ok(AYAR.HARITA_ZAMAN_ASIMI_MS > AYAR.ISTEK_ZAMAN_ASIMI_MS,
+    'harita sınırı API sınırından geniş olmalı');
+  const bas = KAYNAK.indexOf('export async function haritaUrlleri');
+  const govde = KAYNAK.slice(bas, bas + 700);
+  assert.match(govde, /AbortSignal\.timeout\(ayar\.HARITA_ZAMAN_ASIMI_MS\)/);
+  assert.ok(!/ISTEK_ZAMAN_ASIMI_MS/.test(govde),
+    'harita indirmesi API sınırını KULLANMAMALI');
+});

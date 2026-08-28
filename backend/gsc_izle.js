@@ -208,6 +208,22 @@ export const AYAR = {
   ISTEK_ZAMAN_ASIMI_MS: 20000,
   DENEME: 3,
 
+  /// Site haritası indirmeleri için AYRI ve GENİŞ sınır.
+  ///
+  /// NEDEN AYRI (28 Ağu 2026, ilk gerçek koşuda ölçüldü): haritalar statik
+  /// dosya DEĞİL, istek anında ÜRETİLİYOR. Sıcak önbellekte hepsi 1 sn'nin
+  /// altında (ölçüldü: 0,7-1,1 sn), ama SOĞUKKEN üretim çok daha uzun sürüyor
+  /// (`sitemap-bolum-1.xml` soğuk 8,1 sn; `sitemap-kisi-1.xml` 10.494 URL).
+  /// İlk koşu soğuk önbelleğe denk geldi ve 20 sn'yi aştı:
+  ///   haritaHatasi: "The operation was aborted due to timeout"
+  /// Sonuç sessiz ama ağırdı — `urller` boş kaldı, PANELLER KURULAMADI,
+  /// `denetim=0` oldu. Yani izlemenin en pahalı kanalı (indeks kapsamı)
+  /// hiç çalışmadı ve özet satırında yalnız "0/0" olarak göründü.
+  ///
+  /// API çağrılarının sınırı BİLEREK 20 sn'de bırakıldı: onlar Google'a
+  /// gidiyor ve orada 20 sn'yi aşan yanıt gerçek bir arıza demektir.
+  HARITA_ZAMAN_ASIMI_MS: 90000,
+
   // -------------------------------------------------------------------
   // ARAMA ANALİTİĞİ PENCERESİ
   // -------------------------------------------------------------------
@@ -736,7 +752,9 @@ export function locCoz(xml) {
 /** Site haritası dizinini ve alt haritaları indirir; tüm URL'leri döner. */
 export async function haritaUrlleri(kok, getirici = fetch, ayar = AYAR) {
   const indir = async (u) => {
-    const c = await getirici(u, { signal: AbortSignal.timeout(ayar.ISTEK_ZAMAN_ASIMI_MS) });
+    const c = await getirici(u, {
+      signal: AbortSignal.timeout(ayar.HARITA_ZAMAN_ASIMI_MS),
+    });
     if (!c.ok) throw new Error(`${u} → HTTP ${c.status}`);
     return c.text();
   };

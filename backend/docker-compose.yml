@@ -90,6 +90,20 @@ services:
       # kimse fark etmeden geri alınmış olurdu.
       # GERİ ALMA: .env'de DB_APP_KULLANICI=dizijpg + DB_APP_SIFRE=<DB_SIFRE>.
       DATABASE_URL: postgres://${DB_APP_KULLANICI:?.env icinde DB_APP_KULLANICI tanimli olmali}:${DB_APP_SIFRE:?.env icinde DB_APP_SIFRE tanimli olmali}@db:5432/dizijpg
+      # Search Console izleme kimliği (28 Ağu 2026).
+      #
+      # AYRI ANAHTAR ÜRETİLMEDİ — BİLİNÇLİ KARAR. `gsc_izle.js` başlığı ayrı
+      # bir servis hesabı öngörüyordu; kullanıcı mevcut Firebase anahtarını
+      # kullanmayı seçti. Gerekçe: anahtar dosyası ZATEN bu konteynerin içinde
+      # (`/app/firebase-admin.json`, `:ro` bağlı). İkinci bir uzun ömürlü özel
+      # anahtar üretmek yalıtım KAZANDIRMAZDI (ikisi de aynı konteynerde
+      # dururdu), yalnız korunacak sır sayısını artırırdı.
+      #
+      # YETKİ YİNE DAR: istenen kapsam JWT'de `webmasters.readonly` — bu
+      # jetonla site haritası silinemez, mülk eklenemez. Firebase yetkileri
+      # Search Console'a GEÇMEZ; GSC tarafındaki yetki ayrıca ve elle verildi
+      # (Ayarlar → Kullanıcılar ve izinler → "Tam").
+      GSC_SA_YOL: /app/firebase-admin.json
       JWT_SECRET: ${JWT_SECRET}
       TMDB_TOKEN: ${TMDB_TOKEN}
       # Özel mesajların DURAĞAN şifrelemesi (AES-256-GCM, backend/kripto.js).
