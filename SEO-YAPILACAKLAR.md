@@ -1,6 +1,11 @@
 # dizi.jpg — SEO yapılacaklar
 
-> Sürüm **5.2** · 29 Ağustos 2026 — **ANAHTAR KELİME ENVANTERİ çıkarıldı; üç
+> Sürüm **5.3** · 29 Ağustos 2026 — **SSR 46 DİLE AÇILDI** (dizin tabanlı yol
+> `/en/icerik/…`, karşılıklı hreflang, dil başına site haritası, özet zinciri
+> TMDB→Argos→boş). v5.2'nin "⛔ mimarî engel" kararı kullanıcı kararıyla
+> TERSİNE ÇEVRİLDİ — bkz. §0.-1
+>
+> Sürüm 5.2 · 29 Ağustos 2026 — **ANAHTAR KELİME ENVANTERİ çıkarıldı; üç
 > nitelik kapatıldı; "SSR 45 dilli" varsayımı ÖLÇÜLDÜ ve ÇÜRÜDÜ** (bkz. §0.0)
 >
 > Sürüm 5.1 · 29 Ağustos 2026 — v5.0'ın açık sorusu ölçüldü: hipotez çürüdü,
