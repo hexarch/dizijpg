@@ -1,13 +1,130 @@
 # dizi.jpg — SEO yapılacaklar
 
-> Sürüm **5.1** · 29 Ağustos 2026 — **v5.0'ın AÇIK SORUSU ÖLÇÜLDÜ: hipotez çürüdü,
-> "%3,5 indeks" bir ölçüm yapaylığı çıktı, "bölüm %13 TO" ise DAİRESEL** (bkz. §0.0)
+> Sürüm **5.2** · 29 Ağustos 2026 — **ANAHTAR KELİME ENVANTERİ çıkarıldı; üç
+> nitelik kapatıldı; "SSR 45 dilli" varsayımı ÖLÇÜLDÜ ve ÇÜRÜDÜ** (bkz. §0.0)
+>
+> Sürüm 5.1 · 29 Ağustos 2026 — v5.0'ın açık sorusu ölçüldü: hipotez çürüdü,
+> "%3,5 indeks" bir ölçüm yapaylığı çıktı, "bölüm %13 TO" ise DAİRESEL
 >
 > Sürüm 5.0 · 28 Ağustos 2026 — trafik dikleşti; ölçümün kör noktası kapatıldı  
 > Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda · ⛔ yapılmayacak  
 >
 > Bu belge bir görev listesi değil, **karar belgesidir**. Neden / neden değil yazılır. Atlanan maddenin gerekçesi buraya işlenir.  
 > Strateji ve GSC tablolarının anlatımı: `SEO-PLANI.md` v3.0 (23 Ağu).
+> **Nitelik/anahtar kelime envanteri: `ANAHTAR-KELIME-ENVANTERI.md` v1.0 (29 Ağu).**
+
+---
+
+## 0.0 v5.2 NE DEĞİŞTİ — ANAHTAR KELİME EKSENİ AÇILDI (29 Ağustos 2026)
+
+Bu projede bugüne dek **anahtar kelime çalışması hiç yapılmamıştı**: üç
+planlama belgesinin hiçbirinde "anahtar kelime / keyword / uzun kuyruk"
+geçmiyordu. Sayfalarımızın hangi doğal dil sorusuna cevap verdiği tesadüfe
+bırakılmıştı. Bu tur o ekseni açtı. Tam envanter ayrı belgede
+(`ANAHTAR-KELIME-ENVANTERI.md`); buraya yalnız **kararlar** yazılıyor.
+
+### ÖLÇÜM 1 — TMDB'nin verdiği ama sayfada HİÇ geçmeyen 9 nitelik
+
+Site haritasından tekdüze rastgele örneklem (film 150 · dizi 150 · kişi 150),
+canlı TMDB, `ICERIK_APPEND` ile aynı `append_to_response` — yani ölçülen her
+alan **zaten çektiğimiz yanıtın içinde**, ek istek doğurmuyor:
+
+```
+film  crew.Director %100 · Writer/Screenplay %99 · revenue %84 · budget %77
+      production_countries %99 · belongs_to_collection %24
+dizi  networks %100 · origin_country %100 · created_by %66 · episode_run_time %64
+kişi  deathday %23 · combined_credits.crew %48
+```
+
+Canlı SSR ölçümü (Googlebot UA, `/icerik/movie/559`): **"Sam Raimi" sayfada
+0 kez geçiyordu** — ne başlıkta, ne SSS'te, ne şemada, ne görünür metinde.
+
+### ✅🚀 YAPILAN — üç nitelik, üç yüzeyde birden
+
+Öncelik ölçüsü: **doluluk × kalıbın evrenselliği × bizde olup olmaması × ek
+istek maliyeti** (GSC tıklaması DEĞİL — §0.0 v5.1'in dersi: "0 tıklama = talep
+yok" değil, uygun olmadığımız sorgunun talebini ölçemeyiz).
+
+| # | nitelik | SSS | JSON-LD | görünür künye | meta açıklama |
+|---|---|---|---|---|---|
+| 1 | film yönetmeni + senaristi | 🚀 | 🚀 `director` | 🚀 | 🚀 |
+| 2 | film gişe hasılatı + bütçesi | 🚀 | ⛔ (aşağıda) | 🚀 SSS bloğunda | — |
+| 3 | dizi yaratıcısı + kanalı | 🚀 | 🚀 `creator` | 🚀 | 🚀 |
+
+Film SSS'i 4 → **6** soru, dizi SSS'i 3 → **5**. Yeni sorular **"nerede
+izlenir"in ARDINA** eklendi, önüne değil: o, GSC'de tıklama üreten TEK nitelik
+kalıbı ve bu tur hiçbir şeyi yerinden etmiyor, yalnız EKLİYOR.
+
+Canlı doğrulama (Googlebot UA, dağıtımdan sonra):
+```
+Ahlat Ağacı filminin yönetmeni Nuri Bilge Ceylan. Senaryoyu Ebru Ceylan yazdı.
+Örümcek Adam 3 dünya genelinde 894.983.373 dolar (yaklaşık 895 milyon dolar)
+  gişe hasılatı elde etti. Filmin bütçesi 258.000.000 dolar.
+Arka Sokaklar dizisinin yaratıcıları Türker İnanoğlu ve Ali Cengiz Deveci.
+Arka Sokaklar Kanal D tarafından yayınlandı.   (Silo → "yayınlanıyor")
+```
+
+### ÖLÇÜM 2 — **SSR TEK DİL ÜRETİYOR** (varsayım çürüdü)
+
+`isitici.js`'teki `diller=tr+en` **SSR'ın dili değil**, TMDB önbelleğinin
+ısıtıldığı dil kümesi. Ölçüm (canlı, Googlebot UA, 3 dil × 2 yöntem):
+
+```
+?dil=en → <html lang="tr">  og:locale tr_TR   ?dil=de → tr   Accept-Language: en → tr
+```
+
+Üç ayrı sebep, üçü de bağımsız engel:
+1. SSR metinleri Türkçe **sabit** — `app/lib/diller/*` ile hiçbir bağı yok.
+2. nginx `proxy_pass …/og$uri;` **değişken içerdiği için `$args` eklemiyor** →
+   `?dil=` bot yolunda hiç uca ulaşmıyor.
+3. Googlebot `Accept-Language` göndermiyor, SSR'da onu okuyan satır da yok.
+
+### ⛔ YAPILMAYAN 1 — 45 dile çeviri
+
+Gerçek engel **çeviri değil, dil başına URL şeması kararı**. `ogSayfa` bugün 45
+`og:locale:alternate` basıyor ama hepsi AYNI kanonik URL'ye işaret ediyor;
+`sitemapAltHarita`daki not zaten *"dil başına AYRI URL şeması kararı verilmeden
+buraya dokunulmaz"* diyor. 46 dil × bugünkü 18.410 URL = **846.860 URL** —
+sitenin ölçülmüş TEK darboğazı tarama bütçesi (keşif kuyruğu 21.394). §0.1
+bağlayıcı sırası da md.5'te (dış bağlantı) duruyor, hreflang md.6.
+
+**Uygulama metni kuralı çiğnenmedi:** bu turda `app/lib`'e yeni kullanıcı metni
+eklenmedi; eklenen tüm metin backend SSR'ında ve mimarî gereği tek dilli.
+
+### ⛔ YAPILMAYAN 2 — `<title>`e yönetmen/hasılat eklemek
+
+`SEO_BASLIK_MAX = 60`, bugünkü film başlığı zaten 54 karakter; eklemek
+`seoIcerikBasligi` düşürme merdiveninin bir basamağını daha yakardı. Üstelik
+**başlık mekanizmanın parçası değil**: tıklama üreten "nerede izlenir"
+başlıkta YOK (SSS'te), başlıkta olan "oyuncuları" ise 26 sorgu · 40 gösterim ·
+**0 tıklama**. Yerine meta açıklama kullanıldı (`… Yönetmen: Sam Raimi. Konu: …`),
+155 tavanı aşarsa cümle hiç yazılmıyor.
+
+### ⛔ YAPILMAYAN 3 — hasılat için JSON-LD alanı uydurmak
+
+schema.org `Movie`da gişe hasılatı özelliği YOK; `additionalProperty`
+`CreativeWork`ün alanı değil. Uydurma anahtar yazmak yapısal veri ihlali olurdu.
+Hasılat şemaya `FAQPage` → `Answer.text` üzerinden zaten giriyor.
+
+### ⛔ YAPILMAYAN 4 — dizide "yönetmen" sorusu
+
+Dizide `credits.crew` yalnız **%10** dolu ve dolduğunda TEK BİR BÖLÜMÜN
+yönetmenini gösteriyor. O soruyu sormak yanlış bilgi üretirdi. Dizinin doğru
+karşılığı `created_by`.
+
+### 🔎 YAN BULGU — bölüm sayfasında ŞEMA VAR, GÖRÜNÜR METİN YOK
+
+`bolumJsonLd` 21 Ağu'dan beri `director`/`author` düğümlerini basıyor ama bölüm
+SSS'inde ve gövdesinde yönetmen/senarist HİÇ geçmiyor — yani "yapılandırılmış
+veri sayfada görünenle eşleşir" kuralı orada zorlanıyor. Bu turda kapsam gereği
+düzeltilmedi; **envanterin SIRADAKİ maddesi bu** (en ucuz iş, üstelik sitenin
+tıklama üreten ailesinde).
+
+### ⬜ AÇIK KALAN
+
+Envanterin 5-9. maddeleri: ülke (`origin_country`/`production_countries`
+%100/%99), kişi ölümü (%23), kişinin yönettikleri (%48), dizi bölüm süresi
+(%64), film serisi (%24, tek ek istek gerektiren madde).
 
 ---
 

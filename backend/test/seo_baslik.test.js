@@ -48,9 +48,13 @@ const icerikJsonLd = alan(
   // `seoSssJsonLd`: icerikJsonLd 21 Ağu 2026'dan beri `@graph`a FAQPage
   // ekliyor (bkz. seo_sss.test.js). Bağımlılık listesinde olmazsa çağrı
   // ReferenceError verir — testin gördüğü kod canlıdaki kodun aynısı.
+  // `gecerliTmdb` + `SEO_SSS_YONETMEN`/`SEO_SSS_YARATICI`: 29 Ağu 2026'dan beri
+  // `icerikJsonLd` `director`/`creator` düğümlerini de kuruyor.
   ['SITE_KOK', 'seoMetin', 'seoGun', 'seoYildiz', 'seoYildizOrt', 'SEO_PUAN_MIN',
     'seoKisiNesnesi', 'seoYazarNesnesi', 'seoDegerlendirmeler', 'seoOrtalamaPuan',
-    'seoKirinti', 'seoIstDil', 'seoSssJsonLd', 'seoIcerikSonTarih', 'icerikJsonLd'], 'icerikJsonLd');
+    'seoKirinti', 'seoIstDil', 'seoSssJsonLd', 'seoIcerikSonTarih',
+    'gecerliTmdb', 'SEO_YONETMEN_ISLERI', 'SEO_SSS_YONETMEN', 'SEO_SSS_YARATICI',
+    'icerikJsonLd'], 'icerikJsonLd');
 const ogSayfa = alan(
   ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
 

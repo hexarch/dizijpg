@@ -1,6 +1,56 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-29 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-29 — 🚀 ANAHTAR KELİME ENVANTERİ + üç nitelik canlıda
+
+Kullanıcının isteği: *"anahtar kelime çalışması yaptık mı tüm dizi ve filmler
+için — silo oyuncular, spiderman 3 hasılatı, ahlat ağacı yönetmeni gibi …
+envanter çıkarsın 45 dilde"*. **Yapılmamıştı**: üç planlama belgesinin hiçbirinde
+"anahtar kelime" geçmiyordu. Yeni belge: **`ANAHTAR-KELIME-ENVANTERI.md` v1.0**
+(üç eksen: TMDB'de ne var · hangi sorguya karşılık geliyor · bugün neyi
+kapsıyoruz). Kararlar `SEO-YAPILACAKLAR.md` **v5.2 §0.0**'a işlendi.
+
+- ✅ **Ölçüldü (harita örneklemi: film 150 · dizi 150 · kişi 150).** TMDB'nin
+  verdiği ama sayfada HİÇ geçmeyen **9 nitelik**; hepsi zaten çekilen yanıtın
+  içinde, **ek TMDB isteği yok**: `crew.Director` %100 · `Writer/Screenplay`
+  %99 · `revenue` %84 · `budget` %77 · `networks` %100 · `origin_country` %100 ·
+  `created_by` %66 · `episode_run_time` %64 · `deathday` %23.
+  Canlı SSR'da (Googlebot UA) *"Sam Raimi" `/icerik/movie/559`'da 0 kez geçiyordu.*
+- 🚀 **Üç nitelik kapatıldı — SSS + JSON-LD + görünür künye + meta açıklama:**
+  1. **Film yönetmeni + senaristi** (`director` şeması) —
+     *"Ahlat Ağacı filminin yönetmeni Nuri Bilge Ceylan. Senaryoyu Ebru Ceylan yazdı."*
+  2. **Film gişe hasılatı + bütçesi** —
+     *"Örümcek Adam 3 dünya genelinde 894.983.373 dolar (yaklaşık 895 milyon
+     dolar) gişe hasılatı elde etti. Filmin bütçesi 258.000.000 dolar."*
+  3. **Dizi yaratıcısı + kanalı** (`creator` şeması) — kip `status`tan:
+     *"Arka Sokaklar Kanal D tarafından yayınlandı"* / *"Silo Apple TV tarafından
+     yayınlanıyor"*.
+  Film SSS'i 4 → **6**, dizi SSS'i 3 → **5** soru. Yeni sorular **"nerede
+  izlenir"in ARDINA** eklendi (o, GSC'de tıklama üreten tek nitelik kalıbı —
+  yerinden oynatılmadı).
+- 📏 **SSR'ın GERÇEK dil sayısı ölçüldü: 1.** `?dil=en/de` ve `Accept-Language`
+  denendi, üçü de `<html lang="tr">` döndü. Üç sebep: SSR metinleri Türkçe sabit ·
+  nginx `proxy_pass …/og$uri` değişken içerdiği için `$args` eklemiyor (bot
+  yolunda `?dil=` düşüyor) · Googlebot `Accept-Language` göndermiyor.
+  `isitici.js`'teki `diller=tr+en` **SSR'ın dili değil**, TMDB önbelleği.
+- ⛔ **45 dile çeviri YAPILMADI.** Engel çeviri değil, **dil başına URL şeması**
+  kararı; 46 dil × 18.410 URL = 846.860 URL ve sitenin ölçülmüş tek darboğazı
+  tarama bütçesi (keşif kuyruğu 21.394). §0.1 bağlayıcı sırası da md.5'te.
+  Envanterde 45 dilin **gerçek arama kalıpları** (makine çevirisi değil) hazır
+  duruyor. Uygulamaya yeni kullanıcı metni eklenmedi — 45 dil kuralı tetiklenmedi.
+- ⛔ `<title>`e eklenmedi (60 karakter dolu; başlık mekanizmanın parçası değil —
+  tıklayan soru "nerede izlenir" başlıkta YOK). ⛔ Hasılat için JSON-LD alanı
+  uydurulmadı (schema.org'da yok; `FAQPage` üzerinden zaten şemada).
+  ⛔ Dizide "yönetmen" sorusu yok (`crew` %10 dolu, bölüm yönetmenini gösteriyor).
+- 🔎 **Yan bulgu:** bölüm sayfası JSON-LD'sinde `director`/`author` VAR ama
+  görünür metinde/SSS'te YOK — şema-görünürlük borcu. Envanterin **sıradaki**
+  maddesi.
+- ✅ **Kanıt:** `npm test` **2.021** (2.008 → +13); yeni testler tekil/çoğul
+  uyumu, yönetmen-senarist tekilleştirme (Raimi/Nolan tuzağı), kanal kipi, para
+  biçimi eşikleri, "eksik alan = soru yok" ve şema-görünür eşleşmesini kilitliyor.
+  Kanıt kilidine 4 gerçek TMDB yükü eklendi. Cümleler 16 yapımda **gözle okundu**;
+  dağıtım sonrası 4 sayfa canlı SSR'dan (Googlebot UA) doğrulandı.
+
 ## 2026-08-29 — 📏 SEO/GEO ölçüm turu: İKİ "ANA BULGU" ÇÜRÜDÜ, iş yapılmadı
 
 Bu tur bilerek **ölçüm turu**dur: yapısal değişiklik yok, iki yanlış hüküm

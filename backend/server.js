@@ -3298,7 +3298,7 @@ function seoIcerikBasligi({ ad, yil, tur, sezon, bolum, sure, oyuncuVar, puanMet
  * `yorumAdet` bu yüzden veritabanı toplamı değil, basılan dizilerin uzunluğu.
  */
 function seoIcerikAciklamasi({ ad, yil, tur, sezon, bolum, sure, ozet,
-  puanMetni, puanAdet, yorumAdet, oyuncuVar, benzerVar }) {
+  puanMetni, puanAdet, yorumAdet, oyuncuVar, benzerVar, kunyeNiteligi }) {
   const kunye = seoIcerikKunyesi({ tur, sezon, bolum, sure });
   // İLK CÜMLE ZORUNLU: adı kısaltmaktansa 155'i aşmayı kabul ederiz (başlıkla
   // aynı disiplin). Sonraki cümleler yalnız SIĞIYORSA eklenir.
@@ -3326,6 +3326,12 @@ function seoIcerikAciklamasi({ ad, yil, tur, sezon, bolum, sure, ozet,
       ? `${vitrin.join(' ve ').replace(/^./, (c) => c.toLocaleUpperCase('tr'))} dizi.jpg'de.`
       : 'dizi.jpg\'de puan ver, yorumla ve izleme listene ekle.');
   }
+  // KÜNYE NİTELİĞİ (29 Ağu 2026): "Yönetmen: Sam Raimi." / "Yaratıcı: …".
+  // ÖZETTEN ÖNCE, toplum cümlesinden SONRA. Gerekçe: TMDB özeti onlarca
+  // sitede AYNI metin, yönetmen adı ise sorgunun kendisi ("<film> yönetmeni").
+  // `ekle` süzgeci sayesinde sığmıyorsa HİÇ yazılmaz — 155 tavanı korunur.
+  // Sayfadaki görünür karşılığı künye satırı (`kunyeSatirlari`).
+  ekle(kunyeNiteligi ? `${kunyeNiteligi}.` : '');
   const metin = parcalar.join(' ');
   // ' Konu: ' = 7 karakter. Kalan yer 30'un altındaysa özet parçası HİÇ
   // eklenmez: üç kelimelik bir kuyruk okura bilgi vermez, yalnız `…` üretir.
@@ -3626,6 +3632,83 @@ function seoSssOyunculari(v) {
   }).filter(Boolean).slice(0, SEO_SSS_OYUNCU);
 }
 
+// ===========================================================================
+// KÜNYE NİTELİKLERİ — yönetmen / senarist / yaratıcı / kanal / gişe
+// (29 Ağu 2026, ANAHTAR-KELIME-ENVANTERI.md md.1-3)
+// ===========================================================================
+// NEDEN: envanterin ölçümü, TMDB'nin verdiği ama sayfada HİÇ geçmeyen üç
+// niteliği buldu. `credits` (crew dahil), `created_by` ve `networks` ZATEN
+// `ICERIK_APPEND` ile aynı yanıtta geliyor — EK TMDB İSTEĞİ YOK.
+// Doluluk (29 Ağu, 150'şer URL'lik harita örneklemi):
+//   film  crew.Director %100 · Writer/Screenplay %99 · revenue %84 · budget %77
+//   dizi  networks %100 · created_by %66
+// Kapsam ölçümü (canlı SSR, Googlebot UA): üçü de sayfada 0 kez geçiyordu.
+const SEO_SSS_YONETMEN = 3;   // ortak yönetmenler (Russo kardeşler) sığsın
+const SEO_SSS_SENARIST = 3;
+const SEO_SSS_YARATICI = 3;
+const SEO_SSS_KANAL = 2;      // ortak yapımlarda 4-5 ağ listelenebiliyor
+
+/**
+ * `credits.crew` içinden verilen işleri yapanların ADLARI — sırayı korur,
+ * TEKİLLEŞTİRİR.
+ *
+ * NEDEN TEKİLLEŞTİRME: TMDB aynı kişiyi birden çok `job` ile listeliyor
+ * (canlı örnek Örümcek Adam 3: Sam Raimi hem "Director" hem "Screenplay").
+ * Tekilleştirmeden "Senaryoyu Sam Raimi ve Sam Raimi yazdı" cümlesi çıkardı.
+ * `disla` ikinci bir süzgeç: yönetmen listesinde geçen ad senarist cümlesinde
+ * TEKRAR edilmez.
+ */
+function seoEkipAdlari(v, isler, tavan, disla = []) {
+  const gorulen = new Set(disla);
+  const adlar = [];
+  for (const c of v?.credits?.crew || []) {
+    if (!isler.has(c?.job)) continue;
+    const ad = seoMetin(c?.name);
+    if (!ad || gorulen.has(ad)) continue;
+    gorulen.add(ad);
+    adlar.push(ad);
+    if (adlar.length >= tavan) break;
+  }
+  return adlar;
+}
+
+const SEO_YONETMEN_ISLERI = new Set(['Director']);
+// "Writer" ve "Screenplay" TMDB'de AYNI işin iki adı (yapıma göre değişiyor);
+// "Story" ise ayrı bir katkı ama okur için yine "senaryo" başlığı altında.
+const SEO_SENARIST_ISLERI = new Set(['Screenplay', 'Writer', 'Story']);
+
+/** 894983373 -> "894.983.373". ICU'ya bağlı DEĞİL (seoTarihTr ile aynı gerekçe). */
+function seoBinlik(sayi) {
+  const n = Math.round(Number(sayi));
+  if (!Number.isFinite(n) || n <= 0) return '';
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+/**
+ * Okunur büyüklük: "895 milyon dolar", "1,4 milyar dolar".
+ *
+ * TAM SAYIYA EK OLARAK verilir, YERİNE değil — çünkü sayfada basılan sayı
+ * doğrulanabilir olmalı. Milyonun tam katlarında ('' döner) eklenmez:
+ * "258.000.000 dolar (yaklaşık 258 milyon dolar)" bilgi katmayan bir tekrardır.
+ */
+function seoParaYaklasik(sayi) {
+  const n = Math.round(Number(sayi));
+  if (!Number.isFinite(n) || n < 1e6 || n % 1e6 === 0) return '';
+  if (n >= 1e9) {
+    return `${(n / 1e9).toFixed(1).replace(/\.0$/, '').replace('.', ',')} milyar dolar`;
+  }
+  const milyon = Math.round(n / 1e6);
+  return milyon >= 1000 ? '1 milyar dolar' : `${milyon} milyon dolar`;
+}
+
+/** "894.983.373 dolar (yaklaşık 895 milyon dolar)" — yoksa ''. */
+function seoParaCumlesi(sayi) {
+  const tam = seoBinlik(sayi);
+  if (!tam) return '';
+  const yaklasik = seoParaYaklasik(sayi);
+  return `${tam} dolar${yaklasik ? ` (yaklaşık ${yaklasik})` : ''}`;
+}
+
 /**
  * Sayfanın soru-cevap listesi: `[{ soru, cevap }]`, ikisi de DÜZ METİN.
  *
@@ -3717,6 +3800,64 @@ function seoIcerikSorulari({ ad, tur, v, puanMetni, puanAdet, yorumAdet, bugun }
       `${ad} Türkiye'de ${saglayici.join('; ')} izlenebilir.`
       + ' Sağlayıcı verisi: JustWatch.');
   }
+
+  // ---- KÜNYE NİTELİKLERİ (29 Ağu 2026) -----------------------------------
+  // SIRA: "nerede izlenir"in ARDINA eklendi, önüne DEĞİL. Gerekçe ölçüm:
+  // GSC'de tıklama üreten TEK nitelik kalıbı o soru; yeni sorular eklenirken
+  // ölçülmüş kazananın yeri OYNATILMAZ. Oyuncular yine sonda kalır (en uzun
+  // cevap). Yani bu tur hiçbir şeyi yerinden etmiyor, yalnız EKLİYOR.
+  if (tur === 'tv') {
+    // YARATICI — `created_by`, doluluk %66. Filmdeki "yönetmen"in dizi
+    // karşılığı budur: dizide `credits.crew` Director alanı %10 dolu ve
+    // dolduğunda da tek bir bölümün yönetmenini gösteriyor, dizinin değil.
+    const yaraticilar = (v?.created_by || [])
+      .map((k) => seoMetin(k?.name)).filter(Boolean).slice(0, SEO_SSS_YARATICI);
+    if (yaraticilar.length) {
+      const cok = yaraticilar.length > 1;
+      ekle(`${ad} dizisinin ${cok ? 'yaratıcıları kimler' : 'yaratıcısı kim'}?`,
+        `${ad} dizisinin ${cok ? 'yaratıcıları' : 'yaratıcısı'}`
+        + ` ${seoVeListesi(yaraticilar)}.`);
+    }
+    // KANAL — `networks`, doluluk %100. "tarafından yayınlanıyor" BİLİNÇLİ
+    // olarak nötr: TMDB `networks` hem klasik kanalı (Kanal D) hem yayın
+    // platformunu (Apple TV+) taşıyor ve "Apple TV+ kanalında" yanlış olurdu.
+    const kanallar = (v?.networks || [])
+      .map((k) => seoMetin(k?.name)).filter(Boolean).slice(0, SEO_SSS_KANAL);
+    if (kanallar.length) {
+      // Zaman kipi `status`tan: bitmiş dizi "yayınlanıyor" diyemez.
+      const bitti = SEO_BITMIS_DURUMLAR.has(seoMetin(v?.status));
+      ekle(`${ad} hangi kanalda ${bitti ? 'yayınlandı' : 'yayınlanıyor'}?`,
+        `${ad} ${seoVeListesi(kanallar)} tarafından`
+        + ` ${bitti ? 'yayınlandı' : 'yayınlanıyor'}.`);
+    }
+  } else {
+    // YÖNETMEN + SENARİST — `credits.crew`, doluluk %100 / %99.
+    const yonetmenler = seoEkipAdlari(v, SEO_YONETMEN_ISLERI, SEO_SSS_YONETMEN);
+    if (yonetmenler.length) {
+      const cok = yonetmenler.length > 1;
+      const senaristler = seoEkipAdlari(
+        v, SEO_SENARIST_ISLERI, SEO_SSS_SENARIST, yonetmenler);
+      ekle(`${ad} filminin ${cok ? 'yönetmenleri kimler' : 'yönetmeni kim'}?`,
+        `${ad} filminin ${cok ? 'yönetmenleri' : 'yönetmeni'}`
+        + ` ${seoVeListesi(yonetmenler)}.`
+        // "yazdı" tekil/çoğul öznede de doğru: Türkçede çoğul özne tekil
+        // yüklem alabilir ("Sam Raimi ve Alvin Sargent yazdı").
+        + (senaristler.length ? ` Senaryoyu ${seoVeListesi(senaristler)} yazdı.` : ''));
+    }
+    // GİŞE — `revenue` %84, `budget` %77. Sıra bilinçli: hasılat sorusu
+    // aranan soru, bütçe onun bağlamı. Hasılat yoksa bütçe TEK BAŞINA sorulur
+    // (yapım aşamasındaki filmlerde yalnız bütçe dolu oluyor).
+    const hasilat = seoParaCumlesi(v?.revenue);
+    const butce = seoParaCumlesi(v?.budget);
+    if (hasilat) {
+      ekle(`${ad} ne kadar hasılat yaptı?`,
+        `${ad} dünya genelinde ${hasilat} gişe hasılatı elde etti.`
+        + (butce ? ` Filmin bütçesi ${butce}.` : ''));
+    } else if (butce) {
+      ekle(`${ad} bütçesi ne kadar?`, `${ad} filminin bütçesi ${butce}.`);
+    }
+  }
+
   const oyuncular = seoSssOyunculari(v);
   if (oyuncular.length) {
     ekle(`${ad} oyuncuları kimler?`,
@@ -3788,6 +3929,18 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo, sss = [] }) {
   const dizi = tur === 'tv';
   const tarih = String(v.first_air_date || v.release_date || '').slice(0, 10);
   const oyuncular = (v.credits?.cast || []).slice(0, 10).map(seoKisiNesnesi);
+  // YÖNETMEN / YARATICI (29 Ağu 2026). `gecerliTmdb` süzgeci ZORUNLU:
+  // `seoKisiNesnesi` kimliği doğrudan URL'ye yazıyor, kimliksiz bir kayıt
+  // `/kisi/undefined` üretirdi (Google için kırık bağlantı + soft 404).
+  // Sayfada GÖRÜNÜR karşılığı künye satırıdır (`kunyeSatirlari`) — aynı
+  // TMDB alanı, aynı tavan, aynı sıra.
+  const yonetmenler = dizi ? [] : (v.credits?.crew || [])
+    .filter((c) => SEO_YONETMEN_ISLERI.has(c?.job) && c?.name && gecerliTmdb(c.id))
+    .filter((c, i, a) => a.findIndex((b) => b.name === c.name) === i)
+    .slice(0, SEO_SSS_YONETMEN).map(seoKisiNesnesi);
+  const yaraticilar = dizi ? (v.created_by || [])
+    .filter((k) => k?.name && gecerliTmdb(k.id))
+    .slice(0, SEO_SSS_YARATICI).map(seoKisiNesnesi) : [];
   const degerlendirmeler = seoDegerlendirmeler(seo);
   const ortalama = seoOrtalamaPuan(seo);
   const degisti = seoIcerikSonTarih(seo);
@@ -3807,6 +3960,8 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo, sss = [] }) {
     ...(!dizi && v.runtime ? { duration: `PT${v.runtime}M` } : {}),
     inLanguage: seoIstDil(),
     ...(oyuncular.length ? { actor: oyuncular } : {}),
+    ...(yonetmenler.length ? { director: yonetmenler } : {}),
+    ...(yaraticilar.length ? { creator: yaraticilar } : {}),
     ...(ortalama ? { aggregateRating: ortalama } : {}),
     ...((degerlendirmeler.length && (ortalama || degerlendirmeler.length === 1))
       ? { review: degerlendirmeler } : {}),
@@ -4016,8 +4171,35 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
     //      `duration`/`genre`/`datePublished` alanlarını görünür kılar —
     //      "yapılandırılmış veri sayfada görünenle eşleşir" kuralındaki eski
     //      bir boşluk böylece kapanıyor.
+    //   3. (29 Ağu 2026) JSON-LD'ye BU TURDA giren `director`/`creator`ın
+    //      görünür karşılığı. Şema yalnız görünür bilgiyi işaretleyebilir;
+    //      künye satırı olmadan `director` eklemek "yapılandırılmış veri
+    //      sayfada görünenle eşleşir" kuralını çiğnerdi.
+    // AYNI YARDIMCI, AYNI TAVAN: SSS cevabındaki adlarla künyedeki adlar
+    // ayrışamaz, ikisi de `seoEkipAdlari`/`created_by`yi aynı sırayla okuyor.
+    const kunyeYonetmenler = tur === 'tv'
+      ? [] : seoEkipAdlari(v, SEO_YONETMEN_ISLERI, SEO_SSS_YONETMEN);
+    const kunyeYaraticilar = tur === 'tv'
+      ? (v.created_by || []).map((k) => seoMetin(k?.name)).filter(Boolean)
+        .slice(0, SEO_SSS_YARATICI)
+      : [];
+    const kunyeKanallar = tur === 'tv'
+      ? (v.networks || []).map((k) => seoMetin(k?.name)).filter(Boolean)
+        .slice(0, SEO_SSS_KANAL)
+      : [];
+    // Meta açıklamaya giren nitelik ile künye satırındaki BİREBİR AYNI dizgi:
+    // tek yerde kurulur, iki yerde basılır (ayrışması imkânsız).
+    const kunyeNiteligi = kunyeYonetmenler.length
+      ? `${kunyeYonetmenler.length > 1 ? 'Yönetmenler' : 'Yönetmen'}:`
+        + ` ${kunyeYonetmenler.join(', ')}`
+      : (kunyeYaraticilar.length
+        ? `${kunyeYaraticilar.length > 1 ? 'Yaratıcılar' : 'Yaratıcı'}:`
+          + ` ${kunyeYaraticilar.join(', ')}`
+        : '');
     const kunyeSatirlari = [
       ...kunye,
+      kunyeNiteligi,
+      kunyeKanallar.length ? `Kanal: ${kunyeKanallar.join(', ')}` : '',
       turAdlari.length ? `Tür: ${turAdlari.join(', ')}` : '',
       yayinTarihi ? `${tur === 'tv' ? 'İlk yayın' : 'Vizyon'}: ${yayinTarihi}` : '',
     ].filter(Boolean);
@@ -4056,6 +4238,7 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
         // Sayfaya BASILAN değerlendirme sayısı (DB toplamı değil).
         yorumAdet,
         oyuncuVar: oyuncular.length > 0, benzerVar: benzerListe.length > 0,
+        kunyeNiteligi,
       }),
       gorsel,
       url,

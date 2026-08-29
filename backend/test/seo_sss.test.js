@@ -31,6 +31,10 @@ const SSS_DEP = [
   'SEO_BITMIS_DURUMLAR', 'SEO_AYLAR', 'seoTarihTr', 'seoVeListesi',
   'SEO_SAGLAYICI_GRUPLARI', 'seoSaglayiciParcalari', 'seoRolSadelestir',
   'seoSssOyunculari',
+  // 29 Ağu 2026 — künye nitelikleri (yönetmen/senarist/yaratıcı/kanal/gişe).
+  'SEO_SSS_YONETMEN', 'SEO_SSS_SENARIST', 'SEO_SSS_YARATICI', 'SEO_SSS_KANAL',
+  'seoEkipAdlari', 'SEO_YONETMEN_ISLERI', 'SEO_SENARIST_ISLERI',
+  'seoBinlik', 'seoParaYaklasik', 'seoParaCumlesi',
   'seoIcerikSorulari', 'seoSssGovdesi', 'seoSssJsonLd',
 ];
 const seoIcerikSorulari = alan(SSS_DEP, 'seoIcerikSorulari');
@@ -50,7 +54,11 @@ const icerikJsonLd = alan(
   [...new Set([
     'SITE_KOK', 'seoMetin', 'seoGun', 'seoYildiz', 'seoYildizOrt', 'SEO_PUAN_MIN',
     'seoKisiNesnesi', 'seoYazarNesnesi', 'seoDegerlendirmeler', 'seoOrtalamaPuan',
-    'seoKirinti', 'seoIstDil', ...SSS_DEP, 'seoIcerikSonTarih', 'icerikJsonLd'])], 'icerikJsonLd');
+    'seoKirinti', 'seoIstDil', ...SSS_DEP, 'seoIcerikSonTarih',
+    'gecerliTmdb', 'icerikJsonLd'])], 'icerikJsonLd');
+const seoParaCumlesi = alan(SSS_DEP, 'seoParaCumlesi');
+const seoEkipAdlari = alan(SSS_DEP, 'seoEkipAdlari');
+const SEO_YONETMEN_ISLERI = alan(SSS_DEP, 'SEO_YONETMEN_ISLERI');
 const jsonLdGom = alan(['jsonLdGom'], 'jsonLdGom');
 
 const UC = bolum("app.get('/og/icerik/:tur/:tmdbId'", '// ---------- SEO: /kisi/:id');
@@ -65,6 +73,14 @@ const UC = bolum("app.get('/og/icerik/:tur/:tmdbId'", '// ---------- SEO: /kisi/
 const kadro = (...ciftler) => ({
   cast: ciftler.map(([name, character], i) => ({ id: i + 1, name, character })),
 });
+/** `credits.crew` — `[ad, job]` çiftleri (kimlik sırayla üretilir). */
+const ekip = (...ciftler) => ({
+  crew: ciftler.map(([name, job], i) => ({ id: 1000 + i, name, job })),
+});
+/** Kadro + ekibi TEK `credits` nesnesinde birleştirir. */
+const krediler = (kadroNesnesi, ekipNesnesi) => ({
+  ...kadroNesnesi, ...(ekipNesnesi || {}),
+});
 const trSaglayici = (gruplar) => ({ results: { TR: gruplar } });
 const saglayicilar = (...adlar) =>
   adlar.map((provider_name, i) => ({ provider_id: i, provider_name }));
@@ -77,6 +93,9 @@ const BREAKING_BAD = {
     first_air_date: '2008-01-20', last_air_date: '2013-09-29',
     last_episode_to_air: { season_number: 5, episode_number: 16, air_date: '2013-09-29' },
     next_episode_to_air: null,
+    // 29 Ağu 2026 — canlı TMDB: `created_by` ve `networks`.
+    created_by: [{ id: 66633, name: 'Vince Gilligan' }],
+    networks: [{ id: 174, name: 'AMC' }],
     'watch/providers': trSaglayici({ flatrate: saglayicilar('Netflix') }),
     credits: kadro(
       ['Bryan Cranston', 'Walter White'], ['Aaron Paul', 'Jesse Pinkman'],
@@ -176,23 +195,74 @@ const FIREFLY = {
   },
 };
 
-/** FİLM — `rent` ve `buy` listeleri BİREBİR AYNI (tekrar tuzağı). */
+/** FİLM — `rent` ve `buy` listeleri BİREBİR AYNI (tekrar tuzağı).
+ *  AYRICA: yönetmen = TEK senarist (Nolan). Tekilleştirme sonrası senarist
+ *  listesi BOŞALIR, yani cevapta "Senaryoyu … yazdı" cümlesi HİÇ kurulmaz. */
 const BASLANGIC = {
   tur: 'movie', id: 27205, ad: 'Başlangıç', ortalama: '93', adet: 3, yorumAdet: 4,
   v: {
     status: 'Released', runtime: 148, release_date: '2010-07-15',
+    revenue: 839030630, budget: 160000000,
     'watch/providers': trSaglayici({
       flatrate: saglayicilar('Netflix', 'Amazon Prime Video', 'TV+', 'HBO Max'),
       rent: saglayicilar('Google Play Movies', 'Apple TV Store'),
       buy: saglayicilar('Google Play Movies', 'Apple TV Store'),
     }),
-    credits: kadro(['Leonardo DiCaprio', 'Dom Cobb'],
-      ['Joseph Gordon-Levitt', 'Arthur'], ['Ken Vatanabe', 'Saito']),
+    credits: krediler(
+      kadro(['Leonardo DiCaprio', 'Dom Cobb'],
+        ['Joseph Gordon-Levitt', 'Arthur'], ['Ken Vatanabe', 'Saito']),
+      ekip(['Christopher Nolan', 'Director'], ['Christopher Nolan', 'Writer'])),
+  },
+};
+
+/** FİLM — yönetmen AYNI ZAMANDA senaristlerden biri (Sam Raimi), yani
+ *  tekilleştirme çalışmazsa "Sam Raimi ve Sam Raimi" çıkardı. Gişe rakamları
+ *  ve bütçe canlı TMDB'den (29 Ağu 2026). TR sağlayıcı listesi kısaltılmadı. */
+const ORUMCEK3 = {
+  tur: 'movie', id: 559, ad: 'Örümcek Adam 3', ortalama: null, adet: 0, yorumAdet: 0,
+  v: {
+    status: 'Released', runtime: 195, release_date: '2007-05-01',
+    revenue: 894983373, budget: 258000000,
+    'watch/providers': trSaglayici({ flatrate: saglayicilar('TV+') }),
+    credits: krediler(
+      kadro(['Tobey Maguire', 'Peter Parker'], ['Kirsten Dunst', 'Mary Jane Watson']),
+      ekip(['Sam Raimi', 'Director'], ['Alvin Sargent', 'Screenplay'],
+        ['Sam Raimi', 'Screenplay'], ['Ivan Raimi', 'Screenplay'])),
+  },
+};
+
+/** FİLM — İKİ yönetmen (Russo kardeşler) + MİLYAR ölçeği. Tekil/çoğul
+ *  uyumunun ve "milyar" eşiğinin tek kilidi. */
+const ENDGAME = {
+  tur: 'movie', id: 299534, ad: 'Avengers: Endgame', ortalama: null, adet: 0, yorumAdet: 0,
+  v: {
+    status: 'Released', runtime: 181, release_date: '2019-04-24',
+    revenue: 2799439100, budget: 356000000,
+    'watch/providers': trSaglayici({ flatrate: saglayicilar('Disney Plus') }),
+    credits: krediler(
+      kadro(['Robert Downey Jr.', 'Tony Stark']),
+      ekip(['Anthony Russo', 'Director'], ['Joe Russo', 'Director'],
+        ['Christopher Markus', 'Screenplay'], ['Stephen McFeely', 'Screenplay'])),
+  },
+};
+
+/** DEVAM EDEN dizi + yaratıcı + platform ağı — "yayınlanıyor" kipi. */
+const SILO = {
+  tur: 'tv', id: 125988, ad: 'Silo', ortalama: null, adet: 0, yorumAdet: 0,
+  v: {
+    status: 'Returning Series', number_of_seasons: 2, number_of_episodes: 20,
+    first_air_date: '2023-05-04', last_air_date: '2025-01-17',
+    last_episode_to_air: { season_number: 2, episode_number: 10, air_date: '2025-01-17' },
+    next_episode_to_air: null,
+    created_by: [{ id: 21206, name: 'Graham Yost' }],
+    networks: [{ id: 2552, name: 'Apple TV' }],
+    'watch/providers': trSaglayici({ flatrate: saglayicilar('Apple TV+') }),
+    credits: kadro(['Rebecca Ferguson', 'Juliette Nichols']),
   },
 };
 
 const ORNEKLER = [BREAKING_BAD, SIMPSONLAR, HOTD, CHERNOBYL, HOME_AND_AWAY,
-  DORAEMON, FIREFLY, BASLANGIC];
+  DORAEMON, FIREFLY, BASLANGIC, ORUMCEK3, ENDGAME, SILO];
 const BUGUN = '2026-08-21';
 
 /** Ucun yaptığının aynısı: puan nesnesi -> soru listesi. */
@@ -447,7 +517,15 @@ test('BOILERPLATE DEĞİL: iki yapımın cevapları birbirinin aynısı olamaz',
   for (const o of ORNEKLER) {
     for (const x of sorular(o)) {
       assert.ok(x.cevap.includes(o.ad), `cevap yapım adını taşımıyor: ${x.cevap}`);
-      assert.ok(/\d/.test(x.cevap) || /başrollerinde|izlenebilir/.test(x.cevap),
+      // SOMUT VERİ ÖLÇÜSÜ (29 Ağu 2026'da genelleştirildi): eski hâli
+      // `başrollerinde|izlenebilir` kalıplarını BEYAZ LİSTELİYORDU, yani yeni
+      // bir cevap türü eklenince şablon avcısı değil kalıp avcısı oluyordu
+      // ("… yaratıcısı Vince Gilligan." bu yüzden takıldı). Yeni ölçü kalıptan
+      // bağımsız: yapım adı ÇIKARILDIKTAN SONRA cevapta ya bir SAYI ya da bir
+      // BÜYÜK HARF (özel ad: kişi, kanal, platform, ülke) kalmalı. Veri
+      // taşımayan bir şablon cümlesi ikisini de sağlayamaz.
+      const kalan = x.cevap.split(o.ad).join(' ');
+      assert.ok(/\d/.test(kalan) || /\p{Lu}/u.test(kalan),
         `cevapta somut veri yok: ${x.cevap}`);
     }
   }
@@ -614,6 +692,10 @@ test('gerçek yüklerin ürettiği tam metin (kanıt kilidi)', () => {
         'Breaking Bad 29 Eylül 2013 tarihinde yayınlanan 5. sezon 16. bölümle sona erdi.'],
       ['Breaking Bad nerede izlenir?',
         'Breaking Bad Türkiye\'de Netflix üzerinden abonelikle izlenebilir. Sağlayıcı verisi: JustWatch.'],
+      ['Breaking Bad dizisinin yaratıcısı kim?',
+        'Breaking Bad dizisinin yaratıcısı Vince Gilligan.'],
+      ['Breaking Bad hangi kanalda yayınlandı?',
+        'Breaking Bad AMC tarafından yayınlandı.'],
       ['Breaking Bad oyuncuları kimler?',
         'Breaking Bad başrollerinde Bryan Cranston (Walter White), Aaron Paul (Jesse Pinkman), Anna Gunn (Skyler White), RJ Mitte (Walter White Jr.) ve Dean Norris (Hank Schrader) yer alıyor.'],
     ],
@@ -661,8 +743,53 @@ test('gerçek yüklerin ürettiği tam metin (kanıt kilidi)', () => {
       ['Başlangıç ne zaman çıktı?', 'Başlangıç 15 Temmuz 2010 tarihinde vizyona girdi.'],
       ['Başlangıç nerede izlenir?',
         'Başlangıç Türkiye\'de Netflix, Amazon Prime Video, TV+ ve HBO Max üzerinden abonelikle; Google Play Movies ve Apple TV Store üzerinden kiralayarak ya da satın alarak izlenebilir. Sağlayıcı verisi: JustWatch.'],
+      // TEKİLLEŞTİRME KANITI: Nolan hem Director hem Writer, "Senaryoyu …
+      // yazdı" cümlesi bu yüzden HİÇ kurulmuyor.
+      ['Başlangıç filminin yönetmeni kim?',
+        'Başlangıç filminin yönetmeni Christopher Nolan.'],
+      ['Başlangıç ne kadar hasılat yaptı?',
+        'Başlangıç dünya genelinde 839.030.630 dolar (yaklaşık 839 milyon dolar) gişe hasılatı elde etti. Filmin bütçesi 160.000.000 dolar.'],
       ['Başlangıç oyuncuları kimler?',
         'Başlangıç başrollerinde Leonardo DiCaprio (Dom Cobb), Joseph Gordon-Levitt (Arthur) ve Ken Vatanabe (Saito) yer alıyor.'],
+    ],
+    'movie:559': [
+      ['Örümcek Adam 3 kaç dakika sürüyor?',
+        'Örümcek Adam 3 195 dakika, yani yaklaşık 3 saat 15 dakika sürüyor.'],
+      ['Örümcek Adam 3 ne zaman çıktı?',
+        'Örümcek Adam 3 1 Mayıs 2007 tarihinde vizyona girdi.'],
+      ['Örümcek Adam 3 nerede izlenir?',
+        'Örümcek Adam 3 Türkiye\'de TV+ üzerinden abonelikle izlenebilir. Sağlayıcı verisi: JustWatch.'],
+      ['Örümcek Adam 3 filminin yönetmeni kim?',
+        'Örümcek Adam 3 filminin yönetmeni Sam Raimi. Senaryoyu Alvin Sargent ve Ivan Raimi yazdı.'],
+      ['Örümcek Adam 3 ne kadar hasılat yaptı?',
+        'Örümcek Adam 3 dünya genelinde 894.983.373 dolar (yaklaşık 895 milyon dolar) gişe hasılatı elde etti. Filmin bütçesi 258.000.000 dolar.'],
+      ['Örümcek Adam 3 oyuncuları kimler?',
+        'Örümcek Adam 3 başrollerinde Tobey Maguire (Peter Parker) ve Kirsten Dunst (Mary Jane Watson) yer alıyor.'],
+    ],
+    'movie:299534': [
+      ['Avengers: Endgame kaç dakika sürüyor?',
+        'Avengers: Endgame 181 dakika, yani yaklaşık 3 saat 1 dakika sürüyor.'],
+      ['Avengers: Endgame ne zaman çıktı?',
+        'Avengers: Endgame 24 Nisan 2019 tarihinde vizyona girdi.'],
+      ['Avengers: Endgame nerede izlenir?',
+        'Avengers: Endgame Türkiye\'de Disney Plus üzerinden abonelikle izlenebilir. Sağlayıcı verisi: JustWatch.'],
+      // ÇOĞUL UYUMU: soru "yönetmenleri kimler", cevap "yönetmenleri".
+      ['Avengers: Endgame filminin yönetmenleri kimler?',
+        'Avengers: Endgame filminin yönetmenleri Anthony Russo ve Joe Russo. Senaryoyu Christopher Markus ve Stephen McFeely yazdı.'],
+      ['Avengers: Endgame ne kadar hasılat yaptı?',
+        'Avengers: Endgame dünya genelinde 2.799.439.100 dolar (yaklaşık 2,8 milyar dolar) gişe hasılatı elde etti. Filmin bütçesi 356.000.000 dolar.'],
+      ['Avengers: Endgame oyuncuları kimler?',
+        'Avengers: Endgame başrollerinde Robert Downey Jr. (Tony Stark) yer alıyor.'],
+    ],
+    'tv:125988': [
+      ['Silo kaç sezon, kaç bölüm?', 'Silo 2 sezon ve toplam 20 bölümden oluşuyor.'],
+      ['Silo nerede izlenir?',
+        'Silo Türkiye\'de Apple TV+ üzerinden abonelikle izlenebilir. Sağlayıcı verisi: JustWatch.'],
+      ['Silo dizisinin yaratıcısı kim?', 'Silo dizisinin yaratıcısı Graham Yost.'],
+      // DEVAM EDEN dizi: "yayınlanıyor" (Breaking Bad'de "yayınlandı").
+      ['Silo hangi kanalda yayınlanıyor?', 'Silo Apple TV tarafından yayınlanıyor.'],
+      ['Silo oyuncuları kimler?',
+        'Silo başrollerinde Rebecca Ferguson (Juliette Nichols) yer alıyor.'],
     ],
   };
   for (const o of ORNEKLER) {
@@ -698,6 +825,144 @@ test('rol sonundaki parantezli not atılır, iç içe parantez oluşmaz', () => 
 test('rolün TAMAMI parantezliyse yalnız oyuncu adı basılır', () => {
   const v = { credits: { cast: [{ name: 'Yalnız Ad', character: '(voice)' }] } };
   assert.deepEqual(seoSssOyunculari2(v), ['Yalnız Ad']);
+});
+
+// ===========================================================================
+// 11) KÜNYE NİTELİKLERİ — yönetmen / senarist / yaratıcı / kanal / gişe
+//     (29 Ağu 2026, ANAHTAR-KELIME-ENVANTERI.md md.1-3)
+// ===========================================================================
+
+test('yönetmen sorusu YALNIZ filmde, yaratıcı/kanal YALNIZ dizide', () => {
+  const film = sorulari(ORUMCEK3).join(' | ');
+  assert.ok(film.includes('yönetmeni kim?'), film);
+  assert.ok(!film.includes('yaratıcı'), film);
+  assert.ok(!film.includes('hangi kanalda'), film);
+
+  const dizi = sorulari(SILO).join(' | ');
+  assert.ok(dizi.includes('yaratıcısı kim?') && dizi.includes('hangi kanalda'), dizi);
+  assert.ok(!dizi.includes('yönetmen'), dizi);
+  // Dizide gişe sorusu da YOK: TMDB `revenue`/`budget` alanlarını yalnız
+  // filmde veriyor (150'lik dizi örnekleminde ikisi de boş).
+  assert.ok(!dizi.includes('hasılat') && !dizi.includes('bütçe'), dizi);
+});
+
+test('tekil/çoğul uyumu: tek yönetmende "yönetmeni", ikide "yönetmenleri"', () => {
+  const tek = sorular(ORUMCEK3).find((s) => s.soru.includes('yönetmen'));
+  assert.equal(tek.soru, 'Örümcek Adam 3 filminin yönetmeni kim?');
+  assert.ok(tek.cevap.startsWith('Örümcek Adam 3 filminin yönetmeni Sam Raimi.'), tek.cevap);
+
+  const cok = sorular(ENDGAME).find((s) => s.soru.includes('yönetmen'));
+  assert.equal(cok.soru, 'Avengers: Endgame filminin yönetmenleri kimler?');
+  assert.ok(cok.cevap.includes('yönetmenleri Anthony Russo ve Joe Russo.'), cok.cevap);
+});
+
+test('yönetmen senarist listesinde TEKRAR etmez (Raimi/Nolan tuzağı)', () => {
+  // Sam Raimi hem Director hem Screenplay: senarist cümlesinde geçmemeli.
+  const raimi = sorular(ORUMCEK3).find((s) => s.soru.includes('yönetmen')).cevap;
+  assert.equal(raimi.split('Sam Raimi').length - 1, 1, raimi);
+  assert.ok(raimi.includes('Senaryoyu Alvin Sargent ve Ivan Raimi yazdı.'), raimi);
+  // Nolan TEK senarist ve aynı zamanda yönetmen: senaryo cümlesi HİÇ kurulmaz.
+  const nolan = sorular(BASLANGIC).find((s) => s.soru.includes('yönetmen')).cevap;
+  assert.ok(!nolan.includes('Senaryoyu'), nolan);
+});
+
+test('seoEkipAdlari: iş süzgeci, tekilleştirme, tavan ve bozuk yük', () => {
+  const v = { credits: { crew: [
+    { id: 1, name: 'A', job: 'Director' },
+    { id: 2, name: 'A', job: 'Director' },      // aynı ad — tekilleşir
+    { id: 3, name: '', job: 'Director' },       // adsız — elenir
+    { id: 4, name: 'B', job: 'Producer' },      // başka iş — elenir
+    { id: 5, name: 'C', job: 'Director' },
+    { id: 6, name: 'D', job: 'Director' },
+    { id: 7, name: 'E', job: 'Director' },      // tavan (3) aşıldı
+  ] } };
+  assert.deepEqual(seoEkipAdlari(v, SEO_YONETMEN_ISLERI, 3), ['A', 'C', 'D']);
+  assert.deepEqual(seoEkipAdlari(v, SEO_YONETMEN_ISLERI, 3, ['A']), ['C', 'D', 'E']);
+  assert.deepEqual(seoEkipAdlari(undefined, SEO_YONETMEN_ISLERI, 3), []);
+  assert.deepEqual(seoEkipAdlari({ credits: {} }, SEO_YONETMEN_ISLERI, 3), []);
+});
+
+test('kanal cümlesinin kipi status\'tan gelir — bitmiş dizi "yayınlanıyor" demez', () => {
+  const bb = sorular(BREAKING_BAD).find((s) => s.soru.includes('hangi kanalda'));
+  assert.equal(bb.soru, 'Breaking Bad hangi kanalda yayınlandı?');
+  assert.equal(bb.cevap, 'Breaking Bad AMC tarafından yayınlandı.');
+  const silo = sorular(SILO).find((s) => s.soru.includes('hangi kanalda'));
+  assert.equal(silo.soru, 'Silo hangi kanalda yayınlanıyor?');
+  assert.equal(silo.cevap, 'Silo Apple TV tarafından yayınlanıyor.');
+});
+
+test('para biçimi: binlik ayracı, "yaklaşık" yalnız BİLGİ KATIYORSA', () => {
+  assert.equal(seoParaCumlesi(894983373),
+    '894.983.373 dolar (yaklaşık 895 milyon dolar)');
+  assert.equal(seoParaCumlesi(2799439100),
+    '2.799.439.100 dolar (yaklaşık 2,8 milyar dolar)');
+  // Milyonun TAM KATI: "258.000.000 dolar (yaklaşık 258 milyon dolar)" bilgi
+  // katmayan bir tekrar olurdu — yaklaşık kısım hiç yazılmaz.
+  assert.equal(seoParaCumlesi(258000000), '258.000.000 dolar');
+  assert.equal(seoParaCumlesi(1000000000), '1.000.000.000 dolar');
+  // Milyonun ALTI: yaklaşık yok, ama sayı yine basılır.
+  assert.equal(seoParaCumlesi(750000), '750.000 dolar');
+  // CEVAP UYDURULMAZ: alan yoksa/0 ise dizgi BOŞ döner, soru hiç sorulmaz.
+  for (const bos of [0, null, undefined, -5, NaN, 'abc', {}]) {
+    assert.equal(seoParaCumlesi(bos), '', String(bos));
+  }
+});
+
+test('gişe sorusu: hasılat yoksa bütçe TEK BAŞINA sorulur, ikisi de yoksa soru yok', () => {
+  const yalnizButce = {
+    ...ORUMCEK3, v: { ...ORUMCEK3.v, revenue: 0, budget: 258000000 } };
+  const s = sorular(yalnizButce).find((x) => x.soru.includes('bütçe'));
+  assert.equal(s.soru, 'Örümcek Adam 3 bütçesi ne kadar?');
+  assert.equal(s.cevap, 'Örümcek Adam 3 filminin bütçesi 258.000.000 dolar.');
+
+  const hicbiri = { ...ORUMCEK3, v: { ...ORUMCEK3.v, revenue: 0, budget: 0 } };
+  const metin = sorulari(hicbiri).join(' | ');
+  assert.ok(!metin.includes('hasılat') && !metin.includes('bütçe'), metin);
+});
+
+test('eksik alan = soru YOK (created_by/networks/crew boş ya da bozuk)', () => {
+  const bos = { ...SILO, v: { ...SILO.v, created_by: [], networks: [] } };
+  const m = sorulari(bos).join(' | ');
+  assert.ok(!m.includes('yaratıcı') && !m.includes('hangi kanalda'), m);
+
+  const bozuk = { ...SILO,
+    v: { ...SILO.v, created_by: [{ id: 1 }], networks: [{ id: 2, name: '' }] } };
+  const b = sorulari(bozuk).join(' | ');
+  assert.ok(!b.includes('yaratıcı') && !b.includes('hangi kanalda'), b);
+});
+
+test('şema: filmde director, dizide creator — ve künye satırında GÖRÜNÜR', () => {
+  const bosSeo = { yorumlar: [], incelemeler: [], ortalama: null, adet: 0 };
+  const film = icerikJsonLd({
+    tur: 'movie', url: 'https://dizijpg.com/icerik/movie/559', ad: 'Örümcek Adam 3',
+    ozet: '', gorsel: '', v: ORUMCEK3.v, seo: bosSeo, sss: [] })['@graph'][0];
+  assert.deepEqual(film.director,
+    [{ '@type': 'Person', name: 'Sam Raimi', url: 'https://dizijpg.com/kisi/1000' }]);
+  assert.equal(film.creator, undefined, 'filmde creator olmamalı');
+
+  const dizi = icerikJsonLd({
+    tur: 'tv', url: 'https://dizijpg.com/icerik/tv/125988', ad: 'Silo',
+    ozet: '', gorsel: '', v: SILO.v, seo: bosSeo, sss: [] })['@graph'][0];
+  assert.deepEqual(dizi.creator,
+    [{ '@type': 'Person', name: 'Graham Yost', url: 'https://dizijpg.com/kisi/21206' }]);
+  assert.equal(dizi.director, undefined, 'dizide director olmamalı');
+
+  // GÖRÜNÜR KARŞILIK: uç künye satırını AYNI alanlardan kuruyor.
+  assert.match(UC, /kunyeYonetmenler/);
+  assert.match(UC, /Yönetmenler' : 'Yönetmen'/);
+  assert.match(UC, /Yaratıcılar' : 'Yaratıcı'/);
+  assert.match(UC, /Kanal: \$\{kunyeKanallar\.join/);
+  // Meta açıklama ile künye satırı AYNI dizgiden besleniyor (ayrışamaz).
+  assert.equal(UC.split('const kunyeNiteligi =').length - 1, 1);
+  assert.match(UC, /kunyeNiteligi,/);
+});
+
+test('kimliksiz ekip/yaratıcı şemaya GİRMEZ (/kisi/undefined üretilmez)', () => {
+  const bosSeo = { yorumlar: [], incelemeler: [], ortalama: null, adet: 0 };
+  const v = { credits: { crew: [{ name: 'Kimliksiz', job: 'Director' }] } };
+  const g = icerikJsonLd({ tur: 'movie', url: 'https://dizijpg.com/icerik/movie/1',
+    ad: 'X', ozet: '', gorsel: '', v, seo: bosSeo, sss: [] })['@graph'][0];
+  assert.equal(g.director, undefined);
 });
 
 test('rolün ORTASINDAKİ parantez korunur (yalnız SON not atılır)', () => {
