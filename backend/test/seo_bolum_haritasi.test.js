@@ -116,7 +116,7 @@ test('/sitemap.xml dizininin lastmod\'u her zaman GEÇERLİ (asla Invalid Date)'
 // kullanıcının istediği şey (bölüm sayfaları indekslensin ki yorum gelsin)
 // hiç gerçekleşmez. İki taraf İKİ AYRI DİLDE yazıldığı için (SQL ve JS)
 // derleyici bunu yakalayamaz; yakalayan tek şey bu testtir.
-const HARITA_DALI = bolum('  ), birlesik AS (', '  )\n  SELECT tmdb_id, sezon, bolum');
+const HARITA_DALI = bolum('  ), birlesik AS (', '\n  SELECT tmdb_id, sezon, bolum, coalesce');
 
 test('harita süzgeci ile sayfanın `indexle`si AYNI DÖRT ALANI sayıyor', () => {
   const olcu = bildirimCek('bolumIcerikOlcusu');
@@ -152,8 +152,10 @@ test('harita bölümü dizi düzeyi kapsam süzgecinden geçiriyor (TR / sonraki
     'TR yapım sinyali detay belgesinden okunmuyor');
   assert.match(sorgu, /next_episode_to_air'->>'season_number'/,
     'yayında-dizi sinyali yok');
+  // 29 Ağu 2026: BEŞİNCİ dal (`seo_talep_dizi`). Kapsam parantezi artık dört
+  // terimli; içerik ölçüsü AYRI parantezde kalmaya devam ediyor (B2).
   assert.match(HARITA_DALI,
-    /AND \(d\.tr_yapim OR b\.sezon = d\.sonraki_sezon OR kz\.tmdb_id IS NOT NULL\)/,
+    /AND \(d\.tr_yapim OR b\.sezon = d\.sonraki_sezon OR kz\.tmdb_id IS NOT NULL\n\s+OR tl\.tmdb_id IS NOT NULL\)/,
     'kapsam süzgeci birlesik WHERE\'ine AND\'lenmemiş');
   // `bizim_bolum` dalı kapsamdan BAĞIMSIZ kalmalı (eşikli yorum her dizide
   // haritaya girer) — UNION dalında dizi_bilgi koşulu OLMAMALI.
@@ -171,16 +173,27 @@ test('ısıtıcı kuyruğu haritayla AYNI kapsamda (haritadan çıkana bütçe y
   // soğuk kalmasın) ve dallar çakışabildiği için dış SELECT DISTINCT olmalı.
   assert.match(isitma, /\$\{SEO_YORUM_KOSUL\}/, 'bizim dalı ısıtma kuyruğunda yok');
   assert.match(isitma, /SELECT DISTINCT tmdb_id, sezon, bolum FROM/);
+  // TALEP DALI (29 Ağu) da İKİ dalda birden olmalı: gerçek bölüm listesinde
+  // tavanla, tahmin dalında tavansız (tahmin dalının işi sezon BELGESİNİ
+  // çektirmek — tavanı orada uygulamak 21 Ağu'daki kilidi geri getirirdi).
+  const talepDallari = isitma.match(/EXISTS \(SELECT 1 FROM talep tl/g) || [];
+  assert.equal(talepDallari.length, 2, 'talep dalı iki ısıtma dalına da girmeli');
+  assert.match(isitma, /g\.sira <= \$\{SEO_TALEP_BOLUM_TAVAN\}/,
+    'ısıtıcı gerçek-bölüm dalı haritanın tavanını uygulamıyor — haritada'
+    + ' olmayan URL ısıtılır (bütçe israfı)');
 });
 
 test('dizi sayfası bölüm bağlantıları haritayla AYNI kapsamda', () => {
   const b = bolum('async function seoDiziBolumGovdesi', '// SEO 1.2 — yapısal veri');
   assert.match(b, /origin_country.*includes\('TR'\)/, 'TR yapım dalı yok');
   assert.match(b, /next_episode_to_air\?\.season_number/, 'yayında-dizi dalı yok');
-  assert.match(b, /if \(!trYapim && !sonrakiSezon\) return kurtarilan;/,
+  assert.match(b, /if \(!trYapim && !sonrakiSezon && !talepli\) return kurtarilan;/,
     'kapsam dışı dizi hâlâ SEZON bloğu basıyor — kesilen URL geri keşfedilir'
-    + ' (yalnız kazanan bölümler istisnadır, bkz. dördüncü dal testleri)');
-  assert.match(b, /if \(!trYapim\) sezonlar = sezonlar\.filter\(\(s\) => s\.season_number === sonrakiSezon\);/,
+    + ' (kazanan bölümler ve talep dizileri istisnadır)');
+  assert.match(b, /const talepli = await talepDiziMi\(id\);/,
+    'iç bağlantı tarafı talep listesini OKUMUYOR — harita 20 bin URL bildirir,'
+    + ' sayfa hiçbirine bağlantı vermez (27 Ağu öksüzlüğünün 20 binlik hâli)');
+  assert.match(b, /if \(!trYapim && !talepli\) \{\n\s+sezonlar = sezonlar\.filter\(\(s\) => s\.season_number === sonrakiSezon\);/,
     'yayında dizide bağlantı sonraki sezonla sınırlanmamış');
 });
 
@@ -314,7 +327,7 @@ test('kazanan bölüm bağlantısı kapsam DIŞI dizide de basılıyor', () => {
   // Asıl hata buydu: /dizi/65988 (ne TR yapımı ne yayında) tıklama getiren
   // bölümüne 0 bağlantı veriyordu.
   const govde = bolum('async function seoDiziBolumGovdesi', '// SEO 1.2 — yapısal veri');
-  assert.match(govde, /if \(!trYapim && !sonrakiSezon\) return kurtarilan;/);
+  assert.match(govde, /if \(!trYapim && !sonrakiSezon && !talepli\) return kurtarilan;/);
   assert.match(govde, /if \(!sezonlar\.length\) return kurtarilan;/,
     'sezon listesi boşken kazanan bölüm düşüyor');
   assert.match(govde, /seoDiziBolumHtml\([^)]*\) \+ kurtarilan/,
@@ -488,4 +501,129 @@ test('20.000\'lik bölme ve boş sayfa dizine yazılmama kuralı duruyor', () =>
   for (const aile of ['icerik', 'bolum', 'kisi', 'sirket']) {
     assert.ok(b.includes(`'${aile}'`), `dizin ${aile} ailesini ilan etmiyor`);
   }
+});
+
+// ===========================================================================
+// BEŞİNCİ DAL — YÜKSEK TALEPLİ DİZİ (29 Ağu 2026)
+// ===========================================================================
+// 25 Ağu kapsamı dizi düzeyinde çalışıyordu ve ÖLÇÜM gösterdi ki TMDB'nin en
+// yüksek puanlı 250 dizisinin 249'u (yalnız 1'i TR yapımı, 202'si bitmiş)
+// hiçbir dala girmiyordu — tek giriş yolu "önce tıklama al" kısır döngüsüydü.
+// Kural, kanıtlanmış kazananlarını (bleach / lioness / verdades secretas)
+// kesiyordu. `seo_talep_dizi` bu döngüyü kırar.
+//
+// ÖLÇÜM (canlı, 29 Ağu): harita 5.176 → 24.926 URL, dizi 77 → 285.
+test('talep dalı ÜÇ TARAFTA da var (harita + ısıtıcı + iç bağlantı)', () => {
+  const harita = bildirimCek('SITEMAP_BOLUM_SORGU');
+  const isitma = bildirimCek('ISITMA_BOLUM_SORGU');
+  const govde = bolum('async function seoDiziBolumGovdesi', '// SEO 1.2 — yapısal veri');
+  for (const [ad, metin] of [['harita', harita], ['ısıtıcı', isitma]]) {
+    assert.match(metin, /\), talep AS \(/, `${ad}: talep CTE yok`);
+    assert.match(metin, /FROM seo_talep_dizi/, `${ad}: tablo okunmuyor`);
+  }
+  assert.match(govde, /await talepDiziMi\(id\)/,
+    'dizi sayfası talep listesini sormuyor — 20 bin URL öksüz kalır');
+});
+
+test('talep dalı İÇERİK ÖLÇÜSÜNÜ atlamıyor (B2 tuzağı hâlâ imkânsız)', () => {
+  // Gevşeyen YALNIZ dizi düzeyi kapsam. İçerik ölçüsü kendi parantezinde
+  // kalmalı; aynı parantezin içine düşerse içeriksiz bölüm haritaya girer.
+  const icerik = HARITA_DALI.match(
+    /WHERE \(b\.ozet > 0 OR b\.konuk > 0 OR b\.kare > 0 OR b\.yayin < current_date\)/);
+  assert.ok(icerik, 'içerik ölçüsü kendi parantezinde değil');
+  assert.doesNotMatch(icerik[0], /tl\./,
+    'talep istisnası içerik ölçüsünü gevşetmiş — noindex URL haritaya sızar');
+  // Dizi hiyerarşisi de duruyor: dizisi indekslenmeyen bölüm haritaya girmez.
+  assert.match(HARITA_DALI, /JOIN harita_tv h ON h\.tmdb_id = b\.tmdb_id/);
+});
+
+test('talep tavanı VAR, yalnız TALEP dalına işliyor ve EN ESKİDEN sayıyor', () => {
+  const tavan = alan(['SEO_TALEP_BOLUM_TAVAN'], 'SEO_TALEP_BOLUM_TAVAN');
+  assert.equal(typeof tavan, 'number');
+  assert.ok(tavan > 0 && tavan <= 1000, `tavan makul aralıkta değil: ${tavan}`);
+  const sorgu = bildirimCek('SITEMAP_BOLUM_SORGU');
+  // Sıra ARTAN (sezon, bölüm): kırpılan uç EN YENİ bölümlerdir. Ters sıralama
+  // "bleach 2 sezon 45" gibi ERKEN bölüm kazananlarını keserdi.
+  assert.match(sorgu,
+    /row_number\(\) OVER \(PARTITION BY s\.tmdb_id\n\s+ORDER BY s\.sezon, \(e->>'episode_number'\)::int\) AS sira/,
+    'sıra numarası yok ya da AZALAN sıralı');
+  // Tavan `kirpik` sütununda, kapsam parantezinde DEĞİL: TR yapım / yayında
+  // sezon / kazanan dallarıyla gelen bölüm tavandan ETKİLENMEZ.
+  assert.match(HARITA_DALI,
+    /\(tl\.tmdb_id IS NOT NULL\n\s+AND b\.sira > \$\{SEO_TALEP_BOLUM_TAVAN\}\n\s+AND NOT \(d\.tr_yapim OR b\.sezon = d\.sonraki_sezon\n\s+OR kz\.tmdb_id IS NOT NULL\)\) AS kirpik/,
+    'tavan yalnız talep dalına uygulanmıyor');
+  // Bir bölüm birden çok dalla gelebilir; hepsi kırpık demedikçe kalır.
+  assert.match(bildirimCek('SITEMAP_BOLUM_SORGU'), /bool_and\(kirpik\) AS kirpik/);
+});
+
+test('tavanın kırptığı satır SESSİZCE düşmüyor — sayılıyor ve LOGLANIYOR', () => {
+  const kayitlar = [];
+  const kod = bildirimCek('SEO_TALEP_BOLUM_TAVAN') + '\n'
+    + bolum('function bolumTavaniniUygula', 'async function sitemapBolumUret');
+  // eslint-disable-next-line no-new-func
+  const uygula = new Function('logYaz', `${kod}\nreturn bolumTavaniniUygula;`)(
+    (k) => kayitlar.push(k));
+
+  // Kırpma YOKSA log da YOK (6 saatte bir "kirpilan=0" gürültüsü olmasın).
+  const temiz = [{ tmdb_id: 1, sezon: 1, bolum: 1, kirpik: false }];
+  assert.deepEqual(uygula(temiz), temiz);
+  assert.equal(kayitlar.length, 0, 'kırpma yokken log basılıyor');
+
+  const rows = [
+    { tmdb_id: 37854, sezon: 1, bolum: 1, kirpik: false },
+    { tmdb_id: 37854, sezon: 9, bolum: 9, kirpik: true },
+    { tmdb_id: 37854, sezon: 9, bolum: 10, kirpik: true },
+    { tmdb_id: 1396, sezon: 1, bolum: 1, kirpik: true },
+  ];
+  const kalan = uygula(rows);
+  assert.equal(kalan.length, 1, 'kırpık satır haritada kalmış');
+  assert.equal(kalan[0].tmdb_id, 37854);
+  assert.equal(kayitlar.length, 1, 'kırpma loglanmıyor — SESSİZ KESME');
+  const k = kayitlar[0];
+  assert.equal(k.olay, 'sitemap_bolum_talep_tavani');
+  assert.equal(k.kirpilan, 3);
+  assert.equal(k.dizi, 2);
+  assert.equal(k.harita, 1);
+  // Dizi başına döküm: hangi başlığın kuyruğunu kestiğimiz görünmeli.
+  assert.match(k.diziler, /37854:2/);
+  assert.match(k.diziler, /1396:1/);
+  assert.ok(k.tavan > 0, 'log tavanı taşımıyor — hangi eşikle kesildiği belirsiz');
+  // Bozuk/boş girdide ATMAZ (harita üretimi tek satır yüzünden düşmesin).
+  for (const girdi of [null, undefined, []]) {
+    assert.doesNotThrow(() => uygula(girdi));
+    assert.deepEqual(uygula(girdi), []);
+  }
+});
+
+test('bölüm haritası KIRPIK satırı Google\'a BİLDİRMİYOR', () => {
+  // Sorgu kırpık satırı DÖNDÜRÜYOR (görünürlük için). Üretici onu süzmezse
+  // tavan hiç uygulanmamış olur ve log "kestik" derken URL yayında kalır.
+  const uret = bildirimCek('sitemapBolumUret');
+  assert.match(uret, /sitemapSayfala\(bolumTavaniniUygula\(rows\)/,
+    'harita ham satırlardan üretiliyor — tavan uygulanmıyor');
+});
+
+test('talep listesi okuması SSR\'ı ÇÖKERTMEZ (tablo yoksa boş küme)', () => {
+  const f = bolum('async function talepDiziKumesi', '/** Dizi yüksek talepli');
+  assert.match(f, /try \{/, 'sorgu try içinde değil');
+  assert.match(f, /\} catch \{/, 'hata yutulmuyor');
+  assert.match(f, /KAZANAN_BOLUM_HATA_TTL_MS/,
+    'hata sonrası kısa TTL yok — migrasyon uygulanınca fark edilmez');
+  // Tüm tablo TEK sorguyla okunuyor (dizi başına sorgu = bot isteği başına N).
+  assert.match(f, /SELECT tmdb_id FROM seo_talep_dizi/);
+});
+
+test('ısıtıcının SEZON anahtarı haritanın OKUDUĞU anahtarla AYNI', () => {
+  // 28 Ağu'da `append_to_response=watch/providers` yüzünden `/tv/:id`
+  // anahtarı kaymıştı. Aynı hata sezon anahtarında olursa harita 20 bin URL
+  // için sonsuza kadar soğuk kalır — ısıtılan satırı kimse okumaz.
+  const sorgu = bildirimCek('SITEMAP_BOLUM_SORGU');
+  assert.ok(sorgu.includes("/season/[0-9]+\\\\?language=tr-TR$'"),
+    'harita sezon anahtarını tr-TR ile sınırlamıyor');
+  // Isıtıcı YOLU eksiz üretir (`bolumYollari`); dili `onbellekAnahtari` ekler.
+  assert.match(KAYNAK, /tmdbGetir\(`\/tv\/\$\{id\}\/season\/\$\{s\}`/,
+    'SSR sezon yolu ek parametre almış — anahtar ısıtıcıdan ayrışır');
+  assert.match(bildirimCek('ISITMA_BOLUM_SORGU'),
+    /anahtar ~ '\^\/tv\/\[0-9\]\+\/season\/\[0-9\]\+\\\\\?language=tr-TR\$'/,
+    'ısıtıcı sezon belgesini haritadan FARKLI anahtarla arıyor');
 });

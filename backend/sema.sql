@@ -1366,3 +1366,24 @@ ALTER TABLE bildirimler ADD COLUMN IF NOT EXISTS geri_bildirim_id INT
 CREATE UNIQUE INDEX IF NOT EXISTS bildirimler_geri_bildirim_tekil
   ON bildirimler (kullanici_id, geri_bildirim_id)
   WHERE tur = 'geri_bildirim';
+
+-- 2026-08-29: KESME KURALININ TALEP DALI. Bölüm haritası dizi düzeyinde
+-- kesiliyordu (TR yapım / yayında sezon / SEO kazananı) ve ölçüm gösterdi ki
+-- TMDB'nin en yüksek puanlı 250 dizisinin 249'u bu üç dalın hiçbirine
+-- girmiyor — yani en çok aranan diziler yapısal olarak dışarıdaydı ve tek
+-- giriş yolu "önce tıklama al" kısır döngüsüydü. Bu tablo dördüncü kapsam
+-- dalı: dizi buradaysa bölümleri haritaya (ve ısıtıcı kuyruğuna) girer.
+-- Liste DEĞİŞKEN (aylık tazelenir, bkz. araclar/seo_talep_dizi_tazele.js);
+-- `seo_kazanan_bolum` KALICI — biri düşeni diğeri yakalar.
+-- Uzun gerekçe + ölçümler: migrasyon-2026-08-29.sql, SEO-YAPILACAKLAR §14.
+CREATE TABLE IF NOT EXISTS seo_talep_dizi (
+  tmdb_id      INT         PRIMARY KEY,
+  ad           TEXT        NOT NULL DEFAULT '',
+  puan         NUMERIC(4,2),
+  oy           INT,
+  sira         INT,
+  kaynak       TEXT        NOT NULL DEFAULT 'tmdb_top250_tv',
+  olcum_gunu   DATE,
+  eklendi      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  guncellendi  TIMESTAMPTZ NOT NULL DEFAULT now()
+);

@@ -16,6 +16,47 @@ Mağaza kareleri çekilirken 11 dilde uygulama gezildi; şunlar görüldü:
 - ⬜ **İngilizce çoğul hatası**: dizi sayfasında "1 people you follow watched it"
   — tekil için "1 person" olmalı (diğer dillerde de çoğul kuralı kontrol edilmeli).
 
+## 2026-08-29 — 🚀 BÖLÜM KESME KURALI TALEBE GÖRE YENİDEN YAZILDI
+
+Kesme kuralı (25 Ağu) dizi düzeyinde çalışıyordu: bölüm haritaya ancak dizi TR
+yapımıysa, sezon yayınlanıyorsa ya da bölüm `seo_kazanan_bolum`'daysa giriyordu.
+ÖLÇÜM: TMDB'nin en yüksek puanlı 250 dizisinin **249'u** bu üç dalın hiçbirine
+girmiyordu (yalnız 1'i TR yapımı, 202'si bitmiş). Tek giriş yolu "önce tıklama
+al" — kısır döngü. Üstelik tıklama getiren üç sorgumuz da (bleach / lioness /
+verdades secretas) yabancı ve bitmiş dizilerdi: **kural kendi kazananlarını
+kesiyordu.**
+
+- ✅ **Beşinci dal `seo_talep_dizi`** (migrasyon-2026-08-29.sql, 249 dizi).
+  Harita **5.176 → 26.208 URL**, dizi **77 → 295**. 25 Ağu'da kaçınılan
+  79.463'e dönüş değil, onun %33'ü.
+- ✅ **Dizi başına tavan 500**, yalnız talep dalında, EN ESKİ 500 (kanıt:
+  `bleach 2 sezon 45` erken bir bölüm — yeniden-kırpma kazananı keserdi).
+  Bugün tek diziyi kırpıyor (One Piece, 655 satır) ve **loglanıyor**
+  (`olay: sitemap_bolum_talep_tavani`).
+- ✅ **Liste tazeleyici**: `backend/araclar/seo_talep_dizi_tazele.js`
+  (TMDB discover; kuru koşu varsayılan, `--yaz` ile yazar, 200'ün altında
+  satır çekilirse HİÇBİR ŞEY yazmaz). Aylık.
+- ✅ **Önbellek ısıtma**: ölçüldü — top 250'nin sezon belgelerinin %94'ü
+  ZATEN önbellekteydi; eksik **70 sezon** ısıtıldı (70/70, ~2 dk).
+  `ISITMA_BOLUM_SORGU`'ya talep dalı eklendi (anahtar hizası test kilitli).
+- ✅ **12 boşluk kapatıldı**: `IMDB-TOP500.md`de ❌ olan 12 dizi, projenin
+  YERLEŞİK ve açıkça AI etiketli mekanizmasıyla (`dizi.jpg.ai`, id=51,
+  `kullanicilar.ai`) özgün içerik aldı. Sahte kullanıcı içeriği ÜRETİLMEDİ.
+  12/12 artık indekslenebilir; bölümleri de haritaya girdi.
+- ✅ **🚨 Bölüm ailesi dil varyantından çıkarıldı.** Dağıtımdan sonra canlı
+  sitemap sayılınca bulundu: `SEO_DILLI_AILE` `/dizi/` ile başlayan her yolu
+  kapsıyor, yani bölümler ZATEN 46 dille çarpılıyordu. 26.208 × 46 =
+  **1,2 milyon URL** olurdu. `SEO_HARITA_DILSIZ_AILE` ile bölüm ailesi yalnız
+  `tr`; `/sitemap-en-bolum-1.xml` artık 404. Alt harita 231 → 141.
+  SSR ve hreflang değişmedi.
+- ✅ Testler: 2.054 (yeni: talep dalı, tavan, kırpma logu, anahtar hizası,
+  dil varyantı kilidi). Süre ölçümü: SQL 7,8–8,5 sn · `/sitemap-bolum-1.xml`
+  10,2 sn (nginx 45 sn, `gsc_izle` 90 sn — aşılmıyor).
+- ⬜ **7 gün izle:** GSC keşif kuyruğu (1 Eylül'de 21.394). Kuyruk şişerse
+  tavan düşürülür ya da liste 250 → 100 çekilir.
+
+Karar belgesi: `SEO-YAPILACAKLAR.md` §14 (v5.4).
+
 ## 2026-08-29 — 🚀 SSR **46 DİLE** AÇILDI (dizin tabanlı yol + hreflang)
 
 Kullanıcının kararı: *"google taramıyorsa taramasın bizene, googleden başka

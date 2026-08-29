@@ -3121,6 +3121,43 @@ async function kazananBolumHaritasi() {
 const kazananBolumler = async (id) =>
   (await kazananBolumHaritasi()).get(Number(id)) || [];
 
+// ---------------------------------------------------------------------------
+// TALEP LİSTESİ — kesme kuralının BEŞİNCİ dalı (29 Ağu 2026)
+// ---------------------------------------------------------------------------
+// `seo_talep_dizi` haritada ve ısıtıcı kuyruğunda SQL olarak okunuyor; İÇ
+// BAĞLANTI tarafı (bu dosya) da AYNI listeyi görmek ZORUNDA. 25 Ağu'nun dersi
+// tam buydu: harita kesildi ama iç bağlantı kesilmedi sanılırsa kesilen URL
+// yeniden keşfedilir; TERSİ de doğru — harita açıldı ama iç bağlantı kapalı
+// kalırsa 20.167 URL sitemap'te var, sayfada bağlantısız (öksüz) olur.
+//
+// TÜM TABLO OKUNUR, dizi başına sorgu YAPILMAZ: tablo tanımı gereği 250
+// satır ve dizi sayfası her bot isteğinde bunu soruyor. TTL/hata davranışı
+// `kazananBolumHaritasi` ile birebir aynı (migrasyon sırası ters giderse
+// sayfa 25 Ağu davranışını sürdürür, çökmez).
+let talepDiziOnbellek = { zaman: 0, ttl: 0, kume: new Set() };
+
+async function talepDiziKumesi() {
+  const simdi = Date.now();
+  if (simdi - talepDiziOnbellek.zaman < talepDiziOnbellek.ttl) {
+    return talepDiziOnbellek.kume;
+  }
+  try {
+    const { rows } = await havuz.query('SELECT tmdb_id FROM seo_talep_dizi');
+    talepDiziOnbellek = {
+      zaman: simdi, ttl: KAZANAN_BOLUM_TTL_MS,
+      kume: new Set(rows.map((r) => r.tmdb_id)),
+    };
+  } catch {
+    talepDiziOnbellek = {
+      zaman: simdi, ttl: KAZANAN_BOLUM_HATA_TTL_MS, kume: talepDiziOnbellek.kume,
+    };
+  }
+  return talepDiziOnbellek.kume;
+}
+
+/** Dizi yüksek talepli listede mi (kapsam süzgecinin beşinci dalı). */
+const talepDiziMi = async (id) => (await talepDiziKumesi()).has(Number(id));
+
 /**
  * Kazanan bölümler için iç bağlantı bloğu.
  *
@@ -3161,19 +3198,35 @@ function seoKurtarilanBolumHtml(id, diziAd, kazanan, dil = 'tr') {
  *   · diğerleri      → bölüm bloğu HİÇ basılmaz.
  * Eşikli yorum/incelemesi olan bölümler (haritanın `bizim_bolum` dalı) zaten
  * sayfadaki yorum bölümünden bağlantı alıyor; burada ayrıca ele alınmıyor.
+ *
+ * 29 Ağu 2026 — TALEP DALI BURAYA DA GELDİ. Harita 20.167 URL genişledi;
+ * bu gövde eski dar hâlinde kalsaydı o URL'lerin tamamı "sitemap'te var,
+ * sayfada bağlantısız" olurdu — 27 Ağu'da düzelttiğimiz ÖKSÜZLÜĞÜN aynısı,
+ * bu kez 6 değil 20 bin URL'de. Talep dizisi bu blokta TR YAPIMI GİBİ
+ * davranır (tüm sezonlar), çünkü listenin 202'si bitmiş dizi: "yalnız yayında
+ * olan sezon" süzgeci onlarda HİÇBİR sezon bırakmazdı.
+ *
+ * BAĞLANTI SAYISI PATLAMAZ: `SEO_DIZI_BOLUM_TAVAN` (80) ve
+ * `SEO_DIZI_SEZON_TAVAN` (60) sayfa başına sınırı zaten koyuyor. Haritadaki
+ * bölümün TAMAMINA sayfadan tek tek bağlantı verilmiyor, verilmesi de
+ * gerekmiyor: bölüm sayfaları birbirine `seoSezonGezinme` merdiveniyle
+ * (önceki/sonraki bölüm) bağlı — bot bir bölüme girince sezonu yürüyebiliyor.
  */
 async function seoDiziBolumGovdesi(id, v, dil = 'tr') {
   const trYapim = Array.isArray(v?.origin_country) && v.origin_country.includes('TR');
   const sonrakiSezon = seoPozitif(v?.next_episode_to_air?.season_number);
+  const talepli = await talepDiziMi(id);
   const diziAd = seoMetin(v?.name) || 'Dizi';
   // Kapsam dışı dizide bile basılır: kazanan bölüm ÖKSÜZ KALMAMALI (27 Ağu).
   const kurtarilan = seoKurtarilanBolumHtml(id, diziAd, await kazananBolumler(id), dil);
-  if (!trYapim && !sonrakiSezon) return kurtarilan;
+  if (!trYapim && !sonrakiSezon && !talepli) return kurtarilan;
   let sezonlar = (Array.isArray(v?.seasons) ? v.seasons : [])
     .filter((s) => Number.isInteger(s?.season_number) && s.season_number >= 1
       && Number.isInteger(s?.episode_count) && s.episode_count > 0)
     .sort((a, b) => a.season_number - b.season_number);
-  if (!trYapim) sezonlar = sezonlar.filter((s) => s.season_number === sonrakiSezon);
+  if (!trYapim && !talepli) {
+    sezonlar = sezonlar.filter((s) => s.season_number === sonrakiSezon);
+  }
   if (!sezonlar.length) return kurtarilan;
   // SONDAN geriye: en yeni sezonlar tek tek, bölüm tavanına sığdığı kadar.
   // İlk sezon tavanı tek başına aşsa bile listeye girer (`tam.length` şartı):
@@ -6979,6 +7032,36 @@ const SITEMAP_SORGU = `
 // ALT KÜMESİ — "haritada olup noindex dönen URL" (B2) hâlâ imkânsız, çünkü
 // kesme yalnız DARALTIR. İç bağlantı tarafı da aynı kapsama çekildi
 // (`seoDiziBolumGovdesi`): kesilen URL iç bağlantıyla yeniden keşfedilmesin.
+//
+// ---------------------------------------------------------------------------
+// 29 Ağu 2026 — KESME KURALI TALEBE GÖRE YENİDEN YAZILDI (GERİ ALMA)
+// ---------------------------------------------------------------------------
+// 25 Ağu kapsamı DİZİ DÜZEYİNDE çalışıyordu ve ölçüm onun yapısal bir kör
+// nokta taşıdığını gösterdi (canlı DB + `IMDB-TOP500.md`, 29 Ağu):
+//   · bölüm haritası **5.176 URL / 77 dizi**,
+//   · TMDB'nin en yüksek puanlı 250 dizisinin (oy ≥ 1.000) 249'u eşsiz;
+//     bunların **yalnız 1'i** TR yapımı, **202'si** Ended/Canceled,
+//   · yani en çok aranan 250 dizinin **249'u** üç dalın hiçbirine girmiyordu.
+//     Tek giriş yolu `seo_kazanan_bolum` — o da "ÖNCE tıklama al" demek.
+//     KISIR DÖNGÜ: haritada olmayan URL tıklama alamaz.
+//
+// KARŞI KANIT KURALIN KENDİ İÇİNDEYDİ: tıklama getiren üç sorgumuz
+// (`bleach 2 sezon 45`, `lioness 3. sezon 4. bölüm`, `verdades secretas
+// 1 bölüm izle`) hiçbiri TR yapımı değil, hiçbiri yayında bir sezonda değil.
+// Üçü de yalnız MUAFİYET dalıyla haritaya girebilmişti. Bölüm ailesi %13 TO
+// ile dönüşen tek aile — kural tam da dönüşen yüzeyi kesiyordu.
+//
+// BEŞİNCİ DAL: `seo_talep_dizi` (talep listesi, aylık tazelenir).
+// ÖLÇÜLEN SONUÇ: harita 5.176 → 25.343 URL (+20.167), dizi 77 → 285.
+// 25 Ağu'da kaçınılan 79.463'e dönüş DEĞİL — onun %32'si.
+//
+// `SEO_TALEP_BOLUM_TAVAN` = dizi başına tavan, YALNIZ talep dalında. Bugün tek
+// bir diziyi (One Piece, 917 → 500) kırpıyor. Kırpılan satır sorgudan ATILMAZ:
+// `kirpik = true` ile döner ve `sitemapBolumUret` onu haritadan çıkarıp
+// LOGLAR. Uzun gerekçe (neden 500, neden EN ESKİ 500, neden tavan var):
+// migrasyon-2026-08-29.sql.
+const SEO_TALEP_BOLUM_TAVAN = 500;
+
 const SITEMAP_BOLUM_SORGU = `
   WITH harita_tv AS (
     SELECT DISTINCT tmdb_id FROM (${SITEMAP_SORGU}) h WHERE tur = 'tv'
@@ -7015,7 +7098,15 @@ const SITEMAP_BOLUM_SORGU = `
            max(jsonb_array_length(coalesce(e->'guest_stars', '[]'::jsonb))) AS konuk,
            count(*) FILTER (WHERE coalesce(e->>'still_path', '') <> '') AS kare,
            max(CASE WHEN e->>'air_date' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
-                    THEN (e->>'air_date')::date END) AS yayin
+                    THEN (e->>'air_date')::date END) AS yayin,
+           -- TALEP TAVANI İÇİN SIRA (29 Ağu 2026). Pencere fonksiyonu GROUP BY
+           -- SONRASI çalışır, yani bu numara "dizinin kaçıncı bölümü" demektir
+           -- (mutlak numaralandırmadan bağımsız). ARTAN sırada: kırpılan uç
+           -- EN YENİ bölümler olur, en eskiler değil — gerekçe ve ölçüm
+           -- migrasyon-2026-08-29.sql'de ("bleach 2 sezon 45" kanıtı).
+           -- (Sablon dizesi: BACKTICK YOK.)
+           row_number() OVER (PARTITION BY s.tmdb_id
+                              ORDER BY s.sezon, (e->>'episode_number')::int) AS sira
       FROM sezon_yaniti s, jsonb_array_elements(s.veri->'episodes') e
      WHERE s.sezon >= 1
        AND e->>'episode_number' ~ '^[0-9]+$'
@@ -7040,25 +7131,54 @@ const SITEMAP_BOLUM_SORGU = `
     -- — sitenin toplam 9 tıklamasının 7'si; altısı da kesme sonrası öksüz
     -- kalmıştı). Tablo tanımı gereği küçük kalır, kuyruğu şişirmez.
     SELECT tmdb_id, sezon, bolum FROM seo_kazanan_bolum
+  ), talep AS (
+    -- KESME KURALININ BEŞİNCİ DALI (29 Ağu 2026): YÜKSEK TALEPLİ dizi.
+    -- Gerekçe ve ölçüm: migrasyon-2026-08-29.sql. Özet: 25 Ağu kapsamı dizi
+    -- düzeyinde çalışıyordu ve TMDB'nin en yüksek puanlı 250 dizisinin 249'u
+    -- (yalnız 1'i TR yapımı, 202'si bitmiş) hiçbir dala girmiyordu. Tek giriş
+    -- yolu "kazanan" dalıydı — o da "ÖNCE tıklama al" demek: kısır döngü.
+    -- Kural kendi kanıtlanmış kazananlarını (bleach/lioness/verdades secretas,
+    -- üçü de yabancı ve bitmiş) kesiyordu.
+    SELECT tmdb_id FROM seo_talep_dizi
   ), birlesik AS (
     SELECT b.tmdb_id, b.sezon, b.bolum,
            CASE WHEN b.yayin < current_date THEN b.yayin END AS gun,
-           NULL::timestamptz AS bizim
+           NULL::timestamptz AS bizim,
+           -- TALEP TAVANI — KIRPMA GÖRÜNÜR OLSUN (bkz. sitemapBolumUret).
+           -- Satır SORGUDAN ATILMAZ, "kirpik" ile işaretlenir; harita üreticisi
+           -- onu haritadan çıkarır ve dizi başına sayısıyla LOGLAR. "Sessiz
+           -- kesme yok" kuralı: 20 bin URL'lik bir kapsam değişikliğinde neyin
+           -- neden düştüğü kayıtta olmalı.
+           -- Tavan YALNIZ TALEP DALINA işler: bir bölüm TR yapımı, yayında
+           -- sezon ya da kazanan dalıyla da giriyorsa "kirpik" false kalır.
+           (tl.tmdb_id IS NOT NULL
+            AND b.sira > ${SEO_TALEP_BOLUM_TAVAN}
+            AND NOT (d.tr_yapim OR b.sezon = d.sonraki_sezon
+                     OR kz.tmdb_id IS NOT NULL)) AS kirpik
       FROM tmdb_bolum b
       JOIN harita_tv h ON h.tmdb_id = b.tmdb_id
       JOIN dizi_bilgi d ON d.tmdb_id = b.tmdb_id
       LEFT JOIN kazanan kz ON kz.tmdb_id = b.tmdb_id
                           AND kz.sezon = b.sezon AND kz.bolum = b.bolum
-     -- İÇERİK ÖLÇÜSÜ (ilk satır) KAZANAN DALINDA DA ARANIR: gevşeyen yalnız
-     -- DİZİ DÜZEYİ kapsam. Böylece "haritada var ama noindex" tuzağı (B2)
-     -- matematiksel olarak imkânsız kalır — içeriksiz bölüm bu tablodayken
-     -- bile haritaya giremez.
+      LEFT JOIN talep tl ON tl.tmdb_id = b.tmdb_id
+     -- İÇERİK ÖLÇÜSÜ (ilk satır) KAZANAN VE TALEP DALINDA DA ARANIR: gevşeyen
+     -- yalnız DİZİ DÜZEYİ kapsam. Böylece "haritada var ama noindex" tuzağı
+     -- (B2) matematiksel olarak imkânsız kalır — içeriksiz bölüm bu tablolarda
+     -- olsa bile haritaya giremez.
      WHERE (b.ozet > 0 OR b.konuk > 0 OR b.kare > 0 OR b.yayin < current_date)
-       AND (d.tr_yapim OR b.sezon = d.sonraki_sezon OR kz.tmdb_id IS NOT NULL)
+       AND (d.tr_yapim OR b.sezon = d.sonraki_sezon OR kz.tmdb_id IS NOT NULL
+            OR tl.tmdb_id IS NOT NULL)
     UNION ALL
-    SELECT tmdb_id, sezon, bolum, NULL::date, son FROM bizim_bolum
+    SELECT tmdb_id, sezon, bolum, NULL::date, son, false FROM bizim_bolum
   )
-  SELECT tmdb_id, sezon, bolum, coalesce(max(bizim)::date, max(gun)) AS son
+  -- bool_and: bir bölüm BİRDEN ÇOK dalla gelebilir. Yalnız TÜM dalları kırpık
+  -- diyorsa kırpılır. Eşikli yorumumuz olan (ya da kazanan) bir bölüm tavanın
+  -- üstünde bile olsa haritada kalır.
+  -- (NOKTALI VİRGÜL YASAK: bu satırlar parantez derinliği 0'da ve testlerin
+  --  kaynak okuyucusu const bildirimini ilk depth-0 noktalı virgülde bitiriyor.
+  --  Aynı sebeple BACKTICK de yasak.)
+  SELECT tmdb_id, sezon, bolum, coalesce(max(bizim)::date, max(gun)) AS son,
+         bool_and(kirpik) AS kirpik
     FROM birlesik GROUP BY tmdb_id, sezon, bolum
    ORDER BY tmdb_id, sezon, bolum`;
 
@@ -7182,11 +7302,18 @@ const ISITMA_BOLUM_SORGU = `
        AND anahtar ~ '^/tv/[0-9]+/season/[0-9]+\\?language=tr-TR$'
        AND jsonb_typeof(veri->'episodes') = 'array'
   ), gercek_bolum AS MATERIALIZED (
-    SELECT DISTINCT b.tv, b.sezon_no, (e->>'episode_number')::int AS bolum
-      FROM sezon_belgesi b, jsonb_array_elements(b.veri->'episodes') e
-     WHERE b.sezon_no >= 1
-       AND e->>'episode_number' ~ '^[0-9]+$'
-       AND (e->>'episode_number')::int >= 1
+    -- "sira": haritadaki "SEO_TALEP_BOLUM_TAVAN" ile AYNI numaralandırma
+    -- (dizi içinde sezon,bolum ARTAN). Haritada kırpılan bölüm ısıtma
+    -- kuyruğuna da girmemeli — yoksa bildirilmeyen URL'ye bütçe yanar.
+    SELECT tv, sezon_no, bolum,
+           row_number() OVER (PARTITION BY tv ORDER BY sezon_no, bolum) AS sira
+      FROM (
+        SELECT DISTINCT b.tv, b.sezon_no, (e->>'episode_number')::int AS bolum
+          FROM sezon_belgesi b, jsonb_array_elements(b.veri->'episodes') e
+         WHERE b.sezon_no >= 1
+           AND e->>'episode_number' ~ '^[0-9]+$'
+           AND (e->>'episode_number')::int >= 1
+      ) g
   ), kapsanan AS (
     SELECT DISTINCT tv, sezon_no FROM gercek_bolum
   ), kazanan AS (
@@ -7195,6 +7322,11 @@ const ISITMA_BOLUM_SORGU = `
     -- bildirilen URL soğuk kalır. Bkz. SITEMAP_BOLUM_SORGU icindeki ayni
     -- adli CTE. (Sablon dizesi: BACKTICK YOK.)
     SELECT tmdb_id, sezon, bolum FROM seo_kazanan_bolum
+  ), talep AS (
+    -- Haritanın BEŞİNCİ dalı (29 Ağu 2026). Aynı gerekçe: harita ne
+    -- bildiriyorsa ısıtıcı onu ısıtır. Bu dal OLMADAN 1. madde HİÇBİR ŞEY
+    -- yapmazdı — harita yalnız sezon yanıtı ÖNBELLEKTE olan bölümü görüyor.
+    SELECT tmdb_id FROM seo_talep_dizi
   )
   SELECT DISTINCT tmdb_id, sezon, bolum FROM (
     SELECT g.tv AS tmdb_id, g.sezon_no AS sezon, g.bolum
@@ -7204,6 +7336,8 @@ const ISITMA_BOLUM_SORGU = `
      WHERE d.tr_yapim OR g.sezon_no = d.sonraki_sezon
         OR EXISTS (SELECT 1 FROM kazanan kz WHERE kz.tmdb_id = g.tv
                     AND kz.sezon = g.sezon_no AND kz.bolum = g.bolum)
+        OR (g.sira <= ${SEO_TALEP_BOLUM_TAVAN}
+            AND EXISTS (SELECT 1 FROM talep tl WHERE tl.tmdb_id = g.tv))
     UNION ALL
     SELECT v.tv, v.sezon_no, s.bolum
       FROM tv_sezon v
@@ -7214,7 +7348,15 @@ const ISITMA_BOLUM_SORGU = `
      WHERE v.sezon_no >= 1 AND v.bolum_adedi > 0 AND k.tv IS NULL
        AND (d.tr_yapim OR v.sezon_no = d.sonraki_sezon
             OR EXISTS (SELECT 1 FROM kazanan kz WHERE kz.tmdb_id = v.tv
-                        AND kz.sezon = v.sezon_no AND kz.bolum = s.bolum))
+                        AND kz.sezon = v.sezon_no AND kz.bolum = s.bolum)
+            -- TAHMİN DALINDA TAVAN YOK ve bu BİLİNÇLİ: bu dal yalnız SEZON
+            -- BELGESİ HENÜZ ÖNBELLEKTE OLMAYAN sezonlar için çalışıyor ve asıl
+            -- işi o sezon belgesini çektirmek ("oncelik: 0", dilSinifi 'sezon').
+            -- Tavanı burada uygulasak, tavanın üstündeki sezonun belgesi hiç
+            -- çekilmez ve gerçek dalın o diziyi doğru numaralandırması
+            -- imkânsızlaşırdı — 21 Ağu'daki "kendi kaynağını besleyemeyen
+            -- kuyruk" kilidinin aynısı. Fazla istek olumsuz önbellekle sönüyor.
+            OR EXISTS (SELECT 1 FROM talep tl WHERE tl.tmdb_id = v.tv))
     UNION ALL
     SELECT b.tmdb_id, b.sezon, b.bolum FROM (
       SELECT y.tmdb_id, y.sezon, y.bolum
@@ -7497,9 +7639,48 @@ async function sitemapVerisi(zorla) {
   return sitemapKovaOku(sitemapIcerikKovasi, sitemapUret, zorla);
 }
 
+/**
+ * TALEP TAVANI — kırpılan satırları haritadan çıkarır VE LOGLAR.
+ *
+ * `SITEMAP_BOLUM_SORGU` tavanın ÜSTÜNDEKİ satırları da döndürür
+ * (`kirpik = true`). Onları haritadan çıkarmak ve KAÇ TANESİNİ, HANGİ DİZİDEN
+ * çıkardığımızı yazmak bu fonksiyonun işi. "Sessiz kesme yok": 20 binlik bir
+ * kapsam açılışında tavanın neyi kestiği kayıtta olmazsa kimse fark etmez —
+ * 25 Ağu'da kesilen 73 bin URL'nin tıklama getiren 6'sını da ancak iki gün
+ * sonra GSC'de fark ettik.
+ *
+ * KIRPMA YOKSA SATIR BASILMAZ: her 6 saatte bir "kirpilan=0" yazmak logu
+ * gürültüye boğar ve gerçek kırpma günü gözden kaçar.
+ *
+ * AYRI FONKSİYON (satır içi değil): `sitemapBolumUret` URL üretiminden başka
+ * bir şey İÇERMEMELİ — `seo_harita_kapsami.test.js` orada indeks aritmetiği
+ * (`+ 1`) aramıyor olmasını "URL numarası veriden gelir" güvencesi olarak
+ * kullanıyor. Sayaç aritmetiği o güvencenin dışında kalsın.
+ */
+function bolumTavaniniUygula(rows) {
+  const kalan = (rows || []).filter((r) => !r.kirpik);
+  const kirpik = (rows || []).filter((r) => r.kirpik);
+  if (!kirpik.length) return kalan;
+  const dizi = new Map();
+  for (const r of kirpik) dizi.set(r.tmdb_id, (dizi.get(r.tmdb_id) || 0) + 1);
+  logYaz({
+    seviye: 'bilgi',
+    olay: 'sitemap_bolum_talep_tavani',
+    tavan: SEO_TALEP_BOLUM_TAVAN,
+    kirpilan: kirpik.length,
+    dizi: dizi.size,
+    // Dizi başına döküm: hangi başlığın kuyruğunu kestiğimiz GÖRÜNSÜN.
+    // En çok kırpılan 20 dizi yeter (log satırı sınırsız büyümesin).
+    diziler: [...dizi.entries()].sort((a, b) => b[1] - a[1]).slice(0, 20)
+      .map(([id, n]) => `${id}:${n}`).join(','),
+    harita: kalan.length,
+  });
+  return kalan;
+}
+
 async function sitemapBolumUret() {
   const { rows } = await sitemapSorgu(SITEMAP_BOLUM_SORGU);
-  return sitemapSayfala(rows,
+  return sitemapSayfala(bolumTavaniniUygula(rows),
     (r) => `${SITE_KOK}/dizi/${r.tmdb_id}/sezon/${r.sezon}/bolum/${r.bolum}`);
 }
 
@@ -7581,6 +7762,32 @@ const sitemapParcaLastmod = (sayfa, degisim) => {
   return d > en ? d : en;
 };
 
+// ---------------------------------------------------------------------------
+// BÖLÜM AİLESİ DİL VARYANTI ALMAZ (29 Ağu 2026, ÖLÇÜMLE BULUNDU)
+// ---------------------------------------------------------------------------
+// Dil başına harita bugün eklendiğinde DÖRT ailenin dördü de 46 dille
+// çarpıldı. Bölüm haritası o an 5.176 URL'di, yani 238 bin satır — fark
+// edilmedi. Talep dalı açılınca (aynı gün) bölüm haritası 26.178'e çıktı ve
+// aynı çarpan **1,2 MİLYON URL** demeye başladı: 25 Ağu'da yangına yol açan
+// 79.463'ün 15 katı. Bu ölçüm dağıtımdan sonra canlı `/sitemap.xml` sayılarak
+// yapıldı (`sitemap-en-bolum-1.xml` gerçekten 20.000 satır dönüyordu).
+//
+// KARAR: bölüm sayfaları bu turda TÜRKÇE kalıyor.
+//   · Bölüm uzun kuyruğu ölçülmüş biçimde TÜRKÇE sorgudan geliyor: tıklama
+//     getiren üç sorgunun üçü de Türkçe kalıplı ("... 1 bölüm izle").
+//   · Bölüm sayfasının dil varyantında ÖZGÜN metin yok — TMDB özeti çevirisi.
+//     46 dilde aynı iskeleti bildirmek tarama bütçesini bölmekten başka bir
+//     şey yapmaz. Otoritemiz sıfırken (dış bağlantı 0) bu doğrudan zarar.
+//   · İçerik/kişi/firma aileleri dil varyantını KORUYOR: onlar bugün de öyle
+//     çalışıyordu ve hacimleri (2.453 / ~10.000 / 243) taşınabilir.
+//
+// SSR ve HREFLANG DEĞİŞMEDİ: `/en/dizi/1/sezon/1/bolum/1` hâlâ SSR alıyor ve
+// hâlâ hreflang halkasında. Değişen tek şey Google'a BİLDİRİLEN küme —
+// harita daralmak serbesttir, genişlemek denetim ister (harita ⊆ indexlenebilir).
+const SEO_HARITA_DILSIZ_AILE = new Set(['bolum']);
+const SEO_HARITA_DILLERI = (aile) =>
+  (SEO_HARITA_DILSIZ_AILE.has(aile) ? ['tr'] : SEO_DILLER);
+
 app.get('/sitemap.xml', sarici(async (_req, res) => {
   // Dört harita PARALEL ve BAĞIMSIZ okunur: biri düşse bile diğerleri dizinden
   // kaybolmasın (`allSettled`).
@@ -7616,7 +7823,7 @@ app.get('/sitemap.xml', sarici(async (_req, res) => {
       .filter(({ sayfa }) => sayfa.length)
       .flatMap(({ sayfa, i }) => {
         const lastmod = sitemapParcaLastmod(sayfa, kova.degisim);
-        return SEO_DILLER.map((k) => ({
+        return SEO_HARITA_DILLERI(ad).map((k) => ({
           ad: k === 'tr' ? `${ad}-${i + 1}` : `${k}-${ad}-${i + 1}`,
           lastmod,
         }));
@@ -7742,11 +7949,15 @@ app.get('/sitemap-genel.xml', sarici(async (_req, res) => {
 // ek eleman, ~100 MB. Protokol sınırı 50 MB (sıkıştırılmamış). Google iki
 // yöntemi de eşit sayıyor; `<head>` yöntemi hem sığıyor hem karşılıklılığı
 // sayfanın kendisinde tutuyor (`seoHreflang`).
-function sitemapAltHarita(veriOku, changefreq, priority) {
+function sitemapAltHarita(veriOku, changefreq, priority, aile = '') {
   return sarici(async (req, res) => {
     // Regex grupları: [0] dil (isteğe bağlı), [1] sayfa numarası.
     const dilHam = String(req.params[0] || '').toLowerCase();
-    if (dilHam && (!seoDilVar(dilHam) || dilHam === 'tr')) {
+    // Dilsiz aile (bugün: `bolum`) dil önekiyle İSTENSE BİLE 404 döner.
+    // Dizinden çıkarmak tek başına yetmez: eski dizin kaydı ya da elle
+    // istekle 1,2 milyon URL yine bildirilmiş olurdu.
+    if (dilHam && (!seoDilVar(dilHam) || dilHam === 'tr'
+                   || SEO_HARITA_DILSIZ_AILE.has(aile))) {
       return res.status(404).type('text/plain').send('yok');
     }
     const dil = dilHam || 'tr';
@@ -7779,7 +7990,7 @@ app.get(/^\/sitemap-(?:([a-z]{2,3})-)?icerik-(\d+)\.xml$/,
 // yayınlanmış bir bölümün metadatası nadiren değişir, yeni yorum geldiğinde
 // IndexNow zaten anında haber veriyor.
 app.get(/^\/sitemap-(?:([a-z]{2,3})-)?bolum-(\d+)\.xml$/,
-  sitemapAltHarita(sitemapBolumVerisi, 'monthly', '0.6'));
+  sitemapAltHarita(sitemapBolumVerisi, 'monthly', '0.6', 'bolum'));
 
 // Kişi haritası. `priority` 0.6: kişi sayfası bir DÜĞÜM (biyografi + 12 yapım
 // bağlantısı), yani tarama derinliğini besliyor ama kendi başına içerik

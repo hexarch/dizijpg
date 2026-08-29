@@ -421,3 +421,36 @@ test('dil başına site haritası AYNI kovadan üretilir (ek SQL YOK)', () => {
   assert.equal(u.loc, 'https://dizijpg.com/icerik/tv/1396', 'kova kirletildi');
   assert.equal(sitemapDilliSatir(u, 'tr'), u, 'tr için kopya bile üretilmemeli');
 });
+
+// ===========================================================================
+// BÖLÜM AİLESİ DİL VARYANTI ALMAZ (29 Ağu 2026) — 1,2 MİLYON URL TUZAĞI
+// ===========================================================================
+// Dil başına harita eklendiğinde dört ailenin dördü de 46 dille çarpıldı.
+// Bölüm haritası o an 5.176 URL'di (238 bin satır, fark edilmedi); talep dalı
+// açılınca 26.178'e çıktı ve aynı çarpan 1,2 MİLYON URL demeye başladı —
+// 25 Ağu'da yangına yol açan 79.463'ün 15 katı. Bu test o çarpanı kilitliyor.
+test('bölüm haritası DİL VARYANTI ALMIYOR (tr dışı yok)', () => {
+  const diller = alan(
+    ['SEO_HARITA_DILSIZ_AILE', 'SEO_HARITA_DILLERI'], 'SEO_HARITA_DILLERI');
+  assert.deepEqual(diller('bolum'), ['tr'],
+    'bölüm ailesi dil varyantı alıyor — 26 bin URL × 46 dil = 1,2 milyon');
+  // Diğer üç aile dil varyantını KORUYOR (hacimleri taşınabilir ve bugün de
+  // öyle çalışıyorlar): daraltma yalnız bölüme özel olmalı.
+  for (const aile of ['icerik', 'kisi', 'sirket']) {
+    assert.ok(diller(aile).length > 1, `${aile} ailesi dil varyantını kaybetti`);
+    assert.ok(diller(aile).includes('tr'));
+  }
+  // Dizin bu listeyi kullanmalı — `SEO_DILLER`i doğrudan kullanırsa kural
+  // yalnız yorumda kalır.
+  const dizin = bolum("app.get('/sitemap.xml'", '// ---------- sitemap-genel.xml');
+  assert.match(dizin, /SEO_HARITA_DILLERI\(ad\)\.map/,
+    'dizin hâlâ TÜM dilleri her aileye uyguluyor');
+  // Uç de reddetmeli: dizinden çıkarmak tek başına yetmez (eski dizin kaydı
+  // ya da elle istek yine 1,2 milyon URL bildirirdi).
+  const f = bildirimCek('sitemapAltHarita');
+  assert.match(f, /SEO_HARITA_DILSIZ_AILE\.has\(aile\)/,
+    'dilsiz aile dil önekiyle istendiğinde 404 dönmüyor');
+  assert.match(KAYNAK,
+    /sitemapAltHarita\(sitemapBolumVerisi, 'monthly', '0\.6', 'bolum'\)/,
+    'bölüm rotası aile adını geçirmiyor — süzgeç etkisiz kalır');
+});

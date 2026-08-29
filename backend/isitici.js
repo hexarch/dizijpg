@@ -589,7 +589,12 @@ export function bildirimCek(kaynak, ad) {
 export function sunucuSorgulari(kaynak) {
   const adlar = [
     'SEO_YORUM_MIN', 'SEO_INCELEME_MIN', 'seoOzUzunluk', 'SEO_GIZLI_ICERIK_YOK',
-    'SEO_YORUM_KOSUL', 'SEO_INCELEME_KOSUL', 'SITEMAP_SORGU', 'SITEMAP_BOLUM_SORGU',
+    'SEO_YORUM_KOSUL', 'SEO_INCELEME_KOSUL',
+    // 29 Ağu 2026: talep dalının dizi başına tavanı. HER İKİ sorgu da bunu
+    // şablonla gömüyor — listeye eklenmezse `new Function` "is not defined"
+    // ile patlar ve ısıtıcı hiç koşmaz.
+    'SEO_TALEP_BOLUM_TAVAN',
+    'SITEMAP_SORGU', 'SITEMAP_BOLUM_SORGU',
     'ISITMA_BOLUM_SORGU',
   ];
   const govde = adlar.map((a) => bildirimCek(kaynak, a)).join('\n');

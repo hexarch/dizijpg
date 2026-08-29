@@ -143,9 +143,31 @@ async function kareIndir(kullaniciId, tur, tmdbId, mevcut = []) {
   return secilen;
 }
 
+// ---------------------------------------------------------------------------
+// --tmdb=ID,ID,... — YALNIZ BU YAPIMLARI İŞLE (29 Ağu 2026)
+// ---------------------------------------------------------------------------
+// Liste 2.400 satıra çıktı ve betik VAR OLAN her yorumun 10 karesini algısal
+// hash'le tekrar denetliyor (24.000 görsel). Yeni 12 satır eklemek için
+// tamamını koşturmak saatler sürüyor ve gereksiz yere canlı diski/medya
+// dizinini kurcalıyor. Bu bayrak listeyi daraltır; DAVRANIŞI DEĞİŞTİRMEZ.
+// Bayrak verilmezse eski davranış (tamamı) aynen sürer.
+const TMDB_SUZGECI = (() => {
+  const e = process.argv.slice(2).find((a) => a.startsWith('--tmdb='));
+  if (!e) return null;
+  const k = new Set(e.slice('--tmdb='.length).split(',')
+    .map((s) => Number(s.trim())).filter(Number.isInteger));
+  return k.size ? k : null;
+})();
+
 async function ana() {
-  const veriler = JSON.parse(
+  const tumu = JSON.parse(
     fs.readFileSync(new URL('./ai_yorumlar.json', import.meta.url), 'utf8'));
+  const veriler = TMDB_SUZGECI
+    ? tumu.filter((v) => TMDB_SUZGECI.has(v.tmdb_id)) : tumu;
+  if (TMDB_SUZGECI) {
+    console.log(`süzgeç: ${veriler.length}/${tumu.length} kayıt işlenecek`);
+    if (!veriler.length) { console.error('süzgece uyan kayıt yok'); process.exit(1); }
+  }
   const aiId = await kullaniciHazirla();
 
   // tv/film dönüşümlü sırala ki akışta tek tür üst üste yığılmasın

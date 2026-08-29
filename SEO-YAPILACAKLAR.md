@@ -1,6 +1,10 @@
 # dizi.jpg — SEO yapılacaklar
 
-> Sürüm **5.3** · 29 Ağustos 2026 — **SSR 46 DİLE AÇILDI** (dizin tabanlı yol
+> Sürüm **5.4** · 29 Ağustos 2026 — **BÖLÜM KESME KURALI TALEBE GÖRE YENİDEN
+> YAZILDI (25 Ağu kararının GERİ ALINMASI)**; harita 5.176 → 26.208; bölüm
+> ailesi dil varyantından ÇIKARILDI (1,2 milyon URL tuzağı) — bkz. §14
+>
+> Sürüm 5.3 · 29 Ağustos 2026 — **SSR 46 DİLE AÇILDI** (dizin tabanlı yol
 > `/en/icerik/…`, karşılıklı hreflang, dil başına site haritası, özet zinciri
 > TMDB→Argos→boş). v5.2'nin "⛔ mimarî engel" kararı kullanıcı kararıyla
 > TERSİNE ÇEVRİLDİ — bkz. §0.-1
@@ -667,6 +671,12 @@ Kabul: GSC’de ≥1 referring domain. Bu olmadan konum 63’ten sayfa 1 beklenm
 
 ## 5. ⬜ Bölüm sitemap — genişletme değil, kesme
 
+> ⚠ **29 Ağu 2026: bu bölümün kapsam kuralı GERİ ALINDI — bkz. §14.**
+> Buradaki kesme doğruydu ama dizi düzeyinde çalıştığı için en çok
+> aranan 250 dizinin 249'unu yapısal olarak dışarıda bırakıyordu ve
+> kanıtlanmış kazananlarımızı kesiyordu. Aşağıdaki metin TARİHSEL
+> kayıttır; yürürlükteki kural §14'tedir.
+
 ### Ölçülen
 
 Şablon iyi: `/dizi/1396/sezon/1/bolum/1` → 200, TVEpisode JSON-LD, index, ~9 KB.  
@@ -824,6 +834,8 @@ Saha verisi yok. Bot ~10–20 KB HTML alıyor; Flutter paketini indirmiyor. Canv
 | 5xx | GSC Sayfalar | Doğrulama bitene |
 | Bölüm loc sayısı | `curl sitemap-bolum-1.xml` | Her dağıtım |
 | Manuel işlem | GSC Güvenlik | Haftalık |
+| **Talep listesi** (`seo_talep_dizi`) | `node backend/araclar/seo_talep_dizi_tazele.js` (kuru → `--yaz`) | **Aylık** (§14.2) |
+| **Tavan kırpması** | `docker logs dizijpg-api \| grep sitemap_bolum_talep_tavani` | Her dağıtım (§14.3) |
 
 Bu belge ancak yeni GSC turuyla 4.0 olur. Tahminle sıra değiştirilmez.
 
@@ -965,3 +977,188 @@ ayarlı — senkron çeviri Googlebot'a 504 bastırırdı (§6.9'un dersi).
 Ölçülen üretim hızı (canlı): **~9 metin/sn**, 6.137 benzersiz İngilizce özet
 × 14 dil ≈ **2,7 saat** tek geçiş.
 
+---
+
+## 14. 🚀 BÖLÜM KESME KURALI — TALEBE GÖRE YENİDEN YAZILDI (29 Ağustos 2026)
+
+> **BU BİR GERİ ALMADIR.** §5'in (25 Ağu) "genişletme değil, kesme" kararı
+> DOĞRUYDU ama eksikti; aşağıdaki ölçüm onun bir yan etkisini kanıtlıyor ve
+> kural o kanıta göre yeniden yazıldı. §5 iptal edilmiyor — üstüne bir dal
+> ekleniyor.
+
+### 14.1 Kanıt: kural kendi kazananlarını kesiyordu
+
+25 Ağu kapsamı **dizi düzeyinde** çalışıyordu: bir bölüm haritaya ancak dizi
+**TR yapımıysa**, sezon **şu an yayınlanıyorsa** ya da bölüm
+**`seo_kazanan_bolum`**'daysa giriyordu.
+
+ÖLÇÜM (29 Ağu, canlı veritabanı + bugün üretilen `IMDB-TOP500.md`):
+
+| Ölçü | Değer |
+|---|---|
+| Bölüm haritası (kesme sonrası) | **5.176 URL / 77 dizi** |
+| TMDB en yüksek puanlı 250 dizi (oy ≥ 1.000), eşsiz | **249** |
+| Bunlardan **Türk yapımı** | **1** |
+| Bunlardan **Ended/Canceled** | **202** |
+| Yani üç dalın hiçbirine girmeyen | **249 / 250** |
+
+Tek giriş yolu `seo_kazanan_bolum` idi — o da "ÖNCE tıklama al" demek. Haritada
+olmayan URL tıklama alamaz: **kısır döngü.**
+
+**Karşı kanıt kuralın kendi içindeydi.** Tıklama getiren üç sorgumuz —
+`bleach 2 sezon 45`, `lioness 3. sezon 4. bölüm`, `verdades secretas 1 bölüm
+izle` — **hiçbiri Türk yapımı değil** ve hiçbiri yayında bir sezonda değil.
+Üçü de ancak 27 Ağu'da açılan muafiyet dalıyla haritaya girebildi. Bölüm
+ailesi %13 TO ile **dönüşen tek aile**; kural tam da dönüşen yüzeyi kesiyordu.
+
+### 14.2 Yeni kural: beşinci dal `seo_talep_dizi`
+
+`d.tr_yapim` dalı **yerine değil yanına** bir **talep dalı** geldi. Türk
+yapımları aynen kalıyor.
+
+- Tablo: `seo_talep_dizi` (migrasyon-2026-08-29.sql, tohum 249 dizi).
+- Tazeleme: `node backend/araclar/seo_talep_dizi_tazele.js --yaz`
+  (TMDB `/discover/tv`, `vote_average.desc` + `vote_count.gte=1000`).
+  Kuru koşu varsayılan. **Aylık** tazelenir (§12 ritmine eklendi).
+- Kural **beş yerde** birden yaşıyor: `SITEMAP_BOLUM_SORGU`,
+  `ISITMA_BOLUM_SORGU`, `seoDiziBolumGovdesi` (iç bağlantı) — üçü de
+  `test/seo_bolum_haritasi.test.js` ile kilitli.
+
+**ÖLÇÜLEN SONUÇ (canlı, dağıtım sonrası `/sitemap-bolum-*.xml` sayıldı):**
+
+| | Önce | Sonra |
+|---|---|---|
+| Bölüm URL | 5.176 | **26.208** |
+| Dizi | 77 | **295** |
+| 249 talep dizisinden haritaya giren | — | **249** |
+
+25 Ağu'da kaçınılan **79.463'e dönüş DEĞİL**: yenisi onun **%33'ü**.
+
+### 14.3 Dizi başına tavan: VAR, 500 — ve kestiği her satır LOGLANIR
+
+`SEO_TALEP_BOLUM_TAVAN = 500`, **yalnız talep dalına** uygulanıyor (TR yapım /
+yayında sezon / kazanan dalları sınırsız).
+
+- **Neden var:** bugün tek bir dizi (One Piece) eklemenin %4,5'i. Liste
+  değişkendir; yarın 3.000 bölümlük bir yapım girerse harita tek başlıkla
+  şişer. Tavan, haritanın en kötü hâlini **listeden bağımsız** kılar.
+- **Neden 500:** ölçülen dağılımda 500'ü aşan **tek** dizi var. İkinci sıradaki
+  Naruto: Shippuuden tam 500'de duruyor. Yani tavan bir politika değil
+  **patoloji korkuluğu** — bugün tek başlığa dokunuyor.
+- **Neden "en eski 500":** kırpma `sezon, bölüm` **artan** sırada. İlk sezgi
+  terstir ("yeni bölümler aranır") ama kendi ölçümümüz onu çürütüyor:
+  `bleach 2 sezon 45` — 366 bölümlük bir dizinin **erken** bir bölümü.
+  Yeniden-kırpma tam da dönüşen URL türünü keserdi. Kayıp da yok: One Piece
+  yayında olduğu için güncel sezonu `sonraki_sezon` dalıyla haritada kalıyor.
+- **Sessiz kesme yok:** sorgu kırpılan satırı `kirpik = true` ile DÖNDÜRÜR;
+  `bolumTavaniniUygula` onu haritadan çıkarır ve dizi başına sayısıyla loglar.
+  Canlı kanıt (dağıtım sonrası `docker logs`):
+  `{"olay":"sitemap_bolum_talep_tavani","tavan":500,"kirpilan":655,"dizi":1,"diziler":"37854:655","harita":26208}`
+
+### 14.4 İçerik ölçüsü DEĞİŞMEDİ (B2 tuzağı hâlâ imkânsız)
+
+`ozet>0 OR konuk>0 OR kare>0 OR yayin<current_date` satırı **aynen** duruyor ve
+talep dalına da uygulanıyor. Gevşeyen yalnız **dizi düzeyi** kapsam. Ayrıca
+`harita_tv` birleşimi duruyor: dizisi `noindex` olan bölüm haritaya giremez.
+
+### 14.5 ⚠ ÖNBELLEK: sorun sanıldığından KÜÇÜKTÜ (ölçüldü)
+
+Harita yalnız `/tv/N/season/M?language=tr-TR` yanıtı ÖNBELLEKTE olan bölümü
+görür. Varsayım "top 250'nin sezon verisi önbellekte yok" idi; **ölçüm bunu
+çürüttü**:
+
+| Ölçü | Değer |
+|---|---|
+| 249 dizinin `/tv/:id` detay belgesi önbellekte | **249 / 249** |
+| Sezon belgesi (tr-TR) toplam | 1.116 |
+| Zaten önbellekte | **1.046 (%94)** |
+| **Eksik** | **70 sezon** (1.480 bölüm) |
+
+70 sezon `/tmdb/tv/:id/season/:n` ucundan (aynı önbellek anahtarını yazan uç)
+1,5 sn aralıkla ısıtıldı: **70/70 başarılı, ~2 dakika.** Anahtar hizası
+`/tv/100834/season/1?language=tr-TR` satırı okunarak DOĞRULANDI, varsayılmadı.
+
+Kalıcı taraf: `ISITMA_BOLUM_SORGU`'ya da talep dalı eklendi, yani bundan sonra
+listeye giren dizinin sezon belgesi ısıtıcı kuyruğuna kendiliğinden düşer.
+Tahmin dalında tavan **bilinçli olarak yok** (o dalın işi sezon belgesini
+çektirmek; tavanı orada uygulamak 21 Ağu'daki "kendi kaynağını besleyemeyen
+kuyruk" kilidini geri getirirdi).
+
+### 14.6 🚨 BÖLÜM AİLESİ DİL VARYANTINDAN ÇIKARILDI — 1,2 MİLYON URL TUZAĞI
+
+**Dağıtımdan sonra canlı `/sitemap.xml` sayılarak bulundu.** v5.3 dil başına
+haritayı **dört ailenin dördüne birden** uygulamıştı ve `SEO_DILLI_AILE`
+`/dizi/` ile başlayan her yolu kapsıyor — yani bölüm sayfaları **zaten** 46
+dille çarpılıyordu. Bölüm haritası o an 5.176 URL olduğu için (238 bin satır)
+fark edilmemişti. Talep dalı açılınca aynı çarpan **1.205.568 URL** demeye
+başladı: 25 Ağu'da yangına yol açan 79.463'ün **15 katı**.
+Kanıt: `sitemap-en-bolum-1.xml` gerçekten 20.000 satır dönüyordu.
+
+**KARAR (v5.3'ün bölüm ayağının geri alınması):** bölüm sayfaları bu turda
+**Türkçe kalıyor**.
+
+- Bölüm uzun kuyruğu ölçülmüş biçimde **Türkçe** sorgudan geliyor
+  ("… 1 bölüm izle", "… 2 sezon 45").
+- Bölüm sayfasının dil varyantında **özgün metin yok** — TMDB özetinin
+  çevirisi. 46 dilde aynı iskeleti bildirmek, otoritesi sıfır (dış bağlantı 0)
+  bir sitede tarama bütçesini bölmekten başka bir şey yapmaz.
+- İçerik / kişi / firma aileleri dil varyantını **koruyor**.
+
+Uygulama: `SEO_HARITA_DILSIZ_AILE` (server.js). Dizin artık bölüm için yalnız
+`tr` satırı basıyor **ve** `/sitemap-en-bolum-1.xml` **404** dönüyor —
+dizinden çıkarmak tek başına yetmezdi. Alt harita sayısı **231 → 141**.
+SSR ve hreflang DEĞİŞMEDİ: `/en/dizi/…/bolum/…` hâlâ SSR alıyor.
+Test kilidi: `seo_harita_kapsami.test.js` → "bölüm haritası DİL VARYANTI ALMIYOR".
+
+### 14.7 ÖLÇÜLEN SÜRELER (üretim maliyeti)
+
+| Harita | Süre | Satır | Sınır |
+|---|---|---|---|
+| `SITEMAP_BOLUM_SORGU` (SQL, canlı) | **7,8–8,5 sn** | 26.833 (655'i kırpık) | `SITEMAP_SORGU_ZAMAN_ASIMI_MS` 40 sn |
+| `/sitemap-bolum-1.xml` (uçtan uca) | **10,2 sn** | 20.000 | nginx 45 sn · `gsc_izle` 90 sn |
+| `/sitemap-bolum-2.xml` | 0,6 sn | 6.208 | — |
+| `/sitemap-kisi-1.xml` (değişmedi) | 28,0 sn | 10.568 | nginx 45 sn — **hâlâ sınırda** |
+
+`gsc_izle.js`'in `HARITA_ZAMAN_ASIMI_MS` 90 sn tavanı **aşılmıyor**; izleme
+kırılmadı. Kişi haritası 28 sn ile nginx'in 45 sn'sine en yakın olan; bölüm
+büyümesi onu ETKİLEMEDİ (ayrı sorgu, ayrı kova).
+
+### 14.8 Top 500'ün 12 boşluğu — KAPATILDI (yerleşik AI mekanizmasıyla)
+
+`IMDB-TOP500.md`de ❌ işaretli 12 dizi özgün içeriği olmadığı için `noindex`
+yiyordu. **Sahte kullanıcı içeriği üretilmedi.** Projede bu iş için
+**yerleşik ve açıkça AI olarak etiketli** bir mekanizma var, o kullanıldı:
+
+- Yazar `dizi.jpg.ai` (id=51), `kullanicilar.ai = true` (tekil indeksle tek
+  hesap) ve `tohum = true`.
+- Etiket **üç yüzeyde** birden: SSR HTML'inde `<small>dizi.jpg AI özeti</small>`,
+  uygulamada metin etiketi, avatarda "AI" rozeti.
+- JSON-LD'de yazar `Organization` (asla `Person`), `Review[]` ve
+  `aggregateRating` dışında (`TOHUM_PUANI_YOK`) — yani toplum puanına
+  KARIŞMIYOR.
+- Araç: `ai_tohum.js`. Bu turda `--tmdb=` süzgeci eklendi (2.412 kayıtlık
+  listeyi 12 için baştan sona koşturmak 24.000 görselin algısal hash'i demekti).
+
+Sonuç: 12/12 sayfa artık `noindex` DEĞİL (Googlebot UA ile curl edildi).
+Yan kazanç ölçüldü: bu 12 dizi `seo_talep_dizi`'de olduğu için dizi sayfaları
+indekslenebilir olunca **bölümleri de** haritaya girdi (ör. Vecinos 339, X-Men
+76, Merlí 40 URL).
+
+> ⚠ **§3'teki `⛔ Daha fazla AI özeti` kararıyla gerilim var ve bilinçli.**
+> O karar bir HACİM stratejisine ("2.400 başlığa daha AI özeti yaz") hayır
+> diyor ve gerekçesi ölçülü (Breaking Bad: en zengin sayfamız hâlâ
+> "Crawled – currently not indexed"; darboğaz otorite, içerik hacmi değil).
+> Buradaki iş farklı: **12 başlık**, hepsi talep listesinde, ve kilidi
+> açtığı şey 12 sayfa değil ~1.500 bölüm URL'i (dönüşen tek aile). Hacim
+> oyunu değil, kilit açma. Yeni bir emsal değil, **tanımlı bir istisna** —
+> ⛔ kararı yürürlükte kalıyor.
+
+### 14.9 ⬜ Açık kalan
+
+- ⬜ **7 gün izle:** GSC "Keşfedildi — taranmadı" kuyruğu (1 Eylül'de 21.394).
+  Bu tur kuyruğu 5 binden 26 bine çıkardı; §5'in korkusu geri gelirse tavan
+  düşürülür ya da talep listesi 250'den 100'e çekilir. **Ölçüp karar ver.**
+- ⬜ Dış bağlantı hâlâ **0** (§4.6). Bu turun tezi "keşfedilebilirlik", otorite
+  değil; ikisi ayrı iş.
+- ⬜ `sitemap-kisi-1.xml` 28 sn — nginx 45 sn'ye 17 sn kaldı. Kişi haritası
+  büyürse 504 riski (bu turda dokunulmadı).
