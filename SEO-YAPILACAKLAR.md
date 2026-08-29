@@ -1,5 +1,10 @@
 # dizi.jpg — SEO yapılacaklar
 
+> Sürüm **5.5** · 30 Ağustos 2026 — **SİTE HARİTASI HATASI ÖLÇÜLDÜ VE
+> KAPATILDI**: `sitemap-bolum-1.xml` 156 hata ("Geçersiz tarih", 1970 öncesi
+> `lastmod`) → 0; GSC'ye bildirilen harita 6 → 10 (`sitemap-bolum-2.xml`in
+> 6.152 URL'i Google'a HİÇ ulaşmamıştı) — bkz. §15
+>
 > Sürüm **5.4** · 29 Ağustos 2026 — **BÖLÜM KESME KURALI TALEBE GÖRE YENİDEN
 > YAZILDI (25 Ağu kararının GERİ ALINMASI)**; harita 5.176 → 26.208; bölüm
 > ailesi dil varyantından ÇIKARILDI (1,2 milyon URL tuzağı) — bkz. §14
@@ -1186,3 +1191,202 @@ indekslenebilir olunca **bölümleri de** haritaya girdi (ör. Vecinos 339, X-Me
 - ⬜ **Isıtıcı koşu marjı 134 sn.** Kuyruk 55.451'den büyürse
   `AYAR.AZAMI_DAKIKA` 7 → 6. Kontrol: `tail /var/log/dizijpg-isitici.log`,
   ardışık iki koşuda `başka bir kopya çalışıyor` görülürse marj bitmiştir.
+
+---
+
+## 15. 🚀 SİTE HARİTASI HATALARI — ÖLÇÜLDÜ VE KAPATILDI (30 Ağustos 2026)
+
+> Kullanıcının sorusu: *"site haritalarında hata almış ve hâlâ indexlenen
+> sayfa sayımız çok az"*. İkisi de doğruydu ama **aynı şey değil**: hata
+> tek ve nokta atışıydı, "az indeks" ise bambaşka bir mekanizma. Ayrı ayrı
+> ölçüldü.
+
+### 15.1 HATA 1 — `sitemap-bolum-1.xml`, **156 hata / "Geçersiz tarih"** ✅🚀
+
+**Ölçüm (GSC `sitemaps.list`, 30 Ağu 00:20):**
+
+```
+sitemap-bolum-1.xml   URL=20.000  hata=156  uyarı=0  son okuma 2026-08-29T17:56Z
+sitemap-genel.xml          4  0 hata      sitemap-icerik-1.xml   2.460  0 hata
+sitemap-kisi-1.xml    10.555  0 hata      sitemap-sirket-1.xml     224  0 hata
+sitemap.xml (dizin)   33.243  0 hata
+```
+
+29 Ağu 11:31'deki `gsc_izle` durum dosyasında aynı dosya **5.154 URL / 0
+hata**ydı. Yani hata §14'ün genişlemesiyle GELDİ.
+
+**GSC arayüzü hatayı isimlendirdi** (API yalnız sayı verir):
+*"Geçersiz tarih — Ana etiket: url, Etiket: lastmod"*, örnek **satır
+7216-7217-7218**.
+
+**Dosya XML olarak kusursuzdu** (ölçüldü, tahmin değil): 20.000 `<loc>`,
+0 yinelenen, 0 yabancı host, 0 kaçışsız `&`, 0 kontrol karakteri,
+0 ASCII-dışı, 0 URL > 2.048, `changefreq`/`priority` tek değerli,
+tüm `lastmod`lar `YYYY-MM-DD` biçiminde, gelecek tarih yok.
+
+**Sebep — sayım BİREBİR eşleşti.** 7216-7218. satırlar `dizi/6357`
+(*The Twilight Zone*) bölümleri: `1959-10-02`, `1959-10-09`, `1959-10-16`.
+Haritadaki 1970 öncesi tarihlerin dökümü:
+
+```
+1959:12 + 1960:35 + 1961:33 + 1962:22 + 1963:31 + 1964:23 = 156      ← hata sayısı
+1985 ve sonrası (19.833 satır)                            = 0 hata
+```
+
+Google `lastmod`da **epok (1970-01-01) öncesi tarihi geçersiz sayıyor.**
+Ölçüm sınırın yerini tam vermiyor (verideki boşluk 1965-1984); epok seçildi,
+çünkü tarih doğrulayıcıların yaygın alt sınırı ve ölçülen red kümesini
+tamamen kapsıyor. `sitemap-icerik-1.xml`de 1970 öncesi `lastmod` **yok**
+(ölçüldü: 2.478 satır, 0 tane) — bu yüzden hata yalnız bölüm ailesinde.
+
+**🚀 DÜZELTME** — `backend/server.js`, `gunTarihi`: epok öncesi tarih
+`lastmod` olarak **basılmaz, satır `lastmod`suz gider**.
+
+⛔ **Kırpma (1970-01-01'e sabitleme) BİLEREK SEÇİLMEDİ:** Google'a hâlâ
+yanlış bir "son değişiklik" tarihi söylerdik ve tek güne yığılmış yüzlerce
+satır `lastmod`u TAMAMEN güvenilmez yapardı (o zaman Google alanı hiç
+okumaz). `lastmod` isteğe bağlı; yazmamak dürüst ve zararsız.
+
+**KANIT — Google'ın kendi cevabı, uçtan uca:**
+
+```
+dağıtım → /sitemap-bolum-1.xml soğuk üretim 9,2 sn, 20.000 URL
+          1970 öncesi lastmod: 0      lastmod'suz satır: 167 ( = 156 + eski 11 )
+GSC'ye yeniden bildirildi (webmasters kapsamı, PUT)
+Googlebot 66.249.79.128 → /sitemap-bolum-1.xml 200 @ 17:35:44 (yerel)
+GSC sitemaps.list @ 21:35:44Z:   sitemap-bolum-1.xml  20.000  hata=0  uyarı=0
+```
+
+Test: `backend/test/seo_bolum_haritasi.test.js` → *"gunTarihi 1970 ÖNCESİ
+tarihi lastmod olarak BASMAZ"* (sınırın kendisi `1970-01-01` geçerli kalır).
+
+### 15.2 HATA 2 — **GSC 141 alt haritanın yalnız 6'sını biliyordu** ✅🚀
+
+`/sitemap.xml` 29 Ağu'dan beri **141 çocuk** ilan ediyor. GSC'de kayıtlı
+harita sayısı: **6**. Aradaki 135'in 134'ü dil varyantı, biri gerçek bir
+kayıptı:
+
+* **`sitemap-bolum-2.xml` — 6.152 gerçek Türkçe bölüm URL'i, GSC'ye HİÇ
+  ulaşmamıştı.** §14 bölüm haritasını 26.152 URL'e çıkarırken ikinci sayfayı
+  doğurdu, ama bildirilen tek bölüm haritası hâlâ `-1`di ve **Google dizini
+  28 Ağu 21:08'den (yerel) beri yeniden okumamıştı**. Yani "26 bin URL'e
+  çıkardık" cümlesi Google tarafında 20 bindi.
+
+**🚀 YAPILAN — GSC'ye bildirilen haritalar 6 → 10:**
+
+| harita | neden |
+|---|---|
+| `sitemap-bolum-1.xml` | yeniden bildirim → 156 hata **0**'landı |
+| `sitemap-bolum-2.xml` | **YENİ** — 6.152 URL, hiç bildirilmemişti |
+| `sitemap.xml` (dizin) | yeniden bildirim → 141 çocuk yeniden okundu |
+| `sitemap-en-icerik-1.xml` · `-en-kisi-1.xml` · `-en-sirket-1.xml` | **ÖLÇÜM SONDASI**, aşağıya bak |
+
+Bildirim sonrası (`sitemaps.list`, hepsi 200, hepsi **0 hata**):
+
+```
+sitemap-bolum-1.xml     20.000   okundu 21:35:44Z
+sitemap-bolum-2.xml      6.152   okundu 21:35:47Z
+sitemap-en-icerik-1.xml  2.478   okundu 21:36:41Z
+sitemap-en-kisi-1.xml   10.607   okundu 21:36:42Z
+sitemap-en-sirket-1.xml    225   okundu 21:36:42Z
+sitemap.xml (dizin)     33.243   okundu 21:36:04Z
+yaprak toplamı: 52.705 (önce 33.243)
+```
+
+⛔ **KALAN 132 DİL HARİTASI TEK TEK BİLDİRİLMEDİ — gerekçe aritmetik.**
+Dizin onları zaten ilan ediyor, yani **taranmaları için bildirim gerekmiyor**;
+bildirimin tek kazancı GSC'de *aile başına satır*. 132 satır o raporu
+okunamaz yapar ve tarama davranışını DEĞİŞTİRMEZ. Bunun yerine **tek dil
+(en) sonda olarak bildirildi**: "dil varyantı hiç indeksleniyor mu?"
+sorusunun cevabı 7 gün içinde tek satırda okunacak. Cevap evetse kalanlar
+toplu bildirilir; hayırsa 132 satır hiç açılmamış olur.
+
+### 15.3 "İNDEKS SAYISI NEDEN AZ" — ölçülen kovalar (GSC Sayfa raporu)
+
+⚠ **Rapor 21.08.2026'da donmuş** ("Son güncelleme: 21.08.2026"); yani
+aşağıdaki sayılar 25/29 Ağu değişikliklerini HENÜZ İÇERMİYOR.
+
+| kova | sayfa |
+|---|---|
+| **Dizine eklenen** | **998** |
+| `noindex` ile hariç (KASITLI kalite kapısı) | 559 |
+| Sunucu hatası (5xx) | 34 |
+| Bulunamadı (404) / robots / yönlendirme / kopya | 3 / 3 / 3 / 1 |
+| **Keşfedildi – taranmadı** | **21.394** |
+| Tarandı – eklenmedi | 619 |
+
+**5xx = 34 gerçek bir açık iş DEĞİL (ölçüldü).** Örneklerin son taranma
+tarihleri 22 Haz – 19 Ağu; içerikleri de eski URL şeması
+(`/icerik/free-solo`, `www.dizijpg.com/icerik/et`, `/register`, `/diziler`).
+Bugün canlıda ikişer kez denendi: eski şema **404** (doğru), güncel şemadaki
+ikisi (`/kisi/113970`, `/kisi/102426`) **200**. Doğrulama 22 Ağu'da başlamış
+ve hâlâ "Başladı" — bekleyen bir kuyruk, düzeltilecek bir hata değil.
+
+**Asıl kova 21.394 "keşfedildi – taranmadı" ve içi ÖLÇÜLDÜ:** GSC'nin
+gösterdiği 10 örneğin **9'u bugünkü haritada YOK** (`42912`, `42916`,
+`43017`, `43348` — 25 Ağu'da kesilen eski 78 bin URL'den), yalnız 1'i
+haritada. §0.0 v5.1'in bulgusu aynen duruyor: Google'ın bölüm dikkati hâlâ
+kesme öncesi kuyrukta.
+
+**Tekil URL denetimi (`urlInspection`, 30 Ağu):**
+
+```
+/icerik/tv/1396              Tarandı – eklenmedi   son tarama 2026-08-20  kanonik ✔
+/dizi/1396/sezon/5/bolum/16  Keşfedildi – taranmadı  sitemap: bolum-1 + dizin
+/kisi/17419                  Keşfedildi – taranmadı  sitemap: kisi-1 + dizin
+/dizi/6357/sezon/1/bolum/1   URL Google tarafından bilinmiyor   sitemap: —
+/en/icerik/tv/1396           URL Google tarafından bilinmiyor
+/de/icerik/movie/559         URL Google tarafından bilinmiyor
+```
+
+`6357`in "sitemap: —" demesi, 15.1'deki geçersiz tarihli satırların Google
+tarafında yutulduğuna işaret ediyor — ama düzeltme okuması 30 dakikalıktı,
+**bu tek satır kanıt sayılmaz**; 7 gün sonra tekrar denetlenecek.
+
+### 15.4 46 DİLLİ SSR'IN GSC'DEKİ DURUMU — **henüz sıfır** (ölçüldü)
+
+| ölçüm | sonuç |
+|---|---|
+| Dil önekli sayfa, arama analitiğinde (24-30 Ağu, 1.292 sayfa) | **0** |
+| `urlInspection` → `/en/icerik/tv/1396`, `/de/icerik/movie/559` | **"URL Google tarafından bilinmiyor"** |
+| GERÇEK Googlebot'un (66.249.x) çektiği dil önekli URL, tüm günlük | **3** |
+| hreflang / "uygun kanonikli alternatif sayfa" kovası | GSC'de **yok** (kova hiç açılmadı) |
+
+Yani hreflang tek başına dil varyantlarını indekse SOKMADI. Bu bir hata
+değil, **beklenen durum**: dil haritaları bugüne kadar GSC'ye hiç
+bildirilmemişti ve dizin 28 Ağu'dan beri okunmamıştı. İkisi de bu turda
+kapatıldı; ölçüm 15.2'deki `en` sondasından gelecek.
+
+**⚠ ARİTMETİK, KAYIT İÇİN.** 141 çocuğun ilan ettiği evren:
+`4 (genel) + 26.152 (bölüm) + 46 × 13.310 (içerik+kişi+şirket) ≈ 638.400 URL`.
+Ölçülen Googlebot hızı son 8 günde günlük **218 – 5.695 istek** (medyan
+~800). Tek geçiş ≈ **800 gün**. Bu, v5.3 kararını GERİ ALMAK için bir
+gerekçe DEĞİL (karar Google merkezli olmamak üzerine kuruluydu ve sahibi
+kullanıcı), ama "dil varyantları indeks sayısını yükseltir" beklentisi
+kurulmasın diye burada duruyor.
+
+### 15.5 ⛔ YAPILMAYANLAR
+
+1. **`sitemap-kisi-1.xml` 28 sn sorununa dokunulmadı.** Ölçüldü ve hâlâ
+   dar: soğuk `sitemap-kisi-1.xml` 27,7 sn, `sitemap-en-kisi-1.xml` 28,3 sn;
+   nginx `location ~ ^/sitemap-…` bloğu `proxy_read_timeout 45s`
+   (doğrulandı, satır 416-420). Marj 1,6×. Kişi haritası büyürse 504.
+   SQL'e dokunmak bu turun kapsamı dışıydı ve **ölçüm bir hata GÖSTERMİYOR**
+   (bugüne kadar tüm okumalar 200).
+2. **5xx=34 için hiçbir şey yapılmadı** — 15.3'te ölçüldüğü gibi bayat kayıt.
+3. **Kesilen 73 bin bölüm URL'i `noindex` yapılmadı** — §0.0 v5.1
+   ⛔ YAPILMAYAN 1'in gerekçesi geçerli; bu tur onu yeniden açmadı.
+4. **`sitemap-genel.xml` lastmod** — §6.6'daki karar aynen duruyor.
+
+### 15.6 ⬜ SIRADAKİ ADIM (ölçüme dayalı)
+
+1. **7 gün sonra tek komut:** `docker exec dizijpg-api node gsc_izle.js --kuru`
+   yerine `sitemaps.list` yeter — `sitemap-bolum-2.xml` ve `sitemap-en-*`
+   satırlarının "keşfedilen sayfa" ve indeks kovaları okunacak. `en` sondası
+   sıfır kalırsa kalan 132 dil haritası **bildirilmez**.
+2. **Sayfa raporu 21 Ağu'da donmuş** — 998 sayısı 25/29 Ağu işlerini
+   içermiyor. İlk taze okumada bu sayı yeniden alınmadan hiçbir yapısal
+   karar verilmeyecek.
+3. **Ölçülmüş TEK darboğaz hâlâ dış bağlantı = 0** (§4.6). Bu turda hiçbir
+   şey onu değiştirmedi: 15.1 bir hata onarımı, 15.2 bir görünürlük onarımı.
+   İndeks sayısını asıl büyütecek iş orada duruyor.

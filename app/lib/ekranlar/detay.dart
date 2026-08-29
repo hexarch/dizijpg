@@ -558,6 +558,14 @@ List<Map<String, dynamic>> yapimFirmalari(Map<String, dynamic> icerik) {
   return sonuc.values.toList();
 }
 
+/// İçerik sayfasındaki "İncelemeler" bölümü çizilsin mi.
+///
+/// 30 Ağu 2026'da KAPATILDI (kullanıcı: "şu an inceleme kısmı olmamalı, o
+/// ileriki aşamada moderatörler için açık olacak"). Uç ve veri duruyor;
+/// moderatör ekranı gelince bu bayrak `true` olacak.
+@visibleForTesting
+const bool incelemeBolumuAcik = false;
+
 class DetayEkrani extends StatefulWidget {
   final int tmdbId;
   final String tur; // 'tv' | 'movie'
@@ -1860,9 +1868,21 @@ class _DetayEkraniState extends State<DetayEkrani>
                   ],
                 ),
               ),
-            // İncelemeler
-            if ((_incelemeler?['incelemeler'] as List<dynamic>? ?? [])
-                .isNotEmpty)
+            // İNCELEMELER BÖLÜMÜ KAPALI (30 Ağu 2026, kullanıcı kararı:
+            // "şu an inceleme kısmı olmamalı, o ileriki aşamada moderatörler
+            // için açık olacak").
+            //
+            // NEDEN SİLMEDİM, BAYRAKLA KAPATTIM: bölüm ileride moderatör
+            // ekranı olarak GERİ AÇILACAK. Silseydim aynı kod yeniden
+            // yazılırdı; bayrak `true` yapılınca eski davranış birebir döner.
+            //
+            // VERİ DE SİLİNMEDİ: `puanlar.yorum`daki mevcut incelemeler
+            // yerinde duruyor ve `/incelemeler` ucu hâlâ çalışıyor —
+            // yalnız BURADA çizilmiyor. Puan sheet'i artık yeni metni
+            // oraya değil `/yorumlar`a yazıyor (bkz. puan_sheet.dart).
+            if (incelemeBolumuAcik &&
+                (_incelemeler?['incelemeler'] as List<dynamic>? ?? [])
+                    .isNotEmpty)
               SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

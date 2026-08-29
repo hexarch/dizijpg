@@ -7,7 +7,16 @@ import '../tema.dart';
 import 'ortak.dart' show altGuvenli;
 import 'puan_sec_sheet.dart';
 
-/// Puan + isteğe bağlı inceleme sheet'i. Kaydederse true döner.
+/// Puan + isteğe bağlı YORUM sheet'i. Kaydederse true döner.
+///
+/// ⚠ 30 Ağu 2026: yazılan metin artık İNCELEMEYE (`puanlar.yorum`) DEĞİL,
+/// normal YORUMA (`/yorumlar`) gidiyor. Kullanıcı kararı: "puan verirken
+/// yapılan yorum inceleme kısmına gidiyor ama yorum kısmına gitmeli; şu an
+/// inceleme kısmı olmamalı, o ileriki aşamada moderatörler için açılacak."
+///
+/// ESKİ VERİ SİLİNMEDİ: `puanlar.yorum`daki mevcut incelemeler yerinde
+/// duruyor (moderatör ekranı için) — yalnız yeni metin oraya YAZILMIYOR ve
+/// içerik sayfasında bölüm GÖSTERİLMİYOR.
 /// tur: 'tv' | 'movie' | 'person'
 ///
 /// ÖLÇEK (26 Ağu 2026): yıldız satırı yalnız ölçek ≤ 10 iken çizilir; üstünde
@@ -21,7 +30,10 @@ Future<bool> puanlaVeKaydet(
   int? mevcutPuan,
   String? mevcutYorum,
 }) async {
-  final yorumKutusu = TextEditingController(text: mevcutYorum ?? '');
+  // Kutu BOŞ başlar: yorum düzenlenebilir bir alan değil, EKLENEN bir
+  // gönderidir. Eski inceleme metnini öndoldurmak, kaydete her basışta aynı
+  // metnin yeni bir yorum olarak tekrar gönderilmesine yol açardı.
+  final yorumKutusu = TextEditingController();
   // Görünüm ölçeği; sunucuda kanonik 1-100 tutulur (bkz. lib/puan.dart).
   // Sheet açıkken ölçek değişemeyeceği için bir kez okunur.
   final olcek = PuanOlcegi.deger.value;
@@ -39,16 +51,38 @@ Future<bool> puanlaVeKaydet(
           Future<void> gonder() async {
             setModal(() => kaydediyor = true);
             try {
+              final metin = yorumKutusu.text.trim();
+              // PUAN ve YORUM AYRI: `/puan` yalnız sayıyı taşır, metin
+              // `/yorumlar`a gider. `yorum` alanı BİLEREK gönderilmiyor —
+              // gönderilseydi metin yine `puanlar.yorum`a, yani inceleme
+              // bölümüne düşerdi.
               await Api.post('/puan', {
                 'tmdb_id': tmdbId,
                 'tur': tur,
                 'puan': secilen == 0 ? null : dbPuani(secilen, olcek: olcek),
                 'kanonik': true, // bkz. tepki.dart'taki gerekçe
-
-                'yorum': yorumKutusu.text.trim().isEmpty
-                    ? null
-                    : yorumKutusu.text.trim(),
               });
+              // Yorum İKİNCİ istek: puan kaydı yorumun başarısına BAĞLI
+              // OLMASIN. Yorum düşerse puan yine kaydedilmiş olur ve
+              // kullanıcıya ayrıca haber verilir — sessiz kayıp yok.
+              if (metin.isNotEmpty) {
+                try {
+                  await Api.post('/yorumlar', {
+                    'tur': tur,
+                    'tmdb_id': tmdbId,
+                    'metin': metin,
+                  });
+                } catch (_) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      // Mevcut ve 45 dilde çevrili anahtar kullanıldı:
+                      // GIF ajanı şu an dil dosyalarında çalışıyor, yeni
+                      // anahtar eklemek çakışma üretirdi.
+                      SnackBar(content: Text('Bir şeyler ters gitti'.c)),
+                    );
+                  }
+                }
+              }
               if (context.mounted) Navigator.pop(context, true);
             } catch (e) {
               // Sessiz veri kaybı olmasın: kullanıcıya bildir, sheet açık kalsın.
@@ -149,9 +183,7 @@ Future<bool> puanlaVeKaydet(
                 TextField(
                   controller: yorumKutusu,
                   maxLines: 4,
-                  decoration: InputDecoration(
-                    hintText: 'İncelemen (isteğe bağlı)'.c,
-                  ),
+                  decoration: InputDecoration(hintText: 'Yorum yaz...'.c),
                 ),
                 const SizedBox(height: 16),
                 Row(

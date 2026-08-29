@@ -41,6 +41,27 @@ test('gunTarihi tarihsiz/bozuk girdide ATMAZ, boş döner', () => {
   assert.equal(gunTarihi(new Date('2026-08-14T23:59:00Z')), '2026-08-14');
 });
 
+// ---------------------------------------------------------------------------
+// B1b — EPOK ÖNCESİ `lastmod` DÜŞÜRÜLÜR (30 Ağu 2026, GSC'de ÖLÇÜLDÜ)
+// ---------------------------------------------------------------------------
+// GSC "Site Haritaları" 29 Ağu okumasından sonra `sitemap-bolum-1.xml` için
+// **156 hata / "Geçersiz tarih"** yazdı (örnek satırlar 7216-7218, etiket
+// `lastmod`). Dosya XML olarak kusursuzdu; 156, haritadaki 1970 ÖNCESİ tüm
+// tarihlerin sayısıydı (1959-1964, tek dizi: TMDB 6357). 1985+ aynı dosyada
+// sorunsuz geçti. Bu test o regresyonu kilitler: eski `gunTarihi` 1959'u
+// olduğu gibi basıyordu ve tüm haritayı "hatalı" damgalatıyordu.
+test('gunTarihi 1970 ÖNCESİ tarihi lastmod olarak BASMAZ (GSC "Geçersiz tarih")', () => {
+  // Ölçülen red kümesi: The Twilight Zone bölümlerinin yayın tarihleri.
+  for (const eski of ['1959-10-02', '1960-01-01', '1964-12-31', '1969-12-31',
+    new Date('1959-10-02T00:00:00Z')]) {
+    assert.equal(gunTarihi(eski), '', `epok öncesi basıldı: ${String(eski)}`);
+  }
+  // Sınırın KENDİSİ ve sonrası GEÇERLİ — kapı fazla kapanmasın.
+  assert.equal(gunTarihi('1970-01-01'), '1970-01-01');
+  assert.equal(gunTarihi('1985-09-12'), '1985-09-12');
+  assert.equal(gunTarihi('2026-08-30'), '2026-08-30');
+});
+
 test('sitemapSayfala TARİHSİZ satırla çalışır (bloke edicinin gerçek yolu)', () => {
   // Yeni bölüm sorgusu `son` sütununu NULL döndürebiliyor (yayın tarihi
   // bilinmeyen bölüm). Bu ÇAĞRI eskiden tüm harita üretimini patlatıyordu.

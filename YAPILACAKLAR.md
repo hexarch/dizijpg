@@ -16,6 +16,36 @@ Mağaza kareleri çekilirken 11 dilde uygulama gezildi; şunlar görüldü:
 - ⬜ **İngilizce çoğul hatası**: dizi sayfasında "1 people you follow watched it"
   — tekil için "1 person" olmalı (diğer dillerde de çoğul kuralı kontrol edilmeli).
 
+## 2026-08-30 — 🚀 SEARCH CONSOLE: SİTE HARİTASI HATASI KAPANDI, 6.152 URL GÖRÜNÜR OLDU
+
+Kullanıcı: *"search consolda görevlendir … site haritalarında hata almış ve
+hâlâ indexlenen sayfa sayımız çok az"*. İkisi de doğruydu, ama aynı şey
+değildi. Tam ölçüm ve karar gerekçeleri: **`SEO-YAPILACAKLAR.md` §15**.
+
+- ✅🚀 **`sitemap-bolum-1.xml`: 156 hata → 0.** GSC'nin etiketi *"Geçersiz
+  tarih / lastmod"*. Dosya XML olarak kusursuzdu; 156, haritadaki **1970
+  öncesi** tüm `lastmod`ların sayısıydı (1959-1964, tek dizi: TMDB 6357
+  *The Twilight Zone*). Google epok öncesi `lastmod`u geçersiz sayıyor.
+  Düzeltme `backend/server.js` `gunTarihi`: epok öncesi tarih **basılmaz**
+  (kırpılmaz — uydurma tarih `lastmod`un tamamını güvenilmez yapar).
+  Kanıt: yeniden bildirim sonrası Googlebot dosyayı 17:35:44'te çekti,
+  GSC aynı dakika **hata=0** yazdı. Test:
+  `backend/test/seo_bolum_haritasi.test.js`.
+- ✅🚀 **`sitemap-bolum-2.xml` GSC'ye HİÇ bildirilmemişti** — 6.152 gerçek
+  Türkçe bölüm URL'i Google tarafında yoktu (dizin 28 Ağu'dan beri
+  okunmamıştı). Bildirilen harita **6 → 10**; yaprak URL toplamı
+  **33.243 → 52.705**. Dizin de yeniden bildirildi, 141 çocuk yeniden okundu.
+- ✅ **"İndeks az" ölçüldü:** dizine eklenen **998**, `noindex` 559 (KASITLI
+  kalite kapısı), **keşfedildi–taranmadı 21.394**, tarandı–eklenmedi 619.
+  GSC Sayfa raporu **21.08.2026'da donmuş** — bu sayılar 25/29 Ağu işlerini
+  içermiyor. 5xx=34 bayat kayıt çıktı (örnekler eski URL şeması; canlıda
+  güncel şema 200, eski şema doğru şekilde 404).
+- ✅ **46 dilli SSR'ın GSC karşılığı bugün SIFIR:** arama analitiğinde
+  1.292 sayfanın 0'ı dil önekli; `/en/…` ve `/de/…` denetimi *"URL Google
+  tarafından bilinmiyor"*. hreflang tek başına indekse sokmuyor.
+  Kalan 132 dil haritası **bilerek bildirilmedi**; yalnız `en` (3 harita)
+  ölçüm sondası olarak bildirildi — 7 gün sonra cevabı okunacak.
+
 ## 2026-08-30 — 🚀 KENDİ GIF ARŞİVİMİZ + ORTAK GIF SEÇİCİ
 
 Kullanıcı önce hazır bir GIF servisi istedi. Araştırma (29 Ağu, üçü de

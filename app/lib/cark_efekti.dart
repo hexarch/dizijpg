@@ -75,9 +75,10 @@ class CihazCarkEfekti implements CarkEfekti {
     if (!_hazir || _kapandi) return;
     // `await` YOK: tık akışı animasyon karesinde çağrılıyor, beklemek
     // kareyi düşürürdü. Hata da yutulur — bkz. sınıf başlığı.
-    _oynatici.seek(Duration.zero).then((_) => _oynatici.resume()).catchError((
-      _,
-    ) {});
+    _oynatici
+        .seek(Duration.zero)
+        .then((_) => _oynatici.resume())
+        .catchError((_) {});
   }
 
   @override
