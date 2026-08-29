@@ -1,6 +1,21 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-29 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## Ekran görüntüsü turunda çıkan çeviri hataları (29 Ağu 2026)
+
+Mağaza kareleri çekilirken 11 dilde uygulama gezildi; şunlar görüldü:
+
+- ⬜ **Yunanca'da Σ yerine Latin C basılıyor**: "Cειρες" (Σειρές olmalı),
+  "Κινουμενα Cχεδια", "Cιλο´", "Cυνδρομη´", "Cεζον", "Cε εξελιξη".
+  Ayrıca tonos ayrı karakter geliyor: "Ελληνικα´", "Διαγραφη´", "Ηθοποιοι´",
+  "Τα στατιστικα´". `lib/ceviri/el.dart` (veya el çeviri dosyası) taranmalı.
+- ⬜ **Arapça profil başlığı "melis.izler@"** olarak render ediliyor —
+  @ işareti sona kayıyor (RTL bidi). Kullanıcı adının başına `\u200F`/`\u2066`
+  yön işareti koymak ya da `Directionality`/`textDirection: TextDirection.ltr`
+  ile sarmak gerek.
+- ⬜ **İngilizce çoğul hatası**: dizi sayfasında "1 people you follow watched it"
+  — tekil için "1 person" olmalı (diğer dillerde de çoğul kuralı kontrol edilmeli).
+
 ## 2026-08-29 — 🚀 SSR **46 DİLE** AÇILDI (dizin tabanlı yol + hreflang)
 
 Kullanıcının kararı: *"google taramıyorsa taramasın bizene, googleden başka
