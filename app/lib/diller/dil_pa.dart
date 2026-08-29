@@ -750,7 +750,6 @@ const Map<String, String> cevirilerPa = {
   'Verilerini yanında getir': 'ਆਪਣਾ ਡੇਟਾ ਨਾਲ ਲਿਆਓ',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'ਜੇ ਕਿਸੇ ਹੋਰ ਐਪ ਵਿੱਚ ਦੇਖੇ ਹੋਏ ਟ੍ਰੈਕ ਕਰਦੇ ਹੋ, ਤਾਂ ਉਹ ਇੱਥੇ ਲਿਆ ਸਕਦੇ ਹੋ। ਸ਼ੁਰੂ ਤੋਂ ਸ਼ੁਰੂ ਕਰਨ ਦੀ ਲੋੜ ਨਹੀਂ।',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt ਅਤੇ Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'ਐਕਸਪੋਰਟ ਕੀਤੀ ZIP ਫਾਈਲ ਚੁਣੋ; ਤੁਹਾਡੇ ਦੇਖੇ ਹੋਏ, ਰੇਟਿੰਗਾਂ ਤੇ ਲਿਸਟਾਂ ਆ ਜਾਣਗੀਆਂ।',
   'Aktarılıyor...': 'ਇੰਪੋਰਟ ਹੋ ਰਿਹਾ ਹੈ...',

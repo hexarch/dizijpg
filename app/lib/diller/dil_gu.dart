@@ -747,7 +747,6 @@ const Map<String, String> cevirilerGu = {
   'Verilerini yanında getir': 'તમારો ડેટા સાથે લાવો',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'જો બીજી કોઈ ઍપમાં જોયેલું ટ્રૅક કરતા હો, તો તે અહીં લાવી શકો છો. શરૂઆતથી શરૂ કરવાની જરૂર નથી.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt અને Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'એક્સપોર્ટ કરેલી ZIP ફાઇલ પસંદ કરો; તમારાં જોયેલાં, રેટિંગ અને લિસ્ટ આવી જશે.',
   'Aktarılıyor...': 'ઇમ્પોર્ટ થઈ રહ્યું છે...',

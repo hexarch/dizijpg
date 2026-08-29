@@ -686,7 +686,7 @@ class _AktarmaAdimiState extends State<_AktarmaAdimi> {
         ),
         const _BilgiKarti(
           ikon: Icons.file_upload_outlined,
-          baslik: 'TV Time, Trakt ve Letterboxd',
+          baslik: 'TV Time',
           metin:
               'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.',
         ),

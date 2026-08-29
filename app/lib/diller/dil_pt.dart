@@ -760,7 +760,6 @@ const Map<String, String> cevirilerPt = {
   'Verilerini yanında getir': 'Traga seus dados com você',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Se você acompanha o que assiste em outro app, pode trazer tudo para cá. Não precisa começar do zero.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt e Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Escolha o arquivo ZIP que você exportou; o que você assistiu, suas notas e suas listas serão importados.',
   'Aktarılıyor...': 'Importando...',

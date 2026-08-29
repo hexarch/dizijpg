@@ -735,7 +735,6 @@ const Map<String, String> cevirilerAm = {
   'Verilerini yanında getir': 'ዳታዎን ይዘው ይምጡ',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'በሌላ መተግበሪያ ውስጥ ያዩዋቸውን የሚከታተሉ ከሆነ ወደዚህ ማዛወር ይችላሉ። ከባዶ መጀመር አያስፈልግዎትም።',
-  'TV Time, Trakt ve Letterboxd': 'TV Time፣ Trakt እና Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'ወደ ውጭ የላኩትን የZIP ፋይል ይምረጡ፤ ያዩዋቸው፣ ነጥቦችዎ እና ዝርዝሮችዎ ይዛወራሉ።',
   'Aktarılıyor...': 'በማዛወር ላይ...',

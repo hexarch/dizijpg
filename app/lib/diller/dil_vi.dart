@@ -749,7 +749,6 @@ const Map<String, String> cevirilerVi = {
   'Verilerini yanında getir': 'Mang dữ liệu của bạn theo',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Nếu bạn đang ghi lại những gì mình xem ở ứng dụng khác, hãy chuyển sang đây. Không cần bắt đầu lại từ đầu.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt và Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Chọn tệp ZIP bạn đã xuất; lịch sử xem, điểm và danh sách của bạn sẽ được nhập vào.',
   'Aktarılıyor...': 'Đang nhập...',

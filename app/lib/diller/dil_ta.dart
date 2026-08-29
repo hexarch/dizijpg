@@ -757,7 +757,6 @@ const Map<String, String> cevirilerTa = {
   'Verilerini yanında getir': 'உன் தரவை உடன் கொண்டு வா',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'வேறொரு ஆப்பில் பார்த்தவற்றைக் கண்காணித்து வந்தால், அவற்றை இங்கே கொண்டு வரலாம். புதிதாகத் தொடங்க வேண்டியதில்லை.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt மற்றும் Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'ஏற்றுமதி செய்த ZIP கோப்பைத் தேர்ந்தெடு; பார்த்தவை, மதிப்பீடுகள், பட்டியல்கள் இங்கே வந்து சேரும்.',
   'Aktarılıyor...': 'இறக்குமதி ஆகிறது...',

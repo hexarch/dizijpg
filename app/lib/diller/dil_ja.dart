@@ -728,7 +728,6 @@ const Map<String, String> cevirilerJa = {
   'Verilerini yanında getir': 'データを持ってこよう',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       '他のアプリで視聴を記録しているなら、ここに移せます。ゼロから始める必要はありません。',
-  'TV Time, Trakt ve Letterboxd': 'TV Time、Trakt、Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'エクスポートした ZIP ファイルを選ぶと、視聴履歴・評価・リストが取り込まれます。',
   'Aktarılıyor...': 'インポート中...',

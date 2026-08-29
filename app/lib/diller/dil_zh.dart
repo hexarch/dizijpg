@@ -719,7 +719,6 @@ const Map<String, String> cevirilerZh = {
   'Verilerini yanında getir': '把你的数据一起带过来',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       '如果你在别的应用里记录过观看，可以搬到这里来，不用从零开始。',
-  'TV Time, Trakt ve Letterboxd': 'TV Time、Trakt 和 Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       '选择你导出的 ZIP 文件，把观看记录、评分和片单一起导进来。',
   'Aktarılıyor...': '导入中...',

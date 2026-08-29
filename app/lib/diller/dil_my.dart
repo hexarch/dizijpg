@@ -763,7 +763,6 @@ const Map<String, String> cevirilerMy = {
   'Verilerini yanında getir': 'သင့်ဒေတာများကို ယူဆောင်လာပါ',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'အခြားအက်ပ်တစ်ခုတွင် ကြည့်ပြီးသားများကို မှတ်သားထားလျှင် ဤနေရာသို့ ရွှေ့ယူနိုင်သည်။ အစကနေ ပြန်စရန် မလိုပါ။',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt နှင့် Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'ထုတ်ယူထားသော ZIP ဖိုင်ကို ရွေးပါ။ ကြည့်ပြီးသားများ၊ အဆင့်သတ်မှတ်ချက်များနှင့် စာရင်းများ ရောက်လာပါမည်။',
   'Aktarılıyor...': 'သွင်းယူနေသည်...',

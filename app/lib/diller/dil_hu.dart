@@ -756,7 +756,6 @@ const Map<String, String> cevirilerHu = {
   'Verilerini yanında getir': 'Hozd magaddal az adataidat',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Ha egy másik alkalmazásban tartod számon, mit néztél, ide is áthozhatod. Nem kell nulláról kezdened.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt és Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Válaszd ki az exportált ZIP-fájlt, és átkerülnek a megnézett tartalmaid, az értékeléseid és a listáid.',
   'Aktarılıyor...': 'Importálás...',

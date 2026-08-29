@@ -753,7 +753,6 @@ const Map<String, String> cevirilerMl = {
   'Verilerini yanında getir': 'നിങ്ങളുടെ ഡാറ്റ ഒപ്പം കൊണ്ടുവരൂ',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'മറ്റൊരു ആപ്പിൽ കണ്ടവ ട്രാക്ക് ചെയ്യുന്നുണ്ടെങ്കിൽ അവ ഇവിടേക്ക് കൊണ്ടുവരാം. പൂജ്യത്തിൽ നിന്ന് തുടങ്ങേണ്ട.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt, Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'എക്സ്പോർട്ട് ചെയ്ത ZIP ഫയൽ തിരഞ്ഞെടുക്കൂ; കണ്ടവയും റേറ്റിംഗുകളും ലിസ്റ്റുകളും എത്തിക്കോളും.',
   'Aktarılıyor...': 'ഇമ്പോർട്ട് ചെയ്യുന്നു...',

@@ -760,7 +760,6 @@ const Map<String, String> cevirilerFil = {
   'Verilerini yanında getir': 'Dalhin mo ang data mo',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Kung sinusubaybayan mo ang mga napapanood mo sa ibang app, puwede mong ilipat ang mga iyon dito. Hindi mo kailangang magsimula sa wala.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt at Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Piliin ang ZIP file na na-export mo para mailipat ang mga napanood, rating at listahan mo.',
   'Aktarılıyor...': 'Ini-import...',

@@ -754,7 +754,6 @@ const Map<String, String> cevirilerFi = {
   'Verilerini yanında getir': 'Ota tietosi mukaan',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Jos seuraat katsomiasi toisessa sovelluksessa, voit siirtää ne tänne. Sinun ei tarvitse aloittaa alusta.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt ja Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Valitse viemäsi ZIP-tiedosto, niin katseluhistoriasi, arvosanasi ja listasi tuodaan mukana.',
   'Aktarılıyor...': 'Tuodaan...',

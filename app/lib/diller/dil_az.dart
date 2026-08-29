@@ -746,7 +746,6 @@ const Map<String, String> cevirilerAz = {
   'Verilerini yanında getir': 'Məlumatlarını özünlə gətir',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'İzlədiklərini başqa tətbiqdə qeyd edirsənsə, onları bura köçürə bilərsən. Sıfırdan başlamağına ehtiyac yoxdur.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt və Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'İxrac etdiyin ZIP faylını seç; izlədiklərin, qiymətlərin və siyahıların köçürülsün.',
   'Aktarılıyor...': 'Köçürülür...',

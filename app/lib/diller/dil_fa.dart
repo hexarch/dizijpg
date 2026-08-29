@@ -750,7 +750,6 @@ const Map<String, String> cevirilerFa = {
   'Verilerini yanında getir': 'داده‌هایت را با خودت بیاور',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'اگر در برنامه‌ای دیگر تماشاهایت را دنبال می‌کنی، می‌توانی آن‌ها را به اینجا بیاوری. لازم نیست از صفر شروع کنی.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time، Trakt و Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'فایل ZIP خروجی‌گرفته را انتخاب کن تا تماشاها، امتیازها و فهرست‌هایت منتقل شوند.',
   'Aktarılıyor...': 'در حال انتقال...',

@@ -755,7 +755,6 @@ const Map<String, String> cevirilerRu = {
   'Verilerini yanında getir': 'Перенеси свои данные',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Если ведёшь историю просмотров в другом приложении, перенеси её сюда. Начинать с нуля не придётся.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt и Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Выбери ZIP-файл из экспорта — просмотры, оценки и списки перенесутся.',
   'Aktarılıyor...': 'Перенос...',

@@ -756,7 +756,6 @@ const Map<String, String> cevirilerRo = {
   'Verilerini yanında getir': 'Adu-ți datele cu tine',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Dacă îți ții evidența vizionărilor în altă aplicație, poți muta totul aici. Nu trebuie să iei de la zero.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt și Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Alege fișierul ZIP pe care l-ai exportat, iar vizionările, notele și listele tale vor fi importate.',
   'Aktarılıyor...': 'Se importă...',

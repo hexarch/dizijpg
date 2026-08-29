@@ -741,7 +741,6 @@ const Map<String, String> cevirilerTh = {
   'Verilerini yanında getir': 'ย้ายข้อมูลของคุณมาด้วย',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'ถ้าคุณบันทึกสิ่งที่ดูไว้ในแอปอื่น ย้ายมาที่นี่ได้เลย ไม่ต้องเริ่มใหม่จากศูนย์',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt และ Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'เลือกไฟล์ ZIP ที่คุณส่งออกไว้ แล้วประวัติการดู คะแนน และลิสต์ของคุณจะถูกนำเข้ามา',
   'Aktarılıyor...': 'กำลังนำเข้า...',

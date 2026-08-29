@@ -754,7 +754,6 @@ const Map<String, String> cevirilerUk = {
   'Verilerini yanında getir': 'Перенеси свої дані',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Якщо ведеш історію переглядів в іншому застосунку, перенеси її сюди. Починати з нуля не доведеться.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt і Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Вибери ZIP-файл з експорту — перегляди, оцінки та списки перенесуться.',
   'Aktarılıyor...': 'Перенесення...',

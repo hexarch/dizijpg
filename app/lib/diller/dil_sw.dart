@@ -750,7 +750,6 @@ const Map<String, String> cevirilerSw = {
   'Verilerini yanında getir': 'Leta data yako nawe',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Ikiwa unafuatilia ulichotazama kwenye programu nyingine, unaweza kukihamishia hapa. Huhitaji kuanza upya.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt na Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Chagua faili la ZIP ulilohamisha kutoka huko; ulichotazama, alama zako na orodha zako zitahamishwa.',
   'Aktarılıyor...': 'Inahamisha...',

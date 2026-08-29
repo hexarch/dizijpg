@@ -750,7 +750,6 @@ const Map<String, String> cevirilerMr = {
   'Verilerini yanında getir': 'तुझा डेटा सोबत आणा',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'दुसऱ्या एखाद्या अ‍ॅपमध्ये पाहिलेल्यांची नोंद असेल, तर ती इथे आणता येते. सगळे नव्याने सुरू करण्याची गरज नाही.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt आणि Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'तिथून एक्सपोर्ट केलेली ZIP फाइल निवडा; पाहिलेले, रेटिंग आणि लिस्ट इथे येतील.',
   'Aktarılıyor...': 'इंपोर्ट होत आहे...',

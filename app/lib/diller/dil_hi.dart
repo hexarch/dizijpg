@@ -752,7 +752,6 @@ const Map<String, String> cevirilerHi = {
   'Verilerini yanında getir': 'अपना डेटा साथ ले आओ',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'किसी दूसरे ऐप में देखे हुए का हिसाब रखा है तो उसे यहाँ ले आओ। सब कुछ शुरू से करने की ज़रूरत नहीं।',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt और Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'वहाँ से एक्सपोर्ट की गई ZIP फ़ाइल चुनो; देखे हुए, रेटिंग और लिस्ट्स यहाँ आ जाएँगी।',
   'Aktarılıyor...': 'इंपोर्ट हो रहा है...',

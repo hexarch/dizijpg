@@ -755,7 +755,6 @@ const Map<String, String> cevirilerId = {
   'Verilerini yanında getir': 'Bawa datamu ke sini',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Kalau kamu melacak tontonanmu di aplikasi lain, kamu bisa memindahkannya ke sini. Tidak perlu mulai dari nol.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt, dan Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Pilih file ZIP hasil ekspormu; tontonan, rating, dan daftarmu akan dipindahkan.',
   'Aktarılıyor...': 'Mengimpor...',

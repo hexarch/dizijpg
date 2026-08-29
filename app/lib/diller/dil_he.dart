@@ -740,7 +740,6 @@ const Map<String, String> cevirilerHe = {
   'Verilerini yanında getir': 'הנתונים שלך באים איתך',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'אם המעקב אחרי הצפיות שלך מתנהל באפליקציה אחרת, אפשר להעביר אותו לכאן. אין צורך להתחיל מאפס.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt ו-Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'בחירת קובץ ה-ZIP שיוצא משם; הצפיות, הדירוגים והרשימות שלך יועברו.',
   'Aktarılıyor...': 'בהעברה...',

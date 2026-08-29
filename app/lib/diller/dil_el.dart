@@ -761,7 +761,6 @@ const Map<String, String> cevirilerEl = {
   'Verilerini yanında getir': 'Φέρε τα δεδομένα σου μαζί σου',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Αν παρακολουθείς όσα βλέπεις σε άλλη εφαρμογή, μπορείς να τα μεταφέρεις εδώ. Δεν χρειάζεται να ξεκινήσεις από την αρχή.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt και Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Διάλεξε το αρχείο ZIP που εξήγαγες, για να μεταφερθούν οι προβολές, οι βαθμολογίες και οι λίστες σου.',
   'Aktarılıyor...': 'Μεταφορά...',

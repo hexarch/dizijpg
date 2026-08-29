@@ -750,7 +750,6 @@ const Map<String, String> cevirilerDa = {
   'Verilerini yanında getir': 'Tag dine data med',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Hvis du holder styr på, hvad du ser, i en anden app, kan du flytte det hele hertil. Du behøver ikke starte forfra.',
-  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt og Letterboxd',
   'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
       'Vælg den ZIP-fil, du har eksporteret, så følger din visningshistorik, dine bedømmelser og dine lister med.',
   'Aktarılıyor...': 'Importerer...',
