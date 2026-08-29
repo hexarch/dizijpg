@@ -980,6 +980,32 @@ const double reelsTuvalOrani = 9 / 16;
 /// medya küçültülmez; yalnız çerçeve içeriğe uyar.
 const double reelsAzamiTuvalOrani = 16 / 9;
 
+/// YATAY videoyu dikeyde ortalamak yerine biraz YUKARI çeker.
+///
+/// NEDEN (29 Ağu 2026, kullanıcı isteği): "dikdörtgen yatay videoları biraz
+/// yukarı çek, aşağıda kalıyor". Geometrik olarak ortalanmış olsalar da
+/// GÖRSEL olarak aşağıda duruyorlar, çünkü ekranın alt şeridini kullanıcı
+/// adı, açıklama, ilerleme çubuğu ve eylem sütunu kaplıyor. Yani medyanın
+/// engellenmemiş alandaki optik merkezi, geometrik merkezin YUKARISINDA.
+///
+/// ÖLÇÜ BOŞ ALANIN ORANI, ekran yüksekliğinin değil. `Alignment.y` boş alanın
+/// YARISI üzerinden çalışır (y=-1 → üst kenara yaslar), bu yüzden istenen
+/// "boş alanın %17,5'i kadar yukarı" değeri y = -0.35 demek. Boş alana
+/// bağlı olması güvenlik de sağlar: video ne kadar büyükse kayma o kadar
+/// küçülür, hiçbir oranda ekran dışına taşamaz.
+///
+/// YALNIZ YATAY VE YÜKSEKLİĞİ BİLİNEN medyaya uygulanır (`isInitialized` +
+/// oran > 1). Dikey videoda boş alan zaten yok; oran ölçülmemişken (9:16
+/// varsayımı) kaydırmak ölçmediğimiz bir şeyi taşımak olurdu.
+const double reelsYatayVideoYukariHizasi = -0.35;
+
+/// Oranı [oran] olan medya için Reels dikey hizası.
+/// Yatay (oran > 1) ise yukarı çekilir, değilse ortalanır.
+@visibleForTesting
+Alignment reelsDikeyHiza(double oran) => oran > 1
+    ? const Alignment(0, reelsYatayVideoYukariHizasi)
+    : Alignment.center;
+
 /// Tuvalin masaüstünde alabileceği EN BÜYÜK genişlik.
 ///
 /// Oran serbest bırakılırsa 16:9 medyada tuval 1358 dp'ye çıkar ve 7 Ağu'da
@@ -1715,23 +1741,43 @@ class _ReelSayfaState extends State<_ReelSayfa>
 
     Widget zemin;
     if (d != null && d.value.isInitialized) {
-      zemin = Center(
-        child: AspectRatio(
-          aspectRatio: d.value.aspectRatio == 0 ? 9 / 16 : d.value.aspectRatio,
-          child: VideoPlayer(d),
-        ),
+      final videoOrani = d.value.aspectRatio == 0
+          ? 9 / 16
+          : d.value.aspectRatio;
+      zemin = Align(
+        // Yatayda yukarı çekilir (bkz. `reelsYatayVideoYukariHizasi`);
+        // dikeyde `Alignment.center` — eski davranışla BİREBİR aynı.
+        alignment: reelsDikeyHiza(videoOrani),
+        child: AspectRatio(aspectRatio: videoOrani, child: VideoPlayer(d)),
       );
     } else if (_videoUrl != null) {
       zemin = const Center(
         child: CircularProgressIndicator(color: DiziRenkler.sari),
       );
     } else if (foto != null) {
-      zemin = Center(
+      // `Center` DEĞİL `SizedBox.expand`: `Center` içinde resim KENDİ doğal
+      // boyutunu alır, `alignment`ın oynayacağı boş alan kalmaz ve hizalama
+      // sessizce etkisiz olur (29 Ağu 2026 emülatörde ölçüldü: üst 722 px /
+      // alt 710 px — hiç kaymamış). Kutu genişleyince `contain` sığdırır,
+      // `alignment` de kutunun içinde konumlandırır.
+      zemin = SizedBox.expand(
         child: CachedNetworkImage(
           imageUrl: foto,
           httpHeaders: gorselBasliklari(foto),
           filterQuality: kullaniciGorselKalitesi,
           fit: BoxFit.contain,
+          // Videodaki ile AYNI düzeltme (bkz. `reelsYatayVideoYukariHizasi`):
+          // yatay medya geometrik ortada dursa da GÖRSEL olarak aşağıda
+          // kalıyor, çünkü alt şeridi kullanıcı adı/açıklama/eylem sütunu
+          // kaplıyor. Emülatörde ölçüldü: yatay fotoğrafta üst boşluk 665 px,
+          // alt boşluk 670 px — tam ortada.
+          //
+          // ORAN HESABI GEREKMEZ: `BoxFit.contain` medyayı kutuya sığdırır,
+          // `alignment` de onu kutunun İÇİNDE konumlandırır. Dikey medyada
+          // yüksekliğe sığdığı için dikey boş alan KALMAZ ve hizalama
+          // kendiliğinden etkisizdir — ayrı bir "yatay mı" kontrolü
+          // gereksiz, dolayısıyla ölçülmemiş oranla iş yapılmıyor.
+          alignment: const Alignment(0, reelsYatayVideoYukariHizasi),
         ),
       );
     } else {

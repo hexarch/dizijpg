@@ -405,9 +405,20 @@ class _AkisEkraniState extends State<AkisEkrani>
             padding: const EdgeInsets.only(top: 8, bottom: 24),
             // İlerideki kartlar önden kurulur → videoları erkenden yüklenir
             cacheExtent: 4000,
-            itemCount: _akis!.length,
+            // +1: SIFIRINCI ÖĞE PAYLAŞIM KUTUSU. 29 Ağu 2026, kullanıcı:
+            // "akıştaki yorum yap kısmı ekranda sabit kalmamalı, aşağı
+            // kaydırınca kaybolmalı". 28 Ağu'da bilerek listenin DIŞINA
+            // konmuştu ("üst barın altında" = sabit diye okunmuştu); o okuma
+            // düzeltildi. Listenin içinde olduğu için [OrtaKolon] kısıtını
+            // zaten alıyor — masaüstü hizası bozulmaz.
+            itemCount: _akis!.length + 1,
             itemBuilder: (context, i) {
-              final y = _akis![i] as Map<String, dynamic>;
+              if (i == 0) {
+                return _PaylasKutusu(onPaylasildi: _yukle);
+              }
+              // Kart indeksi bir geride: 0 kutuya ayrıldı.
+              final k = i - 1;
+              final y = _akis![k] as Map<String, dynamic>;
               // "Görüldü": kart GERÇEKTEN ekranda (>%60) belirince işaretle —
               // build ≈ görüldü DEĞİL (ListView ekran dışı kartları da kurar).
               return VisibilityDetector(
@@ -421,7 +432,7 @@ class _AkisEkraniState extends State<AkisEkrani>
                   key: ValueKey(y['id']),
                   yorum: y,
                   icerikler: _icerikler,
-                  onMedyaAc: (mi) => _reelsAc(i, mi),
+                  onMedyaAc: (mi) => _reelsAc(k, mi),
                 ),
               );
             },
@@ -473,41 +484,49 @@ class _AkisEkraniState extends State<AkisEkrani>
       // Arama çubuğu akıştan KALDIRILDI (kullanıcı isteği): arama Ana
       // Sayfa'da (AramaCubugu) duruyor, akış yalnız gönderilere ayrıldı.
       //
-      // PAYLAŞIM KUTUSU ÜST BARIN HEMEN ALTINDA, akışın DIŞINDA (28 Ağu 2026,
-      // kullanıcı isteği). Listenin İÇİNE (ilk öğe olarak) koymak daha az kod
-      // olurdu ama kutu kaydırınca yukarı kaçardı; kullanıcı "üst barın
-      // altında" dedi — yani sabit.
-      body: Column(
-        children: [
-          // MASAÜSTÜNDE KUTU DA AKIŞ KOLONUNA OTURUR (29 Ağu 2026, kullanıcı
-          // isteği: "web masaüstünde akıştaki yorum yap kısmı çok büyük onu
-          // doğru ortasında yerleştirsin").
-          //
-          // Kutu `Column`un doğrudan çocuğuydu, yani `Expanded(child: govde)`
-          // içindeki [OrtaKolon] sınırının DIŞINDA kalıyordu: kartlar 720
-          // dp'lik ortalanmış kolonda dururken kutu pencerenin tamamına
-          // (1400+ dp) yayılıyor, kenarları kartlarınkiyle tutmuyordu.
-          // Yeni kalıp UYDURULMADI — akışın kendi sarmalayıcısı aynen
-          // kullanıldı, böylece kutunun ve kartların sol/sağ kenarları
-          // birebir aynı hizada.
-          //
-          // Telefon BOZULMAZ: [OrtaKolon] sabit genişlik değil ÜST SINIR
-          // verir; pencere 720'nin altındayken kısıt bağlayıcı olmaz ve kutu
-          // eskisi gibi tam genişlikte kalır.
-          OrtaKolon(
-            azami: masaustuKolonGenisligi,
-            cocuk: _PaylasKutusu(
-              onPaylasildi: () {
-                // Yeni yorum akışta görünsün: paylaşımdan SONRA tazele.
-                _yukle();
-              },
+      // PAYLAŞIM KUTUSU AKIŞ LİSTESİNİN İÇİNDE (29 Ağu 2026): kaydırınca
+      // yukarı kaçar, sabit durmaz. 28 Ağu'da listenin dışındaydı; "üst barın
+      // altında" ifadesi "sabit" diye okunmuştu, kullanıcı düzeltti.
+      //
+      // AMA liste YOKKEN (hata / yükleniyor / akış boş) kutu yine üstte sabit
+      // durur: akışı boş olan kullanıcı paylaşım yapamazsa kutunun varlık
+      // sebebi ortadan kalkar — ve orada kaydırılacak bir şey de yok.
+      body: _akisDolu
+          ? govde
+          : Column(
+              children: [
+                // MASAÜSTÜNDE KUTU DA AKIŞ KOLONUNA OTURUR (29 Ağu 2026, kullanıcı
+                // isteği: "web masaüstünde akıştaki yorum yap kısmı çok büyük onu
+                // doğru ortasında yerleştirsin").
+                //
+                // Kutu `Column`un doğrudan çocuğuydu, yani `Expanded(child: govde)`
+                // içindeki [OrtaKolon] sınırının DIŞINDA kalıyordu: kartlar 720
+                // dp'lik ortalanmış kolonda dururken kutu pencerenin tamamına
+                // (1400+ dp) yayılıyor, kenarları kartlarınkiyle tutmuyordu.
+                // Yeni kalıp UYDURULMADI — akışın kendi sarmalayıcısı aynen
+                // kullanıldı, böylece kutunun ve kartların sol/sağ kenarları
+                // birebir aynı hizada.
+                //
+                // Telefon BOZULMAZ: [OrtaKolon] sabit genişlik değil ÜST SINIR
+                // verir; pencere 720'nin altındayken kısıt bağlayıcı olmaz ve kutu
+                // eskisi gibi tam genişlikte kalır.
+                OrtaKolon(
+                  azami: masaustuKolonGenisligi,
+                  cocuk: _PaylasKutusu(
+                    onPaylasildi: () {
+                      // Yeni yorum akışta görünsün: paylaşımdan SONRA tazele.
+                      _yukle();
+                    },
+                  ),
+                ),
+                Expanded(child: govde),
+              ],
             ),
-          ),
-          Expanded(child: govde),
-        ],
-      ),
     );
   }
+
+  /// Akışta gerçekten kart var mı — kutunun listeye mi gireceğini belirler.
+  bool get _akisDolu => _hata == null && _akis != null && _akis!.isNotEmpty;
 }
 
 /// AKIŞTAKİ PAYLAŞIM KUTUSU — solda avatar, ortada dokunulabilir alan.

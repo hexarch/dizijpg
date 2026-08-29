@@ -78,6 +78,26 @@ const int profilHedefi = 4;
 @visibleForTesting
 int hedefIndeksi(int dal) => dal == kesfetDali ? akisHedefi : dal;
 
+bool mesajYuzeyiMi(String yol) =>
+    yol.startsWith('/sohbet') || yol.startsWith('/mesaj-istekleri');
+
+/// Çubukta HANGİ hedefin sarı yanacağı — DAL ÜYELİĞİNDEN AYRI bir sorudur.
+///
+/// NEDEN AYRI (29 Ağu 2026, kullanıcı: "aşağıdaki 5'li navigasyonda mesajlar
+/// hariç hepsine tıklayınca sarı oluyor, mesajlara tıklayınca olmuyor"):
+/// Mesajlar bir dal DEĞİL, akış dalının içinde `push` edilir (geri tuşu
+/// çalışsın diye, bkz. `onSec`). Bu yüzden `shell.currentIndex` hiçbir zaman
+/// [mesajIndeksi] olmuyor ve [kabukSekmeIndeksi] de mesaj yollarını bilerek
+/// [akisHedefi]e eşliyordu — ikisi de NAVİGASYON için doğru, ama GÖRSEL
+/// geri bildirim için yanlıştı: kullanıcı bastığı sekmenin yandığını görmeli.
+///
+/// Dal üyeliği DEĞİŞMEDİ: `push`/`goBranch` davranışı, geri tuşu ve
+/// [kabukSekmeIndeksi]nin döndürdüğü değer aynen duruyor. Değişen tek şey
+/// çubuğun boyadığı hedef.
+@visibleForTesting
+int kabukSecili(String yol, int dalHedefi) =>
+    mesajYuzeyiMi(yol) ? mesajIndeksi : dalHedefi;
+
 /// Alt gezinme sekmeleri. İlk dört hedefin seçili / seçili olmayan ikonu
 /// AYNI ikon ailesinden olmalı (yalnız içi dolu/boş farkı) — yoksa sekme
 /// değiştikçe ikon başka bir şeye dönüşüyormuş gibi görünür. Test bunu kilitler.
@@ -504,7 +524,7 @@ class MasaustuKaliciCubuk extends StatelessWidget {
       body: cocuk,
       bottomNavigationBar: kabukCubugu(
         context,
-        secili: kabukSekmeIndeksi(yol),
+        secili: kabukSecili(yol, kabukSekmeIndeksi(yol)),
         onSec: (i) => kabukSekmeyeGit(context, i),
       ),
     );
@@ -513,9 +533,29 @@ class MasaustuKaliciCubuk extends StatelessWidget {
 
 /// Ana kabuk: Ana Sayfa · Takvim · Akış · Mesajlar · Profil.
 /// StatefulShellRoute ile sekme durumu korunur ve URL sekmeyi yansıtır.
-class KabukEkrani extends StatelessWidget {
+class KabukEkrani extends StatefulWidget {
   final StatefulNavigationShell shell;
   const KabukEkrani({super.key, required this.shell});
+
+  @override
+  State<KabukEkrani> createState() => _KabukEkraniState();
+}
+
+class _KabukEkraniState extends State<KabukEkrani> {
+  /// Mesajlar yüzeyi şu an açık mı — çubuğun boyayacağı hedefi belirler.
+  ///
+  /// NEDEN DURUM, ROTA OKUMASI DEĞİL (29 Ağu 2026): Mesajlar bir dal değil,
+  /// `push` ile açılıyor; `shell.currentIndex` değişmiyor. İlk denemede
+  /// `routerDelegate.currentConfiguration.uri.path` okundu — EMÜLATÖRDE
+  /// ÇALIŞMADI, çubuk dalın hedefinde kaldı.
+  ///
+  /// NEDEN GLOBAL DEĞİL: ikinci denemede üst düzey bir `ValueNotifier`
+  /// kullanıldı ve TESTLER ARASINDA SIZDI — `akis_gorunum_secici_test`
+  /// bayrak açık kaldığı için Mesajlar'ı seçili gördü. Durum artık kabuğun
+  /// kendi `State`inde; sızıntı imkânsız.
+  bool _mesajda = false;
+
+  StatefulNavigationShell get shell => widget.shell;
 
   @override
   Widget build(BuildContext context) {
@@ -532,17 +572,31 @@ class KabukEkrani extends StatelessWidget {
       body: OturumDustuKatmani(
         child: DogumGunuKatmani(child: YasakSeridi(child: shell)),
       ),
+      // ROUTER DİNLENİR, tek seferlik OKUNMAZ. `GoRouter.maybeOf(context)` ile
+      // yolu okumak değişikliğe ABONE OLMAZ: mesajlar dalın İÇİNE `push`
+      // edildiği için `shell.currentIndex` değişmiyor, kabuk da yeniden
+      // çizilmiyordu — çubuk eski hedefte kalıyordu. (29 Ağu 2026: ilk
+      // denemede tam bu yüzden sarı yanmadı, emülatörde görüldü.)
+      // `routerDelegate` bir `ChangeNotifier`; push/pop'ta haber verir.
       bottomNavigationBar: kabukCubugu(
         context,
         // Dal → hedef çevirisi ŞART: Keşfet dalındayken (3) çeviri olmadan
         // çubukta Mesajlar seçili görünürdü (bkz. [hedefIndeksi]).
-        secili: hedefIndeksi(shell.currentIndex),
+        // Üstüne mesaj yüzeyi kontrolü (bkz. [kabukSecili]).
+        secili: _mesajda ? mesajIndeksi : hedefIndeksi(shell.currentIndex),
         onSec: (i) async {
           // Mesajlar bir dal DEĞİL: `push` ile üste açılır (üst bardaki DM
           // düğmeleriyle aynı davranış), dönünce rozet tazelenir. `go`
           // kullansaydık kullanıcı geri tuşuyla bulunduğu sayfaya dönemezdi.
           if (i == mesajIndeksi) {
-            await context.push('/sohbetler');
+            setState(() => _mesajda = true);
+            try {
+              await context.push('/sohbetler');
+            } finally {
+              // `finally`: geri tuşuyla çıkılsa da hata atsa da bayrak
+              // MUTLAKA iner; yoksa çubuk Mesajlar'da takılı kalırdı.
+              if (mounted) setState(() => _mesajda = false);
+            }
             await SohbetOlaylari.okunmamisYenile();
             return;
           }
