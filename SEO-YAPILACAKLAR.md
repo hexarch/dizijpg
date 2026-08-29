@@ -1123,6 +1123,27 @@ Test kilidi: `seo_harita_kapsami.test.js` → "bölüm haritası DİL VARYANTI A
 kırılmadı. Kişi haritası 28 sn ile nginx'in 45 sn'sine en yakın olan; bölüm
 büyümesi onu ETKİLEMEDİ (ayrı sorgu, ayrı kova).
 
+**ISITICI KOŞU SÜRESİ — asıl sıkışan yer burası.** Kuyruk 31.994 → **55.451**
+adaya çıktı (ölçüldü, dağıtım sonrası ilk koşu). O koşu:
+
+```
+bakılan=55451 tazelendi=420 istek=420 kuyruk=1063 bayat_toplam=1483
+sınıf_payı=bolum:102,diziDuz:176,icerik:9,kisi:53,sezon:80 süre=419.4sn TAVAN=istek
+```
+
+| Ölçü | Değer |
+|---|---|
+| İş fazı (`AZAMI_DAKIKA` 7) | 419,4 sn (tavana oturdu) |
+| **Toplam duvar saati** (12:40:02 → 12:47:48) | **466 sn** |
+| Cron penceresi | 600 sn |
+| **Marj** | **134 sn (%22)** |
+
+Bekleyen bayat 1.483; koşu başına 420 × 6 koşu/saat = 2.520/saat, yani birikim
+bir saatte erir. ⚠ `isitici.js`'in kendi uyarısı geçerliliğini KORUYOR:
+`adaylariTopla` kuyruk büyüdükçe uzar; 600 sn aşılırsa bir sonraki koşu
+advisory lock'a takılıp boşa döner ve bunu **yalnız günlüğe bakan** fark eder.
+Marj 134 sn'nin altına inerse `AZAMI_DAKIKA` 7 → 6 çekilmeli.
+
 ### 14.8 Top 500'ün 12 boşluğu — KAPATILDI (yerleşik AI mekanizmasıyla)
 
 `IMDB-TOP500.md`de ❌ işaretli 12 dizi özgün içeriği olmadığı için `noindex`
@@ -1162,3 +1183,6 @@ indekslenebilir olunca **bölümleri de** haritaya girdi (ör. Vecinos 339, X-Me
   değil; ikisi ayrı iş.
 - ⬜ `sitemap-kisi-1.xml` 28 sn — nginx 45 sn'ye 17 sn kaldı. Kişi haritası
   büyürse 504 riski (bu turda dokunulmadı).
+- ⬜ **Isıtıcı koşu marjı 134 sn.** Kuyruk 55.451'den büyürse
+  `AYAR.AZAMI_DAKIKA` 7 → 6. Kontrol: `tail /var/log/dizijpg-isitici.log`,
+  ardışık iki koşuda `başka bir kopya çalışıyor` görülürse marj bitmiştir.

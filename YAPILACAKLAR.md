@@ -54,6 +54,10 @@ kesiyordu.**
   10,2 sn (nginx 45 sn, `gsc_izle` 90 sn — aşılmıyor).
 - ⬜ **7 gün izle:** GSC keşif kuyruğu (1 Eylül'de 21.394). Kuyruk şişerse
   tavan düşürülür ya da liste 250 → 100 çekilir.
+- ⬜ **Isıtıcı marjı:** kuyruk 31.994 → 55.451 adaya çıktı; koşu 466 sn
+  (cron penceresi 600 sn, marj 134 sn). Kuyruk daha büyürse
+  `isitici.js` `AYAR.AZAMI_DAKIKA` 7 → 6 çekilmeli — yoksa bir sonraki koşu
+  advisory lock'a takılıp kapasite yarıya iner (sessiz).
 
 Karar belgesi: `SEO-YAPILACAKLAR.md` §14 (v5.4).
 
