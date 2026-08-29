@@ -189,6 +189,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .arac input{flex:1;min-width:180px}
 .arac input:focus,.arac select:focus{outline:none;border-color:var(--sari)}
 .btn.secili{background:var(--sari);color:#000;border-color:var(--sari)}
+a.btn{text-decoration:none;display:inline-flex;align-items:center;gap:4px}
 .satir-tikla{cursor:pointer}
 .satir-tikla:hover td{background:rgba(245,197,24,.06)}
 .kck{font-size:11px;color:var(--soluk2)}
@@ -1170,6 +1171,31 @@ const gBag = (id,metin) => `<span class="bag" role="button" tabindex="0"
   onclick="event.stopPropagation();gonderiDetay(${Number(id)||0})"
   onkeydown="if(event.key==='Enter'){event.stopPropagation();gonderiDetay(${Number(id)||0})}"
   >${esc(metin)}</span>`;
+/* ---- SİTEDE AÇ: panelden CANLI sayfaya (30 Ağu 2026) ----
+   İstek aynen: "o yorumu site içerisinde de görmek istiyorum tıklayıp …
+   son yorumlara tıklayınca açılan modalda ilgili kısma yönlendiren linki de koy".
+
+   TABAN location.origin'DEN TÜRETİLİR, sabit yazılmaz: panel dizijpg.com/api/admin
+   altından servis ediliyor ve uygulama AYNI kökün / yolunda duruyor. 'https://dizijpg.com'
+   gömseydik panel yerelde ya da IP üzerinden açıldığında yönetici CANLI siteye atlardı —
+   canlı veriyi test verisi sanmaya götüren sessiz bir tuzak.
+
+   YENİ SEKME + noopener: modal yığını ve panel oturumu açık kalsın; aynı sekmede
+   gitseydi yönetici geri geldiğinde modal geçmişini kaybederdi. */
+const siteYolu = (tur,id,sezon,bolum) =>
+    tur==='person'  ? `/kisi/${Number(id)||0}`
+  : tur==='company' ? `/sirket/${Number(id)||0}`
+  : (sezon!=null && bolum!=null)
+      ? `/dizi/${Number(id)||0}/sezon/${Number(sezon)}/bolum/${Number(bolum)}`
+      : `/icerik/${tur==='movie'?'movie':'tv'}/${Number(id)||0}`;
+const SITE_TABAN = (typeof location !== 'undefined' && location.origin) || '';
+const siteBag = (yol,metin) => `<a class="btn" href="${SITE_TABAN}${esc(yol)}"
+  target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
+  title="Sitede yeni sekmede açar">${esc(metin)} <span aria-hidden="true">↗</span></a>`;
+/* Satır içi küçük çapa — gönderi kartının üst şeridinde. */
+const siteMini = (yol,baslik) => `<a class="bag" href="${SITE_TABAN}${esc(yol)}"
+  target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
+  title="${esc(baslik)}" aria-label="${esc(baslik)}">↗</a>`;
 const TMDB_GORSEL='https://image.tmdb.org/t/p/w185';
 
 /* ---- 3D Globe ---- */
@@ -1351,6 +1377,10 @@ async function gonderiDetay(id){
               ${gKart(d.ust,false)}<div class="kck" style="margin:10px 0 6px">Bu gönderi</div>`:'')
       + gKart(g,true)
       + `<div class="btnler" style="margin-top:12px">
+           ${siteBag('/gonderi/'+g.id,'Yorumu sitede aç')}
+           ${g.tmdb_id ? siteBag(siteYolu(g.tur,g.tmdb_id,g.sezon,g.bolum),
+               (g.sezon!=null&&g.bolum!=null) ? 'Bölümü sitede aç' : 'Yapımı sitede aç') : ''}
+           ${siteBag('/kullanici/'+encodeURIComponent(g.kullanici_adi),'Yazarı sitede aç')}
            <button class="btn" onclick="kullaniciDetay('${escJs(g.kullanici_adi)}')">Yazarın profili</button>
            <button class="btn" onclick="icerikDetay('${escJs(g.tur)}',${g.tmdb_id})">Yapımı aç</button>
            <button class="btn tehlike" onclick="gonderiSilVeKapat(${g.id})">Gönderiyi sil</button>
@@ -1392,7 +1422,7 @@ function gKart(y, ana){
       ${y.yasakli?'<span class="etiket" style="background:rgba(248,113,113,.15);color:var(--kirmizi)">yasaklı</span>':''}
       ${y.spoiler?'<span class="etiket e-yeni">spoiler</span>':''}
       ${y.kaynak_dil?`<span class="etiket e-kapatildi mono">${esc(y.kaynak_dil)}</span>`:''}
-      <span class="mono kck">${gBag(y.id,'#'+y.id)} · ❤${y.begeni} · 👁${y.goruntulenme}${y.sikayet?' · 🚩'+y.sikayet:''}</span>
+      <span class="mono kck">${gBag(y.id,'#'+y.id)} ${siteMini('/gonderi/'+y.id,'Bu gönderiyi sitede aç')} · ❤${y.begeni} · 👁${y.goruntulenme}${y.sikayet?' · 🚩'+y.sikayet:''}</span>
       <span class="mono kck" style="margin-left:auto">${esc(new Date(y.tarih).toLocaleString('tr'))}</span>
     </div>
     <div class="g-metin">${esc(y.metin||'(boş)')}</div>
