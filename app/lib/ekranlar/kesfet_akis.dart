@@ -980,31 +980,33 @@ const double reelsTuvalOrani = 9 / 16;
 /// medya küçültülmez; yalnız çerçeve içeriğe uyar.
 const double reelsAzamiTuvalOrani = 16 / 9;
 
-/// YATAY videoyu dikeyde ortalamak yerine biraz YUKARI çeker.
+/// Reels'te medyayı dikeyde ortalamak yerine biraz YUKARI çeker.
 ///
 /// NEDEN (29 Ağu 2026, kullanıcı isteği): "dikdörtgen yatay videoları biraz
 /// yukarı çek, aşağıda kalıyor". Geometrik olarak ortalanmış olsalar da
 /// GÖRSEL olarak aşağıda duruyorlar, çünkü ekranın alt şeridini kullanıcı
-/// adı, açıklama, ilerleme çubuğu ve eylem sütunu kaplıyor. Yani medyanın
-/// engellenmemiş alandaki optik merkezi, geometrik merkezin YUKARISINDA.
+/// adı, açıklama, ilerleme çubuğu ve eylem sütunu kaplıyor.
 ///
 /// ÖLÇÜ BOŞ ALANIN ORANI, ekran yüksekliğinin değil. `Alignment.y` boş alanın
-/// YARISI üzerinden çalışır (y=-1 → üst kenara yaslar), bu yüzden istenen
-/// "boş alanın %17,5'i kadar yukarı" değeri y = -0.35 demek. Boş alana
-/// bağlı olması güvenlik de sağlar: video ne kadar büyükse kayma o kadar
-/// küçülür, hiçbir oranda ekran dışına taşamaz.
+/// YARISI üzerinden çalışır (y=-1 → üst kenara yaslar), yani "boş alanın
+/// %17,5'i kadar yukarı" = y -0.35.
 ///
-/// YALNIZ YATAY VE YÜKSEKLİĞİ BİLİNEN medyaya uygulanır (`isInitialized` +
-/// oran > 1). Dikey videoda boş alan zaten yok; oran ölçülmemişken (9:16
-/// varsayımı) kaydırmak ölçmediğimiz bir şeyi taşımak olurdu.
-const double reelsYatayVideoYukariHizasi = -0.35;
+/// KOŞULSUZ UYGULANIR ve bu GÜVENLİDİR: medya ekranı dikeyde dolduruyorsa
+/// boş alan yoktur, hizalama kendiliğinden etkisizdir; boşluk büyüdükçe kayma
+/// büyür, hiçbir oranda ekran dışına taşamaz.
+///
+/// ⚠ İLK SÜRÜM `oran > 1` KOŞULU KOYUYORDU VE YANLIŞTI (aynı gün, kullanıcı
+/// bildirdi: "fotoğrafları yukarı çekmişsin ama videolar hâlâ aşağıda").
+/// Instagram'ın kendi formatları 4:5 (0,8) ve 1:1 — ikisi de "kareden geniş"
+/// DEĞİL, ama telefon ekranı ~0,486 oranında olduğu için ikisi de üstte ve
+/// altta koca boşluk bırakıyor. Koşul onları "dikey" sayıp ortalıyordu, yani
+/// şikâyet edilen videolar tam da kuralın DIŞINDA kalıyordu. Doğru soru
+/// "kareden geniş mi" değil "EKRANDAN geniş mi" — ve onu hesaplamaya gerek
+/// yok, boş alanın kendisi zaten cevap.
+const double reelsMedyaYukariHizasi = -0.35;
 
-/// Oranı [oran] olan medya için Reels dikey hizası.
-/// Yatay (oran > 1) ise yukarı çekilir, değilse ortalanır.
-@visibleForTesting
-Alignment reelsDikeyHiza(double oran) => oran > 1
-    ? const Alignment(0, reelsYatayVideoYukariHizasi)
-    : Alignment.center;
+/// Reels medyasının dikey hizası — video ve fotoğraf için AYNI.
+const Alignment reelsMedyaHizasi = Alignment(0, reelsMedyaYukariHizasi);
 
 /// Tuvalin masaüstünde alabileceği EN BÜYÜK genişlik.
 ///
@@ -1745,9 +1747,9 @@ class _ReelSayfaState extends State<_ReelSayfa>
           ? 9 / 16
           : d.value.aspectRatio;
       zemin = Align(
-        // Yatayda yukarı çekilir (bkz. `reelsYatayVideoYukariHizasi`);
-        // dikeyde `Alignment.center` — eski davranışla BİREBİR aynı.
-        alignment: reelsDikeyHiza(videoOrani),
+        // Fotoğrafla AYNI hiza. Koşul YOK: ekranı dolduran videoda boş alan
+        // olmadığı için hizalama kendiliğinden etkisiz kalır.
+        alignment: reelsMedyaHizasi,
         child: AspectRatio(aspectRatio: videoOrani, child: VideoPlayer(d)),
       );
     } else if (_videoUrl != null) {
@@ -1766,7 +1768,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
           httpHeaders: gorselBasliklari(foto),
           filterQuality: kullaniciGorselKalitesi,
           fit: BoxFit.contain,
-          // Videodaki ile AYNI düzeltme (bkz. `reelsYatayVideoYukariHizasi`):
+          // Videodaki ile AYNI düzeltme (bkz. `reelsMedyaHizasi`):
           // yatay medya geometrik ortada dursa da GÖRSEL olarak aşağıda
           // kalıyor, çünkü alt şeridi kullanıcı adı/açıklama/eylem sütunu
           // kaplıyor. Emülatörde ölçüldü: yatay fotoğrafta üst boşluk 665 px,
@@ -1777,7 +1779,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
           // yüksekliğe sığdığı için dikey boş alan KALMAZ ve hizalama
           // kendiliğinden etkisizdir — ayrı bir "yatay mı" kontrolü
           // gereksiz, dolayısıyla ölçülmemiş oranla iş yapılmıyor.
-          alignment: const Alignment(0, reelsYatayVideoYukariHizasi),
+          alignment: reelsMedyaHizasi,
         ),
       );
     } else {

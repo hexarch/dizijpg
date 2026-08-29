@@ -600,6 +600,21 @@ class _KabukEkraniState extends State<KabukEkrani> {
             await SohbetOlaylari.okunmamisYenile();
             return;
           }
+          // MESAJLAR AÇIKKEN BAŞKA SEKMEYE BASILDI (29 Ağu 2026 regresyonu,
+          // kullanıcı bildirdi: "mesajlara tıklayınca sarı oluyor ama sonra
+          // diğer tuşlara tıklayınca onlar sarı olmuyor").
+          //
+          // KÖK: `/sohbetler` üste `push` edilmiş ve yukarıdaki `await` hâlâ
+          // bekliyor. `goBranch` alttaki dalı değiştirse de mesaj sayfası
+          // ÜSTTE kalıyor, `await` çözülmediği için `finally` çalışmıyor ve
+          // `_mesajda` true kalıyordu — çubuk sonsuza kadar Mesajlar'ı
+          // boyuyordu.
+          //
+          // ÇÖZÜM: önce mesaj sayfasını KAPAT. `pop` yukarıdaki `await`i
+          // çözer, `finally` bayrağı indirir; sonra dal değişir. Bayrağı
+          // burada elle indirmiyoruz — tek kaynak `finally` olsun, yoksa iki
+          // yerden yönetilen bir durum doğar.
+          if (_mesajda && context.canPop()) context.pop();
           if (i == profilHedefi) profilYenileTetik.value++;
           shell.goBranch(
             i,

@@ -1,36 +1,29 @@
-// Reels'te YATAY videonun dikey hizası.
+// Reels'te medyanın dikey hizası.
 //
-// Kullanıcı (29 Ağu 2026): "dikdörtgen yatay videoların, eğer yüksekliği
-// belliyse, biraz yukarı çek — aşağıda kalıyor. Ekranın tam ortasına
-// yerleştiriyorsun, bu çok iyi ama biraz yukarıda olmalı."
+// Kullanıcı (29 Ağu 2026): "yatay videoları biraz yukarı çek, aşağıda
+// kalıyor" → sonra "fotoğrafları yukarı çekmişsin ama videolar hâlâ aşağıda".
 //
-// Bu test SAYIYLA ölçer: "yukarıda duruyor gibi" yeterli değil.
+// İlk sürüm `oran > 1` koşulu koyuyordu; Instagram formatları 4:5 ve 1:1
+// bu koşulun DIŞINDA kaldığı için tam da şikâyet edilen videolar
+// kaymıyordu. Hiza artık KOŞULSUZ; güvenliği boş alandan geliyor.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:dizijpg/ekranlar/kesfet_akis.dart';
 
 void main() {
-  test('yatay oran yukarı çeker, dikey oran ORTALAR', () {
-    // Dikey ve kare: eski davranış birebir korunur.
-    expect(reelsDikeyHiza(9 / 16), Alignment.center);
-    expect(reelsDikeyHiza(1), Alignment.center, reason: 'kare yatay değildir');
-    // Yatay: yukarı.
-    expect(reelsDikeyHiza(16 / 9).y, lessThan(0));
-    expect(reelsDikeyHiza(4 / 3).y, lessThan(0));
-  });
-
   test('kayma BOŞ ALANIN %15-20 bandında (ekran yüksekliğinin değil)', () {
-    // `Alignment.y` boş alanın YARISI üzerinden çalışır: gerçek kayma oranı
-    // |y| / 2. Kullanıcının istediği bant %15-20.
-    final oran = reelsDikeyHiza(16 / 9).y.abs() / 2;
+    // `Alignment.y` boş alanın YARISI üzerinden çalışır → oran |y| / 2.
+    final oran = reelsMedyaHizasi.y.abs() / 2;
     expect(oran, greaterThanOrEqualTo(0.15));
     expect(oran, lessThanOrEqualTo(0.20));
+    expect(reelsMedyaHizasi.x, 0, reason: 'yatayda ortalı kalmalı');
   });
 
-  testWidgets('16:9 video ORTADAN yukarı kayar, 9:16 video kaymaz', (
+  testWidgets('mektup kutulu her oran yukarı kayar, ekranı dolduran kaymaz', (
     tester,
   ) async {
+    // Telefon: 400×800 → ekran oranı 0.5.
     const sahne = Size(400, 800);
     tester.view.physicalSize = sahne;
     tester.view.devicePixelRatio = 1;
@@ -40,9 +33,10 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Stack(
+            fit: StackFit.expand,
             children: [
               Align(
-                alignment: reelsDikeyHiza(oran),
+                alignment: reelsMedyaHizasi,
                 child: AspectRatio(
                   aspectRatio: oran,
                   child: const SizedBox.expand(key: Key('medya')),
@@ -55,29 +49,53 @@ void main() {
       return tester.getRect(find.byKey(const Key('medya')));
     }
 
-    // 9:16 — dikey: tam ortada (üst boşluk == alt boşluk).
-    final dikey = await yerlesim(9 / 16);
-    expect(
-      (dikey.top - (sahne.height - dikey.bottom)).abs(),
-      lessThan(0.5),
-      reason: 'dikey video ortalanmalı, davranış değişmemeli',
+    // Ekrandan GENİŞ olan her oran mektup kutusu olur → kaymalı.
+    // 4:5 ve 1:1 KRİTİK: Instagram formatları, eski `oran > 1` koşulu
+    // bunları kaçırıyordu.
+    for (final oran in [16 / 9, 4 / 3, 1.0, 4 / 5, 9 / 16]) {
+      final r = await yerlesim(oran);
+      final bos = sahne.height - r.height;
+      if (bos < 1) continue; // ekranı dolduruyor, kayacak yer yok
+      final kayma = (bos / 2) - r.top;
+      expect(
+        kayma / bos,
+        greaterThanOrEqualTo(0.15),
+        reason: 'oran $oran için kayma az',
+      );
+      expect(
+        kayma / bos,
+        lessThanOrEqualTo(0.20),
+        reason: 'oran $oran için kayma fazla',
+      );
+      expect(r.top, greaterThanOrEqualTo(0), reason: 'oran $oran taştı');
+      expect(r.bottom, lessThanOrEqualTo(sahne.height));
+    }
+  });
+
+  testWidgets('ekranı dikeyde dolduran medyada hiza ETKİSİZ', (tester) async {
+    // Ekrandan DAR (daha uzun) medya: yüksekliği doldurur, boş alan kalmaz.
+    tester.view.physicalSize = const Size(400, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Stack(
+          fit: StackFit.expand,
+          children: [
+            Align(
+              alignment: reelsMedyaHizasi,
+              child: AspectRatio(
+                aspectRatio: 1 / 3, // 0.33 < ekran 0.5
+                child: const SizedBox.expand(key: Key('medya')),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
-
-    // 16:9 — yatay: üst boşluk alt boşluktan BELİRGİN küçük olmalı.
-    final yatay = await yerlesim(16 / 9);
-    final ust = yatay.top;
-    final alt = sahne.height - yatay.bottom;
-    expect(ust, lessThan(alt), reason: 'yatay video yukarı çekilmeli');
-
-    // Ve kayma miktarı ölçülen bantta: boş alanın %15-20'si.
-    final bos = sahne.height - yatay.height;
-    final kayma = (bos / 2) - ust;
-    expect(kayma / bos, greaterThanOrEqualTo(0.15));
-    expect(kayma / bos, lessThanOrEqualTo(0.20));
-
-    // Ekran dışına TAŞMAZ — kayma boş alana bağlı olduğu için matematiksel
-    // olarak imkânsız, ama kilitliyoruz.
-    expect(yatay.top, greaterThanOrEqualTo(0));
-    expect(yatay.bottom, lessThanOrEqualTo(sahne.height));
+    final r = tester.getRect(find.byKey(const Key('medya')));
+    expect(r.top, 0, reason: 'dikey boşluk yok → kayma da yok');
+    expect(r.height, 800);
   });
 }
