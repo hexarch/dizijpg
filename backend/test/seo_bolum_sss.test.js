@@ -18,8 +18,8 @@ import assert from 'node:assert/strict';
 import { alan, KAYNAK } from './yardimci/seo_kaynak.js';
 
 const DEP = [
-  'seoMetin', 'seoPozitif', 'htmlKacir', 'SEO_SSS_BASLIK', 'SEO_SSS_MIN',
-  'SEO_AYLAR', 'seoTarihTr', 'seoVeListesi', 'SEO_BOLUM_SSS_KONUK',
+  'seoMetin', 'seoPozitif', 'htmlKacir', 'SEO_SSS_MIN',
+  'seoVeListesi', 'SEO_BOLUM_SSS_KONUK',
   'SEO_SSS_BOLGE', 'SEO_SSS_SAGLAYICI', 'SEO_SAGLAYICI_GRUPLARI',
   'seoSaglayiciParcalari',
   'seoBolumSorulari', 'seoSssGovdesi', 'seoSssJsonLd',
@@ -156,7 +156,7 @@ test('bölüm rotası SSS bloğunu basıyor ve jsonLd\'ye geçiriyor', () => {
   const rota = KAYNAK.slice(i, i + 9000);
   assert.ok(rota.includes('const sssListesi = seoBolumSorulari('),
     'rota SSS listesini kurmalı');
-  assert.ok(rota.includes('seoSssGovdesi(sssListesi)'), 'görünür blok basılmalı');
+  assert.ok(rota.includes('seoSssGovdesi(sssListesi, dil)'), 'görünür blok basılmalı');
   assert.ok(rota.includes('sss: sssListesi'), 'aynı liste jsonLd\'ye geçmeli');
   // ÖZET SORUYA GİRMEZ: rota `ozet`i seoBolumSorulari'ye VERMİYOR.
   const cagri = rota.slice(rota.indexOf('seoBolumSorulari('),
@@ -189,6 +189,6 @@ test('bölüm rotası dizi sağlayıcılarını AYNI istekte alıyor', () => {
   const rota = KAYNAK.slice(i, i + 9000);
   assert.ok(rota.includes('append_to_response=watch/providers'),
     'dizi çağrısına watch/providers eklenmeli — fazladan TMDB isteği atmadan');
-  assert.ok(rota.includes('saglayicilar: seoSaglayiciParcalari(dizi)'),
+  assert.ok(rota.includes('saglayicilar: seoSaglayiciParcalari(dizi, SEO_SSS_BOLGE, dil)'),
     'içerik sayfasıyla AYNI yardımcı kullanılmalı');
 });

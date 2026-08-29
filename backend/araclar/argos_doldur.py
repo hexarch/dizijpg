@@ -408,7 +408,11 @@ def main() -> int:
     ozet = psql(
         "SELECT dil || '=' || count(*)::text FROM metin_cevirileri "
         "WHERE dil IN ('" + "','".join(HEDEF_DILLER) + "') "
-        "GROUP BY 1 ORDER BY 1;"
+        # `GROUP BY 1` ifadenin İÇİNDEKİ count(*)'ı gruplamaya sokuyordu:
+        # Postgres "aggregate functions are not allowed in GROUP BY" ile
+        # DÜŞÜYORDU (29 Ağu 2026'da yakalandı — betiğin son adımı, yani tüm
+        # çeviri bittikten SONRA patlıyor ve çıkış kodunu 1 yapıyordu).
+        "GROUP BY dil ORDER BY dil;"
     )
     log("DOLULUK:\n" + ozet)
     return 0

@@ -24,8 +24,8 @@ import assert from 'node:assert/strict';
 import { alan, KAYNAK } from './yardimci/seo_kaynak.js';
 
 const DEP = [
-  'seoMetin', 'htmlKacir', 'SEO_SSS_BASLIK', 'SEO_SSS_MIN', 'SEO_AYLAR',
-  'seoTarihTr', 'seoVeListesi', 'SEO_KISI_MESLEK', 'SEO_KISI_SSS_YAPIM',
+  'seoMetin', 'htmlKacir', 'SEO_SSS_MIN', 
+  'seoVeListesi', 'SEO_KISI_SSS_YAPIM',
   'seoYapimEki', 'seoKisiYasi', 'seoKisiSorulari', 'seoSssGovdesi',
   'seoSssJsonLd',
 ];
@@ -211,14 +211,14 @@ test('/kisi/ rotası SSS bloğunu gövdeye BASIYOR ve jsonLd\'ye geçiriyor', ()
   const rota = KAYNAK.slice(i, KAYNAK.indexOf("app.get('/og/sirket", i));
   assert.ok(rota.includes('const sssListesi = seoKisiSorulari('),
     'rota SSS listesini kurmalı');
-  assert.ok(rota.includes('seoSssGovdesi(sssListesi)'),
+  assert.ok(rota.includes('seoSssGovdesi(sssListesi, dil)'),
     'görünür blok gövdeye basılmalı (gizli JSON-LD SSS ihlaldir)');
   assert.ok(rota.includes('sss: sssListesi'),
     'aynı liste jsonLd\'ye geçirilmeli');
   // SSS biyografiden SONRA, yapım listesinden ÖNCE.
   assert.ok(
-    rota.indexOf('kimdir?</h2>') < rota.indexOf('seoSssGovdesi(sssListesi)')
-    && rota.indexOf('seoSssGovdesi(sssListesi)') < rota.indexOf('seoAfisListesi('),
+    rota.indexOf('t.bsKimdir') < rota.indexOf('seoSssGovdesi(sssListesi, dil)')
+    && rota.indexOf('seoSssGovdesi(sssListesi, dil)') < rota.indexOf('seoAfisListesi('),
     'SSS gövdenin üst yarısında, biyografi ile yapım listesi arasında olmalı',
   );
 });

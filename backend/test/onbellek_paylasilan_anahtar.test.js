@@ -146,9 +146,15 @@ test('/og/icerik yeni gelen ağır alanları HTML’e BASMIYOR', () => {
 test('SSR bütçesi hâlâ tek bir TMDB isteğini fazlasıyla karşılıyor', () => {
   const butce = alan(['SSR_BUTCE_MS'], 'SSR_BUTCE_MS');
   assert.ok(butce >= 10000, 'SSR bütçesi 10 sn altına düştüyse bu ölçüm yenilenmeli');
-  // İçerik SSR'ı TEK TMDB isteği yapar (bölüm kuyruğu ayrı, o zaten vardı).
+  // İçerik SSR'ı TÜRKÇEDE TEK TMDB isteği yapar (bölüm kuyruğu ayrı, o zaten
+  // vardı). 29 Ağu 2026'da İKİNCİ bir çağrı eklendi ama KOŞULLU: yalnız
+  // istenen dilde TMDB özeti YOKSA ve dilin Argos çifti varsa İngilizce yük
+  // okunur. Türkçe/İngilizce sayfada `argosDiliMi(dil)` false, yani bu dal
+  // HİÇ çalışmaz — bugünkü tek-istek davranışı aynen korunur.
   const uc = bolum("app.get('/og/icerik/:tur/:tmdbId'", "app.get('/og/kisi");
-  assert.equal((uc.match(/tmdbGetir\(/g) || []).length, 1);
+  assert.equal((uc.match(/tmdbGetir\(/g) || []).length, 2);
+  assert.match(uc, /if \(!ozetMetni && argosDiliMi\(dil\)\)/,
+    'ikinci TMDB çağrısı koşulsuz — her SSR isteği iki katına çıkar');
 });
 
 // ===========================================================================

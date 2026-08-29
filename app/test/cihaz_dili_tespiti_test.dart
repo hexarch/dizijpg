@@ -348,7 +348,10 @@ void main() {
   // ---------------------------------------------------------------------
   test('main() dili runApp\'ten ÖNCE yükler', () {
     final kaynak = File('lib/main.dart').readAsStringSync();
-    final ceviriYeri = kaynak.indexOf("acilisAdimi('ceviri'");
+    // 29 Ağu 2026: çağrı iki satıra yayıldı (`acilisAdimi(\n  'ceviri', ...)`)
+    // çünkü artık adres parametresi de veriliyor. Arama bu yüzden yalnız
+    // ADIM ADINA bakıyor — biçimlendirici satır kırdığında test kırılmasın.
+    final ceviriYeri = kaynak.indexOf("'ceviri',");
     final runAppYeri = kaynak.indexOf('runApp(');
     final bagliyici = kaynak.indexOf('WidgetsFlutterBinding.ensureInitialized');
     expect(ceviriYeri, greaterThan(-1));
@@ -363,10 +366,20 @@ void main() {
       lessThan(ceviriYeri),
       reason: 'platform dil listesi bağlayıcı kurulmadan güvenilir değil',
     );
+    // `await` ile çağrılıyor mu — beklenmezse açılış yarışına girer.
+    // Çağrı 29 Ağu 2026'da iki satıra yayıldı (adres parametresi eklendi),
+    // bu yüzden `await acilisAdimi(` ile `'ceviri',` arasına yalnız boşluk /
+    // satır sonu girebilir.
     expect(
-      kaynak.contains("await acilisAdimi('ceviri'"),
+      RegExp(r"await acilisAdimi\(\s*'ceviri',").hasMatch(kaynak),
       isTrue,
       reason: 'beklenmezse açılış yarışına girer',
+    );
+    // Dil ADRESTEN de okunuyor (dil önekli SSR URL'leri, 29 Ağu 2026).
+    expect(
+      kaynak.contains('Ceviri.yukle(adres:'),
+      isTrue,
+      reason: '/de/icerik/... ile gelen ziyaretçi uygulamayı Türkçe açardı',
     );
   });
 }

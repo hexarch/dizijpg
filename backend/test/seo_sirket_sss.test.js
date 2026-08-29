@@ -21,8 +21,8 @@ import assert from 'node:assert/strict';
 import { alan, KAYNAK } from './yardimci/seo_kaynak.js';
 
 const DEP = [
-  'seoMetin', 'htmlKacir', 'SEO_SSS_BASLIK', 'SEO_SSS_MIN', 'seoVeListesi',
-  'SEO_ULKE_ADI', 'seoUlkeAdi', 'SEO_SIRKET_SSS_YAPIM', 'SEO_SIRKET_SAYIM',
+  'seoMetin', 'htmlKacir', 'SEO_SSS_MIN', 'seoVeListesi',
+  'SEO_SIRKET_SSS_YAPIM', 'SEO_SIRKET_SAYIM',
   'seoYapimEki',
   'seoSirketSssCumlesi', 'seoSirketSorulari', 'seoSssGovdesi', 'seoSssJsonLd',
 ];
@@ -48,7 +48,7 @@ test('künye + diziler + filmler; kuyruk yalnız ilk cevapta', () => {
 
   assert.equal(sorular[0].soru, 'Netflix hangi ülkenin yapım firması?');
   assert.match(sorular[0].cevap,
-    /^Netflix, ABD merkezli bir yapım firması \(merkez: Los Gatos, California\)\./);
+    /^Netflix, Amerika Birleşik Devletleri merkezli bir yapım firması \(merkez: Los Gatos, California\)\./);
   assert.match(sorular[0].cevap,
     /dizi\.jpg kullanıcıları Netflix yapımları hakkında 5 yorum ve inceleme yazdı\./);
   assert.ok(!sorular[1].cevap.includes('dizi.jpg kullanıcıları'));
@@ -143,11 +143,11 @@ test('/sirket/ rotası SSS bloğunu gövdeye basıyor ve jsonLd\'ye geçiriyor',
   const rota = KAYNAK.slice(i, i + 6000);
   assert.ok(rota.includes('const sssListesi = seoSirketSorulari('),
     'rota SSS listesini kurmalı');
-  assert.ok(rota.includes('seoSssGovdesi(sssListesi)'),
+  assert.ok(rota.includes('seoSssGovdesi(sssListesi, dil)'),
     'görünür blok gövdeye basılmalı');
   assert.ok(rota.includes('sss: sssListesi'), 'aynı liste jsonLd\'ye geçmeli');
   assert.ok(
-    rota.indexOf('seoSssGovdesi(sssListesi)') < rota.indexOf('seoAfisListesi(`${ad} dizileri`'),
+    rota.indexOf('seoSssGovdesi(sssListesi, dil)') < rota.indexOf('seoAfisListesi(bic(t.bsFirmaDiziler, { ad })'),
     'SSS yapım raflarından ÖNCE gelmeli',
   );
 });

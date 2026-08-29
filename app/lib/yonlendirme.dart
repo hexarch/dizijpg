@@ -172,11 +172,17 @@ bool herkeseAcikMi(String yol) =>
 ///     içerikle karşılaşır. Ham (kodlanmış) hâliyle taşınır.
 String baslangicRotasi(Uri? adres) {
   if (adres == null) return '/kesfet';
-  var yol = adres.pathSegments
-      // Sondaki eğik çizgi boş bir son segment üretir; onu at.
-      .where((s) => s.isNotEmpty)
-      .map(Uri.encodeComponent)
-      .join('/');
+  var parcalar = adres.pathSegments.where((s) => s.isNotEmpty).toList();
+  // DİL ÖNEKİ DÜŞER (29 Ağu 2026). Sunucu arama motorlarına dil önekli URL
+  // veriyor (`/de/icerik/movie/559`); uygulamada o önekle EŞLEŞEN rota YOK ve
+  // `errorBuilder`a, yani "Bağlantı geçersiz" ekranına düşerdi. Yani Almanca
+  // arama sonucundan gelen HER ziyaretçi kırık sayfa görürdü.
+  //
+  // Dilin kendisi kaybolmaz: `Ceviri.yukle(adres: ...)` aynı önekten uygulama
+  // dilini seçiyor (sıra: kullanıcı seçimi > adres > cihaz). Burada yalnız
+  // ROTA eşleşmesi için önek atılır.
+  if (Ceviri.adresDiliKodu(adres) != null) parcalar = parcalar.sublist(1);
+  var yol = parcalar.map(Uri.encodeComponent).join('/');
   yol = yol.isEmpty ? '' : '/$yol';
   // Kök adres (`/`, `` ya da yalnız sorgu): uygulamanın ana sayfası.
   if (yol.isEmpty) return '/kesfet';

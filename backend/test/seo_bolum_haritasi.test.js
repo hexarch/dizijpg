@@ -202,7 +202,7 @@ test('harita, sayfanın GÖRDÜĞÜNDEN AZINI okuyor (tr-TR sezon satırı)', ()
   const sorgu = bildirimCek('SITEMAP_BOLUM_SORGU');
   assert.ok(sorgu.includes("/season/[0-9]+\\\\?language=tr-TR$'"),
     'harita sezon satırını tr-TR ile sınırlamıyor');
-  assert.match(bolum("const ozet = seoMetin(bol.overview)", 'const seo = await'),
+  assert.match(bolum("const ozetEn = seoCeviriAlani(bol.translations", 'const seo = await'),
     /seoCeviriAlani\(bol\.translations, 'overview'\)/);
 });
 
@@ -399,12 +399,12 @@ test('meta açıklama ham özet DEĞİL, bizim verimizden kurulu cümle', () => 
   assert.doesNotMatch(b, /aciklama: ozet \|\|/);
   assert.doesNotMatch(b, /dizi\.jpg puanı, incelemeleri ve kullanıcı yorumları/);
   // Gövdedeki tek özet bloğu duruyor.
-  assert.match(b, /<h2>\$\{htmlKacir\(bolumAd\)\} özeti<\/h2>/);
+  assert.match(b, /bic\(t\.bsOzeti, \{ ad: bolumAd \}\)/);
 });
 
 test('seoBolumAciklamasi her sayfada FARKLI, sınırı aşmıyor, ÖZET İÇERMİYOR', () => {
   const f = alan(
-    ['SEO_ACIKLAMA_MAX', 'seoMetin', 'seoPozitif', 'SEO_AYLAR', 'seoTarihTr',
+    ['SEO_ACIKLAMA_MAX', 'seoMetin', 'seoPozitif', 
       'SEO_SABLON_BOLUM_ADI', 'seoOzgunBolumAdi', 'seoBolumAciklamasi'],
     'seoBolumAciklamasi');
   const a = f({ diziAd: 'Simpsonlar', sezon: 30, bolum: 12, bolumAd: 'Bart', yayin: '2019-01-13', kareVar: true });

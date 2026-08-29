@@ -165,8 +165,14 @@ test('içerik yolu ESKİ `credits,similar` anahtarına geri dönmedi', () => {
 
 test('SSR yolu ile uygulama ucu AYNI anahtarı paylaşıyor (bölünme yok)', () => {
   // İki çağıran da tek fonksiyondan geçiyor; ısıtıcı da aynı dizeyi üretiyor.
-  assert.equal([...SERVER.matchAll(/icerikTmdbYolu\(/g)].length, 3,
-    'icerikTmdbYolu tanım + iki çağıran değil (SSR ya da /tmdb ucu ayrışmış olabilir)');
+  // 29 Ağu 2026: DÖRDÜNCÜ çağıran eklendi — SSR, istenen dilde özet YOKSA
+  // Argos çevirisinin kaynağı olan İNGİLİZCE yükü aynı fonksiyondan çekiyor
+  // (`icerikTmdbYolu(tur, tmdbId, 'en')`). Ayrı bir yol dizesi yazsaydı
+  // anahtar ısıtıcıdan (diller=tr+en) ayrışır ve ısıtma boşa giderdi.
+  assert.equal([...SERVER.matchAll(/icerikTmdbYolu\(/g)].length, 4,
+    'icerikTmdbYolu tanım + üç çağıran değil (SSR ya da /tmdb ucu ayrışmış olabilir)');
+  assert.match(SERVER, /icerikTmdbYolu\(tur, tmdbId, 'en'\)/,
+    'Argos kaynağı olan İngilizce yük ORTAK yol üreticisinden gelmiyor');
   assert.match(SERVER, /app\.get\('\/og\/icerik\/:tur\/:tmdbId'/);
 });
 

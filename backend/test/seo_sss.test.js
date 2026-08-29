@@ -23,12 +23,13 @@
 // aynı disiplin): test canlıdaki kodu sınar, kopyasını değil.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import * as DIL from '../seo_dil.js';
 import { alan, bolum } from './yardimci/seo_kaynak.js';
 
 const SSS_DEP = [
-  'seoMetin', 'seoPozitif', 'htmlKacir', 'SEO_SSS_BASLIK', 'SEO_SSS_BOLGE',
+  'seoMetin', 'seoPozitif', 'htmlKacir', 'SEO_SSS_BOLGE',
   'SEO_SSS_SAGLAYICI', 'SEO_SSS_OYUNCU', 'SEO_SSS_ROL_MAX', 'SEO_SSS_MIN',
-  'SEO_BITMIS_DURUMLAR', 'SEO_AYLAR', 'seoTarihTr', 'seoVeListesi',
+  'SEO_BITMIS_DURUMLAR', 'seoVeListesi',
   'SEO_SAGLAYICI_GRUPLARI', 'seoSaglayiciParcalari', 'seoRolSadelestir',
   'seoSssOyunculari',
   // 29 Ağu 2026 — künye nitelikleri (yönetmen/senarist/yaratıcı/kanal/gişe).
@@ -40,12 +41,14 @@ const SSS_DEP = [
 const seoIcerikSorulari = alan(SSS_DEP, 'seoIcerikSorulari');
 const seoSssGovdesi = alan(SSS_DEP, 'seoSssGovdesi');
 const seoSssJsonLd = alan(SSS_DEP, 'seoSssJsonLd');
-const seoTarihTr = alan(SSS_DEP, 'seoTarihTr');
+// `seoTarihTr` 29 Ağu 2026'da KALDIRILDI: ay adları + tarih sırası artık
+// ICU'dan (`seoTarih(iso, dil)`, seo_dil.js) — 46 dil elle taşınamaz.
+const seoTarihTr = (iso) => DIL.seoTarih(iso, 'tr');
 const seoVeListesi = alan(SSS_DEP, 'seoVeListesi');
 const seoSaglayiciParcalari = alan(SSS_DEP, 'seoSaglayiciParcalari');
 const SEO_SSS_MIN = alan(SSS_DEP, 'SEO_SSS_MIN');
 const SEO_SSS_BOLGE = alan(SSS_DEP, 'SEO_SSS_BOLGE');
-const SEO_SSS_BASLIK = alan(SSS_DEP, 'SEO_SSS_BASLIK');
+const SEO_SSS_BASLIK = DIL.SEO_DIL.tr.sssBaslik;
 
 const seoOrtalamaPuan = alan(
   ['seoYildizOrt', 'SEO_PUAN_MIN', 'seoOrtalamaPuan'], 'seoOrtalamaPuan');
@@ -553,7 +556,7 @@ test('yapım adının hemen ardından kesme işareti/ek gelmez', () => {
   }
 });
 
-test('seoTarihTr: Türkçe uzun tarih, ayrıştırılamayan her şey ""', () => {
+test('seoTarih(tr): Türkçe uzun tarih, ayrıştırılamayan her şey ""', () => {
   assert.equal(seoTarihTr('2013-09-29'), '29 Eylül 2013');
   assert.equal(seoTarihTr('2010-07-15'), '15 Temmuz 2010');
   assert.equal(seoTarihTr('1999-01-01'), '1 Ocak 1999');
@@ -658,7 +661,7 @@ test('kaçış: yapım adındaki HTML hem <dt>e hem JSON-LD scriptine sızmaz', 
 test('/og/icerik SSS listesini üretip HEM gövdeye HEM şemaya veriyor', () => {
   assert.match(UC, /const sssListesi = seoIcerikSorulari\(\{/,
     'uç SSS listesini kurmuyor');
-  assert.match(UC, /const sssBlok = seoSssGovdesi\(sssListesi\)/,
+  assert.match(UC, /const sssBlok = seoSssGovdesi\(sssListesi, dil\)/,
     'görünür blok tek listeden üretilmiyor');
   assert.match(UC, /\+ kunyeBlok \+ ozetBlok \+ sssBlok/,
     'sssBlok gövdeye eklenmemiş — işaretlenen SSS sayfada GÖRÜNMEZ olur');
@@ -949,9 +952,9 @@ test('şema: filmde director, dizide creator — ve künye satırında GÖRÜNÜ
 
   // GÖRÜNÜR KARŞILIK: uç künye satırını AYNI alanlardan kuruyor.
   assert.match(UC, /kunyeYonetmenler/);
-  assert.match(UC, /Yönetmenler' : 'Yönetmen'/);
-  assert.match(UC, /Yaratıcılar' : 'Yaratıcı'/);
-  assert.match(UC, /Kanal: \$\{kunyeKanallar\.join/);
+  assert.match(UC, /t\.etYonetmenler : t\.etYonetmen/);
+  assert.match(UC, /t\.etYaraticilar : t\.etYaratici/);
+  assert.match(UC, /\$\{t\.etKanal\}: \$\{kunyeKanallar\.join/);
   // Meta açıklama ile künye satırı AYNI dizgiden besleniyor (ayrışamaz).
   assert.equal(UC.split('const kunyeNiteligi =').length - 1, 1);
   assert.match(UC, /kunyeNiteligi,/);

@@ -11,6 +11,12 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+// SSR dil tablosu (29 Ağu 2026): server.js'ten ÇEKİLEN saf yardımcılar artık
+// `seoDil` / `bic` / `seoTarih` / `seoSayi` / `seoUlke` / `seoDilliYol`
+// çağırıyor. Sanal alan bu adları GÖRMEK zorunda; yoksa "seoDil is not
+// defined" ile patlar. TEK YERDEN enjekte edilir ki test dosyaları
+// bağımlılık listelerine dil altyapısını tek tek yazmak zorunda kalmasın.
+import * as DIL from '../../seo_dil.js';
 
 export const KOK = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 export const PROJE = path.dirname(KOK);
@@ -49,10 +55,17 @@ export function bildirimCek(ad) {
   assert.fail(`${ad} bildiriminin sonu bulunamadı`);
 }
 
+// Sanal alana HER ZAMAN enjekte edilen dil altyapısı (seo_dil.js).
+const DIL_ADLARI = [
+  'SEO_DIL', 'SEO_DILLER', 'seoDil', 'seoDilVar', 'seoDilliYol', 'seoDilAyir',
+  'seoTarih', 'seoSayi', 'seoOndalik', 'seoUlke', 'bic', 'seoSagAyrac',
+];
+
 /** İstenen bildirimleri sırayla derleyip son ifadeyi döndüren sanal alan. */
 export function alan(adlar, ifade) {
   const govde = adlar.map(bildirimCek).join('\n');
-  return new Function(`${govde}\nreturn (${ifade});`)();
+  return new Function(...DIL_ADLARI, `${govde}\nreturn (${ifade});`)(
+    ...DIL_ADLARI.map((k) => DIL[k]));
 }
 
 /** Kaynağın [bas, son) arasındaki bölümü; sınır yoksa test patlar. */

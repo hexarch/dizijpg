@@ -835,3 +835,128 @@ Bu belge ancak yeni GSC turuyla 4.0 olur. Tahminle sıra değiştirilmez.
 - **Keşfedildi – taranmadı:** Google URL’yi biliyor, indirmemiş. Bütçe/otorite; “içerik kötü” demek değil.
 - **Tarandı – eklenmedi:** İndi, indekslememeyi seçti. İnce/yinelenen sinyal.
 - **Dynamic rendering:** Bota HTML, insana CanvasKit. İçerik aynı olduğu sürece meşru; divergince cloaking.
+
+---
+
+## 0.-1 v5.3 — **SSR 46 DİLE AÇILDI** (29 Ağustos 2026, kullanıcı kararı)
+
+> Bu bölüm v5.2'nin §0.0'ında "⛔ mimarî engel" diye kapatılan maddeyi
+> **tersine çeviriyor.** Gerekçe teknik değil, sahiplik: karar kullanıcının.
+
+### KARAR (kullanıcının kendi sözleriyle)
+
+> "google taramıyorsa taramasın bizene, googleden başka tarayıcı kullanan
+> insanlar da var … sen aç farklı dilleri indexle, google isterse indexlesin
+> isterse indexlemesin, 1 haftadır uğraşıyoruz"
+
+v5.2'de 45 dile açmama gerekçesi üç maddeydi: (1) okuyucusu yok, (2) tarama
+bütçesi yangınına benzin, (3) sıra yanlış. **Üçü de Google merkezliydi.**
+Bing/Yandex/DuckDuckGo kendi bütçeleriyle çalışıyor, AI cevap motorlarının
+tarama ekonomisi bambaşka ve uygulama zaten 45 dilli. Kapsamı "Google'ın
+tarama bütçesi" gerekçesiyle daraltmak bu karardan sonra geçersiz.
+
+### ⛔ ÖLÇÜLEN ÜÇ ENGEL VE NASIL KALDIRILDI
+
+| engel (v5.2 §4.2 ölçümü) | çözüm |
+|---|---|
+| SSR metinleri Türkçe SABİT, `app/lib/diller/*` ile bağı yok | 🚀 `backend/seo_dil.js` — 201 anahtarlık dil tablosu |
+| `?dil=` bot yolunda DÜŞÜYOR (nginx `proxy_pass …/og$uri` değişken taşıdığı için `$args` eklenmiyor) | 🚀 **dizin tabanlı yol**: `/en/icerik/movie/559`. Önek `$uri`nin parçası → nginx'te DEĞİŞİKLİK GEREKMEDİ |
+| Googlebot `Accept-Language` göndermiyor | 🚀 dil artık ADRESTE; başlık hiç okunmuyor |
+| (v5.2 §4.3) dil başına AYRI URL şeması kararı yoktu | 🚀 karar verildi: dizin tabanlı, **Türkçe kökte** (`/icerik/…`, önek YOK), `x-default` = Türkçe |
+
+### 🚀 YAPILAN
+
+1. **`backend/seo_dil.js`** — 46 dil × 201 anahtar. SSS soruları, künye
+   etiketleri, başlık/açıklama şablonları, gövde başlıkları, 404 metni,
+   ana sayfa SSS'i.
+   **KURAL: bir dil tabloda ya TAM vardır ya HİÇ yoktur.** Eksik anahtar
+   Türkçeye DÜŞMEZ; `seoDilVar()` kapısı tablosuz dili dil önekli URL'den,
+   hreflang'den ve site haritasından tamamen dışarıda tutar.
+2. **Tarih / sayı / ülke adı ICU'dan.** Eski `SEO_AYLAR` (12 Türkçe ay) +
+   `seoTarihTr` + `SEO_ULKE_ADI` (40 ülke) kaldırıldı: 46 dil için 552 ay adı
+   + 46 tarih sırası + 1.840 ülke adı elle taşınamazdı.
+   ⚠ Eski yorumun korktuğu tuzak ("`toLocaleString` sunucu yereline göre
+   sessizce değişir") **yerel HER ÇAĞRIDA açıkça verilerek** kapatıldı.
+   ⚠ `fa-IR` varsayılanda Hicri-şemsi takvim + Doğu Arap rakamı veriyordu
+   (`۱۹ مرداد ۱۳۹۷`); `-u-ca-gregory-nu-latn` ile zorlandı. `ar`, `my` için
+   Latin rakam zorlandı.
+   ⚠ `ZZ` CLDR'de "Bilinmeyen Bölge" diye ÇÖZÜLÜYOR — sayfaya o yazılamaz,
+   ham kod bırakılıyor (eski `SEO_ULKE_ADI` disiplini korundu).
+3. **hreflang `<head>`te, KARŞILIKLI.** Her sayfa 46 dilin tamamı + `x-default`
+   basıyor ve liste TEK kaynaktan (`SEO_DILLER`) geliyor — bir dilin unutulması
+   yapısal olarak imkânsız.
+   ⛔ **Site haritasına KONMADI**: `xhtml:link` her `<url>`e 46 satır ekler;
+   20.000 URL'lik dosyada ~920.000 eleman (~100 MB) eder, protokol sınırı
+   50 MB. Google iki yöntemi eşit sayıyor.
+   ⛔ **Yalnız dil varyantı OLAN ve indekslenen sayfada** basılıyor (`dilliMi`):
+   gönderi/liste kullanıcı metnidir, onlara 46 alternatif ilan etmek olmayan
+   45 URL vaat etmek olurdu (v5.2 §4.3'ün tam da uyardığı tuzak).
+4. **Dil başına site haritası** — `/sitemap-en-icerik-1.xml` gibi.
+
+### ÜRETİM MALİYETİ — ÖLÇÜLDÜ, ÇÖZÜLDÜ (canlı, 29 Ağu 2026)
+
+Ham sayı korkutucuydu: 46 dil × 18.410 URL = **846.860 satır**. Ama pahalı olan
+URL satırı DEĞİL, **SQL**: maliyet jsonb TOAST açımından geliyor ve diller o
+sorguyu DEĞİŞTİRMİYOR — aynı kayıtların aynı kimlikleri, yalnız `<loc>` öneki
+farklı.
+
+Çözüm: **dil, önbellek katmanının ALTINDA değil ÜSTÜNDE.** Dört kova
+(içerik/bölüm/kişi/firma) dilden bağımsız kalır, `loc` kanonik (Türkçe) hâliyle
+saklanır, önek SERVİS ANINDA eklenir (`sitemapDilliSatir`).
+
+Canlı ölçüm (dağıtım sonrası, soğuk → sıcak):
+
+```
+/sitemap-kisi-1.xml       200  1.177.394 B  27,73 s   <- SOĞUK (SQL)
+/sitemap-ru-kisi-1.xml    200  1.209.059 B   0,70 s   <- AYNI kovadan, 40× hızlı
+/sitemap-bolum-1.xml      200    819.396 B   8,58 s
+/sitemap-de-bolum-1.xml   200    835.017 B   8,81 s   (küme: başka işçi, ayrı kova)
+/sitemap-en-icerik-1.xml  200    365.312 B   0,48 s
+```
+
+Yani **46 dil için EK VERİTABANI SORGUSU YOK**: 6 saatte hâlâ dört sorgu.
+Bir dilin maliyeti sayfa başına bir dizgi birleştirmesi. Bayat-servis,
+tek-uçuş ve zorlama tabanı davranışı AYNEN korundu.
+
+### İNSAN TRAFİĞİ DEĞİŞMEDİ — kanıt
+
+```
+GET /icerik/movie/559      (Chrome UA)  200  12.680 B  flutter_bootstrap.js
+GET /en/icerik/movie/559   (Chrome UA)  200  12.680 B  flutter_bootstrap.js
+GET /                      (Chrome UA)  200  12.680 B  flutter_bootstrap.js
+```
+
+Üçü de BİREBİR aynı Flutter kabuğu. nginx'te tek satır değişmedi: `@spa`
+bilinmeyen yolu zaten `/og$uri`ye taşıyor, bot 418 → `@og`, insan `index.html`.
+
+Flutter tarafında iki ekleme yapıldı (yoksa Google'dan gelen yabancı dilli
+ziyaretçi "Bağlantı geçersiz" görürdü):
+- `baslangicRotasi` dil önekini DÜŞÜRÜR (`/de/icerik/movie/559` → `/icerik/...`),
+- `Ceviri.yukle(adres:)` dili adresten okur. **Sıra: kullanıcının seçimi >
+  adres > cihaz dili** — seçim açık iradedir, adres onu ezmez.
+
+### ÖZET (overview) ZİNCİRİ: TMDB → ARGOS → BOŞ
+
+Sayfanın BİZİM yazdığımız her parçası dil tablosundan geliyor ve gerçekten
+çevrili. Çevrilmeyen tek blok TMDB özetiydi. Kural:
+
+1. TMDB o dilde özet veriyorsa **onu** kullan (insan eliyle girilmiş, bedava),
+2. yoksa ve dilin **Argos** çifti varsa `metin_cevirileri` önbelleğine bak,
+3. ikisi de yoksa **BOŞ** bırak. **Türkçesi hiçbir durumda basılmaz.**
+
+Makine çevirisi bu projede yeni bir emsal DEĞİL: kullanıcı gönderileri
+30 Tem 2026'dan beri aynı boruyla (Argos Translate + CTranslate2, ÇEVRİMDIŞI —
+Google Translate değil) çevrilip aynı tabloya yazılıyor (`argos_doldur.py`).
+
+Sunucuda KURULU çiftler (29 Ağu 2026'da doğrulandı, varsayılmadı):
+`en→ar bn de es fr hi id ja ko pt ru ur vi zh` (**14**) + `tr→en`.
+
+⚠ **SSR Argos'u ÇAĞIRMAZ, yalnız önbellek OKUR.** Model 5,1 GB ve metin başına
+saniyeler sürüyor; SSR bütçesi nginx'in 20 sn'lik `proxy_read_timeout`una göre
+ayarlı — senkron çeviri Googlebot'a 504 bastırırdı (§6.9'un dersi).
+Önbelleği `araclar/argos_ozet_doldur.py` dolduruyor; motor, tablo, anahtar
+(`md5(btrim(metin))`) ve yazma deseni `argos_doldur.py`den İÇE AKTARILIYOR.
+
+Ölçülen üretim hızı (canlı): **~9 metin/sn**, 6.137 benzersiz İngilizce özet
+× 14 dil ≈ **2,7 saat** tek geçiş.
+

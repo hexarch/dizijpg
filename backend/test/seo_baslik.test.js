@@ -23,6 +23,7 @@
 // Saf yardımcılar kaynaktan ÇEKİLİP gerçekten ÇALIŞTIRILIYOR.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import * as DIL from '../seo_dil.js';
 import { KAYNAK, alan, bolum } from './yardimci/seo_kaynak.js';
 
 const UC = bolum("app.get('/og/icerik/:tur/:tmdbId'", '// ---------- SEO: /kisi/:id');
@@ -56,7 +57,7 @@ const icerikJsonLd = alan(
     'gecerliTmdb', 'SEO_YONETMEN_ISLERI', 'SEO_SSS_YONETMEN', 'SEO_SSS_YARATICI',
     'icerikJsonLd'], 'icerikJsonLd');
 const ogSayfa = alan(
-  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
+  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoSsrDil', 'seoOgYerel', 'seoHreflang', 'ogSayfa'], 'ogSayfa');
 
 /** Breaking Bad'in canlı önbellekten alınmış gerçek künyesi. */
 const BB = {
@@ -265,8 +266,8 @@ test('açıklamadaki her sayı sayfada GERÇEKTEN olan bir şeyi sayar', () => {
   assert.match(UC, /const kunyeBlok = kunyeSatirlari\.length/);
   assert.match(UC, /govde: seoAnaGorsel\([^\n]*\n\s*\+ kunyeBlok \+ ozetBlok/);
   // TMDB özeti gövdede GÖRÜNÜR kalıyor: JSON-LD `description` odur.
-  assert.match(UC, /const ozetBlok = seoMetin\(v\.overview\)/);
-  assert.match(UC, /konusu<\/h2>/);
+  assert.match(UC, /const ozetBlok = ozetMetni/);
+  assert.match(UC, /bsKonusu/);
   // "benzer diziler" cümlesi ancak liste doluysa kurulur (boş vaat yok).
   assert.match(UC, /benzerVar: benzerListe\.length > 0/);
 });
@@ -299,6 +300,9 @@ test('seoKirp kelime sınırında kırpar, yarım kelime bırakmaz', () => {
 test('her SSR <title> "— dizi.jpg" ile biter (bölüm sayfası dahil)', () => {
   // Kaynaktaki tüm `baslik:` atamalarını topla; hepsi ya markayla biter ya da
   // markadan sonra YALNIZCA puan eki taşır.
+  // Şablonlaşan başlıklar (dil tablosundan gelenler) burada değil, tablonun
+  // kendisinde kilitli: `SEO_DIL[*].firmaBaslik` gibi girdilere marka eki
+  // `SEO_MARKA` ile EKLENİR, gövdeye gömülmez.
   const basliklar = [...KAYNAK.matchAll(/baslik: (`[^`]*`|'[^']*')/g)]
     .map((m) => m[1].slice(1, -1))
     .filter((s) => s.includes('dizi.jpg'));
@@ -311,12 +315,16 @@ test('her SSR <title> "— dizi.jpg" ile biter (bölüm sayfası dahil)', () => 
   }
   // Bölüm başlığı 27 Ağu 2026'da İKİYE BÖLÜNDÜ: ad ancak BİLGİ KATIYORSA
   // ekleniyor (`seoOzgunBolumAdi`), yoksa "4. bölüm: 4. Bölüm" tekrarı olurdu.
+  // 29 Ağu 2026: gövde dil tablosuna taşındı (`bolumBaslik` / `bolumBaslikAd`),
+  // marka eki tek sabitten (`SEO_MARKA`) geliyor.
   assert.ok(KAYNAK.includes(
-    'baslik: `${diziAd} ${s}. sezon ${b}. bölüm`'),
+    'baslik: bic(t.bolumBaslik, { ad: diziAd, s, b })'),
   'bölüm sayfası başlığının gövdesi değişmiş');
   assert.ok(KAYNAK.includes(
-    "+ `${ozgunAd ? `: ${ozgunAd}` : ''} — dizi.jpg`"),
+    "+ (ozgunAd ? bic(t.bolumBaslikAd, { l: ozgunAd }) : '') + SEO_MARKA"),
   'bölüm başlığındaki koşullu ad eki kaybolmuş');
+  assert.equal(DIL.SEO_DIL.tr.bolumBaslik, '{ad} {s}. sezon {b}. bölüm');
+  assert.equal(DIL.SEO_DIL.tr.bolumBaslikAd, ': {l}');
   // Şablon tarafı da aynı sabitten besleniyor.
   assert.equal(SEO_MARKA, ' — dizi.jpg');
   assert.ok(seoIcerikBasligi(BB).includes(SEO_MARKA));
@@ -375,13 +383,15 @@ test('kişi meta açıklaması TMDB biyografisiyle BAŞLAMIYOR', () => {
 // ===========================================================================
 test('firma başlığı korunuyor, meta açıklama TMDB metnine düşmüyor', () => {
   const sirketUc = bolum("app.get('/og/sirket/:id'", '/**\n * Gönderi sayfası indekse girsin mi?');
-  assert.match(sirketUc, /baslik: `\$\{ad\} dizileri ve filmleri — dizi\.jpg`/);
+  assert.match(sirketUc, /baslik: bic\(t\.firmaBaslik, \{ ad \}\) \+ SEO_MARKA/);
+  // Türkçe gövde AYNEN korunuyor (dil tablosuna taşınmak metni değiştirmez).
+  assert.equal(DIL.SEO_DIL.tr.firmaBaslik, '{ad} dizileri ve filmleri');
   // META açıklama artık koşulsuz VERİDEN kurulur.
   assert.match(sirketUc, /const metaAciklama = seoSirketAciklamasi\(ad, firma, yapimlar, \{/);
   assert.match(sirketUc, /\n\s*aciklama: metaAciklama,/);
   // TMDB metni sayfada GÖRÜNÜR kalıyor ve JSON-LD `description` onu tercih
   // eder; yoksa META İLE AYNI cümleye düşer (ayrı bir çağrı DEĞİL — ayrışırdı).
-  assert.match(sirketUc, /hakkında<\/h2>/);
+  assert.match(sirketUc, /bic\(t\.bsFirmaHakkinda, \{ ad \}\)/);
   assert.match(sirketUc, /aciklama: tmdbAciklama \|\| metaAciklama,/);
   assert.equal((sirketUc.match(/seoSirketAciklamasi\(/g) || []).length, 1);
 });

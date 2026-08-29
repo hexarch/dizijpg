@@ -35,7 +35,7 @@ const gizlilikJsonLd = alan(
   ['SITE_KOK', 'SEO_GIZLILIK_GUNCELLEME', 'seoGizlilikIsoTarih', 'seoKirinti', 'gizlilikJsonLd'],
   'gizlilikJsonLd');
 const ogSayfa = alan(
-  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
+  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoSsrDil', 'seoOgYerel', 'seoHreflang', 'ogSayfa'], 'ogSayfa');
 
 /**
  * gizlilik.dart'taki _Baslik/_Govde/_Madde metinlerini SIRAYLA çıkarır.

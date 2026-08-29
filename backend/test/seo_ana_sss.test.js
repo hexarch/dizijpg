@@ -23,7 +23,7 @@ import path from 'node:path';
 import { alan, KAYNAK, PROJE } from './yardimci/seo_kaynak.js';
 
 const DEP = [
-  'htmlKacir', 'SEO_SSS_BASLIK', 'SEO_ARAYUZ_DIL', 'seoAnaSorulari',
+  'htmlKacir', 'SEO_ARAYUZ_DIL', 'seoAnaSorulari',
   'seoSssGovdesi', 'seoSssJsonLd',
 ];
 const seoAnaSorulari = alan(DEP, 'seoAnaSorulari');
@@ -106,16 +106,16 @@ test('/og/ana rotası SSS\'i gövdeye basıyor ve @graph\'a ekliyor', () => {
   const i = KAYNAK.indexOf("app.get('/og/ana'");
   assert.ok(i > 0, '/og/ana rotası bulunamadı');
   const rota = KAYNAK.slice(i, i + 4000);
-  assert.ok(rota.includes('const anaSorular = seoAnaSorulari();'));
-  assert.ok(rota.includes('seoSssGovdesi(anaSorular)'),
+  assert.ok(rota.includes('const anaSorular = seoAnaSorulari(dil);'));
+  assert.ok(rota.includes('seoSssGovdesi(anaSorular, dil)'),
     'görünür blok basılmalı (gizli JSON-LD SSS ihlaldir)');
   assert.ok(rota.includes('seoSssJsonLd(anaSorular, url)'),
     'aynı liste JSON-LD\'ye girmeli');
   // SSS bağlantı listelerinden ÖNCE: sayfanın kimlik sorusu en üstte.
   // `SEO_KESIF_HUB` yukarıdaki yorumda da geçtiği için ÇAĞRIYA bakılır.
   assert.ok(
-    rota.indexOf('seoSssGovdesi(anaSorular)')
-      < rota.indexOf("seoBaglantiListesi('Keşfe başla'"),
+    rota.indexOf('seoSssGovdesi(anaSorular, dil)')
+      < rota.indexOf('seoBaglantiListesi(t.bsKesfeBasla'),
     'SSS "Keşfe başla" bağlantılarından önce gelmeli',
   );
   // Şema sırası: WebSite ve Organization önce, FAQPage sonra.

@@ -1,6 +1,52 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-29 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-29 — 🚀 SSR **46 DİLE** AÇILDI (dizin tabanlı yol + hreflang)
+
+Kullanıcının kararı: *"google taramıyorsa taramasın bizene, googleden başka
+tarayıcı kullanan insanlar da var … sen aç farklı dilleri indexle, google
+isterse indexlesin isterse indexlemesin."* Aynı gün sabah "⛔ mimarî engel"
+diye kapatılan madde açıldı — engel gerçekten mimariydi ve mimari düzeltildi.
+
+- 🚀 **`backend/seo_dil.js`** — 46 dil × **201 anahtar**. SSS soruları, künye
+  etiketleri, başlık/açıklama şablonları, gövde başlıkları, 404 metni, ana
+  sayfa SSS'i. **Kural: bir dil tabloda ya TAM vardır ya HİÇ yoktur** — eksik
+  anahtar Türkçeye düşmez, `seoDilVar()` kapısı tablosuz dili URL'den,
+  hreflang'den ve haritadan tamamen dışarıda tutar.
+- 🚀 **Dizin tabanlı yol**: `/en/icerik/movie/559`, `/de/kisi/17419`.
+  Türkçe **kökte** kalıyor (`/icerik/…`, önek YOK) ve `x-default` odur.
+  `?dil=` ölüydü: nginx `proxy_pass …/og$uri` URI'sinde değişken taşıdığı için
+  sorgu dizesini eklemiyor. Önek `$uri`nin parçası → **nginx'te tek satır
+  değişmedi** (`@spa` bilinmeyen yolu zaten `/og$uri`ye taşıyor).
+- 🚀 **hreflang `<head>`te ve KARŞILIKLI** — 46 dil + `x-default`, liste tek
+  kaynaktan (`SEO_DILLER`). Site haritasına KONMADI: `xhtml:link` 20.000
+  URL'lik dosyayı ~100 MB yapardı (protokol sınırı 50 MB).
+- 🚀 **Dil başına site haritası, EK SQL YOK.** Dört kova dilden bağımsız kalıyor,
+  önek servis anında ekleniyor. Ölçüldü: `/sitemap-kisi-1.xml` soğuk **27,7 sn**,
+  hemen ardından `/sitemap-ru-kisi-1.xml` **0,70 sn** (aynı kovadan, 40× hızlı).
+- 🚀 **Tarih / sayı / ülke adı ICU'dan.** `SEO_AYLAR` (12 Türkçe ay),
+  `seoTarihTr` ve `SEO_ULKE_ADI` (40 ülke) kaldırıldı — 46 dil için 552 ay adı
+  ve 1.840 ülke adı elle taşınamazdı. Yerel her çağrıda AÇIKÇA veriliyor.
+  `fa` Hicri-şemsi takvim + Doğu Arap rakamı veriyordu → Gregoryen + Latin
+  rakam zorlandı; `ar` ve `my` için Latin rakam.
+- 🚀 **Özet zinciri: TMDB → Argos önbelleği → BOŞ.** Türkçesi hiçbir durumda
+  basılmıyor. Argos yeni emsal değil: kullanıcı gönderileri 30 Tem'den beri
+  aynı boruyla çevriliyor. Yeni araç `araclar/argos_ozet_doldur.py` motoru ve
+  önbelleği `argos_doldur.py`den içe aktarıyor.
+  Kurulu çift: **14** (`en→ar bn de es fr hi id ja ko pt ru ur vi zh`).
+  Ölçülen hız **~9 metin/sn**; 6.137 benzersiz İngilizce özet × 14 dil ≈ 2,7 saat.
+  ⚠ SSR Argos'u ÇAĞIRMAZ, yalnız önbellek okur (5,1 GB model + 20 sn nginx
+  zaman aşımı = Googlebot'a 504 demekti).
+- 🚀 **Flutter tarafı**: `baslangicRotasi` dil önekini düşürüyor (yoksa
+  Google'dan gelen yabancı dilli ziyaretçi "Bağlantı geçersiz" görürdü),
+  `Ceviri.yukle(adres:)` dili adresten okuyor. **Sıra: kullanıcının seçimi >
+  adres > cihaz dili.**
+- 📏 **İnsan trafiği DEĞİŞMEDİ (kanıt):** `/icerik/movie/559`, `/en/icerik/movie/559`
+  ve `/` — üçü de Chrome UA ile **12.680 B** aynı Flutter kabuğu.
+- ⬜ **Argos çifti olmayan 31 dilde özet BOŞ** (TMDB o dilde vermiyorsa).
+  Sayfa yine o dilde: SSS, künye, başlık, şema hepsi çevrili. Kapatmanın yolu
+  o dillere Argos paketi kurmak.
+
 ## 2026-08-29 — 🚀 ANAHTAR KELİME ENVANTERİ + üç nitelik canlıda
 
 Kullanıcının isteği: *"anahtar kelime çalışması yaptık mı tüm dizi ve filmler

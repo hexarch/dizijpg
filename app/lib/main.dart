@@ -97,7 +97,14 @@ Future<void> main() async {
     // dille gider ve `Onbellek` yanlış dil anahtarına yazardı.
     // `WidgetsFlutterBinding.ensureInitialized()`ten SONRA olmalı (yukarıda):
     // platform dil listesi bağlama kurulmadan güvenilir değil.
-    await acilisAdimi('ceviri', Ceviri.yukle);
+    // ADRESTEKİ DİL ÖNEKİ (29 Ağu 2026): `/de/icerik/movie/559` ile gelen
+    // ziyaretçi uygulamayı Almanca açar. Bot o adreste Almanca SSR alıyor;
+    // insanın Türkçe kabuk görmesi tutarsızlık olurdu. Seçim varsa bu adım
+    // devreye girmez (bkz. `Ceviri.yukle` sırası).
+    await acilisAdimi(
+      'ceviri',
+      () => Ceviri.yukle(adres: kIsWeb ? Uri.base : null),
+    );
     // KURULUM kimliği: ilk açılışta üretilir, sonraki açılışlarda okunur.
     // DONANIMDAN OKUNMAZ (Play politikası + gizlilik); yalnız moderasyon
     // için `X-Cihaz` başlığıyla gider. Ayrıntı: lib/cihaz_kimlik.dart

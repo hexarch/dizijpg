@@ -18,6 +18,7 @@
 // doğrulamak. Biri değişip diğeri unutulursa 504 sessizce geri gelir.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import * as DIL from '../seo_dil.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { AsyncLocalStorage } from 'node:async_hooks';
@@ -258,13 +259,20 @@ const araKatmanKaynagi = (() => {
 
 /** Middleware'i enjekte edilmiş bağımlılıklarla kurar. */
 function araKatmanKur(butceMs) {
-  const ogSayfaKaynak = ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa']
+  const ogSayfaKaynak = ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoSsrDil', 'seoOgYerel', 'seoHreflang', 'ogSayfa']
     .map(bildirimCek).join('\n');
   const kaydedilen = [];
+  // SSR dil altyapısı (seo_dil.js) da enjekte edilir: `ogSayfa` artık
+  // `seoSsrDil`/`seoHreflang` üzerinden `SEO_DILLER`, `seoDilliYol`,
+  // `seoDilVar` çağırıyor.
+  const DIL_ADLARI = [
+    'SEO_DILLER', 'seoDil', 'seoDilVar', 'seoDilliYol', 'seoDilAyir',
+    'seoTarih', 'seoSayi', 'seoOndalik', 'seoUlke', 'bic', 'seoSagAyrac',
+  ];
   const fn = new Function(
-    'istekBaglam', 'SSR_BUTCE_MS', 'logYaz',
+    'istekBaglam', 'SSR_BUTCE_MS', 'logYaz', ...DIL_ADLARI,
     `${ogSayfaKaynak}\nreturn (${araKatmanKaynagi});`,
-  )(istekBaglam, butceMs, (a) => kaydedilen.push(a));
+  )(istekBaglam, butceMs, (a) => kaydedilen.push(a), ...DIL_ADLARI.map((k) => DIL[k]));
   return { fn, kaydedilen };
 }
 

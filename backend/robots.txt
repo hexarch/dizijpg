@@ -106,6 +106,27 @@ Disallow: /api/
 Allow: /api/medya/
 Allow: /api/avatarlar/
 
+# ---------------------------------------------------------------------------
+# DIL ONEKLI YOLLAR (29 Agu 2026) — SSR 46 dile acildi
+# ---------------------------------------------------------------------------
+# Yukaridaki Disallow kurallari ON EK esler ve joker ICERMEZ; yani
+# `Disallow: /kullanici/` dil onekli `/de/kullanici/alcelik` adresini
+# KAPATMAZ. Uc katmanli guvencenin (bkz. yukarisi) ikinci ve ucuncu katmani
+# hala calisiyor — `/og/de/kullanici/...` diye bir uc YOK ve yakalayici uc
+# gercek 404 + noindex doner; ama BIRINCI katmani (bot hic istemesin) yalnizca
+# joker kural saglayabilir. Sayfa ailesi basina TEK satir: 46 dil × her yol
+# yerine `*` ile.
+#
+# NOT: dil onekli olarak SSR uretilen TEK aile `/icerik|kisi|sirket|dizi`;
+# geri kalan her sey (gonderi, listeler, uygulama ici ekranlar) dil onekiyle
+# istendiginde 404 doner. Asagidaki satirlar tarama butcesini bosa harcayan
+# o istekleri bastan keser.
+Disallow: /*/kullanici/
+Disallow: /*/gorusme/
+Disallow: /*/gonderi/
+Disallow: /*/listeler/
+Disallow: /*/api/
+
 # Takip parametreleri ayri URL uretmesin
 Disallow: /*?utm_
 Disallow: /*?fbclid=

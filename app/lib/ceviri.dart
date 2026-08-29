@@ -139,6 +139,26 @@ class Ceviri {
     return null;
   }
 
+  /// Adresteki DİL ÖNEKİNİN kodu: `/en/icerik/movie/559` → `en`.
+  ///
+  /// NEDEN VAR (29 Ağu 2026): SSR 46 dile açıldı ve arama motorlarına dil
+  /// önekli URL'ler verildi (`https://dizijpg.com/de/icerik/movie/559`).
+  /// Almanca bir arama sonucundan gelen ziyaretçi o adrese düşüyor; uygulama
+  /// dili adresten okumasaydı bot Almanca sayfa, insan Türkçe/İngilizce
+  /// uygulama görürdü. Bu, Google'ın tanımıyla CLOAKING'e komşu bir tutarsızlık
+  /// ve kullanıcı için doğrudan kafa karışıklığıdır.
+  ///
+  /// `tr` KABUL EDİLMEZ: Türkçe kökte yaşıyor (`/icerik/...`), `/tr/...` diye
+  /// bir adres YOK — sunucu tarafı da onu reddediyor (`seoDilAyir`).
+  static String? adresDiliKodu(Uri? adres) {
+    if (adres == null) return null;
+    final parcalar = adres.pathSegments.where((s) => s.isNotEmpty).toList();
+    if (parcalar.isEmpty) return null;
+    final kod = parcalar.first.toLowerCase();
+    if (kod == 'tr') return null;
+    return diller.containsKey(kod) ? kod : null;
+  }
+
   /// Cihaz dillerinin kaynağı. Yalnız test değiştirir (gerçek cihaz dilini
   /// widget testinde taklit etmenin başka yolu yok: `PlatformDispatcher`
   /// singleton'ı test ikamesi kabul etmiyor).
@@ -172,11 +192,21 @@ class Ceviri {
   /// `runApp`'ten ÖNCE `await` ediyor (`acilisAdimi('ceviri', ...)`), yani
   /// İLK KARE zaten doğru dilde çizilir. Sonradan çağrılsaydı uygulama önce
   /// Türkçe çizip sonra dil değiştirirdi.
-  static Future<void> yukle() async {
+  /// [adres] verilirse (web'de `Uri.base`) dil önekine bakılır. SIRA:
+  /// **kullanıcının seçimi > adresteki dil > cihaz dili**. Adres cihazdan
+  /// GÜÇLÜ çünkü ziyaretçi o dildeki bir arama sonucuna tıklayarak geldi;
+  /// seçimden ZAYIF çünkü seçim açık bir iradedir (mevcut kural korunuyor:
+  /// "Seçim varsa cihaz dili hiç okunmaz").
+  static Future<void> yukle({Uri? adres}) async {
     final prefs = await SharedPreferences.getInstance();
     final secilen = prefs.getString(_secilenAnahtar);
     if (secilen != null && diller.containsKey(secilen)) {
       _uygula(secilen);
+      return;
+    }
+    final adresKodu = adresDiliKodu(adres);
+    if (adresKodu != null) {
+      _uygula(adresKodu);
       return;
     }
     final tercihler = cihazDilleri();

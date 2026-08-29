@@ -27,6 +27,7 @@
 //      sadece 404 üretir. Harita bunu ASLA yapmamalı.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import * as DIL from '../seo_dil.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { alan, bildirimCek, bolum, KAYNAK, KOK } from './yardimci/seo_kaynak.js';
@@ -117,9 +118,12 @@ test('dört alt harita ucu da ORTAK uçtan geçiyor (kural bir yerde)', () => {
     ['icerik', 'sitemapVerisi'], ['bolum', 'sitemapBolumVerisi'],
     ['kisi', 'sitemapKisiVerisi'], ['sirket', 'sitemapSirketVerisi'],
   ]) {
+    // Dil öneki 29 Ağu 2026'da eklendi: `/sitemap-icerik-1.xml` (tr) ve
+    // `/sitemap-en-icerik-1.xml` AYNI uca düşer (isteğe bağlı yakalama grubu).
     const desen = new RegExp(
-      `app\\.get\\(/\\^\\\\/sitemap-${aile}-\\(\\\\d\\+\\)\\\\\\.xml\\$/,\\s*`
-      + `sitemapAltHarita\\(${veri},`);
+      `app\\.get\\(/\\^\\\\/sitemap-\\(\\?:\\(\\[a-z\\]\\{2,3\\}\\)-\\)\\?${aile}-`
+      + `\\(\\\\d\\+\\)\\\\\\.xml\\$/,\\s*`
+      + `\\n?\\s*sitemapAltHarita\\(${veri},`);
     assert.match(KAYNAK, desen, `${aile} alt haritası ortak uçtan geçmiyor`);
   }
 });
@@ -338,6 +342,12 @@ test('kişi/firma sorguları KULLANICI TABLOSUNA dokunmuyor (gizlilik)', () => {
   }
 });
 
+const seoHreflang = alan(
+  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'seoHreflang'],
+  'seoHreflang');
+const SEO_DILLER = DIL.SEO_DILLER;
+const sitemapDilliSatir = alan(['SITE_KOK', 'sitemapDilliSatir'], 'sitemapDilliSatir');
+
 test('harita sayfalama tavanı protokol sınırının ALTINDA (50.000)', () => {
   const boy = Number(/const SITEMAP_SAYFA_BOYU = (\d+);/.exec(KAYNAK)[1]);
   assert.ok(boy > 0 && boy <= 50000, `SITEMAP_SAYFA_BOYU protokolü aşıyor: ${boy}`);
@@ -349,29 +359,65 @@ test('harita sayfalama tavanı protokol sınırının ALTINDA (50.000)', () => {
 });
 
 // ===========================================================================
-// HREFLANG ZEMİNİ (§7) — uygulama DEĞİL, yerin işaretli olduğunun kilidi
+// HREFLANG — 29 Ağu 2026'da UYGULANDI (karar tersine döndü)
 // ===========================================================================
-test('hreflang\'in gireceği yer alt harita ucunda İŞARETLİ', () => {
-  const uc = bildirimCek('sitemapAltHarita');
-  assert.match(uc, /HREFLANG YERİ/,
-    '45 dil turu geldiğinde `xhtml:link` alternatiflerinin nereye gireceği '
-    + 'işaretli değil — işaret düşerse sıradaki tur yeri kendi arar');
-  assert.match(uc, /xmlns:xhtml/,
-    'kök etikete xmlns:xhtml bildirimi gerektiği not edilmemiş '
-    + '(bildirim olmadan Google tüm dosyayı ayrıştıramaz)');
-  // Bu tur hreflang UYGULANMADI: gerçek bir alternatif satır ÜRETİLMİŞ
-  // olmamalı (işaret yorumundaki örnek metin sayılmaz).
-  assert.ok(!/hreflang="\$\{/.test(KAYNAK),
-    'hreflang uygulanmış — dil başına URL şeması kararı verilmeden yapılmamalı');
-  assert.ok(!/xhtml:link rel="alternate" hreflang="[a-z]/.test(
-    KAYNAK.replace(/^\s*\/\/.*$/gm, '')),
-  'hreflang satırı üretiliyor — §7 sırası gelmeden uygulanmamalı');
+// ESKİ KİLİT NEYDİ: bu blok "hreflang UYGULANMAMIŞ olmalı" diye kilitliyordu,
+// çünkü dil başına URL şeması kararı yoktu ve olmayan URL'lere alternate
+// vermek harcanmış tarama bütçesi demekti. Kullanıcı 29 Ağu'da dizin tabanlı
+// şemaya karar verdi (`/en/icerik/movie/559`); kilit bu yüzden TERSİNE
+// çevrildi — artık hreflang'in VAR OLDUĞUNU ve KARŞILIKLI olduğunu kilitliyor.
+//
+// NEDEN SİTE HARİTASINDA DEĞİL `<head>`TE: `xhtml:link` her `<url>`e 46 satır
+// ekler; 20.000 URL'lik bir dosyada ~920.000 eleman (~100 MB) eder ve protokol
+// sınırı 50 MB'dir. Google iki yöntemi eşit sayıyor.
+test('hreflang `<head>`te üretiliyor ve KARŞILIKLI', () => {
+  const f = bildirimCek('seoHreflang');
+  assert.match(f, /x-default/, 'x-default yok — dil eşleşmeyen ziyaretçi kaybolur');
+  assert.match(f, /SEO_DILLER\.map/,
+    'hreflang listesi tek kaynaktan (SEO_DILLER) gelmiyor — karşılıklılık '
+    + 'garanti edilemez');
+  // Halka: her dil AYNI tam listeyi basar. Bir dilin listesi eksik olsaydı
+  // Google TÜM kümeyi yok sayardı.
+  const cikti = seoHreflang('/icerik/movie/559');
+  for (const k of SEO_DILLER) {
+    assert.ok(cikti.includes(`hreflang="${k}"`), `hreflang eksik: ${k}`);
+  }
+  assert.ok(cikti.includes('hreflang="x-default" href="https://dizijpg.com/icerik/movie/559"'),
+    'x-default Türkçe köke (öneksiz) işaret etmeli');
+  assert.ok(cikti.includes('hreflang="tr" href="https://dizijpg.com/icerik/movie/559"'),
+    'tr öneksiz kökte kalmalı');
+  assert.ok(cikti.includes('hreflang="en" href="https://dizijpg.com/en/icerik/movie/559"'),
+    'dil önekli URL dizin tabanlı olmalı');
 });
 
-test('SSR 45 dil og:locale:alternate basar; hreflang URL çarpanı YOK', () => {
-  assert.match(KAYNAK, /og:locale:alternate/,
-    'bot HTML\'inde 45 dil og:locale:alternate yok');
+test('hreflang YALNIZ dil varyantı olan ve indekslenen sayfada basılır', () => {
+  const f = bildirimCek('ogSayfa');
+  assert.match(f, /dilliMi && indexle/,
+    'hreflang noindex/dil varyantsız sayfada da basılıyor — gönderi ve liste '
+    + 'sayfaları Türkçe metindir, 46 alternatif ilan etmek olmayan URL vaat '
+    + 'etmek olurdu');
+});
+
+test('SSR dil önekinden okunur; og:locale:alternate yalnız CANLI diller', () => {
+  assert.match(KAYNAK, /og:locale:alternate/);
   assert.match(KAYNAK, /function seoIstDil\(/);
-  // Kanonik URL dil parametresiz kalır — CF önbelleği parçalanmaz.
-  assert.match(KAYNAK, /Aynı kanonik URL/);
+  assert.match(KAYNAK, /function seoSsrDil\(/,
+    'SSR dili ile uygulama dili ayrışmıyor — metin tablosu olmayan dilde '
+    + 'yarım çevrilmiş sayfa basılır');
+  // Dil öneki ayrıştırması nginx DEĞİŞMEDEN çalışsın diye `/og$uri` yolunda.
+  assert.match(KAYNAK, /SEO_DILLI_AILE/);
+});
+
+test('dil başına site haritası AYNI kovadan üretilir (ek SQL YOK)', () => {
+  const f = bildirimCek('sitemapAltHarita');
+  assert.match(f, /sitemapDilliSatir/,
+    'dil öneki servis anında uygulanmıyor — kovayı dile bölmek 46× SQL demek');
+  const d = bildirimCek('sitemapDilliSatir');
+  assert.match(d, /seoDilliYol/);
+  // Kova DEĞİŞMEZ: dilli satır yeni nesne döndürür.
+  const u = { loc: 'https://dizijpg.com/icerik/tv/1396', lastmod: '2026-08-01' };
+  const en = sitemapDilliSatir(u, 'en');
+  assert.equal(en.loc, 'https://dizijpg.com/en/icerik/tv/1396');
+  assert.equal(u.loc, 'https://dizijpg.com/icerik/tv/1396', 'kova kirletildi');
+  assert.equal(sitemapDilliSatir(u, 'tr'), u, 'tr için kopya bile üretilmemeli');
 });

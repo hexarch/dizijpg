@@ -14,8 +14,8 @@ import { KAYNAK, alan } from './yardimci/seo_kaynak.js';
 
 const ogYok = alan(
   ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom',
-    'seoIstDil', 'seoOgYerel', 'ogSayfa',
-    'SEO_KESIF_HUB', 'seoBaglantiListesi', 'ogYok'],
+    'seoIstDil', 'seoSsrDil', 'seoOgYerel', 'seoHreflang', 'ogSayfa',
+    'SEO_KESIF_HUB', 'seoBaglantiListesi', 'SEO_MARKA', 'ogYok'],
   'ogYok',
 );
 

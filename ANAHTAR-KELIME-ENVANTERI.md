@@ -212,7 +212,16 @@ kapatır. **Sıradaki en ucuz iş bu.**
 
 ---
 
-## 4. DİL EKSENİ — SSR'ın GERÇEKTE ÜRETTİĞİ DİL SAYISI: **1**
+## 4. DİL EKSENİ — ~~SSR'ın GERÇEKTE ÜRETTİĞİ DİL SAYISI: **1**~~ → **46** 🚀
+
+> **GÜNCELLEME (29 Ağustos 2026, aynı gün, kullanıcı kararı):** aşağıdaki
+> §4.4 kararı **TERSİNE ÇEVRİLDİ ve UYGULANDI.** SSR artık 46 dil üretiyor;
+> yol şeması **dizin tabanlı** (`/en/icerik/movie/559`), Türkçe kökte kalıyor.
+> §4.1-4.3'teki ölçümler TARİHÎ KAYIT olarak duruyor — üç engelin de nasıl
+> kaldırıldığı `SEO-YAPILACAKLAR.md` §0.-1'de. §4.5'teki 45 dilli sorgu kalıbı
+> tablosu artık bir PLAN değil, `backend/seo_dil.js`in kaynağı.
+>
+> Bu bölümdeki "⛔ bu turda yapılmadı" ifadeleri o günün ilk turuna aittir.
 
 Görevin uyardığı gibi önce ÖLÇTÜM, varsaymadım. `isitici.js`'teki
 `diller=tr+en` **SSR'ın dili değil**, TMDB önbelleğinin ısıtıldığı dil
@@ -257,7 +266,15 @@ Yani 45 dilli anahtar kelime hedefinin önündeki gerçek engel çeviri değil,
 kilitlemiş durumda: *"hreflang / konuşan URL / yeni aile — ⛔ şimdilik, kuyruk
 düşene kadar"* (keşif kuyruğu 21.394, randevu 1 Eylül).
 
-### 4.4 ⛔ KARAR — bu turda 45 dile ÇEVİRİ YAPILMADI
+### 4.4 ⛔→🚀 KARAR DEĞİŞTİ — 45 dile ÇEVİRİ YAPILDI
+
+> Aşağıdaki üç gerekçe **aynı gün geçersiz kılındı.** Kullanıcının kararı:
+> *"google taramıyorsa taramasın bizene … sen aç farklı dilleri indexle."*
+> Üç gerekçenin üçü de Google merkezliydi; Bing/Yandex/DuckDuckGo ve AI cevap
+> motorları başka bütçelerle çalışıyor. "Okuyucusu yok" iddiası da düştü:
+> engel çeviri değil MİMARİYDİ ve mimari düzeldi.
+>
+> **Tarihî gerekçe (29 Ağu, ilk tur):**
 
 Gerekçe, üç maddede:
 
@@ -359,7 +376,7 @@ ek istek maliyeti.** Tahmine dayanan her satır `[TAHMİN]` etiketli.
 | 7 | kişi: yönettiği yapımlar (`cc.crew`) | %48 | yok | yoktu | ⬜ |
 | 8 | dizi bölüm süresi (`episode_run_time`) | %64 | yok | yoktu | ⬜ [TAHMİN] |
 | 9 | film serisi (`belongs_to_collection`) | %24 | **VAR** (koleksiyon ucu) | yoktu | ⬜ [TAHMİN] |
-| 10 | 45 dile yayma | — | — | — | ⛔ §4.4 (engel mimarî) |
+| 10 | 45 dile yayma | — | — | — | 🚀 **yapıldı** (§4.4 güncellemesi) |
 
 **Neden 1 ve 2 önce:** ikisi de %100'e yakın dolu, ikisi de sıfır ek istek, ve
 ikisi de kullanıcının kendi örneklerinde geçiyor (*"spiderman 3 hasılatı"*,
@@ -527,5 +544,10 @@ giriyor — yani makine okunabilirliği kaybedilmiş değil.
    *"hangi ülke dizisi"* Türkçe'de güçlü bir kalıp.
 3. ⬜ **md.6-7 — kişi sayfası nitelikleri** (`deathday`, `cc.crew`). Çıplak ad
    sorgusunu KOVALAMADAN, nitelikli sorguyu hedefleyerek.
-4. ⛔ **45 dil** — `SEO-YAPILACAKLAR` §0.1 md.5 (dış bağlantı) ve keşif kuyruğu
-   ölçümü (1 Eylül) geçmeden açılmaz. §4.3'teki URL şeması kararı ön koşul.
+4. 🚀 **45 dil — AÇILDI** (aynı gün, kullanıcı kararı). §4.3'teki URL şeması
+   kararı verildi: **dizin tabanlı, Türkçe kökte**. Ayrıntı ve ölçümler
+   `SEO-YAPILACAKLAR.md` §0.-1'de.
+5. ⬜ **Argos çifti OLMAYAN 31 dilde özet BOŞ.** TMDB o dilde özet vermiyorsa
+   ve makine çevirisi kurulu değilse blok hiç basılmıyor (kural: Türkçesi
+   asla basılmaz). Sayfa yine de o dilde: SSS, künye, başlık, şema hepsi
+   çevrili. Kapatmanın yolu o dillere Argos paketi kurmak.

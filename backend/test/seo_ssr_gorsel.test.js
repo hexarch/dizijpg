@@ -160,7 +160,9 @@ test('görsel alanları GERÇEK veriden geliyor (boş alt üretilemez)', () => {
   assert.ok(altlar.length >= 5, `alt ataması bulunamadı (${altlar.length})`);
   for (const a of altlar) {
     assert.ok(!/^''$/.test(a), `boş alt atanmış: ${a}`);
-    assert.ok(/\$\{/.test(a) || /^`/.test(a) || /alt$/.test(a),
+    // 29 Ağu 2026: `alt` metinleri dil tablosundan geliyor (`bic(t.altAfis,
+    // { ad })`) — yine DEĞİŞKENDEN kuruluyor, yalnız şablon dile bağlı.
+    assert.ok(/\$\{/.test(a) || /^`/.test(a) || /alt$/.test(a) || /^bic\(t\./.test(a),
       `alt sabit metin (her görselde aynı olurdu): ${a}`);
   }
 });
@@ -175,7 +177,7 @@ test('gönderi sayfası KENDİ medyamızı tercih ediyor (robots.txt istisnası)
 
 test('içerik sayfası yapım firmasına bağlanıyor (yeni SSR yüzeyi keşfedilsin)', () => {
   const govde = bolum("app.get('/og/icerik/:tur/:tmdbId'", '// ---------- SEO: /kisi/:id');
-  assert.match(govde, /seoBaglantiListesi\('Yapım firmaları'/);
-  assert.match(govde, /yol: `\/sirket\/\$\{f\.id\}`/);
+  assert.match(govde, /seoBaglantiListesi\(t\.bsFirmalar/);
+  assert.match(govde, /yol: seoDilliYol\(`\/sirket\/\$\{f\.id\}`, dil\)/);
   assert.match(govde, /SEO_ICERIK_FIRMA/);
 });

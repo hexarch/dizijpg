@@ -12,6 +12,7 @@
 // gerçekten ÇALIŞTIRILIYOR: test canlıdaki kodu sınar, kopyasını değil.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import * as DIL from '../seo_dil.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import {
@@ -22,13 +23,15 @@ const UC = bolum("app.get('/og/sirket/:id'", '/**\n * Gönderi sayfası indekse 
 
 const sirketIndekslenir = alan(
   ['SEO_SIRKET_YAPIM_MIN', 'sirketIndekslenir'], 'sirketIndekslenir');
-const seoUlkeAdi = alan(['SEO_ULKE_ADI', 'seoUlkeAdi'], 'seoUlkeAdi');
+// `seoUlkeAdi` + `SEO_ULKE_ADI` 29 Ağu 2026'da KALDIRILDI: 40 ülke adını
+// 46 dile elle taşımak yerine ICU `Intl.DisplayNames` (`seoUlke`).
+const seoUlkeAdi = (kod) => DIL.seoUlke(kod, 'tr');
 // `SEO_ACIKLAMA_MAX` + `seoPozitif` 20 Ağu 2026'da bağımlılık oldu: açıklama
 // artık ~155 karakter bütçesine göre kuruluyor ve kapanış cümlesi GERÇEK
 // yorum sayısına bağlı (boş vaat üretmesin diye). Testin niyeti aynı —
 // "açıklama veriden kuruluyor" — yalnız fonksiyonun bağlamı büyüdü.
 const seoSirketAciklamasi = alan(
-  ['SEO_ACIKLAMA_MAX', 'seoPozitif', 'seoMetin', 'SEO_ULKE_ADI', 'seoUlkeAdi',
+  ['SEO_ACIKLAMA_MAX', 'seoPozitif', 'seoMetin', 
     'seoSirketAciklamasi'],
   'seoSirketAciklamasi');
 const seoSirketYapimlari = alan(
@@ -38,7 +41,7 @@ const sirketJsonLd = alan(
   ['SITE_KOK', 'seoMetin', 'seoKirinti', 'seoSssJsonLd', 'sirketJsonLd'],
   'sirketJsonLd');
 const ogSayfa = alan(
-  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
+  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoSsrDil', 'seoOgYerel', 'seoHreflang', 'ogSayfa'], 'ogSayfa');
 
 /** Gerçekçi bir TMDB `/discover` yanıtı. */
 const discoverYanit = (n, tur) => ({
@@ -93,7 +96,7 @@ test('TMDB sorguları sirket.dart ile AYNI (bot ile insan aynı listeyi görür)
   );
   // Sıralama seçimi ADRESTE taşınıyor ama canonical onu DÜŞÜRMELİ; yoksa
   // her sıralama ayrı bir yinelenen sayfa olurdu.
-  assert.match(UC, /canonical: `\$\{SITE_KOK\}\/sirket\/\$\{sid\}`/);
+  assert.match(UC, /canonical: SITE_KOK \+ seoDilliYol\(`\/sirket\/\$\{sid\}`, dil\)/);
   assert.match(UC, /\/discover\/tv\?with_companies=\$\{sid\}&sort_by=popularity\.desc/);
   assert.match(UC, /\/discover\/movie\?with_companies=\$\{sid\}&sort_by=popularity\.desc/);
   assert.match(UC, /\/company\/\$\{sid\}/);
@@ -203,8 +206,10 @@ test('açıklama VERİDEN kuruluyor (jenerik/yinelenen meta değil)', () => {
 });
 
 test('ülke kodu Türkçeye çevriliyor, çözülemeyen kod HAM kalıyor', () => {
-  assert.equal(seoUlkeAdi('US'), 'ABD');
+  assert.equal(seoUlkeAdi('US'), 'Amerika Birleşik Devletleri');
   assert.equal(seoUlkeAdi('tr'), 'Türkiye');
+  assert.equal(DIL.seoUlke('US', 'en'), 'United States');
+  assert.equal(DIL.seoUlke('US', 'de'), 'Vereinigte Staaten');
   assert.equal(seoUlkeAdi('ZZ'), 'ZZ');
   assert.equal(seoUlkeAdi(''), '');
   assert.equal(seoUlkeAdi(null), '');

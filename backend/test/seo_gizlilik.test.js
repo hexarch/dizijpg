@@ -13,6 +13,7 @@
 // gerçekten ÇALIŞTIRILIYOR: test canlıdaki kodu sınar, kopyasını değil.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import * as DIL from '../seo_dil.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -50,10 +51,18 @@ function bildirimCek(ad) {
   assert.fail(`${ad} bildiriminin sonu bulunamadı`);
 }
 
+// SSR dil altyapısı (seo_dil.js) sanal alana enjekte edilir: server.js'ten
+// çekilen saf yardımcılar artık `seoDil`/`bic`/`seoTarih` çağırıyor.
+const DIL_ADLARI = [
+  'SEO_DIL', 'SEO_DILLER', 'seoDil', 'seoDilVar', 'seoDilliYol', 'seoDilAyir',
+  'seoTarih', 'seoSayi', 'seoOndalik', 'seoUlke', 'bic', 'seoSagAyrac',
+];
+
 /** İstenen bildirimleri sırayla derleyip son ifadeyi döndüren sanal alan. */
 function alan(adlar, ifade) {
   const govde = adlar.map(bildirimCek).join('\n');
-  return new Function(`${govde}\nreturn (${ifade});`)();
+  return new Function(...DIL_ADLARI, `${govde}\nreturn (${ifade});`)(
+    ...DIL_ADLARI.map((k) => DIL[k]));
 }
 
 const htmlKacir = alan(['htmlKacir'], 'htmlKacir');
@@ -69,7 +78,7 @@ const seoKesifAdet = alan(['seoKesifAdet'], 'seoKesifAdet');
 const seoKesifJsonLd = alan(
   ['SITE_KOK', 'seoKirinti', 'seoIstDil', 'seoKesifJsonLd'], 'seoKesifJsonLd');
 const ogSayfa = alan(
-  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
+  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoSsrDil', 'seoOgYerel', 'seoHreflang', 'ogSayfa'], 'ogSayfa');
 
 /** Kaynağın [bas, son) arasındaki bölümü; sınır yoksa test patlar. */
 function bolum(bas, son) {
