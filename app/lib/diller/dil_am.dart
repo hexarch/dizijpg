@@ -1298,4 +1298,5 @@ const Map<String, String> cevirilerAm = {
   'Kişi': 'ሰው',
   'Yapım firması': 'የፕሮዳክሽን ኩባንያ',
   'Yapım ara...': 'ርዕሶችን ይፈልጉ...',
+  'Çarkı çevirmek için sürükle veya dokun': 'መንኮራኩሩን ለማዞር ይጎትቱ ወይም ይንኩ',
 };

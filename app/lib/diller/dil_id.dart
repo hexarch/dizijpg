@@ -1346,4 +1346,5 @@ const Map<String, String> cevirilerId = {
   'Kişi': 'Orang',
   'Yapım firması': 'Rumah produksi',
   'Yapım ara...': 'Cari judul...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Seret atau ketuk untuk memutar roda',
 };

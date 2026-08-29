@@ -1345,4 +1345,5 @@ const Map<String, String> cevirilerVi = {
   'Kişi': 'Người',
   'Yapım firması': 'Hãng sản xuất',
   'Yapım ara...': 'Tìm tựa đề...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Kéo hoặc chạm để quay vòng quay',
 };

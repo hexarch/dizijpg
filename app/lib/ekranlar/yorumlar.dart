@@ -12,6 +12,7 @@ import '../medya_yukle.dart';
 import '../tema.dart';
 import 'begenenler.dart';
 import 'etiket.dart';
+import 'gif_sec.dart';
 import 'gonderi_istatistik.dart' show IstatistikGirisi;
 import 'medya_inceleme.dart';
 import 'giris_istem.dart';
@@ -235,6 +236,18 @@ class _YorumBolumuState extends State<YorumBolumu> {
   ///
   /// KISMİ BAŞARI: bir dosya patlarsa geri kalanı yüklenmeye devam eder ve
   /// sonunda kaçının yüklendiği/yüklenemediği söylenir — sessiz kayıp YOK.
+  /// Arşivden GIF seç. Dosya YENİDEN YÜKLENMEZ — sunucudaki yol doğrudan
+  /// ek listesine girer (`POST /yorumlar` sahiplik regexi aynı adı bekler).
+  Future<void> _gifSec() async {
+    if (!girisGerekli(context)) return;
+    if (_ekler.length >= enCokEk || _ekYukleniyor) return;
+    final gif = await gifSecAc(context);
+    if (gif == null || !mounted) return;
+    final yol = gif['yol'] as String?;
+    if (yol == null) return;
+    setState(() => _ekler.add({'yol': yol, 'video': false}));
+  }
+
   Future<void> _ekSec() async {
     if (!girisGerekli(context)) return;
     final kalan = enCokEk - _ekler.length;
@@ -489,6 +502,18 @@ class _YorumBolumuState extends State<YorumBolumu> {
                                 color: DiziRenkler.sariMetin,
                               ),
                         tooltip: 'Fotoğraf / video ekle'.c,
+                      ),
+                      // KENDİ GIF ARŞİVİMİZ (29 Ağu 2026). Dış servis yok;
+                      // seçicinin içindeki "GIF yükle" arşivi büyütür.
+                      IconButton(
+                        onPressed: _ekYukleniyor || _ekler.length >= enCokEk
+                            ? null
+                            : _gifSec,
+                        icon: Icon(
+                          Icons.gif_box_outlined,
+                          color: DiziRenkler.sariMetin,
+                        ),
+                        tooltip: 'GIF ekle'.c,
                       ),
                       // Spoiler işareti: yorumu bulanık gönderir
                       InkWell(

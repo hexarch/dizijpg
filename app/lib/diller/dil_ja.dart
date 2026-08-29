@@ -1280,4 +1280,5 @@ const Map<String, String> cevirilerJa = {
   'Kişi': '人物',
   'Yapım firması': '制作会社',
   'Yapım ara...': '作品を検索...',
+  'Çarkı çevirmek için sürükle veya dokun': 'ドラッグまたはタップしてホイールを回す',
 };

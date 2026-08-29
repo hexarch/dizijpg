@@ -1367,4 +1367,5 @@ const Map<String, String> cevirilerFr = {
   'Kişi': 'Personne',
   'Yapım firması': 'Société de production',
   'Yapım ara...': 'Rechercher des titres...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Fais glisser ou touche pour tourner la roue',
 };

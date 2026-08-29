@@ -1328,4 +1328,5 @@ const Map<String, String> cevirilerFa = {
   'Kişi': 'شخص',
   'Yapım firması': 'شرکت تولید',
   'Yapım ara...': 'جستجوی آثار...',
+  'Çarkı çevirmek için sürükle veya dokun': 'برای چرخاندن چرخ بکشید یا ضربه بزنید',
 };

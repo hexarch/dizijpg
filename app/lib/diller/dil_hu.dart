@@ -1355,4 +1355,5 @@ const Map<String, String> cevirilerHu = {
   'Kişi': 'Személy',
   'Yapım firması': 'Gyártó cég',
   'Yapım ara...': 'Címek keresése...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Húzd vagy koppints a kerék pörgetéséhez',
 };

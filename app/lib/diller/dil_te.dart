@@ -1342,4 +1342,5 @@ const Map<String, String> cevirilerTe = {
   'Kişi': 'వ్యక్తి',
   'Yapım firması': 'నిర్మాణ సంస్థ',
   'Yapım ara...': 'టైటిల్స్ వెతుకు...',
+  'Çarkı çevirmek için sürükle veya dokun': 'చక్రం తిప్పడానికి లాగండి లేదా నొక్కండి',
 };

@@ -1368,4 +1368,5 @@ const Map<String, String> cevirilerDe = {
   'Kişi': 'Person',
   'Yapım firması': 'Produktionsfirma',
   'Yapım ara...': 'Titel suchen...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Zum Drehen ziehen oder tippen',
 };

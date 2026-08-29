@@ -1366,4 +1366,5 @@ const Map<String, String> cevirilerFil = {
   'Kişi': 'Tao',
   'Yapım firması': 'Production company',
   'Yapım ara...': 'Maghanap ng pamagat...',
+  'Çarkı çevirmek için sürükle veya dokun': 'I-drag o i-tap para paikutin ang gulong',
 };

@@ -138,7 +138,10 @@ Future<GoRouter> _carkiAc(
 /// Çevirme animasyonunu sonuna kadar oynatır
 /// (5,2 sn dönüş + 320 ms geri oturma "tık"ı).
 Future<void> _cevirVeBekle(WidgetTester tester) async {
-  await tester.tap(find.byKey(const Key('cark-cevir')));
+  // 29 Ağu 2026: "Çarkı çevir" düğmesi KALDIRILDI (kullanıcı: "elle de
+  // çevrilebilmeli, çevir butonu saçma"). Dokunma davranışı aynen duruyor,
+  // hedef artık çarkın kendisi.
+  await tester.tap(find.byKey(const Key('izlem-carki-cark')));
   for (var i = 0; i < 24; i++) {
     await tester.pump(const Duration(milliseconds: 250));
   }

@@ -1356,4 +1356,5 @@ const Map<String, String> cevirilerMy = {
   'Kişi': 'လူပုဂ္ဂိုလ်',
   'Yapım firması': 'ထုတ်လုပ်ရေးကုမ္ပဏီ',
   'Yapım ara...': 'ခေါင်းစဉ်များ ရှာပါ...',
+  'Çarkı çevirmek için sürükle veya dokun': 'ဘီးလှည့်ရန် ဆွဲပါ သို့မဟုတ် တို့ပါ',
 };

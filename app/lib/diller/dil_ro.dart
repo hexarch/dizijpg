@@ -1364,4 +1364,5 @@ const Map<String, String> cevirilerRo = {
   'Kişi': 'Persoană',
   'Yapım firması': 'Companie de producție',
   'Yapım ara...': 'Caută titluri...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Trage sau atinge pentru a învârti roata',
 };

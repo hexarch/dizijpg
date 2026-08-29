@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../api.dart';
+import '../cark_efekti.dart';
 import '../ceviri.dart';
 import '../icerik_deposu.dart';
 import '../tema.dart';
@@ -55,7 +56,15 @@ class IzlemCarki extends StatefulWidget {
   /// Testte seed'lenebilir rastgelelik; üründe null → [math.Random].
   final math.Random? rastgele;
 
-  const IzlemCarki({super.key, required this.ogeler, this.rastgele});
+  /// Testte ses/titreşim yerine sayaç geçilir; üründe null → cihaz efekti.
+  final CarkEfekti? efekt;
+
+  const IzlemCarki({
+    super.key,
+    required this.ogeler,
+    this.rastgele,
+    this.efekt,
+  });
 
   @override
   State<IzlemCarki> createState() => _IzlemCarkiState();
@@ -65,6 +74,19 @@ class _IzlemCarkiState extends State<IzlemCarki>
     with SingleTickerProviderStateMixin {
   late final math.Random _rastgele = widget.rastgele ?? math.Random();
   late final AnimationController _donus = AnimationController(vsync: this);
+
+  /// Ses + titreşim. Testte [SessizCarkEfekti] geçilir.
+  late final CarkEfekti _efekt = widget.efekt ?? CihazCarkEfekti();
+
+  /// İbrenin en son hangi dilimde olduğu — DEĞİŞTİĞİ an tık çalar.
+  /// `null` = henüz ölçülmedi (ilk karede tık çalmasın).
+  int? _sonDilim;
+
+  /// Elle çevirirken parmağın çark merkezine göre son açısı.
+  double? _tutusAcisi;
+
+  /// Elle çevirme sırasında biriken açısal hız (rad/sn) — bırakınca savurur.
+  double _elHiz = 0;
 
   /// 'hepsi' | 'tv' | 'movie'
   String _suzgec = 'hepsi';
@@ -93,8 +115,28 @@ class _IzlemCarkiState extends State<IzlemCarki>
 
   @override
   void dispose() {
+    _efekt.kapat();
     _donus.dispose();
     super.dispose();
+  }
+
+  /// İbrenin şu an gösterdiği dilim indeksini verir.
+  /// İbre ÜSTTE (-π/2); çark [_aci] kadar döndüyse yerel açı (-π/2 - açı).
+  int _ibreDilimi(int adet) {
+    if (adet <= 0) return 0;
+    final dilim = 2 * math.pi / adet;
+    var yerel = (-math.pi / 2 - _aci) % (2 * math.pi);
+    if (yerel < 0) yerel += 2 * math.pi;
+    return (yerel / dilim).floor() % adet;
+  }
+
+  /// Dilim değiştiyse tık çalar. Çark yavaşladıkça dilim değişimi de
+  /// seyrekleşir — gerçek çarkın "tık… tık…  tık" ritmi buradan gelir,
+  /// ayrıca döngüsel bir ses dosyası gerekmez.
+  void _tikDenetle(int adet) {
+    final d = _ibreDilimi(adet);
+    if (_sonDilim != null && _sonDilim != d) _efekt.tik();
+    _sonDilim = d;
   }
 
   String _anahtar(Map<String, dynamic> o) => '${o['tur']}:${o['tmdb_id']}';
@@ -166,6 +208,7 @@ class _IzlemCarkiState extends State<IzlemCarki>
     );
     void dinle() {
       _aci = baslangic + (ilkHedef - baslangic) * animasyon.value;
+      _tikDenetle(liste.length);
     }
 
     _donus.addListener(dinle);
@@ -194,8 +237,108 @@ class _IzlemCarkiState extends State<IzlemCarki>
             _donuyor = false;
             _sonuc = secilen;
           });
+          _efekt.durdu();
           _detayGetir(secilen);
         });
+  }
+
+  /// İki sürükleme olayı arasındaki süre (hız için).
+  Duration? _oncekiDamga;
+  Duration _dt(Duration damga) {
+    final onceki = _oncekiDamga;
+    _oncekiDamga = damga;
+    return onceki == null ? const Duration(milliseconds: 16) : damga - onceki;
+  }
+
+  /// Parmağın çark merkezine göre açısı.
+  double _parmakAcisi(Offset yerel, Size kutu) =>
+      math.atan2(yerel.dy - kutu.height / 2, yerel.dx - kutu.width / 2);
+
+  /// ELLE ÇEVİRME (29 Ağu 2026, kullanıcı: "elle de çevrilebilmeli, çevir
+  /// butonu saçma"). Parmak çarkı doğrudan döndürür; bırakınca son hızla
+  /// savrulur ve sürtünmeyle bir dilimde durur.
+  void _elBasla(Offset yerel, Size kutu) {
+    if (_donuyor) return;
+    _donus.stop();
+    _tutusAcisi = _parmakAcisi(yerel, kutu);
+    _elHiz = 0;
+  }
+
+  void _elSurukle(Offset yerel, Size kutu, Duration? dt) {
+    if (_donuyor || _tutusAcisi == null) return;
+    final yeni = _parmakAcisi(yerel, kutu);
+    // Fark ±π'ye sarmalanır: -π/π sınırından geçerken çark ters dönmesin.
+    var fark = yeni - _tutusAcisi!;
+    if (fark > math.pi) fark -= 2 * math.pi;
+    if (fark < -math.pi) fark += 2 * math.pi;
+    _tutusAcisi = yeni;
+    final sn = (dt?.inMicroseconds ?? 16000) / 1e6;
+    // Anlık hız yerine yumuşatılmış hız: tek karelik sıçrama savurmayı
+    // saçma biçimde hızlandırıyordu.
+    if (sn > 0) _elHiz = _elHiz * 0.6 + (fark / sn) * 0.4;
+    setState(() => _aci += fark);
+    _tikDenetle(_suzulmus.length);
+  }
+
+  /// Parmak kalktı: hız eşiğin altındaysa çark olduğu yerde kalır (kullanıcı
+  /// sadece hizalıyordur), üstündeyse savrulup bir dilimde durur.
+  void _elBirak() {
+    _tutusAcisi = null;
+    final liste = _suzulmus;
+    if (_donuyor || liste.isEmpty) return;
+    final hiz = _elHiz;
+    _elHiz = 0;
+    if (hiz.abs() < 1.2) return; // yavaş çevirme: sonuç seçme, serbest bırak
+
+    // Sürtünme modeli: v(t) = v0·e^(-kt) → toplam yol v0/k.
+    const k = 1.9;
+    final yol = hiz / k;
+    final dilim = 2 * math.pi / liste.length;
+    // Serbest yolun bittiği yere EN YAKIN dilim ortasına oturt: sonuç
+    // rastgele DEĞİL, kullanıcının kendi savurmasının sonucu.
+    final ham = _aci + yol;
+    var yerel = (-math.pi / 2 - ham) % (2 * math.pi);
+    if (yerel < 0) yerel += 2 * math.pi;
+    final i = (yerel / dilim).round() % liste.length;
+    final hedefYerel = i * dilim + dilim / 2;
+    var delta =
+        (-math.pi / 2 - hedefYerel - (_aci % (2 * math.pi))) % (2 * math.pi);
+    if (delta < 0) delta += 2 * math.pi;
+    // Savurma yönü korunur: geriye savurduysa tur sayısını negatiften kur.
+    final tur = (yol.abs() / (2 * math.pi)).floor();
+    final hedef =
+        _aci +
+        (hiz > 0 ? 1 : -1) * tur * 2 * math.pi +
+        (hiz > 0 ? delta : delta - 2 * math.pi);
+    final secilen = liste[i];
+
+    setState(() {
+      _donuyor = true;
+      _sonuc = null;
+      _detay = null;
+      _detayHatasi = false;
+    });
+    final baslangic = _aci;
+    _donus.value = 0;
+    final egri = CurvedAnimation(parent: _donus, curve: Curves.easeOutCubic);
+    void dinle() {
+      _aci = baslangic + (hedef - baslangic) * egri.value;
+      _tikDenetle(liste.length);
+    }
+
+    _donus.addListener(dinle);
+    final ms = (900 + (hiz.abs() * 260)).clamp(900, 4200).toInt();
+    _donus.animateTo(1, duration: Duration(milliseconds: ms)).whenComplete(() {
+      _donus.removeListener(dinle);
+      if (!mounted) return;
+      setState(() {
+        _aci = hedef;
+        _donuyor = false;
+        _sonuc = secilen;
+      });
+      _efekt.durdu();
+      _detayGetir(secilen);
+    });
   }
 
   Future<void> _detayGetir(Map<String, dynamic> o) async {
@@ -341,7 +484,22 @@ class _IzlemCarkiState extends State<IzlemCarki>
                     height: kenar,
                     child: GestureDetector(
                       key: const Key('izlem-carki-cark'),
+                      // DOKUN = otomatik çevir (eski davranış korunur),
+                      // SÜRÜKLE = elle çevir. "Çarkı çevir" düğmesi kaldırıldı
+                      // (29 Ağu 2026, kullanıcı: "elle de çevrilebilmeli,
+                      // çevir butonu saçma") — çarkın kendisi zaten dokunma
+                      // hedefi ve 44 dp'nin kat kat üstünde.
                       onTap: _cevir,
+                      onPanStart: (d) =>
+                          _elBasla(d.localPosition, Size.square(kenar)),
+                      onPanUpdate: (d) => _elSurukle(
+                        d.localPosition,
+                        Size.square(kenar),
+                        d.sourceTimeStamp == null
+                            ? null
+                            : _dt(d.sourceTimeStamp!),
+                      ),
+                      onPanEnd: (_) => _elBirak(),
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -393,25 +551,17 @@ class _IzlemCarkiState extends State<IzlemCarki>
             ),
           ),
         ),
+        // DÜĞME YERİNE İPUCU: çarkın kendisi çevriliyor, ayrı bir düğme
+        // gereksizdi. Ama keşfedilebilirlik kaybolmasın diye ne yapılacağı
+        // yazıyor — dokunma hedefi ≥44 dp kuralını çark zaten fazlasıyla
+        // karşılıyor (ekran kenarı kadar).
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 4, 24, 20),
-          child: SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: FilledButton.icon(
-              key: const Key('cark-cevir'),
-              style: FilledButton.styleFrom(
-                backgroundColor: DiziRenkler.sari,
-                foregroundColor: Colors.black,
-                textStyle: const TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16,
-                ),
-              ),
-              onPressed: _donuyor || liste.isEmpty ? null : _cevir,
-              icon: const Icon(Icons.refresh),
-              label: Text('Çarkı çevir'.c),
-            ),
+          child: Text(
+            'Çarkı çevirmek için sürükle veya dokun'.c,
+            key: const Key('cark-ipucu'),
+            textAlign: TextAlign.center,
+            style: TextStyle(color: DiziRenkler.metin54, fontSize: 13),
           ),
         ),
       ],
@@ -660,31 +810,47 @@ class _CarkBoyaci extends CustomPainter {
         ..color = DiziRenkler.sari,
     );
 
-    // Adlar (yalnız okunacak kadar az dilim varsa)
-    if (n <= 16) {
-      for (var i = 0; i < n; i++) {
-        final a = -math.pi / 2 + (i + 0.5) * dilim;
-        final metin = TextPainter(
-          text: TextSpan(
-            text: adlar[i].length > 14
-                ? '${adlar[i].substring(0, 13)}…'
-                : adlar[i],
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-            ),
+    // ADLAR HER ZAMAN ÇİZİLİR, dilim daraldıkça YAZI KÜÇÜLÜR.
+    //
+    // ⚠ ESKİ HÂLİ `if (n <= 16)` idi ve BU BİR HATAYDI (29 Ağu 2026,
+    // kullanıcı: "liste büyünce yazılar gözükmüyor"). 17. yapımdan itibaren
+    // adların hepsi birden KAYBOLUYORDU — küçülmüyor, hiç çizilmiyordu.
+    // Kullanıcı "font küçülmeli" diye tarif etti; kök sebep font değil sert
+    // kesmeydi, ikisi birden düzeltildi.
+    //
+    // ÖLÇÜ: yazı yüksekliği dilimin dış yaydaki kalınlığını AŞMAMALI, yoksa
+    // komşu dilimlerin adları üst üste biner. Dış yay kalınlığı ≈ dilim
+    // açısı × yazının oturduğu yarıçap. Alt sınır 7 dp: altında okunmuyor,
+    // o noktadan sonra yazıyı kısaltmak daha iyi.
+    final olcu = carkYaziOlcusu(n, yaricap);
+    final iciYaricap = olcu.iciYaricap;
+    final yaziAlani = olcu.yaziAlani;
+    final punto = olcu.punto;
+    final azamiHarf = olcu.azamiHarf;
+
+    for (var i = 0; i < n; i++) {
+      final a = -math.pi / 2 + (i + 0.5) * dilim;
+      final ham = adlar[i];
+      final metin = TextPainter(
+        text: TextSpan(
+          text: ham.length > azamiHarf
+              ? '${ham.substring(0, azamiHarf - 1)}…'
+              : ham,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: punto,
+            fontWeight: FontWeight.w600,
           ),
-          textDirection: TextDirection.ltr,
-          maxLines: 1,
-          ellipsis: '…',
-        )..layout(maxWidth: yaricap - 88);
-        canvas.save();
-        canvas.translate(merkez.dx, merkez.dy);
-        canvas.rotate(a);
-        metin.paint(canvas, Offset(72, -metin.height / 2));
-        canvas.restore();
-      }
+        ),
+        textDirection: TextDirection.ltr,
+        maxLines: 1,
+        ellipsis: '…',
+      )..layout(maxWidth: yaziAlani);
+      canvas.save();
+      canvas.translate(merkez.dx, merkez.dy);
+      canvas.rotate(a);
+      metin.paint(canvas, Offset(iciYaricap, -metin.height / 2));
+      canvas.restore();
     }
   }
 
@@ -713,4 +879,42 @@ class _IbreBoyaci extends CustomPainter {
 
   @override
   bool shouldRepaint(_IbreBoyaci eski) => false;
+}
+
+/// Çark dilimindeki adın ölçüleri — punto ve harf sınırı.
+@visibleForTesting
+class CarkYaziOlcusu {
+  final double iciYaricap;
+  final double yaziAlani;
+  final double punto;
+  final int azamiHarf;
+  const CarkYaziOlcusu({
+    required this.iciYaricap,
+    required this.yaziAlani,
+    required this.punto,
+    required this.azamiHarf,
+  });
+}
+
+/// [n] dilimli, [yaricap] yarıçaplı çarkta ad yazısının ölçüsü.
+///
+/// DIŞARI ALINDI ki "liste büyüdükçe yazı küçülüyor" SAYIYLA test edilebilsin;
+/// boyacının içinde gömülü kalsaydı test ancak kaynak metnine bakabilirdi.
+///
+/// Ölçü: yazı yüksekliği dilimin dış yaydaki kalınlığını aşmamalı, yoksa
+/// komşu adlar üst üste biner. Alt sınır 7 dp — altında okunmuyor, o
+/// noktadan sonra küçültmek yerine adı kısaltmak gerekir.
+@visibleForTesting
+CarkYaziOlcusu carkYaziOlcusu(int n, double yaricap) {
+  const iciYaricap = 72.0;
+  final yaziAlani = yaricap - iciYaricap - 16;
+  final dilim = 2 * math.pi / (n <= 0 ? 1 : n);
+  final yayKalinligi = dilim * (iciYaricap + yaziAlani / 2);
+  final punto = (yayKalinligi * 0.62).clamp(7.0, 13.0);
+  return CarkYaziOlcusu(
+    iciYaricap: iciYaricap,
+    yaziAlani: yaziAlani,
+    punto: punto,
+    azamiHarf: (yaziAlani / (punto * 0.52)).floor().clamp(4, 22),
+  );
 }

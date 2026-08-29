@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show listEquals, visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +23,7 @@ import '../video_kova.dart';
 import 'akis.dart' show AkisGorunumSecici, AkisGorunumu, AkisKarti;
 import 'begenenler.dart';
 import 'etiket.dart';
+import 'gif_sec.dart';
 import 'giris_istem.dart';
 import 'medya_goster.dart';
 import 'medya_inceleme.dart';
@@ -2643,24 +2643,25 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
   /// İzin açısından risk yok: `file_picker` de SAF kullanır, `READ_MEDIA_*`
   /// istemez — Play reddine yol açan şey uygulama içi galeri ızgarasıydı.
   /// Yükleme/sınır/hata yolu ise artık ORTAK ([medyalariYukle]).
+  /// 29 AĞU 2026 — ARTIK ÖNCE KENDİ ARŞİVİMİZ AÇILIR.
+  /// Dış GIF servisi kurmadık (Tenor kapandı, Giphy saatlik sınırlı ve ücretli,
+  /// Klipy proxy/önbelleği yasaklıyor). [gifSecAc] arşivi gösterir; oradaki
+  /// "GIF yükle" düğmesi ise yukarıda anlatılan `file_picker` yolunun TA
+  /// KENDİSİDİR — yani dosyadan seçme yolu KAYBOLMADI, arşivin içine taşındı.
   Future<void> _gifSec() async {
     if (!girisGerekli(context)) return;
     if (_ekler.length >= enCokYanitEk || _ekYukleniyor) return;
-    final secim = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['gif'],
-      withData: true,
-    );
-    final veri = secim?.files.single.bytes;
-    if (veri == null || !mounted) return;
-    await _ekYukle([
-      XFile.fromData(
-        veri,
-        mimeType: 'image/gif',
-        name: secim!.files.single.name,
-        length: veri.length,
-      ),
-    ]);
+    final gif = await gifSecAc(context);
+    if (gif == null || !mounted) return;
+    final yol = gif['yol'] as String?;
+    if (yol == null) return;
+    // GIF sunucuda ZATEN duruyor: yeniden yüklemeye gerek yok, doğrudan ek olur.
+    setState(() => _ekler.add({'yol': yol, 'video': false}));
+    // Yükleme sürerken gönder'e basılmışsa aynı kural: bekleyen gönderimi sür.
+    if (_gonderBekliyor && !_ekYukleniyor) {
+      _gonderBekliyor = false;
+      await _gonder();
+    }
   }
 
   /// Seçilen dosyaları SIRAYLA yükler ve ek karolarına ekler.

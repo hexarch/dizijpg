@@ -27,6 +27,7 @@ import 'tepki.dart';
 import 'medya_goster.dart';
 import 'medya_inceleme.dart';
 import 'icerik_sec.dart';
+import 'gif_sec.dart';
 import 'ortak.dart';
 import 'ses.dart';
 
@@ -1715,6 +1716,21 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   }
 
   /// Dizi/film arayıp kart olarak gönder.
+  /// KENDİ GIF ARŞİVİMİZDEN seç ve TEK mesaj olarak gönder.
+  ///
+  /// TEK DOSYA SINIRI: `mesajlar.medya` TEXT'tir (TEXT[] DEĞİL, sema.sql),
+  /// yani bir mesaj tam bir medya taşır — seçici de tek kayıt döndürür.
+  /// YENİDEN YÜKLEME YOK: arşivdeki GIF sunucuda zaten duruyor, yolu doğrudan
+  /// gider. Kendi bekleyen GIF'in de aynı `m<id>-<hex>.gif` adını taşır, yani
+  /// `POST /mesajlar` sahiplik regexinden geçer.
+  Future<void> _gifGonder() async {
+    final gif = await gifSecAc(context);
+    if (gif == null || !mounted) return;
+    final yol = gif['yol'] as String?;
+    if (yol == null) return;
+    await _gonder(medya: yol, metin: _metin.text.trim());
+  }
+
   Future<void> _icerikPaylas() async {
     final secilen = await showModalBottomSheet<Map<String, dynamic>>(
       context: context,
@@ -2148,6 +2164,14 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                               _duzenlenenId != null,
                                           yukleniyor: _ekYukleniyor,
                                           onTap: _fotoGonder,
+                                        ),
+                                        _kutuIkonu(
+                                          ipucu: 'GIF ekle'.c,
+                                          ikon: Icons.gif_box_outlined,
+                                          kapali:
+                                              _ekYukleniyor ||
+                                              _duzenlenenId != null,
+                                          onTap: _gifGonder,
                                         ),
                                         _kutuIkonu(
                                           ipucu: 'İçerik paylaş'.c,

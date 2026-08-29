@@ -1332,4 +1332,5 @@ const Map<String, String> cevirilerGu = {
   'Kişi': 'વ્યક્તિ',
   'Yapım firması': 'નિર્માણ કંપની',
   'Yapım ara...': 'શીર્ષકો શોધો...',
+  'Çarkı çevirmek için sürükle veya dokun': 'ચક્ર ફેરવવા માટે ખેંચો અથવા ટૅપ કરો',
 };

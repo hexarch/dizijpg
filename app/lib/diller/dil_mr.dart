@@ -1337,4 +1337,5 @@ const Map<String, String> cevirilerMr = {
   'Kişi': 'व्यक्ती',
   'Yapım firması': 'निर्मिती कंपनी',
   'Yapım ara...': 'शीर्षके शोधा...',
+  'Çarkı çevirmek için sürükle veya dokun': 'चाक फिरवण्यासाठी ओढा किंवा टॅप करा',
 };

@@ -1387,3 +1387,47 @@ CREATE TABLE IF NOT EXISTS seo_talep_dizi (
   eklendi      TIMESTAMPTZ NOT NULL DEFAULT now(),
   guncellendi  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- 2026-08-29b: KENDİ GIF ARŞİVİMİZ. Dış GIF servisleri elendi (Tenor kapandı,
+-- Giphy 100/saat üstü ücretli, Klipy proxy/önbelleği yasaklıyor). Kullanıcı
+-- yüklediği GIF'i HEMEN kendi seçicisinde kullanır; herkese açık arşive ancak
+-- yönetici onayıyla girer — onaysız kayıt BAŞKA kullanıcıya asla görünmez
+-- (kural tek yerde: backend/gif.js `gifSuzgec`, test/gif_gorunurluk.test.js).
+-- `yol` mevcut POST /medya çıktısıdır; yeni medya boru hattı KURULMADI.
+-- Uzun gerekçe: migrasyon-2026-08-29b.sql.
+CREATE TABLE IF NOT EXISTS gifler (
+  id            BIGSERIAL   PRIMARY KEY,
+  yol           TEXT        NOT NULL UNIQUE,
+  yukleyen_id   INT         REFERENCES kullanicilar(id) ON DELETE SET NULL,
+  etiketler     TEXT[]      NOT NULL DEFAULT '{}',
+  arama_metni   TEXT        NOT NULL DEFAULT '',
+  durum         TEXT        NOT NULL DEFAULT 'bekliyor'
+                            CHECK (durum IN ('bekliyor', 'onayli', 'reddedildi')),
+  kaynak        TEXT        NOT NULL DEFAULT 'kullanici'
+                            CHECK (kaynak IN ('kullanici', 'kamu-mali')),
+  lisans        TEXT        NOT NULL DEFAULT '',
+  atif          TEXT        NOT NULL DEFAULT '',
+  en            INT,
+  boy           INT,
+  bayt          BIGINT,
+  kullanim      INT         NOT NULL DEFAULT 0,
+  eklendi       TIMESTAMPTZ NOT NULL DEFAULT now(),
+  karar_veren   TEXT        NOT NULL DEFAULT '',
+  karar_zamani  TIMESTAMPTZ,
+  red_sebebi    TEXT        NOT NULL DEFAULT '',
+  -- Kamu malı içerik lisans + atıf olmadan giremez (CC-BY atıf ister).
+  CONSTRAINT gifler_kamu_mali_atif
+    CHECK (kaynak <> 'kamu-mali' OR (length(btrim(lisans)) > 0 AND length(btrim(atif)) > 0))
+);
+CREATE INDEX IF NOT EXISTS gifler_onayli_trend
+  ON gifler (kullanim DESC, id DESC) WHERE durum = 'onayli';
+CREATE INDEX IF NOT EXISTS gifler_arama
+  ON gifler USING gin (arama_metni gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS gifler_yukleyen
+  ON gifler (yukleyen_id, id DESC);
+CREATE INDEX IF NOT EXISTS gifler_kuyruk
+  ON gifler (id) WHERE durum = 'bekliyor';
+-- Şikayet yolu: yeni altyapı yok, mevcut `sikayetler`e 'gif' türü eklendi.
+ALTER TABLE sikayetler DROP CONSTRAINT IF EXISTS sikayetler_tur_check;
+ALTER TABLE sikayetler ADD CONSTRAINT sikayetler_tur_check
+  CHECK (tur IN ('yorum', 'mesaj', 'kullanici', 'liste', 'gif'));

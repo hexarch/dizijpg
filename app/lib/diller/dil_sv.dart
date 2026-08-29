@@ -1355,4 +1355,5 @@ const Map<String, String> cevirilerSv = {
   'Kişi': 'Person',
   'Yapım firması': 'Produktionsbolag',
   'Yapım ara...': 'Sök titlar...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Dra eller tryck för att snurra hjulet',
 };

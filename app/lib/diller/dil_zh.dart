@@ -1265,4 +1265,5 @@ const Map<String, String> cevirilerZh = {
   'Kişi': '人物',
   'Yapım firması': '制作公司',
   'Yapım ara...': '搜索作品...',
+  'Çarkı çevirmek için sürükle veya dokun': '拖动或点击转动转盘',
 };

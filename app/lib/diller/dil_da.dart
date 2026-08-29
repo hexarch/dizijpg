@@ -1346,4 +1346,5 @@ const Map<String, String> cevirilerDa = {
   'Kişi': 'Person',
   'Yapım firması': 'Produktionsselskab',
   'Yapım ara...': 'Søg titler...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Træk eller tryk for at dreje hjulet',
 };

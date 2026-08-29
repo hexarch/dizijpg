@@ -830,6 +830,27 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
   </div>
 </section>
 
+<!-- GIF ONAYI (29 Ağu 2026) — kendi GIF arşivimizin moderasyon kuyruğu.
+     Kullanıcı yüklediği GIF'i HEMEN kendi seçicisinde kullanır; herkese açık
+     arşive ancak buradan girer. Kuyruk birikirse kullanıcıların GIF'leri
+     kimseye görünmez — rozet bu yüzden var. -->
+<section id="s-gifler" class="sayfa gizli">
+  <div class="panel">
+    <h3>🎞 GIF onay kuyruğu <span class="sag" id="gif-say">—</span></h3>
+    <p style="font-size:12px;color:var(--soluk);margin:0;padding:0 18px 10px">
+      Onaysız GIF <b>hiçbir başka kullanıcıya görünmez</b> (yalnız yükleyeni
+      kendi seçicisinde görür). Reddedilen GIF arşivden <b>ve</b> yükleyenin
+      seçicisinden düşer. <b>+18, şiddet, telifli dizi/film klibi ONAYLANMAZ.</b>
+    </p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;padding:0 18px 12px">
+      <button class="btn secili" id="gf-bekliyor" onclick="gifSuzgec('bekliyor')">Bekleyen</button>
+      <button class="btn" id="gf-onayli" onclick="gifSuzgec('onayli')">Onaylı</button>
+      <button class="btn" id="gf-reddedildi" onclick="gifSuzgec('reddedildi')">Reddedilen</button>
+    </div>
+    <div id="gif-izgara" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;padding:0 18px 20px"></div>
+  </div>
+</section>
+
 <!-- YASAKLAR -->
 <section id="s-yasaklar" class="sayfa gizli">
   <div class="panel">
@@ -976,6 +997,7 @@ const MODULLER=[
     {k:'sikayetler', ad:'Şikayetler',   i:'🚩', rozet:'sik-rozet', yukle:()=>sikayetleriYukle()},
     {k:'yasaklar',   ad:'Yasaklar',     i:'⛔', rozet:'yas-rozet', yukle:()=>yasaklariYukle()},
     {k:'itirazlar',  ad:'İtirazlar',    i:'⚖️', rozet:'itr-rozet', yukle:()=>itirazlariYukle()},
+    {k:'gifler',     ad:'GIF onayı',    i:'🎞', rozet:'gif-rozet', yukle:()=>gifKuyruguYukle()},
   ]},
   {ad:'İletişim', sayfalar:[
     {k:'mailler',    ad:'Mailler',      i:'📬', rozet:'mail-rozet', yukle:()=>mailleriYukle()},
@@ -1222,6 +1244,9 @@ function kartlar(d){
     </div>`).join('');
   // şikayet + çevrimiçi rozetleri
   const rz=$('#sik-rozet'); rz.textContent=d.sikayetYeni; rz.classList.toggle('gizli',!d.sikayetYeni);
+  // GIF onay kuyruğu rozeti: kuyruk birikirse kullanıcıların yüklediği GIF'ler
+  // herkese açık arşive HİÇ girmez (yalnız kendilerinde görünür).
+  const gz=$('#gif-rozet'); if(gz){ gz.textContent=d.gifBekleyen??0; gz.classList.toggle('gizli',!d.gifBekleyen); }
   const cz=$('#cev-rozet'); cz.textContent=d.cevrimici??0; cz.classList.toggle('gizli',!d.cevrimici);
   ulkeler(d.ulkeler);
   spark(d.istekSeri);
@@ -2535,6 +2560,64 @@ async function sureKaydet(tur,id){
     const r=await api('/eksik-sure',{method:'POST',body:JSON.stringify({tur,tmdb_id:id,dakika:dk})});
     durum.textContent='✓ '+r.eklenen+' kayıt'; durum.style.color='var(--yesil)';
   }catch(e){ durum.textContent='Kaydedilemedi'; durum.style.color='var(--kirmizi)'; }
+}
+
+/* ---- GIF ONAYI (kendi arşivimiz, 29 Ağu 2026) ----
+   Dış GIF servisi kullanmıyoruz (Tenor kapandı, Giphy 100/saat üstü ücretli,
+   Klipy proxy/önbelleği yasaklıyor). Arşiv kullanıcı yüklemeleriyle büyür ve
+   +18 riski TAM DA BURADA kesilir: onaylanmayan hiçbir kayıt başka kullanıcının
+   aramasına düşmez (backend/gif.js `gifSuzgec`). */
+let GIF_SUZGEC='bekliyor';
+function gifSuzgec(d){
+  GIF_SUZGEC=d;
+  ['bekliyor','onayli','reddedildi'].forEach(x=>$('#gf-'+x).classList.toggle('secili',x===d));
+  gifKuyruguYukle();
+}
+async function gifKuyruguYukle(){
+  const kutu=$('#gif-izgara');
+  try{
+    const d=await api('/gif-kuyruk?durum='+encodeURIComponent(GIF_SUZGEC));
+    $('#gif-say').textContent=`${d.bekleyen} bekliyor · ${d.onayli} onaylı · ${d.reddedilen} reddedildi`;
+    const rz=$('#gif-rozet'); if(rz){ rz.textContent=d.bekleyen; rz.classList.toggle('gizli',!d.bekleyen); }
+    kutu.innerHTML = d.gifler.length
+      ? d.gifler.map(gifKart).join('')
+      : '<div class="bos" style="grid-column:1/-1">🎉 Bu kuyrukta GIF yok</div>';
+  }catch(e){ kutu.innerHTML='<div class="bos" style="grid-column:1/-1">Yüklenemedi</div>'; }
+}
+function gifKart(g){
+  // GIF ÖNİZLEMESİ OYNAR: <img> ile çizilir. Tek kare gösterip onaylamak
+  // tehlikeli olurdu — zararlı içerik ilk karede görünmeyebilir.
+  const sik = g.sikayet ? `<span class="etiket e-yeni">🚩 ${g.sikayet}</span>` : '';
+  const lisans = g.kaynak==='kamu-mali'
+    ? `<div class="kck">${esc(g.lisans||'—')} · ${esc(g.atif||'atıf YOK')}</div>` : '';
+  return `<div class="panel" style="padding:10px">
+    <a href="${MEDYA_TABAN}${esc(g.yol)}" target="_blank" rel="noreferrer">
+      <img src="${MEDYA_TABAN}${esc(g.yol)}" alt="${esc((g.etiketler||[]).join(', '))}"
+           loading="lazy" style="width:100%;height:150px;object-fit:contain;background:var(--panel2);border-radius:10px">
+    </a>
+    <div style="font-size:12px;margin-top:8px;word-break:break-word">${esc((g.etiketler||[]).join(', '))||'<i>etiketsiz</i>'} ${sik}</div>
+    <div class="kck">#${g.id} · ${g.kullanici_adi?kBag(g.kullanici_adi):'(silinmiş)'} · ${bytFmt(g.bayt)} · ${g.en||'?'}×${g.boy||'?'} · ${g.kullanim} kullanım</div>
+    ${lisans}
+    ${g.red_sebebi?`<div class="kck" style="color:var(--kirmizi)">red: ${esc(g.red_sebebi)}</div>`:''}
+    <div class="btnler" style="margin-top:8px">
+      ${g.durum!=='onayli'?`<button class="btn iyi" onclick="gifKarar(${g.id},'onayli')">Onayla</button>`:''}
+      ${g.durum!=='reddedildi'?`<button class="btn tehlike" onclick="gifKarar(${g.id},'reddedildi')">Reddet</button>`:''}
+      ${g.durum==='reddedildi'?`<button class="btn tehlike" onclick="gifKalicSil(${g.id})">Diskten sil</button>`:''}
+    </div>
+  </div>`;
+}
+async function gifKarar(id,durum){
+  let sebep='';
+  if(durum==='reddedildi'){
+    sebep=prompt('Red sebebi (yükleyene gösterilmez, kayıt içindir):','+18 / uygunsuz')||'';
+  }
+  await api('/gif-karar',{method:'POST',body:JSON.stringify({id,durum,sebep})});
+  gifKuyruguYukle();
+}
+async function gifKalicSil(id){
+  if(!confirm('GIF diskten KALICI silinsin mi? Geri alınamaz.'))return;
+  await api('/gif-sil',{method:'POST',body:JSON.stringify({id})});
+  gifKuyruguYukle();
 }
 
 /* ---- Şikayetler ---- */

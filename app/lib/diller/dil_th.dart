@@ -1323,4 +1323,5 @@ const Map<String, String> cevirilerTh = {
   'Kişi': 'บุคคล',
   'Yapım firması': 'บริษัทผู้สร้าง',
   'Yapım ara...': 'ค้นหาผลงาน...',
+  'Çarkı çevirmek için sürükle veya dokun': 'ลากหรือแตะเพื่อหมุนวงล้อ',
 };

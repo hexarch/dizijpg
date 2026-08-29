@@ -1338,4 +1338,5 @@ const Map<String, String> cevirilerHi = {
   'Kişi': 'व्यक्ति',
   'Yapım firması': 'प्रोडक्शन कंपनी',
   'Yapım ara...': 'टाइटल खोजें...',
+  'Çarkı çevirmek için sürükle veya dokun': 'व्हील घुमाने के लिए खींचें या टैप करें',
 };

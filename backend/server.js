@@ -62,6 +62,14 @@ import {
   imzaDogrula as medyaImzaDogrula, imzaAyristir as medyaImzaAyristir,
   yoluNormalle as medyaYoluNormalle,
 } from './medya_imza.js';
+// KENDİ GIF ARŞİVİMİZ — saf modül. `gifSuzgec` +18 şartının TEK kapısıdır:
+// onaysız GIF başka kullanıcıya görünmez. Üç okuma ucu da onu çağırır,
+// `test/gif_gorunurluk.test.js` de onu çağırır (kaynak greplemez).
+import {
+  GIF_KAYNAKLARI, ETIKET_AZAMI, SAYFA_BOYU as GIF_SAYFA_BOYU,
+  gifSuzgec, kendiGifSuzgeci, gifYoluGecerli, etiketleriTemizle,
+  aramaMetniUret, sorguNormalle as gifSorguNormalle, sayfaOfseti as gifSayfaOfseti,
+} from './gif.js';
 // D2: dosya baytlarını nginx'e devretme katmanı (X-Accel-Redirect).
 // İmza/özel-medya kapısına DOKUNMAZ; kapıdan geçen isteğin yalnız dosya
 // gönderimini devralır. MEDYA_XACCEL=1 değilse tamamen saydamdır.
@@ -12454,6 +12462,140 @@ app.post('/medya',
   }));
 
 
+// ---------- KENDİ GIF ARŞİVİMİZ ----------
+//
+// NEDEN DIŞ SERVİS YOK (29 Ağu 2026, üçü de doğrulandı): Tenor 30 Haz 2026'da
+// mevcut entegrasyonları da durdurdu; Giphy beta 100 istek/saat, üstü ücretli;
+// Klipy'nin üretim şartları PROXY ve ÖNBELLEĞİ yasaklıyor. Kullanıcı kararı:
+// "tamamen ücretsiz ve saat sınırı olmayan bir şey yoksa hiç kurmayalım."
+//
+// MEDYA BORU HATTI YENİDEN KURULMADI. İstemci GIF'i ZATEN VAR OLAN `POST /medya`
+// ucuna yükler (sihirli bayt 'GIF8', disk kapısı, IP bayt bütçesi, kullanıcı
+// kotası, hız limiti hepsi orada). Buradaki uç yalnız o dosyaya ETİKET + DURUM
+// iliştirir. Bu yüzden `/gif` bir yükleme ucu DEĞİL, bir KAYIT ucudur ve
+// `express.raw` kullanmaz — gövdesi JSON'dur.
+//
+// +18 ŞARTI: onaysız GIF hiçbir BAŞKA kullanıcıya görünmez. Kural `gif.js`
+// içinde TEK fonksiyonda (`gifSuzgec`); buradaki üç okuma ucu da onu çağırır.
+// SQL metnine kopyalanmaz — kopya, birinde unutulunca sessizce +18 yayınlardı.
+const gifKayitLimiti = hizLimiti(30, (req) => `gk:${req.kullanici.id}`);
+const gifOkumaLimiti = hizLimiti(600, (req) => `go:${req.kullanici?.id || req.ip}`);
+
+/** İstemciye dönen satır — yalnız gereken alanlar (yükleyen e-postası vb. ASLA). */
+function gifSatiri(r) {
+  return {
+    id: Number(r.id),
+    yol: r.yol,
+    etiketler: r.etiketler || [],
+    durum: r.durum,
+    kaynak: r.kaynak,
+    lisans: r.lisans || '',
+    atif: r.atif || '',
+    en: r.en ?? null,
+    boy: r.boy ?? null,
+    benim: r.benim === true,
+  };
+}
+
+// KAYIT: yüklenmiş bir GIF'i arşive sokar. Kullanıcı onu HEMEN kendi
+// seçicisinde kullanır ('bekliyor'); herkese açık arşive yönetici onayıyla girer.
+app.post('/gif', girisZorunlu, gifKayitLimiti, sarici(async (req, res) => {
+  const { yol: yolHam, etiketler: etiketHam } = req.body || {};
+  // İmzalı yolu kanonikleştir — `POST /mesajlar` ile aynı gerekçe.
+  const yol = medyaYoluNormalle(yolHam);
+  // SAHİPLİK: yalnız BU kullanıcının yüklediği, BİZİM ürettiğimiz .gif adı.
+  // Dosyanın diskte gerçekten durduğu da doğrulanır; yoksa kullanıcı hayali
+  // bir yol kaydedip arşivi kırık kayıtlarla doldurabilirdi.
+  if (!gifYoluGecerli(yol, req.kullanici.id)
+      || !fs.existsSync(path.join(MEDYA_DIZIN, path.basename(yol)))) {
+    return res.status(400).json({ hata: 'Geçersiz GIF' });
+  }
+  const etiketler = etiketleriTemizle(etiketHam);
+  if (!etiketler.length) {
+    return res.status(400).json({ hata: 'En az bir etiket gerekli' });
+  }
+  // Boyut/ölçü bilgisi: `medya_olculer` yükleme sırasında ATEŞLE-UNUT
+  // dolduruluyor, yani henüz yazılmamış olabilir — yoksa NULL kalır ve
+  // istemci kendisi ölçer (akış kartıyla aynı davranış).
+  const olcu = await havuz.query(
+    'SELECT en, boy FROM medya_olculer WHERE medya=$1', [yol]);
+  let bayt = null;
+  try { bayt = fs.statSync(path.join(MEDYA_DIZIN, path.basename(yol))).size; }
+  catch { /* dosya az önce vardı; boyut kritik değil */ }
+  // ON CONFLICT: aynı dosya iki kez kaydedilirse etiketleri TAZELE, yeni satır
+  // açma (`yol` UNIQUE). Kullanıcı yanlış etiket yazıp düzeltebilsin diye.
+  // Ama DURUMA DOKUNMA: onaylanmış bir GIF'in etiketi değişince yeniden
+  // kuyruğa düşmemeli; reddedilmiş olan da kendini onaya geri sokamamalı.
+  const { rows } = await havuz.query(
+    `INSERT INTO gifler (yol, yukleyen_id, etiketler, arama_metni, en, boy, bayt)
+     VALUES ($1,$2,$3,$4,$5,$6,$7)
+     ON CONFLICT (yol) DO UPDATE
+       SET etiketler = EXCLUDED.etiketler, arama_metni = EXCLUDED.arama_metni
+     RETURNING *`,
+    [yol, req.kullanici.id, etiketler, aramaMetniUret(etiketler),
+      olcu.rows[0]?.en ?? null, olcu.rows[0]?.boy ?? null, bayt],
+  );
+  res.json({ gif: { ...gifSatiri(rows[0]), benim: true } });
+}));
+
+/** Üç okuma ucunun ORTAK gövdesi — süzgeç dışında hepsi aynı. */
+async function gifListele(req, res, { kendi = false } = {}) {
+  const isteyen = req.kullanici?.id ?? null;
+  const { kosul, parametreler } = kendi
+    ? kendiGifSuzgeci(isteyen, 1)
+    : gifSuzgec(isteyen, 1);
+  const p = [...parametreler];
+  const sorgu = gifSorguNormalle(req.query.q);
+  let aramaKosulu = '';
+  if (sorgu) {
+    p.push(`%${sorgu}%`);
+    // similarity() DEĞİL LIKE: etiketler kısa ve kullanıcı tam kelime yazıyor.
+    // Trigram indeksi (`gifler_arama`) LIKE '%...%' sorgusunu da hızlandırır.
+    aramaKosulu = ` AND g.arama_metni LIKE $${p.length}`;
+  }
+  p.push(GIF_SAYFA_BOYU + 1);              // +1: "devam var mı" sondası
+  const limitYeri = p.length;
+  p.push(gifSayfaOfseti(req.query.sayfa));
+  const ofsetYeri = p.length;
+  // SIRALAMA: aramada en çok kullanılan önce (trend sinyali), ama kullanıcının
+  // KENDİ bekleyeni her zaman en üstte — az önce yüklediğini görmesi gerek.
+  const { rows } = await havuz.query(
+    `SELECT g.*, ${isteyen ? `(g.yukleyen_id = $1)` : 'false'} AS benim
+       FROM gifler g
+      WHERE ${kosul}${aramaKosulu}
+      ORDER BY (g.durum = 'bekliyor') DESC, g.kullanim DESC, g.id DESC
+      LIMIT $${limitYeri} OFFSET $${ofsetYeri}`,
+    p,
+  );
+  const devamVar = rows.length > GIF_SAYFA_BOYU;
+  res.json({
+    gifler: rows.slice(0, GIF_SAYFA_BOYU).map(gifSatiri),
+    devam_var: devamVar,
+  });
+}
+
+// ARAMA + TREND aynı uç: `q` boşsa trend/varsayılan liste döner.
+// `girisIsteğeBagli`: misafir de GIF görebilmeli (yalnız onaylıları).
+app.get('/gif', girisIsteğeBagli, gifOkumaLimiti,
+  sarici((req, res) => gifListele(req, res)));
+
+// "Yüklediklerim" — kendi onaylı + bekleyenleri; reddedilen DÜŞER.
+app.get('/gif/benim', girisZorunlu, gifOkumaLimiti,
+  sarici((req, res) => gifListele(req, res, { kendi: true })));
+
+// Kullanım sayacı: trend listesinin tek sinyali. ATEŞLE-UNUT gibi davranır
+// (hata gönderiyi bozmaz) ama yine de kimlik ister — anonim istekle sayaç
+// şişirilip arşivin ilk sayfası ele geçirilemesin.
+app.post('/gif/:id/kullanildi', girisZorunlu, gifOkumaLimiti, sarici(async (req, res) => {
+  const id = Number.parseInt(req.params.id, 10);
+  if (!Number.isInteger(id) || id < 1) return res.status(400).json({ hata: 'Geçersiz id' });
+  // YALNIZ onaylı sayaç alır: bekleyen bir GIF'in sayacını şişirip onay
+  // sonrası listenin başına oturtmak mümkün olmasın.
+  await havuz.query(
+    "UPDATE gifler SET kullanim = kullanim + 1 WHERE id=$1 AND durum='onayli'", [id]);
+  res.json({ tamam: true });
+}));
+
 // ---------- video altyazıları ----------
 // Oynayan videonun o anki cümlesi ekranda gösterilir (sol alt). Metin
 // ÇEVİRİDİR: kaynak Türkçe ise İngilizce, değilse Türkçe — gönderi metni
@@ -16815,7 +16957,11 @@ app.delete('/hesabim', girisZorunlu, sarici(async (req, res) => {
 
 // ---------- şikayet + engelleme (Play Store UGC gereksinimi) ----------
 const sikayetLimiti = hizLimiti(20, (req) => `sk:${req.kullanici.id}`);
-const SIKAYET_TUR = ['yorum', 'mesaj', 'kullanici', 'liste'];
+// 'gif' 29 Ağu 2026'da eklendi: GIF arşivinin şikayet yolu YENİ altyapı
+// uydurmadan mevcut kuyruğa bağlanıyor (hedef_id = gifler.id). Bu diziyi
+// genişletirken `sikayetler` CHECK kısıtı (sema.sql + migrasyon) ve
+// `sikayetHedefSahibi` dalı da genişletilmeli — üçü birlikte.
+const SIKAYET_TUR = ['yorum', 'mesaj', 'kullanici', 'liste', 'gif'];
 
 app.post('/sikayet', girisZorunlu, sikayetLimiti, sarici(async (req, res) => {
   const { tur, hedef_id, sebep } = req.body || {};
@@ -17486,13 +17632,17 @@ app.get('/admin', adminKisit, (_req, res) => res.type('html').send(ADMIN_HTML));
 
 // Genel özet: kullanıcı/hata/şikayet sayıları + sistem + istek/dk + ülkeler.
 app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
-  const [ku, h24, hT, sy, sT, cv] = await Promise.all([
+  const [ku, h24, hT, sy, sT, cv, gf] = await Promise.all([
     havuz.query('SELECT count(*)::int n, count(*) FILTER (WHERE misafir)::int misafir FROM kullanicilar'),
     havuz.query("SELECT count(*)::int n FROM hatalar WHERE tarih > now() - interval '24 hours'"),
     havuz.query('SELECT count(*)::int n FROM hatalar'),
     havuz.query("SELECT count(*)::int n FROM sikayetler WHERE durum='yeni'"),
     havuz.query('SELECT count(*)::int n FROM sikayetler'),
     havuz.query("SELECT count(*)::int n FROM kullanicilar WHERE son_gorulme > now() - interval '3 minutes'"),
+    // GIF onay kuyruğu — panel rozetini besler. Kuyruk birikirse kullanıcıların
+    // yüklediği GIF'ler herkese açık arşive HİÇ girmez (yalnız kendilerinde
+    // görünür), yani rozet bir "unutma" alarmıdır.
+    havuz.query("SELECT count(*)::int n FROM gifler WHERE durum='bekliyor'"),
   ]);
   const IST = await istekVerisi(); // kümede birleşik, kümesizken yerel halka
   const simdiDk = Math.floor(Date.now() / 60000);
@@ -17515,6 +17665,7 @@ app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
     hataToplam: hT.rows[0].n,
     sikayetYeni: sy.rows[0].n,
     sikayetToplam: sT.rows[0].n,
+    gifBekleyen: gf.rows[0].n,
     istekToplam: IST.toplam,
     istekSeri: seri,
     ulkeler,
@@ -17747,7 +17898,8 @@ app.get('/admin/sikayetler', adminKisit, sarici(async (req, res) => {
   const kulIds = rows.filter((r) => r.tur === 'kullanici').map((r) => r.hedef_id);
   const mesajIds = rows.filter((r) => r.tur === 'mesaj').map((r) => r.hedef_id);
   const listeIds = rows.filter((r) => r.tur === 'liste').map((r) => r.hedef_id);
-  const [yorumlar, kullar, mesajlar, listeler] = await Promise.all([
+  const gifIds = rows.filter((r) => r.tur === 'gif').map((r) => r.hedef_id);
+  const [yorumlar, kullar, mesajlar, listeler, gifler] = await Promise.all([
     yorumIds.length
       ? havuz.query('SELECT id, metin, kullanici_id FROM yorumlar WHERE id = ANY($1)', [yorumIds]).then((r) => r.rows)
       : [],
@@ -17765,11 +17917,17 @@ app.get('/admin/sikayetler', adminKisit, sarici(async (req, res) => {
     listeIds.length
       ? havuz.query('SELECT id, ad, kullanici_id FROM listeler WHERE id = ANY($1)', [listeIds]).then((r) => r.rows)
       : [],
+    // GIF arşivi şikayeti: yönetici hangi GIF'e bakacağını GÖRMELİ, yoksa
+    // kuyrukta yine "#123" durur (mesaj şikayetinde 7 Ağu'da yaşanan hata).
+    gifIds.length
+      ? havuz.query('SELECT id, yol, etiketler, durum, yukleyen_id FROM gifler WHERE id = ANY($1)', [gifIds]).then((r) => r.rows)
+      : [],
   ]);
   const yMap = new Map(yorumlar.map((y) => [y.id, y]));
   const kMap = new Map(kullar.map((k) => [k.id, k]));
   const mMap = new Map(mesajlar.map((m) => [m.id, m]));
   const lMap = new Map(listeler.map((l) => [l.id, l]));
+  const gMap = new Map(gifler.map((g) => [Number(g.id), g]));
   // Şikayet edilen kullanıcı yasaklı mı: hem 'kullanici' hem yorum/mesaj/liste
   // sahipleri için lazım (panelde doğru butonu — banla / yasağı kaldır — basmak
   // için). Tek sorguda toplanır.
@@ -17813,6 +17971,13 @@ app.get('/admin/sikayetler', adminKisit, sarici(async (req, res) => {
       const l = lMap.get(r.hedef_id);
       r.hedef_ozet = l ? l.ad : '(silinmiş liste)';
       r.hedef_kullanici_id = l?.kullanici_id ?? null;
+    } else if (r.tur === 'gif') {
+      const g = gMap.get(r.hedef_id);
+      r.hedef_ozet = g
+        ? `${(g.etiketler || []).join(', ')} · ${g.durum}`
+        : '(silinmiş GIF)';
+      r.hedef_gif = g ? g.yol : null;
+      r.hedef_kullanici_id = g?.yukleyen_id ?? null;
     }
     const sahip = r.hedef_kullanici_id != null ? sMap.get(r.hedef_kullanici_id) : null;
     if (sahip) {
@@ -18148,6 +18313,66 @@ app.post('/admin/guven', adminKisit, sarici(async (req, res) => {
 }));
 
 // Moderasyon aksiyonları.
+// ---------- GIF ARŞİVİ MODERASYONU (panel → Moderasyon → GIF onayı) ----------
+//
+// Kullanıcı yüklediği GIF'i hemen KENDİ seçicisinde kullanır ama herkese açık
+// arşive ancak buradan girer. Kullanıcının sert şartı "+18 KESİNLİKLE
+// olmayacak" bu kuyruğa dayanıyor: onaylanmayan hiçbir kayıt başka kullanıcının
+// aramasına düşmez (`gif.js/gifSuzgec`).
+app.get('/admin/gif-kuyruk', adminKisit, sarici(async (req, res) => {
+  const durum = ['bekliyor', 'onayli', 'reddedildi'].includes(req.query.durum)
+    ? req.query.durum : 'bekliyor';
+  const { rows } = await havuz.query(
+    `SELECT g.id, g.yol, g.etiketler, g.durum, g.kaynak, g.lisans, g.atif,
+            g.en, g.boy, g.bayt, g.kullanim, g.eklendi, g.red_sebebi,
+            k.kullanici_adi, k.id AS kullanici_id,
+            (SELECT count(*)::int FROM sikayetler s
+              WHERE s.tur='gif' AND s.hedef_id = g.id) AS sikayet
+       FROM gifler g LEFT JOIN kullanicilar k ON k.id = g.yukleyen_id
+      WHERE g.durum=$1
+      ORDER BY g.id ${durum === 'bekliyor' ? 'ASC' : 'DESC'} LIMIT 300`,
+    [durum],
+  );
+  const { rows: sayim } = await havuz.query(
+    `SELECT count(*) FILTER (WHERE durum='bekliyor')::int bekleyen,
+            count(*) FILTER (WHERE durum='onayli')::int onayli,
+            count(*) FILTER (WHERE durum='reddedildi')::int reddedilen,
+            count(*)::int toplam FROM gifler`);
+  res.json({ gifler: rows, ...sayim[0] });
+}));
+
+app.post('/admin/gif-karar', adminKisit, sarici(async (req, res) => {
+  const { id, durum, sebep } = req.body || {};
+  if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  if (!['bekliyor', 'onayli', 'reddedildi'].includes(durum)) {
+    return res.status(400).json({ hata: 'Geçersiz durum' });
+  }
+  const { rows } = await havuz.query(
+    `UPDATE gifler
+        SET durum=$1, karar_veren=$2, karar_zamani=now(),
+            red_sebebi = CASE WHEN $1='reddedildi' THEN $3 ELSE '' END
+      WHERE id=$4 RETURNING id, yol, durum`,
+    [durum, yoneticiEtiketi(req), String(sebep || '').slice(0, 300), id],
+  );
+  if (!rows.length) return res.status(404).json({ hata: 'GIF bulunamadı' });
+  res.json({ durum: 'ok', gif: rows[0] });
+}));
+
+// Reddedilen GIF'i diskten de sil. Kayıt 'reddedildi' kaldığı sürece dosya
+// duruyor demektir; yönetici içeriğin kalıcı gitmesini istediğinde bunu çağırır.
+// SATIR DA SİLİNİR: `gifler_yol_key` UNIQUE olduğu için satır kalsaydı aynı
+// kullanıcı aynı dosyayı bir daha yükleyip kaydedemezdi.
+app.post('/admin/gif-sil', adminKisit, sarici(async (req, res) => {
+  const id = req.body?.id;
+  if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const { rows } = await havuz.query('DELETE FROM gifler WHERE id=$1 RETURNING yol', [id]);
+  if (!rows.length) return res.status(404).json({ hata: 'GIF bulunamadı' });
+  // Dosya silme ATEŞLE-UNUT: DB satırı zaten gitti, disk hatası isteği bozmasın
+  // (öksüz tarayıcı zaten toplar).
+  fs.unlink(path.join(MEDYA_DIZIN, path.basename(rows[0].yol)), () => {});
+  res.json({ durum: 'silindi', yol: rows[0].yol });
+}));
+
 app.post('/admin/sikayet-durum', adminKisit, sarici(async (req, res) => {
   const { id, durum } = req.body || {};
   if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
@@ -18188,6 +18413,10 @@ async function sikayetHedefSahibi(tur, hedefId) {
     const { rows } = await havuz.query('SELECT kullanici_id FROM listeler WHERE id=$1', [hedefId]);
     return rows[0]?.kullanici_id ?? null;
   }
+  if (tur === 'gif') {
+    const { rows } = await havuz.query('SELECT yukleyen_id FROM gifler WHERE id=$1', [hedefId]);
+    return rows[0]?.yukleyen_id ?? null;
+  }
   return null;
 }
 
@@ -18208,15 +18437,21 @@ const YEDEK_DIZIN = process.env.YEDEK_DIZIN || '/yedekler';
 const YEDEK_GUNLUK = process.env.YEDEK_GUNLUK || '/yedekler/yedek.log';
 
 // Diskteki medyanın DB'de referansı var mı? Referans veren TÜM sütunlar:
-// yorumlar.medya[] (gönderi ekleri) + mesajlar.medya (DM) — avatar/kapak ise
-// ayrı dizinde durur, ayrı toplanır.
+// yorumlar.medya[] (gönderi ekleri) + mesajlar.medya (DM) + gifler.yol (GIF
+// arşivi) — avatar/kapak ise ayrı dizinde durur, ayrı toplanır.
+//
+// TUZAK (29 Ağu 2026, GIF arşivi eklenirken): `gifler` dalı olmasaydı öksüz
+// taraması arşivdeki HER GIF'i referanssız sayar ve `/admin/oksuz-sil` hepsini
+// silerdi — arşiv sessizce kırık yollara dönerdi. Arşive yeni bir yol sütunu
+// ekleyen herkes buraya da dal eklemek ZORUNDA.
 async function medyaReferanslari() {
-  const [y, m] = await Promise.all([
+  const [y, m, g] = await Promise.all([
     havuz.query('SELECT unnest(medya) AS yol FROM yorumlar WHERE cardinality(medya) > 0'),
     havuz.query('SELECT medya AS yol FROM mesajlar WHERE medya IS NOT NULL'),
+    havuz.query('SELECT yol FROM gifler'),
   ]);
   const kume = new Set();
-  for (const r of [...y.rows, ...m.rows]) {
+  for (const r of [...y.rows, ...m.rows, ...g.rows]) {
     if (!r.yol) continue;
     const ad = path.basename(String(r.yol));
     kume.add(ad);

@@ -1362,4 +1362,5 @@ const Map<String, String> cevirilerTa = {
   'Kişi': 'நபர்',
   'Yapım firması': 'தயாரிப்பு நிறுவனம்',
   'Yapım ara...': 'தலைப்புகளைத் தேடு...',
+  'Çarkı çevirmek için sürükle veya dokun': 'சக்கரத்தைச் சுழற்ற இழுக்கவும் அல்லது தட்டவும்',
 };

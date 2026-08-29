@@ -132,10 +132,19 @@ const DUN = '2026-08-12';
 // ===========================================================================
 // 1) ŞEMA (sema.sql)
 // ===========================================================================
+// 29 Ağu 2026: bu iki test önce sema.sql'deki SON `CHECK (tur IN (...))`
+// ifadesini alıyordu — "en son eklenen tur CHECK'i bildirimler'inkidir"
+// varsayımıyla. GIF arşivi `sikayetler.tur` CHECK'ini dosyanın sonuna eklediği
+// an varsayım çöktü ve testler yanlış kısıtı ölçmeye başladı. Artık kısıt ADIYLA
+// aranıyor; başka bir tablo sona eklenince bir daha kaymaz.
+const BILDIRIM_TUR_CHECK = () => {
+  const hepsi = SEMA.match(
+    /bildirimler_tur_check\s+CHECK \(tur IN \([^)]*\)\)/g) || [];
+  return hepsi[hepsi.length - 1];
+};
+
 test('sema: bildirimler.tur CHECK ı "bolum" türünü kabul eder', () => {
-  const m = /CHECK \(tur IN \([^)]*\)\)/g;
-  const hepsi = SEMA.match(m) || [];
-  const son = hepsi[hepsi.length - 1];
+  const son = BILDIRIM_TUR_CHECK();
   assert.ok(son, 'bildirimler tur CHECK ı bulunamadı');
   assert.match(son, /'bolum'/, "sema.sql 'bolum' türünü kabul etmiyor");
 });
@@ -143,7 +152,7 @@ test('sema: bildirimler.tur CHECK ı "bolum" türünü kabul eder', () => {
 test('sema: 8 Ağu\'nun kacirilan_arama türü CHECK ten DÜŞMEDİ', () => {
   // Yeni liste eski listenin ÜST KÜMESİ olmalı; düşerse canlıdaki kaçırılan
   // arama bildirimi bir daha yazılamaz.
-  const son = (SEMA.match(/CHECK \(tur IN \([^)]*\)\)/g) || []).pop();
+  const son = BILDIRIM_TUR_CHECK();
   for (const t of ['yanit', 'begeni', 'takip', 'mesaj', 'etiket', 'kacirilan_arama']) {
     assert.match(son, new RegExp(`'${t}'`), `${t} türü kayboldu`);
   }

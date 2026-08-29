@@ -143,13 +143,21 @@ const diziKredisi = (o = {}) => kredi({
 // 1) ŞEMA (sema.sql)
 // ===========================================================================
 test('sema: bildirimler.tur CHECK ı "kisi" türünü kabul eder', () => {
-  const son = (SEMA.match(/CHECK \(tur IN \([^)]*\)\)/g) || []).pop();
+  // 29 Ağu 2026: 'sondaki tur CHECK ı bildirimler inkidir' varsayımı GIF arşivi
+  // sikayetler.tur CHECK ını sema.sql sonuna ekleyince çöktü. Kısıt artık ADIYLA
+  // aranıyor — başka tablo sona eklenince bir daha kaymaz.
+  const son = (SEMA.match(
+    /bildirimler_tur_check\s+CHECK \(tur IN \([^)]*\)\)/g) || []).pop();
   assert.ok(son, 'bildirimler tur CHECK ı bulunamadı');
   assert.match(son, /'kisi'/, "sema.sql 'kisi' türünü kabul etmiyor");
 });
 
 test('sema: ÖNCEKİ YEDİ tür CHECK ten DÜŞMEDİ (md.27 ve 8 Ağu dahil)', () => {
-  const son = (SEMA.match(/CHECK \(tur IN \([^)]*\)\)/g) || []).pop();
+  // 29 Ağu 2026: 'sondaki tur CHECK ı bildirimler inkidir' varsayımı GIF arşivi
+  // sikayetler.tur CHECK ını sema.sql sonuna ekleyince çöktü. Kısıt artık ADIYLA
+  // aranıyor — başka tablo sona eklenince bir daha kaymaz.
+  const son = (SEMA.match(
+    /bildirimler_tur_check\s+CHECK \(tur IN \([^)]*\)\)/g) || []).pop();
   for (const t of ['yanit', 'begeni', 'takip', 'mesaj', 'etiket',
     'kacirilan_arama', 'bolum']) {
     assert.match(son, new RegExp(`'${t}'`), `${t} türü kayboldu`);

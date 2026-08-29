@@ -1351,4 +1351,5 @@ const Map<String, String> cevirilerNl = {
   'Kişi': 'Persoon',
   'Yapım firması': 'Productiebedrijf',
   'Yapım ara...': 'Titels zoeken...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Sleep of tik om het rad te draaien',
 };

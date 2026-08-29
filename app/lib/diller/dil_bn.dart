@@ -1334,4 +1334,5 @@ const Map<String, String> cevirilerBn = {
   'Kişi': 'ব্যক্তি',
   'Yapım firması': 'প্রোডাকশন কোম্পানি',
   'Yapım ara...': 'শিরোনাম খুঁজুন...',
+  'Çarkı çevirmek için sürükle veya dokun': 'চাকা ঘোরাতে টানুন বা ট্যাপ করুন',
 };

@@ -1352,4 +1352,5 @@ const Map<String, String> cevirilerFi = {
   'Kişi': 'Henkilö',
   'Yapım firması': 'Tuotantoyhtiö',
   'Yapım ara...': 'Hae nimikkeitä...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Vedä tai napauta pyörittääksesi pyörää',
 };

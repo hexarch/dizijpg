@@ -7,6 +7,7 @@ import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import 'bolum_sec.dart';
 import 'giris_istem.dart';
+import 'gif_sec.dart';
 import 'icerik_sec.dart';
 import 'medya_inceleme.dart';
 import '../medya_yukle.dart';
@@ -100,6 +101,17 @@ class _PaylasYorumSheetState extends State<PaylasYorumSheet> {
     if (secim == null || !mounted) return;
     // `{}` = "bölüm seçme" (temizle) anlamına gelir.
     setState(() => _bolum = secim.isEmpty ? null : secim);
+  }
+
+  /// Arşivden GIF seç — yeniden yükleme yok, yol doğrudan eklere girer.
+  Future<void> _gifSec() async {
+    if (!girisGerekli(context)) return;
+    if (_ekler.length >= 10 || _ekYukleniyor) return;
+    final gif = await gifSecAc(context);
+    if (gif == null || !mounted) return;
+    final yol = gif['yol'] as String?;
+    if (yol == null) return;
+    setState(() => _ekler.add({'yol': yol, 'video': false}));
   }
 
   Future<void> _ekSec() async {
@@ -326,6 +338,14 @@ class _PaylasYorumSheetState extends State<PaylasYorumSheet> {
                     onPressed: _ekYukleniyor ? null : _ekSec,
                     icon: Icon(
                       Icons.add_photo_alternate_outlined,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'GIF ekle'.c,
+                    onPressed: _ekYukleniyor ? null : _gifSec,
+                    icon: Icon(
+                      Icons.gif_box_outlined,
                       color: DiziRenkler.sariMetin,
                     ),
                   ),

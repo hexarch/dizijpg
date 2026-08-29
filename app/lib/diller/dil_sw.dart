@@ -1349,4 +1349,5 @@ const Map<String, String> cevirilerSw = {
   'Kişi': 'Mtu',
   'Yapım firması': 'Kampuni ya utayarishaji',
   'Yapım ara...': 'Tafuta vichwa...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Buruta au gusa ili kuzungusha gurudumu',
 };

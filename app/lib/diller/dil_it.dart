@@ -1356,4 +1356,5 @@ const Map<String, String> cevirilerIt = {
   'Kişi': 'Persona',
   'Yapım firması': 'Casa di produzione',
   'Yapım ara...': 'Cerca titoli...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Trascina o tocca per girare la ruota',
 };

@@ -1341,4 +1341,5 @@ const Map<String, String> cevirilerPa = {
   'Kişi': 'ਵਿਅਕਤੀ',
   'Yapım firması': 'ਪ੍ਰੋਡਕਸ਼ਨ ਕੰਪਨੀ',
   'Yapım ara...': 'ਸਿਰਲੇਖ ਖੋਜੋ...',
+  'Çarkı çevirmek için sürükle veya dokun': 'ਪਹੀਆ ਘੁੰਮਾਉਣ ਲਈ ਖਿੱਚੋ ਜਾਂ ਟੈਪ ਕਰੋ',
 };

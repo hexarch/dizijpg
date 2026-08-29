@@ -1337,4 +1337,5 @@ const Map<String, String> cevirilerAz = {
   'Kişi': 'Şəxs',
   'Yapım firması': 'İstehsal şirkəti',
   'Yapım ara...': 'Başlıq axtar...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Çarxı fırlatmaq üçün sürüşdür və ya toxun',
 };

@@ -1348,4 +1348,5 @@ const Map<String, String> cevirilerBg = {
   'Kişi': 'Човек',
   'Yapım firması': 'Продуцентска компания',
   'Yapım ara...': 'Търси заглавия...',
+  'Çarkı çevirmek için sürükle veya dokun': 'Плъзни или докосни, за да завъртиш колелото',
 };
