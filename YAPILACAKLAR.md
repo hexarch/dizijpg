@@ -7297,3 +7297,7 @@ ikisi de aapt2 ile 1.93.0/143 + apksigner yayın imzası doğrulandı; eski
 - [x] Mesaj istekleri: Kabul et / Reddet sohbet ekranının İÇİNDE altta; kabul edilmeden yanıt yazılamasın.
 - [x] Ana sayfa rafları (ör. Marvel Studios filmleri): 5 öğeyle kalmasın — yatay kaydırdıkça sonraki sayfa yüklensin.
 - [x] Çark kullanıcı listelerinde de (tam sayfa + modal); animasyon yavaşlatıldı (3-4 tur / 5,2 sn, yumuşak kalkış + geri oturma).
+
+## 30 Ağu 2026 — Topluluk tanıtım yazıları (dış bağlantı = 0 işine ilk adım)
+- [x] `TOPLULUK-YAZILARI.md`: 9 hazır gönderi (Technopat ×2, DonanımHaber ×2, Ekşi, btt.community, Show HN, r/androidapps, r/SideProject) + platform kuralları + ölçülmüş nofollow tablosu (followed bağlantı ihtimali olan tek yer: Hacker News) + gönderme takvimi + ölçüm bölümü (GSC Bağlantılar, nginx referrer, `araclar/geo-olcum.sh trend`, marka-varlık araması). Ürün iddiaları koddan doğrulandı; ⛔ Trakt/Letterboxd içe aktarma, "mesajlar E2E", iOS, "45 dil" iddiaları yazılara girmedi.
+- [ ] **Gönderiler kullanıcının kendi hesabıyla atılacak** — `TOPLULUK-YAZILARI.md` §4 takvimi ve §5.5 kayıt tablosu doldurulacak. Kabul: GSC Bağlantılar ≥1 yönlendiren alan adı.
