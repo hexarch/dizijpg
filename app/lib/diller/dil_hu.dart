@@ -1340,7 +1340,8 @@ const Map<String, String> cevirilerHu = {
   'Ne düşünüyorsun?': 'Mit gondolsz?',
   '{}/{} yükleniyor': 'Feltöltés {}/{}',
   'Fotoğraf/video ekle': 'Fénykép vagy videó hozzáadása',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Először válassz sorozatot vagy filmet a megosztáshoz.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Először válassz sorozatot vagy filmet a megosztáshoz.',
   'Sezon seç': 'Válassz évadot',
   '{}. sezon': '{}. évad',
   'Bölüm seçme (yalnız dizi hakkında)': 'Nincs epizód (csak a sorozatról)',
@@ -1349,11 +1350,36 @@ const Map<String, String> cevirilerHu = {
   'Bu sezonda bölüm yok.': 'Ebben az évadban nincs epizód.',
   '{}. bölüm': '{}. rész',
   'Dizi veya film ara...': 'Sorozatok és filmek keresése...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Oszd meg a véleményed arról, amit néztél',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Oszd meg a véleményed arról, amit néztél',
   'Yapım seç (zorunlu)': 'Válassz címet (kötelező)',
   'Paylaşmak için önce bir yapım seç.': 'Először válassz címet a megosztáshoz.',
   'Kişi': 'Személy',
   'Yapım firması': 'Gyártó cég',
   'Yapım ara...': 'Címek keresése...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Húzd vagy koppints a kerék pörgetéséhez',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Húzd vagy koppints a kerék pörgetéséhez',
+  'Arşiv': 'Archívum',
+  'Yüklediklerim': 'Feltöltéseim',
+  'GIF ara...': 'GIF keresése...',
+  'GIF yükle': 'GIF feltöltése',
+  'GIF etiketleri': 'GIF címkék',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Vesszővel válaszd el. Ezekkel a szavakkal lehet megtalálni.',
+  'gülme, alkış, şaşkın': 'nevetés, taps, meglepetés',
+  'Yükle': 'Feltöltés',
+  'Henüz GIF yok': 'Még nincs GIF',
+  'Bu aramaya uyan GIF yok': 'Nincs a keresésnek megfelelő GIF',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Az archívum új. Töltsd fel az első GIF-et — rögtön használhatod, jóváhagyás után mindenki látja.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF feltöltve. Rögtön használhatod; a nyilvános archívumba jóváhagyás után kerül.',
+  'Onay bekliyor': 'Jóváhagyásra vár',
+  'GIF listesi yüklenemedi': 'A GIF-lista nem tölthető be',
+  'GIF yüklenemedi': 'A GIF-et nem sikerült feltölteni',
+  'Bu GIF i şikayet et': 'GIF jelentése',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'A nem megfelelő tartalmat jelentjük egy moderátornak, és eltávolíthatjuk az archívumból.',
+  'Şikayetin alındı': 'A jelentésedet megkaptuk',
+  'Şikayet gönderilemedi': 'A jelentést nem sikerült elküldeni',
 };

@@ -1353,7 +1353,8 @@ const Map<String, String> cevirilerDe = {
   'Ne düşünüyorsun?': 'Was denkst du?',
   '{}/{} yükleniyor': '{}/{} wird hochgeladen',
   'Fotoğraf/video ekle': 'Foto oder Video hinzufügen',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Wähle zuerst eine Serie oder einen Film zum Teilen.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Wähle zuerst eine Serie oder einen Film zum Teilen.',
   'Sezon seç': 'Staffel wählen',
   '{}. sezon': 'Staffel {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Keine Folge (nur über die Serie)',
@@ -1362,11 +1363,35 @@ const Map<String, String> cevirilerDe = {
   'Bu sezonda bölüm yok.': 'Keine Folgen in dieser Staffel.',
   '{}. bölüm': 'Folge {}',
   'Dizi veya film ara...': 'Serien und Filme suchen...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Teile einen Kommentar zu dem, was du gesehen hast',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Teile einen Kommentar zu dem, was du gesehen hast',
   'Yapım seç (zorunlu)': 'Titel wählen (erforderlich)',
   'Paylaşmak için önce bir yapım seç.': 'Wähle zuerst einen Titel zum Teilen.',
   'Kişi': 'Person',
   'Yapım firması': 'Produktionsfirma',
   'Yapım ara...': 'Titel suchen...',
   'Çarkı çevirmek için sürükle veya dokun': 'Zum Drehen ziehen oder tippen',
+  'Arşiv': 'Archiv',
+  'Yüklediklerim': 'Meine Uploads',
+  'GIF ara...': 'GIFs suchen...',
+  'GIF yükle': 'GIF hochladen',
+  'GIF etiketleri': 'GIF-Tags',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Mit Kommas trennen. Über diese Wörter wird es gefunden.',
+  'gülme, alkış, şaşkın': 'lachen, Applaus, überrascht',
+  'Yükle': 'Hochladen',
+  'Henüz GIF yok': 'Noch keine GIFs',
+  'Bu aramaya uyan GIF yok': 'Keine GIFs für diese Suche',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Das Archiv ist neu. Lade das erste GIF hoch — du kannst es sofort nutzen, alle sehen es nach der Freigabe.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF hochgeladen. Du kannst es sofort nutzen; ins öffentliche Archiv kommt es nach der Freigabe.',
+  'Onay bekliyor': 'Wartet auf Freigabe',
+  'GIF listesi yüklenemedi': 'GIF-Liste konnte nicht geladen werden',
+  'GIF yüklenemedi': 'GIF konnte nicht hochgeladen werden',
+  'Bu GIF i şikayet et': 'Dieses GIF melden',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Unangemessene Inhalte werden einem Moderator gemeldet und können aus dem Archiv entfernt werden.',
+  'Şikayetin alındı': 'Deine Meldung ist eingegangen',
+  'Şikayet gönderilemedi': 'Meldung konnte nicht gesendet werden',
 };

@@ -1328,7 +1328,8 @@ const Map<String, String> cevirilerEn = {
   'Ne düşünüyorsun?': 'What do you think?',
   '{}/{} yükleniyor': 'Uploading {}/{}',
   'Fotoğraf/video ekle': 'Add photo or video',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Choose a show or movie first to share.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Choose a show or movie first to share.',
   'Sezon seç': 'Choose a season',
   '{}. sezon': 'Season {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'No episode (about the show only)',
@@ -1337,11 +1338,35 @@ const Map<String, String> cevirilerEn = {
   'Bu sezonda bölüm yok.': 'No episodes in this season.',
   '{}. bölüm': 'Episode {}',
   'Dizi veya film ara...': 'Search shows and movies...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Share a comment about what you watched',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Share a comment about what you watched',
   'Yapım seç (zorunlu)': 'Choose a title (required)',
   'Paylaşmak için önce bir yapım seç.': 'Choose a title first to share.',
   'Kişi': 'Person',
   'Yapım firması': 'Production company',
   'Yapım ara...': 'Search titles...',
   'Çarkı çevirmek için sürükle veya dokun': 'Drag or tap to spin the wheel',
+  'Arşiv': 'Archive',
+  'Yüklediklerim': 'My uploads',
+  'GIF ara...': 'Search GIFs...',
+  'GIF yükle': 'Upload GIF',
+  'GIF etiketleri': 'GIF tags',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Separate with commas. These words make it searchable.',
+  'gülme, alkış, şaşkın': 'laughing, applause, shocked',
+  'Yükle': 'Upload',
+  'Henüz GIF yok': 'No GIFs yet',
+  'Bu aramaya uyan GIF yok': 'No GIFs match this search',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'The archive is new. Upload the first GIF — you can use it right away, and everyone sees it after approval.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF uploaded. You can use it right away; it enters the public archive after approval.',
+  'Onay bekliyor': 'Awaiting approval',
+  'GIF listesi yüklenemedi': 'Could not load the GIF list',
+  'GIF yüklenemedi': 'GIF could not be uploaded',
+  'Bu GIF i şikayet et': 'Report this GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Inappropriate content is reported to a moderator and may be removed from the archive.',
+  'Şikayetin alındı': 'Your report was received',
+  'Şikayet gönderilemedi': 'Report could not be sent',
 };

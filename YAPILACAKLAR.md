@@ -1,5 +1,5 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-29 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-30 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
 ## Ekran görüntüsü turunda çıkan çeviri hataları (29 Ağu 2026)
 
@@ -15,6 +15,75 @@ Mağaza kareleri çekilirken 11 dilde uygulama gezildi; şunlar görüldü:
   ile sarmak gerek.
 - ⬜ **İngilizce çoğul hatası**: dizi sayfasında "1 people you follow watched it"
   — tekil için "1 person" olmalı (diğer dillerde de çoğul kuralı kontrol edilmeli).
+
+## 2026-08-30 — 🚀 KENDİ GIF ARŞİVİMİZ + ORTAK GIF SEÇİCİ
+
+Kullanıcı önce hazır bir GIF servisi istedi. Araştırma (29 Ağu, üçü de
+doğrulandı): **Tenor ÖLDÜ** (13 Oca 2026'da yeni anahtar kapandı, 30 Haz
+2026'da mevcut entegrasyonlar da durdu) · **Giphy** beta 100 istek/saat, üstü
+Enterprise (ücretli) · **Klipy** üretim şartları **proxy ve önbelleği
+YASAKLIYOR**. Kullanıcı kararı: *"tamamen ücretsiz ve saat sınırı olmayan bir
+şey yoksa hiç kurmayalım"* → **kendi arşivimiz.**
+
+Moderasyon modeli (kullanıcı onayladı): yükleyen GIF'ini **hemen kendi
+seçicisinde** kullanır; **herkese açık arşive ancak admin onayıyla** girer.
+
+- ✅ **Tablo `gifler`** (migrasyon-2026-08-29b.sql + sema.sql, **CANLIYA
+  UYGULANDI**): yol (UNIQUE, mevcut `POST /medya` çıktısı) · yükleyen ·
+  etiketler + arama_metni (pg_trgm GIN) · durum (bekliyor/onaylı/reddedildi) ·
+  kaynak (kullanıcı/kamu-malı) · **lisans+atıf** (kamu malı için tablo kısıtıyla
+  ZORUNLU) · en/boy/bayt · kullanım sayacı · karar kaydı.
+- ✅ **Uçlar:** `POST /gif` (kayıt; sahiplik regexi + `fs.existsSync`) ·
+  `GET /gif` (arama **ve** trend, `q` boşsa trend) · `GET /gif/benim` ·
+  `POST /gif/:id/kullanildi`. Hız limitleri: kayıt 30/sa, okuma 600/sa.
+- ✅ **+18 KİLİDİ TEK YERDE:** `backend/gif.js` `gifSuzgec`. Üç okuma ucu da onu
+  çağırır; SQL metnine KOPYALANMAZ. Varsayılan GÖRÜNMEZ (yeni bir durum
+  eklenirse otomatik gizli kalır). `test/gif_gorunurluk.test.js` fonksiyonu
+  GERÇEKTEN çağırıp altı satırlık bir matris üzerinde kimin ne gördüğünü ölçer.
+- ✅ **Ortak `GifSecSheet`** (`app/lib/ekranlar/gif_sec.dart`): arama (400 ms
+  geciktirici) + 3 sütun ızgara + sonsuz kaydırma + "GIF yükle" + Arşiv/
+  Yüklediklerim sekmeleri + eyleme çağıran boş durum + bekleyene "Onay
+  bekliyor" rozeti + uzun basınca şikayet. **DÖRT YÜZEY**: Reels yanıtı ·
+  DM · yorum kutusu · akış paylaşım kutusu. Dosyadan seçme yolu kaybolmadı —
+  seçicinin İÇİNE taşındı ("GIF yükle" → aynı `file_picker` akışı).
+- ✅ **Panel → Moderasyon → GIF onayı** (`admin.html`): oynayan önizleme,
+  Bekleyen/Onaylı/Reddedilen süzgeci, Onayla/Reddet/Diskten sil, şikayet
+  rozeti, kuyruk rozeti (`/admin/ozet` → `gifBekleyen`).
+- ✅ **Şikayet yolu MEVCUT altyapıda**: `sikayetler.tur`'a `'gif'` eklendi
+  (CHECK migrasyonu + `SIKAYET_TUR` + `sikayetHedefSahibi` + panel hedef
+  çözümü). Yeni tablo UYDURULMADI.
+- ✅ **ÖKSÜZ TARAMASI TUZAĞI KAPATILDI:** `medyaReferanslari()`'ye `gifler`
+  dalı eklendi. Eklenmeseydi `/admin/oksuz-sil` arşivdeki HER GIF'i
+  referanssız sayıp silerdi.
+- ✅ **Panelde YAKALANAN hata:** `pg` BIGINT'i DİZGİ döndürüyor; `bytFmt`
+  `"847".toFixed` deyip patlıyor ve ızgara sessizce "Yüklenemedi" yazıyordu
+  (başlıktaki sayaçlar DOĞRU geldiği için gözden kaçacaktı). id/bayt artık
+  uçta `Number()`'a çevriliyor + gerileme testi.
+- ✅ **Yorum kutusu taşması:** satıra GIF düğmesi eklenince Row dar ekranda
+  16 px taştı; Spoiler etiketi `Flexible` + ellipsis yapıldı.
+
+**KANIT — CANLIDA UÇTAN UCA (30 Ağu, iki gerçek hesap):**
+A = melis.izler (id=1), B = yeni misafir (id=448).
+1. A `/medya` ile GIF yükledi → `/medya/m1-2184b2ab91b74ae4.gif` (847 B, 2×2).
+2. `POST /gif` → durum **bekliyor**.
+3. A kendi aramasında **GÖRÜYOR**; B **GÖRMÜYOR** (`{"gifler":[]}`); anonim
+   **GÖRMÜYOR**; B'nin `/gif/benim`'i **BOŞ**.
+4. Panelden **Onayla** → B **ve** anonim artık **GÖRÜYOR**.
+5. **Reddet** → B, A ve A'nın "Yüklediklerim"i **hepsi GÖRMÜYOR**.
+6. B'nin A'nın dosyasını kaydetme denemesi → `Geçersiz GIF`; etiketsiz kayıt →
+   `En az bir etiket gerekli`; `POST /sikayet` `tur=gif` → `alindi`.
+Panel ekran görüntüsüyle de doğrulandı (kart, etiketler, şikayet rozeti,
+Onayla/Reddet). Test verileri sonunda silindi.
+
+- ✅ Çeviri: **19 yeni anahtar × 45 dil = 855 satır**
+  (`test/ceviri_bosluklari_test.dart` 45/45 doğruladı).
+- ✅ Testler: backend **2079/0** (+25), Flutter **2276/2276**, `flutter analyze
+  lib test` 0 hata-uyarı, `node --check` temiz.
+- ⬜ **İÇERİK DOLDURMA AYRI İŞ:** arşiv bugün BOŞ. Kaynak yalnız kamu malı /
+  CC0 / CC-BY olacak; `lisans` + `atif` alanları tam bu yüzden var ve kamu malı
+  kayıtta tablo kısıtıyla ZORUNLU. ⛔ Telifli tepki GIF'i toplanmayacak.
+- ⬜ Trend sıralaması bugün yalnız `kullanim` sayacına bakıyor; arşiv büyüyünce
+  zaman ağırlıklı bir skor gerekebilir.
 
 ## 2026-08-29 — 🚀 BÖLÜM KESME KURALI TALEBE GÖRE YENİDEN YAZILDI
 

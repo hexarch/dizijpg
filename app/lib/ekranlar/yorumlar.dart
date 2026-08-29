@@ -515,41 +515,52 @@ class _YorumBolumuState extends State<YorumBolumu> {
                         ),
                         tooltip: 'GIF ekle'.c,
                       ),
-                      // Spoiler işareti: yorumu bulanık gönderir
-                      InkWell(
-                        onTap: () => setState(() => _spoiler = !_spoiler),
-                        borderRadius: BorderRadius.circular(20),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 8,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                _spoiler
-                                    ? Icons.visibility_off
-                                    : Icons.visibility_off_outlined,
-                                size: 20,
-                                color: _spoiler
-                                    ? DiziRenkler.sariMetin
-                                    : DiziRenkler.metin54,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                'Spoiler'.c,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: _spoiler
-                                      ? FontWeight.w700
-                                      : FontWeight.w400,
+                      // Spoiler işareti: yorumu bulanık gönderir.
+                      // FLEXIBLE ŞART (29 Ağu 2026): satıra GIF düğmesi
+                      // eklenince dar ekranda Row 16 px TAŞTI (medya_inceleme
+                      // testi kırmızıya döndü, 338 px genişlik). Esneyen tek
+                      // öğe METİNLİ olan bu; ikon düğmeleri 44 px dokunma
+                      // hedefinin altına inemez.
+                      Flexible(
+                        child: InkWell(
+                          onTap: () => setState(() => _spoiler = !_spoiler),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 8,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  _spoiler
+                                      ? Icons.visibility_off
+                                      : Icons.visibility_off_outlined,
+                                  size: 20,
                                   color: _spoiler
                                       ? DiziRenkler.sariMetin
                                       : DiziRenkler.metin54,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    'Spoiler'.c,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: _spoiler
+                                          ? FontWeight.w700
+                                          : FontWeight.w400,
+                                      color: _spoiler
+                                          ? DiziRenkler.sariMetin
+                                          : DiziRenkler.metin54,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

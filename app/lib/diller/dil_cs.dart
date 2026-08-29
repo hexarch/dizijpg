@@ -1323,20 +1323,47 @@ const Map<String, String> cevirilerCs = {
   'Ne düşünüyorsun?': 'Co si o tom myslíš?',
   '{}/{} yükleniyor': 'Nahrávání {}/{}',
   'Fotoğraf/video ekle': 'Přidat fotku nebo video',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Nejdřív vyber seriál nebo film ke sdílení.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Nejdřív vyber seriál nebo film ke sdílení.',
   'Sezon seç': 'Vyber sezónu',
   '{}. sezon': 'Sezóna {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Bez epizody (jen o seriálu)',
   'Sezonlar yüklenemedi.': 'Sezóny se nepodařilo načíst.',
-  'Bu dizide bölüm bilgisi yok.': 'Pro tento seriál nejsou informace o epizodách.',
+  'Bu dizide bölüm bilgisi yok.':
+      'Pro tento seriál nejsou informace o epizodách.',
   'Bu sezonda bölüm yok.': 'V této sezóně nejsou epizody.',
   '{}. bölüm': 'Epizoda {}',
   'Dizi veya film ara...': 'Hledat seriály a filmy...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Sdílej komentář o tom, co jsi sledoval',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Sdílej komentář o tom, co jsi sledoval',
   'Yapım seç (zorunlu)': 'Vyber titul (povinné)',
   'Paylaşmak için önce bir yapım seç.': 'Nejdřív vyber titul ke sdílení.',
   'Kişi': 'Osoba',
   'Yapım firması': 'Produkční společnost',
   'Yapım ara...': 'Hledat tituly...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Táhni nebo klepni pro roztočení kola',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Táhni nebo klepni pro roztočení kola',
+  'Arşiv': 'Archiv',
+  'Yüklediklerim': 'Moje nahrané',
+  'GIF ara...': 'Hledat GIFy...',
+  'GIF yükle': 'Nahrát GIF',
+  'GIF etiketleri': 'Štítky GIFu',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Oddělte čárkami. Podle těchto slov se najde.',
+  'gülme, alkış, şaşkın': 'smích, potlesk, překvapení',
+  'Yükle': 'Nahrát',
+  'Henüz GIF yok': 'Zatím žádné GIFy',
+  'Bu aramaya uyan GIF yok': 'Tomuto hledání neodpovídá žádný GIF',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Archiv je nový. Nahraj první GIF — použiješ ho hned a všichni ho uvidí po schválení.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF nahrán. Můžeš ho použít hned; do veřejného archivu se dostane po schválení.',
+  'Onay bekliyor': 'Čeká na schválení',
+  'GIF listesi yüklenemedi': 'Seznam GIFů se nepodařilo načíst',
+  'GIF yüklenemedi': 'GIF se nepodařilo nahrát',
+  'Bu GIF i şikayet et': 'Nahlásit tento GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Nevhodný obsah se nahlásí moderátorovi a může být z archivu odstraněn.',
+  'Şikayetin alındı': 'Tvoje hlášení bylo přijato',
+  'Şikayet gönderilemedi': 'Hlášení se nepodařilo odeslat',
 };

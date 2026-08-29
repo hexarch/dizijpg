@@ -1283,7 +1283,8 @@ const Map<String, String> cevirilerAm = {
   'Ne düşünüyorsun?': 'ምን ያስባሉ?',
   '{}/{} yükleniyor': '{}/{} በመጫን ላይ',
   'Fotoğraf/video ekle': 'ፎቶ ወይም ቪዲዮ ያክሉ',
-  'Paylaşmak için önce bir dizi veya film seç.': 'ለማጋራት መጀመሪያ ተከታታይ ወይም ፊልም ይምረጡ።',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'ለማጋራት መጀመሪያ ተከታታይ ወይም ፊልም ይምረጡ።',
   'Sezon seç': 'ወቅት ይምረጡ',
   '{}. sezon': 'ወቅት {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'ክፍል የለም (ስለ ተከታታዩ ብቻ)',
@@ -1299,4 +1300,26 @@ const Map<String, String> cevirilerAm = {
   'Yapım firması': 'የፕሮዳክሽን ኩባንያ',
   'Yapım ara...': 'ርዕሶችን ይፈልጉ...',
   'Çarkı çevirmek için sürükle veya dokun': 'መንኮራኩሩን ለማዞር ይጎትቱ ወይም ይንኩ',
+  'Arşiv': 'መዝገብ',
+  'Yüklediklerim': 'የእኔ ስቀላዎች',
+  'GIF ara...': 'GIF ፈልግ...',
+  'GIF yükle': 'GIF ስቀል',
+  'GIF etiketleri': 'የGIF መለያዎች',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.': 'በኮማ ለያይ። በእነዚህ ቃላት ይገኛል።',
+  'gülme, alkış, şaşkın': 'ሳቅ፣ ጭብጨባ፣ መደነቅ',
+  'Yükle': 'ስቀል',
+  'Henüz GIF yok': 'ገና GIF የለም',
+  'Bu aramaya uyan GIF yok': 'ከዚህ ፍለጋ ጋር የሚስማማ GIF የለም',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'መዝገቡ አዲስ ነው። የመጀመሪያውን GIF አንተ ስቀል — ወዲያውኑ ትጠቀማለህ፣ ከጸደቀ በኋላ ሁሉም ያየዋል።',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF ተስቅሏል። ወዲያውኑ መጠቀም ትችላለህ፤ ወደ ሕዝባዊ መዝገብ የሚገባው ከጸደቀ በኋላ ነው።',
+  'Onay bekliyor': 'ጽድቅ በመጠበቅ ላይ',
+  'GIF listesi yüklenemedi': 'የGIF ዝርዝር መጫን አልተቻለም',
+  'GIF yüklenemedi': 'GIF መስቀል አልተቻለም',
+  'Bu GIF i şikayet et': 'ይህን GIF አሳውቅ',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'ተገቢ ያልሆነ ይዘት ለአስተዳዳሪ ይነገራል፤ ከመዝገቡም ሊወገድ ይችላል።',
+  'Şikayetin alındı': 'ሪፖርትህ ተቀብሏል',
+  'Şikayet gönderilemedi': 'ሪፖርቱን መላክ አልተቻለም',
 };

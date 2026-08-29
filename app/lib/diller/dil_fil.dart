@@ -1351,20 +1351,49 @@ const Map<String, String> cevirilerFil = {
   'Ne düşünüyorsun?': 'Ano sa tingin mo?',
   '{}/{} yükleniyor': 'Ina-upload {}/{}',
   'Fotoğraf/video ekle': 'Magdagdag ng larawan o video',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Pumili muna ng serye o pelikula para makapag-share.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Pumili muna ng serye o pelikula para makapag-share.',
   'Sezon seç': 'Pumili ng season',
   '{}. sezon': 'Season {}',
-  'Bölüm seçme (yalnız dizi hakkında)': 'Walang episode (tungkol lang sa serye)',
+  'Bölüm seçme (yalnız dizi hakkında)':
+      'Walang episode (tungkol lang sa serye)',
   'Sezonlar yüklenemedi.': 'Hindi ma-load ang mga season.',
-  'Bu dizide bölüm bilgisi yok.': 'Walang impormasyon ng episode para sa seryeng ito.',
+  'Bu dizide bölüm bilgisi yok.':
+      'Walang impormasyon ng episode para sa seryeng ito.',
   'Bu sezonda bölüm yok.': 'Walang episode sa season na ito.',
   '{}. bölüm': 'Episode {}',
   'Dizi veya film ara...': 'Maghanap ng serye at pelikula...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Mag-share ng komento tungkol sa napanood mo',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Mag-share ng komento tungkol sa napanood mo',
   'Yapım seç (zorunlu)': 'Pumili ng pamagat (kailangan)',
-  'Paylaşmak için önce bir yapım seç.': 'Pumili muna ng pamagat para makapag-share.',
+  'Paylaşmak için önce bir yapım seç.':
+      'Pumili muna ng pamagat para makapag-share.',
   'Kişi': 'Tao',
   'Yapım firması': 'Production company',
   'Yapım ara...': 'Maghanap ng pamagat...',
-  'Çarkı çevirmek için sürükle veya dokun': 'I-drag o i-tap para paikutin ang gulong',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'I-drag o i-tap para paikutin ang gulong',
+  'Arşiv': 'Archive',
+  'Yüklediklerim': 'Mga in-upload ko',
+  'GIF ara...': 'Maghanap ng GIF...',
+  'GIF yükle': 'Mag-upload ng GIF',
+  'GIF etiketleri': 'Mga tag ng GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Paghiwalayin ng kuwit. Sa mga salitang ito ito makikita.',
+  'gülme, alkış, şaşkın': 'tawa, palakpak, gulat',
+  'Yükle': 'I-upload',
+  'Henüz GIF yok': 'Wala pang GIF',
+  'Bu aramaya uyan GIF yok': 'Walang GIF na tumutugma sa paghahanap na ito',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Bago ang archive. I-upload mo ang unang GIF — magagamit mo agad, makikita ng lahat pagkatapos maaprubahan.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'Na-upload ang GIF. Magagamit mo agad; papasok sa pampublikong archive pagkatapos maaprubahan.',
+  'Onay bekliyor': 'Naghihintay ng pag-apruba',
+  'GIF listesi yüklenemedi': 'Hindi ma-load ang listahan ng GIF',
+  'GIF yüklenemedi': 'Hindi na-upload ang GIF',
+  'Bu GIF i şikayet et': 'I-report ang GIF na ito',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Iniuulat sa moderator ang hindi angkop na nilalaman at maaaring tanggalin sa archive.',
+  'Şikayetin alındı': 'Natanggap ang iyong report',
+  'Şikayet gönderilemedi': 'Hindi naipadala ang report',
 };

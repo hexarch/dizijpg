@@ -1319,7 +1319,8 @@ const Map<String, String> cevirilerBn = {
   'Ne düşünüyorsun?': 'আপনি কী মনে করেন?',
   '{}/{} yükleniyor': '{}/{} আপলোড হচ্ছে',
   'Fotoğraf/video ekle': 'ছবি বা ভিডিও যোগ করুন',
-  'Paylaşmak için önce bir dizi veya film seç.': 'শেয়ার করতে আগে একটি সিরিজ বা সিনেমা বাছুন।',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'শেয়ার করতে আগে একটি সিরিজ বা সিনেমা বাছুন।',
   'Sezon seç': 'একটি সিজন বাছুন',
   '{}. sezon': 'সিজন {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'কোনো পর্ব নয় (শুধু সিরিজ সম্পর্কে)',
@@ -1328,11 +1329,35 @@ const Map<String, String> cevirilerBn = {
   'Bu sezonda bölüm yok.': 'এই সিজনে কোনো পর্ব নেই।',
   '{}. bölüm': 'পর্ব {}',
   'Dizi veya film ara...': 'সিরিজ ও সিনেমা খুঁজুন...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'যা দেখেছেন সে সম্পর্কে মন্তব্য শেয়ার করুন',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'যা দেখেছেন সে সম্পর্কে মন্তব্য শেয়ার করুন',
   'Yapım seç (zorunlu)': 'একটি শিরোনাম বাছুন (আবশ্যক)',
   'Paylaşmak için önce bir yapım seç.': 'শেয়ার করতে আগে একটি শিরোনাম বাছুন।',
   'Kişi': 'ব্যক্তি',
   'Yapım firması': 'প্রোডাকশন কোম্পানি',
   'Yapım ara...': 'শিরোনাম খুঁজুন...',
   'Çarkı çevirmek için sürükle veya dokun': 'চাকা ঘোরাতে টানুন বা ট্যাপ করুন',
+  'Arşiv': 'সংরক্ষণাগার',
+  'Yüklediklerim': 'আমার আপলোড',
+  'GIF ara...': 'GIF খুঁজুন...',
+  'GIF yükle': 'GIF আপলোড করুন',
+  'GIF etiketleri': 'GIF ট্যাগ',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'কমা দিয়ে আলাদা করুন। এই শব্দগুলো দিয়েই এটি পাওয়া যাবে।',
+  'gülme, alkış, şaşkın': 'হাসি, হাততালি, বিস্ময়',
+  'Yükle': 'আপলোড করুন',
+  'Henüz GIF yok': 'এখনো কোনো GIF নেই',
+  'Bu aramaya uyan GIF yok': 'এই অনুসন্ধানের সঙ্গে মেলে এমন GIF নেই',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'সংরক্ষণাগারটি নতুন। প্রথম GIF আপনি আপলোড করুন — আপনি এখনই ব্যবহার করতে পারবেন, অনুমোদনের পর সবাই দেখবে।',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF আপলোড হয়েছে। আপনি এখনই ব্যবহার করতে পারেন; অনুমোদনের পর প্রকাশ্য সংরক্ষণাগারে যাবে।',
+  'Onay bekliyor': 'অনুমোদনের অপেক্ষায়',
+  'GIF listesi yüklenemedi': 'GIF তালিকা লোড করা যায়নি',
+  'GIF yüklenemedi': 'GIF আপলোড করা যায়নি',
+  'Bu GIF i şikayet et': 'এই GIF রিপোর্ট করুন',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'অনুপযুক্ত বিষয়বস্তু মডারেটরকে জানানো হয় এবং সংরক্ষণাগার থেকে সরানো হতে পারে।',
+  'Şikayetin alındı': 'আপনার রিপোর্ট পাওয়া গেছে',
+  'Şikayet gönderilemedi': 'রিপোর্ট পাঠানো যায়নি',
 };

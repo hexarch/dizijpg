@@ -1334,7 +1334,8 @@ const Map<String, String> cevirilerSr = {
   'Ne düşünüyorsun?': 'Šta misliš?',
   '{}/{} yükleniyor': 'Otpremanje {}/{}',
   'Fotoğraf/video ekle': 'Dodaj fotografiju ili video',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Prvo izaberi seriju ili film za deljenje.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Prvo izaberi seriju ili film za deljenje.',
   'Sezon seç': 'Izaberi sezonu',
   '{}. sezon': 'Sezona {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Bez epizode (samo o seriji)',
@@ -1343,11 +1344,36 @@ const Map<String, String> cevirilerSr = {
   'Bu sezonda bölüm yok.': 'Nema epizoda u ovoj sezoni.',
   '{}. bölüm': 'Epizoda {}',
   'Dizi veya film ara...': 'Traži serije i filmove...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Podeli komentar o onome što si gledao',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Podeli komentar o onome što si gledao',
   'Yapım seç (zorunlu)': 'Izaberi naslov (obavezno)',
   'Paylaşmak için önce bir yapım seç.': 'Prvo izaberi naslov za deljenje.',
   'Kişi': 'Osoba',
   'Yapım firması': 'Produkcijska kuća',
   'Yapım ara...': 'Traži naslove...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Prevuci ili dodirni da zavrtiš točak',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Prevuci ili dodirni da zavrtiš točak',
+  'Arşiv': 'Arhiva',
+  'Yüklediklerim': 'Moja otpremanja',
+  'GIF ara...': 'Pretraži GIF-ove...',
+  'GIF yükle': 'Otpremi GIF',
+  'GIF etiketleri': 'Oznake GIF-a',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Razdvoj zarezima. Po tim rečima će biti pronađen.',
+  'gülme, alkış, şaşkın': 'smeh, aplauz, iznenađenje',
+  'Yükle': 'Otpremi',
+  'Henüz GIF yok': 'Još nema GIF-ova',
+  'Bu aramaya uyan GIF yok': 'Nema GIF-ova za ovu pretragu',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Arhiva je nova. Otpremi prvi GIF — možeš ga koristiti odmah, a svi ga vide nakon odobrenja.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF je otpremljen. Možeš ga koristiti odmah; u javnu arhivu ulazi nakon odobrenja.',
+  'Onay bekliyor': 'Čeka odobrenje',
+  'GIF listesi yüklenemedi': 'Lista GIF-ova nije mogla da se učita',
+  'GIF yüklenemedi': 'GIF nije mogao da se otpremi',
+  'Bu GIF i şikayet et': 'Prijavi ovaj GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Neprikladan sadržaj se prijavljuje moderatoru i može biti uklonjen iz arhive.',
+  'Şikayetin alındı': 'Tvoja prijava je primljena',
+  'Şikayet gönderilemedi': 'Prijava nije mogla da se pošalje',
 };

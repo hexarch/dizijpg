@@ -1337,7 +1337,8 @@ const Map<String, String> cevirilerFi = {
   'Ne düşünüyorsun?': 'Mitä mieltä olet?',
   '{}/{} yükleniyor': 'Ladataan {}/{}',
   'Fotoğraf/video ekle': 'Lisää kuva tai video',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Valitse ensin sarja tai elokuva jakaaksesi.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Valitse ensin sarja tai elokuva jakaaksesi.',
   'Sezon seç': 'Valitse kausi',
   '{}. sezon': 'Kausi {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Ei jaksoa (vain sarjasta)',
@@ -1352,5 +1353,29 @@ const Map<String, String> cevirilerFi = {
   'Kişi': 'Henkilö',
   'Yapım firması': 'Tuotantoyhtiö',
   'Yapım ara...': 'Hae nimikkeitä...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Vedä tai napauta pyörittääksesi pyörää',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Vedä tai napauta pyörittääksesi pyörää',
+  'Arşiv': 'Arkisto',
+  'Yüklediklerim': 'Omat lataukset',
+  'GIF ara...': 'Hae GIF...',
+  'GIF yükle': 'Lataa GIF',
+  'GIF etiketleri': 'GIF-tunnisteet',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Erota pilkuilla. Näillä sanoilla se löytyy.',
+  'gülme, alkış, şaşkın': 'nauru, aplodit, hämmästys',
+  'Yükle': 'Lataa',
+  'Henüz GIF yok': 'Ei vielä GIF-kuvia',
+  'Bu aramaya uyan GIF yok': 'Yksikään GIF ei vastaa tätä hakua',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Arkisto on uusi. Lataa ensimmäinen GIF — voit käyttää sitä heti, ja kaikki näkevät sen hyväksynnän jälkeen.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF ladattu. Voit käyttää sitä heti; julkiseen arkistoon se tulee hyväksynnän jälkeen.',
+  'Onay bekliyor': 'Odottaa hyväksyntää',
+  'GIF listesi yüklenemedi': 'GIF-luetteloa ei voitu ladata',
+  'GIF yüklenemedi': 'GIF-kuvaa ei voitu ladata',
+  'Bu GIF i şikayet et': 'Ilmianna tämä GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Sopimaton sisältö ilmoitetaan valvojalle ja se voidaan poistaa arkistosta.',
+  'Şikayetin alındı': 'Ilmoituksesi vastaanotettiin',
+  'Şikayet gönderilemedi': 'Ilmoitusta ei voitu lähettää',
 };

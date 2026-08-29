@@ -1330,7 +1330,8 @@ const Map<String, String> cevirilerVi = {
   'Ne düşünüyorsun?': 'Bạn nghĩ sao?',
   '{}/{} yükleniyor': 'Đang tải lên {}/{}',
   'Fotoğraf/video ekle': 'Thêm ảnh hoặc video',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Hãy chọn phim bộ hoặc phim lẻ trước khi chia sẻ.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Hãy chọn phim bộ hoặc phim lẻ trước khi chia sẻ.',
   'Sezon seç': 'Chọn mùa',
   '{}. sezon': 'Mùa {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Không chọn tập (chỉ về phim bộ)',
@@ -1339,11 +1340,35 @@ const Map<String, String> cevirilerVi = {
   'Bu sezonda bölüm yok.': 'Mùa này chưa có tập nào.',
   '{}. bölüm': 'Tập {}',
   'Dizi veya film ara...': 'Tìm phim bộ và phim lẻ...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Chia sẻ cảm nhận về những gì bạn đã xem',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Chia sẻ cảm nhận về những gì bạn đã xem',
   'Yapım seç (zorunlu)': 'Chọn tựa đề (bắt buộc)',
   'Paylaşmak için önce bir yapım seç.': 'Hãy chọn tựa đề trước khi chia sẻ.',
   'Kişi': 'Người',
   'Yapım firması': 'Hãng sản xuất',
   'Yapım ara...': 'Tìm tựa đề...',
   'Çarkı çevirmek için sürükle veya dokun': 'Kéo hoặc chạm để quay vòng quay',
+  'Arşiv': 'Kho lưu trữ',
+  'Yüklediklerim': 'Tôi đã tải lên',
+  'GIF ara...': 'Tìm GIF...',
+  'GIF yükle': 'Tải GIF lên',
+  'GIF etiketleri': 'Thẻ GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Ngăn cách bằng dấu phẩy. Những từ này giúp tìm ra nó.',
+  'gülme, alkış, şaşkın': 'cười, vỗ tay, ngạc nhiên',
+  'Yükle': 'Tải lên',
+  'Henüz GIF yok': 'Chưa có GIF nào',
+  'Bu aramaya uyan GIF yok': 'Không có GIF nào khớp với tìm kiếm này',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Kho còn mới. Hãy tải lên GIF đầu tiên — bạn dùng được ngay, mọi người thấy sau khi duyệt.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'Đã tải GIF lên. Bạn dùng được ngay; nó vào kho công khai sau khi được duyệt.',
+  'Onay bekliyor': 'Chờ duyệt',
+  'GIF listesi yüklenemedi': 'Không tải được danh sách GIF',
+  'GIF yüklenemedi': 'Không tải được GIF lên',
+  'Bu GIF i şikayet et': 'Báo cáo GIF này',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Nội dung không phù hợp sẽ được báo cho người kiểm duyệt và có thể bị gỡ khỏi kho.',
+  'Şikayetin alındı': 'Đã nhận báo cáo của bạn',
+  'Şikayet gönderilemedi': 'Không gửi được báo cáo',
 };

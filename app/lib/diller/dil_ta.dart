@@ -1341,26 +1341,55 @@ const Map<String, String> cevirilerTa = {
   'Geri bildirimine yanıt verdik': 'உங்கள் கருத்துக்கு நாங்கள் பதிலளித்தோம்',
   'Bu yanıt artık görüntülenemiyor.': 'இந்தப் பதிலை இனி காட்ட முடியாது.',
   'Gönderdiğin geri bildirim': 'நீங்கள் அனுப்பிய கருத்து',
-  'Dizi veya film seç (zorunlu)': 'தொடர் அல்லது திரைப்படத்தைத் தேர்வுசெய் (கட்டாயம்)',
+  'Dizi veya film seç (zorunlu)':
+      'தொடர் அல்லது திரைப்படத்தைத் தேர்வுசெய் (கட்டாயம்)',
   'Bölüm seç (isteğe bağlı)': 'அத்தியாயத்தைத் தேர்வுசெய் (விருப்பம்)',
   '{}. sezon {}. bölüm': 'சீசன் {}, அத்தியாயம் {}',
   'Ne düşünüyorsun?': 'நீ என்ன நினைக்கிறாய்?',
   '{}/{} yükleniyor': '{}/{} பதிவேற்றப்படுகிறது',
   'Fotoğraf/video ekle': 'படம் அல்லது வீடியோ சேர்',
-  'Paylaşmak için önce bir dizi veya film seç.': 'பகிர முதலில் ஒரு தொடர் அல்லது திரைப்படத்தைத் தேர்வுசெய்.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'பகிர முதலில் ஒரு தொடர் அல்லது திரைப்படத்தைத் தேர்வுசெய்.',
   'Sezon seç': 'சீசனைத் தேர்வுசெய்',
   '{}. sezon': 'சீசன் {}',
-  'Bölüm seçme (yalnız dizi hakkında)': 'அத்தியாயம் இல்லை (தொடர் பற்றி மட்டும்)',
+  'Bölüm seçme (yalnız dizi hakkında)':
+      'அத்தியாயம் இல்லை (தொடர் பற்றி மட்டும்)',
   'Sezonlar yüklenemedi.': 'சீசன்களை ஏற்ற முடியவில்லை.',
   'Bu dizide bölüm bilgisi yok.': 'இந்தத் தொடருக்கு அத்தியாயத் தகவல் இல்லை.',
   'Bu sezonda bölüm yok.': 'இந்தச் சீசனில் அத்தியாயங்கள் இல்லை.',
   '{}. bölüm': 'அத்தியாயம் {}',
   'Dizi veya film ara...': 'தொடர்கள், திரைப்படங்களைத் தேடு...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'நீ பார்த்தது பற்றி கருத்தைப் பகிர்',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'நீ பார்த்தது பற்றி கருத்தைப் பகிர்',
   'Yapım seç (zorunlu)': 'தலைப்பைத் தேர்வுசெய் (கட்டாயம்)',
-  'Paylaşmak için önce bir yapım seç.': 'பகிர முதலில் ஒரு தலைப்பைத் தேர்வுசெய்.',
+  'Paylaşmak için önce bir yapım seç.':
+      'பகிர முதலில் ஒரு தலைப்பைத் தேர்வுசெய்.',
   'Kişi': 'நபர்',
   'Yapım firması': 'தயாரிப்பு நிறுவனம்',
   'Yapım ara...': 'தலைப்புகளைத் தேடு...',
-  'Çarkı çevirmek için sürükle veya dokun': 'சக்கரத்தைச் சுழற்ற இழுக்கவும் அல்லது தட்டவும்',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'சக்கரத்தைச் சுழற்ற இழுக்கவும் அல்லது தட்டவும்',
+  'Arşiv': 'காப்பகம்',
+  'Yüklediklerim': 'என் பதிவேற்றங்கள்',
+  'GIF ara...': 'GIF தேடு...',
+  'GIF yükle': 'GIF பதிவேற்று',
+  'GIF etiketleri': 'GIF குறிச்சொற்கள்',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'காற்புள்ளியால் பிரி. இந்தச் சொற்களால் இது கிடைக்கும்.',
+  'gülme, alkış, şaşkın': 'சிரிப்பு, கைதட்டல், வியப்பு',
+  'Yükle': 'பதிவேற்று',
+  'Henüz GIF yok': 'இன்னும் GIF இல்லை',
+  'Bu aramaya uyan GIF yok': 'இந்தத் தேடலுக்குப் பொருந்தும் GIF இல்லை',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'காப்பகம் புதியது. முதல் GIF ஐ நீ பதிவேற்று — உடனே பயன்படுத்தலாம், ஒப்புதலுக்குப் பிறகு அனைவரும் பார்ப்பர்.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF பதிவேற்றப்பட்டது. உடனே பயன்படுத்தலாம்; ஒப்புதலுக்குப் பிறகு பொதுக் காப்பகத்தில் சேரும்.',
+  'Onay bekliyor': 'ஒப்புதலுக்குக் காத்திருக்கிறது',
+  'GIF listesi yüklenemedi': 'GIF பட்டியலை ஏற்ற முடியவில்லை',
+  'GIF yüklenemedi': 'GIF ஐப் பதிவேற்ற முடியவில்லை',
+  'Bu GIF i şikayet et': 'இந்த GIF ஐப் புகாரளி',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'பொருத்தமற்ற உள்ளடக்கம் நடுவருக்குத் தெரிவிக்கப்படும், காப்பகத்திலிருந்து நீக்கப்படலாம்.',
+  'Şikayetin alındı': 'உன் புகார் பெறப்பட்டது',
+  'Şikayet gönderilemedi': 'புகாரை அனுப்ப முடியவில்லை',
 };

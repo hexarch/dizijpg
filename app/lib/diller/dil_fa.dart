@@ -1313,7 +1313,8 @@ const Map<String, String> cevirilerFa = {
   'Ne düşünüyorsun?': 'نظرت چیست؟',
   '{}/{} yükleniyor': 'در حال بارگذاری {}/{}',
   'Fotoğraf/video ekle': 'افزودن عکس یا ویدیو',
-  'Paylaşmak için önce bir dizi veya film seç.': 'برای اشتراک‌گذاری ابتدا یک سریال یا فیلم انتخاب کن.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'برای اشتراک‌گذاری ابتدا یک سریال یا فیلم انتخاب کن.',
   'Sezon seç': 'یک فصل انتخاب کن',
   '{}. sezon': 'فصل {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'بدون قسمت (فقط درباره سریال)',
@@ -1322,11 +1323,37 @@ const Map<String, String> cevirilerFa = {
   'Bu sezonda bölüm yok.': 'در این فصل قسمتی نیست.',
   '{}. bölüm': 'قسمت {}',
   'Dizi veya film ara...': 'جستجوی سریال و فیلم...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'درباره آنچه دیده‌ای نظر بگذار',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'درباره آنچه دیده‌ای نظر بگذار',
   'Yapım seç (zorunlu)': 'یک اثر انتخاب کن (الزامی)',
-  'Paylaşmak için önce bir yapım seç.': 'برای اشتراک‌گذاری ابتدا یک اثر انتخاب کن.',
+  'Paylaşmak için önce bir yapım seç.':
+      'برای اشتراک‌گذاری ابتدا یک اثر انتخاب کن.',
   'Kişi': 'شخص',
   'Yapım firması': 'شرکت تولید',
   'Yapım ara...': 'جستجوی آثار...',
-  'Çarkı çevirmek için sürükle veya dokun': 'برای چرخاندن چرخ بکشید یا ضربه بزنید',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'برای چرخاندن چرخ بکشید یا ضربه بزنید',
+  'Arşiv': 'بایگانی',
+  'Yüklediklerim': 'بارگذاری‌های من',
+  'GIF ara...': 'جست‌وجوی GIF...',
+  'GIF yükle': 'بارگذاری GIF',
+  'GIF etiketleri': 'برچسب‌های GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'با ویرگول جدا کن. با همین واژه‌ها پیدا می‌شود.',
+  'gülme, alkış, şaşkın': 'خنده، تشویق، شگفتی',
+  'Yükle': 'بارگذاری',
+  'Henüz GIF yok': 'هنوز GIF ای نیست',
+  'Bu aramaya uyan GIF yok': 'هیچ GIF ای با این جست‌وجو همخوان نیست',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'بایگانی تازه است. نخستین GIF را تو بارگذاری کن — بی‌درنگ می‌توانی از آن استفاده کنی و پس از تأیید همه می‌بینند.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF بارگذاری شد. بی‌درنگ می‌توانی استفاده کنی؛ پس از تأیید به بایگانی همگانی می‌رود.',
+  'Onay bekliyor': 'در انتظار تأیید',
+  'GIF listesi yüklenemedi': 'فهرست GIF بارگذاری نشد',
+  'GIF yüklenemedi': 'GIF بارگذاری نشد',
+  'Bu GIF i şikayet et': 'گزارش این GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'محتوای نامناسب به مدیر گزارش می‌شود و ممکن است از بایگانی حذف شود.',
+  'Şikayetin alındı': 'گزارش تو دریافت شد',
+  'Şikayet gönderilemedi': 'گزارش ارسال نشد',
 };

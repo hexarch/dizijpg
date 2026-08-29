@@ -1322,7 +1322,8 @@ const Map<String, String> cevirilerAz = {
   'Ne düşünüyorsun?': 'Nə düşünürsən?',
   '{}/{} yükleniyor': '{}/{} yüklənir',
   'Fotoğraf/video ekle': 'Şəkil və ya video əlavə et',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Paylaşmaq üçün əvvəlcə serial və ya film seç.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Paylaşmaq üçün əvvəlcə serial və ya film seç.',
   'Sezon seç': 'Sezon seç',
   '{}. sezon': 'Sezon {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Bölüm yox (yalnız serial haqqında)',
@@ -1331,11 +1332,36 @@ const Map<String, String> cevirilerAz = {
   'Bu sezonda bölüm yok.': 'Bu sezonda bölüm yoxdur.',
   '{}. bölüm': 'Bölüm {}',
   'Dizi veya film ara...': 'Serial və film axtar...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'İzlədiyin barədə şərh paylaş',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'İzlədiyin barədə şərh paylaş',
   'Yapım seç (zorunlu)': 'Başlıq seç (mütləq)',
   'Paylaşmak için önce bir yapım seç.': 'Paylaşmaq üçün əvvəlcə başlıq seç.',
   'Kişi': 'Şəxs',
   'Yapım firması': 'İstehsal şirkəti',
   'Yapım ara...': 'Başlıq axtar...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Çarxı fırlatmaq üçün sürüşdür və ya toxun',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Çarxı fırlatmaq üçün sürüşdür və ya toxun',
+  'Arşiv': 'Arxiv',
+  'Yüklediklerim': 'Yüklədiklərim',
+  'GIF ara...': 'GIF axtar...',
+  'GIF yükle': 'GIF yüklə',
+  'GIF etiketleri': 'GIF etiketləri',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Vergüllə ayır. Bu sözlərlə tapılacaq.',
+  'gülme, alkış, şaşkın': 'gülüş, alqış, təəccüb',
+  'Yükle': 'Yüklə',
+  'Henüz GIF yok': 'Hələ GIF yoxdur',
+  'Bu aramaya uyan GIF yok': 'Bu axtarışa uyğun GIF yoxdur',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Arxiv yenidir. İlk GIF-i sən yüklə — dərhal istifadə edə bilərsən, təsdiqdən sonra hamı görəcək.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF yükləndi. Dərhal istifadə edə bilərsən; ictimai arxivə təsdiqdən sonra düşür.',
+  'Onay bekliyor': 'Təsdiq gözləyir',
+  'GIF listesi yüklenemedi': 'GIF siyahısı yüklənə bilmədi',
+  'GIF yüklenemedi': 'GIF yüklənə bilmədi',
+  'Bu GIF i şikayet et': 'Bu GIF-i şikayət et',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Uyğunsuz məzmun moderatora bildirilir və arxivdən silinə bilər.',
+  'Şikayetin alındı': 'Şikayətin qəbul edildi',
+  'Şikayet gönderilemedi': 'Şikayət göndərilə bilmədi',
 };

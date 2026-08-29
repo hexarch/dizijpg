@@ -1324,7 +1324,8 @@ const Map<String, String> cevirilerKn = {
   'Ne düşünüyorsun?': 'ನಿಮ್ಮ ಅಭಿಪ್ರಾಯವೇನು?',
   '{}/{} yükleniyor': '{}/{} ಅಪ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ',
   'Fotoğraf/video ekle': 'ಫೋಟೋ ಅಥವಾ ವೀಡಿಯೊ ಸೇರಿಸಿ',
-  'Paylaşmak için önce bir dizi veya film seç.': 'ಹಂಚಿಕೊಳ್ಳಲು ಮೊದಲು ಸರಣಿ ಅಥವಾ ಸಿನಿಮಾ ಆಯ್ಕೆಮಾಡಿ.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'ಹಂಚಿಕೊಳ್ಳಲು ಮೊದಲು ಸರಣಿ ಅಥವಾ ಸಿನಿಮಾ ಆಯ್ಕೆಮಾಡಿ.',
   'Sezon seç': 'ಸೀಸನ್ ಆಯ್ಕೆಮಾಡಿ',
   '{}. sezon': 'ಸೀಸನ್ {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'ಸಂಚಿಕೆ ಇಲ್ಲ (ಸರಣಿಯ ಬಗ್ಗೆ ಮಾತ್ರ)',
@@ -1333,11 +1334,36 @@ const Map<String, String> cevirilerKn = {
   'Bu sezonda bölüm yok.': 'ಈ ಸೀಸನ್‌ನಲ್ಲಿ ಸಂಚಿಕೆಗಳಿಲ್ಲ.',
   '{}. bölüm': 'ಸಂಚಿಕೆ {}',
   'Dizi veya film ara...': 'ಸರಣಿ ಮತ್ತು ಸಿನಿಮಾ ಹುಡುಕಿ...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'ನೀವು ನೋಡಿದ್ದರ ಬಗ್ಗೆ ಅಭಿಪ್ರಾಯ ಹಂಚಿಕೊಳ್ಳಿ',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'ನೀವು ನೋಡಿದ್ದರ ಬಗ್ಗೆ ಅಭಿಪ್ರಾಯ ಹಂಚಿಕೊಳ್ಳಿ',
   'Yapım seç (zorunlu)': 'ಶೀರ್ಷಿಕೆ ಆಯ್ಕೆಮಾಡಿ (ಕಡ್ಡಾಯ)',
   'Paylaşmak için önce bir yapım seç.': 'ಹಂಚಿಕೊಳ್ಳಲು ಮೊದಲು ಶೀರ್ಷಿಕೆ ಆಯ್ಕೆಮಾಡಿ.',
   'Kişi': 'ವ್ಯಕ್ತಿ',
   'Yapım firması': 'ನಿರ್ಮಾಣ ಸಂಸ್ಥೆ',
   'Yapım ara...': 'ಶೀರ್ಷಿಕೆಗಳನ್ನು ಹುಡುಕಿ...',
-  'Çarkı çevirmek için sürükle veya dokun': 'ಚಕ್ರ ತಿರುಗಿಸಲು ಎಳೆಯಿರಿ ಅಥವಾ ಟ್ಯಾಪ್ ಮಾಡಿ',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'ಚಕ್ರ ತಿರುಗಿಸಲು ಎಳೆಯಿರಿ ಅಥವಾ ಟ್ಯಾಪ್ ಮಾಡಿ',
+  'Arşiv': 'ಸಂಗ್ರಹ',
+  'Yüklediklerim': 'ನನ್ನ ಅಪ್‌ಲೋಡ್‌ಗಳು',
+  'GIF ara...': 'GIF ಹುಡುಕಿ...',
+  'GIF yükle': 'GIF ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+  'GIF etiketleri': 'GIF ಟ್ಯಾಗ್‌ಗಳು',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'ಅಲ್ಪವಿರಾಮದಿಂದ ಬೇರ್ಪಡಿಸಿ. ಈ ಪದಗಳಿಂದಲೇ ಇದು ಸಿಗುತ್ತದೆ.',
+  'gülme, alkış, şaşkın': 'ನಗು, ಚಪ್ಪಾಳೆ, ಆಶ್ಚರ್ಯ',
+  'Yükle': 'ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+  'Henüz GIF yok': 'ಇನ್ನೂ GIF ಇಲ್ಲ',
+  'Bu aramaya uyan GIF yok': 'ಈ ಹುಡುಕಾಟಕ್ಕೆ ಹೊಂದುವ GIF ಇಲ್ಲ',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'ಸಂಗ್ರಹ ಹೊಸದು. ಮೊದಲ GIF ಅನ್ನು ನೀವು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ — ನೀವು ತಕ್ಷಣ ಬಳಸಬಹುದು, ಅನುಮೋದನೆಯ ನಂತರ ಎಲ್ಲರೂ ನೋಡುತ್ತಾರೆ.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF ಅಪ್‌ಲೋಡ್ ಆಯಿತು. ನೀವು ತಕ್ಷಣ ಬಳಸಬಹುದು; ಅನುಮೋದನೆಯ ನಂತರ ಸಾರ್ವಜನಿಕ ಸಂಗ್ರಹಕ್ಕೆ ಸೇರುತ್ತದೆ.',
+  'Onay bekliyor': 'ಅನುಮೋದನೆಗೆ ಕಾಯುತ್ತಿದೆ',
+  'GIF listesi yüklenemedi': 'GIF ಪಟ್ಟಿ ಲೋಡ್ ಆಗಲಿಲ್ಲ',
+  'GIF yüklenemedi': 'GIF ಅಪ್‌ಲೋಡ್ ಆಗಲಿಲ್ಲ',
+  'Bu GIF i şikayet et': 'ಈ GIF ಬಗ್ಗೆ ದೂರು ನೀಡಿ',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'ಅನುಚಿತ ವಿಷಯವನ್ನು ನಿರ್ವಾಹಕರಿಗೆ ವರದಿ ಮಾಡಲಾಗುತ್ತದೆ ಮತ್ತು ಸಂಗ್ರಹದಿಂದ ತೆಗೆದುಹಾಕಬಹುದು.',
+  'Şikayetin alındı': 'ನಿಮ್ಮ ದೂರು ಸ್ವೀಕರಿಸಲಾಗಿದೆ',
+  'Şikayet gönderilemedi': 'ದೂರು ಕಳುಹಿಸಲು ಆಗಲಿಲ್ಲ',
 };

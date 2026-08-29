@@ -7561,11 +7561,41 @@ async function sitemapSorgu(sql) {
  *
  * Tarihsiz satır `lastmod`SUZ basılır — uydurma tarih basmak yasak (Google
  * `lastmod`u tutarsız bulursa TAMAMEN yok sayar, bkz. `sitemapSatiri`).
+ *
+ * 30 Ağu 2026, ÖLÇÜLMÜŞ ONARIM — EPOK ÖNCESİ TARİH GOOGLE'A "GEÇERSİZ TARİH".
+ * GSC "Site Haritaları → sitemap-bolum-1.xml" satırı 29 Ağu okumasından sonra
+ * **156 hata / "Geçersiz tarih"** gösterdi (örnek satırlar 7216-7218, etiket
+ * `lastmod`). Dosya XML olarak KUSURSUZDU: 0 yinelenen, 0 yabancı host,
+ * 0 kaçışsız `&`, 0 biçim bozukluğu, tüm tarihler `YYYY-MM-DD`. Sayım eşleşti:
+ *
+ *     1959:12 + 1960:35 + 1961:33 + 1962:22 + 1963:31 + 1964:23 = 156
+ *
+ * yani haritadaki **1970 öncesi tarihlerin TAMAMI** — hepsi tek diziden
+ * (TMDB 6357, *The Twilight Zone*, 1959-1964 yayın tarihleri). 1985 ve
+ * sonrası aynı dosyada sorunsuz. Bölüm ailesi 25 Ağu kesmesiyle 5.154 satıra
+ * inmişken hata 0'dı; 29 Ağu'da 20.000'e çıkınca bu diziyle birlikte geldi.
+ * (`sitemap-icerik-1.xml`de 1970 öncesi lastmod YOK — ölçüldü, 0 satır.)
+ *
+ * Google'ın kabul ettiği ALT SINIR belgelenmemiş; ölçüm yalnız "<1965 RED,
+ * ≥1985 KABUL" diyor. Epok (1970-01-01) seçildi çünkü tarih doğrulayıcıların
+ * yaygın alt sınırı ve ölçülen red kümesini TAMAMEN kapsıyor.
+ *
+ * NEDEN KIRPMA DEĞİL, DÜŞÜRME: `lastmod`u 1970-01-01'e kırpsaydık Google'a
+ * hâlâ YANLIŞ bir "son değişiklik" tarihi söylerdik ve tek bir güne yığılmış
+ * on binlerce satır "tutarsız `lastmod`" damgası yerdi (o zaman Google alanı
+ * TAMAMEN yok sayar). Alan isteğe bağlı: yazmamak dürüst ve zararsız —
+ * `sitemapSatiri` zaten boş `lastmod`da etiketi hiç basmıyor.
  */
 const gunTarihi = (d) => {
   if (d === null || d === undefined || d === '') return '';
   const t = new Date(d);
-  return Number.isNaN(t.getTime()) ? '' : t.toISOString().slice(0, 10);
+  if (Number.isNaN(t.getTime())) return '';
+  const g = t.toISOString().slice(0, 10);
+  // Sınır BURAYA gömülü, modül düzeyinde sabit DEĞİL: SEO testleri bu
+  // fonksiyonu kaynaktan çekip sanal alanda çalıştırıyor (`alan(['gunTarihi'])`)
+  // ve dışarıdaki bir sabit o alanda tanımsız kalırdı.
+  // ISO tarihte dizgi karşılaştırması = tarih karşılaştırması.
+  return g < '1970-01-01' ? '' : g;
 };
 
 // Önbellek kapları. Dört harita da AYRI kaplarda tutulur: biri üretilemezse
@@ -18338,7 +18368,15 @@ app.get('/admin/gif-kuyruk', adminKisit, sarici(async (req, res) => {
             count(*) FILTER (WHERE durum='onayli')::int onayli,
             count(*) FILTER (WHERE durum='reddedildi')::int reddedilen,
             count(*)::int toplam FROM gifler`);
-  res.json({ gifler: rows, ...sayim[0] });
+  // BIGINT → DİZGİ TUZAĞI (29 Ağu 2026, panelde YAKALANDI): `pg` BIGSERIAL/BIGINT
+  // sütunları JS `Number`ına SIĞMAYABİLECEĞİ için DİZGİ döndürür. Panelin
+  // `bytFmt`i `n.toFixed` çağırıyor ve "847" dizgisinde patlıyordu — ızgara
+  // sessizce "Yüklenemedi" yazıyordu (başlıktaki sayılar doğru geldiği için
+  // hata kolayca gözden kaçardı). id ve bayt BURADA sayıya çevrilir.
+  res.json({
+    gifler: rows.map((r) => ({ ...r, id: Number(r.id), bayt: Number(r.bayt) })),
+    ...sayim[0],
+  });
 }));
 
 app.post('/admin/gif-karar', adminKisit, sarici(async (req, res) => {
@@ -18355,7 +18393,7 @@ app.post('/admin/gif-karar', adminKisit, sarici(async (req, res) => {
     [durum, yoneticiEtiketi(req), String(sebep || '').slice(0, 300), id],
   );
   if (!rows.length) return res.status(404).json({ hata: 'GIF bulunamadı' });
-  res.json({ durum: 'ok', gif: rows[0] });
+  res.json({ durum: 'ok', gif: { ...rows[0], id: Number(rows[0].id) } });
 }));
 
 // Reddedilen GIF'i diskten de sil. Kayıt 'reddedildi' kaldığı sürece dosya
@@ -18365,11 +18403,18 @@ app.post('/admin/gif-karar', adminKisit, sarici(async (req, res) => {
 app.post('/admin/gif-sil', adminKisit, sarici(async (req, res) => {
   const id = req.body?.id;
   if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
-  const { rows } = await havuz.query('DELETE FROM gifler WHERE id=$1 RETURNING yol', [id]);
+  const { rows } = await havuz.query(
+    'DELETE FROM gifler WHERE id=$1 RETURNING yol, yukleyen_id', [id]);
   if (!rows.length) return res.status(404).json({ hata: 'GIF bulunamadı' });
+  const tam = path.join(MEDYA_DIZIN, path.basename(rows[0].yol));
+  // KOTA İADESİ — avatar değişimindeki kuralın aynısı: silinen dosyanın yerini
+  // kullanıcı ömür boyu ödememeli. Boyut dosya SİLİNMEDEN ÖNCE okunur.
+  let boyut = 0;
+  try { boyut = fs.statSync(tam).size; } catch { /* dosya zaten yok */ }
+  if (rows[0].yukleyen_id) kotaIade(rows[0].yukleyen_id, boyut);
   // Dosya silme ATEŞLE-UNUT: DB satırı zaten gitti, disk hatası isteği bozmasın
   // (öksüz tarayıcı zaten toplar).
-  fs.unlink(path.join(MEDYA_DIZIN, path.basename(rows[0].yol)), () => {});
+  fs.unlink(tam, () => {});
   res.json({ durum: 'silindi', yol: rows[0].yol });
 }));
 

@@ -1323,20 +1323,47 @@ const Map<String, String> cevirilerHi = {
   'Ne düşünüyorsun?': 'आपका क्या ख़याल है?',
   '{}/{} yükleniyor': '{}/{} अपलोड हो रहा है',
   'Fotoğraf/video ekle': 'फ़ोटो या वीडियो जोड़ें',
-  'Paylaşmak için önce bir dizi veya film seç.': 'साझा करने के लिए पहले सीरीज़ या फ़िल्म चुनें।',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'साझा करने के लिए पहले सीरीज़ या फ़िल्म चुनें।',
   'Sezon seç': 'सीज़न चुनें',
   '{}. sezon': 'सीज़न {}',
-  'Bölüm seçme (yalnız dizi hakkında)': 'कोई एपिसोड नहीं (केवल सीरीज़ के बारे में)',
+  'Bölüm seçme (yalnız dizi hakkında)':
+      'कोई एपिसोड नहीं (केवल सीरीज़ के बारे में)',
   'Sezonlar yüklenemedi.': 'सीज़न लोड नहीं हो सके।',
   'Bu dizide bölüm bilgisi yok.': 'इस सीरीज़ के एपिसोड की जानकारी नहीं है।',
   'Bu sezonda bölüm yok.': 'इस सीज़न में कोई एपिसोड नहीं है।',
   '{}. bölüm': 'एपिसोड {}',
   'Dizi veya film ara...': 'सीरीज़ और फ़िल्में खोजें...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'आपने जो देखा उस पर टिप्पणी साझा करें',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'आपने जो देखा उस पर टिप्पणी साझा करें',
   'Yapım seç (zorunlu)': 'टाइटल चुनें (ज़रूरी)',
   'Paylaşmak için önce bir yapım seç.': 'साझा करने के लिए पहले टाइटल चुनें।',
   'Kişi': 'व्यक्ति',
   'Yapım firması': 'प्रोडक्शन कंपनी',
   'Yapım ara...': 'टाइटल खोजें...',
-  'Çarkı çevirmek için sürükle veya dokun': 'व्हील घुमाने के लिए खींचें या टैप करें',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'व्हील घुमाने के लिए खींचें या टैप करें',
+  'Arşiv': 'संग्रह',
+  'Yüklediklerim': 'मेरे अपलोड',
+  'GIF ara...': 'GIF खोजें...',
+  'GIF yükle': 'GIF अपलोड करें',
+  'GIF etiketleri': 'GIF टैग',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'अल्पविराम से अलग करें। इन्हीं शब्दों से यह मिलेगा।',
+  'gülme, alkış, şaşkın': 'हँसी, तालियाँ, हैरानी',
+  'Yükle': 'अपलोड करें',
+  'Henüz GIF yok': 'अभी कोई GIF नहीं',
+  'Bu aramaya uyan GIF yok': 'इस खोज से मेल खाता कोई GIF नहीं',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'संग्रह नया है। पहला GIF आप अपलोड करें — आप तुरंत इस्तेमाल कर सकते हैं, मंज़ूरी के बाद सब देखेंगे।',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF अपलोड हो गया। आप तुरंत इस्तेमाल कर सकते हैं; सार्वजनिक संग्रह में मंज़ूरी के बाद आएगा।',
+  'Onay bekliyor': 'मंज़ूरी का इंतज़ार',
+  'GIF listesi yüklenemedi': 'GIF सूची लोड नहीं हो सकी',
+  'GIF yüklenemedi': 'GIF अपलोड नहीं हो सका',
+  'Bu GIF i şikayet et': 'इस GIF की शिकायत करें',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'अनुचित सामग्री की सूचना मॉडरेटर को दी जाती है और उसे संग्रह से हटाया जा सकता है।',
+  'Şikayetin alındı': 'आपकी शिकायत मिल गई',
+  'Şikayet gönderilemedi': 'शिकायत नहीं भेजी जा सकी',
 };

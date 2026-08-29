@@ -1334,7 +1334,8 @@ const Map<String, String> cevirilerUk = {
   'Ne düşünüyorsun?': 'Що ви думаєте?',
   '{}/{} yükleniyor': 'Завантаження {}/{}',
   'Fotoğraf/video ekle': 'Додати фото або відео',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Спочатку виберіть серіал або фільм для допису.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Спочатку виберіть серіал або фільм для допису.',
   'Sezon seç': 'Виберіть сезон',
   '{}. sezon': 'Сезон {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Без епізоду (лише про серіал)',
@@ -1343,11 +1344,36 @@ const Map<String, String> cevirilerUk = {
   'Bu sezonda bölüm yok.': 'У цьому сезоні немає епізодів.',
   '{}. bölüm': 'Епізод {}',
   'Dizi veya film ara...': 'Пошук серіалів і фільмів...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Поділіться думкою про те, що дивилися',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Поділіться думкою про те, що дивилися',
   'Yapım seç (zorunlu)': 'Виберіть тайтл (обовʼязково)',
   'Paylaşmak için önce bir yapım seç.': 'Спочатку виберіть тайтл для допису.',
   'Kişi': 'Людина',
   'Yapım firması': 'Кінокомпанія',
   'Yapım ara...': 'Пошук тайтлів...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Проведіть або торкніться, щоб крутити колесо',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Проведіть або торкніться, щоб крутити колесо',
+  'Arşiv': 'Архів',
+  'Yüklediklerim': 'Мої завантаження',
+  'GIF ara...': 'Пошук GIF...',
+  'GIF yükle': 'Завантажити GIF',
+  'GIF etiketleri': 'Теги GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Розділяйте комами. За цими словами його знайдуть.',
+  'gülme, alkış, şaşkın': 'сміх, оплески, здивування',
+  'Yükle': 'Завантажити',
+  'Henüz GIF yok': 'Поки що немає GIF',
+  'Bu aramaya uyan GIF yok': 'За цим запитом GIF не знайдено',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Архів новий. Завантаж перший GIF — одразу зможеш ним користуватися, а всі побачать його після схвалення.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF завантажено. Можеш користуватися ним одразу; до спільного архіву він потрапить після схвалення.',
+  'Onay bekliyor': 'Очікує схвалення',
+  'GIF listesi yüklenemedi': 'Не вдалося завантажити список GIF',
+  'GIF yüklenemedi': 'Не вдалося завантажити GIF',
+  'Bu GIF i şikayet et': 'Поскаржитися на цей GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Про неприйнятний вміст повідомляють модератора, і його можуть вилучити з архіву.',
+  'Şikayetin alındı': 'Скаргу отримано',
+  'Şikayet gönderilemedi': 'Не вдалося надіслати скаргу',
 };

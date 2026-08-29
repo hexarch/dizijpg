@@ -1317,7 +1317,8 @@ const Map<String, String> cevirilerGu = {
   'Ne düşünüyorsun?': 'તમે શું વિચારો છો?',
   '{}/{} yükleniyor': '{}/{} અપલોડ થઈ રહ્યું છે',
   'Fotoğraf/video ekle': 'ફોટો અથવા વીડિયો ઉમેરો',
-  'Paylaşmak için önce bir dizi veya film seç.': 'શેર કરવા માટે પહેલા શ્રેણી અથવા ફિલ્મ પસંદ કરો.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'શેર કરવા માટે પહેલા શ્રેણી અથવા ફિલ્મ પસંદ કરો.',
   'Sezon seç': 'સીઝન પસંદ કરો',
   '{}. sezon': 'સીઝન {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'એપિસોડ નહીં (ફક્ત શ્રેણી વિશે)',
@@ -1326,11 +1327,36 @@ const Map<String, String> cevirilerGu = {
   'Bu sezonda bölüm yok.': 'આ સીઝનમાં એપિસોડ નથી.',
   '{}. bölüm': 'એપિસોડ {}',
   'Dizi veya film ara...': 'શ્રેણી અને ફિલ્મો શોધો...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'તમે જે જોયું તેના વિશે ટિપ્પણી શેર કરો',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'તમે જે જોયું તેના વિશે ટિપ્પણી શેર કરો',
   'Yapım seç (zorunlu)': 'શીર્ષક પસંદ કરો (ફરજિયાત)',
   'Paylaşmak için önce bir yapım seç.': 'શેર કરવા માટે પહેલા શીર્ષક પસંદ કરો.',
   'Kişi': 'વ્યક્તિ',
   'Yapım firması': 'નિર્માણ કંપની',
   'Yapım ara...': 'શીર્ષકો શોધો...',
-  'Çarkı çevirmek için sürükle veya dokun': 'ચક્ર ફેરવવા માટે ખેંચો અથવા ટૅપ કરો',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'ચક્ર ફેરવવા માટે ખેંચો અથવા ટૅપ કરો',
+  'Arşiv': 'સંગ્રહ',
+  'Yüklediklerim': 'મારા અપલોડ',
+  'GIF ara...': 'GIF શોધો...',
+  'GIF yükle': 'GIF અપલોડ કરો',
+  'GIF etiketleri': 'GIF ટૅગ',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'અલ્પવિરામથી અલગ કરો. આ શબ્દોથી તે મળશે.',
+  'gülme, alkış, şaşkın': 'હાસ્ય, તાળીઓ, આશ્ચર્ય',
+  'Yükle': 'અપલોડ કરો',
+  'Henüz GIF yok': 'હજી કોઈ GIF નથી',
+  'Bu aramaya uyan GIF yok': 'આ શોધ સાથે મેળ ખાતું કોઈ GIF નથી',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'સંગ્રહ નવો છે. પહેલો GIF તમે અપલોડ કરો — તમે તરત વાપરી શકશો, મંજૂરી પછી બધા જોશે.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF અપલોડ થયો. તમે તરત વાપરી શકો છો; મંજૂરી પછી જાહેર સંગ્રહમાં આવશે.',
+  'Onay bekliyor': 'મંજૂરીની રાહમાં',
+  'GIF listesi yüklenemedi': 'GIF યાદી લોડ થઈ શકી નહીં',
+  'GIF yüklenemedi': 'GIF અપલોડ થઈ શક્યો નહીં',
+  'Bu GIF i şikayet et': 'આ GIF ની ફરિયાદ કરો',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'અયોગ્ય સામગ્રીની જાણ મોડરેટરને કરવામાં આવે છે અને તેને સંગ્રહમાંથી દૂર કરી શકાય છે.',
+  'Şikayetin alındı': 'તમારી ફરિયાદ મળી ગઈ',
+  'Şikayet gönderilemedi': 'ફરિયાદ મોકલી શકાઈ નહીં',
 };

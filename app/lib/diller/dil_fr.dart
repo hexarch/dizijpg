@@ -1352,20 +1352,47 @@ const Map<String, String> cevirilerFr = {
   'Ne düşünüyorsun?': 'Qu\'en penses-tu ?',
   '{}/{} yükleniyor': 'Envoi {}/{}',
   'Fotoğraf/video ekle': 'Ajouter une photo ou une vidéo',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Choisis d\'abord une série ou un film à partager.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Choisis d\'abord une série ou un film à partager.',
   'Sezon seç': 'Choisis une saison',
   '{}. sezon': 'Saison {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Aucun épisode (à propos de la série)',
   'Sezonlar yüklenemedi.': 'Impossible de charger les saisons.',
-  'Bu dizide bölüm bilgisi yok.': 'Aucune information d\'épisode pour cette série.',
+  'Bu dizide bölüm bilgisi yok.':
+      'Aucune information d\'épisode pour cette série.',
   'Bu sezonda bölüm yok.': 'Aucun épisode dans cette saison.',
   '{}. bölüm': 'Épisode {}',
   'Dizi veya film ara...': 'Rechercher séries et films...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Partage un commentaire sur ce que tu as regardé',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Partage un commentaire sur ce que tu as regardé',
   'Yapım seç (zorunlu)': 'Choisis un titre (obligatoire)',
   'Paylaşmak için önce bir yapım seç.': 'Choisis d\'abord un titre à partager.',
   'Kişi': 'Personne',
   'Yapım firması': 'Société de production',
   'Yapım ara...': 'Rechercher des titres...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Fais glisser ou touche pour tourner la roue',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Fais glisser ou touche pour tourner la roue',
+  'Arşiv': 'Archive',
+  'Yüklediklerim': 'Mes envois',
+  'GIF ara...': 'Rechercher des GIF...',
+  'GIF yükle': 'Envoyer un GIF',
+  'GIF etiketleri': 'Étiquettes du GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Séparez par des virgules. Ces mots servent à le retrouver.',
+  'gülme, alkış, şaşkın': 'rire, applaudissements, surpris',
+  'Yükle': 'Envoyer',
+  'Henüz GIF yok': 'Pas encore de GIF',
+  'Bu aramaya uyan GIF yok': 'Aucun GIF ne correspond à cette recherche',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'L\'archive est nouvelle. Envoie le premier GIF — tu peux l\'utiliser tout de suite, tout le monde le verra après validation.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF envoyé. Tu peux l\'utiliser tout de suite ; il rejoint l\'archive publique après validation.',
+  'Onay bekliyor': 'En attente de validation',
+  'GIF listesi yüklenemedi': 'Impossible de charger la liste des GIF',
+  'GIF yüklenemedi': 'Impossible d\'envoyer le GIF',
+  'Bu GIF i şikayet et': 'Signaler ce GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Le contenu inapproprié est signalé à un modérateur et peut être retiré de l\'archive.',
+  'Şikayetin alındı': 'Ton signalement a été reçu',
+  'Şikayet gönderilemedi': 'Le signalement n\'a pas pu être envoyé',
 };

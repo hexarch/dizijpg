@@ -1346,20 +1346,48 @@ const Map<String, String> cevirilerEs = {
   'Ne düşünüyorsun?': '¿Qué opinas?',
   '{}/{} yükleniyor': 'Subiendo {}/{}',
   'Fotoğraf/video ekle': 'Añadir foto o vídeo',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Elige primero una serie o película para compartir.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Elige primero una serie o película para compartir.',
   'Sezon seç': 'Elige una temporada',
   '{}. sezon': 'Temporada {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Sin episodio (solo sobre la serie)',
   'Sezonlar yüklenemedi.': 'No se pudieron cargar las temporadas.',
-  'Bu dizide bölüm bilgisi yok.': 'No hay información de episodios para esta serie.',
+  'Bu dizide bölüm bilgisi yok.':
+      'No hay información de episodios para esta serie.',
   'Bu sezonda bölüm yok.': 'No hay episodios en esta temporada.',
   '{}. bölüm': 'Episodio {}',
   'Dizi veya film ara...': 'Buscar series y películas...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Comparte un comentario sobre lo que viste',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Comparte un comentario sobre lo que viste',
   'Yapım seç (zorunlu)': 'Elige un título (obligatorio)',
-  'Paylaşmak için önce bir yapım seç.': 'Elige primero un título para compartir.',
+  'Paylaşmak için önce bir yapım seç.':
+      'Elige primero un título para compartir.',
   'Kişi': 'Persona',
   'Yapım firması': 'Productora',
   'Yapım ara...': 'Buscar títulos...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Arrastra o toca para girar la ruleta',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Arrastra o toca para girar la ruleta',
+  'Arşiv': 'Archivo',
+  'Yüklediklerim': 'Mis subidas',
+  'GIF ara...': 'Buscar GIF...',
+  'GIF yükle': 'Subir GIF',
+  'GIF etiketleri': 'Etiquetas del GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Sepáralas con comas. Con esas palabras se encuentra.',
+  'gülme, alkış, şaşkın': 'risa, aplausos, sorpresa',
+  'Yükle': 'Subir',
+  'Henüz GIF yok': 'Todavía no hay GIF',
+  'Bu aramaya uyan GIF yok': 'Ningún GIF coincide con esta búsqueda',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'El archivo es nuevo. Sube el primer GIF: podrás usarlo enseguida y todos lo verán tras la aprobación.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF subido. Puedes usarlo enseguida; entra en el archivo público tras la aprobación.',
+  'Onay bekliyor': 'Pendiente de aprobación',
+  'GIF listesi yüklenemedi': 'No se pudo cargar la lista de GIF',
+  'GIF yüklenemedi': 'No se pudo subir el GIF',
+  'Bu GIF i şikayet et': 'Denunciar este GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'El contenido inapropiado se notifica a un moderador y puede retirarse del archivo.',
+  'Şikayetin alındı': 'Tu denuncia se ha recibido',
+  'Şikayet gönderilemedi': 'No se pudo enviar la denuncia',
 };

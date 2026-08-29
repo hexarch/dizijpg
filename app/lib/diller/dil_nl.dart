@@ -1336,20 +1336,47 @@ const Map<String, String> cevirilerNl = {
   'Ne düşünüyorsun?': 'Wat vind je ervan?',
   '{}/{} yükleniyor': '{}/{} uploaden',
   'Fotoğraf/video ekle': 'Foto of video toevoegen',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Kies eerst een serie of film om te delen.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Kies eerst een serie of film om te delen.',
   'Sezon seç': 'Kies een seizoen',
   '{}. sezon': 'Seizoen {}',
-  'Bölüm seçme (yalnız dizi hakkında)': 'Geen aflevering (alleen over de serie)',
+  'Bölüm seçme (yalnız dizi hakkında)':
+      'Geen aflevering (alleen over de serie)',
   'Sezonlar yüklenemedi.': 'Seizoenen konden niet worden geladen.',
   'Bu dizide bölüm bilgisi yok.': 'Geen afleveringsinformatie voor deze serie.',
   'Bu sezonda bölüm yok.': 'Geen afleveringen in dit seizoen.',
   '{}. bölüm': 'Aflevering {}',
   'Dizi veya film ara...': 'Series en films zoeken...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Deel een reactie over wat je hebt gekeken',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Deel een reactie over wat je hebt gekeken',
   'Yapım seç (zorunlu)': 'Kies een titel (verplicht)',
   'Paylaşmak için önce bir yapım seç.': 'Kies eerst een titel om te delen.',
   'Kişi': 'Persoon',
   'Yapım firması': 'Productiebedrijf',
   'Yapım ara...': 'Titels zoeken...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Sleep of tik om het rad te draaien',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Sleep of tik om het rad te draaien',
+  'Arşiv': 'Archief',
+  'Yüklediklerim': 'Mijn uploads',
+  'GIF ara...': 'Zoek GIF\'s...',
+  'GIF yükle': 'GIF uploaden',
+  'GIF etiketleri': 'GIF-labels',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Scheid met komma’s. Met deze woorden wordt hij gevonden.',
+  'gülme, alkış, şaşkın': 'lachen, applaus, verbaasd',
+  'Yükle': 'Uploaden',
+  'Henüz GIF yok': 'Nog geen GIFs',
+  'Bu aramaya uyan GIF yok': 'Geen GIFs voor deze zoekopdracht',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Het archief is nieuw. Upload de eerste GIF — je kunt hem meteen gebruiken, iedereen ziet hem na goedkeuring.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF geüpload. Je kunt hem meteen gebruiken; hij komt na goedkeuring in het openbare archief.',
+  'Onay bekliyor': 'Wacht op goedkeuring',
+  'GIF listesi yüklenemedi': 'GIF-lijst kon niet worden geladen',
+  'GIF yüklenemedi': 'GIF kon niet worden geüpload',
+  'Bu GIF i şikayet et': 'Deze GIF melden',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Ongepaste inhoud wordt aan een moderator gemeld en kan uit het archief worden verwijderd.',
+  'Şikayetin alındı': 'Je melding is ontvangen',
+  'Şikayet gönderilemedi': 'Melding kon niet worden verzonden',
 };

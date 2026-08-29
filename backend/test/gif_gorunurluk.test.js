@@ -261,6 +261,34 @@ test('şema: lisans/atıf kamu malı için ZORUNLU, yol TEKİL', () => {
   assert.match(SEMA, /kaynak <> 'kamu-mali' OR \(length\(btrim\(lisans\)\) > 0 AND length\(btrim\(atif\)\) > 0\)/);
 });
 
+test('GIF silinince yükleyenin KOTASI iade edilir', () => {
+  // Avatar değişiminde iade zaten yapılıyordu; arşiv silmesinde YOKTU ve
+  // kullanıcı silinmiş bir dosyanın yerini ömür boyu ödemeye devam ederdi.
+  const i = KAYNAK.indexOf("app.post('/admin/gif-sil'");
+  assert.notEqual(i, -1);
+  const govde = KAYNAK.slice(i, i + 1400);
+  assert.match(govde, /RETURNING yol, yukleyen_id/);
+  assert.match(govde, /kotaIade\(rows\[0\]\.yukleyen_id, boyut\)/,
+    'silme kotayı iade etmiyor');
+  // Boyut dosya SİLİNMEDEN ÖNCE okunmalı, yoksa hep 0 iade edilir.
+  assert.ok(govde.indexOf('statSync') < govde.indexOf('fs.unlink'),
+    'boyut dosya silindikten sonra okunuyor — iade daima 0 olur');
+});
+
+test('BIGINT → DİZGİ tuzağı: admin uçları id/bayt ı SAYIYA çevirir', () => {
+  // 29 Ağu 2026, tarayıcıda YAKALANDI: `pg` BIGINT'i dizgi döndürüyor,
+  // panelin `bytFmt`i `n.toFixed` çağırıp patlıyordu. Izgara sessizce
+  // "Yüklenemedi" yazdı; başlıktaki sayaçlar DOĞRU geldiği için hata
+  // "sunucu bozuk" gibi görünmüyordu — tam da gözden kaçacak cinsten.
+  assert.match(KAYNAK, /id: Number\(r\.id\), bayt: Number\(r\.bayt\)/,
+    'gif-kuyruk BIGINT alanlarını dizgi olarak gönderiyor');
+  assert.match(KAYNAK, /gif: \{ \.\.\.rows\[0\], id: Number\(rows\[0\]\.id\) \}/,
+    'gif-karar id yi dizgi olarak gönderiyor');
+  // İstemciye giden satır da sayı olmalı: seçici `id is int` kontrolü yapıyor,
+  // dizgi gelirse kullanım sayacı SESSİZCE hiç artmaz.
+  assert.match(KAYNAK, /id: Number\(r\.id\),/);
+});
+
 test('panelde GIF onayı Moderasyon modülünde', () => {
   assert.match(PANEL, /k:'gifler'/, 'panel modül satırı yok');
   assert.match(PANEL, /gif-kuyruk/);

@@ -1327,7 +1327,8 @@ const Map<String, String> cevirilerTe = {
   'Ne düşünüyorsun?': 'నువ్వు ఏమనుకుంటున్నావు?',
   '{}/{} yükleniyor': '{}/{} అప్‌లోడ్ అవుతోంది',
   'Fotoğraf/video ekle': 'ఫోటో లేదా వీడియో జోడించు',
-  'Paylaşmak için önce bir dizi veya film seç.': 'షేర్ చేయడానికి ముందు సిరీస్ లేదా సినిమా ఎంచుకో.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'షేర్ చేయడానికి ముందు సిరీస్ లేదా సినిమా ఎంచుకో.',
   'Sezon seç': 'సీజన్ ఎంచుకో',
   '{}. sezon': 'సీజన్ {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'ఎపిసోడ్ లేదు (సిరీస్ గురించి మాత్రమే)',
@@ -1336,11 +1337,36 @@ const Map<String, String> cevirilerTe = {
   'Bu sezonda bölüm yok.': 'ఈ సీజన్‌లో ఎపిసోడ్‌లు లేవు.',
   '{}. bölüm': 'ఎపిసోడ్ {}',
   'Dizi veya film ara...': 'సిరీస్‌లు, సినిమాలు వెతుకు...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'నువ్వు చూసిన దాని గురించి వ్యాఖ్య పంచుకో',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'నువ్వు చూసిన దాని గురించి వ్యాఖ్య పంచుకో',
   'Yapım seç (zorunlu)': 'టైటిల్ ఎంచుకో (తప్పనిసరి)',
   'Paylaşmak için önce bir yapım seç.': 'షేర్ చేయడానికి ముందు టైటిల్ ఎంచుకో.',
   'Kişi': 'వ్యక్తి',
   'Yapım firması': 'నిర్మాణ సంస్థ',
   'Yapım ara...': 'టైటిల్స్ వెతుకు...',
-  'Çarkı çevirmek için sürükle veya dokun': 'చక్రం తిప్పడానికి లాగండి లేదా నొక్కండి',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'చక్రం తిప్పడానికి లాగండి లేదా నొక్కండి',
+  'Arşiv': 'ఆర్కైవ్',
+  'Yüklediklerim': 'నా అప్‌లోడ్‌లు',
+  'GIF ara...': 'GIF వెతకండి...',
+  'GIF yükle': 'GIF అప్‌లోడ్ చేయండి',
+  'GIF etiketleri': 'GIF ట్యాగ్‌లు',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'కామాలతో వేరు చేయండి. ఈ పదాలతోనే ఇది దొరుకుతుంది.',
+  'gülme, alkış, şaşkın': 'నవ్వు, చప్పట్లు, ఆశ్చర్యం',
+  'Yükle': 'అప్‌లోడ్ చేయండి',
+  'Henüz GIF yok': 'ఇంకా GIF లేవు',
+  'Bu aramaya uyan GIF yok': 'ఈ శోధనకు సరిపోయే GIF లేదు',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'ఆర్కైవ్ కొత్తది. మొదటి GIF ని మీరు అప్‌లోడ్ చేయండి — మీరు వెంటనే వాడుకోవచ్చు, ఆమోదం తర్వాత అందరూ చూస్తారు.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF అప్‌లోడ్ అయింది. మీరు వెంటనే వాడుకోవచ్చు; ఆమోదం తర్వాత బహిరంగ ఆర్కైవ్‌లోకి వస్తుంది.',
+  'Onay bekliyor': 'ఆమోదం కోసం వేచి ఉంది',
+  'GIF listesi yüklenemedi': 'GIF జాబితా లోడ్ కాలేదు',
+  'GIF yüklenemedi': 'GIF అప్‌లోడ్ కాలేదు',
+  'Bu GIF i şikayet et': 'ఈ GIF పై ఫిర్యాదు చేయండి',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'అనుచిత విషయం మోడరేటర్‌కు నివేదించబడుతుంది మరియు ఆర్కైవ్ నుండి తీసివేయవచ్చు.',
+  'Şikayetin alındı': 'మీ ఫిర్యాదు అందింది',
+  'Şikayet gönderilemedi': 'ఫిర్యాదు పంపడం సాధ్యపడలేదు',
 };

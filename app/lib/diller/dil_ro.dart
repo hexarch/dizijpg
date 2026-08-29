@@ -1349,20 +1349,48 @@ const Map<String, String> cevirilerRo = {
   'Ne düşünüyorsun?': 'Ce părere ai?',
   '{}/{} yükleniyor': 'Se încarcă {}/{}',
   'Fotoğraf/video ekle': 'Adaugă fotografie sau videoclip',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Alege mai întâi un serial sau film pentru a publica.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Alege mai întâi un serial sau film pentru a publica.',
   'Sezon seç': 'Alege un sezon',
   '{}. sezon': 'Sezonul {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Fără episod (doar despre serial)',
   'Sezonlar yüklenemedi.': 'Sezoanele nu au putut fi încărcate.',
-  'Bu dizide bölüm bilgisi yok.': 'Nu există informații despre episoadele acestui serial.',
+  'Bu dizide bölüm bilgisi yok.':
+      'Nu există informații despre episoadele acestui serial.',
   'Bu sezonda bölüm yok.': 'Niciun episod în acest sezon.',
   '{}. bölüm': 'Episodul {}',
   'Dizi veya film ara...': 'Caută seriale și filme...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Împărtășește un comentariu despre ce ai urmărit',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Împărtășește un comentariu despre ce ai urmărit',
   'Yapım seç (zorunlu)': 'Alege un titlu (obligatoriu)',
-  'Paylaşmak için önce bir yapım seç.': 'Alege mai întâi un titlu pentru a publica.',
+  'Paylaşmak için önce bir yapım seç.':
+      'Alege mai întâi un titlu pentru a publica.',
   'Kişi': 'Persoană',
   'Yapım firması': 'Companie de producție',
   'Yapım ara...': 'Caută titluri...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Trage sau atinge pentru a învârti roata',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Trage sau atinge pentru a învârti roata',
+  'Arşiv': 'Arhivă',
+  'Yüklediklerim': 'Încărcările mele',
+  'GIF ara...': 'Caută GIF-uri...',
+  'GIF yükle': 'Încarcă GIF',
+  'GIF etiketleri': 'Etichete GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Separă prin virgule. După aceste cuvinte va fi găsit.',
+  'gülme, alkış, şaşkın': 'râs, aplauze, surpriză',
+  'Yükle': 'Încarcă',
+  'Henüz GIF yok': 'Încă nu există GIF-uri',
+  'Bu aramaya uyan GIF yok': 'Niciun GIF nu corespunde acestei căutări',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Arhiva este nouă. Încarcă primul GIF — îl poți folosi imediat, iar toți îl văd după aprobare.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF încărcat. Îl poți folosi imediat; intră în arhiva publică după aprobare.',
+  'Onay bekliyor': 'Așteaptă aprobarea',
+  'GIF listesi yüklenemedi': 'Lista de GIF-uri nu a putut fi încărcată',
+  'GIF yüklenemedi': 'GIF-ul nu a putut fi încărcat',
+  'Bu GIF i şikayet et': 'Raportează acest GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Conținutul nepotrivit este raportat unui moderator și poate fi eliminat din arhivă.',
+  'Şikayetin alındı': 'Raportarea ta a fost primită',
+  'Şikayet gönderilemedi': 'Raportarea nu a putut fi trimisă',
 };

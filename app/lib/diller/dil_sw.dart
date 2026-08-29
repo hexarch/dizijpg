@@ -1334,20 +1334,47 @@ const Map<String, String> cevirilerSw = {
   'Ne düşünüyorsun?': 'Unafikiri nini?',
   '{}/{} yükleniyor': 'Inapakia {}/{}',
   'Fotoğraf/video ekle': 'Ongeza picha au video',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Chagua kwanza mfululizo au filamu ili kushiriki.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Chagua kwanza mfululizo au filamu ili kushiriki.',
   'Sezon seç': 'Chagua msimu',
   '{}. sezon': 'Msimu {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Hakuna kipindi (kuhusu mfululizo tu)',
   'Sezonlar yüklenemedi.': 'Misimu haikuweza kupakiwa.',
-  'Bu dizide bölüm bilgisi yok.': 'Hakuna taarifa za vipindi kwa mfululizo huu.',
+  'Bu dizide bölüm bilgisi yok.':
+      'Hakuna taarifa za vipindi kwa mfululizo huu.',
   'Bu sezonda bölüm yok.': 'Hakuna vipindi katika msimu huu.',
   '{}. bölüm': 'Kipindi {}',
   'Dizi veya film ara...': 'Tafuta mfululizo na filamu...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Shiriki maoni kuhusu ulichotazama',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Shiriki maoni kuhusu ulichotazama',
   'Yapım seç (zorunlu)': 'Chagua kichwa (lazima)',
   'Paylaşmak için önce bir yapım seç.': 'Chagua kwanza kichwa ili kushiriki.',
   'Kişi': 'Mtu',
   'Yapım firması': 'Kampuni ya utayarishaji',
   'Yapım ara...': 'Tafuta vichwa...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Buruta au gusa ili kuzungusha gurudumu',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Buruta au gusa ili kuzungusha gurudumu',
+  'Arşiv': 'Kumbukumbu',
+  'Yüklediklerim': 'Nilizopakia',
+  'GIF ara...': 'Tafuta GIF...',
+  'GIF yükle': 'Pakia GIF',
+  'GIF etiketleri': 'Lebo za GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Tenganisha kwa koma. Kwa maneno haya itapatikana.',
+  'gülme, alkış, şaşkın': 'kicheko, makofi, mshangao',
+  'Yükle': 'Pakia',
+  'Henüz GIF yok': 'Bado hakuna GIF',
+  'Bu aramaya uyan GIF yok': 'Hakuna GIF inayolingana na utafutaji huu',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Kumbukumbu ni mpya. Pakia GIF ya kwanza — unaweza kuitumia mara moja, na wote wataiona baada ya kuidhinishwa.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF imepakiwa. Unaweza kuitumia mara moja; itaingia kwenye kumbukumbu ya umma baada ya kuidhinishwa.',
+  'Onay bekliyor': 'Inasubiri idhini',
+  'GIF listesi yüklenemedi': 'Orodha ya GIF haikuweza kupakiwa',
+  'GIF yüklenemedi': 'GIF haikuweza kupakiwa',
+  'Bu GIF i şikayet et': 'Ripoti GIF hii',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Maudhui yasiyofaa huripotiwa kwa msimamizi na yanaweza kuondolewa kwenye kumbukumbu.',
+  'Şikayetin alındı': 'Ripoti yako imepokelewa',
+  'Şikayet gönderilemedi': 'Ripoti haikuweza kutumwa',
 };

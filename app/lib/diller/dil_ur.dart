@@ -1326,7 +1326,8 @@ const Map<String, String> cevirilerUr = {
   'Ne düşünüyorsun?': 'آپ کا کیا خیال ہے؟',
   '{}/{} yükleniyor': '{}/{} اپ لوڈ ہو رہا ہے',
   'Fotoğraf/video ekle': 'تصویر یا ویڈیو شامل کریں',
-  'Paylaşmak için önce bir dizi veya film seç.': 'شیئر کرنے کے لیے پہلے سیریز یا فلم منتخب کریں۔',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'شیئر کرنے کے لیے پہلے سیریز یا فلم منتخب کریں۔',
   'Sezon seç': 'سیزن منتخب کریں',
   '{}. sezon': 'سیزن {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'کوئی قسط نہیں (صرف سیریز کے بارے میں)',
@@ -1335,11 +1336,37 @@ const Map<String, String> cevirilerUr = {
   'Bu sezonda bölüm yok.': 'اس سیزن میں کوئی قسط نہیں۔',
   '{}. bölüm': 'قسط {}',
   'Dizi veya film ara...': 'سیریز اور فلمیں تلاش کریں...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'جو دیکھا اس پر تبصرہ شیئر کریں',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'جو دیکھا اس پر تبصرہ شیئر کریں',
   'Yapım seç (zorunlu)': 'ایک عنوان منتخب کریں (لازمی)',
-  'Paylaşmak için önce bir yapım seç.': 'شیئر کرنے کے لیے پہلے عنوان منتخب کریں۔',
+  'Paylaşmak için önce bir yapım seç.':
+      'شیئر کرنے کے لیے پہلے عنوان منتخب کریں۔',
   'Kişi': 'شخص',
   'Yapım firması': 'پروڈکشن کمپنی',
   'Yapım ara...': 'عنوانات تلاش کریں...',
-  'Çarkı çevirmek için sürükle veya dokun': 'پہیہ گھمانے کے لیے کھینچیں یا ٹیپ کریں',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'پہیہ گھمانے کے لیے کھینچیں یا ٹیپ کریں',
+  'Arşiv': 'آرکائیو',
+  'Yüklediklerim': 'میری اپ لوڈز',
+  'GIF ara...': 'GIF تلاش کریں...',
+  'GIF yükle': 'GIF اپ لوڈ کریں',
+  'GIF etiketleri': 'GIF ٹیگز',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'کوما سے الگ کریں۔ انہی الفاظ سے یہ ملے گا۔',
+  'gülme, alkış, şaşkın': 'ہنسی، تالیاں، حیرت',
+  'Yükle': 'اپ لوڈ کریں',
+  'Henüz GIF yok': 'ابھی کوئی GIF نہیں',
+  'Bu aramaya uyan GIF yok': 'اس تلاش سے کوئی GIF نہیں ملا',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'آرکائیو نیا ہے۔ پہلا GIF آپ اپ لوڈ کریں — آپ فوراً استعمال کر سکتے ہیں، منظوری کے بعد سب دیکھیں گے۔',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF اپ لوڈ ہو گیا۔ آپ فوراً استعمال کر سکتے ہیں؛ عوامی آرکائیو میں منظوری کے بعد آئے گا۔',
+  'Onay bekliyor': 'منظوری کا منتظر',
+  'GIF listesi yüklenemedi': 'GIF فہرست لوڈ نہ ہو سکی',
+  'GIF yüklenemedi': 'GIF اپ لوڈ نہ ہو سکا',
+  'Bu GIF i şikayet et': 'اس GIF کی شکایت کریں',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'نامناسب مواد کی اطلاع منتظم کو دی جاتی ہے اور اسے آرکائیو سے ہٹایا جا سکتا ہے۔',
+  'Şikayetin alındı': 'آپ کی شکایت موصول ہو گئی',
+  'Şikayet gönderilemedi': 'شکایت بھیجی نہ جا سکی',
 };

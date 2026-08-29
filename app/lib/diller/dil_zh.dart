@@ -1266,4 +1266,26 @@ const Map<String, String> cevirilerZh = {
   'Yapım firması': '制作公司',
   'Yapım ara...': '搜索作品...',
   'Çarkı çevirmek için sürükle veya dokun': '拖动或点击转动转盘',
+  'Arşiv': '归档',
+  'Yüklediklerim': '我的上传',
+  'GIF ara...': '搜索 GIF...',
+  'GIF yükle': '上传 GIF',
+  'GIF etiketleri': 'GIF 标签',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.': '用逗号分隔。搜索时靠这些词找到它。',
+  'gülme, alkış, şaşkın': '大笑、鼓掌、惊讶',
+  'Yükle': '上传',
+  'Henüz GIF yok': '还没有 GIF',
+  'Bu aramaya uyan GIF yok': '没有符合此搜索的 GIF',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      '归档是新的。第一个 GIF 由你上传——你可以立刻使用，通过审核后所有人都能看到。',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF 已上传。你可以立刻使用；通过审核后才会进入公开归档。',
+  'Onay bekliyor': '等待审核',
+  'GIF listesi yüklenemedi': '无法加载 GIF 列表',
+  'GIF yüklenemedi': '无法上传 GIF',
+  'Bu GIF i şikayet et': '举报此 GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      '不当内容会上报给管理员，并可能从归档中移除。',
+  'Şikayetin alındı': '举报已收到',
+  'Şikayet gönderilemedi': '举报发送失败',
 };

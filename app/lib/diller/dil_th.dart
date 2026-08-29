@@ -1308,7 +1308,8 @@ const Map<String, String> cevirilerTh = {
   'Ne düşünüyorsun?': 'คุณคิดอย่างไร?',
   '{}/{} yükleniyor': 'กำลังอัปโหลด {}/{}',
   'Fotoğraf/video ekle': 'เพิ่มรูปภาพหรือวิดีโอ',
-  'Paylaşmak için önce bir dizi veya film seç.': 'เลือกซีรีส์หรือภาพยนตร์ก่อนแชร์',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'เลือกซีรีส์หรือภาพยนตร์ก่อนแชร์',
   'Sezon seç': 'เลือกซีซัน',
   '{}. sezon': 'ซีซัน {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'ไม่เลือกตอน (เกี่ยวกับซีรีส์เท่านั้น)',
@@ -1317,11 +1318,35 @@ const Map<String, String> cevirilerTh = {
   'Bu sezonda bölüm yok.': 'ซีซันนี้ยังไม่มีตอน',
   '{}. bölüm': 'ตอนที่ {}',
   'Dizi veya film ara...': 'ค้นหาซีรีส์และภาพยนตร์...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'แชร์ความคิดเห็นเกี่ยวกับสิ่งที่คุณดู',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'แชร์ความคิดเห็นเกี่ยวกับสิ่งที่คุณดู',
   'Yapım seç (zorunlu)': 'เลือกผลงาน (จำเป็น)',
   'Paylaşmak için önce bir yapım seç.': 'เลือกผลงานก่อนแชร์',
   'Kişi': 'บุคคล',
   'Yapım firması': 'บริษัทผู้สร้าง',
   'Yapım ara...': 'ค้นหาผลงาน...',
   'Çarkı çevirmek için sürükle veya dokun': 'ลากหรือแตะเพื่อหมุนวงล้อ',
+  'Arşiv': 'คลัง',
+  'Yüklediklerim': 'ที่ฉันอัปโหลด',
+  'GIF ara...': 'ค้นหา GIF...',
+  'GIF yükle': 'อัปโหลด GIF',
+  'GIF etiketleri': 'แท็ก GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'คั่นด้วยจุลภาค คำเหล่านี้ใช้ค้นหา',
+  'gülme, alkış, şaşkın': 'หัวเราะ, ปรบมือ, ตกใจ',
+  'Yükle': 'อัปโหลด',
+  'Henüz GIF yok': 'ยังไม่มี GIF',
+  'Bu aramaya uyan GIF yok': 'ไม่มี GIF ที่ตรงกับการค้นหานี้',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'คลังนี้ยังใหม่ อัปโหลด GIF แรกเลย — คุณใช้ได้ทันที และทุกคนจะเห็นหลังผ่านการอนุมัติ',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'อัปโหลด GIF แล้ว คุณใช้ได้ทันที ส่วนคลังสาธารณะจะเข้าหลังผ่านการอนุมัติ',
+  'Onay bekliyor': 'รออนุมัติ',
+  'GIF listesi yüklenemedi': 'โหลดรายการ GIF ไม่สำเร็จ',
+  'GIF yüklenemedi': 'อัปโหลด GIF ไม่สำเร็จ',
+  'Bu GIF i şikayet et': 'รายงาน GIF นี้',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'เนื้อหาที่ไม่เหมาะสมจะถูกแจ้งผู้ดูแลและอาจถูกลบออกจากคลัง',
+  'Şikayetin alındı': 'ได้รับรายงานของคุณแล้ว',
+  'Şikayet gönderilemedi': 'ส่งรายงานไม่สำเร็จ',
 };

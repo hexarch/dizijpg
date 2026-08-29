@@ -1302,7 +1302,8 @@ const Map<String, String> cevirilerAr = {
   'Ne düşünüyorsun?': 'ما رأيك؟',
   '{}/{} yükleniyor': 'جارٍ الرفع {}/{}',
   'Fotoğraf/video ekle': 'إضافة صورة أو فيديو',
-  'Paylaşmak için önce bir dizi veya film seç.': 'اختر أولاً مسلسلاً أو فيلماً للمشاركة.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'اختر أولاً مسلسلاً أو فيلماً للمشاركة.',
   'Sezon seç': 'اختر موسماً',
   '{}. sezon': 'الموسم {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'بدون حلقة (عن المسلسل فقط)',
@@ -1318,4 +1319,27 @@ const Map<String, String> cevirilerAr = {
   'Yapım firması': 'شركة إنتاج',
   'Yapım ara...': 'ابحث عن الأعمال...',
   'Çarkı çevirmek için sürükle veya dokun': 'اسحب أو انقر لتدوير العجلة',
+  'Arşiv': 'الأرشيف',
+  'Yüklediklerim': 'ما رفعته',
+  'GIF ara...': 'ابحث عن GIF...',
+  'GIF yükle': 'رفع GIF',
+  'GIF etiketleri': 'وسوم GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'افصل بينها بفواصل. بهذه الكلمات يُعثر عليه.',
+  'gülme, alkış, şaşkın': 'ضحك، تصفيق، اندهاش',
+  'Yükle': 'رفع',
+  'Henüz GIF yok': 'لا توجد صور GIF بعد',
+  'Bu aramaya uyan GIF yok': 'لا توجد صور GIF تطابق هذا البحث',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'الأرشيف جديد. ارفع أول GIF — يمكنك استخدامه فورًا، ويراه الجميع بعد الموافقة.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'تم رفع الـ GIF. يمكنك استخدامه فورًا؛ ويدخل الأرشيف العام بعد الموافقة.',
+  'Onay bekliyor': 'بانتظار الموافقة',
+  'GIF listesi yüklenemedi': 'تعذّر تحميل قائمة GIF',
+  'GIF yüklenemedi': 'تعذّر رفع الـ GIF',
+  'Bu GIF i şikayet et': 'الإبلاغ عن هذا الـ GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'يُبلَّغ المشرف عن المحتوى غير اللائق وقد يُزال من الأرشيف.',
+  'Şikayetin alındı': 'تم استلام بلاغك',
+  'Şikayet gönderilemedi': 'تعذّر إرسال البلاغ',
 };

@@ -1283,4 +1283,26 @@ const Map<String, String> cevirilerKo = {
   'Yapım firması': '제작사',
   'Yapım ara...': '작품 검색...',
   'Çarkı çevirmek için sürükle veya dokun': '드래그하거나 탭해서 휠 돌리기',
+  'Arşiv': '보관함',
+  'Yüklediklerim': '내 업로드',
+  'GIF ara...': 'GIF 검색...',
+  'GIF yükle': 'GIF 업로드',
+  'GIF etiketleri': 'GIF 태그',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.': '쉼표로 구분하세요. 이 단어들로 검색됩니다.',
+  'gülme, alkış, şaşkın': '웃음, 박수, 놀람',
+  'Yükle': '업로드',
+  'Henüz GIF yok': '아직 GIF가 없습니다',
+  'Bu aramaya uyan GIF yok': '이 검색과 일치하는 GIF가 없습니다',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      '보관함이 새로 생겼습니다. 첫 GIF를 올려 보세요 — 바로 쓸 수 있고, 승인 후에는 모두가 봅니다.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF를 올렸습니다. 바로 쓸 수 있고, 공개 보관함에는 승인 후 들어갑니다.',
+  'Onay bekliyor': '승인 대기 중',
+  'GIF listesi yüklenemedi': 'GIF 목록을 불러오지 못했습니다',
+  'GIF yüklenemedi': 'GIF를 업로드하지 못했습니다',
+  'Bu GIF i şikayet et': '이 GIF 신고',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      '부적절한 콘텐츠는 관리자에게 신고되며 보관함에서 삭제될 수 있습니다.',
+  'Şikayetin alındı': '신고가 접수되었습니다',
+  'Şikayet gönderilemedi': '신고를 보내지 못했습니다',
 };

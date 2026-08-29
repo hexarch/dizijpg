@@ -1340,20 +1340,47 @@ const Map<String, String> cevirilerSv = {
   'Ne düşünüyorsun?': 'Vad tycker du?',
   '{}/{} yükleniyor': 'Laddar upp {}/{}',
   'Fotoğraf/video ekle': 'Lägg till foto eller video',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Välj först en serie eller film för att dela.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Välj först en serie eller film för att dela.',
   'Sezon seç': 'Välj en säsong',
   '{}. sezon': 'Säsong {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Inget avsnitt (endast om serien)',
   'Sezonlar yüklenemedi.': 'Säsongerna kunde inte laddas.',
-  'Bu dizide bölüm bilgisi yok.': 'Ingen avsnittsinformation för den här serien.',
+  'Bu dizide bölüm bilgisi yok.':
+      'Ingen avsnittsinformation för den här serien.',
   'Bu sezonda bölüm yok.': 'Inga avsnitt i den här säsongen.',
   '{}. bölüm': 'Avsnitt {}',
   'Dizi veya film ara...': 'Sök serier och filmer...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Dela en kommentar om det du sett',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Dela en kommentar om det du sett',
   'Yapım seç (zorunlu)': 'Välj en titel (obligatoriskt)',
   'Paylaşmak için önce bir yapım seç.': 'Välj först en titel för att dela.',
   'Kişi': 'Person',
   'Yapım firması': 'Produktionsbolag',
   'Yapım ara...': 'Sök titlar...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Dra eller tryck för att snurra hjulet',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Dra eller tryck för att snurra hjulet',
+  'Arşiv': 'Arkiv',
+  'Yüklediklerim': 'Mina uppladdningar',
+  'GIF ara...': 'Sök GIF...',
+  'GIF yükle': 'Ladda upp GIF',
+  'GIF etiketleri': 'GIF-taggar',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Separera med kommatecken. Den hittas med de här orden.',
+  'gülme, alkış, şaşkın': 'skratt, applåder, förvånad',
+  'Yükle': 'Ladda upp',
+  'Henüz GIF yok': 'Inga GIF än',
+  'Bu aramaya uyan GIF yok': 'Inga GIF matchar den här sökningen',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Arkivet är nytt. Ladda upp den första GIF:en — du kan använda den direkt, alla ser den efter godkännande.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF uppladdad. Du kan använda den direkt; den hamnar i det öppna arkivet efter godkännande.',
+  'Onay bekliyor': 'Väntar på godkännande',
+  'GIF listesi yüklenemedi': 'Det gick inte att läsa in GIF-listan',
+  'GIF yüklenemedi': 'Det gick inte att ladda upp GIF:en',
+  'Bu GIF i şikayet et': 'Anmäl den här GIF:en',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Olämpligt innehåll anmäls till en moderator och kan tas bort från arkivet.',
+  'Şikayetin alındı': 'Din anmälan har tagits emot',
+  'Şikayet gönderilemedi': 'Det gick inte att skicka anmälan',
 };

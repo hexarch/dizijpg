@@ -1302,7 +1302,8 @@ const Map<String, String> cevirilerHe = {
   'Ne düşünüyorsun?': 'מה דעתך?',
   '{}/{} yükleniyor': 'מעלה {}/{}',
   'Fotoğraf/video ekle': 'הוסף תמונה או וידאו',
-  'Paylaşmak için önce bir dizi veya film seç.': 'בחר תחילה סדרה או סרט כדי לשתף.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'בחר תחילה סדרה או סרט כדי לשתף.',
   'Sezon seç': 'בחר עונה',
   '{}. sezon': 'עונה {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'ללא פרק (על הסדרה בלבד)',
@@ -1318,4 +1319,27 @@ const Map<String, String> cevirilerHe = {
   'Yapım firması': 'חברת הפקה',
   'Yapım ara...': 'חפש כותרים...',
   'Çarkı çevirmek için sürükle veya dokun': 'גרור או הקש כדי לסובב את הגלגל',
+  'Arşiv': 'ארכיון',
+  'Yüklediklerim': 'ההעלאות שלי',
+  'GIF ara...': 'חיפוש GIF...',
+  'GIF yükle': 'העלאת GIF',
+  'GIF etiketleri': 'תגיות GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'הפרד בפסיקים. במילים האלה ימצאו אותו.',
+  'gülme, alkış, şaşkın': 'צחוק, מחיאות כפיים, הפתעה',
+  'Yükle': 'העלה',
+  'Henüz GIF yok': 'עדיין אין GIF',
+  'Bu aramaya uyan GIF yok': 'אין GIF שתואם לחיפוש הזה',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'הארכיון חדש. העלה את ה-GIF הראשון — אפשר להשתמש בו מיד, וכולם יראו אותו לאחר האישור.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'ה-GIF הועלה. אפשר להשתמש בו מיד; לארכיון הציבורי הוא נכנס לאחר האישור.',
+  'Onay bekliyor': 'ממתין לאישור',
+  'GIF listesi yüklenemedi': 'לא ניתן לטעון את רשימת ה-GIF',
+  'GIF yüklenemedi': 'לא ניתן להעלות את ה-GIF',
+  'Bu GIF i şikayet et': 'דווח על ה-GIF הזה',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'תוכן לא הולם מדווח למנהל ועשוי להיות מוסר מהארכיון.',
+  'Şikayetin alındı': 'הדיווח שלך התקבל',
+  'Şikayet gönderilemedi': 'לא ניתן לשלוח את הדיווח',
 };

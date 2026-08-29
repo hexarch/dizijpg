@@ -1351,20 +1351,47 @@ const Map<String, String> cevirilerEl = {
   'Ne düşünüyorsun?': 'Τι πιστεύεις;',
   '{}/{} yükleniyor': 'Μεταφόρτωση {}/{}',
   'Fotoğraf/video ekle': 'Προσθήκη φωτογραφίας ή βίντεο',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Επίλεξε πρώτα σειρά ή ταινία για δημοσίευση.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Επίλεξε πρώτα σειρά ή ταινία για δημοσίευση.',
   'Sezon seç': 'Επίλεξε σεζόν',
   '{}. sezon': 'Σεζόν {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Χωρίς επεισόδιο (μόνο για τη σειρά)',
   'Sezonlar yüklenemedi.': 'Δεν ήταν δυνατή η φόρτωση των σεζόν.',
-  'Bu dizide bölüm bilgisi yok.': 'Δεν υπάρχουν πληροφορίες επεισοδίων για αυτή τη σειρά.',
+  'Bu dizide bölüm bilgisi yok.':
+      'Δεν υπάρχουν πληροφορίες επεισοδίων για αυτή τη σειρά.',
   'Bu sezonda bölüm yok.': 'Δεν υπάρχουν επεισόδια σε αυτή τη σεζόν.',
   '{}. bölüm': 'Επεισόδιο {}',
   'Dizi veya film ara...': 'Αναζήτηση σειρών και ταινιών...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Μοιράσου ένα σχόλιο για αυτό που είδες',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Μοιράσου ένα σχόλιο για αυτό που είδες',
   'Yapım seç (zorunlu)': 'Επίλεξε τίτλο (υποχρεωτικό)',
   'Paylaşmak için önce bir yapım seç.': 'Επίλεξε πρώτα τίτλο για δημοσίευση.',
   'Kişi': 'Άτομο',
   'Yapım firması': 'Εταιρεία παραγωγής',
   'Yapım ara...': 'Αναζήτηση τίτλων...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Σύρε ή άγγιξε για να γυρίσεις τον τροχό',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Σύρε ή άγγιξε για να γυρίσεις τον τροχό',
+  'Arşiv': 'Αρχείο',
+  'Yüklediklerim': 'Οι μεταφορτώσεις μου',
+  'GIF ara...': 'Αναζήτηση GIF...',
+  'GIF yükle': 'Μεταφόρτωση GIF',
+  'GIF etiketleri': 'Ετικέτες GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Χώρισέ τες με κόμματα. Με αυτές τις λέξεις θα βρίσκεται.',
+  'gülme, alkış, şaşkın': 'γέλιο, χειροκρότημα, έκπληξη',
+  'Yükle': 'Μεταφόρτωση',
+  'Henüz GIF yok': 'Δεν υπάρχουν ακόμη GIF',
+  'Bu aramaya uyan GIF yok': 'Κανένα GIF δεν ταιριάζει σε αυτήν την αναζήτηση',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Το αρχείο είναι νέο. Ανέβασε το πρώτο GIF — μπορείς να το χρησιμοποιήσεις αμέσως και όλοι θα το δουν μετά την έγκριση.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'Το GIF ανέβηκε. Μπορείς να το χρησιμοποιήσεις αμέσως· στο δημόσιο αρχείο μπαίνει μετά την έγκριση.',
+  'Onay bekliyor': 'Αναμένει έγκριση',
+  'GIF listesi yüklenemedi': 'Δεν ήταν δυνατή η φόρτωση της λίστας GIF',
+  'GIF yüklenemedi': 'Δεν ήταν δυνατή η μεταφόρτωση του GIF',
+  'Bu GIF i şikayet et': 'Αναφορά αυτού του GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Το ακατάλληλο περιεχόμενο αναφέρεται σε συντονιστή και μπορεί να αφαιρεθεί από το αρχείο.',
+  'Şikayetin alındı': 'Η αναφορά σου ελήφθη',
+  'Şikayet gönderilemedi': 'Δεν ήταν δυνατή η αποστολή της αναφοράς',
 };

@@ -1333,7 +1333,8 @@ const Map<String, String> cevirilerRu = {
   'Ne düşünüyorsun?': 'Что вы думаете?',
   '{}/{} yükleniyor': 'Загрузка {}/{}',
   'Fotoğraf/video ekle': 'Добавить фото или видео',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Сначала выберите сериал или фильм для публикации.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Сначала выберите сериал или фильм для публикации.',
   'Sezon seç': 'Выберите сезон',
   '{}. sezon': 'Сезон {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Без серии (только о сериале)',
@@ -1342,11 +1343,37 @@ const Map<String, String> cevirilerRu = {
   'Bu sezonda bölüm yok.': 'В этом сезоне нет серий.',
   '{}. bölüm': 'Серия {}',
   'Dizi veya film ara...': 'Поиск сериалов и фильмов...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Поделитесь мнением о том, что посмотрели',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Поделитесь мнением о том, что посмотрели',
   'Yapım seç (zorunlu)': 'Выберите тайтл (обязательно)',
-  'Paylaşmak için önce bir yapım seç.': 'Сначала выберите тайтл для публикации.',
+  'Paylaşmak için önce bir yapım seç.':
+      'Сначала выберите тайтл для публикации.',
   'Kişi': 'Человек',
   'Yapım firması': 'Кинокомпания',
   'Yapım ara...': 'Поиск тайтлов...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Проведите или коснитесь, чтобы крутить колесо',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Проведите или коснитесь, чтобы крутить колесо',
+  'Arşiv': 'Архив',
+  'Yüklediklerim': 'Мои загрузки',
+  'GIF ara...': 'Поиск GIF...',
+  'GIF yükle': 'Загрузить GIF',
+  'GIF etiketleri': 'Теги GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Разделяйте запятыми. По этим словам его найдут.',
+  'gülme, alkış, şaşkın': 'смех, аплодисменты, удивление',
+  'Yükle': 'Загрузить',
+  'Henüz GIF yok': 'GIF пока нет',
+  'Bu aramaya uyan GIF yok': 'По этому запросу GIF не найдены',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Архив новый. Загрузи первый GIF — сразу сможешь им пользоваться, а все увидят его после одобрения.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF загружен. Ты можешь использовать его сразу; в общий архив он попадёт после одобрения.',
+  'Onay bekliyor': 'Ожидает одобрения',
+  'GIF listesi yüklenemedi': 'Не удалось загрузить список GIF',
+  'GIF yüklenemedi': 'Не удалось загрузить GIF',
+  'Bu GIF i şikayet et': 'Пожаловаться на этот GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'О неприемлемом содержимом сообщается модератору, и оно может быть удалено из архива.',
+  'Şikayetin alındı': 'Жалоба принята',
+  'Şikayet gönderilemedi': 'Не удалось отправить жалобу',
 };

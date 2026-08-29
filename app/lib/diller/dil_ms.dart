@@ -1336,7 +1336,8 @@ const Map<String, String> cevirilerMs = {
   'Ne düşünüyorsun?': 'Apa pendapat anda?',
   '{}/{} yükleniyor': 'Memuat naik {}/{}',
   'Fotoğraf/video ekle': 'Tambah foto atau video',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Pilih siri atau filem dahulu untuk berkongsi.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Pilih siri atau filem dahulu untuk berkongsi.',
   'Sezon seç': 'Pilih musim',
   '{}. sezon': 'Musim {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Tiada episod (tentang siri sahaja)',
@@ -1345,11 +1346,36 @@ const Map<String, String> cevirilerMs = {
   'Bu sezonda bölüm yok.': 'Tiada episod dalam musim ini.',
   '{}. bölüm': 'Episod {}',
   'Dizi veya film ara...': 'Cari siri dan filem...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Kongsi komen tentang apa yang anda tonton',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Kongsi komen tentang apa yang anda tonton',
   'Yapım seç (zorunlu)': 'Pilih tajuk (wajib)',
   'Paylaşmak için önce bir yapım seç.': 'Pilih tajuk dahulu untuk berkongsi.',
   'Kişi': 'Orang',
   'Yapım firması': 'Syarikat penerbitan',
   'Yapım ara...': 'Cari tajuk...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Seret atau ketik untuk memutar roda',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Seret atau ketik untuk memutar roda',
+  'Arşiv': 'Arkib',
+  'Yüklediklerim': 'Muat naik saya',
+  'GIF ara...': 'Cari GIF...',
+  'GIF yükle': 'Muat naik GIF',
+  'GIF etiketleri': 'Tag GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Pisahkan dengan koma. Dengan perkataan ini ia ditemui.',
+  'gülme, alkış, şaşkın': 'ketawa, tepukan, terkejut',
+  'Yükle': 'Muat naik',
+  'Henüz GIF yok': 'Belum ada GIF',
+  'Bu aramaya uyan GIF yok': 'Tiada GIF yang sepadan dengan carian ini',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Arkib ini baharu. Muat naik GIF pertama — anda boleh guna serta-merta, semua orang nampak selepas kelulusan.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF dimuat naik. Anda boleh guna serta-merta; ia masuk arkib awam selepas kelulusan.',
+  'Onay bekliyor': 'Menunggu kelulusan',
+  'GIF listesi yüklenemedi': 'Senarai GIF tidak dapat dimuatkan',
+  'GIF yüklenemedi': 'GIF tidak dapat dimuat naik',
+  'Bu GIF i şikayet et': 'Laporkan GIF ini',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Kandungan tidak sesuai dilaporkan kepada moderator dan boleh dibuang daripada arkib.',
+  'Şikayetin alındı': 'Laporan anda diterima',
+  'Şikayet gönderilemedi': 'Laporan tidak dapat dihantar',
 };

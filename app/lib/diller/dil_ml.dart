@@ -1329,20 +1329,48 @@ const Map<String, String> cevirilerMl = {
   'Ne düşünüyorsun?': 'നിങ്ങൾ എന്ത് കരുതുന്നു?',
   '{}/{} yükleniyor': '{}/{} അപ്‌ലോഡ് ചെയ്യുന്നു',
   'Fotoğraf/video ekle': 'ഫോട്ടോയോ വീഡിയോയോ ചേർക്കുക',
-  'Paylaşmak için önce bir dizi veya film seç.': 'പങ്കിടാൻ ആദ്യം ഒരു പരമ്പരയോ സിനിമയോ തിരഞ്ഞെടുക്കുക.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'പങ്കിടാൻ ആദ്യം ഒരു പരമ്പരയോ സിനിമയോ തിരഞ്ഞെടുക്കുക.',
   'Sezon seç': 'സീസൺ തിരഞ്ഞെടുക്കുക',
   '{}. sezon': 'സീസൺ {}',
-  'Bölüm seçme (yalnız dizi hakkında)': 'എപ്പിസോഡ് ഇല്ല (പരമ്പരയെക്കുറിച്ച് മാത്രം)',
+  'Bölüm seçme (yalnız dizi hakkında)':
+      'എപ്പിസോഡ് ഇല്ല (പരമ്പരയെക്കുറിച്ച് മാത്രം)',
   'Sezonlar yüklenemedi.': 'സീസണുകൾ ലോഡ് ചെയ്യാനായില്ല.',
   'Bu dizide bölüm bilgisi yok.': 'ഈ പരമ്പരയ്ക്ക് എപ്പിസോഡ് വിവരമില്ല.',
   'Bu sezonda bölüm yok.': 'ഈ സീസണിൽ എപ്പിസോഡുകളില്ല.',
   '{}. bölüm': 'എപ്പിസോഡ് {}',
   'Dizi veya film ara...': 'പരമ്പരകളും സിനിമകളും തിരയുക...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'നിങ്ങൾ കണ്ടതിനെക്കുറിച്ച് അഭിപ്രായം പങ്കിടുക',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'നിങ്ങൾ കണ്ടതിനെക്കുറിച്ച് അഭിപ്രായം പങ്കിടുക',
   'Yapım seç (zorunlu)': 'ഒരു ശീർഷകം തിരഞ്ഞെടുക്കുക (നിർബന്ധം)',
-  'Paylaşmak için önce bir yapım seç.': 'പങ്കിടാൻ ആദ്യം ഒരു ശീർഷകം തിരഞ്ഞെടുക്കുക.',
+  'Paylaşmak için önce bir yapım seç.':
+      'പങ്കിടാൻ ആദ്യം ഒരു ശീർഷകം തിരഞ്ഞെടുക്കുക.',
   'Kişi': 'വ്യക്തി',
   'Yapım firması': 'നിർമ്മാണ കമ്പനി',
   'Yapım ara...': 'ശീർഷകങ്ങൾ തിരയുക...',
-  'Çarkı çevirmek için sürükle veya dokun': 'ചക്രം കറക്കാൻ വലിക്കുക അല്ലെങ്കിൽ ടാപ്പ് ചെയ്യുക',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'ചക്രം കറക്കാൻ വലിക്കുക അല്ലെങ്കിൽ ടാപ്പ് ചെയ്യുക',
+  'Arşiv': 'ശേഖരം',
+  'Yüklediklerim': 'എന്റെ അപ്‌ലോഡുകൾ',
+  'GIF ara...': 'GIF തിരയുക...',
+  'GIF yükle': 'GIF അപ്‌ലോഡ് ചെയ്യുക',
+  'GIF etiketleri': 'GIF ടാഗുകൾ',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'കോമ ഉപയോഗിച്ച് വേർതിരിക്കുക. ഈ വാക്കുകളിലൂടെയാണ് ഇത് കണ്ടെത്തുക.',
+  'gülme, alkış, şaşkın': 'ചിരി, കൈയ്യടി, അമ്പരപ്പ്',
+  'Yükle': 'അപ്‌ലോഡ് ചെയ്യുക',
+  'Henüz GIF yok': 'ഇതുവരെ GIF ഇല്ല',
+  'Bu aramaya uyan GIF yok': 'ഈ തിരയലുമായി യോജിക്കുന്ന GIF ഇല്ല',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'ശേഖരം പുതിയതാണ്. ആദ്യ GIF നിങ്ങൾ അപ്‌ലോഡ് ചെയ്യൂ — ഉടൻ ഉപയോഗിക്കാം, അംഗീകാരത്തിനു ശേഷം എല്ലാവരും കാണും.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF അപ്‌ലോഡ് ചെയ്തു. ഉടൻ ഉപയോഗിക്കാം; അംഗീകാരത്തിനു ശേഷം പൊതു ശേഖരത്തിൽ ചേരും.',
+  'Onay bekliyor': 'അംഗീകാരം കാത്തിരിക്കുന്നു',
+  'GIF listesi yüklenemedi': 'GIF പട്ടിക ലോഡ് ചെയ്യാനായില്ല',
+  'GIF yüklenemedi': 'GIF അപ്‌ലോഡ് ചെയ്യാനായില്ല',
+  'Bu GIF i şikayet et': 'ഈ GIF റിപ്പോർട്ട് ചെയ്യുക',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'അനുചിതമായ ഉള്ളടക്കം മോഡറേറ്ററെ അറിയിക്കുകയും ശേഖരത്തിൽ നിന്ന് നീക്കം ചെയ്യപ്പെടുകയും ചെയ്യാം.',
+  'Şikayetin alındı': 'നിങ്ങളുടെ റിപ്പോർട്ട് ലഭിച്ചു',
+  'Şikayet gönderilemedi': 'റിപ്പോർട്ട് അയയ്ക്കാനായില്ല',
 };

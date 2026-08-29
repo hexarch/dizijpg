@@ -1333,20 +1333,48 @@ const Map<String, String> cevirilerBg = {
   'Ne düşünüyorsun?': 'Какво мислиш?',
   '{}/{} yükleniyor': 'Качване {}/{}',
   'Fotoğraf/video ekle': 'Добави снимка или видео',
-  'Paylaşmak için önce bir dizi veya film seç.': 'Първо избери сериал или филм, за да споделиш.',
+  'Paylaşmak için önce bir dizi veya film seç.':
+      'Първо избери сериал или филм, за да споделиш.',
   'Sezon seç': 'Избери сезон',
   '{}. sezon': 'Сезон {}',
   'Bölüm seçme (yalnız dizi hakkında)': 'Без епизод (само за сериала)',
   'Sezonlar yüklenemedi.': 'Сезоните не можаха да се заредят.',
-  'Bu dizide bölüm bilgisi yok.': 'Няма информация за епизодите на този сериал.',
+  'Bu dizide bölüm bilgisi yok.':
+      'Няма информация за епизодите на този сериал.',
   'Bu sezonda bölüm yok.': 'В този сезон няма епизоди.',
   '{}. bölüm': 'Епизод {}',
   'Dizi veya film ara...': 'Търси сериали и филми...',
-  'İzlediğin dizi ve film hakkında yorum paylaş': 'Сподели мнение за това, което гледа',
+  'İzlediğin dizi ve film hakkında yorum paylaş':
+      'Сподели мнение за това, което гледа',
   'Yapım seç (zorunlu)': 'Избери заглавие (задължително)',
-  'Paylaşmak için önce bir yapım seç.': 'Първо избери заглавие, за да споделиш.',
+  'Paylaşmak için önce bir yapım seç.':
+      'Първо избери заглавие, за да споделиш.',
   'Kişi': 'Човек',
   'Yapım firması': 'Продуцентска компания',
   'Yapım ara...': 'Търси заглавия...',
-  'Çarkı çevirmek için sürükle veya dokun': 'Плъзни или докосни, за да завъртиш колелото',
+  'Çarkı çevirmek için sürükle veya dokun':
+      'Плъзни или докосни, за да завъртиш колелото',
+  'Arşiv': 'Архив',
+  'Yüklediklerim': 'Моите качвания',
+  'GIF ara...': 'Търсене на GIF...',
+  'GIF yükle': 'Качване на GIF',
+  'GIF etiketleri': 'Етикети на GIF',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.':
+      'Разделяйте със запетаи. По тези думи ще бъде намерен.',
+  'gülme, alkış, şaşkın': 'смях, аплодисменти, изненада',
+  'Yükle': 'Качване',
+  'Henüz GIF yok': 'Още няма GIF файлове',
+  'Bu aramaya uyan GIF yok': 'Няма GIF файлове за това търсене',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.':
+      'Архивът е нов. Качи първия GIF — можеш да го използваш веднага, а всички ще го видят след одобрение.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.':
+      'GIF е качен. Можеш да го използваш веднага; в публичния архив влиза след одобрение.',
+  'Onay bekliyor': 'Чака одобрение',
+  'GIF listesi yüklenemedi': 'Списъкът с GIF файлове не можа да се зареди',
+  'GIF yüklenemedi': 'GIF не можа да бъде качен',
+  'Bu GIF i şikayet et': 'Докладвай този GIF',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.':
+      'Неподходящото съдържание се докладва на модератор и може да бъде премахнато от архива.',
+  'Şikayetin alındı': 'Сигналът ти е получен',
+  'Şikayet gönderilemedi': 'Сигналът не можа да бъде изпратен',
 };

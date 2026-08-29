@@ -33,6 +33,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // gif_sec.dart — KENDİ GIF ARŞİVİMİZİN ortak seçicisi (29 Ağu 2026).
+  // Dış GIF servisi kurulmadı (Tenor kapandı, Giphy saatlik sınırlı+ücretli,
+  // Klipy proxy/önbelleği yasaklıyor); arşiv kullanıcı yüklemesiyle büyüyor.
+  'Arşiv',
+  'Yüklediklerim',
+  'GIF ara...',
+  'GIF yükle',
+  'GIF etiketleri',
+  'Virgülle ayır. Aramada bu kelimelerle bulunur.',
+  'gülme, alkış, şaşkın',
+  'Yükle',
+  'Henüz GIF yok',
+  'Bu aramaya uyan GIF yok',
+  'Arşiv yeni. İlk GIF i sen yükle — sen hemen kullanırsın, onaydan sonra herkes görür.',
+  'GIF yüklendi. Sen hemen kullanabilirsin; herkese açık arşive onaydan sonra girer.',
+  'Onay bekliyor',
+  'GIF listesi yüklenemedi',
+  'GIF yüklenemedi',
+  'Bu GIF i şikayet et',
+  'Uygunsuz içerik yöneticiye bildirilir ve arşivden kaldırılabilir.',
+  'Şikayetin alındı',
+  'Şikayet gönderilemedi',
   // yorumlar.dart — AI yorumunun yanında görünen etiket (23 Ağu 2026)
   'dizi.jpg AI özeti',
   // arama_cubugu.dart — kategori kuyruğu "Daha fazlasını gör" (23 Ağu 2026)
