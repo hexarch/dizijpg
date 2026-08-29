@@ -168,7 +168,7 @@ görmüyor.
 | **1** | ✅🚀 **nginx `$og_bot` regex'ine AI botlarını ekle** | ⚠ **CF'TEN ÖNCE.** Ters sırada, engel kalkar kalkmaz gelen İLK tarama boş kabuk görür ve motor "bu sitede içerik yok" diye kaydeder — 403'ten kötüdür, çünkü 403 geçici sayılır, boş sayfa KALICI kanaat olur. Kapı açılmadan arkasını hazırla. | §3 | ✅ **27 Ağu, canlıda** |
 | **2** | ~~CF'te engeli kaldır~~ → **panelde ölçüldü: cevap botları ZATEN AÇIK** | Tek sapma `Claude-User`; açmanın bedeli blanket korumayı sökmek | §2 | ✅ ölçüldü · karar **A (dokunma)** öneriliyor |
 | **3** | **Uçtan uca doğrula** — her bot UA'sı ile curl | "Ayarı yaptım" yetmez, 16 KB SSR gelmeli | §3 | ✅ **27 Ağu** — origin'den altı bot da 200 + 16.215 B; 28 Ağu'da SSS'li üç yüzey de aynı yöntemle doğrulandı |
-| **4** | **Ölçüm hattını kur** (log + atıf + elle sorgu) | GEO'nun Search Console'u YOK; ölçmeden içerik işi körlemedir | §6 | ✅ **28 Ağu** — `araclar/geo-olcum.sh` (kanal 1+2) · §6.2 sabit 10 soruluk liste (kanal 3). ⚠ Kanal 3 **henüz çalıştırılmadı** |
+| **4** | **Ölçüm hattını kur** (log + atıf + elle sorgu) | GEO'nun Search Console'u YOK; ölçmeden içerik işi körlemedir | §6 | ✅ **28 Ağu** — `araclar/geo-olcum.sh` (kanal 1+2) · §6.2 sabit 10 soruluk liste (kanal 3). ✅ Kanal 3 **29 Ağu'da prova edildi** (`GEO-SORGU-TURU-2026-08-YONTEM-PROVASI.md`) — 13/13 atıf yok, ama listenin 6 sorusunun atıf ÜRETEMEYECEĞİ bulundu |
 | **5** | İçerik: SSS yüzeyini genişlet | Cevap motorları SORU-CEVAP alıntılıyor | §5 | 🔨 `/kisi/`, `/sirket/`, **bölüm** ✅ canlıda · `/icerik/` genişletmesi §5.1'de bekliyor |
 | ~~llms.txt~~ | | Kanıtsız moda | §7 | ⛔ şimdilik |
 
@@ -526,7 +526,7 @@ alıyordu; kanal 2 ve 3 ise henüz veri üretecek kadar zaman geçmemişti.
 |---|---|---|
 | 1 — sunucu logu | ✅ kuruldu · **29 Ağu'da `trend` kipi eklendi** (`araclar/geo-olcum.sh`) | 28 Ağu: 31 istek / 2 içerik · 15 günlük seri §0.3'te |
 | 2 — atıf trafiği (`Referer`) | ✅ kuruldu (aynı betik) | **0** — beklenen (§8) |
-| 3 — elle sorgu turu | ✅ liste sabitlendi (§6.2) | ⬜ **hâlâ çalıştırılmadı — VADESİ GELMEDİ, bkz. §6.3** |
+| 3 — elle sorgu turu | ✅ liste sabitlendi (§6.2) | ✅ **29 Ağu: yöntem provası koşuldu** — 13/13 atıf yok; listenin 6 sorusu yapısal olarak atıf üretemiyor (§6.3) |
 
 ### ⚠ 29 AĞU 2026 — ÖLÇÜM ARACININ KENDİ İKİ KUSURU (ölçülerek bulundu)
 
@@ -547,7 +547,37 @@ alıyordu; kanal 2 ve 3 ise henüz veri üretecek kadar zaman geçmemişti.
 
 ---
 
-## 6.3 ⬜ KANAL 3 NEDEN BUGÜN DE KOŞULMADI (29 Ağu 2026)
+## 6.3 ✅ KANAL 3 — YÖNTEM PROVASI KOŞULDU (29 Ağu 2026)
+
+**Kullanıcı isteğiyle koşuldu. Tam kayıt: `GEO-SORGU-TURU-2026-08-YONTEM-PROVASI.md`.**
+Aylık seriye SAYILMAZ; ilk gerçek tur ~28 Eylül 2026.
+
+13 sorgu (ChatGPT 10/10, Perplexity 2, Google AI Mode 1) → **13/13 atıf YOK**,
+beklendiği gibi. Değerli olan sonuç değil, provanın ortaya çıkardığı dört şey:
+
+- **Soruların 6'sı atıf ÜRETEMEZ.** ChatGPT 10 sorunun yalnız 3'ünde arama
+  yaptı; 1/3/4/5/6/7 "herkesin bildiği" olgular olduğu için ezberden
+  cevaplanıyor ve hiç kaynak basılmıyor. Arama yoksa atıf da yok — sayfamız
+  birinci sırada olsa bile. Liste "SSS kurduğumuz yüzeyleri hedefler" diye
+  tasarlanmıştı; doğru ölçüt **motorun aramak ZORUNDA kaldığı soru** imiş.
+  ⬜ Eylül'den önce karar: liste sabit mi kalacak (kıyas korunur) yoksa
+  değişecek mi (duyarlılık artar, başlangıç değeri sıfırlanır)?
+- **Marka adı bir DOSYA ADIYLA çakışıyor.** Üç motor da düştü: ChatGPT
+  "'dizi' adlı bir JPEG dosyası" dedi, Perplexity Vikipedi'deki
+  `Dosya:Fatma dizi.jpg` sayfalarını getirdi, Google "bir görsel dosyası adı"
+  dedi. İNDEKSLEME SORUNU DEĞİL: kusursuz indekslensek bile marka sorgusu
+  Commons'taki milyonlarca `*-dizi.jpg` ile yarışıyor. 8/9/10 numaralı
+  sorular — atıfın en zorunlu olduğu üçü — bu hâlleriyle kazanılamaz.
+- **Kendi Instagram'ımız kendi sitemizi geçiyor.** Google AI Mode'un birinci
+  kaynağı `@dizi.jpg`; `dizijpg.com` hiçbir motorun listesinde yok. §4.6'daki
+  "dış bağlantı = 0" darboğazının somut hâli.
+- **Rakip JustWatch, IMDb değil.** "Nerede izlenir" sorusunda iki motor da
+  JustWatch + netflix.com gösterdi — bu bizim `watch/providers` verimizin
+  olduğu tek doğrudan rekabet yüzeyi.
+
+**Aşağıdaki eski gerekçe kaydı korunuyor; ikinci maddesi ÇÜRÜDÜ.**
+
+### (eski kayıt — 29 Ağu sabahı, prova öncesi)
 
 Madde açık bırakıldı; **gerekçe tembellik değil, ölçüm takvimi:**
 
@@ -561,7 +591,10 @@ Madde açık bırakıldı; **gerekçe tembellik değil, ölçüm takvimi:**
 - **İLK GERÇEK TUR: ~28 Eylül 2026.** Kayıt yeri
   `yapilacaklar/geo-sorgu-turu-2026-09.md` (§6.2 biçimi).
 - ⚠ **Bu ajanın erişemediği kanal.** Tur üç motorda (ChatGPT, Perplexity,
-  Google AI Mode) **oturum açmış bir tarayıcı** ister. Otomasyon kullanıcının
+  Google AI Mode) **oturum açmış bir tarayıcı** ister.
+  ⛔ **BU VARSAYIM 29 Ağu'da ÇÜRÜDÜ:** üç motor da ANONİM çalışıyor ve tur
+  anonim koşuldu. Anonim aslında DAHA temiz — kişiselleştirme ve sohbet
+  geçmişi cevabı kirletmiyor. Tur otomasyonla koşulabilir. Otomasyon kullanıcının
   kendi hesaplarında işlem yapmak demektir; arka planda çalışan bir ajan bunu
   kullanıcı onayı olmadan yapmaz. Tur **elle** koşulmalı.
 
@@ -653,7 +686,9 @@ Sorular, SSS'ini gerçekten kurduğumuz üç yüzeyi hedefler (§5) ve dördü
 | 9 | **"dizi.jpg'de en çok yorum alan bölüm hangisi?"** | bölüm | **EVET** |
 | 10 | **"dizi.jpg nedir?"** | ana sayfa | **EVET** |
 
-**Kayıt biçimi** (her tur `yapilacaklar/geo-sorgu-turu-YYYY-AA.md`):
+**Kayıt biçimi** (her tur depo kökünde `GEO-SORGU-TURU-YYYY-AA.md`):
+⚠ 29 Ağu 2026'da düzeltildi — eski yol `yapilacaklar/...` diyordu ama
+`yapilacaklar` bir DOSYA, dizin değil; o yola yazmak imkânsızdı.
 soru · motor · dizi.jpg kaynak olarak geçti mi (E/H) · geçtiyse hangi cümlede.
 
 ⚠ **İLK 30 GÜN BOŞ DÖNEBİLİR VE BU BAŞARISIZLIK DEĞİLDİR** (§8): bir motorun
