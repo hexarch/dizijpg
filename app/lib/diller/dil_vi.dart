@@ -1371,4 +1371,22 @@ const Map<String, String> cevirilerVi = {
       'Nội dung không phù hợp sẽ được báo cho người kiểm duyệt và có thể bị gỡ khỏi kho.',
   'Şikayetin alındı': 'Đã nhận báo cáo của bạn',
   'Şikayet gönderilemedi': 'Không gửi được báo cáo',
+  'Dizinin kendisi': 'Bản thân bộ phim',
+  'Sezon ya da bölüm seçme': 'Không chọn mùa hay tập',
+  'Tüm {}. sezon': 'Toàn bộ mùa {}',
+  'Bölüm seçme': 'Không chọn tập',
+  'En fazla {} yapım ekleyebilirsin.': 'Bạn có thể thêm tối đa {} tựa đề.',
+  'Bu zaten ekli.': 'Đã thêm rồi.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Gắn thẻ phim bộ, phim lẻ, diễn viên hoặc đạo diễn — bài của bạn cũng hiện trên trang của họ.',
+  'Etiket ekle': 'Thêm thẻ',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Gắn thẻ phim bộ, phim lẻ, diễn viên hoặc đạo diễn',
+  'Gönderiden vazgeç': 'Bỏ bài viết',
+  'Yazdıkların kaydedilmeyecek.': 'Nội dung bạn viết sẽ không được lưu.',
+  'Yazmaya devam et': 'Viết tiếp',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Không tìm thấy. Thử cách viết khác.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Tìm phim bộ, phim lẻ, diễn viên, đạo diễn hoặc hãng sản xuất.',
 };

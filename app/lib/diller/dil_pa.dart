@@ -1367,4 +1367,23 @@ const Map<String, String> cevirilerPa = {
       'ਅਣਉਚਿਤ ਸਮੱਗਰੀ ਦੀ ਸੂਚਨਾ ਮਾਡਰੇਟਰ ਨੂੰ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਅਤੇ ਇਸਨੂੰ ਪੁਰਾਲੇਖ ਤੋਂ ਹਟਾਇਆ ਜਾ ਸਕਦਾ ਹੈ।',
   'Şikayetin alındı': 'ਤੁਹਾਡੀ ਸ਼ਿਕਾਇਤ ਮਿਲ ਗਈ',
   'Şikayet gönderilemedi': 'ਸ਼ਿਕਾਇਤ ਭੇਜੀ ਨਹੀਂ ਜਾ ਸਕੀ',
+  'Dizinin kendisi': 'ਸੀਰੀਜ਼ ਖੁਦ',
+  'Sezon ya da bölüm seçme': 'ਸੀਜ਼ਨ ਜਾਂ ਐਪੀਸੋਡ ਤੋਂ ਬਿਨਾਂ',
+  'Tüm {}. sezon': 'ਪੂਰਾ ਸੀਜ਼ਨ {}',
+  'Bölüm seçme': 'ਐਪੀਸੋਡ ਤੋਂ ਬਿਨਾਂ',
+  'En fazla {} yapım ekleyebilirsin.':
+      'ਤੁਸੀਂ ਵੱਧ ਤੋਂ ਵੱਧ {} ਸਿਰਲੇਖ ਜੋੜ ਸਕਦੇ ਹੋ।',
+  'Bu zaten ekli.': 'ਪਹਿਲਾਂ ਹੀ ਜੋੜਿਆ ਗਿਆ ਹੈ।',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'ਕਿਸੇ ਸੀਰੀਜ਼, ਫ਼ਿਲਮ, ਅਦਾਕਾਰ ਜਾਂ ਨਿਰਦੇਸ਼ਕ ਨੂੰ ਟੈਗ ਕਰੋ — ਤੁਹਾਡੀ ਪੋਸਟ ਉਹਨਾਂ ਦੇ ਪੰਨੇ ਉੱਤੇ ਵੀ ਦਿਖੇਗੀ।',
+  'Etiket ekle': 'ਟੈਗ ਜੋੜੋ',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'ਸੀਰੀਜ਼, ਫ਼ਿਲਮ, ਅਦਾਕਾਰ ਜਾਂ ਨਿਰਦੇਸ਼ਕ ਨੂੰ ਟੈਗ ਕਰੋ',
+  'Gönderiden vazgeç': 'ਪੋਸਟ ਰੱਦ ਕਰੋ',
+  'Yazdıkların kaydedilmeyecek.': 'ਜੋ ਲਿਖਿਆ ਹੈ ਉਹ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾਵੇਗਾ।',
+  'Yazmaya devam et': 'ਲਿਖਦੇ ਰਹੋ',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'ਨਹੀਂ ਮਿਲਿਆ। ਹੋਰ ਸਪੈਲਿੰਗ ਅਜ਼ਮਾਓ।',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'ਸੀਰੀਜ਼, ਫ਼ਿਲਮ, ਅਦਾਕਾਰ, ਨਿਰਦੇਸ਼ਕ ਜਾਂ ਪ੍ਰੋਡਕਸ਼ਨ ਕੰਪਨੀ ਲੱਭੋ।',
 };

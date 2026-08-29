@@ -1393,4 +1393,22 @@ const Map<String, String> cevirilerRo = {
       'Conținutul nepotrivit este raportat unui moderator și poate fi eliminat din arhivă.',
   'Şikayetin alındı': 'Raportarea ta a fost primită',
   'Şikayet gönderilemedi': 'Raportarea nu a putut fi trimisă',
+  'Dizinin kendisi': 'Serialul în sine',
+  'Sezon ya da bölüm seçme': 'Fără sezon sau episod',
+  'Tüm {}. sezon': 'Tot sezonul {}',
+  'Bölüm seçme': 'Fără episod',
+  'En fazla {} yapım ekleyebilirsin.': 'Poți adăuga cel mult {} titluri.',
+  'Bu zaten ekli.': 'Deja adăugat.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Etichetează un serial, film, actor sau regizor — postarea ta va apărea și pe pagina lor.',
+  'Etiket ekle': 'Adaugă etichetă',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Etichetează un serial, film, actor sau regizor',
+  'Gönderiden vazgeç': 'Renunță la postare',
+  'Yazdıkların kaydedilmeyecek.': 'Ce ai scris nu va fi salvat.',
+  'Yazmaya devam et': 'Continuă să scrii',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Nu s-a găsit. Încearcă altă scriere.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Caută un serial, film, actor, regizor sau studio.',
 };

@@ -1356,4 +1356,22 @@ const Map<String, String> cevirilerFa = {
       'محتوای نامناسب به مدیر گزارش می‌شود و ممکن است از بایگانی حذف شود.',
   'Şikayetin alındı': 'گزارش تو دریافت شد',
   'Şikayet gönderilemedi': 'گزارش ارسال نشد',
+  'Dizinin kendisi': 'خود سریال',
+  'Sezon ya da bölüm seçme': 'بدون فصل یا قسمت',
+  'Tüm {}. sezon': 'کل فصل {}',
+  'Bölüm seçme': 'بدون قسمت',
+  'En fazla {} yapım ekleyebilirsin.': 'حداکثر {} عنوان می‌توانی اضافه کنی.',
+  'Bu zaten ekli.': 'قبلاً اضافه شده.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'یک سریال، فیلم، بازیگر یا کارگردان را برچسب بزن — پستت در صفحه‌ی آن‌ها هم دیده می‌شود.',
+  'Etiket ekle': 'افزودن برچسب',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'سریال، فیلم، بازیگر یا کارگردان را برچسب بزن',
+  'Gönderiden vazgeç': 'انصراف از پست',
+  'Yazdıkların kaydedilmeyecek.': 'آنچه نوشتی ذخیره نمی‌شود.',
+  'Yazmaya devam et': 'ادامه‌ی نوشتن',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'پیدا نشد. املای دیگری را امتحان کن.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'دنبال سریال، فیلم، بازیگر، کارگردان یا شرکت سازنده بگرد.',
 };

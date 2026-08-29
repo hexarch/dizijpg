@@ -1305,4 +1305,20 @@ const Map<String, String> cevirilerKo = {
       '부적절한 콘텐츠는 관리자에게 신고되며 보관함에서 삭제될 수 있습니다.',
   'Şikayetin alındı': '신고가 접수되었습니다',
   'Şikayet gönderilemedi': '신고를 보내지 못했습니다',
+  'Dizinin kendisi': '시리즈 자체',
+  'Sezon ya da bölüm seçme': '시즌·에피소드 선택 안 함',
+  'Tüm {}. sezon': '시즌 {} 전체',
+  'Bölüm seçme': '에피소드 선택 안 함',
+  'En fazla {} yapım ekleyebilirsin.': '최대 {}개까지 추가할 수 있어요.',
+  'Bu zaten ekli.': '이미 추가했어요.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      '드라마·영화·배우·감독을 태그하면 글이 그 페이지에도 표시돼요.',
+  'Etiket ekle': '태그 추가',
+  'Dizi, film, oyuncu ya da yönetmen etiketle': '드라마·영화·배우·감독 태그하기',
+  'Gönderiden vazgeç': '게시물 취소',
+  'Yazdıkların kaydedilmeyecek.': '작성한 내용은 저장되지 않아요.',
+  'Yazmaya devam et': '계속 쓰기',
+  'Bulunamadı. Adın yazılışını değiştirip dene.': '찾지 못했어요. 다른 철자로 시도해 보세요.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      '드라마, 영화, 배우, 감독 또는 제작사를 검색하세요.',
 };

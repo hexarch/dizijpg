@@ -1373,4 +1373,23 @@ const Map<String, String> cevirilerId = {
       'Konten tidak pantas dilaporkan ke moderator dan bisa dihapus dari arsip.',
   'Şikayetin alındı': 'Laporanmu diterima',
   'Şikayet gönderilemedi': 'Laporan tidak dapat dikirim',
+  'Dizinin kendisi': 'Serialnya sendiri',
+  'Sezon ya da bölüm seçme': 'Tanpa musim atau episode',
+  'Tüm {}. sezon': 'Seluruh musim {}',
+  'Bölüm seçme': 'Tanpa episode',
+  'En fazla {} yapım ekleyebilirsin.':
+      'Kamu bisa menambahkan maksimal {} judul.',
+  'Bu zaten ekli.': 'Sudah ditambahkan.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Tandai serial, film, aktor, atau sutradara — postinganmu juga muncul di halaman mereka.',
+  'Etiket ekle': 'Tambah tag',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Tandai serial, film, aktor, atau sutradara',
+  'Gönderiden vazgeç': 'Buang postingan',
+  'Yazdıkların kaydedilmeyecek.': 'Yang kamu tulis tidak akan disimpan.',
+  'Yazmaya devam et': 'Lanjut menulis',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Tidak ditemukan. Coba ejaan lain.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Cari serial, film, aktor, sutradara, atau rumah produksi.',
 };

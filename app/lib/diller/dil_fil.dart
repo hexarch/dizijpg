@@ -1396,4 +1396,23 @@ const Map<String, String> cevirilerFil = {
       'Iniuulat sa moderator ang hindi angkop na nilalaman at maaaring tanggalin sa archive.',
   'Şikayetin alındı': 'Natanggap ang iyong report',
   'Şikayet gönderilemedi': 'Hindi naipadala ang report',
+  'Dizinin kendisi': 'Ang serye mismo',
+  'Sezon ya da bölüm seçme': 'Walang season o episode',
+  'Tüm {}. sezon': 'Buong season {}',
+  'Bölüm seçme': 'Walang episode',
+  'En fazla {} yapım ekleyebilirsin.':
+      'Puwede kang magdagdag ng hanggang {} pamagat.',
+  'Bu zaten ekli.': 'Nadagdag na.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'I-tag ang serye, pelikula, aktor o direktor — lalabas din ang post mo sa page nila.',
+  'Etiket ekle': 'Magdagdag ng tag',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'I-tag ang serye, pelikula, aktor o direktor',
+  'Gönderiden vazgeç': 'Itapon ang post',
+  'Yazdıkların kaydedilmeyecek.': 'Hindi mase-save ang isinulat mo.',
+  'Yazmaya devam et': 'Magpatuloy sa pagsulat',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Walang nahanap. Subukan ang ibang baybay.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Maghanap ng serye, pelikula, aktor, direktor o production company.',
 };

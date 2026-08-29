@@ -1378,4 +1378,22 @@ const Map<String, String> cevirilerMs = {
       'Kandungan tidak sesuai dilaporkan kepada moderator dan boleh dibuang daripada arkib.',
   'Şikayetin alındı': 'Laporan anda diterima',
   'Şikayet gönderilemedi': 'Laporan tidak dapat dihantar',
+  'Dizinin kendisi': 'Siri itu sendiri',
+  'Sezon ya da bölüm seçme': 'Tanpa musim atau episod',
+  'Tüm {}. sezon': 'Seluruh musim {}',
+  'Bölüm seçme': 'Tanpa episod',
+  'En fazla {} yapım ekleyebilirsin.': 'Anda boleh menambah sehingga {} tajuk.',
+  'Bu zaten ekli.': 'Sudah ditambah.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Tandakan siri, filem, pelakon atau pengarah — hantaran anda juga muncul di halaman mereka.',
+  'Etiket ekle': 'Tambah tag',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Tandakan siri, filem, pelakon atau pengarah',
+  'Gönderiden vazgeç': 'Buang hantaran',
+  'Yazdıkların kaydedilmeyecek.': 'Apa yang anda tulis tidak akan disimpan.',
+  'Yazmaya devam et': 'Terus menulis',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Tidak dijumpai. Cuba ejaan lain.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Cari siri, filem, pelakon, pengarah atau syarikat produksi.',
 };

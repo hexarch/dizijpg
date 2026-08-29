@@ -1366,4 +1366,23 @@ const Map<String, String> cevirilerKn = {
       'ಅನುಚಿತ ವಿಷಯವನ್ನು ನಿರ್ವಾಹಕರಿಗೆ ವರದಿ ಮಾಡಲಾಗುತ್ತದೆ ಮತ್ತು ಸಂಗ್ರಹದಿಂದ ತೆಗೆದುಹಾಕಬಹುದು.',
   'Şikayetin alındı': 'ನಿಮ್ಮ ದೂರು ಸ್ವೀಕರಿಸಲಾಗಿದೆ',
   'Şikayet gönderilemedi': 'ದೂರು ಕಳುಹಿಸಲು ಆಗಲಿಲ್ಲ',
+  'Dizinin kendisi': 'ಸರಣಿ ಸ್ವತಃ',
+  'Sezon ya da bölüm seçme': 'ಸೀಸನ್ ಅಥವಾ ಸಂಚಿಕೆ ಇಲ್ಲ',
+  'Tüm {}. sezon': 'ಪೂರ್ಣ ಸೀಸನ್ {}',
+  'Bölüm seçme': 'ಸಂಚಿಕೆ ಇಲ್ಲ',
+  'En fazla {} yapım ekleyebilirsin.':
+      'ನೀವು ಗರಿಷ್ಠ {} ಶೀರ್ಷಿಕೆಗಳನ್ನು ಸೇರಿಸಬಹುದು.',
+  'Bu zaten ekli.': 'ಈಗಾಗಲೇ ಸೇರಿಸಲಾಗಿದೆ.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'ಒಂದು ಸರಣಿ, ಸಿನಿಮಾ, ನಟ ಅಥವಾ ನಿರ್ದೇಶಕರನ್ನು ಟ್ಯಾಗ್ ಮಾಡಿ — ನಿಮ್ಮ ಪೋಸ್ಟ್ ಅವರ ಪುಟದಲ್ಲೂ ಕಾಣಿಸುತ್ತದೆ.',
+  'Etiket ekle': 'ಟ್ಯಾಗ್ ಸೇರಿಸಿ',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'ಸರಣಿ, ಸಿನಿಮಾ, ನಟ ಅಥವಾ ನಿರ್ದೇಶಕರನ್ನು ಟ್ಯಾಗ್ ಮಾಡಿ',
+  'Gönderiden vazgeç': 'ಪೋಸ್ಟ್ ರದ್ದುಗೊಳಿಸಿ',
+  'Yazdıkların kaydedilmeyecek.': 'ನೀವು ಬರೆದಿದ್ದು ಉಳಿಸಲಾಗುವುದಿಲ್ಲ.',
+  'Yazmaya devam et': 'ಬರೆಯುವುದನ್ನು ಮುಂದುವರಿಸಿ',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'ಸಿಗಲಿಲ್ಲ. ಬೇರೆ ಕಾಗುಣಿತ ಪ್ರಯತ್ನಿಸಿ.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'ಸರಣಿ, ಸಿನಿಮಾ, ನಟ, ನಿರ್ದೇಶಕ ಅಥವಾ ನಿರ್ಮಾಣ ಸಂಸ್ಥೆಯನ್ನು ಹುಡುಕಿ.',
 };

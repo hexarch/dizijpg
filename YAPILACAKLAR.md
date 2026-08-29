@@ -16,6 +16,103 @@ Mağaza kareleri çekilirken 11 dilde uygulama gezildi; şunlar görüldü:
 - ⬜ **İngilizce çoğul hatası**: dizi sayfasında "1 people you follow watched it"
   — tekil için "1 person" olmalı (diğer dillerde de çoğul kuralı kontrol edilmeli).
 
+## 2026-08-30 — 🚀 AKIŞ PAYLAŞIM KUTUSU YENİDEN + ESKİ İNCELEMELER YORUMLARA (1.102.0+162)
+
+Kullanıcı: *"Akışta gönderi paylaşırken yapım seçme zorunlu olmasın … Oraya da
+yapım/yönetmen/oyuncu ekle olsun ve 1'den fazla eklenebilsin, ve eklenenlerin
+profilinde de paylaşılacak — yani mesela Silo ve Breaking Bad'i seçersem
+ikisinin de profilinde paylaşılacak. Ve dizilerde bölüm, sezon veya dizinin
+kendisini de seçme olacak. Ve akıştaki 'yorum yap'a tıklandığında yarım modal
+açma, tam ekranda aç, ve daha güzelini yapabilirsin."* + *"İncelemeyi kaldırdık
+ya, oradaki yorumları da otomatik olarak yorumlar kısmına aktar."*
+
+### Veri modeli kararı — bağ tablosu, sütunlar KALIYOR
+- ✅🚀 **`yorum_etiketleri` bağ tablosu** (`migrasyon-2026-08-30.sql`). Üç
+  seçenekten (sabit sayıda ek sütun / eski sütunları silip her şeyi JOIN'e
+  taşımak / bağ tablosunu EK olarak koymak) üçüncüsü seçildi.
+  `yorumlar.tur/tmdb_id/sezon/bolum` artık **BİRİNCİL ETİKET** anlamına
+  geliyor ve YERİNDE DURUYOR: bu dört sütun `server.js`te 20'den fazla yerde
+  okunuyor (akış spoiler kuralı, SEO sorguları, site haritası, IndexNow,
+  yanıtın hedef devralması, tohum betikleri, Instagram aktarımı). Hepsini tek
+  turda JOIN'e çevirmek **5.211 mevcut yorumu** riske atardı.
+- ✅🚀 **Birincil etiketi TRIGGER yazıyor** (`yorum_birincil_etiket`), uygulama
+  değil. `yorumlar`a yazan tek yer `POST /yorumlar` DEĞİL — `ai_tohum.js`,
+  `araclar/seo_bolum_tohum.js` ve Instagram aktarımı doğrudan INSERT atıyor.
+  Uygulamaya bırakılsaydı o yollardan gelen yorumlar içerik sayfasında
+  görünmezdi (sessiz gerileme).
+- ✅🚀 **Geriye dönük doldurma: 5.212 satır**, tek koşuda. Tek etiketli eski
+  yorumların davranışı BİREBİR aynı.
+- ✅🚀 **Etiketsiz gönderi**: `tur`/`tmdb_id` NULL'a açıldı + `(tur IS NULL) =
+  (tmdb_id IS NULL)` kısıtı. İki sessiz tuzak kapatıldı: `AKIS_KURAL`da
+  `y.tur <> 'person'` üç değerli mantıkta NULL döndüğü için etiketsiz gönderi
+  akıştan DÜŞÜYORDU (`coalesce` eklendi); `akisSatiri` etiketsizi BULANIK
+  gösteriyordu (muafiyet listesine `tur == null` eklendi).
+- ✅🚀 **Sezon düzeyi YALNIZ bağ tablosunda.** `yorumlar.sezon` sözleşmesi
+  ("ikisi de dolu = bölüm") korundu — sezon oraya yazılsaydı SEO sorguları,
+  akış spoiler kuralı ve içerik sayfası sayaçları hiçbir değişiklik
+  yapılmadan yanlış cevap vermeye başlardı.
+
+### Kutunun yeni hâli
+- ✅🚀 **TAM EKRAN** (`fullscreenDialog`, `paylas_yorum.dart`). Sol üstte tek
+  çıkış (çarpı), sağ üstte tek birincil eylem (Paylaş — klavye açıkken de
+  görünür). `PopScope` ile **kaydedilmemiş metin onayı** (Apple HIG
+  `sheet-dismiss-confirm`); `canPop` DİNAMİK — sabit `false` olsaydı
+  paylaşımdan sonraki `Navigator.pop(context, true)` yakalanır ve akış
+  tazelenmezdi.
+- ✅🚀 **0..6 etiket, dört tür** (dizi · film · kişi · yapım firması), rozet
+  olarak; her rozette görsel + ad + düzey + ayrı 44 dp kaldırma hedefi.
+  "(zorunlu)" ifadesi ve kapalı düğme gerekçesi EKRANDAN KALKTI.
+- ✅🚀 **Üç düzey** (`bolum_sec.dart`): dizinin kendisi · sezon · bölüm.
+  Sezon, kökte dördüncü seçenek olarak DEĞİL, sezonun içindeki
+  "Tüm {n}. sezon" satırı olarak — kademeli açılım.
+- ✅🚀 **Ek önizleme şeridi** (eskiden yalnız "3" yazıyordu) + karakter sayacı
+  yalnız son 100 karakterde.
+- ✅🚀 **Masaüstünde ortalanmış kolon** (`OrtaKolon`, 720 dp) — GERÇEK
+  tarayıcıda görüldü: kolon kısıtı yokken metin alanı 1.300 dp'ye yayılıyordu.
+- ✅🚀 **Akış kartı**: birinci etiket başlıkta (blok DEĞİŞMEDİ — yüksekliği
+  medya konumunu belirliyor ve dört yerleşim testi ona bağlı), kalanlar
+  metnin altında yatay rozet şeridinde. Etiketsizde içerik adı satırı HİÇ
+  çizilmiyor (eskisi sarı bir "?" basar ve `/icerik/null/null`a giderdi).
+- ✅🚀 **Seçicide boş durum** (ux #90): "henüz aramadın" ile "aradın,
+  bulunamadı" ayrı metin — eskiden ikisi de boş ekrandı.
+- ✅ **GIF seçici bozulmadı** (dört yüzey de eskisi gibi).
+
+**Kanıt (canlı, uçtan uca):** üç etiketli tek gönderi `tv/125988`, `tv/1396`
+**ve** `person/17419` sayfalarının ÜÇÜNDE birden listelendi, tam etiket
+dizisiyle; etiketsiz gönderi hiçbirinde çıkmadı, akışta `spoiler=false` ile
+göründü; sezon etiketi dizi sayfasında `{"sezon":2,"bolum":null}` olarak geldi.
+Test gönderileri silindi, bağ satırları CASCADE ile düştü.
+
+### Eski incelemeler → yorumlar (tek seferlik migrasyon)
+- ✅🚀 **177 inceleme taşındı** (`migrasyon-2026-08-30b.sql`). Ölçüm: 180
+  metinli inceleme · 30 kullanıcı · 145 yapım · bölüm düzeyinde 0 ·
+  movie 98 / tv 77 / person 5 · en uzun 337 krk. Taşınmayan 3: 2 tanesi
+  `yorumlar`da BİREBİR zaten vardı, 1 tanesi tek karakterlik ("ı").
+- ✅ **Tohum/AI hesapların 83'ü de taşındı.** Gerekçe: bu metinler İncelemeler
+  bölümü kapatılana kadar ZATEN yayındaydı (taşımamak, okunan içeriği sessizce
+  silmek olurdu); 15 intl persona normal izleyici yorumu yazıyor ve hiçbiri
+  `kullanicilar.ai` işaretli değil; 145 yapımın yorum bölümünün yarısı onlar.
+  Keşfet/Reels'e SIZMAZLAR — o yüzeyler `cardinality(medya) > 0` istiyor.
+- ✅ **`puanlar.yorum` SİLİNMEDİ** (moderatör ekranı okuyor); `tasinan_yorum_id`
+  işareti eklendi.
+- ✅ **İdempotentlik KANITLANDI**: migrasyon ikinci kez koşturuldu →
+  `UPDATE 0`, toplam 177'de sabit kaldı.
+- ✅ **Orijinal tarih korundu**: `y.tarih <> p.tarih` sayısı **0**.
+- ✅ **Profilde görünüyor** (kanıt): `GET /profil/fatih.cel` yanıtında taşınan
+  5338/5339/5340 kendi tarihleriyle listelendi.
+
+### Testler
+- ✅ `backend/test/coklu_etiket.test.js` — 30 test (etiket doğrulama gerçekten
+  çalıştırılıyor; içerik sayfası SQL'i, akış kuralı, yazma sırası, migrasyon
+  değişmezleri).
+- ✅ `app/test/paylas_yorum_test.dart` — 25 test (etiketsiz paylaşım, iki dizi
+  birden, dört tür, üç düzey, rozet kaldırma, tam ekran kanıtı, kapatma onayı).
+- ✅ `app/test/akis_coklu_etiket_test.dart` — 6 test (kart rozetleri, etiketsiz
+  kart).
+- Toplam: backend **2.112**, Flutter **2.312** — hepsi yeşil.
+- ✅ 14 yeni metin **45 dile** çevrildi (630 kayıt; dosya başına 1.150 anahtar,
+  45 dosya senkron).
+
 ## 2026-08-30 — 🚀 SEARCH CONSOLE: SİTE HARİTASI HATASI KAPANDI, 6.152 URL GÖRÜNÜR OLDU
 
 Kullanıcı: *"search consolda görevlendir … site haritalarında hata almış ve

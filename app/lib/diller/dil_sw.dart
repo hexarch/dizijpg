@@ -1377,4 +1377,22 @@ const Map<String, String> cevirilerSw = {
       'Maudhui yasiyofaa huripotiwa kwa msimamizi na yanaweza kuondolewa kwenye kumbukumbu.',
   'Şikayetin alındı': 'Ripoti yako imepokelewa',
   'Şikayet gönderilemedi': 'Ripoti haikuweza kutumwa',
+  'Dizinin kendisi': 'Msururu wenyewe',
+  'Sezon ya da bölüm seçme': 'Bila msimu wala kipindi',
+  'Tüm {}. sezon': 'Msimu {} mzima',
+  'Bölüm seçme': 'Bila kipindi',
+  'En fazla {} yapım ekleyebilirsin.': 'Unaweza kuongeza hadi vichwa {}.',
+  'Bu zaten ekli.': 'Tayari imeongezwa.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Tia lebo msururu, filamu, mwigizaji au mkurugenzi — chapisho lako litaonekana pia kwenye ukurasa wao.',
+  'Etiket ekle': 'Ongeza lebo',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Tia lebo msururu, filamu, mwigizaji au mkurugenzi',
+  'Gönderiden vazgeç': 'Tupa chapisho',
+  'Yazdıkların kaydedilmeyecek.': 'Ulichoandika hakitahifadhiwa.',
+  'Yazmaya devam et': 'Endelea kuandika',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Haikupatikana. Jaribu tahajia nyingine.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Tafuta msururu, filamu, mwigizaji, mkurugenzi au kampuni ya utayarishaji.',
 };

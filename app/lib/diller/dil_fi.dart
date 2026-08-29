@@ -1378,4 +1378,22 @@ const Map<String, String> cevirilerFi = {
       'Sopimaton sisältö ilmoitetaan valvojalle ja se voidaan poistaa arkistosta.',
   'Şikayetin alındı': 'Ilmoituksesi vastaanotettiin',
   'Şikayet gönderilemedi': 'Ilmoitusta ei voitu lähettää',
+  'Dizinin kendisi': 'Sarja itse',
+  'Sezon ya da bölüm seçme': 'Ei kautta eikä jaksoa',
+  'Tüm {}. sezon': 'Koko kausi {}',
+  'Bölüm seçme': 'Ei jaksoa',
+  'En fazla {} yapım ekleyebilirsin.': 'Voit lisätä enintään {} nimikettä.',
+  'Bu zaten ekli.': 'Jo lisätty.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Merkitse sarja, elokuva, näyttelijä tai ohjaaja – julkaisusi näkyy myös heidän sivullaan.',
+  'Etiket ekle': 'Lisää tunniste',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Merkitse sarja, elokuva, näyttelijä tai ohjaaja',
+  'Gönderiden vazgeç': 'Hylkää julkaisu',
+  'Yazdıkların kaydedilmeyecek.': 'Kirjoittamaasi ei tallenneta.',
+  'Yazmaya devam et': 'Jatka kirjoittamista',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Ei löytynyt. Kokeile toista kirjoitusasua.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Hae sarjaa, elokuvaa, näyttelijää, ohjaajaa tai tuotantoyhtiötä.',
 };

@@ -1360,4 +1360,23 @@ const Map<String, String> cevirilerBn = {
       'অনুপযুক্ত বিষয়বস্তু মডারেটরকে জানানো হয় এবং সংরক্ষণাগার থেকে সরানো হতে পারে।',
   'Şikayetin alındı': 'আপনার রিপোর্ট পাওয়া গেছে',
   'Şikayet gönderilemedi': 'রিপোর্ট পাঠানো যায়নি',
+  'Dizinin kendisi': 'সিরিজটি নিজেই',
+  'Sezon ya da bölüm seçme': 'সিজন বা পর্ব ছাড়া',
+  'Tüm {}. sezon': 'পুরো সিজন {}',
+  'Bölüm seçme': 'পর্ব ছাড়া',
+  'En fazla {} yapım ekleyebilirsin.':
+      'তুমি সর্বোচ্চ {}টি শিরোনাম যোগ করতে পারো।',
+  'Bu zaten ekli.': 'ইতিমধ্যেই যোগ করা আছে।',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'কোনো সিরিজ, সিনেমা, অভিনেতা বা পরিচালককে ট্যাগ করো — তোমার পোস্ট তাদের পেজেও দেখা যাবে।',
+  'Etiket ekle': 'ট্যাগ যোগ করুন',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'সিরিজ, সিনেমা, অভিনেতা বা পরিচালককে ট্যাগ করো',
+  'Gönderiden vazgeç': 'পোস্ট বাতিল করুন',
+  'Yazdıkların kaydedilmeyecek.': 'যা লিখেছ তা সংরক্ষণ করা হবে না।',
+  'Yazmaya devam et': 'লেখা চালিয়ে যাও',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'পাওয়া যায়নি। অন্য বানান চেষ্টা করো।',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'সিরিজ, সিনেমা, অভিনেতা, পরিচালক বা প্রযোজনা সংস্থা খোঁজো।',
 };

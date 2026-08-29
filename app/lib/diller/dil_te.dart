@@ -1369,4 +1369,23 @@ const Map<String, String> cevirilerTe = {
       'అనుచిత విషయం మోడరేటర్‌కు నివేదించబడుతుంది మరియు ఆర్కైవ్ నుండి తీసివేయవచ్చు.',
   'Şikayetin alındı': 'మీ ఫిర్యాదు అందింది',
   'Şikayet gönderilemedi': 'ఫిర్యాదు పంపడం సాధ్యపడలేదు',
+  'Dizinin kendisi': 'సిరీస్ స్వయంగా',
+  'Sezon ya da bölüm seçme': 'సీజన్ లేదా ఎపిసోడ్ లేకుండా',
+  'Tüm {}. sezon': 'మొత్తం సీజన్ {}',
+  'Bölüm seçme': 'ఎపిసోడ్ లేకుండా',
+  'En fazla {} yapım ekleyebilirsin.':
+      'నువ్వు గరిష్ఠంగా {} శీర్షికలు జోడించవచ్చు.',
+  'Bu zaten ekli.': 'ఇప్పటికే జోడించబడింది.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'ఒక సిరీస్, సినిమా, నటుడు లేదా దర్శకుడిని ట్యాగ్ చేయి — నీ పోస్ట్ వాళ్ల పేజీలోనూ కనిపిస్తుంది.',
+  'Etiket ekle': 'ట్యాగ్ జోడించు',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'సిరీస్, సినిమా, నటుడు లేదా దర్శకుడిని ట్యాగ్ చేయి',
+  'Gönderiden vazgeç': 'పోస్ట్ రద్దు చేయి',
+  'Yazdıkların kaydedilmeyecek.': 'నువ్వు రాసినది భద్రపరచబడదు.',
+  'Yazmaya devam et': 'రాయడం కొనసాగించు',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'దొరకలేదు. వేరే స్పెల్లింగ్ ప్రయత్నించు.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'సిరీస్, సినిమా, నటుడు, దర్శకుడు లేదా నిర్మాణ సంస్థను వెతుకు.',
 };

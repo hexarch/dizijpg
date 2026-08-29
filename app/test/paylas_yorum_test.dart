@@ -13,30 +13,26 @@ import 'package:http/testing.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// AKIŞTAN PAYLAŞIM (28 Ağu 2026, kullanıcı isteği).
+/// AKIŞTAN PAYLAŞIM — TAM EKRAN + ÇOKLU ETİKET (30 Ağu 2026, kullanıcı isteği).
 ///
 /// ASIL SÖZLEŞME — ve bu dosyanın varlık sebebi: paylaşım YENİ bir gönderi
-/// türü değil, `tur` + `tmdb_id` (+ `sezon`/`bolum`) taşıyan sıradan bir
-/// YORUM. Yük bozulursa paylaşım akışta görünür ama ilgili dizi/film/bölüm
-/// sayfasında GÖRÜNMEZ — kullanıcının istediği şeyin tamamı kaybolur ve
-/// ekranda hiçbir hata çıkmaz. Aşağıdaki yük testleri tam olarak bunu kilitler.
+/// türü değil, `etiketler` dizisi taşıyan sıradan bir YORUM. Yük bozulursa
+/// paylaşım akışta görünür ama etiketlenen dizi/film/kişi sayfasında GÖRÜNMEZ
+/// — kullanıcının istediği şeyin tamamı kaybolur ve ekranda hiçbir hata
+/// çıkmaz. Aşağıdaki yük testleri tam olarak bunu kilitler.
 http.Response _json(Object govde) => http.Response(
   jsonEncode(govde),
   200,
   headers: {'content-type': 'application/json; charset=utf-8'},
 );
 
-/// `search/multi` yanıtı: bir film + bir dizi.
+/// `search/multi` yanıtı: bir film + iki dizi + bir kişi.
 const _aramaSonuclari = {
   'results': [
-    {
-      'id': 1,
-      'media_type': 'movie',
-      'title': 'Superman',
-      'poster_path': '/s.jpg',
-    },
+    {'id': 1, 'media_type': 'movie', 'title': 'Superman', 'poster_path': '/s.jpg'},
     {'id': 2, 'media_type': 'tv', 'name': 'Silo', 'poster_path': '/x.jpg'},
     {'id': 3, 'media_type': 'person', 'name': 'Biri', 'profile_path': '/p.jpg'},
+    {'id': 5, 'media_type': 'tv', 'name': 'Breaking Bad', 'poster_path': '/b.jpg'},
   ],
 };
 
@@ -93,21 +89,45 @@ Future<void> _ac(WidgetTester tester) async {
   await tester.pumpWidget(
     ChangeNotifierProvider<Oturum>.value(
       value: Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'},
-      child: const MaterialApp(home: Scaffold(body: PaylasYorumSheet())),
+      child: const MaterialApp(home: PaylasYorumEkrani()),
     ),
   );
   await tester.pump();
 }
 
-/// Seçiciyi açıp verilen adlı sonuca dokunur.
-Future<void> _icerikSec(WidgetTester tester, String ad) async {
-  await tester.tap(find.textContaining('Yapım seç'));
+/// Etiket seçiciyi açıp verilen adlı sonuca dokunur.
+/// [duzey] verilirse (dizi seçildiğinde açılan) düzey seçicide o satıra basar.
+Future<void> _etiketEkle(
+  WidgetTester tester,
+  String ad, {
+  String? duzey,
+  String? sezon,
+}) async {
+  await tester.tap(find.text('Etiket ekle'));
   await tester.pumpAndSettle();
   await tester.enterText(find.byType(TextField).last, 'ara');
   // Seçicideki 400 ms geciktirici.
   await tester.pump(const Duration(milliseconds: 500));
   await tester.pump();
-  await tester.tap(find.text(ad));
+  // ListTile'a daralt: aynı ad hem ARAMA SONUCUNDA hem (daha önce eklendiyse)
+  // ROZETTE geçiyor ve `find.text` ikisini birden yakalıyor.
+  await tester.tap(find.widgetWithText(ListTile, ad));
+  await tester.pumpAndSettle();
+  if (duzey != null) {
+    // Dizide düzey seçici HEMEN açılır.
+    if (sezon != null) {
+      await tester.tap(find.widgetWithText(ListTile, sezon));
+      await tester.pumpAndSettle();
+    }
+    await tester.tap(find.widgetWithText(ListTile, duzey));
+    await tester.pumpAndSettle();
+  }
+}
+
+Future<void> _yazVePaylas(WidgetTester tester, String metin) async {
+  await tester.enterText(find.byType(TextField).first, metin);
+  await tester.pump();
+  await tester.tap(find.widgetWithText(FilledButton, 'Paylaş'));
   await tester.pumpAndSettle();
 }
 
@@ -116,77 +136,286 @@ Finder get _paylasDugmesi => find.widgetWithText(FilledButton, 'Paylaş');
 void main() {
   setUp(_sunucu);
 
-  testWidgets('İÇERİK ZORUNLU: seçilmeden Paylaş düğmesi KAPALI', (
+  // =========================================================================
+  // 1) ETİKET ARTIK ZORUNLU DEĞİL
+  // =========================================================================
+  testWidgets('ETİKETSİZ paylaşım: yapım seçmeden Paylaş AÇIK ve yük gider', (
     tester,
   ) async {
+    // Kullanıcı isteği (30 Ağu): "yapım seçme zorunlu olmasın, 'yapım seç'
+    // yazısındaki zorunluyu kaldır."
     await _ac(tester);
-    await tester.enterText(find.byType(TextField).first, 'çok iyiydi');
+    await tester.enterText(find.byType(TextField).first, 'bugün hiç izlemedim');
     await tester.pump();
     expect(
       tester.widget<FilledButton>(_paylasDugmesi).onPressed,
-      isNull,
-      reason: 'içerik seçilmeden paylaşılamaz',
+      isNotNull,
+      reason: 'etiket kapısı hâlâ duruyor',
     );
-    // Sebebi ekranda YAZIYOR: kapalı düğme tahmin ettirmemeli.
-    expect(find.textContaining('önce bir yapım seç'), findsOneWidget);
+    await tester.tap(_paylasDugmesi);
+    await tester.pumpAndSettle();
+
+    final y = _gonderilen.single;
+    expect(y['etiketler'], isEmpty);
+    expect(y['metin'], 'bugün hiç izlemedim');
+    // Etiketsizde eski alanlar HİÇ gitmemeli (yoksa sunucu yarım etiket görür).
+    expect(y.containsKey('tur'), isFalse);
+    expect(y.containsKey('tmdb_id'), isFalse);
   });
 
-  testWidgets('METİN ZORUNLU: içerik seçili ama metin boşsa düğme KAPALI', (
+  testWidgets('"zorunlu" ifadesi ve kapalı düğme gerekçesi EKRANDA YOK', (
     tester,
   ) async {
     await _ac(tester);
-    await _icerikSec(tester, 'Superman');
+    expect(find.textContaining('zorunlu'), findsNothing);
+    expect(find.textContaining('önce bir yapım seç'), findsNothing);
+  });
+
+  testWidgets('METİN hâlâ ZORUNLU: boşken düğme KAPALI (sunucu da reddeder)', (
+    tester,
+  ) async {
+    await _ac(tester);
     expect(tester.widget<FilledButton>(_paylasDugmesi).onPressed, isNull);
   });
 
-  testWidgets('DÖRT TÜR de listelenir: dizi, film, kişi, firma', (
+  // =========================================================================
+  // 2) ÇOKLU ETİKET — kullanıcının Silo + Breaking Bad örneği
+  // =========================================================================
+  testWidgets('İKİ DİZİ birden: yük İKİ etiket taşır, sırası korunur', (
     tester,
   ) async {
-    // 28 Ağu: kullanıcı "sadece dizi film değil oyuncu yönetmen yapım firması
-    // vb de seçebilir" dedi. Sunucu (`YORUM_TURLERI`) bunları zaten kabul
-    // ediyordu; eksik olan istemcinin seçtirmemesiydi.
+    // Kullanıcı isteği birebir: "mesela Silo ve Breaking Bad'i seçersem
+    // ikisinin de profilinde paylaşılacak".
     await _ac(tester);
-    await tester.tap(find.textContaining('Yapım seç'));
+    await _etiketEkle(tester, 'Silo', duzey: 'Dizinin kendisi');
+    await _etiketEkle(tester, 'Breaking Bad', duzey: 'Dizinin kendisi');
+
+    // İki rozet de ekranda.
+    expect(find.text('Silo'), findsOneWidget);
+    expect(find.text('Breaking Bad'), findsOneWidget);
+
+    await _yazVePaylas(tester, 'ikisi de harika');
+    final e = (_gonderilen.single['etiketler'] as List).cast<Map>();
+    expect(e.length, 2);
+    expect([e[0]['tmdb_id'], e[1]['tmdb_id']], [2, 5]);
+    expect(e.every((x) => x['tur'] == 'tv'), isTrue);
+    // Birincil etiket eski alanlarda da gider (eski sunucu yedeği).
+    expect(_gonderilen.single['tmdb_id'], 2);
+  });
+
+  testWidgets('DÖRT TÜR birlikte etiketlenebilir', (tester) async {
+    await _ac(tester);
+    await _etiketEkle(tester, 'Superman');
+    await _etiketEkle(tester, 'Biri');
+    await _etiketEkle(tester, 'Bir Yapım');
+    await _etiketEkle(tester, 'Silo', duzey: 'Dizinin kendisi');
+    await _yazVePaylas(tester, 'karışık');
+
+    final e = (_gonderilen.single['etiketler'] as List).cast<Map>();
+    expect(e.map((x) => x['tur']).toList(), [
+      'movie',
+      'person',
+      'company',
+      'tv',
+    ]);
+  });
+
+  testWidgets('AYNI yapım iki kez eklenemez (uyarı çıkar, rozet çiftlenmez)', (
+    tester,
+  ) async {
+    await _ac(tester);
+    await _etiketEkle(tester, 'Superman');
+    await _etiketEkle(tester, 'Superman');
+    await tester.pump();
+    expect(find.text('Superman'), findsOneWidget);
+    expect(find.textContaining('zaten ekli'), findsOneWidget);
+  });
+
+  testWidgets('ROZET KALDIRILABİLİR: çarpıya basınca etiket düşer', (
+    tester,
+  ) async {
+    await _ac(tester);
+    await _etiketEkle(tester, 'Superman');
+    await _etiketEkle(tester, 'Biri');
+    expect(find.text('Superman'), findsOneWidget);
+
+    // "Kaldır" semantiği olan ilk düğme Superman rozetinindir.
+    await tester.tap(find.bySemanticsLabel('Kaldır').first);
+    await tester.pump();
+    expect(find.text('Superman'), findsNothing);
+    expect(find.text('Biri'), findsOneWidget);
+
+    await _yazVePaylas(tester, 'yalnız kişi');
+    final e = (_gonderilen.single['etiketler'] as List).cast<Map>();
+    expect(e.length, 1);
+    expect(e.single['tur'], 'person');
+  });
+
+  // =========================================================================
+  // 3) ÜÇ DÜZEY — dizinin kendisi · sezon · bölüm
+  // =========================================================================
+  testWidgets('DÜZEY 1 — dizinin kendisi: sezon/bolum GÖNDERİLMEZ', (
+    tester,
+  ) async {
+    await _ac(tester);
+    await _etiketEkle(tester, 'Silo', duzey: 'Dizinin kendisi');
+    await _yazVePaylas(tester, 'dizi bir harika');
+    final e = (_gonderilen.single['etiketler'] as List).cast<Map>().single;
+    expect(e['tur'], 'tv');
+    expect(e['tmdb_id'], 2);
+    expect(e.containsKey('sezon'), isFalse);
+    expect(e.containsKey('bolum'), isFalse);
+  });
+
+  testWidgets('DÜZEY 2 — SEZON: yük sezon taşır, bolum TAŞIMAZ', (
+    tester,
+  ) async {
+    // 30 Ağu'da açılan üçüncü düzey. Sezon 0 hâlâ listede olmamalı.
+    await _ac(tester);
+    await tester.tap(find.text('Etiket ekle'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField).last, 'ara');
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pump();
-    expect(find.text('Superman'), findsOneWidget);
-    expect(find.text('Silo'), findsOneWidget);
-    expect(find.text('Biri'), findsOneWidget);
-    expect(find.text('Bir Yapım'), findsOneWidget);
-    // Tür etiketleri: aynı ad iki türde olabilir, kullanıcı ayırt etsin.
-    expect(find.text('Kişi'), findsOneWidget);
-    expect(find.text('Yapım firması'), findsOneWidget);
-  });
-
-  testWidgets('KİŞİ: yük tur=person taşır, bölüm seçici YOK', (tester) async {
-    await _ac(tester);
-    await _icerikSec(tester, 'Biri');
-    expect(find.textContaining('Bölüm seç'), findsNothing);
-    await tester.enterText(find.byType(TextField).first, 'harika oyuncu');
-    await tester.pump();
-    await tester.tap(_paylasDugmesi);
+    await tester.tap(find.text('Silo'));
     await tester.pumpAndSettle();
-    final y = _gonderilen.single;
-    expect(y['tur'], 'person');
-    expect(y['tmdb_id'], 3);
+
+    expect(find.text('0. sezon'), findsNothing);
+    await tester.tap(find.widgetWithText(ListTile, '2. sezon'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, 'Tüm 2. sezon'));
+    await tester.pumpAndSettle();
+
+    // Rozet düzeyi gösteriyor.
+    expect(find.text('2. sezon'), findsOneWidget);
+
+    await _yazVePaylas(tester, 'bu sezon çok iyiydi');
+    final e = (_gonderilen.single['etiketler'] as List).cast<Map>().single;
+    expect(e['sezon'], 2);
+    expect(
+      e.containsKey('bolum'),
+      isFalse,
+      reason: 'sezon düzeyinde bölüm alanı olmamalı',
+    );
+    // ESKİ ALANLAR: sezon düzeyi oraya YAZILMAZ — eski sunucu "sezon ve bolum
+    // birlikte" istiyor, yarım çift 400 döndürürdü.
+    expect(_gonderilen.single.containsKey('sezon'), isFalse);
   });
 
-  testWidgets('FİRMA: yük tur=company taşır (media_type istemcide eklenir)', (
+  testWidgets('DÜZEY 3 — BÖLÜM: yük sezon + bolum taşır (eski alanlarda da)', (
     tester,
   ) async {
     await _ac(tester);
-    await _icerikSec(tester, 'Bir Yapım');
-    await tester.enterText(find.byType(TextField).first, 'iyi işler');
-    await tester.pump();
-    await tester.tap(_paylasDugmesi);
-    await tester.pumpAndSettle();
-    final y = _gonderilen.single;
-    expect(y['tur'], 'company');
-    expect(y['tmdb_id'], 4);
+    await _etiketEkle(tester, 'Silo', sezon: '2. sezon', duzey: 'İkinci');
+    expect(find.text('2. sezon 2. bölüm'), findsOneWidget);
+
+    await _yazVePaylas(tester, 'bu bölüm çok iyiydi');
+    final govde = _gonderilen.single;
+    final e = (govde['etiketler'] as List).cast<Map>().single;
+    expect([e['tur'], e['tmdb_id'], e['sezon'], e['bolum']], ['tv', 2, 2, 2]);
+    expect([govde['sezon'], govde['bolum']], [2, 2]);
   });
 
+  testWidgets('DÜZEY DEĞİŞTİRME: rozete dokununca seçici yeniden açılır', (
+    tester,
+  ) async {
+    await _ac(tester);
+    await _etiketEkle(tester, 'Silo', duzey: 'Dizinin kendisi');
+    expect(find.text('Dizi'), findsOneWidget); // tür etiketi
+
+    await tester.tap(find.text('Silo'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, '2. sezon'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, 'Birinci'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('2. sezon 1. bölüm'), findsOneWidget);
+    await _yazVePaylas(tester, 'düzey değişti');
+    final e = (_gonderilen.single['etiketler'] as List).cast<Map>().single;
+    expect([e['sezon'], e['bolum']], [2, 1]);
+  });
+
+  testWidgets('DİZİ OLMAYANDA düzey seçici HİÇ açılmaz', (tester) async {
+    await _ac(tester);
+    await _etiketEkle(tester, 'Superman');
+    // Seçim biter bitmez ekranda düzey seçici olmamalı.
+    expect(find.byType(BolumSecSheet), findsNothing);
+    // Rozete dokunmak da bir şey açmamalı (film/kişi/firmada düzey yok).
+    await tester.tap(find.text('Superman'));
+    await tester.pumpAndSettle();
+    expect(find.byType(BolumSecSheet), findsNothing);
+  });
+
+  // =========================================================================
+  // 4) TAM EKRAN AÇILIŞ
+  // =========================================================================
+  testWidgets('AKIŞ KUTUSU tam ekran açıyor — YARIM MODAL DEĞİL', (
+    tester,
+  ) async {
+    // Kullanıcı isteği: "akıştaki 'yorum yap'a tıklandığında yarım modal
+    // açma, tam ekranda aç".
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    DiziRenkler.acik = false;
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(420, 900);
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'},
+        child: const MaterialApp(home: AkisEkrani()),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final kutu = find.text('Yorum yap');
+    expect(kutu, findsOneWidget);
+    await tester.tap(kutu);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PaylasYorumEkrani), findsOneWidget);
+    // TAM EKRAN KANITI: ekran EKRANIN TAMAMINI kaplıyor. Alt sayfa olsaydı
+    // üstte boşluk kalır (28 Ağu'daki hâlde ~%25) ve `top > 0` olurdu.
+    final kutuRect = tester.getRect(find.byType(PaylasYorumEkrani));
+    expect(kutuRect.top, 0);
+    expect(kutuRect.height, 900);
+    // Ve alt sayfa DEĞİL: modal alt sayfa yaprağı sahnede olmamalı.
+    expect(find.byType(BottomSheet), findsNothing);
+  });
+
+  // =========================================================================
+  // 5) YAZILANI KAZAYLA ATMA KORUMASI
+  // =========================================================================
+  testWidgets('KAPATMA ONAYI: metin varken çarpı onay ister', (tester) async {
+    // ux (Apple HIG `sheet-dismiss-confirm`): kaydedilmemiş değişiklik varken
+    // kapatmadan önce onay. Tam ekranda daha kritik — metin uzun oluyor.
+    await _ac(tester);
+    await tester.enterText(find.byType(TextField).first, 'uzun uzun yazdım');
+    await tester.pump();
+    await tester.tap(find.byIcon(Icons.close));
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsOneWidget);
+
+    // "Yazmaya devam et" → ekran KAPANMAZ, metin durur.
+    await tester.tap(find.textContaining('devam et'));
+    await tester.pumpAndSettle();
+    expect(find.byType(PaylasYorumEkrani), findsOneWidget);
+    expect(find.text('uzun uzun yazdım'), findsOneWidget);
+  });
+
+  testWidgets('BOŞKEN onay SORULMAZ (gereksiz sürtünme yok)', (tester) async {
+    await _ac(tester);
+    await tester.tap(find.byIcon(Icons.close));
+    await tester.pumpAndSettle();
+    expect(find.byType(AlertDialog), findsNothing);
+  });
+
+  // =========================================================================
+  // 6) SEÇİCİ — ortak bileşen, boş durum
+  // =========================================================================
   testWidgets('SOHBET seçicisi kişi/firma GÖSTERMEZ (kart afiş çiziyor)', (
     tester,
   ) async {
@@ -205,143 +434,33 @@ void main() {
     expect(find.text('Bir Yapım'), findsNothing);
   });
 
-  testWidgets('FİLM: yük tur/tmdb_id taşır, sezon/bolum YOK', (tester) async {
-    await _ac(tester);
-    await _icerikSec(tester, 'Superman');
-    await tester.enterText(find.byType(TextField).first, 'harika');
-    await tester.pump();
-    await tester.tap(_paylasDugmesi);
-    await tester.pumpAndSettle();
-
-    expect(_gonderilen.length, 1);
-    final y = _gonderilen.single;
-    expect(y['tur'], 'movie');
-    expect(y['tmdb_id'], 1);
-    expect(y['metin'], 'harika');
-    // Filmde bölüm KAVRAMI YOK: alanlar hiç gönderilmemeli.
-    expect(y.containsKey('sezon'), isFalse);
-    expect(y.containsKey('bolum'), isFalse);
-  });
-
-  testWidgets('DİZİ + BÖLÜM: yük sezon ve bolum taşır', (tester) async {
-    await _ac(tester);
-    await _icerikSec(tester, 'Silo');
-
-    // Bölüm seçici yalnız DİZİDE çıkar.
-    expect(find.textContaining('Bölüm seç'), findsOneWidget);
-    await tester.tap(find.textContaining('Bölüm seç'));
-    await tester.pumpAndSettle();
-
-    // Sezon 0 (özel bölümler) listelenmemeli.
-    expect(find.text('0. sezon'), findsNothing);
-    await tester.tap(find.text('2. sezon'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('İkinci'));
-    await tester.pumpAndSettle();
-
-    expect(find.textContaining('2. sezon 2. bölüm'), findsOneWidget);
-
-    await tester.enterText(find.byType(TextField).first, 'bu bölüm çok iyiydi');
-    await tester.pump();
-    await tester.tap(_paylasDugmesi);
-    await tester.pumpAndSettle();
-
-    final y = _gonderilen.single;
-    expect(y['tur'], 'tv');
-    expect(y['tmdb_id'], 2);
-    expect(y['sezon'], 2);
-    expect(y['bolum'], 2);
-  });
-
-  testWidgets('DİZİ, bölüm seçilmezse: sezon/bolum GÖNDERİLMEZ', (
+  testWidgets('SEÇİCİ boş durumu: "ara" ipucu → sonuç yoksa BULUNAMADI', (
     tester,
   ) async {
-    // Kullanıcının senaryosu: "silo dizisi hakkında paylaşım yaparsam silo
-    // dizisinin yorumlar kısmında gözükmeli" — bölüm etiketi OLMADAN.
-    await _ac(tester);
-    await _icerikSec(tester, 'Silo');
-    await tester.enterText(find.byType(TextField).first, 'dizi bir harika');
+    // ux #90 (No Results): boş ekran kullanıcıya seçicinin bozuk olduğunu
+    // düşündürüyordu. İki hâl ayrı metin veriyor.
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.contains('/search/')) {
+        return _json({'results': const []});
+      }
+      return _json(const <String, dynamic>{});
+    });
+    DiziRenkler.acik = false;
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: IcerikSecSheet())),
+    );
     await tester.pump();
-    await tester.tap(_paylasDugmesi);
-    await tester.pumpAndSettle();
+    expect(find.textContaining('yapım firması ara.'), findsOneWidget);
 
-    final y = _gonderilen.single;
-    expect(y['tur'], 'tv');
-    expect(y.containsKey('sezon'), isFalse);
-  });
-
-  testWidgets('"Bölüm seçme" seçimi TEMİZLER (null ile karışmaz)', (
-    tester,
-  ) async {
-    await _ac(tester);
-    await _icerikSec(tester, 'Silo');
-    // Önce bir bölüm seç.
-    await tester.tap(find.textContaining('Bölüm seç'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('2. sezon'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Birinci'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('2. sezon 1. bölüm'), findsOneWidget);
-
-    // Sonra "Bölüm seçme" ile kaldır.
-    await tester.tap(find.textContaining('2. sezon 1. bölüm'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.textContaining('Bölüm seçme'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Bölüm seç (isteğe bağlı)'), findsOneWidget);
-
-    await tester.enterText(find.byType(TextField).first, 'yine de iyi');
-    await tester.pump();
-    await tester.tap(_paylasDugmesi);
-    await tester.pumpAndSettle();
-    expect(_gonderilen.single.containsKey('sezon'), isFalse);
-  });
-
-  testWidgets('İÇERİK DEĞİŞİNCE bölüm seçimi SIFIRLANIR', (tester) async {
-    // Silo 2x2 seçip sonra filme geçen kullanıcının yorumu, sıfırlama
-    // olmasaydı filme "2. sezon 2. bölüm" etiketiyle giderdi.
-    await _ac(tester);
-    await _icerikSec(tester, 'Silo');
-    await tester.tap(find.textContaining('Bölüm seç'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('2. sezon'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('İkinci'));
-    await tester.pumpAndSettle();
-
-    // Şimdi içeriği FİLME çevir.
-    await tester.tap(find.text('Silo'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField).last, 'ara');
+    await tester.enterText(find.byType(TextField).first, 'zzzz');
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pump();
-    await tester.tap(find.text('Superman'));
-    await tester.pumpAndSettle();
-
-    await tester.enterText(find.byType(TextField).first, 'film hakkında');
-    await tester.pump();
-    await tester.tap(_paylasDugmesi);
-    await tester.pumpAndSettle();
-
-    final y = _gonderilen.single;
-    expect(y['tur'], 'movie');
-    expect(
-      y.containsKey('sezon'),
-      isFalse,
-      reason: 'film yükünde dizinin bölümü kalmamalı',
-    );
-  });
-
-  testWidgets('bölüm seçici DİZİ OLMAYANDA hiç çizilmez', (tester) async {
-    await _ac(tester);
-    await _icerikSec(tester, 'Superman');
-    expect(find.textContaining('Bölüm seç'), findsNothing);
+    expect(find.textContaining('Bulunamadı'), findsOneWidget);
   });
 
   testWidgets('seçiciler ortak bileşenler (kopyalanmadı)', (tester) async {
     await _ac(tester);
-    await tester.tap(find.textContaining('Yapım seç'));
+    await tester.tap(find.text('Etiket ekle'));
     await tester.pumpAndSettle();
     expect(find.byType(IcerikSecSheet), findsOneWidget);
     await tester.enterText(find.byType(TextField).last, 'ara');
@@ -349,42 +468,7 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('Silo'));
     await tester.pumpAndSettle();
-    await tester.tap(find.textContaining('Bölüm seç'));
-    await tester.pumpAndSettle();
     expect(find.byType(BolumSecSheet), findsOneWidget);
-  });
-
-  testWidgets('AKIŞTA giriş noktası: kutu üst barın altında ve sheet açıyor', (
-    tester,
-  ) async {
-    // Kullanıcı isteği: "akışta üst barın altında sol tarafta profil resmi
-    // ortada input alanı ... tıklayınca alttan modal aç".
-    SharedPreferences.setMockInitialValues({'token': 'sahte'});
-    await Api.tokenYukle();
-    DiziRenkler.acik = false;
-    tester.view
-      ..devicePixelRatio = 1.0
-      ..physicalSize = const Size(420, 900);
-    addTearDown(tester.view.reset);
-    await tester.pumpWidget(
-      ChangeNotifierProvider<Oturum>.value(
-        value: Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'},
-        child: const MaterialApp(home: AkisEkrani()),
-      ),
-    );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
-
-    // Kısa metin (28 Ağu, kullanıcı: "çok uzun oldu yazı").
-    final kutu = find.text('Yorum yap');
-    expect(kutu, findsOneWidget);
-    // Üst barın ALTINDA: AppBar'ın altında başlıyor.
-    final bar = tester.getRect(find.byType(AppBar));
-    expect(tester.getRect(kutu).top, greaterThan(bar.bottom - 1));
-
-    await tester.tap(kutu);
-    await tester.pumpAndSettle();
-    expect(find.byType(PaylasYorumSheet), findsOneWidget);
   });
 
   testWidgets('TAM AD eşleşmesi başa gelir (firma listenin dibinde kalmasın)', (

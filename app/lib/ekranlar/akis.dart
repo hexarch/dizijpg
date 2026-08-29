@@ -896,6 +896,19 @@ class _AkisKartiState extends State<AkisKarti> {
     final avatar = dosyaUrl(y['avatar'] as String?);
     final medya = (y['medya'] as List<dynamic>? ?? []);
     final bolumlu = y['sezon'] != null;
+    // ÇOKLU ETİKET (30 Ağu 2026) — gönderi 0..6 varlığa bağlı olabilir.
+    //  · ETİKETSİZ (`tur` null): başlıktaki içerik adı satırı HİÇ çizilmez.
+    //    Çizilseydi sarı bir "?" yazar ve dokununca `/icerik/null/null`
+    //    adresine giderdi.
+    //  · BİRDEN ÇOK: birincisi eskisi gibi başlıkta, KALANLAR metnin altında
+    //    ayrı bir rozet şeridinde. Başlık satırı yeniden düzenlenmedi —
+    //    yüksekliği medyanın nereden başlayacağını belirliyor ve dört ayrı
+    //    yerleşim testi ona bağlı (akis_karti_*_test.dart).
+    final etiketsiz = y['tur'] == null;
+    final etiketler = (y['etiketler'] as List<dynamic>? ?? const []);
+    final ekEtiketler = etiketler.length > 1
+        ? etiketler.sublist(1).cast<Map<String, dynamic>>()
+        : const <Map<String, dynamic>>[];
     // İçerik adı DAİMA içeriğin kendi sayfasına gider; bölüm rozeti ise o
     // bölüme. İkisi ayrı dokunma hedefi (kullanıcı isteği).
     final icerikYolu = y['tur'] == 'person'
@@ -1003,59 +1016,61 @@ class _AkisKartiState extends State<AkisKarti> {
                       //     dizi adı, bölüm yorumu → dizi adı + S4B6 rozeti.
                       //     BAŞLIĞIN SON SATIRIDIR: yüksekliği doğrudan
                       //     medyanın nereden başlayacağını belirler.
-                      Row(
-                        children: [
-                          Flexible(
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(6),
-                              onTap: () =>
-                                  gonderidenIcerige(context, y, icerikYolu),
-                              child: ConstrainedBox(
-                                // Dokunma kutusu 24 dp — NEDEN 44 DEĞİL,
-                                // hangi standarda dayandığı ve telafisi:
-                                // bkz. _icerikAdiDokunmaYuksekligi.
-                                constraints: const BoxConstraints(
-                                  minHeight: _icerikAdiDokunmaYuksekligi,
-                                ),
-                                child: Align(
-                                  // ÜSTE dayalı: kutunun metinden ARTAN payı
-                                  // kullanıcı adıyla ARAYA değil ALTA yazılır
-                                  // (üstteki 11,5/13,5 dp'lik boşluk korunur).
-                                  alignment: Alignment.topLeft,
-                                  // widthFactor: kutu yazı kadar geniş kalsın
-                                  // ki S4B6 rozeti adın HEMEN yanında dursun
-                                  // (yoksa satırın sonuna savrulur).
-                                  widthFactor: 1,
-                                  child: Text(
-                                    '${icerik['ad']}',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: DiziRenkler.sariMetin,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
+                      //     ETİKETSİZ gönderide bu satır YOKTUR.
+                      if (!etiketsiz)
+                        Row(
+                          children: [
+                            Flexible(
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(6),
+                                onTap: () =>
+                                    gonderidenIcerige(context, y, icerikYolu),
+                                child: ConstrainedBox(
+                                  // Dokunma kutusu 24 dp — NEDEN 44 DEĞİL,
+                                  // hangi standarda dayandığı ve telafisi:
+                                  // bkz. _icerikAdiDokunmaYuksekligi.
+                                  constraints: const BoxConstraints(
+                                    minHeight: _icerikAdiDokunmaYuksekligi,
+                                  ),
+                                  child: Align(
+                                    // ÜSTE dayalı: kutunun metinden ARTAN payı
+                                    // kullanıcı adıyla ARAYA değil ALTA yazılır
+                                    // (üstteki 11,5/13,5 dp'lik boşluk korunur).
+                                    alignment: Alignment.topLeft,
+                                    // widthFactor: kutu yazı kadar geniş kalsın
+                                    // ki S4B6 rozeti adın HEMEN yanında dursun
+                                    // (yoksa satırın sonuna savrulur).
+                                    widthFactor: 1,
+                                    child: Text(
+                                      '${icerik['ad']}',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: DiziRenkler.sariMetin,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          if (bolumlu) ...[
-                            const SizedBox(width: 6),
-                            BolumRozeti(
-                              diziId: y['tmdb_id'] as int,
-                              sezon: y['sezon'] as int,
-                              bolum: y['bolum'] as int,
-                              // İçerik adıyla aynı hizada dursun
-                              hizalama: Alignment.topCenter,
-                              // Rozet 44 dp kalsaydı satırı O şişirirdi ve
-                              // medya yukarı gelemezdi; adla aynı kutuya
-                              // indirildi (genişliği 44+ dp kalır).
-                              yukseklik: _icerikAdiDokunmaYuksekligi,
-                            ),
+                            if (bolumlu) ...[
+                              const SizedBox(width: 6),
+                              BolumRozeti(
+                                diziId: y['tmdb_id'] as int,
+                                sezon: y['sezon'] as int,
+                                bolum: y['bolum'] as int,
+                                // İçerik adıyla aynı hizada dursun
+                                hizalama: Alignment.topCenter,
+                                // Rozet 44 dp kalsaydı satırı O şişirirdi ve
+                                // medya yukarı gelemezdi; adla aynı kutuya
+                                // indirildi (genişliği 44+ dp kalır).
+                                yukseklik: _icerikAdiDokunmaYuksekligi,
+                              ),
+                            ],
                           ],
-                        ],
-                      ),
+                        ),
                     ],
                   ),
                 ),
@@ -1095,6 +1110,15 @@ class _AkisKartiState extends State<AkisKarti> {
               ],
             ),
           ),
+          // ---- 1c. EK ETİKETLER (30 Ağu 2026, çoklu etiket)
+          // Birincisi başlıkta duruyor; kalanlar burada yatay bir şerit.
+          // Başlığa sıkıştırılmadılar çünkü o satırın yüksekliği medyanın
+          // konumunu belirliyor ve dört yerleşim testi ona bağlı.
+          if (ekEtiketler.isNotEmpty)
+            _EkEtiketSeridi(
+              etiketler: ekEtiketler,
+              icerikler: widget.icerikler,
+            ),
           // ---- 2. Spoiler perdesi: açılana dek MEDYA DA METİN DE çizilmez
           if (!_spoilerAcik)
             Padding(
@@ -1266,6 +1290,121 @@ class _AkisKartiState extends State<AkisKarti> {
 
 /// Akış kartındaki "Takip Et" düğmesi. Görsel yüksekliği 30px ama dokunma
 /// alanı 48px'tir (tapTargetSize.padded) — parmakla ıskalanmaz.
+/// GÖNDERİNİN EK ETİKETLERİ — birincisi başlıkta, kalanları burada.
+///
+/// KULLANICI İSTEĞİ (30 Ağu 2026): "mesela Silo ve Breaking Bad'i seçersem
+/// ikisinin de profilinde paylaşılacak". Gönderi sunucuda ikisinin de
+/// sayfasında listeleniyor; KARTTA da ikisinin görünmesi gerekiyor, yoksa
+/// kullanıcı ikinci etiketi ekledikten sonra hiçbir yerde göremez ve
+/// "eklenmedi mi?" diye tekrar dener.
+///
+/// YATAY KAYDIRILIR, sarmalanmaz: kart yüksekliği etiket sayısıyla
+/// zıplamasın (akışta kaydırma sırasında en rahatsız edici şey budur).
+/// Web'de fare ile sürüklenebilir — [FareKaydirma] MaterialApp seviyesinde.
+class _EkEtiketSeridi extends StatelessWidget {
+  final List<Map<String, dynamic>> etiketler;
+  final Map<String, dynamic> icerikler;
+
+  const _EkEtiketSeridi({required this.etiketler, required this.icerikler});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 34,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(12, 2, 12, 0),
+        itemCount: etiketler.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 6),
+        itemBuilder: (context, i) {
+          final e = etiketler[i];
+          final tur = e['tur'] as String?;
+          final id = e['tmdb_id'];
+          final bilgi =
+              icerikler['$tur:$id'] as Map<String, dynamic>? ??
+              const {'ad': '?', 'poster': null};
+          final sezon = e['sezon'] as int?;
+          final bolum = e['bolum'] as int?;
+          // Düzey soneki: bölüm > sezon > yok. Sezonun kendi sayfası YOK,
+          // o yüzden sezon etiketi de dizi sayfasına gider (rozet yalnız
+          // NEYİN etiketlendiğini söyler).
+          final duzey = bolum != null
+              ? '{}. sezon {}. bölüm'.cf(['$sezon', '$bolum'])
+              : sezon != null
+              ? '{}. sezon'.cf(['$sezon'])
+              : '';
+          final sonek = duzey.isEmpty ? '' : ' · $duzey';
+          final yol = tur == 'person'
+              ? '/kisi/$id'
+              : bolum != null
+              ? '/dizi/$id/sezon/$sezon/bolum/$bolum'
+              : '/icerik/$tur/$id';
+          final poster = posterUrl(bilgi['poster'] as String?, boyut: 'w92');
+          return InkWell(
+            borderRadius: BorderRadius.circular(17),
+            onTap: () => GoRouter.of(context).push(yol),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 230),
+              padding: const EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                color: DiziRenkler.kart,
+                borderRadius: BorderRadius.circular(17),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: ClipOval(
+                      child: SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: poster == null
+                            ? Container(
+                                color: DiziRenkler.acikGri,
+                                child: Icon(
+                                  tur == 'person'
+                                      ? Icons.person
+                                      : tur == 'company'
+                                      ? Icons.business
+                                      : Icons.movie_outlined,
+                                  size: 14,
+                                  color: DiziRenkler.metin38,
+                                ),
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: poster,
+                                httpHeaders: gorselBasliklari(poster),
+                                fit: tur == 'company'
+                                    ? BoxFit.contain
+                                    : BoxFit.cover,
+                              ),
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      '${bilgi['ad']}$sonek',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      // Renk AÇIKÇA veriliyor: tema devralması yok (ux md.2).
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: DiziRenkler.sariMetin,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class _TakipDugmesi extends StatelessWidget {
   final bool isleniyor;
   final VoidCallback onTap;

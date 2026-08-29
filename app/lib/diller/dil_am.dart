@@ -1322,4 +1322,21 @@ const Map<String, String> cevirilerAm = {
       'ተገቢ ያልሆነ ይዘት ለአስተዳዳሪ ይነገራል፤ ከመዝገቡም ሊወገድ ይችላል።',
   'Şikayetin alındı': 'ሪፖርትህ ተቀብሏል',
   'Şikayet gönderilemedi': 'ሪፖርቱን መላክ አልተቻለም',
+  'Dizinin kendisi': 'ተከታታዩ ራሱ',
+  'Sezon ya da bölüm seçme': 'ወቅት ወይም ክፍል የለም',
+  'Tüm {}. sezon': 'ሙሉ ወቅት {}',
+  'Bölüm seçme': 'ክፍል የለም',
+  'En fazla {} yapım ekleyebilirsin.': 'እስከ {} ርዕሶች ማከል ትችላለህ።',
+  'Bu zaten ekli.': 'አስቀድሞ ተጨምሯል።',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'ተከታታይ፣ ፊልም፣ ተዋናይ ወይም ዳይሬክተር ምልክት አድርግ — ልጥፍህ በእነሱ ገጽ ላይም ይታያል።',
+  'Etiket ekle': 'መለያ አክል',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'ተከታታይ፣ ፊልም፣ ተዋናይ ወይም ዳይሬክተር ምልክት አድርግ',
+  'Gönderiden vazgeç': 'ልጥፉን ተው',
+  'Yazdıkların kaydedilmeyecek.': 'የጻፍከው አይቀመጥም።',
+  'Yazmaya devam et': 'መጻፍ ቀጥል',
+  'Bulunamadı. Adın yazılışını değiştirip dene.': 'አልተገኘም። ሌላ አጻጻፍ ሞክር።',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'ተከታታይ፣ ፊልም፣ ተዋናይ፣ ዳይሬክተር ወይም አዘጋጅ ኩባንያ ፈልግ።',
 };

@@ -223,21 +223,73 @@ CREATE INDEX IF NOT EXISTS puanlar_bolum_hedef
 
 -- Yorumlar: dizi/film/kişi geneli veya belirli bir bölüm (sezon+bolum dolu).
 -- medya: /medya/... yolları (fotoğraf veya video), en fazla 4.
+--
+-- tur/tmdb_id 30 Ağu 2026'da NULL'A AÇILDI (migrasyon-2026-08-30.sql):
+-- akıştan ETİKETSİZ gönderi paylaşılabiliyor. Dolu olduklarında anlamları
+-- "BİRİNCİL etiket"tir — kullanıcının ilk seçtiği varlık. Bir gönderinin TÜM
+-- etiketleri `yorum_etiketleri` bağ tablosundadır; birincil satırı oraya
+-- trigger yazar, uygulama değil.
 CREATE TABLE IF NOT EXISTS yorumlar (
   id SERIAL PRIMARY KEY,
   kullanici_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,
-  tur TEXT NOT NULL CHECK (tur IN ('tv','movie','person','company')),
-  tmdb_id INT NOT NULL,
+  tur TEXT CHECK (tur IN ('tv','movie','person','company')),
+  tmdb_id INT,
   sezon INT,
   bolum INT,
   metin TEXT NOT NULL,
   medya TEXT[] NOT NULL DEFAULT '{}',
   goruntulenme INT NOT NULL DEFAULT 0,
   spoiler BOOLEAN NOT NULL DEFAULT false,
-  tarih TIMESTAMPTZ DEFAULT now()
+  tarih TIMESTAMPTZ DEFAULT now(),
+  -- Etiket ya TAMAMEN var ya TAMAMEN yok; yarısı dolu satır anlamsız.
+  CONSTRAINT yorumlar_etiket_ciftli CHECK ((tur IS NULL) = (tmdb_id IS NULL)),
+  CONSTRAINT yorumlar_bolum_etiketli CHECK (sezon IS NULL OR tmdb_id IS NOT NULL)
 );
 CREATE INDEX IF NOT EXISTS idx_yorum_icerik ON yorumlar(tur, tmdb_id, sezon, bolum, tarih DESC);
 CREATE INDEX IF NOT EXISTS idx_yorum_kullanici ON yorumlar(kullanici_id, tarih DESC);
+
+-- ÇOKLU ETİKET (30 Ağu 2026) — bir gönderi BİRDEN ÇOK varlığa bağlanabilir ve
+-- HEPSİNİN sayfasında görünür. Üç düzey: dizinin kendisi (sezon NULL) · sezon
+-- (sezon dolu, bolum NULL) · bölüm (ikisi de dolu).
+-- sira=0 birincil (trigger yazar), 1..N kullanıcının eklediği sırayla.
+-- Uzun gerekçe: migrasyon-2026-08-30.sql.
+CREATE TABLE IF NOT EXISTS yorum_etiketleri (
+  id       BIGSERIAL PRIMARY KEY,
+  yorum_id INT  NOT NULL REFERENCES yorumlar(id) ON DELETE CASCADE,
+  tur      TEXT NOT NULL CHECK (tur IN ('tv','movie','person','company')),
+  tmdb_id  INT  NOT NULL,
+  sezon    INT,
+  bolum    INT,
+  sira     INT  NOT NULL DEFAULT 0,
+  CONSTRAINT yorum_etiket_bolum_sezonsuz CHECK (bolum IS NULL OR sezon IS NOT NULL),
+  CONSTRAINT yorum_etiket_bolum_yalniz_tv CHECK (sezon IS NULL OR tur = 'tv')
+);
+CREATE UNIQUE INDEX IF NOT EXISTS yorum_etiket_tekil
+  ON yorum_etiketleri (yorum_id, tur, tmdb_id, COALESCE(sezon,-1), COALESCE(bolum,-1));
+CREATE INDEX IF NOT EXISTS yorum_etiket_icerik
+  ON yorum_etiketleri (tur, tmdb_id, sezon, bolum, yorum_id DESC);
+CREATE INDEX IF NOT EXISTS yorum_etiket_yorum
+  ON yorum_etiketleri (yorum_id, sira);
+
+-- Birincil etiketi bağ tablosuna VERİTABANI yazar. `yorumlar`a yazan tek yer
+-- POST /yorumlar değil (ai_tohum.js, araclar/seo_bolum_tohum.js, Instagram
+-- aktarımı da doğrudan INSERT atıyor); uygulamaya bırakılsaydı o yollardan
+-- gelen yorumlar içerik sayfasında görünmezdi.
+CREATE OR REPLACE FUNCTION yorum_birincil_etiket() RETURNS trigger AS $$
+BEGIN
+  DELETE FROM yorum_etiketleri WHERE yorum_id = NEW.id AND sira = 0;
+  IF NEW.tmdb_id IS NOT NULL AND NEW.tur IS NOT NULL THEN
+    INSERT INTO yorum_etiketleri (yorum_id, tur, tmdb_id, sezon, bolum, sira)
+    VALUES (NEW.id, NEW.tur, NEW.tmdb_id, NEW.sezon, NEW.bolum, 0)
+    ON CONFLICT DO NOTHING;
+  END IF;
+  RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS yorumlar_birincil_etiket ON yorumlar;
+CREATE TRIGGER yorumlar_birincil_etiket
+  AFTER INSERT OR UPDATE OF tur, tmdb_id, sezon, bolum ON yorumlar
+  FOR EACH ROW EXECUTE FUNCTION yorum_birincil_etiket();
 
 -- Yorum görüntüleyenler: "kaç FARKLI kişi gördü" sayacı (md. 23).
 -- izleyen = 'h:<base64url>' — HMAC-SHA256(sunucu sırrı, "u:<id>"|"ip:<adres>")
@@ -1431,3 +1483,13 @@ CREATE INDEX IF NOT EXISTS gifler_kuyruk
 ALTER TABLE sikayetler DROP CONSTRAINT IF EXISTS sikayetler_tur_check;
 ALTER TABLE sikayetler ADD CONSTRAINT sikayetler_tur_check
   CHECK (tur IN ('yorum', 'mesaj', 'kullanici', 'liste', 'gif'));
+
+-- 2026-08-30b: eski İncelemeler (`puanlar.yorum`) `yorumlar`a TAŞINDI.
+-- Sütun SİLİNMEDİ (moderatör ekranı okuyor); bu işaret taşımanın idempotent
+-- olmasını sağlar — ikinci koşu `tasinan_yorum_id IS NULL` ile çiftlemez.
+-- ON DELETE SET NULL: kullanıcı taşınan yorumu silerse işaret düşer.
+ALTER TABLE puanlar
+  ADD COLUMN IF NOT EXISTS tasinan_yorum_id INT
+    REFERENCES yorumlar(id) ON DELETE SET NULL;
+CREATE INDEX IF NOT EXISTS puanlar_tasinan
+  ON puanlar (tasinan_yorum_id) WHERE tasinan_yorum_id IS NOT NULL;

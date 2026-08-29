@@ -1373,4 +1373,22 @@ const Map<String, String> cevirilerMl = {
       'അനുചിതമായ ഉള്ളടക്കം മോഡറേറ്ററെ അറിയിക്കുകയും ശേഖരത്തിൽ നിന്ന് നീക്കം ചെയ്യപ്പെടുകയും ചെയ്യാം.',
   'Şikayetin alındı': 'നിങ്ങളുടെ റിപ്പോർട്ട് ലഭിച്ചു',
   'Şikayet gönderilemedi': 'റിപ്പോർട്ട് അയയ്ക്കാനായില്ല',
+  'Dizinin kendisi': 'പരമ്പര തന്നെ',
+  'Sezon ya da bölüm seçme': 'സീസണോ എപ്പിസോഡോ ഇല്ല',
+  'Tüm {}. sezon': 'മുഴുവൻ സീസൺ {}',
+  'Bölüm seçme': 'എപ്പിസോഡ് ഇല്ല',
+  'En fazla {} yapım ekleyebilirsin.': 'നിനക്ക് പരമാവധി {} ശീർഷകങ്ങൾ ചേർക്കാം.',
+  'Bu zaten ekli.': 'ഇതിനകം ചേർത്തിട്ടുണ്ട്.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'ഒരു പരമ്പര, സിനിമ, നടൻ അല്ലെങ്കിൽ സംവിധായകനെ ടാഗ് ചെയ്യൂ — നിന്റെ പോസ്റ്റ് അവരുടെ പേജിലും കാണാം.',
+  'Etiket ekle': 'ടാഗ് ചേർക്കുക',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'പരമ്പര, സിനിമ, നടൻ അല്ലെങ്കിൽ സംവിധായകനെ ടാഗ് ചെയ്യൂ',
+  'Gönderiden vazgeç': 'പോസ്റ്റ് ഉപേക്ഷിക്കുക',
+  'Yazdıkların kaydedilmeyecek.': 'നീ എഴുതിയത് സംരക്ഷിക്കില്ല.',
+  'Yazmaya devam et': 'എഴുത്ത് തുടരുക',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'കണ്ടെത്തിയില്ല. മറ്റൊരു അക്ഷരവിന്യാസം പരീക്ഷിക്കൂ.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'പരമ്പര, സിനിമ, നടൻ, സംവിധായകൻ അല്ലെങ്കിൽ നിർമ്മാണ കമ്പനി തിരയൂ.',
 };

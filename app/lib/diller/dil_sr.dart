@@ -1376,4 +1376,22 @@ const Map<String, String> cevirilerSr = {
       'Neprikladan sadržaj se prijavljuje moderatoru i može biti uklonjen iz arhive.',
   'Şikayetin alındı': 'Tvoja prijava je primljena',
   'Şikayet gönderilemedi': 'Prijava nije mogla da se pošalje',
+  'Dizinin kendisi': 'Sama serija',
+  'Sezon ya da bölüm seçme': 'Bez sezone ili epizode',
+  'Tüm {}. sezon': 'Cela sezona {}',
+  'Bölüm seçme': 'Bez epizode',
+  'En fazla {} yapım ekleyebilirsin.': 'Možeš dodati najviše {} naslova.',
+  'Bu zaten ekli.': 'Već je dodato.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Označi seriju, film, glumca ili reditelja — tvoja objava će se pojaviti i na njihovoj stranici.',
+  'Etiket ekle': 'Dodaj oznaku',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Označi seriju, film, glumca ili reditelja',
+  'Gönderiden vazgeç': 'Odbaci objavu',
+  'Yazdıkların kaydedilmeyecek.': 'Ono što si napisao neće biti sačuvano.',
+  'Yazmaya devam et': 'Nastavi da pišeš',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Nije pronađeno. Probaj drugačije napisati.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Traži seriju, film, glumca, reditelja ili produkciju.',
 };

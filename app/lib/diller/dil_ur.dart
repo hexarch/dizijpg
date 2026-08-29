@@ -1369,4 +1369,23 @@ const Map<String, String> cevirilerUr = {
       'نامناسب مواد کی اطلاع منتظم کو دی جاتی ہے اور اسے آرکائیو سے ہٹایا جا سکتا ہے۔',
   'Şikayetin alındı': 'آپ کی شکایت موصول ہو گئی',
   'Şikayet gönderilemedi': 'شکایت بھیجی نہ جا سکی',
+  'Dizinin kendisi': 'خود سیریز',
+  'Sezon ya da bölüm seçme': 'سیزن یا قسط کے بغیر',
+  'Tüm {}. sezon': 'پورا سیزن {}',
+  'Bölüm seçme': 'قسط کے بغیر',
+  'En fazla {} yapım ekleyebilirsin.':
+      'زیادہ سے زیادہ {} عنوانات شامل کر سکتے ہو۔',
+  'Bu zaten ekli.': 'پہلے ہی شامل ہے۔',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'کسی سیریز، فلم، اداکار یا ہدایتکار کو ٹیگ کرو — تمہاری پوسٹ ان کے صفحے پر بھی نظر آئے گی۔',
+  'Etiket ekle': 'ٹیگ شامل کریں',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'سیریز، فلم، اداکار یا ہدایتکار کو ٹیگ کرو',
+  'Gönderiden vazgeç': 'پوسٹ منسوخ کریں',
+  'Yazdıkların kaydedilmeyecek.': 'جو لکھا ہے وہ محفوظ نہیں ہوگا۔',
+  'Yazmaya devam et': 'لکھتے رہیں',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'نہیں ملا۔ کوئی اور ہجے آزمائیں۔',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'سیریز، فلم، اداکار، ہدایتکار یا پروڈکشن کمپنی تلاش کریں۔',
 };

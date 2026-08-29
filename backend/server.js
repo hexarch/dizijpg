@@ -12691,6 +12691,71 @@ app.post('/icerikler', girisIsteğeBagli, tmdbLimiti, sarici(async (req, res) =>
 // 'company' 19 Ağu 2026 (istek): yapım firması profillerine de yorum.
 const YORUM_TURLERI = ['tv', 'movie', 'person', 'company'];
 
+// Bir gönderiye bağlanabilecek EN FAZLA varlık sayısı (30 Ağu 2026, çoklu
+// etiket). Sınır keyfi değil: gönderi kartında etiketler yatay bir şerit
+// olarak çiziliyor ve 6'dan sonrası okunmuyor; ayrıca her etiket içerik
+// sayfası sorgusunda bir satır demek. 0 da geçerli — ETİKETSİZ paylaşım
+// kullanıcı isteğidir ("yapım seçme zorunlu olmasın").
+const YORUM_ETIKET_AZAMI = 6;
+
+// Gönderinin TÜM etiketleri (birincil dahil), seçim sırasıyla.
+// `sira` 0 = birincil (trigger yazar), 1..N kullanıcının eklediği sıra.
+// ŞABLON DİZESİ: buraya backtick yazma.
+const ETIKET_ALANI = `
+            (SELECT coalesce(json_agg(json_build_object(
+                      'tur', e.tur, 'tmdb_id', e.tmdb_id,
+                      'sezon', e.sezon, 'bolum', e.bolum)
+                    ORDER BY e.sira, e.id), '[]'::json)
+               FROM yorum_etiketleri e WHERE e.yorum_id = y.id) AS etiketler`;
+
+/**
+ * İstekten gelen etiket listesini DOĞRULAR ve normalize eder.
+ *
+ * ÜÇ DÜZEY (kullanıcı isteği, 30 Ağu 2026: "dizilerde bölüm, sezon veya
+ * dizinin kendisini de seçme olacak"):
+ *   {tur:'tv', tmdb_id}                    → dizinin kendisi
+ *   {tur:'tv', tmdb_id, sezon}             → sezon
+ *   {tur:'tv', tmdb_id, sezon, bolum}      → bölüm
+ * Sezon/bölüm YALNIZ 'tv'de anlamlı; film/kişi/firmada verilirse hata.
+ *
+ * Döner: `{ hata }` ya da `{ etiketler: [...] }` (tekilleştirilmiş, sıralı).
+ */
+function etiketleriDogrula(ham) {
+  if (!Array.isArray(ham)) return { hata: 'etiketler dizi olmalı' };
+  if (ham.length > YORUM_ETIKET_AZAMI) {
+    return { hata: `En fazla ${YORUM_ETIKET_AZAMI} yapım etiketlenebilir` };
+  }
+  const cikti = [];
+  const gorulen = new Set();
+  for (const e of ham) {
+    if (!e || typeof e !== 'object') return { hata: 'Geçersiz etiket' };
+    const tur = e.tur;
+    const tmdbId = e.tmdb_id;
+    if (!YORUM_TURLERI.includes(tur) || !gecerliTmdb(tmdbId)) {
+      return { hata: 'Geçersiz tür veya tmdb_id' };
+    }
+    const sezon = e.sezon == null ? null : e.sezon;
+    const bolum = e.bolum == null ? null : e.bolum;
+    if (sezon != null && (!Number.isInteger(sezon) || sezon < 1)) {
+      return { hata: 'Geçersiz sezon' };
+    }
+    if (bolum != null && (!Number.isInteger(bolum) || bolum < 1)) {
+      return { hata: 'Geçersiz bolum' };
+    }
+    // Bölüm sezonsuz olamaz — bağ tablosundaki CHECK'in istemci tarafı.
+    if (bolum != null && sezon == null) return { hata: 'Bölüm için sezon gerekli' };
+    if (sezon != null && tur !== 'tv') return { hata: 'Sezon/bölüm yalnız dizide' };
+    // Aynı varlık iki kez: tekil indeks zaten reddederdi, ama 400 yerine
+    // sessizce tekilleştirmek doğru davranış — kullanıcı aynı diziyi iki kez
+    // seçtiyse niyeti "iki kere görünsün" değil.
+    const anahtar = `${tur}:${tmdbId}:${sezon ?? ''}:${bolum ?? ''}`;
+    if (gorulen.has(anahtar)) continue;
+    gorulen.add(anahtar);
+    cikti.push({ tur, tmdb_id: tmdbId, sezon, bolum });
+  }
+  return { etiketler: cikti };
+}
+
 // ===========================================================================
 // md. 23 — GÖRÜNTÜLENME KAYDI (sayaç + kaynak + tekil izleyici)
 // ===========================================================================
@@ -12929,10 +12994,26 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
   // İzlemeler TEK sorguda toplanır (`izlenen` CTE'si = tek indeks taraması);
   // 100 yorum için 100 ayrı izleme sorgusu ATILMAZ.
   const { rows } = await havuz.query(
+    // ÇOKLU ETİKET (30 Ağu 2026): eşleşme artık `yorumlar.tur/tmdb_id`de
+    // DEĞİL, `yorum_etiketleri` bağ tablosunda aranıyor. Kullanıcı isteği:
+    // "Silo ve Breaking Bad'i seçersem ikisinin de profilinde paylaşılacak."
+    // Birincil etiketi bağ tablosuna trigger yazdığı için tek etiketli
+    // 5.211 eski yorum da buradan aynen gelir (migrasyon-2026-08-30.sql).
+    //
+    // LATERAL + LIMIT 1: aynı gönderi aynı diziye HEM genel HEM bölüm
+    // etiketiyle bağlanmış olabilir. Spoiler perdesi için EN ÖZGÜL eşleşme
+    // alınır (`bolum NULLS LAST` → bölüm etiketi varsa o kazanır); daha
+    // gevşek olanı seçmek perdeyi sessizce kaldırırdı.
     `WITH ustler AS (
-       SELECT y.id FROM yorumlar y
-       WHERE y.tur=$1 AND y.tmdb_id=$2 AND y.ust_id IS NULL
-         AND ($3::int IS NULL OR (y.sezon = $3 AND y.bolum = $4))
+       SELECT y.id, e.sezon AS e_sezon, e.bolum AS e_bolum
+       FROM yorumlar y
+       JOIN LATERAL (
+         SELECT et.sezon, et.bolum FROM yorum_etiketleri et
+          WHERE et.yorum_id = y.id AND et.tur = $1 AND et.tmdb_id = $2::int
+            AND ($3::int IS NULL OR (et.sezon = $3 AND et.bolum = $4))
+          ORDER BY et.bolum NULLS LAST, et.sezon NULLS LAST
+          LIMIT 1) e ON true
+       WHERE y.ust_id IS NULL
          AND ${engelSuzgec('y.kullanici_id', '$5')}
        ORDER BY y.tarih DESC LIMIT 100),
      izlenen AS (
@@ -12941,11 +13022,24 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
          AND i.tur=$1 AND i.tmdb_id=$2::int)
      SELECT y.id, y.kullanici_id, y.metin, y.medya, y.tarih, y.sezon, y.bolum,
             y.ust_id, y.goruntulenme, k.kullanici_adi, k.avatar, y.kaynak_dil,
+            ${ETIKET_ALANI},
+            -- SPOILER PERDESI ESLESEN ETIKETE BAKAR, birincil etikete degil.
+            -- Coklu etikette ikisi farkli olabilir: birincili Silo 2x3 olan
+            -- bir gonderi Breaking Bad sayfasinda da listelenir; eski hal
+            -- orada Silo'nun bolum numarasini Breaking Bad'in izlemelerinde
+            -- arar ve gonderiyi haksiz yere bulaniklastirirdi.
+            -- KOSUL bolum IS NOT NULL (eski hal sezon IS NOT NULL idi): SEZON
+            -- etiketi (bolum NULL) bolum spoiler'i tasimaz ve izlenen CTE'sinde
+            -- eslesemezdi -- perde her sezon etiketinde kalici acik kalirdi.
+            -- Yanitlarda eslesen etiket yok (ustler'da satirlari olmaz),
+            -- oradaki geri dusus yorumun kendi birincil etiketidir.
+            -- (Sablon dizesi: BACKTICK YOK.)
             (y.spoiler OR (
-               $3::int IS NULL AND y.sezon IS NOT NULL
+               $3::int IS NULL AND COALESCE(u.e_bolum, y.bolum) IS NOT NULL
                AND y.kullanici_id <> $5 AND NOT k.ai
                AND NOT EXISTS (SELECT 1 FROM izlenen iz
-                     WHERE iz.sezon = y.sezon AND iz.bolum = y.bolum)
+                     WHERE iz.sezon = COALESCE(u.e_sezon, y.sezon)
+                       AND iz.bolum = COALESCE(u.e_bolum, y.bolum))
              )) AS spoiler,
             (SELECT c.metin FROM metin_cevirileri c
                    WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $6) AS ceviri_metin,
@@ -12953,6 +13047,7 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$5) AS begendim
      FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+     LEFT JOIN ustler u ON u.id = y.id
      WHERE (y.id IN (SELECT id FROM ustler)
             OR y.ust_id IN (SELECT id FROM ustler))
        -- ENGELLEME (13 Ağu 2026, md. 19) — İKİ YERDE BİRDEN:
@@ -13037,7 +13132,12 @@ const AKIS_ALANLAR = `
             -- /kesfet-akis aynı sözleşmeyi döndürsün.
             EXISTS(SELECT 1 FROM takipler t
                    WHERE t.takip_eden_id=$1 AND t.takip_edilen_id=y.kullanici_id)
-              AS takip_ediyorum`;
+              AS takip_ediyorum,
+            -- ÇOKLU ETİKET (30 Agu 2026): kart artik TEK yapim degil, gonderiye
+            -- bagli TUM varliklari cizer. tur/tmdb_id alanlari BIRINCIL
+            -- etiket olarak kaliyor -- eski istemciler bozulmasin diye.
+            -- (Sablon dizesi: BACKTICK YOK.)
+            ${ETIKET_ALANI}`;
 // Akış uygunluk kuralı (asla boş kalmaz):
 //  - Bölüm yorumları YALNIZ o bölüm izlendiyse (spoiler: tamamen dışarıda).
 //  - Film/dizi-geneli yorumlar herkesten; kitaplıkta "guvenli" değilse istemci
@@ -13052,7 +13152,12 @@ const AKIS_KURAL = `
             y.tmdb_id = ANY($3::int[])
             OR y.kullanici_id IN (
               SELECT takip_edilen_id FROM takipler WHERE takip_eden_id=$1)))
-         OR (y.sezon IS NULL AND y.tur <> 'person')
+         -- ETIKETSIZ GONDERI (30 Agu 2026): y.tur NULL olabiliyor ve
+         -- NULL <> 'person' UC DEGERLI mantikta NULL doner -- yani "dogru
+         -- degil". Bu satir coalesce'siz kalsaydi etiketsiz her gonderi
+         -- akistan SESSIZCE duserdi: paylasan kisi kendi gonderisini bile
+         -- goremezdi. (Sablon dizesi: BACKTICK YOK.)
+         OR (y.sezon IS NULL AND coalesce(y.tur, '') <> 'person')
        )`;
 
 // ---------- SIRALAMA ALGORİTMASI (ALGORITMA-PLANI.md) ----------
@@ -13450,8 +13555,23 @@ async function icerikKartlari(anahtarlar) {
   return kartlar;
 }
 
+// Akış satırlarının ihtiyaç duyduğu TMDB kartları.
+//
+// İKİ DEĞİŞİKLİK (30 Ağu 2026):
+//  · ÇOKLU ETİKET: yalnız birincil etiket değil, `etiketler` dizisindeki her
+//    varlık toplanır — yoksa kartta ikinci/üçüncü rozet "?" adıyla çizilirdi.
+//  · ETİKETSİZ GÖNDERİ: `tur`/`tmdb_id` NULL olabiliyor. Eski hâl bunlardan
+//    `"null:null"` anahtarı üretiyordu ve TMDB'ye `/null/null` yolu gidiyordu
+//    (her akış isteğinde boşa giden bir dış çağrı + kartta hayalet kayıt).
 async function akisIcerikleri(rows) {
-  return icerikBilgileri([...new Set(rows.map((r) => `${r.tur}:${r.tmdb_id}`))]);
+  const anahtarlar = new Set();
+  for (const r of rows) {
+    if (r.tur && r.tmdb_id != null) anahtarlar.add(`${r.tur}:${r.tmdb_id}`);
+    for (const e of r.etiketler || []) {
+      if (e && e.tur && e.tmdb_id != null) anahtarlar.add(`${e.tur}:${e.tmdb_id}`);
+    }
+  }
+  return icerikBilgileri([...anahtarlar]);
 }
 
 // dizi.jpg AI hesabı: tanıtım yorumları spoilersız ÜRETİLİR (ai_tohum.js,
@@ -13493,8 +13613,13 @@ const akisSatiri = ({ guvenli, spoiler_isaret, ai_hesap, ...ham }) => ({
   // İstemci bulanık gösterir. İki kaynak: (1) izlemediğin içeriğin yorumu
   // (otomatik), (2) yazan kişinin "spoiler içerir" işareti. Kişi yorumları ve
   // kitaplık eşleşmeleri otomatik spoiler sayılmaz ama işaretliyse yine bulanık.
+  // ETİKETSİZ GÖNDERİ SPOİLER OLAMAZ (30 Ağu 2026): `guvenli` kitaplık
+  // eşleşmesinden gelir ve etiketi olmayan gönderide eşleşecek bir şey yoktur
+  // → false. Muafiyet listesine `tur == null` eklenmeseydi kullanıcının
+  // yazdığı her etiketsiz gönderi akışta BULANIK çıkardı — ortada bozulacak
+  // bir sürpriz yokken.
   spoiler: spoiler_isaret === true ||
-    !(guvenli || ham.tur === 'person' || ai_hesap === true),
+    !(guvenli || ham.tur == null || ham.tur === 'person' || ai_hesap === true),
 });
 
 // ---------- Sık kullanılan emojiler (yorum kutusunun üstündeki 8'li satır) ----
@@ -15801,10 +15926,46 @@ app.post('/yorumlar/:id/begen', girisZorunlu, sarici(async (req, res) => {
   res.json({ begendim: silindi.rowCount === 0, begeni: rows[0].begeni });
 }));
 
+// ---------------------------------------------------------------------------
+// ÇOKLU ETİKET + ETİKETSİZ PAYLAŞIM (30 Ağu 2026, kullanıcı isteği)
+// ---------------------------------------------------------------------------
+// Gövde iki sözleşmeyi birden kabul eder:
+//   ESKİ: { tur, tmdb_id, sezon?, bolum? }        → tek etiket (1.101.0 öncesi
+//         istemciler ve tohum betikleri hâlâ böyle yazıyor)
+//   YENİ: { etiketler: [{tur, tmdb_id, sezon?, bolum?}, ...] }  → 0..6 etiket
+// `etiketler` GÖNDERİLDİYSE eskiler yok sayılır; boş dizi ETİKETSİZ demektir
+// ("yapım seçme zorunlu olmasın").
+//
+// `yorumlar.tur/tmdb_id/sezon/bolum` = BİRİNCİL etiket (listenin ilki).
+// SEZON DÜZEYİ ORAYA YAZILMAZ, bilerek: `y.sezon IS NULL` bu dosyada 20'den
+// fazla yerde "dizi/film geneli" anlamına geliyor (SEO sorguları, akış
+// spoiler kuralı, içerik sayfası sayaçları, yıl özeti…). Sezon etiketi o
+// sütuna konsaydı, hiçbiri değişmeden hepsi YANLIŞ cevap vermeye başlardı.
+// Sezon YALNIZ bağ tablosunda ifade edilir; `yorumlar` sütunları eskisi gibi
+// "ikisi de dolu = bölüm, ikisi de boş = genel" sözleşmesini korur.
 app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
   let { tur, tmdb_id, sezon = null, bolum = null } = req.body || {};
   const { metin, medya = [], ust_id = null } = req.body || {};
   const spoiler = req.body?.spoiler === true;
+  // Etiket listesi: yeni sözleşme varsa o, yoksa eski alanlardan tek etiket.
+  let etiketler = [];
+  if (ust_id == null) {
+    if (Array.isArray(req.body?.etiketler)) {
+      const d = etiketleriDogrula(req.body.etiketler);
+      if (d.hata) return res.status(400).json({ hata: d.hata });
+      etiketler = d.etiketler;
+    } else if (tur != null || tmdb_id != null) {
+      const d = etiketleriDogrula([{ tur, tmdb_id, sezon, bolum }]);
+      if (d.hata) return res.status(400).json({ hata: d.hata });
+      etiketler = d.etiketler;
+    }
+    const birincil = etiketler[0] || null;
+    tur = birincil?.tur ?? null;
+    tmdb_id = birincil?.tmdb_id ?? null;
+    // Yalnız BÖLÜM düzeyi sütuna iner (yukarıdaki gerekçe).
+    sezon = birincil?.bolum != null ? birincil.sezon : null;
+    bolum = birincil?.bolum ?? null;
+  }
   // Yanıt: hedef alanları üst yorumdan alınır; yanıtın yanıtı üst yoruma bağlanır (tek seviye).
   let gercekUst = null;
   if (ust_id != null) {
@@ -15833,7 +15994,12 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
     sezon = u.sezon;
     bolum = u.bolum;
   }
-  if (!YORUM_TURLERI.includes(tur) || !gecerliTmdb(tmdb_id)) {
+  // ETİKET ARTIK ZORUNLU DEĞİL — ama YARIM da olamaz.
+  // Yeni gönderide değerler `etiketleriDogrula`dan, yanıtta üst yorumun
+  // (zaten doğrulanmış) satırından geliyor. Buradaki üç kontrol son emniyet:
+  // ikisi birlikte dolu ya da birlikte boş, tür tanınıyor, bölüm çifti tam.
+  if ((tur == null) !== (tmdb_id == null)
+      || (tur != null && (!YORUM_TURLERI.includes(tur) || !gecerliTmdb(tmdb_id)))) {
     return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   }
   if ((sezon == null) !== (bolum == null) ||
@@ -15863,6 +16029,44 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
     [req.kullanici.id, tur, tmdb_id, sezon, bolum, temiz, medya, gercekUst, spoiler,
      dilTespit(temiz)],
   );
+  const yorumId = rows[0].id;
+
+  // ---- ÇOKLU ETİKET SATIRLARI ----
+  // Birincil satırı TRIGGER zaten yazdı (`yorumlar_birincil_etiket`); burada
+  // yalnız kullanıcının seçtiği liste tamamlanır.
+  //
+  // SIRA ÖNEMLİ — önce EKLE, sonra ARTIĞI SİL. Tersi (önce hepsini sil, sonra
+  // yaz) daha kısa olurdu ama iki ifade arasında gönderinin HİÇ etiketi
+  // olmadığı bir an bırakırdı; o anda gelen bir içerik sayfası isteği yeni
+  // gönderiyi göremezdi.
+  if (etiketler.length) {
+    await havuz.query(
+      `INSERT INTO yorum_etiketleri (yorum_id, tur, tmdb_id, sezon, bolum, sira)
+       SELECT $1, e.tur, e.tmdb_id, e.sezon, e.bolum, e.sira
+         FROM json_to_recordset($2::json)
+              AS e(tur text, tmdb_id int, sezon int, bolum int, sira int)
+       ON CONFLICT DO NOTHING`,
+      [yorumId, JSON.stringify(etiketler.map((e, i) => ({ ...e, sira: i })))],
+    );
+    // Trigger'ın yazdığı satır kullanıcının listesinde YOKSA artıktır ve
+    // gider. Tek gerçek durumu: birincil etiket SEZON düzeyinde. O zaman
+    // `yorumlar.sezon` NULL kalır (yukarıdaki gerekçe), trigger dizi-geneli
+    // bir satır yazar ve gönderi kartında "Silo" + "Silo · 2. sezon" diye
+    // İKİ rozet çıkardı. Sezon satırı dizi sayfası sorgusunu zaten
+    // karşılıyor (sorgu yalnız tur+tmdb_id eşliyor), yani kapsam kaybı yok.
+    await havuz.query(
+      `DELETE FROM yorum_etiketleri e
+        WHERE e.yorum_id = $1 AND e.sira = 0
+          AND NOT EXISTS (
+            SELECT 1 FROM json_to_recordset($2::json)
+                 AS j(tur text, tmdb_id int, sezon int, bolum int)
+             WHERE j.tur = e.tur AND j.tmdb_id = e.tmdb_id
+               AND coalesce(j.sezon, -1) = coalesce(e.sezon, -1)
+               AND coalesce(j.bolum, -1) = coalesce(e.bolum, -1))`,
+      [yorumId, JSON.stringify(etiketler)],
+    );
+  }
+
   let yanitlananSahip = null;
   if (gercekUst) {
     const sahip = await havuz.query(

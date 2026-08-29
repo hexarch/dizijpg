@@ -1366,4 +1366,23 @@ const Map<String, String> cevirilerHi = {
       'अनुचित सामग्री की सूचना मॉडरेटर को दी जाती है और उसे संग्रह से हटाया जा सकता है।',
   'Şikayetin alındı': 'आपकी शिकायत मिल गई',
   'Şikayet gönderilemedi': 'शिकायत नहीं भेजी जा सकी',
+  'Dizinin kendisi': 'सीरीज़ खुद',
+  'Sezon ya da bölüm seçme': 'सीज़न या एपिसोड नहीं',
+  'Tüm {}. sezon': 'पूरा सीज़न {}',
+  'Bölüm seçme': 'एपिसोड नहीं',
+  'En fazla {} yapım ekleyebilirsin.':
+      'तुम ज़्यादा से ज़्यादा {} टाइटल जोड़ सकते हो।',
+  'Bu zaten ekli.': 'पहले से जुड़ा है।',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'किसी सीरीज़, फ़िल्म, अभिनेता या निर्देशक को टैग करो — तुम्हारी पोस्ट उनके पेज पर भी दिखेगी।',
+  'Etiket ekle': 'टैग जोड़ें',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'सीरीज़, फ़िल्म, अभिनेता या निर्देशक को टैग करो',
+  'Gönderiden vazgeç': 'पोस्ट रद्द करें',
+  'Yazdıkların kaydedilmeyecek.': 'जो लिखा है वह सहेजा नहीं जाएगा।',
+  'Yazmaya devam et': 'लिखते रहो',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'नहीं मिला। दूसरी वर्तनी आज़माओ।',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'सीरीज़, फ़िल्म, अभिनेता, निर्देशक या प्रोडक्शन कंपनी खोजो।',
 };

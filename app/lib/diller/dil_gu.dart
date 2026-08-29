@@ -1359,4 +1359,22 @@ const Map<String, String> cevirilerGu = {
       'અયોગ્ય સામગ્રીની જાણ મોડરેટરને કરવામાં આવે છે અને તેને સંગ્રહમાંથી દૂર કરી શકાય છે.',
   'Şikayetin alındı': 'તમારી ફરિયાદ મળી ગઈ',
   'Şikayet gönderilemedi': 'ફરિયાદ મોકલી શકાઈ નહીં',
+  'Dizinin kendisi': 'સિરીઝ પોતે',
+  'Sezon ya da bölüm seçme': 'સીઝન કે એપિસોડ વગર',
+  'Tüm {}. sezon': 'આખી સીઝન {}',
+  'Bölüm seçme': 'એપિસોડ વગર',
+  'En fazla {} yapım ekleyebilirsin.': 'તમે વધુમાં વધુ {} શીર્ષક ઉમેરી શકો છો.',
+  'Bu zaten ekli.': 'પહેલેથી ઉમેરાયેલું છે.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'કોઈ સિરીઝ, ફિલ્મ, અભિનેતા કે દિગ્દર્શકને ટૅગ કરો — તમારી પોસ્ટ તેમના પેજ પર પણ દેખાશે.',
+  'Etiket ekle': 'ટૅગ ઉમેરો',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'સિરીઝ, ફિલ્મ, અભિનેતા કે દિગ્દર્શકને ટૅગ કરો',
+  'Gönderiden vazgeç': 'પોસ્ટ રદ કરો',
+  'Yazdıkların kaydedilmeyecek.': 'તમે લખેલું સાચવવામાં આવશે નહીં.',
+  'Yazmaya devam et': 'લખવાનું ચાલુ રાખો',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'મળ્યું નહીં. બીજી જોડણી અજમાવો.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'સિરીઝ, ફિલ્મ, અભિનેતા, દિગ્દર્શક કે નિર્માણ કંપની શોધો.',
 };

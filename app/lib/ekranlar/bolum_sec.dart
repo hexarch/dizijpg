@@ -4,16 +4,29 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 
-/// Bir dizinin SEZON → BÖLÜM seçicisi.
+/// Bir dizinin DÜZEY seçicisi: DİZİNİN KENDİSİ → SEZON → BÖLÜM.
 ///
 /// Döndürdüğü değer:
-///   · `{sezon, bolum, ad}` — bölüm seçildi,
-///   · `{}` (boş harita)    — "Bölüm seçme" (varsa seçimi TEMİZLE),
+///   · `{sezon, bolum, ad}` — BÖLÜM seçildi,
+///   · `{sezon}`            — SEZON seçildi (30 Ağu 2026'da eklendi),
+///   · `{}` (boş harita)    — DİZİNİN KENDİSİ (varsa alt düzey seçimi TEMİZLE),
 ///   · `null`               — kullanıcı vazgeçti (mevcut seçim korunur).
 ///
 /// BOŞ HARİTA İLE `null` AYRI ŞEYLER — ve bu ayrım bilerek: ikisi de `null`
 /// olsaydı "seçimi kaldır" ile "geri tuşuna bastım" aynı davranışa düşerdi ve
 /// kullanıcı bir kez bölüm seçtikten sonra onu asla kaldıramazdı.
+///
+/// ÜÇÜNCÜ DÜZEY (SEZON) — kullanıcı isteği, 30 Ağu 2026: "dizilerde bölüm,
+/// sezon veya dizinin kendisini de seçme olacak". Sezon, listeye ayrı bir
+/// kök seçenek olarak DEĞİL, sezonun İÇİNE girince en üstteki "Tüm {n}. sezon"
+/// satırı olarak kondu: kullanıcı zaten sezona dokunarak niyetini belirtmiş
+/// oluyor, kökte üç seçenek birden göstermek seçiciyi menüye çevirirdi
+/// (kademeli açılım — bkz. ux md.4, modal ve gezinme kuralları).
+///
+/// SUNUCU TARAFI: sezon düzeyi YALNIZ `yorum_etiketleri` bağ tablosunda
+/// yaşıyor, `yorumlar.sezon` sütununda DEĞİL — o sütun 20'den fazla yerde
+/// "ikisi de dolu = bölüm" sözleşmesiyle okunuyor
+/// (bkz. backend/migrasyon-2026-08-30.sql).
 ///
 /// SEZON 0 (ÖZEL BÖLÜMLER) LİSTEDE YOK: `/yorumlar` uçlarında ve site
 /// haritasında bölüm `sezon >= 1` varsayılıyor (`SITEMAP_BOLUM_SORGU`
@@ -119,12 +132,18 @@ class _BolumSecSheetState extends State<BolumSecSheet> {
               ],
             ),
           ),
-          // "Bölüm seçme": mevcut seçimi kaldırmanın TEK yolu.
+          // DİZİNİN KENDİSİ: mevcut sezon/bölüm seçimini kaldırmanın TEK yolu.
+          // Kökte durur çünkü en genel düzey odur; sezonun içine girince
+          // "Tüm {n}. sezon" satırı devreye girer.
           ListTile(
-            leading: Icon(Icons.block, color: DiziRenkler.metin38),
+            leading: Icon(Icons.tv, color: DiziRenkler.metin38),
             title: Text(
-              'Bölüm seçme (yalnız dizi hakkında)'.c,
+              'Dizinin kendisi'.c,
               style: TextStyle(color: DiziRenkler.metin),
+            ),
+            subtitle: Text(
+              'Sezon ya da bölüm seçme'.c,
+              style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
             ),
             onTap: () => Navigator.pop(context, <String, dynamic>{}),
           ),
@@ -187,17 +206,52 @@ class _BolumSecSheetState extends State<BolumSecSheet> {
       return const Center(child: CircularProgressIndicator());
     }
     final bolumler = _bolumler!;
+    // SEZON DÜZEYİ: bölüm listesi BOŞ olsa bile sunulur. TMDB'de bölüm
+    // dökümü olmayan sezonlar var; eski hâlde o sezon hakkında hiçbir şey
+    // seçilemiyordu, artık en azından sezonun kendisi etiketlenebiliyor.
+    final sezonSatiri = ListTile(
+      leading: Icon(Icons.calendar_view_week, color: DiziRenkler.sariMetin),
+      title: Text(
+        'Tüm {}. sezon'.cf(['$_acikSezon']),
+        style: TextStyle(color: DiziRenkler.metin, fontWeight: FontWeight.w700),
+      ),
+      subtitle: Text(
+        'Bölüm seçme'.c,
+        style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
+      ),
+      // `bolum` ANAHTARI HİÇ KONULMAZ (null olarak da değil): çağıran taraf
+      // "sezon mu bölüm mü" ayrımını `bolum == null` ile yapıyor.
+      onTap: () =>
+          Navigator.pop(context, <String, dynamic>{'sezon': _acikSezon}),
+    );
     if (bolumler.isEmpty) {
-      return Center(
-        child: Text(
-          'Bu sezonda bölüm yok.'.c,
-          style: TextStyle(color: DiziRenkler.metin54),
-        ),
+      return ListView(
+        children: [
+          sezonSatiri,
+          const Divider(height: 1),
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Center(
+              child: Text(
+                'Bu sezonda bölüm yok.'.c,
+                style: TextStyle(color: DiziRenkler.metin54),
+              ),
+            ),
+          ),
+        ],
       );
     }
     return ListView.builder(
-      itemCount: bolumler.length,
-      itemBuilder: (context, i) {
+      // +1: SIFIRINCI ÖĞE "Tüm {n}. sezon".
+      itemCount: bolumler.length + 1,
+      itemBuilder: (context, ham) {
+        if (ham == 0) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [sezonSatiri, const Divider(height: 1)],
+          );
+        }
+        final i = ham - 1;
         final b = bolumler[i] as Map<String, dynamic>;
         final no = b['episode_number'] as int;
         final ad = (b['name'] as String?)?.trim();

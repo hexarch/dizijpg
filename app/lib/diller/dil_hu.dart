@@ -1382,4 +1382,22 @@ const Map<String, String> cevirilerHu = {
       'A nem megfelelő tartalmat jelentjük egy moderátornak, és eltávolíthatjuk az archívumból.',
   'Şikayetin alındı': 'A jelentésedet megkaptuk',
   'Şikayet gönderilemedi': 'A jelentést nem sikerült elküldeni',
+  'Dizinin kendisi': 'Maga a sorozat',
+  'Sezon ya da bölüm seçme': 'Nincs évad vagy epizód',
+  'Tüm {}. sezon': 'A teljes {}. évad',
+  'Bölüm seçme': 'Nincs epizód',
+  'En fazla {} yapım ekleyebilirsin.': 'Legfeljebb {} címet adhatsz hozzá.',
+  'Bu zaten ekli.': 'Már hozzá van adva.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Jelölj meg sorozatot, filmet, színészt vagy rendezőt — a bejegyzésed az ő oldalukon is megjelenik.',
+  'Etiket ekle': 'Címke hozzáadása',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Jelölj meg sorozatot, filmet, színészt vagy rendezőt',
+  'Gönderiden vazgeç': 'Bejegyzés elvetése',
+  'Yazdıkların kaydedilmeyecek.': 'Amit írtál, nem lesz elmentve.',
+  'Yazmaya devam et': 'Írok tovább',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Nincs találat. Próbáld más írásmóddal.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Keress sorozatot, filmet, színészt, rendezőt vagy gyártót.',
 };

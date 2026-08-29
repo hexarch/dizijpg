@@ -64,6 +64,11 @@ class _IcerikSecSheetState extends State<IcerikSecSheet> {
   List<dynamic> _sonuclar = [];
   bool _araniyor = false;
 
+  /// En az bir arama TAMAMLANDI mı. Boş liste iki ayrı şey demek olabilir —
+  /// "henüz aramadın" ve "aradın, bulunamadı" — ve ikisi aynı boş ekrana
+  /// düşerse kullanıcı seçicinin bozuk olduğunu sanır (ux: no-results).
+  bool _arandi = false;
+
   @override
   void dispose() {
     _arama.dispose();
@@ -129,6 +134,7 @@ class _IcerikSecSheetState extends State<IcerikSecSheet> {
     });
     setState(() {
       _sonuclar = liste;
+      _arandi = true;
       _araniyor = false;
     });
   }
@@ -158,51 +164,85 @@ class _IcerikSecSheetState extends State<IcerikSecSheet> {
               padding: EdgeInsets.only(bottom: 8),
               child: LinearProgressIndicator(minHeight: 2),
             ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _sonuclar.length,
-              itemBuilder: (context, i) {
-                final r = _sonuclar[i] as Map<String, dynamic>;
-                final tur = r['media_type'] as String?;
-                final gorsel = posterUrl(tmdbGorselYolu(r), boyut: 'w92');
-                return ListTile(
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: Container(
-                      width: 34,
-                      height: 50,
-                      color: DiziRenkler.kart,
-                      child: gorsel == null
-                          ? Icon(
-                              _turIkonu(tur),
-                              size: 18,
-                              color: DiziRenkler.metin38,
-                            )
-                          : CachedNetworkImage(
-                              imageUrl: gorsel,
-                              httpHeaders: gorselBasliklari(gorsel),
-                              // Firma logosu şeffaf ve GENİŞ: `cover` onu
-                              // kırpıp tanınmaz hâle getirirdi.
-                              fit: tur == 'company'
-                                  ? BoxFit.contain
-                                  : BoxFit.cover,
-                            ),
+          if (_sonuclar.isEmpty && !_araniyor)
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(28),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        _arandi ? Icons.search_off : Icons.search,
+                        size: 38,
+                        color: DiziRenkler.metin24,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        _arandi
+                            ? 'Bulunamadı. Adın yazılışını değiştirip dene.'.c
+                            : 'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.'
+                                  .c,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: DiziRenkler.metin54,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: ListView.builder(
+                itemCount: _sonuclar.length,
+                itemBuilder: (context, i) {
+                  final r = _sonuclar[i] as Map<String, dynamic>;
+                  final tur = r['media_type'] as String?;
+                  final gorsel = posterUrl(tmdbGorselYolu(r), boyut: 'w92');
+                  return ListTile(
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Container(
+                        width: 34,
+                        height: 50,
+                        color: DiziRenkler.kart,
+                        child: gorsel == null
+                            ? Icon(
+                                _turIkonu(tur),
+                                size: 18,
+                                color: DiziRenkler.metin38,
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: gorsel,
+                                httpHeaders: gorselBasliklari(gorsel),
+                                // Firma logosu şeffaf ve GENİŞ: `cover` onu
+                                // kırpıp tanınmaz hâle getirirdi.
+                                fit: tur == 'company'
+                                    ? BoxFit.contain
+                                    : BoxFit.cover,
+                              ),
+                      ),
                     ),
-                  ),
-                  title: Text(
-                    (r['name'] ?? r['title'] ?? '?') as String,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(
-                    tmdbTurEtiketi(tur),
-                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
-                  ),
-                  onTap: () => Navigator.pop(context, r),
-                );
-              },
+                    title: Text(
+                      (r['name'] ?? r['title'] ?? '?') as String,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                      tmdbTurEtiketi(tur),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: DiziRenkler.metin38,
+                      ),
+                    ),
+                    onTap: () => Navigator.pop(context, r),
+                  );
+                },
+              ),
             ),
-          ),
         ],
       ),
     );

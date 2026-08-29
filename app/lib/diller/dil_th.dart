@@ -1349,4 +1349,21 @@ const Map<String, String> cevirilerTh = {
       'เนื้อหาที่ไม่เหมาะสมจะถูกแจ้งผู้ดูแลและอาจถูกลบออกจากคลัง',
   'Şikayetin alındı': 'ได้รับรายงานของคุณแล้ว',
   'Şikayet gönderilemedi': 'ส่งรายงานไม่สำเร็จ',
+  'Dizinin kendisi': 'ตัวซีรีส์เอง',
+  'Sezon ya da bölüm seçme': 'ไม่เลือกซีซันหรือตอน',
+  'Tüm {}. sezon': 'ทั้งซีซัน {}',
+  'Bölüm seçme': 'ไม่เลือกตอน',
+  'En fazla {} yapım ekleyebilirsin.': 'เพิ่มได้มากที่สุด {} เรื่อง',
+  'Bu zaten ekli.': 'เพิ่มไปแล้ว',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'แท็กซีรีส์ หนัง นักแสดง หรือผู้กำกับ — โพสต์ของคุณจะแสดงบนหน้าของพวกเขาด้วย',
+  'Etiket ekle': 'เพิ่มแท็ก',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'แท็กซีรีส์ หนัง นักแสดง หรือผู้กำกับ',
+  'Gönderiden vazgeç': 'ทิ้งโพสต์นี้',
+  'Yazdıkların kaydedilmeyecek.': 'สิ่งที่คุณเขียนจะไม่ถูกบันทึก',
+  'Yazmaya devam et': 'เขียนต่อ',
+  'Bulunamadı. Adın yazılışını değiştirip dene.': 'ไม่พบ ลองสะกดแบบอื่นดู',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'ค้นหาซีรีส์ หนัง นักแสดง ผู้กำกับ หรือบริษัทผู้สร้าง',
 };

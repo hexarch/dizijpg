@@ -1379,4 +1379,22 @@ const Map<String, String> cevirilerNl = {
       'Ongepaste inhoud wordt aan een moderator gemeld en kan uit het archief worden verwijderd.',
   'Şikayetin alındı': 'Je melding is ontvangen',
   'Şikayet gönderilemedi': 'Melding kon niet worden verzonden',
+  'Dizinin kendisi': 'De serie zelf',
+  'Sezon ya da bölüm seçme': 'Geen seizoen of aflevering',
+  'Tüm {}. sezon': 'Heel seizoen {}',
+  'Bölüm seçme': 'Geen aflevering',
+  'En fazla {} yapım ekleyebilirsin.': 'Je kunt maximaal {} titels toevoegen.',
+  'Bu zaten ekli.': 'Al toegevoegd.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Tag een serie, film, acteur of regisseur — je post verschijnt ook op hun pagina.',
+  'Etiket ekle': 'Tag toevoegen',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Tag een serie, film, acteur of regisseur',
+  'Gönderiden vazgeç': 'Bericht verwijderen',
+  'Yazdıkların kaydedilmeyecek.': 'Wat je schreef wordt niet bewaard.',
+  'Yazmaya devam et': 'Doorgaan met schrijven',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Niet gevonden. Probeer een andere schrijfwijze.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Zoek een serie, film, acteur, regisseur of productiebedrijf.',
 };

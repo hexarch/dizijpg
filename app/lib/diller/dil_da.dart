@@ -1373,4 +1373,22 @@ const Map<String, String> cevirilerDa = {
       'Upassende indhold anmeldes til en moderator og kan blive fjernet fra arkivet.',
   'Şikayetin alındı': 'Din anmeldelse er modtaget',
   'Şikayet gönderilemedi': 'Anmeldelsen kunne ikke sendes',
+  'Dizinin kendisi': 'Selve serien',
+  'Sezon ya da bölüm seçme': 'Ingen sæson eller afsnit',
+  'Tüm {}. sezon': 'Hele sæson {}',
+  'Bölüm seçme': 'Intet afsnit',
+  'En fazla {} yapım ekleyebilirsin.': 'Du kan tilføje op til {} titler.',
+  'Bu zaten ekli.': 'Allerede tilføjet.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Tag en serie, film, skuespiller eller instruktør – dit opslag vises også på deres side.',
+  'Etiket ekle': 'Tilføj tag',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Tag en serie, film, skuespiller eller instruktør',
+  'Gönderiden vazgeç': 'Kassér opslaget',
+  'Yazdıkların kaydedilmeyecek.': 'Det, du skrev, bliver ikke gemt.',
+  'Yazmaya devam et': 'Bliv ved med at skrive',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Ikke fundet. Prøv en anden stavemåde.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Søg efter serie, film, skuespiller, instruktør eller produktionsselskab.',
 };

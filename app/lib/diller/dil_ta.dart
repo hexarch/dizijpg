@@ -1392,4 +1392,23 @@ const Map<String, String> cevirilerTa = {
       'பொருத்தமற்ற உள்ளடக்கம் நடுவருக்குத் தெரிவிக்கப்படும், காப்பகத்திலிருந்து நீக்கப்படலாம்.',
   'Şikayetin alındı': 'உன் புகார் பெறப்பட்டது',
   'Şikayet gönderilemedi': 'புகாரை அனுப்ப முடியவில்லை',
+  'Dizinin kendisi': 'தொடர் தானே',
+  'Sezon ya da bölüm seçme': 'சீசன் அல்லது எபிசோட் இல்லை',
+  'Tüm {}. sezon': 'முழு சீசன் {}',
+  'Bölüm seçme': 'எபிசோட் இல்லை',
+  'En fazla {} yapım ekleyebilirsin.':
+      'அதிகபட்சம் {} தலைப்புகளைச் சேர்க்கலாம்.',
+  'Bu zaten ekli.': 'ஏற்கனவே சேர்க்கப்பட்டுள்ளது.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'ஒரு தொடர், திரைப்படம், நடிகர் அல்லது இயக்குநரை டேக் செய் — உன் இடுகை அவர்களின் பக்கத்திலும் தெரியும்.',
+  'Etiket ekle': 'டேக் சேர்',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'தொடர், திரைப்படம், நடிகர் அல்லது இயக்குநரை டேக் செய்',
+  'Gönderiden vazgeç': 'இடுகையை கைவிடு',
+  'Yazdıkların kaydedilmeyecek.': 'நீ எழுதியது சேமிக்கப்படாது.',
+  'Yazmaya devam et': 'எழுதுவதைத் தொடர்',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'கிடைக்கவில்லை. வேறு எழுத்துப்பிழையை முயற்சி செய்.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'தொடர், திரைப்படம், நடிகர், இயக்குநர் அல்லது தயாரிப்பு நிறுவனத்தைத் தேடு.',
 };

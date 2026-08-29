@@ -1394,4 +1394,22 @@ const Map<String, String> cevirilerEl = {
       'Το ακατάλληλο περιεχόμενο αναφέρεται σε συντονιστή και μπορεί να αφαιρεθεί από το αρχείο.',
   'Şikayetin alındı': 'Η αναφορά σου ελήφθη',
   'Şikayet gönderilemedi': 'Δεν ήταν δυνατή η αποστολή της αναφοράς',
+  'Dizinin kendisi': 'Η ίδια η σειρά',
+  'Sezon ya da bölüm seçme': 'Χωρίς σεζόν ή επεισόδιο',
+  'Tüm {}. sezon': 'Όλη η σεζόν {}',
+  'Bölüm seçme': 'Χωρίς επεισόδιο',
+  'En fazla {} yapım ekleyebilirsin.': 'Μπορείς να προσθέσεις έως {} τίτλους.',
+  'Bu zaten ekli.': 'Έχει ήδη προστεθεί.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Επισήμανε σειρά, ταινία, ηθοποιό ή σκηνοθέτη — η ανάρτησή σου θα φανεί και στη σελίδα τους.',
+  'Etiket ekle': 'Προσθήκη ετικέτας',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Επισήμανε σειρά, ταινία, ηθοποιό ή σκηνοθέτη',
+  'Gönderiden vazgeç': 'Απόρριψη ανάρτησης',
+  'Yazdıkların kaydedilmeyecek.': 'Ό,τι έγραψες δεν θα αποθηκευτεί.',
+  'Yazmaya devam et': 'Συνέχισε να γράφεις',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Δεν βρέθηκε. Δοκίμασε άλλη γραφή.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Αναζήτησε σειρά, ταινία, ηθοποιό, σκηνοθέτη ή εταιρεία παραγωγής.',
 };

@@ -1303,4 +1303,20 @@ const Map<String, String> cevirilerJa = {
       '不適切なコンテンツは管理者に報告され、アーカイブから削除されることがあります。',
   'Şikayetin alındı': '報告を受け付けました',
   'Şikayet gönderilemedi': '報告を送信できませんでした',
+  'Dizinin kendisi': '作品そのもの',
+  'Sezon ya da bölüm seçme': 'シーズンもエピソードも選ばない',
+  'Tüm {}. sezon': 'シーズン{}全体',
+  'Bölüm seçme': 'エピソードを選ばない',
+  'En fazla {} yapım ekleyebilirsin.': '最大{}件まで追加できます。',
+  'Bu zaten ekli.': 'すでに追加済みです。',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'ドラマ・映画・俳優・監督をタグ付けすると、投稿はその作品のページにも表示されます。',
+  'Etiket ekle': 'タグを追加',
+  'Dizi, film, oyuncu ya da yönetmen etiketle': 'ドラマ・映画・俳優・監督をタグ付け',
+  'Gönderiden vazgeç': '投稿を破棄',
+  'Yazdıkların kaydedilmeyecek.': '書いた内容は保存されません。',
+  'Yazmaya devam et': '書き続ける',
+  'Bulunamadı. Adın yazılışını değiştirip dene.': '見つかりませんでした。別の表記で試してください。',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'ドラマ・映画・俳優・監督・制作会社を検索。',
 };

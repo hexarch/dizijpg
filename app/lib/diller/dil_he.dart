@@ -1342,4 +1342,20 @@ const Map<String, String> cevirilerHe = {
       'תוכן לא הולם מדווח למנהל ועשוי להיות מוסר מהארכיון.',
   'Şikayetin alındı': 'הדיווח שלך התקבל',
   'Şikayet gönderilemedi': 'לא ניתן לשלוח את הדיווח',
+  'Dizinin kendisi': 'הסדרה עצמה',
+  'Sezon ya da bölüm seçme': 'בלי עונה או פרק',
+  'Tüm {}. sezon': 'כל עונה {}',
+  'Bölüm seçme': 'בלי פרק',
+  'En fazla {} yapım ekleyebilirsin.': 'אפשר להוסיף עד {} כותרים.',
+  'Bu zaten ekli.': 'כבר נוסף.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'תייג סדרה, סרט, שחקן או במאי — הפוסט שלך יופיע גם בעמוד שלהם.',
+  'Etiket ekle': 'הוספת תגית',
+  'Dizi, film, oyuncu ya da yönetmen etiketle': 'תייג סדרה, סרט, שחקן או במאי',
+  'Gönderiden vazgeç': 'ביטול הפוסט',
+  'Yazdıkların kaydedilmeyecek.': 'מה שכתבת לא יישמר.',
+  'Yazmaya devam et': 'להמשיך לכתוב',
+  'Bulunamadı. Adın yazılışını değiştirip dene.': 'לא נמצא. נסה איות אחר.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'חפש סדרה, סרט, שחקן, במאי או חברת הפקה.',
 };

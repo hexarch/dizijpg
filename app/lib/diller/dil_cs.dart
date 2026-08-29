@@ -1366,4 +1366,22 @@ const Map<String, String> cevirilerCs = {
       'Nevhodný obsah se nahlásí moderátorovi a může být z archivu odstraněn.',
   'Şikayetin alındı': 'Tvoje hlášení bylo přijato',
   'Şikayet gönderilemedi': 'Hlášení se nepodařilo odeslat',
+  'Dizinin kendisi': 'Samotný seriál',
+  'Sezon ya da bölüm seçme': 'Bez série i epizody',
+  'Tüm {}. sezon': 'Celá série {}',
+  'Bölüm seçme': 'Bez epizody',
+  'En fazla {} yapım ekleyebilirsin.': 'Můžeš přidat nejvýše {} titulů.',
+  'Bu zaten ekli.': 'Už je přidáno.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Označ seriál, film, herce nebo režiséra — tvůj příspěvek se objeví i na jejich stránce.',
+  'Etiket ekle': 'Přidat štítek',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Označ seriál, film, herce nebo režiséra',
+  'Gönderiden vazgeç': 'Zahodit příspěvek',
+  'Yazdıkların kaydedilmeyecek.': 'To, co jsi napsal, se neuloží.',
+  'Yazmaya devam et': 'Pokračovat v psaní',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Nenalezeno. Zkus jiný zápis.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Hledej seriál, film, herce, režiséra nebo produkci.',
 };

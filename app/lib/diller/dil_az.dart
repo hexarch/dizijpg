@@ -1364,4 +1364,22 @@ const Map<String, String> cevirilerAz = {
       'Uyğunsuz məzmun moderatora bildirilir və arxivdən silinə bilər.',
   'Şikayetin alındı': 'Şikayətin qəbul edildi',
   'Şikayet gönderilemedi': 'Şikayət göndərilə bilmədi',
+  'Dizinin kendisi': 'Serialın özü',
+  'Sezon ya da bölüm seçme': 'Sezon və ya bölüm yox',
+  'Tüm {}. sezon': 'Bütün {}. sezon',
+  'Bölüm seçme': 'Bölüm yox',
+  'En fazla {} yapım ekleyebilirsin.': 'Ən çox {} əsər əlavə edə bilərsən.',
+  'Bu zaten ekli.': 'Artıq əlavə olunub.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Serial, film, aktyor və ya rejissor etiketlə — paylaşımın onların səhifəsində də görünəcək.',
+  'Etiket ekle': 'Etiket əlavə et',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Serial, film, aktyor və ya rejissor etiketlə',
+  'Gönderiden vazgeç': 'Paylaşımdan imtina et',
+  'Yazdıkların kaydedilmeyecek.': 'Yazdıqların saxlanmayacaq.',
+  'Yazmaya devam et': 'Yazmağa davam et',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Tapılmadı. Adın yazılışını dəyişib yoxla.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Serial, film, aktyor, rejissor və ya istehsalat şirkəti axtar.',
 };

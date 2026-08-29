@@ -1288,4 +1288,20 @@ const Map<String, String> cevirilerZh = {
       '不当内容会上报给管理员，并可能从归档中移除。',
   'Şikayetin alındı': '举报已收到',
   'Şikayet gönderilemedi': '举报发送失败',
+  'Dizinin kendisi': '剧集本身',
+  'Sezon ya da bölüm seçme': '不选季或集',
+  'Tüm {}. sezon': '整个第 {} 季',
+  'Bölüm seçme': '不选集',
+  'En fazla {} yapım ekleyebilirsin.': '最多可以添加 {} 个作品。',
+  'Bu zaten ekli.': '已经添加过了。',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      '标记剧集、电影、演员或导演——你的帖子也会出现在他们的页面上。',
+  'Etiket ekle': '添加标记',
+  'Dizi, film, oyuncu ya da yönetmen etiketle': '标记剧集、电影、演员或导演',
+  'Gönderiden vazgeç': '放弃这条帖子',
+  'Yazdıkların kaydedilmeyecek.': '你写的内容不会被保存。',
+  'Yazmaya devam et': '继续写',
+  'Bulunamadı. Adın yazılışını değiştirip dene.': '没找到。换一种写法试试。',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      '搜索剧集、电影、演员、导演或制片公司。',
 };

@@ -1385,4 +1385,22 @@ const Map<String, String> cevirilerMy = {
       'မသင့်လျော်သော အကြောင်းအရာကို ထိန်းသိမ်းသူထံ သတင်းပို့ပြီး မှတ်တမ်းတိုက်မှ ဖယ်ရှားနိုင်သည်။',
   'Şikayetin alındı': 'သင့်သတင်းပို့ချက် လက်ခံရရှိပါပြီ',
   'Şikayet gönderilemedi': 'သတင်းပို့ချက် မပို့နိုင်ပါ',
+  'Dizinin kendisi': 'ဇာတ်လမ်းတွဲကိုယ်တိုင်',
+  'Sezon ya da bölüm seçme': 'ရာသီ သို့မဟုတ် အပိုင်း မရွေးပါ',
+  'Tüm {}. sezon': 'ရာသီ {} တစ်ခုလုံး',
+  'Bölüm seçme': 'အပိုင်း မရွေးပါ',
+  'En fazla {} yapım ekleyebilirsin.': 'အများဆုံး {} ခု ထည့်နိုင်ပါတယ်။',
+  'Bu zaten ekli.': 'ထည့်ပြီးသားပါ။',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'ဇာတ်လမ်းတွဲ၊ ရုပ်ရှင်၊ သရုပ်ဆောင် သို့မဟုတ် ဒါရိုက်တာကို တက်ဂ်လုပ်ပါ — သင့်ပို့စ် သူတို့စာမျက်နှာမှာလည်း ပေါ်ပါမယ်။',
+  'Etiket ekle': 'တက်ဂ် ထည့်ရန်',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'ဇာတ်လမ်းတွဲ၊ ရုပ်ရှင်၊ သရုပ်ဆောင် သို့မဟုတ် ဒါရိုက်တာကို တက်ဂ်လုပ်ပါ',
+  'Gönderiden vazgeç': 'ပို့စ်ကို ဖျက်ရန်',
+  'Yazdıkların kaydedilmeyecek.': 'ရေးထားတာတွေ သိမ်းမှာ မဟုတ်ပါ။',
+  'Yazmaya devam et': 'ဆက်ရေးရန်',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'မတွေ့ပါ။ အခြားစာလုံးပေါင်းနဲ့ ကြိုးစားကြည့်ပါ။',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'ဇာတ်လမ်းတွဲ၊ ရုပ်ရှင်၊ သရုပ်ဆောင်၊ ဒါရိုက်တာ သို့မဟုတ် ထုတ်လုပ်ရေးကုမ္ပဏီ ရှာပါ။',
 };

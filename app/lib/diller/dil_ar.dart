@@ -1342,4 +1342,22 @@ const Map<String, String> cevirilerAr = {
       'يُبلَّغ المشرف عن المحتوى غير اللائق وقد يُزال من الأرشيف.',
   'Şikayetin alındı': 'تم استلام بلاغك',
   'Şikayet gönderilemedi': 'تعذّر إرسال البلاغ',
+  'Dizinin kendisi': 'المسلسل نفسه',
+  'Sezon ya da bölüm seçme': 'بدون موسم أو حلقة',
+  'Tüm {}. sezon': 'الموسم {} كاملاً',
+  'Bölüm seçme': 'بدون حلقة',
+  'En fazla {} yapım ekleyebilirsin.': 'يمكنك إضافة {} عناوين كحد أقصى.',
+  'Bu zaten ekli.': 'مُضاف بالفعل.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'ضع وسمًا لمسلسل أو فيلم أو ممثل أو مخرج — سيظهر منشورك على صفحتهم أيضًا.',
+  'Etiket ekle': 'إضافة وسم',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'ضع وسمًا لمسلسل أو فيلم أو ممثل أو مخرج',
+  'Gönderiden vazgeç': 'تجاهل المنشور',
+  'Yazdıkların kaydedilmeyecek.': 'لن يتم حفظ ما كتبته.',
+  'Yazmaya devam et': 'متابعة الكتابة',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'لم يُعثر عليه. جرّب تهجئة أخرى.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'ابحث عن مسلسل أو فيلم أو ممثل أو مخرج أو شركة إنتاج.',
 };

@@ -1395,4 +1395,22 @@ const Map<String, String> cevirilerPt = {
       'Conteúdo inadequado é comunicado a um moderador e pode ser removido do arquivo.',
   'Şikayetin alındı': 'Sua denúncia foi recebida',
   'Şikayet gönderilemedi': 'Não foi possível enviar a denúncia',
+  'Dizinin kendisi': 'A própria série',
+  'Sezon ya da bölüm seçme': 'Sem temporada nem episódio',
+  'Tüm {}. sezon': 'Toda a temporada {}',
+  'Bölüm seçme': 'Sem episódio',
+  'En fazla {} yapım ekleyebilirsin.': 'Você pode adicionar até {} títulos.',
+  'Bu zaten ekli.': 'Já adicionado.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Marque uma série, filme, ator ou diretor — sua publicação também aparecerá na página dele.',
+  'Etiket ekle': 'Adicionar tag',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Marcar série, filme, ator ou diretor',
+  'Gönderiden vazgeç': 'Descartar publicação',
+  'Yazdıkların kaydedilmeyecek.': 'O que você escreveu não será salvo.',
+  'Yazmaya devam et': 'Continuar escrevendo',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Não encontrado. Tente outra grafia.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Procure uma série, filme, ator, diretor ou produtora.',
 };

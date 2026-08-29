@@ -1364,4 +1364,23 @@ const Map<String, String> cevirilerMr = {
       'अनुचित मजकुराची तक्रार नियंत्रकाकडे जाते आणि तो संग्रहातून काढला जाऊ शकतो.',
   'Şikayetin alındı': 'तुमची तक्रार मिळाली',
   'Şikayet gönderilemedi': 'तक्रार पाठवता आली नाही',
+  'Dizinin kendisi': 'मालिका स्वतः',
+  'Sezon ya da bölüm seçme': 'सीझन किंवा भाग नाही',
+  'Tüm {}. sezon': 'संपूर्ण सीझन {}',
+  'Bölüm seçme': 'भाग नाही',
+  'En fazla {} yapım ekleyebilirsin.':
+      'तुम्ही जास्तीत जास्त {} शीर्षके जोडू शकता.',
+  'Bu zaten ekli.': 'आधीच जोडलेले आहे.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'एखादी मालिका, चित्रपट, अभिनेता किंवा दिग्दर्शक टॅग करा — तुमची पोस्ट त्यांच्या पानावरही दिसेल.',
+  'Etiket ekle': 'टॅग जोडा',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'मालिका, चित्रपट, अभिनेता किंवा दिग्दर्शक टॅग करा',
+  'Gönderiden vazgeç': 'पोस्ट रद्द करा',
+  'Yazdıkların kaydedilmeyecek.': 'तुम्ही लिहिलेले जतन होणार नाही.',
+  'Yazmaya devam et': 'लिहीत राहा',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'सापडले नाही. दुसरे स्पेलिंग वापरून पाहा.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'मालिका, चित्रपट, अभिनेता, दिग्दर्शक किंवा निर्मिती कंपनी शोधा.',
 };

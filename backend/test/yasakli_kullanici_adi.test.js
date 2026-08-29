@@ -489,7 +489,11 @@ test('AKIŞ: `ai_hesap` yanıt sözleşmesine SIZMIYOR', () => {
 test('YORUMLAR SQL: muafiyet `NOT k.ai` — ad artık PARAMETRE bile değil', async () => {
   let yakalanan = null;
   const uc = kur(
-    ['YORUM_TURLERI', 'engelSuzgec'],
+    // ETIKET_ALANI 30 Ağu 2026'da eklendi: uç artık gönderinin TÜM
+    // etiketlerini (`yorum_etiketleri`) de döndürüyor ve sorgu metnine o
+    // sabitten yerleşiyor. Bildirilmezse `new Function` gövdesi
+    // "ETIKET_ALANI is not defined" ile patlar.
+    ['YORUM_TURLERI', 'ETIKET_ALANI', 'engelSuzgec'],
     {
       havuz: { query: async (sql, par) => { yakalanan = { sql, par }; return { rows: [] }; } },
       istekBaglam: { getStore: () => ({ dil: 'tr' }) },

@@ -1377,4 +1377,23 @@ const Map<String, String> cevirilerBg = {
       'Неподходящото съдържание се докладва на модератор и може да бъде премахнато от архива.',
   'Şikayetin alındı': 'Сигналът ти е получен',
   'Şikayet gönderilemedi': 'Сигналът не можа да бъде изпратен',
+  'Dizinin kendisi': 'Самият сериал',
+  'Sezon ya da bölüm seçme': 'Без сезон или епизод',
+  'Tüm {}. sezon': 'Целият сезон {}',
+  'Bölüm seçme': 'Без епизод',
+  'En fazla {} yapım ekleyebilirsin.':
+      'Можеш да добавиш най-много {} заглавия.',
+  'Bu zaten ekli.': 'Вече е добавено.',
+  'Dizi, film, oyuncu ya da yönetmen etiketle — gönderin onların sayfasında da görünür.':
+      'Отбележи сериал, филм, актьор или режисьор — публикацията ти ще се появи и на тяхната страница.',
+  'Etiket ekle': 'Добави етикет',
+  'Dizi, film, oyuncu ya da yönetmen etiketle':
+      'Отбележи сериал, филм, актьор или режисьор',
+  'Gönderiden vazgeç': 'Откажи публикацията',
+  'Yazdıkların kaydedilmeyecek.': 'Написаното няма да бъде запазено.',
+  'Yazmaya devam et': 'Продължи да пишеш',
+  'Bulunamadı. Adın yazılışını değiştirip dene.':
+      'Не е намерено. Опитай друго изписване.',
+  'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
+      'Търси сериал, филм, актьор, режисьор или продуцентска компания.',
 };
