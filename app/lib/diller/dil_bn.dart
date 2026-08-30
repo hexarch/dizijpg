@@ -1378,4 +1378,19 @@ const Map<String, String> cevirilerBn = {
       'পাওয়া যায়নি। অন্য বানান চেষ্টা করো।',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'সিরিজ, সিনেমা, অভিনেতা, পরিচালক বা প্রযোজনা সংস্থা খোঁজো।',
+  'E-posta adresini değiştir': 'তোমার ইমেইল ঠিকানা বদলাও',
+  'E-posta bağlı değil': 'কোনো ইমেইল যুক্ত নেই',
+  'Geçerli bir e-posta adresi yaz': 'একটি বৈধ ইমেইল ঠিকানা লেখো',
+  'Bu zaten hesabının e-posta adresi':
+      'এটি ইতিমধ্যেই তোমার অ্যাকাউন্টের ইমেইল ঠিকানা',
+  'Kod gönder': 'কোড পাঠাও',
+  'E-posta adresin güncellendi': 'তোমার ইমেইল ঠিকানা হালনাগাদ হয়েছে',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'এই ইমেইল অন্য একটি অ্যাকাউন্টে নিবন্ধিত',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'যাচাই কোড নতুন ঠিকানায় পাঠানো হয়; কোড দেওয়ার পরেই কেবল ঠিকানা বদলায়। পাসওয়ার্ড রিসেট ও দুই ধাপের লগইন কোড এরপর থেকে নতুন ঠিকানায় যাবে।',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'তোমার অ্যাকাউন্টের ইমেইল ঠিকানা বৈধ নয়, তাই ইমেইল পৌঁছানো যাচ্ছে না। সঠিক ঠিকানা যুক্ত করতে সহায়তার সঙ্গে যোগাযোগ করো।',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'এই ঠিকানায় কোড পাঠানো গেল না, ঠিকানাটি দেখে নাও',
 };

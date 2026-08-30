@@ -1393,4 +1393,19 @@ const Map<String, String> cevirilerRu = {
       'Не найдено. Попробуй другое написание.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Ищи сериал, фильм, актёра, режиссёра или студию.',
+  'E-posta adresini değiştir': 'Изменить адрес электронной почты',
+  'E-posta bağlı değil': 'Почта не привязана',
+  'Geçerli bir e-posta adresi yaz':
+      'Введи действительный адрес электронной почты',
+  'Bu zaten hesabının e-posta adresi': 'Это уже адрес почты твоего аккаунта',
+  'Kod gönder': 'Отправить код',
+  'E-posta adresin güncellendi': 'Адрес электронной почты обновлён',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Эта почта зарегистрирована в другом аккаунте',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Код подтверждения отправляется на НОВЫЙ адрес; адрес меняется только после ввода кода. Коды сброса пароля и двухэтапного входа с этого момента будут приходить на новый адрес.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Адрес электронной почты в твоём аккаунте недействителен, поэтому письмо доставить невозможно. Обратись в поддержку, чтобы привязать правильный адрес.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Не удалось отправить код на этот адрес, проверь адрес',
 };

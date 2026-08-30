@@ -16,6 +16,7 @@ import '../gorusme/arama_servisi.dart';
 import '../gorusme/gorusme_api.dart' show misafirAramaSebebi;
 import '../push.dart';
 import 'gorsel_kirp.dart';
+import 'eposta_sheet.dart' show EpostaSheet;
 import 'iki_adim_sheet.dart' show IkiAdimAyariSheet;
 import 'ortak.dart' show AgGorsel, DaireGorsel, altGuvenli;
 import 'sosyal.dart';
@@ -290,6 +291,22 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
     // Kilidin kalan günü ve yeni ad SUNUCUDAN yeniden okunur: kalan günü
     // istemcide 90 diye varsaymak, sunucu kuralı değişirse sessizce yalan olur.
     await _yukle();
+  }
+
+  /// E-posta adresini değiştirir (30 Ağu 2026). Akışın tamamı ve gerekçesi
+  /// `EpostaSheet`te; burada yalnız SONUCU oturuma yazıyoruz — yazılmazsa
+  /// kart eski adresi göstermeye devam eder ve kullanıcı değişimin olup
+  /// olmadığını anlayamaz.
+  Future<void> _epostaDegistir(String mevcut) async {
+    final yeni = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      isScrollControlled: true,
+      builder: (_) => EpostaSheet(mevcut: mevcut),
+    );
+    if (yeni == null || !mounted) return;
+    final oturum = context.read<Oturum>();
+    await oturum.girisYapildi({...?oturum.kullanici, 'email': yeni});
   }
 
   /// GIF mi? (sihirli baytlar) — GIF'ler kırpılmaz, animasyon korunur.
@@ -730,6 +747,11 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
     } else {
       final avatar = dosyaUrl(_profil!['avatar'] as String?);
       final kapak = dosyaUrl(_profil!['kapak'] as String?);
+      // E-posta ve misafirlik `Oturum`dan okunuyor: `/profil` yanıtı e-posta
+      // TAŞIMAZ (profil herkese açık bir kaynak, adres oraya konmamalı).
+      final oturumK = context.watch<Oturum>().kullanici;
+      final misafir = oturumK?['misafir'] == true;
+      final eposta = (oturumK?['email'] as String?) ?? '';
       govde = ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -1424,6 +1446,40 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     ),
                   ),
                 ),
+                // E-posta adresi (30 Ağu 2026). Hesabın adresi BURADA
+                // GÖRÜNÜYOR: bozuk adresle kayıtlı bir kullanıcının durumu
+                // fark edebileceği tek yer burasıydı ve yoktu — şifre
+                // sıfırlama, iki adımlı kod ve dışa aktarma sessizce
+                // kayboluyordu. Misafirde gizli: adres bağlama yolu
+                // `/auth/bagla` ve o akış giriş ekranında.
+                if (!misafir) ...[
+                  const SizedBox(height: 8),
+                  Card(
+                    child: ListTile(
+                      key: const Key('ayar-eposta'),
+                      leading: Icon(
+                        Icons.mail_outline,
+                        color: DiziRenkler.sariMetin,
+                      ),
+                      title: Text(
+                        'E-posta'.c,
+                        style: TextStyle(color: DiziRenkler.metin),
+                      ),
+                      subtitle: Text(
+                        eposta.isEmpty ? 'E-posta bağlı değil'.c : eposta,
+                        style: TextStyle(
+                          color: DiziRenkler.metin54,
+                          fontSize: 12,
+                        ),
+                      ),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: DiziRenkler.metin38,
+                      ),
+                      onTap: () => _epostaDegistir(eposta),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 8),
                 TextButton(
                   onPressed: () => context.push('/gizlilik'),

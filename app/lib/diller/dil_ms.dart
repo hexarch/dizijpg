@@ -1395,4 +1395,18 @@ const Map<String, String> cevirilerMs = {
       'Tidak dijumpai. Cuba ejaan lain.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Cari siri, filem, pelakon, pengarah atau syarikat produksi.',
+  'E-posta adresini değiştir': 'Tukar alamat e-mel anda',
+  'E-posta bağlı değil': 'Tiada e-mel dipautkan',
+  'Geçerli bir e-posta adresi yaz': 'Tulis alamat e-mel yang sah',
+  'Bu zaten hesabının e-posta adresi': 'Itu sudah pun alamat e-mel akaun anda',
+  'Kod gönder': 'Hantar kod',
+  'E-posta adresin güncellendi': 'Alamat e-mel anda telah dikemas kini',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'E-mel ini didaftarkan pada akaun lain',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Kod pengesahan dihantar ke alamat BARU; alamat hanya bertukar selepas anda memasukkan kod. Kod set semula kata laluan dan log masuk dua langkah akan pergi ke alamat baharu selepas itu.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Alamat e-mel pada akaun anda tidak sah, jadi e-mel tidak dapat dihantar. Hubungi sokongan untuk memautkan alamat yang betul.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Kod tidak dapat dihantar ke alamat ini, semak alamat itu',
 };

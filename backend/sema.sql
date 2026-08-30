@@ -1330,10 +1330,16 @@ ALTER TABLE kullanicilar
 CREATE TABLE IF NOT EXISTS iki_adim_kodlari (
   kullanici_id INT PRIMARY KEY REFERENCES kullanicilar(id) ON DELETE CASCADE,
   kod_hash TEXT NOT NULL,
-  amac TEXT NOT NULL CHECK (amac IN ('giris','ac','kapat')),
+  amac TEXT NOT NULL CHECK (amac IN ('giris','ac','kapat','eposta')),
   bilet_hash TEXT,
   bitis TIMESTAMPTZ NOT NULL,
-  deneme INT NOT NULL DEFAULT 0
+  deneme INT NOT NULL DEFAULT 0,
+  -- 'eposta' amacında kodun BAĞLI OLDUĞU hedef adres (migrasyon-2026-08-30c).
+  -- Doğrulamada istekteki adres DEĞİL bu adres uygulanır; olmasaydı kullanıcı
+  -- A adresine gelen kodu B adresini bağlamak için kullanabilirdi.
+  yeni_eposta TEXT,
+  CONSTRAINT iki_adim_kodlari_yeni_eposta_check
+    CHECK ((amac = 'eposta') = (yeni_eposta IS NOT NULL))
 );
 
 -- ===========================================================================

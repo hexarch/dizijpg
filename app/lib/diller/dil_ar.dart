@@ -1359,4 +1359,18 @@ const Map<String, String> cevirilerAr = {
       'لم يُعثر عليه. جرّب تهجئة أخرى.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'ابحث عن مسلسل أو فيلم أو ممثل أو مخرج أو شركة إنتاج.',
+  'E-posta adresini değiştir': 'تغيير عنوان بريدك الإلكتروني',
+  'E-posta bağlı değil': 'لا يوجد بريد إلكتروني مرتبط',
+  'Geçerli bir e-posta adresi yaz': 'اكتب عنوان بريد إلكتروني صالح',
+  'Bu zaten hesabının e-posta adresi': 'هذا هو عنوان بريد حسابك بالفعل',
+  'Kod gönder': 'إرسال الرمز',
+  'E-posta adresin güncellendi': 'تم تحديث عنوان بريدك الإلكتروني',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'هذا البريد الإلكتروني مسجَّل في حساب آخر',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'يُرسل رمز التحقق إلى العنوان الجديد، ولا يتغير العنوان إلا بعد إدخال الرمز. ستصل رموز إعادة تعيين كلمة المرور وتسجيل الدخول بخطوتين إلى العنوان الجديد من الآن فصاعدًا.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'عنوان البريد الإلكتروني في حسابك غير صالح، لذلك لا يمكن تسليم البريد. تواصل مع الدعم لربط العنوان الصحيح.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'تعذّر إرسال رمز إلى هذا العنوان، تحقق من العنوان',
 };

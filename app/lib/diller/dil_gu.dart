@@ -1376,4 +1376,18 @@ const Map<String, String> cevirilerGu = {
       'મળ્યું નહીં. બીજી જોડણી અજમાવો.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'સિરીઝ, ફિલ્મ, અભિનેતા, દિગ્દર્શક કે નિર્માણ કંપની શોધો.',
+  'E-posta adresini değiştir': 'તારું ઈમેલ સરનામું બદલ',
+  'E-posta bağlı değil': 'કોઈ ઈમેલ જોડાયેલ નથી',
+  'Geçerli bir e-posta adresi yaz': 'માન્ય ઈમેલ સરનામું લખ',
+  'Bu zaten hesabının e-posta adresi':
+      'આ પહેલેથી જ તારા ખાતાનું ઈમેલ સરનામું છે',
+  'Kod gönder': 'કોડ મોકલ',
+  'E-posta adresin güncellendi': 'તારું ઈમેલ સરનામું અપડેટ થયું',
+  'Bu e-posta başka bir hesapta kayıtlı': 'આ ઈમેલ બીજા ખાતામાં નોંધાયેલું છે',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'ચકાસણી કોડ નવા સરનામે મોકલાય છે; કોડ દાખલ કર્યા પછી જ સરનામું બદલાય છે. પાસવર્ડ રીસેટ અને બે-તબક્કાના લોગિન કોડ ત્યાર પછી નવા સરનામે જશે.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'તારા ખાતાનું ઈમેલ સરનામું માન્ય નથી, એટલે ઈમેલ પહોંચાડી શકાતું નથી. સાચું સરનામું જોડવા સપોર્ટનો સંપર્ક કર.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'આ સરનામે કોડ મોકલી શકાયો નહીં, સરનામું તપાસ',
 };

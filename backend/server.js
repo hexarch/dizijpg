@@ -51,6 +51,7 @@ import {
 import {
   IKI_ADIM_MAX_DENEME, IKI_ADIM_DK, IKI_ADIM_KOD_DESENI, IKI_ADIM_AMAC,
   esitSabit, ikiAdimBiletUret, ikiAdimBiletCoz, epostaMaskele, ikiAdimKarar,
+  epostaGecerli, epostaNormalle,
 } from './iki_adim.js';
 // Özel mesajların durağan şifrelemesi (AES-256-GCM). `cozGoster` ASLA
 // fırlatmaz: tek bozuk satır yüzünden sohbetin tamamı 500 dönmesin.
@@ -784,7 +785,10 @@ const mailUlastirici = nodemailer.createTransport({
 // sıfırlayabilir ya da iki adımlı doğrulamasını geçebilir. Maskele.
 // (md. 52: 'iki_adim' de buraya EKLENDİ — giriş kodu da sıfırlama kodu kadar
 // hassas; unutulsaydı 2FA kodları panelde okunabilir dururdu.)
-const KOD_MAILLERI = new Set(['sifirlama', 'iki_adim']);
+// 'eposta_degistir' 30 Ağu 2026'da EKLENDİ: e-posta değiştirme kodu da
+// sıfırlama kodu kadar hassas — maskelenmeseydi panele erişen biri o kodla
+// hesabın adresini kendi adresine çevirip devralabilirdi.
+const KOD_MAILLERI = new Set(['sifirlama', 'iki_adim', 'eposta_degistir']);
 function mailGovdeTemizle(metin, tur) {
   const t = KOD_MAILLERI.has(tur)
     ? String(metin).replace(/\b\d{6}\b/g, '••••••') : String(metin);
@@ -798,10 +802,20 @@ async function mailGonder(secenekler, bilgi = {}) {
   const ek = secenekler.attachments?.[0];
   let sonuc = null;
   let hata = null;
-  try {
-    sonuc = await mailUlastirici.sendMail({ from: MAIL_FROM, ...secenekler });
-  } catch (e) {
-    hata = e.message;
+  // ALICI BİÇİM DENETİMİ — "gönderildi" YALANINI KESEN YER.
+  // Postfix yerel teslimde adresi SORGULAMADAN kabul eder; alan adı yoksa
+  // bounce DAKİKALAR SONRA asenkron gelir. O yüzden sendMail başarıyla döner,
+  // uç "verilerin e-postana gönderildi" der ve kullanıcı boş kutuya bakar
+  // (30 Ağu 2026 olayı). Biçimi burada eleyip ÇAĞIRANA hata döndürüyoruz —
+  // `mailler` tablosuna da 'hata' olarak düşer, panelde görünür.
+  if (!epostaGecerli(secenekler.to)) {
+    hata = `gecersiz alici adresi: ${epostaMaskele(secenekler.to)}`;
+  } else {
+    try {
+      sonuc = await mailUlastirici.sendMail({ from: MAIL_FROM, ...secenekler });
+    } catch (e) {
+      hata = e.message;
+    }
   }
   havuz.query(
     `INSERT INTO mailler (kime, konu, govde, tur, kullanici_id, ek_ad, ek_boyut,
@@ -817,6 +831,20 @@ async function mailGonder(secenekler, bilgi = {}) {
   if (hata) throw new Error(hata);
   return sonuc;
 }
+
+/// "Hesabındaki adres teslim edilemez" yanıtının TEK üreticisi.
+///
+/// Mesaj SABİT (içine adres gömülmez): `ApiHata.toString()` metni çeviri
+/// haritasında ANAHTAR olarak arıyor, araya maskeli adres kaçarsa anahtar her
+/// hesapta değişir ve metin hiçbir dile çevrilemez. Adres ayrı alanda gider.
+/// `kod` da veriliyor — istemci Türkçe metne değil ona dallanır
+/// (bkz. `ApiHata.makineKodu`).
+const epostaGecersizYuku = (eposta) => ({
+  kod: 'EPOSTA_GECERSIZ',
+  hata: 'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim '
+    + 'edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.',
+  eposta_ipucu: epostaMaskele(eposta),
+});
 
 // ---------- yardımcılar ----------
 const TMDB = 'https://api.themoviedb.org/3';
@@ -8488,8 +8516,16 @@ async function kullaniciAdiDegistir(havuzVeya, kullaniciId, istenen, simdi = Dat
 
 app.post('/auth/kayit', authLimiti, sarici(async (req, res) => {
   if (await cihazKapisi(req, res)) return;
-  const { email, kullanici_adi, sifre } = req.body || {};
-  if (!email?.includes('@') || !kullanici_adi || (sifre || '').length < 6) {
+  const { kullanici_adi, sifre } = req.body || {};
+  // BİÇİM DENETİMİ (bkz. `epostaGecerli`): eskiden tek koşul `includes('@')`
+  // idi ve `<hane>@_` gibi TESLİM EDİLEMEZ adresler kayıttan geçiyordu. Hesap
+  // açılıyor, sonra sıfırlama/2FA/dışa aktarma mailleri sessizce bounce ediyor
+  // ve kullanıcı suçu kendi posta sağlayıcısında arıyordu. Normalleştirme de
+  // BURAYA alındı: SQL'deki `lower($1)` küçültüyor ama BOŞLUK KIRPMIYORDU,
+  // yani " a@b.com" ayrı bir satır olarak yazılabiliyordu. `lower($1)` yine
+  // duruyor — ikinci kemer, kaldırmanın kazancı yok.
+  const email = epostaNormalle(req.body?.email);
+  if (!epostaGecerli(email) || !kullanici_adi || (sifre || '').length < 6) {
     return res.status(400).json({ hata: 'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli' });
   }
   if (!KULLANICI_ADI_KALIBI.test(kullanici_adi)) {
@@ -8557,8 +8593,10 @@ app.post('/auth/misafir', authLimiti, sarici(async (req, res) => {
 
 // Misafir hesabını e-postaya bağlar (veriler korunur).
 app.post('/auth/bagla', girisZorunlu, sarici(async (req, res) => {
-  const { email, sifre, kullanici_adi } = req.body || {};
-  if (!email?.includes('@') || (sifre || '').length < 6) {
+  const { sifre, kullanici_adi } = req.body || {};
+  // Kayıtla AYNI denetim: burası da e-postanın ilk kez yazıldığı bir yol.
+  const email = epostaNormalle(req.body?.email);
+  if (!epostaGecerli(email) || (sifre || '').length < 6) {
     return res.status(400).json({ hata: 'Geçerli e-posta ve en az 6 karakter şifre gerekli' });
   }
   if (kullanici_adi && !KULLANICI_ADI_KALIBI.test(kullanici_adi)) {
@@ -8894,17 +8932,18 @@ const ZAMAN_ESITLEYICI_HASH = bcrypt.hashSync('dizijpg-zaman-esitleyici', 10);
  * yeniden ister). Bu, iki ayrı satır tutmanın karmaşıklığına değmeyen,
  * pratikte görülmeyen bir kenar durumdur.
  */
-async function ikiAdimKodYaz(kullaniciId, amac, biletHash = null) {
+async function ikiAdimKodYaz(kullaniciId, amac, biletHash = null, yeniEposta = null) {
   const kod = String(crypto.randomInt(100000, 1000000));
   const hash = await bcrypt.hash(kod, 10);
   await havuz.query(
     `INSERT INTO iki_adim_kodlari
-       (kullanici_id, kod_hash, amac, bilet_hash, bitis, deneme)
-     VALUES ($1,$2,$3,$4, now() + ($5 * interval '1 minute'), 0)
+       (kullanici_id, kod_hash, amac, bilet_hash, bitis, deneme, yeni_eposta)
+     VALUES ($1,$2,$3,$4, now() + ($5 * interval '1 minute'), 0, $6)
      ON CONFLICT (kullanici_id) DO UPDATE
        SET kod_hash=$2, amac=$3, bilet_hash=$4,
-           bitis=now() + ($5 * interval '1 minute'), deneme=0`,
-    [kullaniciId, hash, amac, biletHash, IKI_ADIM_DK],
+           bitis=now() + ($5 * interval '1 minute'), deneme=0,
+           yeni_eposta=$6`,
+    [kullaniciId, hash, amac, biletHash, IKI_ADIM_DK, yeniEposta],
   );
   return kod;
 }
@@ -8913,15 +8952,24 @@ const ikiAdimKodSil = (kullaniciId) =>
   havuz.query('DELETE FROM iki_adim_kodlari WHERE kullanici_id=$1', [kullaniciId]);
 
 /**
- * Kodu doğrular. Doğruysa satırı SİLER (tek kullanımlık) ve true döner.
+ * Kodu doğrular. Doğruysa satırı SİLER (tek kullanımlık).
  * `sifre-sifirla` ile aynı karar ağacı: süre → kilit → karşılaştırma.
+ *
+ * @returns {null|{yeniEposta: string|null}} Başarısızlıkta `null` (çağıranların
+ *   tamamı yalnız doğruluk değerine bakar; `false` yerine `null` dönmek hiçbir
+ *   dalı değiştirmez). Başarıda TÜKETİLEN SATIRIN yükü döner — 'eposta'
+ *   amacında uygulanacak hedef adres budur. Adresi ayrıca okumak YETMEZDİ:
+ *   okuma ile doğrulama arasında kullanıcı yeni bir kod isterse satırdaki
+ *   adres değişir ve YANLIŞ adres bağlanırdı. Doğrulanan satırın kendisi
+ *   döndüğü için o yarış kapalı.
  */
 async function ikiAdimKodDogrula(kullaniciId, amac, kod) {
   // Biçimsiz girdi DB'ye HİÇ dokunmaz ve deneme hakkı yakmaz (bkz. karar
   // ağacındaki 'bicimsiz' dalı).
-  if (!IKI_ADIM_KOD_DESENI.test(String(kod || ''))) return false;
+  if (!IKI_ADIM_KOD_DESENI.test(String(kod || ''))) return null;
   const { rows } = await havuz.query(
-    'SELECT kod_hash, amac, bitis, deneme FROM iki_adim_kodlari WHERE kullanici_id=$1',
+    `SELECT kod_hash, amac, bitis, deneme, yeni_eposta
+     FROM iki_adim_kodlari WHERE kullanici_id=$1`,
     [kullaniciId],
   );
   const kayit = rows[0];
@@ -8936,12 +8984,12 @@ async function ikiAdimKodDogrula(kullaniciId, amac, kod) {
     deneme: kayit?.deneme ?? 0,
     kodDogru: false,
   });
-  if (onKarar === 'gecersiz') return false;
+  if (onKarar === 'gecersiz') return null;
   // Kilit kodu BİLMEKTEN ÖNCE gelir: sınır aşılmışsa doğru kod bile kabul
   // edilmez ve satır düşer (yeniden gönderim şart, "biraz bekle" demiyoruz).
   if (onKarar === 'kilit') {
     await ikiAdimKodSil(kullaniciId);
-    return false;
+    return null;
   }
   // bcrypt.compare SABİT ZAMANLIDIR (erken çıkışlı bayt karşılaştırması yapmaz).
   if (!(await bcrypt.compare(String(kod), kayit.kod_hash))) {
@@ -8951,7 +8999,7 @@ async function ikiAdimKodDogrula(kullaniciId, amac, kod) {
       [kullaniciId],
     );
     if ((d[0]?.deneme ?? 0) >= IKI_ADIM_MAX_DENEME) await ikiAdimKodSil(kullaniciId);
-    return false;
+    return null;
   }
   // TEK KULLANIMLIK: doğrulanan kod HEMEN silinir.
   await ikiAdimKodSil(kullaniciId);
@@ -8963,7 +9011,7 @@ async function ikiAdimKodDogrula(kullaniciId, amac, kod) {
     'UPDATE kullanicilar SET eposta_dogrulandi=true WHERE id=$1 AND NOT eposta_dogrulandi',
     [kullaniciId],
   ).catch((e) => console.error('eposta_dogrulandi:', e.message));
-  return true;
+  return { yeniEposta: kayit.yeni_eposta ?? null };
 }
 
 /** Kod postası (ateşle-unut). Gövde `mailGovdeTemizle` ile günlükte maskelenir. */
@@ -9056,8 +9104,11 @@ app.get('/auth/iki-adim', girisZorunlu, ikiAdimOkuLimiti, sarici(async (req, res
   if (!rows.length) return res.status(404).json({ hata: 'Hesap bulunamadı' });
   res.json({
     acik: rows[0].iki_adim === true,
-    // E-postası olmayan (misafir) hesapta kod gönderilecek yer yok.
-    kullanilabilir: !!rows[0].email && !rows[0].misafir,
+    // E-postası olmayan (misafir) hesapta kod gönderilecek yer yok. TESLİM
+    // EDİLEMEZ adres de aynı kapıya çıkar: `epostaGecerli` olmadan ayar açık
+    // görünüyor, kullanıcı açmayı deniyor ve kod hiç gelmediği için kilitli
+    // kalıyordu (30 Ağu 2026 olayı).
+    kullanilabilir: epostaGecerli(rows[0].email) && !rows[0].misafir,
     eposta_ipucu: epostaMaskele(rows[0].email),
   });
 }));
@@ -9076,6 +9127,11 @@ app.post('/auth/iki-adim/kod', authLimiti, girisZorunlu, ikiAdimKodLimiti,
     if (!rows.length) return res.status(404).json({ hata: 'Hesap bulunamadı' });
     if (!rows[0].email || rows[0].misafir) {
       return res.status(400).json({ hata: 'Bu hesapta e-posta yok' });
+    }
+    // Adres teslim edilemez biçimdeyse kodu ÜRETME: üretirsek kullanıcı kodu
+    // bekleyen bir ekranda kalır ve iki adımlıyı hiç açamaz/kapatamaz.
+    if (!epostaGecerli(rows[0].email)) {
+      return res.status(400).json(epostaGecersizYuku(rows[0].email));
     }
     // Zaten istenen hâldeyse boşuna posta atma.
     if ((amac === 'ac') === (rows[0].iki_adim === true)) {
@@ -9103,6 +9159,127 @@ app.post('/auth/iki-adim/dogrula', authLimiti, girisZorunlu,
     // atılırdı (ve kutusu ölüyse geri giremezdi). Bkz. yukarıdaki "KURTARMA
     // KODLARI" gerekçesi, madde (b).
     res.json({ acik });
+  }));
+
+// ---------------------------------------------------------------------------
+// E-POSTA DEĞİŞTİRME (30 Ağu 2026)
+// ---------------------------------------------------------------------------
+// NEDEN VAR: `jrssq` (id 445) hesabını `<10 hane>@_` adresiyle açmıştı — o
+// tarihte kayıttaki tek koşul `email.includes('@')` idi. Dışa aktarma ve iki
+// adımlı kod maillerinin hiçbiri ulaşmadı, kullanıcı suçu kendi sağlayıcısında
+// (QQ Mail) aradı ve geri bildirim yazdı. Biçim denetimi `epostaGecerli` ile
+// kapatıldı, AMA ZATEN BOZUK ADRESLE KAYITLI KULLANICI KENDİNİ KURTARAMIYORDU:
+// uygulamada kullanıcı adı değiştirme vardı, e-posta değiştirme YOKTU.
+//
+// İKİ ADIM, ÇÜNKÜ HESAP DEVRALMA SINIRINDA BİR İŞLEM:
+//   1. /auth/eposta-degistir/kod  — ŞİFRE ister, kodu YENİ adrese yollar
+//   2. /auth/eposta-degistir      — koddan geçen adres uygulanır
+// Şifre, ÇALINMIŞ OTURUMLA sessiz devralmayı kapatır (token tek başına
+// yetmesin — `/auth/iki-adim/kod` ile aynı gerekçe). Koda YENİ adresten
+// ulaşılması ise kullanıcının o kutuya GERÇEKTEN sahip olduğunu kanıtlar;
+// kanıt aranmasaydı özellik, hesabı erişilemez bir adrese kilitlemenin
+// (ve bozuk adres olayını tekrar etmenin) en kısa yolu olurdu.
+//
+// ESKİ ADRESE BİLGİ POSTASI ATILMIYOR — BİLEREK: bu özelliğin İLK MÜŞTERİSİ
+// eski adresi TESLİM EDİLEMEZ olan kullanıcıdır. "Önce eskiye haber ver"
+// kuralı tam da kurtarmaya çalıştığımız insanı dışarıda bırakırdı.
+
+// Hesap başına saatte 5. `sifirlamaIstekLimiti` ile aynı gerekçe, bir fazlası
+// var: buradaki adresi SALDIRGAN YAZAR. Limitsiz uç, dizi.jpg'yi isteğe bağlı
+// bir posta bombardıman aracına çevirirdi.
+const epostaDegistirLimiti = hizLimitiMerkezi(5, (req) => `ed:${req.kullanici.id}`);
+
+app.post('/auth/eposta-degistir/kod', authLimiti, girisZorunlu,
+  epostaDegistirLimiti, sarici(async (req, res) => {
+    const { sifre } = req.body || {};
+    const email = epostaNormalle(req.body?.email);
+    if (!epostaGecerli(email)) {
+      return res.status(400).json({
+        kod: 'EPOSTA_BICIMSIZ',
+        hata: 'Geçerli bir e-posta adresi yaz',
+      });
+    }
+    const { rows } = await havuz.query(
+      'SELECT email, sifre_hash, misafir FROM kullanicilar WHERE id=$1',
+      [req.kullanici.id]);
+    if (!rows.length) return res.status(404).json({ hata: 'Hesap bulunamadı' });
+    const k = rows[0];
+    // Misafirin şifresi yok; adres bağlama yolu ZATEN `/auth/bagla`.
+    if (k.misafir || !k.sifre_hash) {
+      return res.status(400).json({ hata: 'Bu hesapta e-posta yok' });
+    }
+    // ŞİFRE, ADRESTEN ÖNCE: yanlış şifreyle gelen biri "bu adres kayıtlı mı"
+    // sorusunu (409) hiç sormamalı — uç bir e-posta sayım aracına dönüşürdü.
+    if (!(await bcrypt.compare(String(sifre || ''), k.sifre_hash))) {
+      return res.status(401).json({ hata: 'Şifre hatalı' });
+    }
+    if (email === k.email) {
+      return res.status(409).json({
+        kod: 'EPOSTA_AYNI',
+        hata: 'Bu zaten hesabının e-posta adresi',
+      });
+    }
+    const { rows: dolu } = await havuz.query(
+      'SELECT 1 FROM kullanicilar WHERE email=$1 AND id<>$2', [email, req.kullanici.id]);
+    if (dolu.length) {
+      return res.status(409).json({
+        kod: 'EPOSTA_KAYITLI',
+        hata: 'Bu e-posta başka bir hesapta kayıtlı',
+      });
+    }
+    // Kod, hedef adrese BAĞLI yazılır (`yeni_eposta`). İkinci adım istekteki
+    // adrese değil SATIRDAKİ adrese bakar; bakmasaydı kullanıcı A adresinden
+    // okuduğu kodla B adresini bağlayabilirdi.
+    const kod = await ikiAdimKodYaz(req.kullanici.id, 'eposta', null, email);
+    // ATEŞLE-UNUT DEĞİL, BEKLİYORUZ: bu akışın TEK amacı postanın ULAŞMASI.
+    // Sessizce kuyruğa bırakıp "gönderildi" demek, düzeltmeye çalıştığımız
+    // hatanın ta kendisi olurdu.
+    try {
+      await mailGonder({
+        to: email,
+        subject: 'dizi.jpg e-posta doğrulama kodun',
+        text: `dizi.jpg hesabının e-posta adresini bu adresle değiştirmek için kodun: ${kod}`
+          + `\n\n${IKI_ADIM_DK} dakika geçerlidir. Sen istemediysen bu e-postayı yok say.`,
+      }, { tur: 'eposta_degistir', kullanici_id: req.kullanici.id });
+    } catch (e) {
+      console.error('eposta degistirme maili:', e.message);
+      return res.status(502).json({
+        kod: 'EPOSTA_ULASMADI',
+        hata: 'Bu adrese kod gönderilemedi, adresi kontrol et',
+      });
+    }
+    res.json({ gonderildi: true, eposta_ipucu: epostaMaskele(email) });
+  }));
+
+app.post('/auth/eposta-degistir', authLimiti, girisZorunlu,
+  sarici(async (req, res) => {
+    // Uygulanacak adres İSTEKTEN DEĞİL, tüketilen kod satırından gelir.
+    const sonuc = await ikiAdimKodDogrula(req.kullanici.id, 'eposta', req.body?.kod);
+    if (!sonuc?.yeniEposta) return ikiAdimGecersiz(res);
+    // Kemer + askı: satırdaki adres kod yazılırken zaten elendi, ama bu UPDATE
+    // hesabın kimliğini değiştiriyor — elemeyi burada da tekrarlamak ucuz.
+    if (!epostaGecerli(sonuc.yeniEposta)) return ikiAdimGecersiz(res);
+    try {
+      const { rows } = await havuz.query(
+        `UPDATE kullanicilar SET email=$1, eposta_dogrulandi=true
+         WHERE id=$2 RETURNING email`,
+        [sonuc.yeniEposta, req.kullanici.id],
+      );
+      if (!rows.length) return res.status(404).json({ hata: 'Hesap bulunamadı' });
+      // `sifre_surumu` BİLEREK ARTIRILMIYOR — 2FA aç/kapat ile aynı karar:
+      // kullanıcı adresini düzeltirken kendi telefonundan atılmamalı. Şifre
+      // değişmedi, oturumların güvenlik varsayımı da değişmedi.
+      res.json({ email: rows[0].email, eposta_ipucu: epostaMaskele(rows[0].email) });
+    } catch (e) {
+      // Kod beklerken adresi başkası kaptıysa tekil indeks burada patlar.
+      if (e.code === '23505') {
+        return res.status(409).json({
+          kod: 'EPOSTA_KAYITLI',
+          hata: 'Bu e-posta başka bir hesapta kayıtlı',
+        });
+      }
+      throw e;
+    }
   }));
 
 // ---------- TMDB proxy (beyaz listeli) ----------
@@ -13072,7 +13249,15 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
   gorunumKaydet(rows.map((r) => r.id), {
     kaynak: 'dizi', kullaniciId: benId, ip: req.ip,
   });
-  res.json({ yorumlar: rows.map(ceviriUygula) });
+  // `icerikler` 30 Ağu 2026'da EKLENDİ. `etiketler` bu uçtan zaten dönüyordu
+  // ama AD ve POSTER dönmüyordu: istemci yalnız SAYFANIN KENDİ içeriğini
+  // biliyor, gönderiye bağlı ÖTEKİ varlıkları (oyuncu, ikinci dizi) çizemiyor
+  // ve rozet şeridini hiç göstermiyordu. Kullanıcı bildirimi: dizinin
+  // sayfasındaki yorumda oyuncu etiketi görünmüyor.
+  res.json({
+    yorumlar: rows.map(ceviriUygula),
+    icerikler: await akisIcerikleri(rows),
+  });
 }));
 
 // ---------- sosyal akış ----------
@@ -16129,14 +16314,17 @@ app.get('/gizlenen-yorumlar', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
     `SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
             y.metin, y.medya, y.tarih, y.ust_id, y.spoiler, y.kaynak_dil,
+            ${ETIKET_ALANI},
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni
      FROM yorumlar y
      WHERE y.kullanici_id=$1 AND y.profilde_gizli
      ORDER BY y.tarih DESC LIMIT 100`,
     [req.kullanici.id],
   );
-  const anahtarlar = [...new Set(rows.map((y) => `${y.tur}:${y.tmdb_id}`))];
-  const icerikler = await icerikBilgileri(anahtarlar);
+  // Kart profildekiyle AYNI (ProfilYorumKarti) ve o kart ek etiket şeridini
+  // çiziyor: anahtarlar birincil etiketle sınırlı kalırsa ikinci/üçüncü rozet
+  // adsız ("?") görünür. `akisIcerikleri` etiketlerin hepsini toplar.
+  const icerikler = await akisIcerikleri(rows);
   res.json({ yorumlar: rows, icerikler });
 }));
 
@@ -16749,6 +16937,12 @@ app.post('/veri/disa-aktar', girisZorunlu, veriLimiti, sarici(async (req, res) =
       hata: 'Verilerini e-postayla almak için önce hesabına e-posta bağlamalısın',
     });
   }
+  // Adres BOZUKSA ZIP'i hiç üretme: `disaAktar` hesabın tüm verisini tarayan
+  // pahalı bir iş ve sonunda mail zaten teslim edilemeyecek. Kullanıcı sessiz
+  // bir "gönderildi" yerine nedenini görsün (30 Ağu 2026 olayı).
+  if (!epostaGecerli(eposta)) {
+    return res.status(400).json(epostaGecersizYuku(eposta));
+  }
   const zip = await disaAktar(havuz, req.kullanici.id);
   const tarih = new Date().toISOString().slice(0, 10);
   await mailGonder({
@@ -16939,6 +17133,13 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
           `SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
                   y.metin, y.medya, y.ust_id,
                   y.goruntulenme, y.spoiler, y.tarih, y.kaynak_dil,
+                  -- COKLU ETIKET (30 Agu 2026 hatasi): profil karti AkisKarti
+                  -- ve o kart etiketler alanindan ek rozet seridini ZATEN
+                  -- ciziyor; alan gelmedigi icin serit hic gorunmuyordu.
+                  -- Kullanici bildirimi: "oyuncu etiketli yorum paylastim ama
+                  -- profilimdeki yorumlar kisminda oyuncunun etiketini
+                  -- goremiyorum." (Sablon dizesi: BACKTICK YOK.)
+                  ${ETIKET_ALANI},
                   (SELECT c.metin FROM metin_cevirileri c
                      WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $2) AS ceviri_metin,
                   (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
@@ -17081,11 +17282,16 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   // yanıt hedefin tur/tmdb_id'sini devraldığından (POST /yorumlar) bu pratikte
   // aynı anahtardır ve Set onu tekilleştirir — ama eski/elle düzeltilmiş
   // satırlar ayrışırsa kart "?" yazmasın diye açıkça eklenir.
-  const anahtarlar = [...new Set(yorumlar.rows.flatMap((y) => (
-    y.ust ? [`${y.tur}:${y.tmdb_id}`, `${y.ust.tur}:${y.ust.tmdb_id}`]
-          : [`${y.tur}:${y.tmdb_id}`]
-  )))];
-  const icerikler = await icerikBilgileri(anahtarlar);
+  // `akisIcerikleri` BİRİNCİL ETİKETİ DE, `etiketler` dizisindeki her varlığı
+  // da toplar (ve `tur` NULL olan etiketsiz gönderiden anahtar üretmez).
+  // Elle kurulan eski liste yalnız birincili topluyordu: ikinci/üçüncü rozet
+  // adsız ("?") çizilirdi. Üst gönderinin anahtarı Set'e ayrıca katılıyor —
+  // yanıt hedefin tur/tmdb_id'sini devralır, yani pratikte aynı anahtardır,
+  // ama elle düzeltilmiş eski satırlar ayrışırsa kart "?" yazmasın.
+  const icerikler = await akisIcerikleri([
+    ...yorumlar.rows,
+    ...yorumlar.rows.filter((y) => y.ust).map((y) => y.ust),
+  ]);
   res.json({
     ...k.rows[0],
     ben_mi: benId === id,

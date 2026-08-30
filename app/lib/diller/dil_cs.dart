@@ -1383,4 +1383,19 @@ const Map<String, String> cevirilerCs = {
       'Nenalezeno. Zkus jiný zápis.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Hledej seriál, film, herce, režiséra nebo produkci.',
+  'E-posta adresini değiştir': 'Změnit e-mailovou adresu',
+  'E-posta bağlı değil': 'Není připojen žádný e-mail',
+  'Geçerli bir e-posta adresi yaz': 'Napiš platnou e-mailovou adresu',
+  'Bu zaten hesabının e-posta adresi':
+      'Tohle už je e-mailová adresa tvého účtu',
+  'Kod gönder': 'Odeslat kód',
+  'E-posta adresin güncellendi': 'Tvoje e-mailová adresa byla aktualizována',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Tenhle e-mail je registrovaný u jiného účtu',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Ověřovací kód se posílá na NOVOU adresu; adresa se změní až po zadání kódu. Kódy pro obnovu hesla a dvoufázové přihlášení budou od teď chodit na novou adresu.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'E-mailová adresa na tvém účtu není platná, takže e-mail nelze doručit. Pro připojení správné adresy se obrať na podporu.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Na tuhle adresu se nepodařilo poslat kód, zkontroluj ji',
 };

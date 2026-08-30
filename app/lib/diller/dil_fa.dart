@@ -1373,4 +1373,17 @@ const Map<String, String> cevirilerFa = {
       'پیدا نشد. املای دیگری را امتحان کن.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'دنبال سریال، فیلم، بازیگر، کارگردان یا شرکت سازنده بگرد.',
+  'E-posta adresini değiştir': 'نشانی ایمیلت را عوض کن',
+  'E-posta bağlı değil': 'ایمیلی متصل نیست',
+  'Geçerli bir e-posta adresi yaz': 'یک نشانی ایمیل معتبر بنویس',
+  'Bu zaten hesabının e-posta adresi': 'این همین حالا هم نشانی ایمیل حسابت است',
+  'Kod gönder': 'ارسال کد',
+  'E-posta adresin güncellendi': 'نشانی ایمیلت به‌روزرسانی شد',
+  'Bu e-posta başka bir hesapta kayıtlı': 'این ایمیل در حساب دیگری ثبت شده است',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'کد تأیید به نشانی جدید فرستاده می‌شود؛ نشانی فقط پس از وارد کردن کد عوض می‌شود. کدهای بازنشانی گذرواژه و ورود دومرحله‌ای از آن پس به نشانی جدید می‌روند.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'نشانی ایمیل حسابت معتبر نیست، بنابراین ایمیل تحویل داده نمی‌شود. برای اتصال نشانی درست با پشتیبانی تماس بگیر.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'نتوانستیم به این نشانی کد بفرستیم، نشانی را بررسی کن',
 };

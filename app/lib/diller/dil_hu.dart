@@ -1399,4 +1399,18 @@ const Map<String, String> cevirilerHu = {
       'Nincs találat. Próbáld más írásmóddal.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Keress sorozatot, filmet, színészt, rendezőt vagy gyártót.',
+  'E-posta adresini değiştir': 'E-mail-cím módosítása',
+  'E-posta bağlı değil': 'Nincs összekapcsolt e-mail',
+  'Geçerli bir e-posta adresi yaz': 'Írj be egy érvényes e-mail-címet',
+  'Bu zaten hesabının e-posta adresi': 'Ez már a fiókod e-mail-címe',
+  'Kod gönder': 'Kód küldése',
+  'E-posta adresin güncellendi': 'Az e-mail-címed frissült',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Ez az e-mail-cím már egy másik fiókhoz tartozik',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Az ellenőrző kód az ÚJ címre megy; a cím csak a kód megadása után változik. A jelszó-visszaállítási és a kétlépcsős belépési kódok ettől kezdve az új címre érkeznek.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'A fiókodon lévő e-mail-cím nem érvényes, ezért nem kézbesíthető e-mail. Vedd fel a kapcsolatot a támogatással a helyes cím összekapcsolásához.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Nem sikerült kódot küldeni erre a címre, ellenőrizd a címet',
 };

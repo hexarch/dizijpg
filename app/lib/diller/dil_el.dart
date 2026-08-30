@@ -1411,4 +1411,19 @@ const Map<String, String> cevirilerEl = {
       'Δεν βρέθηκε. Δοκίμασε άλλη γραφή.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Αναζήτησε σειρά, ταινία, ηθοποιό, σκηνοθέτη ή εταιρεία παραγωγής.',
+  'E-posta adresini değiştir': 'Άλλαξε τη διεύθυνση email σου',
+  'E-posta bağlı değil': 'Δεν έχει συνδεθεί email',
+  'Geçerli bir e-posta adresi yaz': 'Γράψε μια έγκυρη διεύθυνση email',
+  'Bu zaten hesabının e-posta adresi':
+      'Αυτή είναι ήδη η διεύθυνση email του λογαριασμού σου',
+  'Kod gönder': 'Αποστολή κωδικού',
+  'E-posta adresin güncellendi': 'Η διεύθυνση email σου ενημερώθηκε',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Αυτό το email είναι καταχωρημένο σε άλλον λογαριασμό',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Ο κωδικός επαλήθευσης στέλνεται στη ΝΕΑ διεύθυνση· η διεύθυνση αλλάζει μόνο αφού καταχωρήσεις τον κωδικό. Οι κωδικοί επαναφοράς κωδικού πρόσβασης και σύνδεσης δύο βημάτων θα πηγαίνουν από εδώ και πέρα στη νέα διεύθυνση.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Η διεύθυνση email του λογαριασμού σου δεν είναι έγκυρη, γι\' αυτό το email δεν μπορεί να παραδοθεί. Επικοινώνησε με την υποστήριξη για να συνδέσεις τη σωστή διεύθυνση.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Δεν στάλθηκε κωδικός σε αυτή τη διεύθυνση, έλεγξε τη διεύθυνση',
 };

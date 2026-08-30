@@ -1320,4 +1320,17 @@ const Map<String, String> cevirilerKo = {
   'Bulunamadı. Adın yazılışını değiştirip dene.': '찾지 못했어요. 다른 철자로 시도해 보세요.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       '드라마, 영화, 배우, 감독 또는 제작사를 검색하세요.',
+  'E-posta adresini değiştir': '이메일 주소 변경',
+  'E-posta bağlı değil': '연결된 이메일이 없습니다',
+  'Geçerli bir e-posta adresi yaz': '올바른 이메일 주소를 입력하세요',
+  'Bu zaten hesabının e-posta adresi': '이미 계정의 이메일 주소입니다',
+  'Kod gönder': '코드 보내기',
+  'E-posta adresin güncellendi': '이메일 주소가 변경되었습니다',
+  'Bu e-posta başka bir hesapta kayıtlı': '이 이메일은 다른 계정에 등록되어 있습니다',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      '인증 코드는 새 주소로 발송되며, 코드를 입력해야 주소가 바뀝니다. 비밀번호 재설정과 2단계 로그인 코드도 이후에는 새 주소로 갑니다.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      '계정의 이메일 주소가 올바르지 않아 메일을 보낼 수 없습니다. 올바른 주소를 연결하려면 지원팀에 문의하세요.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      '이 주소로 코드를 보내지 못했습니다. 주소를 확인하세요',
 };

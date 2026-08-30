@@ -1414,4 +1414,19 @@ const Map<String, String> cevirilerFil = {
       'Walang nahanap. Subukan ang ibang baybay.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Maghanap ng serye, pelikula, aktor, direktor o production company.',
+  'E-posta adresini değiştir': 'Palitan ang email address mo',
+  'E-posta bağlı değil': 'Walang naka-link na email',
+  'Geçerli bir e-posta adresi yaz': 'Maglagay ng wastong email address',
+  'Bu zaten hesabının e-posta adresi':
+      'Iyan na ang email address ng account mo',
+  'Kod gönder': 'Ipadala ang code',
+  'E-posta adresin güncellendi': 'Na-update na ang email address mo',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Nakarehistro na ang email na ito sa ibang account',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Ipinapadala ang verification code sa BAGONG address; magbabago lang ang address pagkatapos mong ilagay ang code. Doon na rin pupunta ang mga code para sa pag-reset ng password at two-step login.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Hindi wasto ang email address sa account mo, kaya hindi maihahatid ang email. Makipag-ugnayan sa support para i-link ang tamang address.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Hindi makapagpadala ng code sa address na ito, suriin ang address',
 };

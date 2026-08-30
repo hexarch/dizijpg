@@ -1411,4 +1411,19 @@ const Map<String, String> cevirilerDe = {
       'Nicht gefunden. Versuche eine andere Schreibweise.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Suche nach Serie, Film, Schauspieler, Regisseur oder Produktionsfirma.',
+  'E-posta adresini değiştir': 'E-Mail-Adresse ändern',
+  'E-posta bağlı değil': 'Keine E-Mail verknüpft',
+  'Geçerli bir e-posta adresi yaz': 'Gib eine gültige E-Mail-Adresse ein',
+  'Bu zaten hesabının e-posta adresi':
+      'Das ist bereits die E-Mail-Adresse deines Kontos',
+  'Kod gönder': 'Code senden',
+  'E-posta adresin güncellendi': 'Deine E-Mail-Adresse wurde aktualisiert',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Diese E-Mail ist bei einem anderen Konto registriert',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Der Bestätigungscode geht an die NEUE Adresse; die Adresse ändert sich erst, wenn du den Code eingibst. Codes zum Zurücksetzen des Passworts und für die Zwei-Schritt-Anmeldung gehen ab dann an die neue Adresse.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Die E-Mail-Adresse in deinem Konto ist ungültig, deshalb kann keine E-Mail zugestellt werden. Wende dich an den Support, um die richtige Adresse zu verknüpfen.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'An diese Adresse konnte kein Code gesendet werden, prüf die Adresse',
 };

@@ -1395,4 +1395,18 @@ const Map<String, String> cevirilerFi = {
       'Ei löytynyt. Kokeile toista kirjoitusasua.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Hae sarjaa, elokuvaa, näyttelijää, ohjaajaa tai tuotantoyhtiötä.',
+  'E-posta adresini değiştir': 'Vaihda sähköpostiosoitteesi',
+  'E-posta bağlı değil': 'Sähköpostia ei ole liitetty',
+  'Geçerli bir e-posta adresi yaz': 'Kirjoita kelvollinen sähköpostiosoite',
+  'Bu zaten hesabının e-posta adresi': 'Tämä on jo tilisi sähköpostiosoite',
+  'Kod gönder': 'Lähetä koodi',
+  'E-posta adresin güncellendi': 'Sähköpostiosoitteesi päivitettiin',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Tämä sähköposti on rekisteröity toiselle tilille',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Vahvistuskoodi lähetetään UUTEEN osoitteeseen; osoite vaihtuu vasta kun syötät koodin. Salasanan palautus- ja kaksivaiheisen kirjautumisen koodit menevät siitä lähtien uuteen osoitteeseen.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Tilisi sähköpostiosoite ei ole kelvollinen, joten sähköpostia ei voi toimittaa. Ota yhteyttä tukeen liittääksesi oikean osoitteen.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Koodia ei voitu lähettää tähän osoitteeseen, tarkista osoite',
 };

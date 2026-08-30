@@ -1382,4 +1382,18 @@ const Map<String, String> cevirilerMr = {
       'सापडले नाही. दुसरे स्पेलिंग वापरून पाहा.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'मालिका, चित्रपट, अभिनेता, दिग्दर्शक किंवा निर्मिती कंपनी शोधा.',
+  'E-posta adresini değiştir': 'तुझा ईमेल पत्ता बदल',
+  'E-posta bağlı değil': 'कोणताही ईमेल जोडलेला नाही',
+  'Geçerli bir e-posta adresi yaz': 'वैध ईमेल पत्ता लिही',
+  'Bu zaten hesabının e-posta adresi': 'हा आधीच तुझ्या खात्याचा ईमेल पत्ता आहे',
+  'Kod gönder': 'कोड पाठव',
+  'E-posta adresin güncellendi': 'तुझा ईमेल पत्ता अद्ययावत झाला',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'हा ईमेल दुसऱ्या खात्यावर नोंदवलेला आहे',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'पडताळणी कोड नव्या पत्त्यावर पाठवला जातो; कोड टाकल्यावरच पत्ता बदलतो. पासवर्ड रीसेट आणि दोन-टप्प्यांचे लॉगिन कोड यापुढे नव्या पत्त्यावर जातील.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'तुझ्या खात्याचा ईमेल पत्ता वैध नाही, त्यामुळे ईमेल पोहोचवता येत नाही. योग्य पत्ता जोडण्यासाठी सपोर्टशी संपर्क साध.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'या पत्त्यावर कोड पाठवता आला नाही, पत्ता तपास',
 };

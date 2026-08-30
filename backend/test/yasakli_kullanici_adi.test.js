@@ -35,6 +35,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ARSIV_YAS_SAAT } from '../siralama.js';
+// GERÇEK fonksiyonlar enjekte ediliyor, taklit değil: kayıt/bağlama uçları
+// e-posta biçimini bunlarla eliyor (bkz. eposta_bicimi.test.js). Taklit
+// koysaydık test, uçların artık geçerli e-posta istediğini göremezdi.
+import { epostaGecerli, epostaNormalle } from '../iki_adim.js';
 
 const KOK = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const oku = (a) => fs.readFileSync(path.join(KOK, a), 'utf8');
@@ -234,6 +238,8 @@ function kayitUcu(bagimlilik = {}) {
       bcrypt: PATLAYAN_BCRYPT,
       havuz: PATLAYAN_HAVUZ,
       jwtUret: () => 'tok',
+      epostaGecerli,
+      epostaNormalle,
       ...bagimlilik,
     },
     ucIsleyiciKaynagi('post', '/auth/kayit'));
@@ -279,6 +285,8 @@ function baglaUcu(bagimlilik = {}) {
       havuz: PATLAYAN_HAVUZ,
       jwtUret: () => 'tok',
       sifreSurumOnbellekSil: () => {},
+      epostaGecerli,
+      epostaNormalle,
       ...bagimlilik,
     },
     ucIsleyiciKaynagi('post', '/auth/bagla'));
@@ -499,6 +507,9 @@ test('YORUMLAR SQL: muafiyet `NOT k.ai` — ad artık PARAMETRE bile değil', as
       istekBaglam: { getStore: () => ({ dil: 'tr' }) },
       gorunumKaydet: () => {},
       ceviriUygula: (r) => r,
+      // 30 Ağu 2026: uç, etiketlerin ad/posterini de döndürüyor. Bu testin
+      // konusu SORGU METNİ; TMDB'ye giden yanıt yükü değil, o yüzden taklit.
+      akisIcerikleri: async () => ({}),
     },
     ucIsleyiciKaynagi('get', '/yorumlar/:tur/:tmdbId'));
 

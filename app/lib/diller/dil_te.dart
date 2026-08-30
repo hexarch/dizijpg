@@ -1387,4 +1387,17 @@ const Map<String, String> cevirilerTe = {
       'దొరకలేదు. వేరే స్పెల్లింగ్ ప్రయత్నించు.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'సిరీస్, సినిమా, నటుడు, దర్శకుడు లేదా నిర్మాణ సంస్థను వెతుకు.',
+  'E-posta adresini değiştir': 'నీ ఇమెయిల్ చిరునామాను మార్చు',
+  'E-posta bağlı değil': 'ఏ ఇమెయిల్ అనుసంధానించబడలేదు',
+  'Geçerli bir e-posta adresi yaz': 'సరైన ఇమెయిల్ చిరునామా రాయి',
+  'Bu zaten hesabının e-posta adresi': 'ఇది ఇప్పటికే నీ ఖాతా ఇమెయిల్ చిరునామా',
+  'Kod gönder': 'కోడ్ పంపు',
+  'E-posta adresin güncellendi': 'నీ ఇమెయిల్ చిరునామా నవీకరించబడింది',
+  'Bu e-posta başka bir hesapta kayıtlı': 'ఈ ఇమెయిల్ మరో ఖాతాలో నమోదైంది',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'ధృవీకరణ కోడ్ కొత్త చిరునామాకు పంపబడుతుంది; కోడ్ నమోదు చేసిన తర్వాతే చిరునామా మారుతుంది. పాస్‌వర్డ్ రీసెట్ మరియు రెండు-దశల లాగిన్ కోడ్‌లు ఆ తర్వాత కొత్త చిరునామాకు వెళ్తాయి.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'నీ ఖాతాలోని ఇమెయిల్ చిరునామా చెల్లదు, అందుకే ఇమెయిల్ చేరవేయలేకపోతున్నాం. సరైన చిరునామాను అనుసంధానించడానికి మద్దతును సంప్రదించు.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'ఈ చిరునామాకు కోడ్ పంపలేకపోయాం, చిరునామాను తనిఖీ చేయి',
 };

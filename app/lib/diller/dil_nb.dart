@@ -1389,4 +1389,19 @@ const Map<String, String> cevirilerNb = {
       'Ikke funnet. Prøv en annen skrivemåte.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Søk etter serie, film, skuespiller, regissør eller produksjonsselskap.',
+  'E-posta adresini değiştir': 'Endre e-postadressen din',
+  'E-posta bağlı değil': 'Ingen e-post tilknyttet',
+  'Geçerli bir e-posta adresi yaz': 'Skriv en gyldig e-postadresse',
+  'Bu zaten hesabının e-posta adresi':
+      'Det er allerede e-postadressen til kontoen din',
+  'Kod gönder': 'Send kode',
+  'E-posta adresin güncellendi': 'E-postadressen din er oppdatert',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Denne e-posten er registrert på en annen konto',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Bekreftelseskoden sendes til den NYE adressen; adressen endres først når du har skrevet inn koden. Koder for tilbakestilling av passord og totrinnsinnlogging går til den nye adressen fra da av.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'E-postadressen på kontoen din er ikke gyldig, så e-post kan ikke leveres. Kontakt kundestøtte for å knytte til riktig adresse.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Kunne ikke sende kode til denne adressen, sjekk adressen',
 };

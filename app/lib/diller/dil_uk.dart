@@ -1393,4 +1393,19 @@ const Map<String, String> cevirilerUk = {
       'Не знайдено. Спробуй інше написання.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Шукай серіал, фільм, актора, режисера або студію.',
+  'E-posta adresini değiştir': 'Змінити адресу електронної пошти',
+  'E-posta bağlı değil': 'Пошту не прив’язано',
+  'Geçerli bir e-posta adresi yaz': 'Введи дійсну адресу електронної пошти',
+  'Bu zaten hesabının e-posta adresi':
+      'Це вже адреса пошти твого облікового запису',
+  'Kod gönder': 'Надіслати код',
+  'E-posta adresin güncellendi': 'Адресу електронної пошти оновлено',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Ця пошта зареєстрована в іншому обліковому записі',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Код підтвердження надсилається на НОВУ адресу; адреса змінюється лише після введення коду. Коди скидання пароля та двоетапного входу відтоді надходитимуть на нову адресу.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Адреса електронної пошти у твоєму обліковому записі недійсна, тому лист неможливо доставити. Звернися до підтримки, щоб прив’язати правильну адресу.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Не вдалося надіслати код на цю адресу, перевір адресу',
 };

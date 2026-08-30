@@ -1387,4 +1387,19 @@ const Map<String, String> cevirilerUr = {
       'نہیں ملا۔ کوئی اور ہجے آزمائیں۔',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'سیریز، فلم، اداکار، ہدایتکار یا پروڈکشن کمپنی تلاش کریں۔',
+  'E-posta adresini değiştir': 'اپنا ای میل پتہ تبدیل کریں',
+  'E-posta bağlı değil': 'کوئی ای میل منسلک نہیں',
+  'Geçerli bir e-posta adresi yaz': 'ایک درست ای میل پتہ لکھیں',
+  'Bu zaten hesabının e-posta adresi':
+      'یہ پہلے ہی آپ کے اکاؤنٹ کا ای میل پتہ ہے',
+  'Kod gönder': 'کوڈ بھیجیں',
+  'E-posta adresin güncellendi': 'آپ کا ای میل پتہ اپ ڈیٹ ہو گیا',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'یہ ای میل کسی دوسرے اکاؤنٹ پر رجسٹرڈ ہے',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'تصدیقی کوڈ نئے پتے پر بھیجا جاتا ہے؛ پتہ کوڈ درج کرنے کے بعد ہی بدلتا ہے۔ پاس ورڈ ری سیٹ اور دو مرحلوں والے لاگ اِن کے کوڈ اس کے بعد نئے پتے پر جائیں گے۔',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'آپ کے اکاؤنٹ کا ای میل پتہ درست نہیں، اس لیے ای میل نہیں پہنچائی جا سکتی۔ درست پتہ منسلک کرنے کے لیے سپورٹ سے رابطہ کریں۔',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'اس پتے پر کوڈ نہیں بھیجا جا سکا، پتہ جانچیں',
 };

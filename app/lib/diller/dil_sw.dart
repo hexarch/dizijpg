@@ -1394,4 +1394,19 @@ const Map<String, String> cevirilerSw = {
       'Haikupatikana. Jaribu tahajia nyingine.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Tafuta msururu, filamu, mwigizaji, mkurugenzi au kampuni ya utayarishaji.',
+  'E-posta adresini değiştir': 'Badilisha anwani yako ya barua pepe',
+  'E-posta bağlı değil': 'Hakuna barua pepe iliyounganishwa',
+  'Geçerli bir e-posta adresi yaz': 'Andika anwani sahihi ya barua pepe',
+  'Bu zaten hesabının e-posta adresi':
+      'Hiyo tayari ni anwani ya barua pepe ya akaunti yako',
+  'Kod gönder': 'Tuma msimbo',
+  'E-posta adresin güncellendi': 'Anwani yako ya barua pepe imesasishwa',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Barua pepe hii imesajiliwa kwenye akaunti nyingine',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Msimbo wa uthibitisho hutumwa kwenye anwani MPYA; anwani hubadilika tu baada ya kuweka msimbo. Misimbo ya kuweka upya nenosiri na ya kuingia kwa hatua mbili itakwenda kwenye anwani mpya tangu hapo.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Anwani ya barua pepe kwenye akaunti yako si sahihi, kwa hivyo barua pepe haiwezi kufikishwa. Wasiliana na usaidizi ili kuunganisha anwani sahihi.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Haikuwezekana kutuma msimbo kwenye anwani hii, angalia anwani',
 };

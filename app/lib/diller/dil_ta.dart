@@ -1410,4 +1410,19 @@ const Map<String, String> cevirilerTa = {
       'கிடைக்கவில்லை. வேறு எழுத்துப்பிழையை முயற்சி செய்.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'தொடர், திரைப்படம், நடிகர், இயக்குநர் அல்லது தயாரிப்பு நிறுவனத்தைத் தேடு.',
+  'E-posta adresini değiştir': 'உன் மின்னஞ்சல் முகவரியை மாற்று',
+  'E-posta bağlı değil': 'எந்த மின்னஞ்சலும் இணைக்கப்படவில்லை',
+  'Geçerli bir e-posta adresi yaz': 'சரியான மின்னஞ்சல் முகவரியை எழுது',
+  'Bu zaten hesabının e-posta adresi':
+      'இது ஏற்கெனவே உன் கணக்கின் மின்னஞ்சல் முகவரி',
+  'Kod gönder': 'குறியீட்டை அனுப்பு',
+  'E-posta adresin güncellendi': 'உன் மின்னஞ்சல் முகவரி புதுப்பிக்கப்பட்டது',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'இந்த மின்னஞ்சல் வேறு கணக்கில் பதிவு செய்யப்பட்டுள்ளது',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'சரிபார்ப்புக் குறியீடு புதிய முகவரிக்கு அனுப்பப்படும்; குறியீட்டை உள்ளிட்ட பிறகுதான் முகவரி மாறும். கடவுச்சொல் மீட்டமைப்பு மற்றும் இரு-படி உள்நுழைவுக் குறியீடுகளும் அதன் பிறகு புதிய முகவரிக்குச் செல்லும்.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'உன் கணக்கிலுள்ள மின்னஞ்சல் முகவரி செல்லுபடியாகாது, எனவே மின்னஞ்சலை வழங்க முடியவில்லை. சரியான முகவரியை இணைக்க ஆதரவைத் தொடர்புகொள்.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'இந்த முகவரிக்குக் குறியீட்டை அனுப்ப முடியவில்லை, முகவரியைச் சரிபார்',
 };

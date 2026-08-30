@@ -2519,7 +2519,7 @@ async function mailAc(yon,id){
         ${m.durum==='hata'?`<span style="color:var(--kirmizi)">HATA: ${esc(m.hata||'')}</span>`:''}
       </div>
       ${ekler?`<div style="margin-bottom:12px">${ekler}</div>`:''}
-      ${m.tur==='sifirlama'?'<div style="margin-bottom:10px;font-size:12px;color:var(--soluk2)">Güvenlik: sıfırlama kodu günlükte maskelenir (••••••).</div>':''}
+      ${['sifirlama','iki_adim','eposta_degistir'].includes(m.tur)?'<div style="margin-bottom:10px;font-size:12px;color:var(--soluk2)">Güvenlik: tek kullanımlık kod günlükte maskelenir (••••••).</div>':''}
       ${m.html
         ? `<iframe id="m-html" class="mail-html" sandbox referrerpolicy="no-referrer"></iframe>
            <div style="margin-top:8px;font-size:11px;color:var(--soluk2)">HTML gövde yalıtılmış çerçevede gösteriliyor; uzak görseller (izleme pikselleri) engellendi.</div>`

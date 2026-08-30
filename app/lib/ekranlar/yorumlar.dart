@@ -17,6 +17,7 @@ import 'gonderi_istatistik.dart' show IstatistikGirisi;
 import 'medya_inceleme.dart';
 import 'giris_istem.dart';
 import 'kesfet_akis.dart' show ReelsGorunumu, yanitlariAc;
+import 'ek_etiket_seridi.dart';
 import 'ortak.dart';
 
 /// Bir yoruma eklenebilecek en çok medya.
@@ -141,6 +142,14 @@ class _YorumBolumuState extends State<YorumBolumu> {
         setState(() {
           _yorumlar = d['yorumlar'] as List<dynamic>;
           _yorumHatasi = false;
+          // ÇOKLU ETİKET (30 Ağu 2026): sunucu artık gönderiye bağlı TÜM
+          // varlıkların ad/posterini yolluyor. Onsuz kart, oyuncu etiketini
+          // çizecek adı bilmiyordu ve şeridi hiç göstermiyordu — kullanıcı
+          // "dizinin sayfasında oyuncunun etiketini göremiyorum" dedi.
+          // Birleştirme, yerine koyma DEĞİL: sayfanın kendi bilgisi
+          // (`_icerikYukle`, kişi sayfasında sunucudan gelmeyebilir) korunur.
+          final gelen = d['icerikler'] as Map<String, dynamic>?;
+          if (gelen != null) _icerikler = {..._icerikler, ...gelen};
         });
         _icerikYukle();
       }
@@ -155,7 +164,11 @@ class _YorumBolumuState extends State<YorumBolumu> {
   /// Reels'in üstündeki içerik kartı (poster + ad) için tek seferlik bilgi.
   /// Yalnız MEDYALI yorum varsa çekilir — medyasız sayfa fazladan istek atmaz.
   Future<void> _icerikYukle() async {
-    if (_icerikler.isNotEmpty) return;
+    // ANAHTARA bakılıyor, HARİTANIN DOLULUĞUNA değil: sunucu artık gönderilerin
+    // ETİKETLERİNİ de dolduruyor, yani harita sayfanın kendi bilgisi olmadan da
+    // dolu olabiliyordu — eski `isNotEmpty` koşulu o durumda erken dönüp
+    // Reels'in üst kartını adsız bırakırdı.
+    if (_icerikler.containsKey(_icerikAnahtar)) return;
     if (!(_yorumlar ?? []).any(
       (y) => ((y as Map)['medya'] as List<dynamic>? ?? []).isNotEmpty,
     )) {
@@ -636,6 +649,8 @@ class _YorumBolumuState extends State<YorumBolumu> {
               yanitla: _yanitla,
               yanitSil: _sil,
               medyaAc: _medyaAc,
+              icerikler: _icerikler,
+              sayfaAnahtari: _icerikAnahtar,
               yanitlar:
                   (_yorumlar!.where((c) => c['ust_id'] == y['id']).toList()
                     ..sort(
@@ -661,6 +676,15 @@ class YorumKarti extends StatefulWidget {
   /// bölüm sayfasına bağlanır. Bölüm/film/kişi sayfasında null gelir.
   final int? diziId;
 
+  /// "tur:tmdb_id" → {ad, poster}. Gönderiye bağlı ÖTEKİ varlıkların rozetini
+  /// çizmek için gerekiyor; sunucu `/yorumlar/:tur/:tmdbId` yanıtında yolluyor.
+  final Map<String, dynamic> icerikler;
+
+  /// Bu sayfanın kendi varlığı ("tur:tmdb_id"). Rozet şeridinden ELENİR:
+  /// The Wire sayfasında "The Wire" rozetini tekrar çizmek gürültüdür — orada
+  /// anlamlı olan, gönderinin BAŞKA neye bağlandığı (oyuncu, ikinci dizi).
+  final String? sayfaAnahtari;
+
   /// Medyaya dokununca (yorum, dokunulan medyanın sırası) — Reels açar.
   /// Dönen Future Reels kapanınca tamamlanır: kart beğeni durumunu paylaşılan
   /// haritadan tazeler.
@@ -677,6 +701,8 @@ class YorumKarti extends StatefulWidget {
     required this.yanitlar,
     required this.medyaAc,
     this.diziId,
+    this.icerikler = const {},
+    this.sayfaAnahtari,
   });
 
   @override
@@ -767,6 +793,13 @@ class _YorumKartiState extends State<YorumKarti> {
     final tarih = (yorum['tarih'] as String? ?? '').split('T').first;
     final medya = (yorum['medya'] as List<dynamic>? ?? []).cast<String>();
     final goruntulenme = (yorum['goruntulenme'] as int?) ?? 0;
+    // SAYFANIN KENDİ varlığı elenir; kalanlar rozet şeridine gider. Akıştaki
+    // kart "birinciyi at" diyor çünkü orada birincil etiket BAŞLIKTA duruyor;
+    // burada başlık sayfanın kendisidir, o yüzden ölçüt SIRA değil KİMLİK.
+    final ekEtiketler = (yorum['etiketler'] as List<dynamic>? ?? const [])
+        .cast<Map<String, dynamic>>()
+        .where((e) => '${e['tur']}:${e['tmdb_id']}' != widget.sayfaAnahtari)
+        .toList();
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
@@ -889,6 +922,16 @@ class _YorumKartiState extends State<YorumKarti> {
                     onCiftDokunus: _begen,
                     // md. 23 — videolu gönderide elde tutma eğrisinin verisi.
                     gonderiId: yorum['id'],
+                  ),
+                ],
+                // ÇOKLU ETİKET (30 Ağu 2026 hatası): gönderiye bağlı öteki
+                // varlıklar. Şerit AKIŞTAKİYLE AYNI bileşen — kopyalansaydı
+                // ilk düzeltme tek yerde kalırdı.
+                if (ekEtiketler.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  EkEtiketSeridi(
+                    etiketler: ekEtiketler,
+                    icerikler: widget.icerikler,
                   ),
                 ],
                 const SizedBox(height: 8),

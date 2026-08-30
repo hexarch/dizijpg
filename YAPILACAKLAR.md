@@ -16,6 +16,55 @@ Mağaza kareleri çekilirken 11 dilde uygulama gezildi; şunlar görüldü:
 - ⬜ **İngilizce çoğul hatası**: dizi sayfasında "1 people you follow watched it"
   — tekil için "1 person" olmalı (diğer dillerde de çoğul kuralı kontrol edilmeli).
 
+## 2026-08-30 — ✅ MAİL HİÇ ULAŞMIYORDU + ÇOKLU ETİKET GÖRÜNMÜYORDU
+
+### 1) "Dışa aktarma dosyası ve giriş kodu e-postama gelmedi" (QQ Mail sanıldı)
+Kullanıcı `jrssq` (id 445) geri bildirim yazdı: dışa aktarma ve e-posta giriş
+kodu ulaşmıyor, "QQ Mail kullandığım için mi?" diye sordu.
+
+**Kök neden QQ değil:** hesabın adresi `2334128821@_` olarak kayıtlıydı —
+alan adı yerine tek alt tire. Kayıttaki tek koşul `email.includes('@')` idi.
+Postfix maili yerelde kabul edip ASENKRON bounce ettiği (`Name service error
+for name=_ type=A`) için API "gönderildi" diyordu; `mailler` tablosunda o
+adrese giden 7 satırın hepsi `gonderildi` görünüyordu, Postfix günlüğünde ise
+8 × `status=bounced`. Veritabanının tamamında hiç qq.com adresi yok.
+
+- ✅ `epostaGecerli`/`epostaNormalle` (`iki_adim.js`): alan adında en az bir
+  nokta + harf TLD. `/auth/kayit` ve `/auth/bagla` artık bunu çağırıyor.
+- ✅ `mailGonder` alıcıyı göndermeden eliyor → "gönderildi" yalanı kesildi.
+- ✅ `/veri/disa-aktar` bozuk adreste ZIP üretmeden 400; `/auth/iki-adim/kod`
+  kod üretmiyor; ayar `kullanilabilir: false` (yoksa 2FA açılıp kalıcı kilit).
+- ✅ **E-posta değiştirme özelliği** (asıl eksik: kullanıcı adresini
+  düzeltemiyordu). Şifre + YENİ adrese giden kod; `migrasyon-2026-08-30c.sql`
+  ile `iki_adim_kodlari`na `eposta` amacı + `yeni_eposta` sütunu.
+  Ayarlar > E-posta kartı + `EpostaSheet` + 45 dil çevirisi.
+- ⬜ **PTR kaydı**: 154.53.163.3 → `host3.turksistem.net`, `mail.dizijpg.com`
+  olmalı. QQ/Gmail ters DNS uyuşmazlığını cezalandırıyor. Turksistem'den
+  talep gerekiyor. (SPF ✓ DKIM ✓ `dizi` seçici ✓ DMARC ✓ — eksik yalnız PTR.)
+- ⬜ `jrssq`'ye doğru adresini sor (muhtemelen `2334128821@qq.com`), onaylarsa
+  düzelt. Aynı bozuklukta ikinci adres: `...@gece554713`.
+
+### 2) "Oyuncu etiketli yorumda etiketi göremiyorum" (profil + dizi sayfası)
+Veri DOĞRUYDU (yorum 5519: `tv/1438` + `person/129101`); kusur yüzeylerdeydi.
+Rozet şeridi yalnız akışta çiziliyordu.
+
+- ✅ `/profil/:kullaniciAdi` artık `etiketler` döndürüyor ve içerik anahtarları
+  `akisIcerikleri` ile TÜM etiketlerden toplanıyor (eskiden yalnız birincil →
+  ikinci rozet adsız "?" olurdu).
+- ✅ `/yorumlar/:tur/:tmdbId` artık `icerikler` de döndürüyor (etiketler zaten
+  dönüyordu; ad/poster olmadan şerit çizilemiyordu).
+- ✅ `/gizlenen-yorumlar` aynı sözleşmeye getirildi.
+- ✅ `EkEtiketSeridi` `akis.dart`tan çıkarılıp paylaşılan bileşen oldu;
+  `YorumKarti` (içerik sayfası) ve `ProfilYorumKarti` da çiziyor.
+  İçerik sayfasında SAYFANIN KENDİ varlığı eleniyor, profilde BİRİNCİ etiket.
+- ✅ `coklu_etiket_gorunurluk_test.dart` (7 widget testi) +
+  `coklu_etiket_yuzeyleri.test.js` (6 arka uç testi).
+
+### 3) Kullanıcının aynı geri bildirimdeki İKİNCİ isteği
+- ⬜ **Toplu bölüm işaretleme**: "48 bölümlük diziyi 30. bölümde bıraktım;
+  30. bölüme basınca öncesindeki 29 bölüm otomatik izlendi sayılsın."
+  (Şu an ya 30 kez dokunmak ya 'bitirdim' deyip 18 kez geri almak gerekiyor.)
+
 ## 2026-08-30 — 🔨 ÇARK HİZASI + DAR KOLONA SIKIŞAN İKİ SATIR (3. tur)
 
 ### 1) "Çarkta gösterilen ile çıkan yapım aynı olmuyor"

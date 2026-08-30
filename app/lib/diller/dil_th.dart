@@ -1365,4 +1365,17 @@ const Map<String, String> cevirilerTh = {
   'Bulunamadı. Adın yazılışını değiştirip dene.': 'ไม่พบ ลองสะกดแบบอื่นดู',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'ค้นหาซีรีส์ หนัง นักแสดง ผู้กำกับ หรือบริษัทผู้สร้าง',
+  'E-posta adresini değiştir': 'เปลี่ยนที่อยู่อีเมลของคุณ',
+  'E-posta bağlı değil': 'ยังไม่ได้เชื่อมอีเมล',
+  'Geçerli bir e-posta adresi yaz': 'กรอกที่อยู่อีเมลที่ถูกต้อง',
+  'Bu zaten hesabının e-posta adresi': 'นี่คือที่อยู่อีเมลของบัญชีคุณอยู่แล้ว',
+  'Kod gönder': 'ส่งรหัส',
+  'E-posta adresin güncellendi': 'อัปเดตที่อยู่อีเมลของคุณแล้ว',
+  'Bu e-posta başka bir hesapta kayıtlı': 'อีเมลนี้ลงทะเบียนไว้กับบัญชีอื่น',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'รหัสยืนยันจะถูกส่งไปยังที่อยู่ใหม่ และที่อยู่จะเปลี่ยนก็ต่อเมื่อคุณกรอกรหัสแล้ว รหัสรีเซ็ตรหัสผ่านและรหัสเข้าสู่ระบบสองขั้นตอนจะไปที่ที่อยู่ใหม่นับจากนั้น',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'ที่อยู่อีเมลในบัญชีของคุณไม่ถูกต้อง จึงส่งอีเมลไม่ได้ ติดต่อฝ่ายสนับสนุนเพื่อเชื่อมที่อยู่ที่ถูกต้อง',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'ส่งรหัสไปยังที่อยู่นี้ไม่ได้ ตรวจสอบที่อยู่อีกครั้ง',
 };

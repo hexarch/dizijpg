@@ -9,6 +9,7 @@ import '../gorsel_basliklari.dart';
 import '../seviye.dart';
 import '../tema.dart';
 import 'begenenler.dart';
+import 'ek_etiket_seridi.dart';
 import 'gonderi_istatistik.dart' show IstatistikGirisi;
 import 'ortak.dart';
 import 'profil.dart'
@@ -956,6 +957,12 @@ class ProfilYorumKarti extends StatelessWidget {
     final benim = benimId != null && yorum['kullanici_id'] == benimId;
     // Uç (`GET /profil/:ad`) `y.medya`yı DÖNÜYOR — veri hep vardı, çizilmiyordu.
     final medya = (yorum['medya'] as List<dynamic>? ?? []).cast<String>();
+    // Birincil etiket başlıkta; kalanlar rozet şeridine.
+    final etiketler = (yorum['etiketler'] as List<dynamic>? ?? const [])
+        .cast<Map<String, dynamic>>();
+    final ekEtiketler = etiketler.length > 1
+        ? etiketler.sublist(1)
+        : const <Map<String, dynamic>>[];
 
     return Card(
       margin: EdgeInsets.zero,
@@ -1083,6 +1090,19 @@ class ProfilYorumKarti extends StatelessWidget {
                   if (medya.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     MedyaGaleri(yollar: medya),
+                  ],
+                  // ÇOKLU ETİKET (30 Ağu 2026 hatası). Kullanıcı bildirdi:
+                  // "oyuncu etiketli yorum paylaştım ama profilimdeki yorumlar
+                  // kısmında oyuncunun etiketini göremiyorum." Birincil etiket
+                  // yukarıdaki başlık satırında zaten duruyor; ELENEN de o —
+                  // ölçüt SIRA (akıştaki kartla aynı), çünkü profilde
+                  // "sayfanın kendi varlığı" diye bir şey yok.
+                  if (ekEtiketler.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    EkEtiketSeridi(
+                      etiketler: ekEtiketler,
+                      icerikler: icerikler,
+                    ),
                   ],
                   const SizedBox(height: 8),
                   // ETKİLEŞİM SATIRI — kart gövdesinin (poster, başlık, metin,

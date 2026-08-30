@@ -1393,4 +1393,18 @@ const Map<String, String> cevirilerSr = {
       'Nije pronađeno. Probaj drugačije napisati.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Traži seriju, film, glumca, reditelja ili produkciju.',
+  'E-posta adresini değiştir': 'Промени своју имејл адресу',
+  'E-posta bağlı değil': 'Нема повезане имејл адресе',
+  'Geçerli bir e-posta adresi yaz': 'Упиши исправну имејл адресу',
+  'Bu zaten hesabının e-posta adresi': 'То је већ имејл адреса твог налога',
+  'Kod gönder': 'Пошаљи код',
+  'E-posta adresin güncellendi': 'Твоја имејл адреса је ажурирана',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Овај имејл је регистрован на другом налогу',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Код за потврду се шаље на НОВУ адресу; адреса се мења тек када унесеш код. Кодови за ресетовање лозинке и пријаву у два корака од тада стижу на нову адресу.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Имејл адреса на твом налогу није исправна, па имејл не може да се испоручи. Обрати се подршци да повежеш исправну адресу.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Није успело слање кода на ову адресу, провери адресу',
 };

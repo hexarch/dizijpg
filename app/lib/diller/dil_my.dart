@@ -1402,4 +1402,19 @@ const Map<String, String> cevirilerMy = {
       'မတွေ့ပါ။ အခြားစာလုံးပေါင်းနဲ့ ကြိုးစားကြည့်ပါ။',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'ဇာတ်လမ်းတွဲ၊ ရုပ်ရှင်၊ သရုပ်ဆောင်၊ ဒါရိုက်တာ သို့မဟုတ် ထုတ်လုပ်ရေးကုမ္ပဏီ ရှာပါ။',
+  'E-posta adresini değiştir': 'အီးမေးလ်လိပ်စာ ပြောင်းရန်',
+  'E-posta bağlı değil': 'အီးမေးလ် ချိတ်ဆက်ထားခြင်း မရှိပါ',
+  'Geçerli bir e-posta adresi yaz': 'မှန်ကန်သော အီးမေးလ်လိပ်စာ ရေးပါ',
+  'Bu zaten hesabının e-posta adresi':
+      'ဒါက သင့်အကောင့်ရဲ့ အီးမေးလ်လိပ်စာ ဖြစ်နေပြီးသား',
+  'Kod gönder': 'ကုဒ် ပို့ရန်',
+  'E-posta adresin güncellendi': 'သင့်အီးမေးလ်လိပ်စာ အပ်ဒိတ်ဖြစ်သွားပါပြီ',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'ဤအီးမေးလ်ကို အခြားအကောင့်တစ်ခုတွင် မှတ်ပုံတင်ထားသည်',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'အတည်ပြုကုဒ်ကို လိပ်စာအသစ်သို့ ပို့ပါသည်။ ကုဒ်ထည့်ပြီးမှသာ လိပ်စာပြောင်းပါမည်။ စကားဝှက်ပြန်လည်သတ်မှတ်ခြင်းနှင့် နှစ်ဆင့်ဝင်ရောက်မှုကုဒ်များလည်း ထို့နောက် လိပ်စာအသစ်သို့ ရောက်ပါမည်။',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'သင့်အကောင့်ရှိ အီးမေးလ်လိပ်စာ မမှန်ကန်သဖြင့် အီးမေးလ် ပို့၍မရပါ။ မှန်ကန်သောလိပ်စာ ချိတ်ဆက်ရန် ပံ့ပိုးမှုကို ဆက်သွယ်ပါ။',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'ဤလိပ်စာသို့ ကုဒ်မပို့နိုင်ပါ၊ လိပ်စာကို စစ်ဆေးပါ',
 };

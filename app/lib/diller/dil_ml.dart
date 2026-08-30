@@ -1390,4 +1390,19 @@ const Map<String, String> cevirilerMl = {
       'കണ്ടെത്തിയില്ല. മറ്റൊരു അക്ഷരവിന്യാസം പരീക്ഷിക്കൂ.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'പരമ്പര, സിനിമ, നടൻ, സംവിധായകൻ അല്ലെങ്കിൽ നിർമ്മാണ കമ്പനി തിരയൂ.',
+  'E-posta adresini değiştir': 'നിന്റെ ഇമെയിൽ വിലാസം മാറ്റുക',
+  'E-posta bağlı değil': 'ഇമെയിൽ ബന്ധിപ്പിച്ചിട്ടില്ല',
+  'Geçerli bir e-posta adresi yaz': 'സാധുവായ ഒരു ഇമെയിൽ വിലാസം എഴുതുക',
+  'Bu zaten hesabının e-posta adresi':
+      'ഇത് ഇപ്പോൾതന്നെ നിന്റെ അക്കൗണ്ടിന്റെ ഇമെയിൽ വിലാസമാണ്',
+  'Kod gönder': 'കോഡ് അയയ്ക്കുക',
+  'E-posta adresin güncellendi': 'നിന്റെ ഇമെയിൽ വിലാസം പുതുക്കി',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'ഈ ഇമെയിൽ മറ്റൊരു അക്കൗണ്ടിൽ രജിസ്റ്റർ ചെയ്തിട്ടുണ്ട്',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'സ്ഥിരീകരണ കോഡ് പുതിയ വിലാസത്തിലേക്കാണ് പോകുന്നത്; കോഡ് നൽകിയ ശേഷമേ വിലാസം മാറൂ. പാസ്‌വേഡ് പുനഃസജ്ജീകരണവും രണ്ടു ഘട്ട ലോഗിൻ കോഡുകളും പിന്നീട് പുതിയ വിലാസത്തിലേക്കു പോകും.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'നിന്റെ അക്കൗണ്ടിലെ ഇമെയിൽ വിലാസം സാധുവല്ല, അതിനാൽ ഇമെയിൽ എത്തിക്കാനാകുന്നില്ല. ശരിയായ വിലാസം ബന്ധിപ്പിക്കാൻ പിന്തുണയുമായി ബന്ധപ്പെടുക.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'ഈ വിലാസത്തിലേക്ക് കോഡ് അയയ്ക്കാനായില്ല, വിലാസം പരിശോധിക്കുക',
 };

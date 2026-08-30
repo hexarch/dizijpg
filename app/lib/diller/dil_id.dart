@@ -1391,4 +1391,17 @@ const Map<String, String> cevirilerId = {
       'Tidak ditemukan. Coba ejaan lain.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Cari serial, film, aktor, sutradara, atau rumah produksi.',
+  'E-posta adresini değiştir': 'Ubah alamat emailmu',
+  'E-posta bağlı değil': 'Belum ada email yang tertaut',
+  'Geçerli bir e-posta adresi yaz': 'Tulis alamat email yang valid',
+  'Bu zaten hesabının e-posta adresi': 'Itu sudah jadi alamat email akunmu',
+  'Kod gönder': 'Kirim kode',
+  'E-posta adresin güncellendi': 'Alamat emailmu sudah diperbarui',
+  'Bu e-posta başka bir hesapta kayıtlı': 'Email ini terdaftar di akun lain',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Kode verifikasi dikirim ke alamat BARU; alamat baru berubah setelah kamu memasukkan kode. Kode reset kata sandi dan login dua langkah selanjutnya akan dikirim ke alamat baru.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Alamat email di akunmu tidak valid, jadi email tidak bisa dikirimkan. Hubungi dukungan untuk menautkan alamat yang benar.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Kode tidak bisa dikirim ke alamat ini, periksa alamatnya',
 };

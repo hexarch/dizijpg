@@ -1385,4 +1385,18 @@ const Map<String, String> cevirilerPa = {
       'ਨਹੀਂ ਮਿਲਿਆ। ਹੋਰ ਸਪੈਲਿੰਗ ਅਜ਼ਮਾਓ।',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'ਸੀਰੀਜ਼, ਫ਼ਿਲਮ, ਅਦਾਕਾਰ, ਨਿਰਦੇਸ਼ਕ ਜਾਂ ਪ੍ਰੋਡਕਸ਼ਨ ਕੰਪਨੀ ਲੱਭੋ।',
+  'E-posta adresini değiştir': 'ਆਪਣਾ ਈਮੇਲ ਪਤਾ ਬਦਲੋ',
+  'E-posta bağlı değil': 'ਕੋਈ ਈਮੇਲ ਜੁੜਿਆ ਨਹੀਂ',
+  'Geçerli bir e-posta adresi yaz': 'ਇੱਕ ਵੈਧ ਈਮੇਲ ਪਤਾ ਲਿਖੋ',
+  'Bu zaten hesabının e-posta adresi':
+      'ਇਹ ਪਹਿਲਾਂ ਹੀ ਤੁਹਾਡੇ ਖਾਤੇ ਦਾ ਈਮੇਲ ਪਤਾ ਹੈ',
+  'Kod gönder': 'ਕੋਡ ਭੇਜੋ',
+  'E-posta adresin güncellendi': 'ਤੁਹਾਡਾ ਈਮੇਲ ਪਤਾ ਅੱਪਡੇਟ ਹੋ ਗਿਆ',
+  'Bu e-posta başka bir hesapta kayıtlı': 'ਇਹ ਈਮੇਲ ਕਿਸੇ ਹੋਰ ਖਾਤੇ ਵਿੱਚ ਦਰਜ ਹੈ',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'ਪੁਸ਼ਟੀ ਕੋਡ ਨਵੇਂ ਪਤੇ ਉੱਤੇ ਭੇਜਿਆ ਜਾਂਦਾ ਹੈ; ਪਤਾ ਕੋਡ ਦਰਜ ਕਰਨ ਤੋਂ ਬਾਅਦ ਹੀ ਬਦਲਦਾ ਹੈ। ਪਾਸਵਰਡ ਰੀਸੈੱਟ ਅਤੇ ਦੋ-ਪੜਾਵੀ ਲੌਗਇਨ ਕੋਡ ਉਸ ਤੋਂ ਬਾਅਦ ਨਵੇਂ ਪਤੇ ਉੱਤੇ ਜਾਣਗੇ।',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'ਤੁਹਾਡੇ ਖਾਤੇ ਦਾ ਈਮੇਲ ਪਤਾ ਵੈਧ ਨਹੀਂ ਹੈ, ਇਸ ਲਈ ਈਮੇਲ ਪਹੁੰਚਾਈ ਨਹੀਂ ਜਾ ਸਕਦੀ। ਸਹੀ ਪਤਾ ਜੋੜਨ ਲਈ ਸਹਾਇਤਾ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'ਇਸ ਪਤੇ ਉੱਤੇ ਕੋਡ ਨਹੀਂ ਭੇਜਿਆ ਜਾ ਸਕਿਆ, ਪਤਾ ਜਾਂਚੋ',
 };

@@ -1384,4 +1384,18 @@ const Map<String, String> cevirilerKn = {
       'ಸಿಗಲಿಲ್ಲ. ಬೇರೆ ಕಾಗುಣಿತ ಪ್ರಯತ್ನಿಸಿ.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'ಸರಣಿ, ಸಿನಿಮಾ, ನಟ, ನಿರ್ದೇಶಕ ಅಥವಾ ನಿರ್ಮಾಣ ಸಂಸ್ಥೆಯನ್ನು ಹುಡುಕಿ.',
+  'E-posta adresini değiştir': 'ನಿನ್ನ ಇಮೇಲ್ ವಿಳಾಸ ಬದಲಿಸು',
+  'E-posta bağlı değil': 'ಯಾವುದೇ ಇಮೇಲ್ ಜೋಡಿಸಿಲ್ಲ',
+  'Geçerli bir e-posta adresi yaz': 'ಮಾನ್ಯವಾದ ಇಮೇಲ್ ವಿಳಾಸ ಬರೆ',
+  'Bu zaten hesabının e-posta adresi': 'ಇದು ಈಗಾಗಲೇ ನಿನ್ನ ಖಾತೆಯ ಇಮೇಲ್ ವಿಳಾಸ',
+  'Kod gönder': 'ಕೋಡ್ ಕಳುಹಿಸು',
+  'E-posta adresin güncellendi': 'ನಿನ್ನ ಇಮೇಲ್ ವಿಳಾಸ ನವೀಕರಿಸಲಾಗಿದೆ',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'ಈ ಇಮೇಲ್ ಬೇರೊಂದು ಖಾತೆಯಲ್ಲಿ ನೋಂದಾಯಿಸಲಾಗಿದೆ',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'ದೃಢೀಕರಣ ಕೋಡ್ ಹೊಸ ವಿಳಾಸಕ್ಕೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ; ಕೋಡ್ ನಮೂದಿಸಿದ ನಂತರವೇ ವಿಳಾಸ ಬದಲಾಗುತ್ತದೆ. ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಕೆ ಮತ್ತು ಎರಡು-ಹಂತದ ಲಾಗಿನ್ ಕೋಡ್‌ಗಳು ನಂತರ ಹೊಸ ವಿಳಾಸಕ್ಕೆ ಹೋಗುತ್ತವೆ.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'ನಿನ್ನ ಖಾತೆಯ ಇಮೇಲ್ ವಿಳಾಸ ಮಾನ್ಯವಲ್ಲ, ಆದ್ದರಿಂದ ಇಮೇಲ್ ತಲುಪಿಸಲಾಗುತ್ತಿಲ್ಲ. ಸರಿಯಾದ ವಿಳಾಸ ಜೋಡಿಸಲು ಬೆಂಬಲವನ್ನು ಸಂಪರ್ಕಿಸು.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'ಈ ವಿಳಾಸಕ್ಕೆ ಕೋಡ್ ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ, ವಿಳಾಸ ಪರಿಶೀಲಿಸು',
 };

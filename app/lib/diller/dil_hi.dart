@@ -1384,4 +1384,19 @@ const Map<String, String> cevirilerHi = {
       'नहीं मिला। दूसरी वर्तनी आज़माओ।',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'सीरीज़, फ़िल्म, अभिनेता, निर्देशक या प्रोडक्शन कंपनी खोजो।',
+  'E-posta adresini değiştir': 'अपना ईमेल पता बदलो',
+  'E-posta bağlı değil': 'कोई ईमेल जुड़ा नहीं है',
+  'Geçerli bir e-posta adresi yaz': 'एक मान्य ईमेल पता लिखो',
+  'Bu zaten hesabının e-posta adresi':
+      'यह पहले से ही तुम्हारे खाते का ईमेल पता है',
+  'Kod gönder': 'कोड भेजो',
+  'E-posta adresin güncellendi': 'तुम्हारा ईमेल पता अपडेट हो गया',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'यह ईमेल किसी दूसरे खाते में पंजीकृत है',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'सत्यापन कोड नए पते पर भेजा जाता है; पता कोड डालने के बाद ही बदलता है। पासवर्ड रीसेट और दो-चरणीय लॉगिन कोड इसके बाद नए पते पर जाएँगे।',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'तुम्हारे खाते का ईमेल पता मान्य नहीं है, इसलिए ईमेल पहुँचाया नहीं जा सकता। सही पता जोड़ने के लिए सहायता से संपर्क करो।',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'इस पते पर कोड नहीं भेजा जा सका, पता जाँचो',
 };

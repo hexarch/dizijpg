@@ -1338,4 +1338,17 @@ const Map<String, String> cevirilerAm = {
   'Bulunamadı. Adın yazılışını değiştirip dene.': 'አልተገኘም። ሌላ አጻጻፍ ሞክር።',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'ተከታታይ፣ ፊልም፣ ተዋናይ፣ ዳይሬክተር ወይም አዘጋጅ ኩባንያ ፈልግ።',
+  'E-posta adresini değiştir': 'የኢሜይል አድራሻህን ቀይር',
+  'E-posta bağlı değil': 'ኢሜይል አልተያያዘም',
+  'Geçerli bir e-posta adresi yaz': 'ትክክለኛ የኢሜይል አድራሻ ጻፍ',
+  'Bu zaten hesabının e-posta adresi': 'ይህ አስቀድሞ የመለያህ የኢሜይል አድራሻ ነው',
+  'Kod gönder': 'ኮድ ላክ',
+  'E-posta adresin güncellendi': 'የኢሜይል አድራሻህ ተዘምኗል',
+  'Bu e-posta başka bir hesapta kayıtlı': 'ይህ ኢሜይል በሌላ መለያ ተመዝግቧል',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'የማረጋገጫ ኮዱ ወደ አዲሱ አድራሻ ይላካል፤ አድራሻው የሚቀየረው ኮዱን ካስገባህ በኋላ ብቻ ነው። የይለፍ ቃል ዳግም ማስጀመሪያ እና የሁለት ደረጃ መግቢያ ኮዶች ከዚህ በኋላ ወደ አዲሱ አድራሻ ይሄዳሉ።',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'በመለያህ ላይ ያለው የኢሜይል አድራሻ ትክክል ስላልሆነ ኢሜይል ሊደርስ አይችልም። ትክክለኛውን አድራሻ ለማያያዝ ድጋፍን አግኝ።',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'ወደዚህ አድራሻ ኮድ መላክ አልተቻለም፤ አድራሻውን አረጋግጥ',
 };

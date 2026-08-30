@@ -1357,4 +1357,17 @@ const Map<String, String> cevirilerHe = {
   'Bulunamadı. Adın yazılışını değiştirip dene.': 'לא נמצא. נסה איות אחר.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'חפש סדרה, סרט, שחקן, במאי או חברת הפקה.',
+  'E-posta adresini değiştir': 'שינוי כתובת האימייל שלך',
+  'E-posta bağlı değil': 'לא מקושר אימייל',
+  'Geçerli bir e-posta adresi yaz': 'כתוב כתובת אימייל תקינה',
+  'Bu zaten hesabının e-posta adresi': 'זו כבר כתובת האימייל של החשבון שלך',
+  'Kod gönder': 'שליחת קוד',
+  'E-posta adresin güncellendi': 'כתובת האימייל שלך עודכנה',
+  'Bu e-posta başka bir hesapta kayıtlı': 'האימייל הזה רשום בחשבון אחר',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'קוד האימות נשלח לכתובת החדשה; הכתובת משתנה רק אחרי שתזין את הקוד. קודי איפוס סיסמה והתחברות דו-שלבית יישלחו מעכשיו לכתובת החדשה.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'כתובת האימייל בחשבון שלך אינה תקינה, ולכן אי אפשר למסור אימייל. פנה לתמיכה כדי לקשר את הכתובת הנכונה.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'לא הצלחנו לשלוח קוד לכתובת הזו, בדוק את הכתובת',
 };

@@ -1400,4 +1400,18 @@ const Map<String, String> cevirilerSv = {
       'Hittades inte. Prova en annan stavning.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Sök efter serie, film, skådespelare, regissör eller produktionsbolag.',
+  'E-posta adresini değiştir': 'Ändra din e-postadress',
+  'E-posta bağlı değil': 'Ingen e-post kopplad',
+  'Geçerli bir e-posta adresi yaz': 'Skriv en giltig e-postadress',
+  'Bu zaten hesabının e-posta adresi': 'Det är redan ditt kontos e-postadress',
+  'Kod gönder': 'Skicka kod',
+  'E-posta adresin güncellendi': 'Din e-postadress har uppdaterats',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Den här e-postadressen är registrerad på ett annat konto',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Verifieringskoden skickas till den NYA adressen; adressen ändras först när du angett koden. Koder för lösenordsåterställning och tvåstegsinloggning går därefter till den nya adressen.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'E-postadressen på ditt konto är inte giltig, så e-post kan inte levereras. Kontakta supporten för att koppla rätt adress.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Det gick inte att skicka en kod till den här adressen, kontrollera den',
 };

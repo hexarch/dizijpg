@@ -1318,4 +1318,17 @@ const Map<String, String> cevirilerJa = {
   'Bulunamadı. Adın yazılışını değiştirip dene.': '見つかりませんでした。別の表記で試してください。',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'ドラマ・映画・俳優・監督・制作会社を検索。',
+  'E-posta adresini değiştir': 'メールアドレスを変更',
+  'E-posta bağlı değil': 'メールが連携されていません',
+  'Geçerli bir e-posta adresi yaz': '有効なメールアドレスを入力してください',
+  'Bu zaten hesabının e-posta adresi': 'これはすでにアカウントのメールアドレスです',
+  'Kod gönder': 'コードを送信',
+  'E-posta adresin güncellendi': 'メールアドレスを更新しました',
+  'Bu e-posta başka bir hesapta kayıtlı': 'このメールアドレスは別のアカウントで登録されています',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      '確認コードは新しいアドレスに送られます。アドレスはコードを入力してから変更されます。パスワード再設定と2段階ログインのコードも、以後は新しいアドレスに届きます。',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'アカウントのメールアドレスが有効ではないため、メールを配信できません。正しいアドレスを登録するにはサポートに連絡してください。',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'このアドレスにコードを送信できませんでした。アドレスを確認してください',
 };

@@ -90,6 +90,35 @@ export function epostaMaskele(email) {
 }
 
 /**
+ * E-posta biçim denetimi — KAYIT ANINDA TESLİM EDİLEBİLİRLİK.
+ *
+ * OLAY (30 Ağu 2026): Bir kullanıcı hesabını `<10 hane>@_` adresiyle açmıştı.
+ * Tek kontrol `email.includes('@')` olduğu için bu adres kayıttan geçti; sonra
+ * dışa aktarma ve iki adımlı giriş kodu SESSİZCE kayboldu. Postfix maili yerel
+ * olarak kabul edip `Host or domain name not found. Name service error for
+ * name=_ type=A` ile ASENKRON bounce ettiği için API "gönderildi" diyordu.
+ * Kullanıcı da sorunu kendi posta sağlayıcısında (QQ Mail) sandı.
+ *
+ * Kalıp kasten TUTUCU değil, GERÇEKÇİ: tek istediği, alan adının EN AZ BİR
+ * NOKTA içermesi ve harflerden oluşan bir TLD ile bitmesi. `x@_`, `x@localhost`
+ * ve `x@gece554713` gibi teslim edilemeyecek adresleri eler; `+` etiketli,
+ * tireli, çok seviyeli gerçek adresleri (`a+b@mail.co.uk`) elemez.
+ * Uzunluk sınırları RFC 5321'den: yerel kısım 64, tüm adres 254.
+ */
+const EPOSTA_KALIBI =
+  /^[^\s@,;:<>"'\\()[\]]{1,64}@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/i;
+
+export function epostaGecerli(email) {
+  const s = String(email || '').trim();
+  return s.length <= 254 && EPOSTA_KALIBI.test(s);
+}
+
+/** Kayıt/bağlama yolunda tek normalleştirme: kırp + küçült. */
+export function epostaNormalle(email) {
+  return String(email || '').trim().toLowerCase();
+}
+
+/**
  * Doğrulama karar ağacı — `sifre-sifirla` ile AYNI disiplin.
  *
  * @returns {'bicimsiz'|'gecersiz'|'kilit'|'yanlis'|'kabul'}

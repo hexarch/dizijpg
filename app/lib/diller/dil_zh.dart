@@ -1303,4 +1303,16 @@ const Map<String, String> cevirilerZh = {
   'Bulunamadı. Adın yazılışını değiştirip dene.': '没找到。换一种写法试试。',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       '搜索剧集、电影、演员、导演或制片公司。',
+  'E-posta adresini değiştir': '更改你的邮箱地址',
+  'E-posta bağlı değil': '尚未绑定邮箱',
+  'Geçerli bir e-posta adresi yaz': '请输入有效的邮箱地址',
+  'Bu zaten hesabının e-posta adresi': '这已经是你账号的邮箱地址',
+  'Kod gönder': '发送验证码',
+  'E-posta adresin güncellendi': '你的邮箱地址已更新',
+  'Bu e-posta başka bir hesapta kayıtlı': '该邮箱已注册到另一个账号',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      '验证码会发送到新地址，只有输入验证码后地址才会更改。此后密码重置和两步登录的验证码也会发送到新地址。',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      '你账号上的邮箱地址无效，因此无法投递邮件。请联系支持以绑定正确的地址。',
+  'Bu adrese kod gönderilemedi, adresi kontrol et': '无法向该地址发送验证码，请检查地址',
 };

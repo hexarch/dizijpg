@@ -1410,4 +1410,19 @@ const Map<String, String> cevirilerRo = {
       'Nu s-a găsit. Încearcă altă scriere.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Caută un serial, film, actor, regizor sau studio.',
+  'E-posta adresini değiştir': 'Schimbă-ți adresa de e-mail',
+  'E-posta bağlı değil': 'Niciun e-mail conectat',
+  'Geçerli bir e-posta adresi yaz': 'Scrie o adresă de e-mail validă',
+  'Bu zaten hesabının e-posta adresi':
+      'Aceasta este deja adresa de e-mail a contului tău',
+  'Kod gönder': 'Trimite codul',
+  'E-posta adresin güncellendi': 'Adresa ta de e-mail a fost actualizată',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Acest e-mail este înregistrat la alt cont',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Codul de verificare este trimis la NOUA adresă; adresa se schimbă doar după ce introduci codul. Codurile de resetare a parolei și de autentificare în doi pași vor ajunge de atunci la noua adresă.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Adresa de e-mail din contul tău nu este validă, așa că e-mailul nu poate fi livrat. Contactează asistența pentru a conecta adresa corectă.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Nu s-a putut trimite un cod la această adresă, verific-o',
 };

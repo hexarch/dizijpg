@@ -209,7 +209,14 @@ test('sema.sql: iki_adim_kodlari tablosu tam', () => {
   const blok = SEMA.slice(SEMA.indexOf('CREATE TABLE IF NOT EXISTS iki_adim_kodlari'));
   const t = blok.slice(0, 700);
   assert.match(t, /kod_hash TEXT NOT NULL/, 'kod DÜZ METİN saklanamaz');
-  assert.match(t, /amac TEXT NOT NULL CHECK \(amac IN \('giris','ac','kapat'\)\)/);
+  // 'eposta' 30 Ağu 2026'da eklendi (migrasyon-2026-08-30c): e-posta değiştirme
+  // aynı kod altyapısını kullanıyor. Amaç listesi KAPALI kalmalı — serbest
+  // metin olsaydı yazım hatası taşıyan bir amaç sessizce hiçbir dala uymazdı.
+  assert.match(t, /amac TEXT NOT NULL CHECK \(amac IN \('giris','ac','kapat','eposta'\)\)/);
+  // Hedef adres kodla BİRLİKTE saklanır ve YALNIZ 'eposta' amacında dolu olur:
+  // olmasaydı A adresine gelen kodla B adresi bağlanabilirdi.
+  assert.match(t, /yeni_eposta TEXT/);
+  assert.match(t, /CHECK \(\(amac = 'eposta'\) = \(yeni_eposta IS NOT NULL\)\)/);
   assert.match(t, /bitis TIMESTAMPTZ NOT NULL/);
   assert.match(t, /deneme INT NOT NULL DEFAULT 0/);
   assert.match(t, /kullanici_id INT PRIMARY KEY REFERENCES kullanicilar\(id\) ON DELETE CASCADE/,
@@ -249,7 +256,7 @@ test('kod SABİT ZAMANLI karşılaştırılıyor (bcrypt.compare)', () => {
 test('kod TEK KULLANIMLIK: doğrulanınca satır SİLİNİR', () => {
   const d = uc('async function ikiAdimKodDogrula', 1800);
   const son = d.slice(d.lastIndexOf('bcrypt.compare'));
-  // ÖLÇÜLEN ŞEY: `return true`e ulaşmadan ÖNCE silme AWAIT ile bitmiş olmalı.
+  // ÖLÇÜLEN ŞEY: BAŞARI DÖNÜŞÜNE ulaşmadan ÖNCE silme AWAIT ile bitmiş olmalı.
   // Eskiden bu, "silme satırının hemen ardından return" diye yazılıydı; 17 Ağu
   // 2026'da aralarına `eposta_dogrulandi` yazması eklenince test KODU DOĞRUYKEN
   // kırmızıya döndü. Bitişiklik hiçbir zaman gereklilik değildi — gereklilik
@@ -258,13 +265,17 @@ test('kod TEK KULLANIMLIK: doğrulanınca satır SİLİNİR', () => {
   // kod sınıra dayanınca kodu iptal eden dalda, ki onu `return false` izler.
   // indexOf o dalı bulur ve aşağıdaki "arada erken çıkış yok" kontrolü o
   // `return false`a takılıp testi KODU DOĞRUYKEN kırar.
+  // 30 Ağu 2026: başarı dönüşü `return true` değil TÜKETİLEN SATIRIN yükü
+  // (`{ yeniEposta }`) — e-posta değiştirmede uygulanacak adres o satırdan
+  // okunmak zorunda. Test dönüş DEĞERİNİ değil SIRAYI ölçüyordu; ölçüt aynı
+  // kaldı, yalnız başarı dönüşünün nasıl yazıldığı güncellendi.
   const silIdx = son.lastIndexOf('await ikiAdimKodSil(kullaniciId);');
-  const dogruIdx = son.indexOf('return true');
+  const dogruIdx = son.indexOf('return { yeniEposta');
   assert.ok(silIdx !== -1, 'doğru kod tüketilmiyor — silme çağrısı yok');
   assert.ok(dogruIdx !== -1 && silIdx < dogruIdx,
-    'doğru kod tüketilmeden true dönülüyor — aynı kod ikinci kez kullanılabilirdi');
+    'doğru kod tüketilmeden başarı dönülüyor — aynı kod ikinci kez kullanılabilirdi');
   assert.ok(!/return/.test(son.slice(silIdx, dogruIdx)),
-    'silme ile true arasında erken çıkış var — kod tüketilmeden dönülebilir');
+    'silme ile başarı dönüşü arasında erken çıkış var — kod tüketilmeden dönülebilir');
   assert.match(SERVER_KOD, /DELETE FROM iki_adim_kodlari WHERE kullanici_id=\$1/);
 });
 
@@ -414,7 +425,11 @@ test('POSTA GÖNDERİMİ ATEŞLE-UNUT (yanıt süresi SMTP\'ye bağlanmaz)', () 
 test('KOD MAİLLERİ GÜNLÜKTE MASKELENİYOR', () => {
   // Sıfırlama kodu maskeleniyordu; 2FA kodu unutulsaydı admin panelinde
   // okunabilir dururdu ve panele erişen biri 2FA'yı geçebilirdi.
-  assert.match(SERVER_KOD, /const KOD_MAILLERI = new Set\(\['sifirlama', 'iki_adim'\]\)/);
+  // 'eposta_degistir' 30 Ağu 2026'da eklendi: o kod da hesabı devralmaya yeter
+  // (adresi saldırganın adresine çevirir), yani maskelenmesi ŞART.
+  assert.match(
+    SERVER_KOD,
+    /const KOD_MAILLERI = new Set\(\['sifirlama', 'iki_adim', 'eposta_degistir'\]\)/);
   assert.match(SERVER_KOD, /KOD_MAILLERI\.has\(tur\)[\s\S]{0,120}'••••••'/);
   assert.match(SERVER_KOD, /tur: 'iki_adim'/);
 });

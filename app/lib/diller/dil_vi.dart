@@ -1388,4 +1388,19 @@ const Map<String, String> cevirilerVi = {
       'Không tìm thấy. Thử cách viết khác.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Tìm phim bộ, phim lẻ, diễn viên, đạo diễn hoặc hãng sản xuất.',
+  'E-posta adresini değiştir': 'Đổi địa chỉ email của bạn',
+  'E-posta bağlı değil': 'Chưa liên kết email',
+  'Geçerli bir e-posta adresi yaz': 'Nhập một địa chỉ email hợp lệ',
+  'Bu zaten hesabının e-posta adresi':
+      'Đó đã là địa chỉ email của tài khoản bạn',
+  'Kod gönder': 'Gửi mã',
+  'E-posta adresin güncellendi': 'Địa chỉ email của bạn đã được cập nhật',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Email này đã đăng ký ở một tài khoản khác',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Mã xác minh được gửi tới địa chỉ MỚI; địa chỉ chỉ thay đổi sau khi bạn nhập mã. Từ đó trở đi, mã đặt lại mật khẩu và mã đăng nhập hai bước cũng sẽ gửi tới địa chỉ mới.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Địa chỉ email trên tài khoản của bạn không hợp lệ nên không thể gửi email. Hãy liên hệ hỗ trợ để liên kết địa chỉ đúng.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Không gửi được mã tới địa chỉ này, hãy kiểm tra lại địa chỉ',
 };

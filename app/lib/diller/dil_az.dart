@@ -1381,4 +1381,18 @@ const Map<String, String> cevirilerAz = {
       'Tapılmadı. Adın yazılışını dəyişib yoxla.',
   'Dizi, film, oyuncu, yönetmen ya da yapım firması ara.':
       'Serial, film, aktyor, rejissor və ya istehsalat şirkəti axtar.',
+  'E-posta adresini değiştir': 'E-poçt ünvanını dəyiş',
+  'E-posta bağlı değil': 'E-poçt bağlı deyil',
+  'Geçerli bir e-posta adresi yaz': 'Etibarlı bir e-poçt ünvanı yaz',
+  'Bu zaten hesabının e-posta adresi': 'Bu, artıq hesabının e-poçt ünvanıdır',
+  'Kod gönder': 'Kod göndər',
+  'E-posta adresin güncellendi': 'E-poçt ünvanın yeniləndi',
+  'Bu e-posta başka bir hesapta kayıtlı':
+      'Bu e-poçt başqa bir hesabda qeydiyyatdadır',
+  'Doğrulama kodu YENİ adrese gönderilir; adres ancak kodu girdikten sonra değişir. Şifre sıfırlama ve iki adımlı giriş kodları bundan sonra yeni adrese gider.':
+      'Təsdiq kodu YENİ ünvana göndərilir; ünvan yalnız kodu daxil etdikdən sonra dəyişir. Şifrə sıfırlama və iki addımlı giriş kodları bundan sonra yeni ünvana gedəcək.',
+  'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
+      'Hesabındakı e-poçt ünvanı etibarlı deyil, buna görə e-poçt çatdırıla bilmir. Düzgün ünvanı bağlamaq üçün dəstəklə əlaqə saxla.',
+  'Bu adrese kod gönderilemedi, adresi kontrol et':
+      'Bu ünvana kod göndərilə bilmədi, ünvanı yoxla',
 };

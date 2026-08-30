@@ -360,6 +360,29 @@ class Api {
     return d['acik'] == true;
   }
 
+  // ---- e-posta değiştirme (30 Ağu 2026) ----
+  // NEDEN VAR: bir kullanıcı hesabını `<hane>@_` adresiyle açmıştı (kayıtta o
+  // tarihte yalnız "@ var mı" bakılıyordu) ve hiçbir mail ulaşmıyordu; adresi
+  // düzeltmenin uygulamada YOLU YOKTU. Akış iki adımlı: şifreyle kod iste,
+  // kod YENİ adrese gitsin, kodla uygula.
+
+  /// Yeni adrese doğrulama kodu yollar. Şifre ister: çalınmış bir oturum tek
+  /// başına hesabın adresini değiştirememeli.
+  static Future<Map<String, dynamic>> epostaDegistirKodIste(
+    String email,
+    String sifre,
+  ) async =>
+      await post('/auth/eposta-degistir/kod', {'email': email, 'sifre': sifre})
+          as Map<String, dynamic>;
+
+  /// Kodu doğrular ve adresi uygular. Uygulanan adres SUNUCUDA saklanandır —
+  /// istemci ikinci kez adres göndermez, gönderseydi A adresine gelen kodla
+  /// B adresi bağlanabilirdi.
+  static Future<String> epostaDegistirUygula(String kod) async {
+    final d = await post('/auth/eposta-degistir', {'kod': kod});
+    return d['email'] as String? ?? '';
+  }
+
   static Future<Map<String, dynamic>> misafirGiris() async {
     final d = await post('/auth/misafir', {});
     await _tokenKaydet(d['token'] as String);
