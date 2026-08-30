@@ -17,6 +17,7 @@ import '../tema.dart';
 import 'begenenler.dart';
 import 'etiket.dart';
 import 'gonderi_istatistik.dart' show gonderiIstatistikAc;
+import 'kabuk.dart' show SekmeTekrar, akisHedefi;
 import 'kesfet_akis.dart' show ReelsGorunumu, yanitlariAc;
 import 'paylas_yorum.dart';
 import 'giris_istem.dart';
@@ -147,6 +148,42 @@ class AkisGorunumSecici extends StatelessWidget {
 const double _seciciAsgariYukseklik = 44;
 
 /// Sosyal akış: kitaplığındaki içeriklere başkalarının yorumları.
+/// Bir akış kartı "görüldü" sayılır mı?
+///
+/// HANGİ HATAYI ÇÖZÜYOR (30 Ağu 2026, kullanıcı: *"yukarı kaydırıp sayfayı
+/// yenilesem de izlediğim video gitmiyor"*):
+/// Eski kural tek satırdı — `info.visibleFraction > 0.6`, yani "kartın
+/// %60'ı ekranda". Bu oran KARTIN KENDİ boyuna göre hesaplanıyor ve
+/// **karttan kısa bir ekranda asla %60'a ulaşamıyor**. Dikey video gönderisi
+/// tam da o kart: medya oranı 0,5'e (9:18) kadar inebiliyor, 360 dp genişlikte
+/// medya 720 dp; üstüne başlık + metin + eylem satırı binince kart ~880 dp
+/// oluyor. Telefonda üst bar ve alt çubuk düştükten sonra kalan görüntü alanı
+/// ~530 dp: görünen en yüksek oran 530/880 ≈ 0,60 — eşiğin TAM SINIRINDA,
+/// çoğu cihazda ALTINDA. Sonuç: kullanıcının baştan sona izlediği video
+/// "görülmemiş" kalıyor, `POST /akis/goruldu` hiç gitmiyor ve sunucu onu her
+/// yenilemede geri veriyordu. Kısa kartlar (yazı, yatay foto) eşiği geçtiği
+/// için hata YALNIZ videoda görünüyordu — kullanıcının tarifi birebir buydu.
+///
+/// YENİ KURAL — iki ölçüden biri yeterli:
+///   1. kartın %60'ı ekranda (kısa kartlar için eski kural, aynen);
+///   2. ya da EKRANIN %60'ı bu kartla dolu (karttan kısa ekran hâli).
+/// İkincisi uzun kartı kurtarır ve yanlış pozitif üretmez: ekranın %60'ını
+/// kaplayan bir kart, kullanıcının o an baktığı karttır.
+///
+/// Ölçüler `VisibilityDetector`dan gelir: [gorunen] = `visibleBounds.height`,
+/// [kart] = `size.height`. [ekran] görüntü alanının yüksekliğidir.
+@visibleForTesting
+bool akisGorulduSayilir({
+  required double gorunen,
+  required double kart,
+  required double ekran,
+}) {
+  if (gorunen <= 0 || kart <= 0 || ekran <= 0) return false;
+  return gorunen >= kart * _gorulduOrani || gorunen >= ekran * _gorulduOrani;
+}
+
+const double _gorulduOrani = 0.6;
+
 /// Spoiler emniyeti sunucuda: izlemediğin bölümün/filmin yorumu gelmez.
 class AkisEkrani extends StatefulWidget {
   const AkisEkrani({super.key});
@@ -165,6 +202,12 @@ class _AkisEkraniState extends State<AkisEkrani>
   bool _dahaVar = true;
   bool _yukluyor = false;
   final _kaydirma = ScrollController();
+
+  /// Aşağı-çekmeli yenileyicinin anahtarı. Alt çubuktan gelen "başa dön +
+  /// yenile" bunu kullanır: `show()` hem çarkı gösterir hem `onRefresh`i
+  /// (yani [_yukle]) çalıştırır — kullanıcı yenilemenin OLDUĞUNU görür
+  /// (ux md.3: her eylemin görünür bir "yükleniyor" hâli olacak).
+  final _yenileAnahtari = GlobalKey<RefreshIndicatorState>();
 
   // "Görüldü" biriktirme: ekranda beliren kartlar toplanıp toplu bildirilir;
   // bir daha akışta gösterilmezler.
@@ -185,6 +228,35 @@ class _AkisEkraniState extends State<AkisEkrani>
         _devamYukle();
       }
     });
+    // Alt çubuktaki Akış hedefine SEÇİLİYKEN tekrar basılırsa (bkz.
+    // [SekmeTekrar]) liste başa döner ve yenilenir.
+    SekmeTekrar.tetik(akisHedefi).addListener(_basaDonVeYenile);
+  }
+
+  /// "Akış'a ikinci kez bas" davranışı: önce yukarı, sonra yenile.
+  ///
+  /// SIRA ÖNEMLİ. Önce yenileyip sonra kaydırsaydık liste yeni kartlarla
+  /// yeniden kurulurken kaydırma konumu değişir ve animasyon boş bir listeye
+  /// çalışırdı. Önce başa dönülür (kullanıcı anında yukarı çıktığını görür),
+  /// sonra yenileme çarkı iner.
+  Future<void> _basaDonVeYenile() async {
+    if (!mounted) return;
+    if (_kaydirma.hasClients && _kaydirma.position.pixels > 0) {
+      await _kaydirma.animateTo(
+        0,
+        duration: const Duration(milliseconds: 240),
+        curve: Curves.easeOutCubic,
+      );
+    }
+    if (!mounted) return;
+    // Yenileyici YOKSA (hata / iskelet / boş akış hâlinde gövde
+    // RefreshIndicator değil) doğrudan yükle — sessiz kalmasın.
+    final durum = _yenileAnahtari.currentState;
+    if (durum == null) {
+      await _yukle();
+      return;
+    }
+    await durum.show();
   }
 
   /// Bir kart ekranda belirdi: id'yi biriktir, kısa gecikmeyle toplu bildir.
@@ -194,22 +266,37 @@ class _AkisEkraniState extends State<AkisEkrani>
     _gorulduZaman = Timer(const Duration(seconds: 1), _gorulduGonder);
   }
 
-  void _gorulduGonder() {
+  /// Biriken "görüldü" id'lerini sunucuya yazar.
+  ///
+  /// FUTURE DÖNDÜRÜR ve bu ŞARTTIR: [_yukle] yenilemeden ÖNCE bunu
+  /// BEKLİYOR. Eskiden ateşle-unut çağrılıyordu; aşağı çekip yenileyen
+  /// kullanıcının `GET /akis` isteği, görüldü INSERT'ünden ÖNCE sunucuya
+  /// varabiliyordu — sunucu kartı hâlâ görülmemiş sayıp aynı gönderiyi geri
+  /// veriyordu. Bekleyen zamanlayıcı da burada iptal edilir: 1 sn'lik
+  /// biriktirme penceresi dolmadan yenileyen kullanıcı en çok bunu kaybederdi.
+  Future<void> _gorulduGonder() async {
+    _gorulduZaman?.cancel();
     if (_goruldu.isEmpty) return;
     final idler = _goruldu.toList();
     _goruldu.clear();
     // KAYNAK (md. 23): bu uç akış/keşfet/profil/Reels tarafından ORTAK
     // kullanılıyor; hangisi olduğunu yalnız istemci bilir. Etiketsiz
     // gönderilirse sunucu "Diğer" kovasına koyar ve kırılım işe yaramaz.
-    Api.post('/akis/goruldu', {
-      'idler': idler,
-      'kaynak': GonderiOlcu.kaynakAkis,
-    }).catchError((_) => null);
+    try {
+      await Api.post('/akis/goruldu', {
+        'idler': idler,
+        'kaynak': GonderiOlcu.kaynakAkis,
+      });
+    } catch (_) {
+      // Yazılamadıysa yenileme yine de sürsün: kullanıcı taze içerik ister,
+      // "görüldü" kaydı bir sonraki turda tekrar denenir.
+    }
   }
 
   @override
   void dispose() {
-    _gorulduGonder(); // kalan id'leri gönder
+    SekmeTekrar.tetik(akisHedefi).removeListener(_basaDonVeYenile);
+    unawaited(_gorulduGonder()); // kalan id'leri gönder
     _gorulduZaman?.cancel();
     _kaydirma.dispose();
     super.dispose();
@@ -249,6 +336,11 @@ class _AkisEkraniState extends State<AkisEkrani>
   String? _imlec;
 
   Future<void> _yukle() async {
+    // ÖNCE GÖRÜLDÜLER, SONRA İSTEK: sırayı bozarsak kullanıcının az önce
+    // izlediği gönderi "görülmemiş" sayılıp yenilemede geri gelir
+    // (bkz. [_gorulduGonder]).
+    await _gorulduGonder();
+    if (!mounted) return;
     setState(() => _hata = null);
     _rozetleriYukle();
     try {
@@ -394,6 +486,7 @@ class _AkisEkraniState extends State<AkisEkrani>
       // ([masaustuKolonGenisligi], tema.dart — takvim/Reels/profil de aynı
       // kalıbı kullanır).
       govde = RefreshIndicator(
+        key: _yenileAnahtari,
         color: DiziRenkler.sari,
         onRefresh: _yukle,
         child: OrtaKolon(
@@ -419,12 +512,24 @@ class _AkisEkraniState extends State<AkisEkrani>
               // Kart indeksi bir geride: 0 kutuya ayrıldı.
               final k = i - 1;
               final y = _akis![k] as Map<String, dynamic>;
-              // "Görüldü": kart GERÇEKTEN ekranda (>%60) belirince işaretle —
+              // "Görüldü": kart GERÇEKTEN ekranda belirince işaretle —
               // build ≈ görüldü DEĞİL (ListView ekran dışı kartları da kurar).
+              // Eşik [akisGorulduSayilir]'da: ekrandan UZUN kartlar (dikey
+              // video) tek başına orana bakan eski kuralı asla geçemiyordu.
+              // Görüntü alanı yüksekliği BUILD SIRASINDA okunur, geri
+              // çağrının İÇİNDE değil: `onVisibilityChanged` kare sonrası
+              // (bazen kart ağaçtan düştükten sonra) çalışıyor ve orada
+              // `MediaQuery.sizeOf(context)` "Null check operator used on a
+              // null value" ile patlıyordu (widget testinde yakalandı).
+              final ekranY = MediaQuery.sizeOf(context).height;
               return VisibilityDetector(
                 key: ValueKey('gor-${y['id']}'),
                 onVisibilityChanged: (info) {
-                  if (info.visibleFraction > 0.6) {
+                  if (akisGorulduSayilir(
+                    gorunen: info.visibleBounds.height,
+                    kart: info.size.height,
+                    ekran: ekranY,
+                  )) {
                     _kartGorundu(y['id'] as int);
                   }
                 },

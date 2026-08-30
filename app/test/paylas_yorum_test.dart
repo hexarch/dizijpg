@@ -29,10 +29,20 @@ http.Response _json(Object govde) => http.Response(
 /// `search/multi` yanıtı: bir film + iki dizi + bir kişi.
 const _aramaSonuclari = {
   'results': [
-    {'id': 1, 'media_type': 'movie', 'title': 'Superman', 'poster_path': '/s.jpg'},
+    {
+      'id': 1,
+      'media_type': 'movie',
+      'title': 'Superman',
+      'poster_path': '/s.jpg',
+    },
     {'id': 2, 'media_type': 'tv', 'name': 'Silo', 'poster_path': '/x.jpg'},
     {'id': 3, 'media_type': 'person', 'name': 'Biri', 'profile_path': '/p.jpg'},
-    {'id': 5, 'media_type': 'tv', 'name': 'Breaking Bad', 'poster_path': '/b.jpg'},
+    {
+      'id': 5,
+      'media_type': 'tv',
+      'name': 'Breaking Bad',
+      'poster_path': '/b.jpg',
+    },
   ],
 };
 
@@ -124,14 +134,20 @@ Future<void> _etiketEkle(
   }
 }
 
+/// İKİ ADIM (30 Ağu 2026): yaz → İleri → önizleme → Paylaş.
+/// Paylaş düğmesi artık YAZMA adımında YOK; her paylaşım önizlemeden geçer.
 Future<void> _yazVePaylas(WidgetTester tester, String metin) async {
   await tester.enterText(find.byType(TextField).first, metin);
   await tester.pump();
-  await tester.tap(find.widgetWithText(FilledButton, 'Paylaş'));
+  await tester.tap(_ileriDugmesi);
+  await tester.pumpAndSettle();
+  await tester.tap(_paylasDugmesi);
   await tester.pumpAndSettle();
 }
 
 Finder get _paylasDugmesi => find.widgetWithText(FilledButton, 'Paylaş');
+Finder get _ileriDugmesi =>
+    find.widgetWithIcon(IconButton, Icons.arrow_forward);
 
 void main() {
   setUp(_sunucu);
@@ -148,9 +164,16 @@ void main() {
     await tester.enterText(find.byType(TextField).first, 'bugün hiç izlemedim');
     await tester.pump();
     expect(
-      tester.widget<FilledButton>(_paylasDugmesi).onPressed,
+      tester.widget<IconButton>(_ileriDugmesi).onPressed,
       isNotNull,
       reason: 'etiket kapısı hâlâ duruyor',
+    );
+    await tester.tap(_ileriDugmesi);
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<FilledButton>(_paylasDugmesi).onPressed,
+      isNotNull,
+      reason: 'önizlemede Paylaş kapalı kalmamalı',
     );
     await tester.tap(_paylasDugmesi);
     await tester.pumpAndSettle();
@@ -171,11 +194,13 @@ void main() {
     expect(find.textContaining('önce bir yapım seç'), findsNothing);
   });
 
-  testWidgets('METİN hâlâ ZORUNLU: boşken düğme KAPALI (sunucu da reddeder)', (
+  testWidgets('METİN hâlâ ZORUNLU: boşken İLERİ KAPALI (sunucu da reddeder)', (
     tester,
   ) async {
     await _ac(tester);
-    expect(tester.widget<FilledButton>(_paylasDugmesi).onPressed, isNull);
+    expect(tester.widget<IconButton>(_ileriDugmesi).onPressed, isNull);
+    // Paylaş düğmesi yazma adımında HİÇ yok: tek birincil eylem "ileri".
+    expect(_paylasDugmesi, findsNothing);
   });
 
   // =========================================================================

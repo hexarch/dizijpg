@@ -16,6 +16,62 @@ Mağaza kareleri çekilirken 11 dilde uygulama gezildi; şunlar görüldü:
 - ⬜ **İngilizce çoğul hatası**: dizi sayfasında "1 people you follow watched it"
   — tekil için "1 person" olmalı (diğer dillerde de çoğul kuralı kontrol edilmeli).
 
+## 2026-08-30 — 🔨 AKIŞ SEKMESİ, GÖRÜLDÜ ARIZASI VE PAYLAŞIM EKRANI (2. tur)
+
+Kullanıcı: *"aşağıdaki navigasyon tuşlarında akışa iki defa basınca beni yukarı
+çıkarsın ve sayfayı yenilesin ve yukarı kaydırıp sayfayı yenilesem de izlediğim
+video gitmiyor o sorunu da çöz"* + *"Akıştaki yorum yapmaya tıklayınca açılan
+input alanı çok saçma, orayı da şöyle tasarlayalım: yukarıda profil resmim
+yanında adım, altında etiket ekle, onun da altında en aşağıya kadar 'ne
+düşünüyorsun' yazısı ve en aşağı solda galeri iconu sağda ileri iconu; galeriye
+basıp görsel seçtiğinde input alanı küçülerek yukarı çıkacak görsel aşağıda
+olacak; ileri dediğimde gönderinin bana paylaşılmış gibi hâlini gösterecek ve
+spoiler etiketi vurma iconu olacak; input alanı arka plan ile aynı renkte
+olmalı, farklı renklerde yapma."*
+
+### 1) Sekmeye ikinci basış → başa dön + yenile
+- ✅ **`SekmeTekrar` tetiği** (`kabuk.dart`). `goBranch(initialLocation: true)`
+  yalnız dalın ROTASINI köke çekiyor; Akış zaten dalın kökü ve keepAlive ile
+  canlı olduğu için ikinci basış HİÇBİR ŞEY yapmıyordu. Kabuk artık "aynı dala
+  tekrar basıldı" diye haber veriyor, ekran kendi kaydırmasını başa alıp
+  `RefreshIndicator.show()` ile yeniliyor (çark görünüyor).
+- ✅ Dal DEĞİŞİMİ tetiklemez: Keşfet'ten Akış'a geçmek "yenile" sayılmaz.
+
+### 2) "İzlediğim video yenilemede gitmiyor" — İKİ ayrı kök neden
+- ✅ **Yenileme, biriken `görüldü` id'lerini BEKLEMİYORDU.** `POST
+  /akis/goruldu` ateşle-unut gidiyor, üstelik 1 sn'lik biriktirme penceresi her
+  yeni kartta sıfırlanıyordu: aşağı çekip yenileyen kullanıcıda id'ler ya hiç
+  gönderilmemiş ya da `GET /akis`ten SONRA varmış oluyordu → sunucu gönderiyi
+  hâlâ görülmemiş sayıp geri veriyordu. `_yukle` artık önce boşaltıp BEKLİYOR.
+- ✅ **Görüldü eşiği uzun kartları eliyordu.** Eski kural `visibleFraction >
+  0.6`, yani "kartın %60'ı ekranda" — ekrandan uzun kart bunu ASLA geçemez.
+  Dikey video tam o kart (medya oranı 0,5'e kadar; 360 dp'de kart ~900 dp,
+  görüntü alanı ~530 dp → 0,58). Yeni kural [`akisGorulduSayilir`]: kartın
+  %60'ı YA DA ekranın %60'ı → görüldü.
+- ✅ Yan bulgu (widget testinde yakalandı): `onVisibilityChanged` içinde
+  `MediaQuery.sizeOf(context)` okumak kart ağaçtan düşmüşse çökertiyordu; ölçü
+  artık build sırasında alınıyor.
+- ⬜ **Keşfet ızgarası hâlâ hiçbir karoyu "görüldü" işaretlemiyor** (yalnız tam
+  ekran Reels işaretliyor). Orada yenileme de aynı içerikleri getiriyor. Düzgün
+  çözümü yeni bir `kaynak` etiketi (`kesfet`) gerektiriyor: `GONDERI_KAYNAKLARI`
+  + istatistik kovası + istemci. Ayrı tur.
+
+### 3) Paylaşım ekranı — iki adımlı yeniden tasarım
+- ✅ **Yazma adımı**: profil resmi + ad → Etiket ekle → "Ne düşünüyorsun?"
+  (kalan yüksekliğin tamamı) → alt çubukta solda galeri/GIF, sağda ileri.
+  Metin alanı dolgusuz ve çerçevesiz: zemin sayfayla AYNI renk.
+- ✅ **Görsel seçilince** metin alanı küçülüp yukarı çıkıyor, kareler altta
+  (yükseklik `Expanded` ile paylaşılıyor; tavanlar ekran oranına bağlı ki
+  klavye açık kısa telefonda taşma olmasın).
+- ✅ **Önizleme adımı**: gerçek `AkisKarti` çiziliyor (taklit değil),
+  `IgnorePointer` içinde. Solda **spoiler damgası** — basınca kart ANINDA
+  perdeleniyor; sağda Paylaş. Geri, yazmaya döner ve metni korur.
+- ✅ Yeni çeviri anahtarı YOK: 'İleri', 'Geri', 'Önizleme', 'Spoiler' 45 dilde
+  zaten vardı.
+- ✅ Kanıt: `test/akis_sekme_tekrar_test.dart` (8) +
+  `test/paylas_yorum_duzen_test.dart` (9); `paylas_yorum_test.dart` iki adımlı
+  akışa güncellendi. Tüm paket 2.304 test yeşil.
+
 ## 2026-08-30 — 🚀 AKIŞ PAYLAŞIM KUTUSU YENİDEN + ESKİ İNCELEMELER YORUMLARA (1.102.0+162)
 
 Kullanıcı: *"Akışta gönderi paylaşırken yapım seçme zorunlu olmasın … Oraya da

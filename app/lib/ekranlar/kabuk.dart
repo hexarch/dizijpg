@@ -78,6 +78,36 @@ const int profilHedefi = 4;
 @visibleForTesting
 int hedefIndeksi(int dal) => dal == kesfetDali ? akisHedefi : dal;
 
+/// SEÇİLİ SEKMEYE TEKRAR BASILDI — "başa dön + yenile" tetiği.
+///
+/// KULLANICI İSTEĞİ (30 Ağu 2026): *"aşağıdaki navigasyon tuşlarında akışa
+/// iki defa basınca beni yukarı çıkarsın ve sayfayı yenilesin"*.
+///
+/// NEDEN AYRI BİR TETİK, `goBranch` YETMİYOR: `goBranch(initialLocation: true)`
+/// yalnız DALIN ROTASINI köke çeker. Akış ekranı kabuk dalının kökü ve
+/// `AutomaticKeepAliveClientMixin` ile CANLI tutuluyor — rota zaten `/akis`
+/// olduğu için hiçbir şey olmuyordu: ne kaydırma başa dönüyor ne liste
+/// tazeleniyordu. Sekmenin kendisi durumunu bilmiyor; ekranın bilmesi gerek.
+///
+/// DAL İNDEKSİ ile anahtarlanır (hedef değil): tetiği dinleyen taraf ekranın
+/// kendisi ve o hangi dalda olduğunu bilir.
+///
+/// SIZINTI YOK: tetik yalnız [KabukEkrani] tarafından, kullanıcı GERÇEKTEN
+/// aynı dala ikinci kez basınca artırılır — ilk basış (dal değişimi) saymaz,
+/// yoksa Keşfet'ten Akış'a geçmek de "yenile" sayılırdı.
+class SekmeTekrar {
+  SekmeTekrar._();
+
+  static final Map<int, ValueNotifier<int>> _tetikler = {};
+
+  /// [dal] için tetik; ilk istekte oluşturulur (ekran ve kabuk aynı nesneyi
+  /// görsün diye kalıcıdır — dinleyici sayısı zaten en fazla bir).
+  static ValueNotifier<int> tetik(int dal) =>
+      _tetikler.putIfAbsent(dal, () => ValueNotifier<int>(0));
+
+  static void bas(int dal) => tetik(dal).value++;
+}
+
 bool mesajYuzeyiMi(String yol) =>
     yol.startsWith('/sohbet') || yol.startsWith('/mesaj-istekleri');
 
@@ -616,6 +646,11 @@ class _KabukEkraniState extends State<KabukEkrani> {
           // yerden yönetilen bir durum doğar.
           if (_mesajda && context.canPop()) context.pop();
           if (i == profilHedefi) profilYenileTetik.value++;
+          // AYNI DAL MI — `goBranch`ten ÖNCE ölçülür (sonra `currentIndex`
+          // zaten değişmiş olurdu). Keşfet dalındayken (3) Akış'a (2) basmak
+          // BİR DAL DEĞİŞİMİDİR: kullanıcı yeni bir ekran istedi, "yenile"
+          // istemedi. Tetik yalnız gerçekten aynı dalda kalınca atar.
+          final ayniDal = shell.currentIndex == i;
           shell.goBranch(
             i,
             // Aynı hedefe tekrar basınca köke dön. Karşılaştırma ÇEVRİLMİŞ
@@ -626,6 +661,10 @@ class _KabukEkraniState extends State<KabukEkrani> {
             // o gelirdi — kullanıcı Akış istemişken.
             initialLocation: i == hedefIndeksi(shell.currentIndex),
           );
+          // Seçili sekmeye TEKRAR basıldı → ekran başa dönüp yenilenir
+          // (bkz. [SekmeTekrar]). `goBranch`ten SONRA: dal kökü açıldıktan
+          // sonra tetiklenmezse ekran daha kurulmadan haber verilirdi.
+          if (ayniDal) SekmeTekrar.bas(i);
         },
       ),
     );
