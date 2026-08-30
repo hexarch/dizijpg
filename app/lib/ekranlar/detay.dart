@@ -1233,15 +1233,32 @@ class _DetayEkraniState extends State<DetayEkrani>
                                     DiziDurumRozeti(durum: durum),
                                 ],
                               ),
-                              if (turler.isNotEmpty) ...[
-                                const SizedBox(height: 8),
-                                _TurCipleri(turler: turler, tur: widget.tur),
-                              ],
                             ],
                           ),
                         ),
                       ],
                     ),
+                    // TÜR ÇİPLERİ AFİŞ SATIRININ DIŞINDA — 30 Ağu 2026,
+                    // kullanıcı: *"filmin türleri alt alta dizilmiş ama
+                    // sağında ve solunda boşluk var; mesela komedi drama yan
+                    // yana, gerilim komedinin altında kalmış, yanında
+                    // olabilirdi."*
+                    //
+                    // ÖLÇÜM (390 dp telefon, "Once Upon a Time in Hollywood"
+                    // → Komedi · Drama · Gerilim):
+                    //   · afişin sağındaki sütun 254 dp → çipler 109 + 96,5 +
+                    //     121,5 = 327 dp yer istiyor, üçüncüsü ALT SATIRA
+                    //     düşüyordu (blok 86 dp);
+                    //   · sayfanın tam genişliği 358 dp → üçü TEK SATIRA
+                    //     sığıyor (blok 40 dp).
+                    // Yani boşluk gerçekten vardı, sadece çipler ona
+                    // erişemiyordu. Afişin altı zaten boştu (başlık + yıl
+                    // satırı afişten kısa), çipler oraya inince o boşluk da
+                    // doldu.
+                    if (turler.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      TurCipleri(turler: turler, tur: widget.tur),
+                    ],
                     const SizedBox(height: 8),
                     if (tv && tmdbSezonNolari(c).isNotEmpty)
                       TmdbPuanHaritasi(
@@ -2730,11 +2747,12 @@ class _AfisKucuk extends StatelessWidget {
 /// Dizinin türüne dokununca DİZİ listesi, filmin türüne dokununca FİLM listesi
 /// açılır (`tur` taşınır): TMDB'nin tür kimlikleri iki katalogda AYRIDIR ve
 /// yanlış katalogda süzmek sessizce boş/alakasız sonuç verirdi.
-class _TurCipleri extends StatelessWidget {
+@visibleForTesting
+class TurCipleri extends StatelessWidget {
   final List<Map<String, dynamic>> turler;
   final String tur;
 
-  const _TurCipleri({required this.turler, required this.tur});
+  const TurCipleri({super.key, required this.turler, required this.tur});
 
   @override
   Widget build(BuildContext context) => Wrap(
@@ -2750,6 +2768,14 @@ class _TurCipleri extends StatelessWidget {
             fontSize: 12.5,
             fontWeight: FontWeight.w700,
           ),
+          // DOLGU DARALTILDI (ölçüm, 390 dp telefon): "Komedi" yazısı 75 dp,
+          // çip 109 dp idi — 34 dp'si boşluktu. `labelPadding` sıfırlanıp
+          // dolgu tek yerden veriliyor; çip 24 dp kısalıyor ve üç tür 360 dp
+          // genişliğindeki telefonlarda da tek satıra sığıyor. Dokunma
+          // hedefi DÜŞMÜYOR: yükseklik ve `materialTapTargetSize.padded`
+          // aynen duruyor, kısalan yalnız yatay boşluk.
+          labelPadding: EdgeInsets.zero,
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
           side: BorderSide(color: DiziRenkler.sari.withValues(alpha: 0.35)),
           backgroundColor: DiziRenkler.sari.withValues(alpha: 0.10),
           visualDensity: VisualDensity.compact,

@@ -217,6 +217,55 @@ void main() {
     expect(find.text('2'), findsOneWidget); // hâlâ karışık: 2 dizi
   });
 
+  // ==========================================================================
+  // ÇARKIN DURDUĞU YER = ÇIKAN YAPIM  (30 Ağu 2026 arızası)
+  // ==========================================================================
+  testWidgets('ÇARK SEÇİLEN DİLİMDE DURUR (ibre ile sonuç aynı öğe)', (
+    tester,
+  ) async {
+    // Kullanıcı: "çarkı çevirdiğimde çarkta gösterilen ve çıkan yapım aynı
+    // olmuyor." Boyacı 0. dilimi ibreden (üstten) başlatıyordu, hedef açı
+    // hesabı ise dilimleri saat 3 yönünden sayıyordu — tam bir çeyrek tur,
+    // yani n/4 dilim kayma. Sonuç KARTI doğru çıktığı için (o animasyondan
+    // önce seçiliyor) mevcut testler hatayı görmüyordu; ölçülmesi gereken
+    // şey buydu: DURAN AÇIDA ibrenin altındaki dilim, seçilen öğe mi?
+    await tester.binding.setSurfaceSize(const Size(_g, _y));
+    _sunucu();
+    // Dört öğe = dört dilim; eski hatada kayma tam 1 dilim olurdu.
+    await _carkiAc(tester, _ogeler, seed: 11);
+    await _cevirVeBekle(tester);
+
+    final durum = tester.state(find.byType(IzlemCarki)) as dynamic;
+    final liste = (durum.gorunenListe as List).cast<Map<String, dynamic>>();
+    final sonuc = durum.sonucOge as Map<String, dynamic>?;
+    expect(sonuc, isNotNull, reason: 'çark sonuç üretmedi');
+    final ibre = carkIbreDilimi(durum.aci as double, liste.length);
+    expect(
+      liste[ibre],
+      same(sonuc),
+      reason:
+          'ibrenin altındaki dilim ($ibre) ile sonuç farklı öğe — '
+          'çark yanlış yerde durdu',
+    );
+  });
+
+  testWidgets('SÜZGEÇLİ çarkta da ibre ile sonuç aynı', (tester) async {
+    // Süzgeç listeyi daralttığı için dilim sayısı değişiyor; kayma da dilim
+    // sayısına bağlıydı (n/4), o yüzden ikinci bir n ile daha sınanıyor.
+    await tester.binding.setSurfaceSize(const Size(_g, _y));
+    _sunucu();
+    await _carkiAc(tester, _ogeler, seed: 5);
+    await tester.tap(find.byKey(const Key('cark-suzgec-tv')));
+    await tester.pump();
+    await _cevirVeBekle(tester);
+
+    final durum = tester.state(find.byType(IzlemCarki)) as dynamic;
+    final liste = (durum.gorunenListe as List).cast<Map<String, dynamic>>();
+    expect(liste.length, 2, reason: 'süzgeç uygulanmamış');
+    final ibre = carkIbreDilimi(durum.aci as double, liste.length);
+    expect(liste[ibre], same(durum.sonucOge));
+  });
+
   testWidgets(
     'seed\'li çeviriş filmde durur: sonuç kartı ad + puan + KONU + BÜTÇE',
     (tester) async {

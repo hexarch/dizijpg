@@ -48,6 +48,60 @@ Future<void> izlemCarkiniAc(
   );
 }
 
+/// ---------------------------------------------------------------------------
+/// ÇARK GEOMETRİSİ — TEK KAYNAK
+///
+/// HANGİ HATAYI ÇÖZÜYOR (30 Ağu 2026, kullanıcı: *"çarkı çevirdiğimde çarkta
+/// gösterilen ve çıkan yapım aynı olmuyor"*):
+/// Boyacı ile mantık İKİ FARKLI konvansiyon kullanıyordu.
+///   · [_CarkBoyaci] sıfırıncı dilimi **-π/2'den** (ibrenin durduğu üst
+///     noktadan) başlatıyor: dilim i, `-π/2 + i·dilim` açısından başlar.
+///   · `_ibreDilimi` ve `_cevir` ise dilimlerin **0'dan** (saat 3 yönünden)
+///     başladığını varsayan bir formül kullanıyordu.
+/// Aradaki fark tam bir ÇEYREK TUR, yani `n/4` dilim. Çark, seçilen yapımın
+/// çeyrek tur ötesinde duruyordu; sonuç kartı doğru yapımı gösteriyordu ama
+/// ibrenin altındaki dilimde başka bir ad yazıyordu. Mevcut testler yalnız
+/// SONUCU denetlediği için (o zaten animasyondan önce seçiliyor) hata
+/// görünmüyordu.
+///
+/// Artık üç taraf da (boyacı, ibre okuması, hedef açı) aşağıdaki iki saf
+/// işlevden besleniyor. Bunlar test edilebilir ve birbirinin TERSİ olmak
+/// zorunda — `izlem_carki_geometri_test.dart` bunu her (n, i) için sınıyor.
+/// ---------------------------------------------------------------------------
+
+/// Sıfırıncı dilimin BAŞLADIĞI yerel açı = ibrenin durduğu yön (üst).
+const double carkBaslangic = -math.pi / 2;
+
+/// [aci] kadar dönmüş çarkta ibrenin ALTINDAKİ dilimin indeksi.
+///
+/// Çark `Transform.rotate(angle: aci)` ile döndürülüyor: yerel açı α olan bir
+/// nokta ekranda α + aci'de görünür. İbre ekranda [carkBaslangic] yönünde
+/// sabit durduğu için gösterdiği YEREL açı `carkBaslangic - aci`dir; sıfırıncı
+/// dilimin başlangıcına göre uzaklığı da sadece `-aci` olur.
+@visibleForTesting
+int carkIbreDilimi(double aci, int adet) {
+  if (adet <= 0) return 0;
+  final dilim = 2 * math.pi / adet;
+  var uzaklik = (-aci) % (2 * math.pi);
+  if (uzaklik < 0) uzaklik += 2 * math.pi;
+  return (uzaklik / dilim).floor() % adet;
+}
+
+/// [i]. dilimin ORTASI ibrenin altına gelsin diye çarkın durması gereken açı,
+/// `[0, 2π)` aralığında. Tam turları çağıran ekler.
+///
+/// Türetme: dilim i'nin ortası yerel `carkBaslangic + (i+0.5)·dilim`; ibrenin
+/// gösterdiği yerel açı `carkBaslangic - aci`. İkisini eşitleyince
+/// `aci ≡ -(i+0.5)·dilim (mod 2π)`.
+@visibleForTesting
+double carkDilimAcisi(int i, int adet) {
+  if (adet <= 0) return 0;
+  final dilim = 2 * math.pi / adet;
+  var aci = (-(i + 0.5) * dilim) % (2 * math.pi);
+  if (aci < 0) aci += 2 * math.pi;
+  return aci;
+}
+
 class IzlemCarki extends StatefulWidget {
   /// İzleyeceğim listesinin öğeleri; her biri en az `tur` ve `tmdb_id` taşır
   /// (kitaplık ekranıyla aynı sözleşme).
@@ -120,15 +174,21 @@ class _IzlemCarkiState extends State<IzlemCarki>
     super.dispose();
   }
 
-  /// İbrenin şu an gösterdiği dilim indeksini verir.
-  /// İbre ÜSTTE (-π/2); çark [_aci] kadar döndüyse yerel açı (-π/2 - açı).
-  int _ibreDilimi(int adet) {
-    if (adet <= 0) return 0;
-    final dilim = 2 * math.pi / adet;
-    var yerel = (-math.pi / 2 - _aci) % (2 * math.pi);
-    if (yerel < 0) yerel += 2 * math.pi;
-    return (yerel / dilim).floor() % adet;
-  }
+  /// İbrenin şu an gösterdiği dilim indeksi (bkz. [carkIbreDilimi]).
+  int _ibreDilimi(int adet) => carkIbreDilimi(_aci, adet);
+
+  /// --- TESTE AÇIK ÜÇLÜ ---
+  /// "Çarkta gösterilen ile çıkan yapım aynı mı?" sorusu ancak bu üçü bir
+  /// arada okunarak yanıtlanabiliyor: duran açı, o an çizilen liste ve
+  /// seçilen öğe. Üçü de yalnız okunur; testler dışında kullanılmaz.
+  @visibleForTesting
+  double get aci => _aci;
+
+  @visibleForTesting
+  List<Map<String, dynamic>> get gorunenListe => _suzulmus;
+
+  @visibleForTesting
+  Map<String, dynamic>? get sonucOge => _sonuc;
 
   /// Dilim değiştiyse tık çalar. Çark yavaşladıkça dilim değişimi de
   /// seyrekleşir — gerçek çarkın "tık… tık…  tık" ritmi buradan gelir,
@@ -171,17 +231,18 @@ class _IzlemCarkiState extends State<IzlemCarki>
     final i = liste.indexOf(secilen);
     final dilim = 2 * math.pi / liste.length;
 
-    // İbre üstte (-π/2). Çark θ kadar dönünce ibrenin gösterdiği yerel açı
-    // (-π/2 - θ)'dır; i. dilimin ORTASINA denk gelmesi için:
-    //   -π/2 - θ ≡ i·dilim + dilim/2  (mod 2π)
-    final hedefYerel = i * dilim + dilim / 2;
+    // Hedef açı TEK KAYNAKTAN gelir ([carkDilimAcisi]) — boyacının dilim
+    // düzeniyle birebir aynı hesap. Eskiden burada yerel bir formül vardı ve
+    // boyacıdan çeyrek tur kayıyordu (bkz. geometri başlığı).
+    final hedefAci = carkDilimAcisi(i, liste.length);
     final kisitli = MediaQuery.of(context).disableAnimations;
     // 3-4 tur: eski 4-6 tur / 3,6 sn kurgusunda kalkış anındaki hız
     // bulanıklığa dönüşüyordu (24 Ağu 2026 bildirimi: "çark çok hızlı
     // dönüyor"). Daha az tur + daha uzun süre = aynı tören, okunur hız.
     final tamTur = kisitli ? 1 : 3 + _rastgele.nextInt(2);
-    final mevcutKalan = _aci % (2 * math.pi);
-    var delta = (-math.pi / 2 - hedefYerel - mevcutKalan) % (2 * math.pi);
+    var mevcutKalan = _aci % (2 * math.pi);
+    if (mevcutKalan < 0) mevcutKalan += 2 * math.pi;
+    var delta = (hedefAci - mevcutKalan) % (2 * math.pi);
     if (delta < 0) delta += 2 * math.pi;
     final hedef = _aci + tamTur * 2 * math.pi + delta;
     // Son "tık": çark hedefi dilimin üçte biri kadar İLERİ geçip kısa bir
@@ -293,16 +354,19 @@ class _IzlemCarkiState extends State<IzlemCarki>
     // Sürtünme modeli: v(t) = v0·e^(-kt) → toplam yol v0/k.
     const k = 1.9;
     final yol = hiz / k;
-    final dilim = 2 * math.pi / liste.length;
     // Serbest yolun bittiği yere EN YAKIN dilim ortasına oturt: sonuç
     // rastgele DEĞİL, kullanıcının kendi savurmasının sonucu.
     final ham = _aci + yol;
-    var yerel = (-math.pi / 2 - ham) % (2 * math.pi);
-    if (yerel < 0) yerel += 2 * math.pi;
-    final i = (yerel / dilim).round() % liste.length;
-    final hedefYerel = i * dilim + dilim / 2;
-    var delta =
-        (-math.pi / 2 - hedefYerel - (_aci % (2 * math.pi))) % (2 * math.pi);
+    // Savurmanın bittiği yerde ibrenin ÜSTÜNDE duracağı dilim. Eskiden
+    // `.round()` ile en yakın dilim SINIRINA yuvarlanıyordu; dilimin ikinci
+    // yarısında duran çark komşu dilime atlıyordu. `floor` (yani
+    // [carkIbreDilimi]) gerçekten durulan dilimi verir ve o dilimin ortası
+    // zaten en yakın merkezdir.
+    final i = carkIbreDilimi(ham, liste.length);
+    final hedefAci = carkDilimAcisi(i, liste.length);
+    var mevcutKalan = _aci % (2 * math.pi);
+    if (mevcutKalan < 0) mevcutKalan += 2 * math.pi;
+    var delta = (hedefAci - mevcutKalan) % (2 * math.pi);
     if (delta < 0) delta += 2 * math.pi;
     // Savurma yönü korunur: geriye savurduysa tur sayısını negatiften kur.
     final tur = (yol.abs() / (2 * math.pi)).floor();
@@ -777,8 +841,9 @@ class _CarkBoyaci extends CustomPainter {
       boya.color = n == 1 ? tonlar[0] : tonlar[i % 3];
       canvas.drawArc(
         Rect.fromCircle(center: merkez, radius: yaricap - 4),
-        // -π/2: 0. dilim ibreden (üstten) başlar — [_cevir] hesabıyla aynı.
-        -math.pi / 2 + i * dilim,
+        // 0. dilim ibreden (üstten) başlar; sabit [carkBaslangic]'ta ve
+        // ibre okuması ile hedef açı da ONU kullanıyor — tek kaynak.
+        carkBaslangic + i * dilim,
         dilim,
         true,
         boya,
@@ -791,7 +856,7 @@ class _CarkBoyaci extends CustomPainter {
       ..strokeWidth = 1;
     if (n > 1) {
       for (var i = 0; i < n; i++) {
-        final a = -math.pi / 2 + i * dilim;
+        final a = carkBaslangic + i * dilim;
         canvas.drawLine(
           merkez,
           merkez + Offset(math.cos(a), math.sin(a)) * (yaricap - 4),
@@ -829,7 +894,7 @@ class _CarkBoyaci extends CustomPainter {
     final azamiHarf = olcu.azamiHarf;
 
     for (var i = 0; i < n; i++) {
-      final a = -math.pi / 2 + (i + 0.5) * dilim;
+      final a = carkBaslangic + (i + 0.5) * dilim;
       final ham = adlar[i];
       final metin = TextPainter(
         text: TextSpan(

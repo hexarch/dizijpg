@@ -16,6 +16,41 @@ Mağaza kareleri çekilirken 11 dilde uygulama gezildi; şunlar görüldü:
 - ⬜ **İngilizce çoğul hatası**: dizi sayfasında "1 people you follow watched it"
   — tekil için "1 person" olmalı (diğer dillerde de çoğul kuralı kontrol edilmeli).
 
+## 2026-08-30 — 🔨 ÇARK HİZASI + DAR KOLONA SIKIŞAN İKİ SATIR (3. tur)
+
+### 1) "Çarkta gösterilen ile çıkan yapım aynı olmuyor"
+- ✅ **Boyacı ile mantık farklı konvansiyon kullanıyordu.** `_CarkBoyaci`
+  sıfırıncı dilimi ibrenin durduğu üst noktadan (−π/2) başlatıyor; `_cevir`,
+  `_elBirak` ve `_ibreDilimi` ise dilimleri saat 3 yönünden (0) sayıyordu.
+  Fark tam bir ÇEYREK TUR = **n/4 dilim** (ölçüldü: n=4→1, n=8→2, n=12→3).
+  Çark seçilen yapımın çeyrek tur ötesinde duruyordu.
+- ✅ Geometri iki saf işleve indi: `carkBaslangic`, `carkIbreDilimi`,
+  `carkDilimAcisi` — boyacı, ibre okuması ve hedef açı artık AYNI kaynaktan.
+- ✅ Elle savurmada `.round()` yerine `floor`: dilimin ikinci yarısında duran
+  çark komşu dilime atlıyordu.
+- ✅ **Neden 6 gündür fark edilmedi:** `izlem_carki_test.dart` sonuç KARTINI
+  denetliyordu, o da animasyondan ÖNCE seçiliyor — açı yanlışken bile kart
+  doğruydu. Yeni testler duran AÇIYI ölçüyor
+  (`izlem_carki_geometri_test.dart` + iki uçtan uca test).
+
+### 2) Dar kolona sıkışan iki satır (aynı kök, iki ekran)
+Kullanıcı: *"türler alt alta dizilmiş ama sağında ve solunda boşluk var"* ve
+*"oyuncuda emojiler 3'lü şekilde alt alta, oysa hepsinin sağı solu boş"*.
+İkisi de afişin/fotoğrafın SAĞINDAKİ dar sütunun içinde çiziliyordu; sarma
+kararı sayfanın değil sütunun genişliğine göre veriliyordu.
+- ✅ **Tür çipleri** afiş satırının dışına alındı (254 → 358 dp) ve yatay dolgu
+  daraltıldı (çip 109 → 99 dp; "Komedi" yazısı 75 dp, gerisi boşluktu).
+  Komedi·Drama·Gerilim artık 360 dp'lik telefonda bile TEK SATIR.
+  Afişin altındaki boş bant da dolmuş oldu.
+- ✅ **Tepki emojileri** fotoğraf satırının dışına alındı (234 → 358 dp) ve hap
+  49 → 39 dp'ye indi. Sekizi tek satıra sığıyor. **44 dp kuralı korundu:**
+  boşluk `Wrap.spacing`ten alınıp dokunma kutusunun İÇİNE konuldu — görünen hap
+  39 dp, `InkWell` 44 dp ve komşusuyla çakışmıyor (test bunu ölçüyor).
+- ⬜ Sayaç rozetleri çıkınca (birileri tepki verince) satır yine sarıyor: 8 hap
+  + sayılar 390 dp'ye sığmıyor. Kırpmaktansa sarmak doğru; 3 sıra yerine 2.
+- ✅ Kanıt: `dar_kolon_yerlesim_test.dart` (8 test, biri gerçek `DetayEkrani`
+  üstünde). Tüm paket 2.321 test yeşil.
+
 ## 2026-08-30 — 🔨 AKIŞ SEKMESİ, GÖRÜLDÜ ARIZASI VE PAYLAŞIM EKRANI (2. tur)
 
 Kullanıcı: *"aşağıdaki navigasyon tuşlarında akışa iki defa basınca beni yukarı

@@ -428,13 +428,6 @@ class _KisiEkraniState extends State<KisiEkrani> with OlcekDinler<KisiEkrani> {
                                 ],
                               ],
                             ),
-                            // Tepki satırı (12 Ağu): kullanıcı "oyuncuları da
-                            // unutma, puan gibi emoji verilen her yerde" dedi.
-                            // Puan düğmesinin hemen altında — ikisi de "senin
-                            // girdin" kuşağı. Sunucu tarafı `tur='person'`
-                            // kabul eder (migrasyon-2026-08-12).
-                            const SizedBox(height: 10),
-                            TepkiSatiri(tur: 'person', tmdbId: widget.kisiId),
                             // İSTEK: "puanla yazısının ALTINDA 10/20 gibi".
                             // Oturumsuzda ve oran gelmeden hiç çizilmez.
                             if (_izlenme != null && _izlenme!.$2 > 0)
@@ -451,6 +444,23 @@ class _KisiEkraniState extends State<KisiEkrani> with OlcekDinler<KisiEkrani> {
                       ),
                     ],
                   ),
+                  // TEPKİ SATIRI FOTOĞRAF SATIRININ DIŞINDA — 30 Ağu 2026,
+                  // kullanıcı: *"bir oyuncuyu ziyaret ettiğimde emojiler 3'lü
+                  // şekilde alt alta dizilmişler, oysa hepsinin sağı ve solu
+                  // boş, yan yana sığabilirlerdi."*
+                  //
+                  // ÖLÇÜM (390 dp telefon): satır fotoğrafın sağındaki 234
+                  // dp'lik sütunda kalıyordu → 3 emoji/satır, 159 dp'lik bir
+                  // blok. Sayfanın tam genişliği 358 dp; hapların da daralması
+                  // (bkz. [TepkiSatiri]) ile sekizi TEK SATIRA iniyor.
+                  //
+                  // KUŞAK BOZULMADI (12 Ağu kararı: "puan gibi emoji verilen
+                  // her yerde", puanın hemen altında): tepki satırı hâlâ
+                  // "senin girdin" bloğunun sonunda, yalnız artık sayfanın
+                  // tamamını kullanıyor. Bir üstündeki en son öğe yine
+                  // puan/izlenme satırı.
+                  const SizedBox(height: 12),
+                  TepkiSatiri(tur: 'person', tmdbId: widget.kisiId),
                   if ((k['biography'] as String?)?.isNotEmpty == true) ...[
                     const SizedBox(height: 14),
                     // Biyografi 6 satırda kırpılır, taşarsa sonunda üç nokta
