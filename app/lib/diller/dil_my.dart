@@ -1417,4 +1417,12 @@ const Map<String, String> cevirilerMy = {
       'သင့်အကောင့်ရှိ အီးမေးလ်လိပ်စာ မမှန်ကန်သဖြင့် အီးမေးလ် ပို့၍မရပါ။ မှန်ကန်သောလိပ်စာ ချိတ်ဆက်ရန် ပံ့ပိုးမှုကို ဆက်သွယ်ပါ။',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'ဤလိပ်စာသို့ ကုဒ်မပို့နိုင်ပါ၊ လိပ်စာကို စစ်ဆေးပါ',
+  'ya da': 'သို့မဟုတ်',
+  'Google ile doğrula': 'Google ဖြင့် အတည်ပြုပါ',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'အကောင့်ကို Google ဖြင့် ဖွင့်ခဲ့ပါက စကားဝှက်မရှိပါ။ သင့်အထောက်အထားကို Google ဖြင့် အတည်ပြုပါ။',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google အတည်ပြုချက်သည် ဤအကောင့်နှင့် မကိုက်ညီပါ',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'ဤအကောင့်ကို Google ဖြင့် ဖွင့်ထားသည်။ အတည်ပြုရန် Google ဖြင့် ဝင်ရောက်ပါ',
 };

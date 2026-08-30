@@ -1333,4 +1333,11 @@ const Map<String, String> cevirilerKo = {
       '계정의 이메일 주소가 올바르지 않아 메일을 보낼 수 없습니다. 올바른 주소를 연결하려면 지원팀에 문의하세요.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       '이 주소로 코드를 보내지 못했습니다. 주소를 확인하세요',
+  'ya da': '또는',
+  'Google ile doğrula': 'Google로 확인',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Google로 계정을 만들었다면 비밀번호가 없습니다. Google로 본인을 확인하세요.',
+  'Google doğrulaması bu hesapla eşleşmedi': 'Google 확인이 이 계정과 일치하지 않습니다',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      '이 계정은 Google로 만들어졌습니다. 확인하려면 Google로 로그인하세요',
 };

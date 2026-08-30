@@ -1393,4 +1393,12 @@ const Map<String, String> cevirilerBn = {
       'তোমার অ্যাকাউন্টের ইমেইল ঠিকানা বৈধ নয়, তাই ইমেইল পৌঁছানো যাচ্ছে না। সঠিক ঠিকানা যুক্ত করতে সহায়তার সঙ্গে যোগাযোগ করো।',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'এই ঠিকানায় কোড পাঠানো গেল না, ঠিকানাটি দেখে নাও',
+  'ya da': 'অথবা',
+  'Google ile doğrula': 'Google দিয়ে যাচাই করো',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'অ্যাকাউন্ট Google দিয়ে খুললে তোমার পাসওয়ার্ড নেই; পরিচয় Google দিয়ে যাচাই করো।',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google যাচাই এই অ্যাকাউন্টের সঙ্গে মেলেনি',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'এই অ্যাকাউন্ট Google দিয়ে খোলা; যাচাই করতে Google দিয়ে লগ ইন করো',
 };

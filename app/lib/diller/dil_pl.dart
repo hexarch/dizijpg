@@ -1418,4 +1418,12 @@ const Map<String, String> cevirilerPl = {
       'Adres e-mail na twoim koncie jest nieprawidłowy, więc nie da się dostarczyć wiadomości. Skontaktuj się z pomocą, aby powiązać właściwy adres.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Nie udało się wysłać kodu na ten adres, sprawdź go',
+  'ya da': 'lub',
+  'Google ile doğrula': 'Zweryfikuj przez Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Jeśli założyłeś konto przez Google, nie masz hasła; potwierdź tożsamość przez Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Weryfikacja Google nie pasuje do tego konta',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'To konto założono przez Google; zaloguj się przez Google, aby potwierdzić',
 };

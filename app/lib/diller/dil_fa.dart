@@ -1386,4 +1386,12 @@ const Map<String, String> cevirilerFa = {
       'نشانی ایمیل حسابت معتبر نیست، بنابراین ایمیل تحویل داده نمی‌شود. برای اتصال نشانی درست با پشتیبانی تماس بگیر.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'نتوانستیم به این نشانی کد بفرستیم، نشانی را بررسی کن',
+  'ya da': 'یا',
+  'Google ile doğrula': 'تأیید با Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'اگر حسابت را با Google ساخته‌ای گذرواژه نداری؛ هویتت را با Google تأیید کن.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'تأیید Google با این حساب مطابقت نداشت',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'این حساب با Google ساخته شده؛ برای تأیید با Google وارد شو',
 };

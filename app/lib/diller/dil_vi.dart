@@ -1403,4 +1403,12 @@ const Map<String, String> cevirilerVi = {
       'Địa chỉ email trên tài khoản của bạn không hợp lệ nên không thể gửi email. Hãy liên hệ hỗ trợ để liên kết địa chỉ đúng.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Không gửi được mã tới địa chỉ này, hãy kiểm tra lại địa chỉ',
+  'ya da': 'hoặc',
+  'Google ile doğrula': 'Xác minh bằng Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Nếu bạn tạo tài khoản bằng Google thì bạn không có mật khẩu; hãy xác minh danh tính bằng Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Xác minh Google không khớp với tài khoản này',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Tài khoản này được tạo bằng Google; đăng nhập bằng Google để xác minh',
 };

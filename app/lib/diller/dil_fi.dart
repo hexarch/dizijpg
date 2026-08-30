@@ -1409,4 +1409,12 @@ const Map<String, String> cevirilerFi = {
       'Tilisi sähköpostiosoite ei ole kelvollinen, joten sähköpostia ei voi toimittaa. Ota yhteyttä tukeen liittääksesi oikean osoitteen.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Koodia ei voitu lähettää tähän osoitteeseen, tarkista osoite',
+  'ya da': 'tai',
+  'Google ile doğrula': 'Vahvista Googlella',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Jos loit tilisi Googlella, sinulla ei ole salasanaa; vahvista henkilöllisyytesi Googlella.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google-vahvistus ei täsmännyt tähän tiliin',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Tämä tili luotiin Googlella; kirjaudu Googlella vahvistaaksesi',
 };

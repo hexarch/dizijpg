@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../google_kapisi.dart';
 import '../tema.dart';
 import 'iki_adim_sheet.dart' show ikiAdimSheetAc;
 
@@ -29,6 +33,20 @@ import 'iki_adim_sheet.dart' show ikiAdimSheetAc;
 /// düzeltmeye çalıştığımız olayı tekrar etmenin) en kısa yolu olurdu.
 ///
 /// ---------------------------------------------------------------------------
+/// KİMLİK KANITI HERKESTE "ŞİFRE" DEĞİL
+/// ---------------------------------------------------------------------------
+/// Kullanıcı tespiti (30 Ağu 2026): *"google hesabı ile giriş yapanların
+/// şifresi yok ki"*. Doğrusu: Google ile açılan hesabın `sifre_hash`i sunucuda
+/// RASTGELEDİR, yani sahibi onu BİLEMEZ ve şifre sorulunca kaçınılmaz olarak
+/// "Şifre hatalı" alırdı — çıkışsız bir döngü. Bu yüzden ekran İKİ kanıt
+/// sunar: şifre alanı ve "Google ile doğrula".
+///
+/// HESABIN KÖKENİ SORULMUYOR, İKİSİ BİRDEN GÖSTERİLİYOR. İstemcinin "bu hesap
+/// Google kökenli mi" diye ayrı bir uca sorması gerekirdi; kullanıcıya iki
+/// seçeneği birden vermek hem bir istek eksiltiyor hem de ŞİFRESİNİ SONRADAN
+/// BELİRLEMİŞ Google kullanıcısını (ikisi de geçerli) doğru yakalıyor.
+///
+/// ---------------------------------------------------------------------------
 /// DOĞRULAMA HEM BURADA HEM SUNUCUDA
 /// ---------------------------------------------------------------------------
 /// Buradaki kalıp yalnız HIZLI GERİ BİLDİRİM için (`ui-ux-pro-max` *Inline
@@ -51,6 +69,11 @@ class _EpostaSheetState extends State<EpostaSheet> {
   final _sifre = TextEditingController();
   bool _gonderiliyor = false;
 
+  /// Google kapısı: webde Google'ın KENDİ düğmesi + akış, mobilde `dokun()`.
+  /// Giriş ekranıyla aynı bileşen — ikinci bir Google akışı yazmıyoruz.
+  late final GoogleKapisi _kapi;
+  StreamSubscription<GoogleKimligi>? _googleAbonesi;
+
   /// Alanın altında kırmızı duran hata. Sunucudan gelen mesaj da BURAYA
   /// yazılıyor, yalnız SnackBar'a değil: `ui-ux-pro-max` *Error Clarity* —
   /// kaybolan bir SnackBar kullanıcıyı "ne yazmıştım" diye geri döndürür.
@@ -65,21 +88,38 @@ class _EpostaSheetState extends State<EpostaSheet> {
   );
 
   String get _aday => _eposta.text.trim().toLowerCase();
+
+  /// ADRES tek başına geçerli mi. Şifre BURAYA girmez: Google yolunda şifre
+  /// hiç yazılmaz. Şifre koşulu yalnız "Kod gönder" düğmesinde aranır.
   bool get _gecerli =>
       _kalip.hasMatch(_aday) &&
       _aday.length <= 254 &&
-      _aday != widget.mevcut.trim().toLowerCase() &&
-      _sifre.text.isNotEmpty;
+      _aday != widget.mevcut.trim().toLowerCase();
+
+  @override
+  void initState() {
+    super.initState();
+    _kapi = googleKapisiOlustur(web: kIsWeb);
+    // Webde akış Google'ın kendi düğmesinden gelir; mobilde akış boştur ve
+    // kanıt `dokun()` ile alınır.
+    _googleAbonesi = _kapi.akis.listen(
+      (k) => _gonder(google: k),
+      onError: (Object e) => setState(() => _hata = e.toString()),
+    );
+  }
 
   @override
   void dispose() {
+    _googleAbonesi?.cancel();
+    _kapi.birak();
     _eposta.dispose();
     _sifre.dispose();
     super.dispose();
   }
 
-  Future<void> _gonder() async {
+  Future<void> _gonder({GoogleKimligi? google}) async {
     if (!_gecerli || _gonderiliyor) return;
+    if (google == null && _sifre.text.isEmpty) return;
     setState(() {
       _gonderiliyor = true;
       _hata = null;
@@ -88,7 +128,12 @@ class _EpostaSheetState extends State<EpostaSheet> {
     final messenger = ScaffoldMessenger.of(context);
     String? ipucu;
     try {
-      final d = await Api.epostaDegistirKodIste(adres, _sifre.text);
+      final d = await Api.epostaDegistirKodIste(
+        adres,
+        sifre: google == null ? _sifre.text : null,
+        idToken: google?.idToken,
+        erisimToken: google?.erisimToken,
+      );
       ipucu = d['eposta_ipucu'] as String?;
     } catch (e) {
       if (!mounted) return;
@@ -107,8 +152,15 @@ class _EpostaSheetState extends State<EpostaSheet> {
       baslik: 'E-posta adresini değiştir'.c,
       aciklama: 'Kod {} adresine gönderildi'.cf([ipucu ?? adres]),
       dogrula: (kod) => Api.epostaDegistirUygula(kod),
-      // Yeniden gönderim aynı ucu çağırır: şifre elimizde, adres aynı.
-      yenidenGonder: () => Api.epostaDegistirKodIste(adres, _sifre.text),
+      // Yeniden gönderim aynı ucu, AYNI KANITLA çağırır. Google yolunda
+      // şifre elimizde yok; jeton tekrar kullanılır (kısa ömürlüdür ama kod
+      // ekranı da 10 dakikalıktır, pencereler örtüşür).
+      yenidenGonder: () => Api.epostaDegistirKodIste(
+        adres,
+        sifre: google == null ? _sifre.text : null,
+        idToken: google?.idToken,
+        erisimToken: google?.erisimToken,
+      ),
     );
     if (!tamam || !mounted) return;
     Navigator.pop(context, adres);
@@ -218,7 +270,10 @@ class _EpostaSheetState extends State<EpostaSheet> {
               const SizedBox(height: 12),
               FilledButton(
                 key: const Key('eposta-kod-gonder'),
-                onPressed: (_gecerli && !_gonderiliyor) ? _gonder : null,
+                onPressed:
+                    (_gecerli && _sifre.text.isNotEmpty && !_gonderiliyor)
+                    ? () => _gonder()
+                    : null,
                 child: _gonderiliyor
                     ? const SizedBox(
                         width: 22,
@@ -230,6 +285,70 @@ class _EpostaSheetState extends State<EpostaSheet> {
                       )
                     : Text('Kod gönder'.c),
               ),
+              // GOOGLE YOLU — şifresini bilmeyen (Google ile açılmış) hesap
+              // için TEK çıkış. Ayırıcı metin, iki kanıtın ALTERNATİF olduğunu
+              // söyler: "ikisini de yap" değil, "hangisi varsa onu".
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(child: Divider(color: DiziRenkler.metin38)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      'ya da'.c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin54,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  Expanded(child: Divider(color: DiziRenkler.metin38)),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google '
+                        'ile doğrula.'
+                    .c,
+                style: TextStyle(
+                  color: DiziRenkler.metin54,
+                  fontSize: 12,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 8),
+              // WEB: Google'ın KENDİ düğmesi (GIS artık kendi düğmemizden
+              // giriş başlatmamıza izin vermiyor) — sonuç `akis`tan gelir.
+              // MOBİL: `dugme` null döner, kendi düğmemizi çizip `dokun()`
+              // çağırırız. Giriş ekranıyla birebir aynı kalıp.
+              if (_gecerli && !_gonderiliyor)
+                _kapi.dugme(context) ??
+                    OutlinedButton.icon(
+                      key: const Key('eposta-google-dogrula'),
+                      onPressed: () async {
+                        try {
+                          final k = await _kapi.dokun();
+                          if (k == null || k.bos) return; // vazgeçti
+                          await _gonder(google: k);
+                        } catch (e) {
+                          if (mounted) setState(() => _hata = e.toString());
+                        }
+                      },
+                      icon: const Icon(Icons.account_circle_outlined, size: 18),
+                      label: Text('Google ile doğrula'.c),
+                    )
+              else
+                // Adres geçerli değilken düğme ÇİZİLMEZ: Google akışını
+                // başlatıp sonunda "geçersiz adres" demek, kullanıcıyı hesap
+                // seçtirdikten sonra geri çevirmek olurdu.
+                Opacity(
+                  opacity: 0.4,
+                  child: OutlinedButton.icon(
+                    onPressed: null,
+                    icon: const Icon(Icons.account_circle_outlined, size: 18),
+                    label: Text('Google ile doğrula'.c),
+                  ),
+                ),
             ],
           ),
         ),

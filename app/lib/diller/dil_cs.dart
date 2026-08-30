@@ -1398,4 +1398,12 @@ const Map<String, String> cevirilerCs = {
       'E-mailová adresa na tvém účtu není platná, takže e-mail nelze doručit. Pro připojení správné adresy se obrať na podporu.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Na tuhle adresu se nepodařilo poslat kód, zkontroluj ji',
+  'ya da': 'nebo',
+  'Google ile doğrula': 'Ověřit přes Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Pokud sis účet založil přes Google, nemáš heslo; ověř svou totožnost přes Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Ověření přes Google k tomuto účtu nesedí',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Tenhle účet byl založen přes Google; pro ověření se přihlas přes Google',
 };

@@ -1373,4 +1373,11 @@ const Map<String, String> cevirilerAr = {
       'عنوان البريد الإلكتروني في حسابك غير صالح، لذلك لا يمكن تسليم البريد. تواصل مع الدعم لربط العنوان الصحيح.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'تعذّر إرسال رمز إلى هذا العنوان، تحقق من العنوان',
+  'ya da': 'أو',
+  'Google ile doğrula': 'التحقق عبر Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'إذا أنشأت حسابك عبر Google فليست لديك كلمة مرور؛ تحقّق من هويتك عبر Google.',
+  'Google doğrulaması bu hesapla eşleşmedi': 'لم يطابق تحقّق Google هذا الحساب',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'أُنشئ هذا الحساب عبر Google؛ سجّل الدخول عبر Google للتحقّق',
 };

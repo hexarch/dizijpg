@@ -1407,4 +1407,12 @@ const Map<String, String> cevirilerSr = {
       'Имејл адреса на твом налогу није исправна, па имејл не може да се испоручи. Обрати се подршци да повежеш исправну адресу.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Није успело слање кода на ову адресу, провери адресу',
+  'ya da': 'или',
+  'Google ile doğrula': 'Потврди преко Google-а',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Ако си налог направио преко Google-а, немаш лозинку; потврди идентитет преко Google-а.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google потврда се не поклапа са овим налогом',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Овај налог је направљен преко Google-а; пријави се преко Google-а да потврдиш',
 };

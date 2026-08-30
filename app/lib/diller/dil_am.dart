@@ -1351,4 +1351,11 @@ const Map<String, String> cevirilerAm = {
       'በመለያህ ላይ ያለው የኢሜይል አድራሻ ትክክል ስላልሆነ ኢሜይል ሊደርስ አይችልም። ትክክለኛውን አድራሻ ለማያያዝ ድጋፍን አግኝ።',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'ወደዚህ አድራሻ ኮድ መላክ አልተቻለም፤ አድራሻውን አረጋግጥ',
+  'ya da': 'ወይም',
+  'Google ile doğrula': 'በGoogle አረጋግጥ',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'መለያህን በGoogle ከከፈትህ የይለፍ ቃል የለህም፤ ማንነትህን በGoogle አረጋግጥ።',
+  'Google doğrulaması bu hesapla eşleşmedi': 'የGoogle ማረጋገጫ ከዚህ መለያ ጋር አልተዛመደም',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'ይህ መለያ በGoogle ተከፍቷል፤ ለማረጋገጥ በGoogle ግባ',
 };

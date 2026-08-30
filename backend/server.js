@@ -8748,17 +8748,28 @@ function girisYuku(k) {
 // test kırmızıya döner.
 const GOOGLE_ISTEMCI = '1026295944597-alc4fpkc2gvtn1qmq92hols5oba98h55.apps.googleusercontent.com';
 
-app.post('/auth/google', authLimiti, sarici(async (req, res) => {
-  if (await cihazKapisi(req, res)) return;
-  const { kimlik, erisim } = req.body || {};
-  let bilgi = null;
+/**
+ * Google kimliğini DOĞRULAR ve `{ email, sub }` döndürür; doğrulanamazsa null.
+ *
+ * AYRI FONKSİYON (30 Ağu 2026): `/auth/google` içinde gömülüydü, ama artık
+ * `/auth/eposta-degistir/kod` da aynı kanıtı istiyor — Google ile açılmış
+ * hesabın kullanıcısı ŞİFRESİNİ BİLMEZ (o alana rastgele hash yazılıyor),
+ * dolayısıyla tek kimlik kanıtı sağlayıcıya taze giriştir. Kopyalansaydı
+ * `aud`/`email_verified` kontrollerinden biri bir gün yalnız tek yerde
+ * güncellenirdi; bu fonksiyon o iki kontrolün TEK kaynağıdır.
+ *
+ * `sub` ARTIK DÖNÜYOR: Google hesabının DEĞİŞMEYEN kimliği. E-postayla
+ * eşleştirme, kullanıcı adresini değiştirince koptuğu için yetersiz
+ * (migrasyon-2026-08-30d.sql).
+ */
+async function googleDogrula({ kimlik, erisim }) {
   try {
     if (kimlik) {
       const c = await fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(kimlik));
       if (c.ok) {
         const d = await c.json();
         if (d.aud === GOOGLE_ISTEMCI && String(d.email_verified) === 'true') {
-          bilgi = { email: d.email };
+          return { email: String(d.email).toLowerCase(), sub: d.sub || null };
         }
       }
     } else if (erisim) {
@@ -8773,21 +8784,51 @@ app.post('/auth/google', authLimiti, sarici(async (req, res) => {
           });
           if (u.ok) {
             const d = await u.json();
-            if (d.email_verified) bilgi = { email: d.email };
+            if (d.email_verified) {
+              return { email: String(d.email).toLowerCase(), sub: d.sub || null };
+            }
           }
         }
       }
     }
-  } catch { /* ağ hatası → aşağıda 401 */ }
+  } catch { /* ağ hatası → çağıran 401 versin */ }
+  return null;
+}
+
+app.post('/auth/google', authLimiti, sarici(async (req, res) => {
+  if (await cihazKapisi(req, res)) return;
+  const bilgi = await googleDogrula(req.body || {});
   if (!bilgi?.email) {
     return res.status(401).json({ hata: 'Google doğrulaması başarısız' });
   }
 
-  const email = bilgi.email.toLowerCase();
-  const mevcut = await havuz.query(
-    'SELECT * FROM kullanicilar WHERE email = lower($1)', [email]);
+  const email = bilgi.email;
+  // İKİ AŞAMALI EŞLEŞTİRME (30 Ağu 2026):
+  //   1. `google_sub` — hesabın DEĞİŞMEYEN bağı. Kullanıcı e-postasını
+  //      değiştirdiyse hesabı YALNIZ bu bulur.
+  //   2. e-posta — `sub` henüz doldurulmamış eski hesaplar için. Bulunca
+  //      `sub` O ANDA yazılır, yani her hesap bir sonraki girişte kendiliğinden
+  //      geçer (migrasyonda toplu doldurma YOK; `sub` yalnız jetondan gelir).
+  // SIRA ÖNEMLİ: önce e-postaya bakılsaydı, adresini değiştirmiş kullanıcının
+  // eski adresini kapan BAŞKA biri onun hesabına düşerdi.
+  let mevcut = bilgi.sub
+    ? await havuz.query('SELECT * FROM kullanicilar WHERE google_sub = $1', [bilgi.sub])
+    : { rows: [] };
+  if (!mevcut.rows.length) {
+    mevcut = await havuz.query(
+      'SELECT * FROM kullanicilar WHERE email = lower($1)', [email]);
+  }
   if (mevcut.rows.length) {
     let k = mevcut.rows[0];
+    // `sub` GERİYE DOLDURMA — ateşle-unut: girişi bu yazmaya bağlamıyoruz.
+    // Çakışma (aynı sub başka hesapta) olursa kısmi tekil indeks reddeder ve
+    // giriş yine sürer; bir sonraki denemede yine denenir.
+    if (bilgi.sub && k.google_sub !== bilgi.sub) {
+      havuz.query(
+        'UPDATE kullanicilar SET google_sub=$1 WHERE id=$2 AND google_sub IS NULL',
+        [bilgi.sub, k.id],
+      ).catch((e) => console.error('google_sub doldurma:', e.message));
+    }
     // ---- HESAP ÖN-KAÇIRMA KAPISI (denetim 2026-08-17 §4.2) ----
     // Kayıt ucu e-posta sahipliğini doğrulamıyor. Saldırgan kurbanın
     // adresiyle önceden hesap açtıysa, kurban Google'la girdiğinde
@@ -8859,10 +8900,16 @@ app.post('/auth/google', authLimiti, sarici(async (req, res) => {
         // yanıtıdır, yani posta kutusunun sahipliği ZATEN kanıtlanmıştır.
         // İşaretlemezsek kullanıcı ikinci kez Google'la girdiğinde §4.2 kapısı
         // boş yere tetiklenir ve kendi belirlediği şifreyi silerdi.
-        `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash, eposta_dogrulandi)
-         VALUES (lower($1), $2, $3, true)
+        // `google_sub` İLK YAZIMDA konur: bu hesap Google ile açıldı, yani
+        // sahibi ŞİFRESİNİ BİLMİYOR (aşağıdaki rastgele hash onun değil).
+        // Sütun hem bağlantı anahtarı hem de "bu hesap Google kökenli"
+        // işaretidir — e-posta değiştirmede şifre yerine taze Google jetonu
+        // kabul etme kararı buradan verilir.
+        `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash, eposta_dogrulandi, google_sub)
+         VALUES (lower($1), $2, $3, true, $4)
          RETURNING id, kullanici_adi, email, misafir`,
-        [email, ad, await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10)],
+        [email, ad, await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10),
+         bilgi.sub || null],
       );
       return res.json({ token: jwtUret(rows[0]), kullanici: rows[0], yeni: true });
     } catch (e) {
@@ -9200,7 +9247,7 @@ app.post('/auth/eposta-degistir/kod', authLimiti, girisZorunlu,
       });
     }
     const { rows } = await havuz.query(
-      'SELECT email, sifre_hash, misafir FROM kullanicilar WHERE id=$1',
+      'SELECT email, sifre_hash, misafir, google_sub FROM kullanicilar WHERE id=$1',
       [req.kullanici.id]);
     if (!rows.length) return res.status(404).json({ hata: 'Hesap bulunamadı' });
     const k = rows[0];
@@ -9208,9 +9255,49 @@ app.post('/auth/eposta-degistir/kod', authLimiti, girisZorunlu,
     if (k.misafir || !k.sifre_hash) {
       return res.status(400).json({ hata: 'Bu hesapta e-posta yok' });
     }
-    // ŞİFRE, ADRESTEN ÖNCE: yanlış şifreyle gelen biri "bu adres kayıtlı mı"
-    // sorusunu (409) hiç sormamalı — uç bir e-posta sayım aracına dönüşürdü.
-    if (!(await bcrypt.compare(String(sifre || ''), k.sifre_hash))) {
+    // ---- KİMLİK KANITI: ŞİFRE **VEYA** TAZE GOOGLE GİRİŞİ ----
+    // Kullanıcı tespiti (30 Ağu 2026): "google hesabı ile giriş yapanların
+    // şifresi yok ki". Doğrusu: Google ile açılan hesabın `sifre_hash`i
+    // RASTGELEDİR (bkz. /auth/google), yani sahibi onu bilemez ve şifre
+    // sorulduğunda kaçınılmaz olarak "Şifre hatalı" alırdı. Standart çözüm,
+    // hesabın SAHİP OLDUĞU yöntemle yeniden kimlik doğrulamaktır: şifresi
+    // olan şifreyle, Google'lı sağlayıcıya taze girişle.
+    //
+    // GOOGLE JETONU NE ZAMAN KABUL EDİLİR — iki koşuldan biri:
+    //   · jetonun `sub`u hesabın `google_sub`una eşit (asıl bağ), YA DA
+    //   · jetonun doğrulanmış e-postası hesabın adresine eşit.
+    // İkincisi YENİ BİR KAPI AÇMAZ: `/auth/google` zaten doğrulanmış e-posta
+    // eşleşmesiyle TAM OTURUM veriyor, yani aynı kanıt zaten hesabı açıyor.
+    // Eşleşme e-posta üzerinden olduysa `google_sub` da doldurulur.
+    const googleGirdi = req.body?.kimlik || req.body?.erisim;
+    if (googleGirdi) {
+      const g = await googleDogrula(req.body);
+      const eslesti = g && (
+        (k.google_sub && g.sub === k.google_sub) || g.email === k.email);
+      if (!eslesti) {
+        return res.status(401).json({
+          kod: 'GOOGLE_ESLESMEDI',
+          hata: 'Google doğrulaması bu hesapla eşleşmedi',
+        });
+      }
+      if (g.sub && !k.google_sub) {
+        havuz.query(
+          'UPDATE kullanicilar SET google_sub=$1 WHERE id=$2 AND google_sub IS NULL',
+          [g.sub, req.kullanici.id],
+        ).catch((e) => console.error('google_sub doldurma:', e.message));
+      }
+    } else if (!(await bcrypt.compare(String(sifre || ''), k.sifre_hash))) {
+      // ŞİFRE, ADRESTEN ÖNCE: yanlış şifreyle gelen biri "bu adres kayıtlı mı"
+      // sorusunu (409) hiç sormamalı — uç bir e-posta sayım aracına dönüşürdü.
+      //
+      // GOOGLE KÖKENLİ HESABA AYRI MESAJ: `google_sub` doluysa bu kişi şifre
+      // BİLEMEZ; "Şifre hatalı" demek onu çıkışsız bir döngüde bırakırdı.
+      if (k.google_sub) {
+        return res.status(401).json({
+          kod: 'GOOGLE_GEREKLI',
+          hata: 'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap',
+        });
+      }
       return res.status(401).json({ hata: 'Şifre hatalı' });
     }
     if (email === k.email) {

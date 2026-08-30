@@ -1413,4 +1413,12 @@ const Map<String, String> cevirilerHu = {
       'A fiókodon lévő e-mail-cím nem érvényes, ezért nem kézbesíthető e-mail. Vedd fel a kapcsolatot a támogatással a helyes cím összekapcsolásához.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Nem sikerült kódot küldeni erre a címre, ellenőrizd a címet',
+  'ya da': 'vagy',
+  'Google ile doğrula': 'Ellenőrzés Google-lel',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Ha Google-lel hoztad létre a fiókod, nincs jelszavad; igazold magad Google-lel.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'A Google-ellenőrzés nem egyezik ezzel a fiókkal',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Ez a fiók Google-lel készült; az igazoláshoz jelentkezz be Google-lel',
 };

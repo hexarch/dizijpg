@@ -1405,4 +1405,12 @@ const Map<String, String> cevirilerDa = {
       'E-mailadressen på din konto er ikke gyldig, så e-mailen kan ikke leveres. Kontakt support for at tilknytte den rigtige adresse.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Der kunne ikke sendes en kode til denne adresse, tjek adressen',
+  'ya da': 'eller',
+  'Google ile doğrula': 'Bekræft med Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Hvis du oprettede din konto med Google, har du ingen adgangskode; bekræft din identitet med Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google-bekræftelsen passede ikke til denne konto',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Denne konto blev oprettet med Google; log ind med Google for at bekræfte',
 };

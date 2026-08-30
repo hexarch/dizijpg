@@ -65,6 +65,58 @@ Rozet şeridi yalnız akışta çiziliyordu.
   30. bölüme basınca öncesindeki 29 bölüm otomatik izlendi sayılsın."
   (Şu an ya 30 kez dokunmak ya 'bitirdim' deyip 18 kez geri almak gerekiyor.)
 
+## 2026-08-30 (2. tur) — ✅ İKON KAYIP · EMOJİ DÜZENİ · GOOGLE KİMLİK
+
+### 1) "Masaüstünde takipçi ikonu gözükmüyor" — Cloudflare'de BAYAT FONT
+Kod doğruydu. Canlıya giden ikon fontu 21 Ağustos'tan kalmaydı:
+`origin 46.700 bayt / 350 ikon` ↔ `Cloudflare 45.500 bayt / 342 ikon`.
+`U+E2EB` (Icons.group) o kopyanın cmap'inde HİÇ YOKTU.
+
+Kök neden nginx'te yazılıydı: `/assets/` adları içerik hash'li DEĞİL ama
+`max-age=2592000` (30 gün). Yani 21 Ağu'dan sonra eklenen 8 ikon webde
+görünmüyordu: `group` (takipçi), `business` (firma etiketi), `attractions`,
+`calendar_view_week`, `remove`, `vertical_align_bottom`, `event_available`,
+`mark_email_read`. Telefonda font APK'da olduğu için sorun yoktu.
+
+- ✅ nginx `/assets/` 30 gün → **1 saat**. Bir daha en fazla 1 saat sürer.
+- ✅ Cloudflare purge yapıldı; canlı font artık 46.700 bayt / 350 ikon.
+- ⬜ **Kalıntı:** 21 Ağu–30 Ağu arası siteye girmiş kullanıcıların
+  TARAYICI önbelleğindeki kopya kendi süresi dolana kadar duruyor
+  (`Cmd+Shift+R` bile yenilemiyor — Flutter fontu sayfa yüklendikten sonra
+  kendi içinden çekiyor). Uzaktan silinemez; en geç 30 günde kendini toparlar.
+  Ölçüm: sayfa içinden `fetch(..., {cache:'reload'})` 46.700, normal fetch
+  44.844 dönüyordu.
+
+### 2) Tepki emojileri: TEK SIRA · ARKA PLAN YOK · SAYI ALTTA
+Kullanıcı: *"emojileri tek sıraya sığdır arka planları da olmasın yani neden
+temadan farklı renk arka plan atıyorsun"* + *"sadece oyuncu için değil dizi
+yönetmen firma hepsinde... sayısını altında göster, yanında değil"*.
+
+- ✅ `Wrap` → `Row` + `Expanded`: taşma matematiksel olarak imkânsız.
+- ✅ `DiziRenkler.kart` hap dolgusu ve seçili kenarı kaldırıldı.
+- ✅ Sayı emojinin ALTINDA, yatayda hizalı; 0 iken boş metin (hiza korunur).
+- ✅ Seçili işareti artık renk + sürekli animasyon (kutu değil).
+- ✅ `tepki_tek_sira_test.dart` (6 test) + `dar_kolon_yerlesim_test.dart`'taki
+  "dar sütunda sarar" iddiası TERSİNE çevrildi (artık sarmamalı).
+
+### 3) Google hesapları: şifre yok — İKİ kusur birden kapandı
+Kullanıcı tespiti: *"google hesabı ile giriş yapanların şifresi yok ki"*.
+
+- **Kusur 1:** "şifresi yok" değil, RASTGELE bir şifresi var (/auth/google
+  `crypto.randomBytes(16)` yazıyor) → e-posta değiştirmede kaçınılmaz
+  "Şifre hatalı". Hangi hesabın Google kökenli olduğu da belli değildi.
+- **Kusur 2 (daha ağır):** /auth/google hesabı YALNIZ e-postayla buluyordu.
+  E-posta değiştirme gelince bu, "adresini değiştiren Google kullanıcısı bir
+  daha giremez, sıfırdan boş hesap açılır" demekti.
+
+- ✅ `google_sub` sütunu + kısmi tekil indeks (migrasyon-2026-08-30d.sql).
+- ✅ Giriş İKİ AŞAMALI: önce `sub`, yoksa e-posta; e-postayla bulunca `sub`
+  o anda doldurulur (toplu geriye doldurma YOK — `sub` yalnız jetondan gelir).
+- ✅ E-posta değiştirmede kanıt: şifre **veya** taze Google jetonu.
+- ✅ Google kökenli hesaba anlamlı hata (`GOOGLE_GEREKLI`), "Şifre hatalı" değil.
+- ✅ `EpostaSheet`e "Google ile doğrula" (webde Google'ın kendi düğmesi).
+- ✅ 5 yeni metin × 45 dil.
+
 ## 2026-08-30 — 🔨 ÇARK HİZASI + DAR KOLONA SIKIŞAN İKİ SATIR (3. tur)
 
 ### 1) "Çarkta gösterilen ile çıkan yapım aynı olmuyor"

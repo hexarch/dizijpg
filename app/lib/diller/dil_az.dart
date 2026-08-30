@@ -1395,4 +1395,12 @@ const Map<String, String> cevirilerAz = {
       'Hesabındakı e-poçt ünvanı etibarlı deyil, buna görə e-poçt çatdırıla bilmir. Düzgün ünvanı bağlamaq üçün dəstəklə əlaqə saxla.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Bu ünvana kod göndərilə bilmədi, ünvanı yoxla',
+  'ya da': 'ya da',
+  'Google ile doğrula': 'Google ilə doğrula',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Hesabını Google ilə açmısansa şifrən yoxdur; kimliyini Google ilə doğrula.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google doğrulaması bu hesabla uyğun gəlmədi',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Bu hesab Google ilə açılıb; doğrulamaq üçün Google ilə daxil ol',
 };

@@ -1400,4 +1400,12 @@ const Map<String, String> cevirilerTe = {
       'నీ ఖాతాలోని ఇమెయిల్ చిరునామా చెల్లదు, అందుకే ఇమెయిల్ చేరవేయలేకపోతున్నాం. సరైన చిరునామాను అనుసంధానించడానికి మద్దతును సంప్రదించు.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'ఈ చిరునామాకు కోడ్ పంపలేకపోయాం, చిరునామాను తనిఖీ చేయి',
+  'ya da': 'లేదా',
+  'Google ile doğrula': 'Google తో ధృవీకరించు',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'ఖాతాను Google తో తెరిచి ఉంటే నీకు పాస్‌వర్డ్ లేదు; గుర్తింపును Google తో ధృవీకరించు.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google ధృవీకరణ ఈ ఖాతాతో సరిపోలలేదు',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'ఈ ఖాతా Google తో తెరవబడింది; ధృవీకరించడానికి Google తో సైన్ ఇన్ చేయి',
 };

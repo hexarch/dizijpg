@@ -1315,4 +1315,11 @@ const Map<String, String> cevirilerZh = {
   'Hesabındaki e-posta adresi geçerli değil, bu yüzden e-posta teslim edilemiyor. Doğru adresi bağlamak için destekle iletişime geç.':
       '你账号上的邮箱地址无效，因此无法投递邮件。请联系支持以绑定正确的地址。',
   'Bu adrese kod gönderilemedi, adresi kontrol et': '无法向该地址发送验证码，请检查地址',
+  'ya da': '或',
+  'Google ile doğrula': '用 Google 验证',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      '如果你的账号是用 Google 创建的，就没有密码；请用 Google 验证身份。',
+  'Google doğrulaması bu hesapla eşleşmedi': 'Google 验证与此账号不匹配',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      '此账号是用 Google 创建的；请用 Google 登录以验证',
 };

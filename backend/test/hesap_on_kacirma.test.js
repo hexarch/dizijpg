@@ -110,7 +110,11 @@ test('kullanıcı sessiz bırakılmıyor: bilgilendirme postası gidiyor', () =>
 
 test('Google ile AÇILAN hesap doğrulanmış doğar', () => {
   const g = googleUcu();
-  assert.match(g, /INSERT INTO kullanicilar \(email, kullanici_adi, sifre_hash, eposta_dogrulandi\)[\s\S]*?VALUES \(lower\(\$1\), \$2, \$3, true\)/,
+  // `google_sub` 30 Ağu 2026'da EKLENDİ (migrasyon-2026-08-30d.sql): hem
+  // hesabın değişmeyen bağı hem de "bu hesap Google kökenli" işareti.
+  // İDDİA DEĞİŞMEDİ: sütun listesi ne olursa olsun `eposta_dogrulandi`
+  // TRUE doğmalı — asıl korunan şey bu.
+  assert.match(g, /INSERT INTO kullanicilar \(email, kullanici_adi, sifre_hash, eposta_dogrulandi, google_sub\)[\s\S]*?VALUES \(lower\(\$1\), \$2, \$3, true, \$4\)/,
     'Google ile açılan hesap doğrulanmamış sayılıyor — kullanıcı ikinci '
     + 'girişinde kendi belirlediği şifreyi kaybeder');
 });

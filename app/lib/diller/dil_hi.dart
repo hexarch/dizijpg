@@ -1399,4 +1399,12 @@ const Map<String, String> cevirilerHi = {
       'तुम्हारे खाते का ईमेल पता मान्य नहीं है, इसलिए ईमेल पहुँचाया नहीं जा सकता। सही पता जोड़ने के लिए सहायता से संपर्क करो।',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'इस पते पर कोड नहीं भेजा जा सका, पता जाँचो',
+  'ya da': 'या',
+  'Google ile doğrula': 'Google से सत्यापित करो',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'अगर तुमने खाता Google से बनाया है तो तुम्हारा पासवर्ड नहीं है; पहचान Google से सत्यापित करो।',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google सत्यापन इस खाते से मेल नहीं खाया',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'यह खाता Google से बना है; सत्यापित करने के लिए Google से साइन इन करो',
 };

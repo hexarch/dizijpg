@@ -1370,4 +1370,11 @@ const Map<String, String> cevirilerHe = {
       'כתובת האימייל בחשבון שלך אינה תקינה, ולכן אי אפשר למסור אימייל. פנה לתמיכה כדי לקשר את הכתובת הנכונה.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'לא הצלחנו לשלוח קוד לכתובת הזו, בדוק את הכתובת',
+  'ya da': 'או',
+  'Google ile doğrula': 'אימות באמצעות Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'אם יצרת את החשבון עם Google אין לך סיסמה; אמת את זהותך באמצעות Google.',
+  'Google doğrulaması bu hesapla eşleşmedi': 'אימות Google לא תואם לחשבון הזה',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'החשבון הזה נוצר עם Google; התחבר עם Google כדי לאמת',
 };

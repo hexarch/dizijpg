@@ -1426,4 +1426,12 @@ const Map<String, String> cevirilerEl = {
       'Η διεύθυνση email του λογαριασμού σου δεν είναι έγκυρη, γι\' αυτό το email δεν μπορεί να παραδοθεί. Επικοινώνησε με την υποστήριξη για να συνδέσεις τη σωστή διεύθυνση.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Δεν στάλθηκε κωδικός σε αυτή τη διεύθυνση, έλεγξε τη διεύθυνση',
+  'ya da': 'ή',
+  'Google ile doğrula': 'Επαλήθευση με Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Αν δημιούργησες τον λογαριασμό σου με Google, δεν έχεις κωδικό· επαλήθευσε την ταυτότητά σου με Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Η επαλήθευση Google δεν ταιριάζει με αυτόν τον λογαριασμό',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Ο λογαριασμός δημιουργήθηκε με Google· συνδέσου με Google για επαλήθευση',
 };

@@ -1408,4 +1408,12 @@ const Map<String, String> cevirilerUk = {
       'Адреса електронної пошти у твоєму обліковому записі недійсна, тому лист неможливо доставити. Звернися до підтримки, щоб прив’язати правильну адресу.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Не вдалося надіслати код на цю адресу, перевір адресу',
+  'ya da': 'або',
+  'Google ile doğrula': 'Підтвердити через Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Якщо ти створив обліковий запис через Google, у тебе немає пароля; підтверди особу через Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Підтвердження Google не збіглося з цим обліковим записом',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Цей обліковий запис створено через Google; увійди через Google, щоб підтвердити',
 };

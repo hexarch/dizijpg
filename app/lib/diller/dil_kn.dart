@@ -1398,4 +1398,12 @@ const Map<String, String> cevirilerKn = {
       'ನಿನ್ನ ಖಾತೆಯ ಇಮೇಲ್ ವಿಳಾಸ ಮಾನ್ಯವಲ್ಲ, ಆದ್ದರಿಂದ ಇಮೇಲ್ ತಲುಪಿಸಲಾಗುತ್ತಿಲ್ಲ. ಸರಿಯಾದ ವಿಳಾಸ ಜೋಡಿಸಲು ಬೆಂಬಲವನ್ನು ಸಂಪರ್ಕಿಸು.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'ಈ ವಿಳಾಸಕ್ಕೆ ಕೋಡ್ ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ, ವಿಳಾಸ ಪರಿಶೀಲಿಸು',
+  'ya da': 'ಅಥವಾ',
+  'Google ile doğrula': 'Google ಮೂಲಕ ಪರಿಶೀಲಿಸು',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'ಖಾತೆಯನ್ನು Google ಮೂಲಕ ತೆರೆದಿದ್ದರೆ ನಿನಗೆ ಪಾಸ್‌ವರ್ಡ್ ಇಲ್ಲ; ಗುರುತನ್ನು Google ಮೂಲಕ ಪರಿಶೀಲಿಸು.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google ಪರಿಶೀಲನೆ ಈ ಖಾತೆಗೆ ಹೊಂದಿಕೆಯಾಗಲಿಲ್ಲ',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'ಈ ಖಾತೆ Google ಮೂಲಕ ತೆರೆಯಲಾಗಿದೆ; ಪರಿಶೀಲಿಸಲು Google ಮೂಲಕ ಸೈನ್ ಇನ್ ಮಾಡು',
 };

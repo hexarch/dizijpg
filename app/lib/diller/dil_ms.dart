@@ -1409,4 +1409,12 @@ const Map<String, String> cevirilerMs = {
       'Alamat e-mel pada akaun anda tidak sah, jadi e-mel tidak dapat dihantar. Hubungi sokongan untuk memautkan alamat yang betul.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Kod tidak dapat dihantar ke alamat ini, semak alamat itu',
+  'ya da': 'atau',
+  'Google ile doğrula': 'Sahkan dengan Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Jika anda membuka akaun dengan Google, anda tiada kata laluan; sahkan identiti anda dengan Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Pengesahan Google tidak sepadan dengan akaun ini',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Akaun ini dibuka dengan Google; log masuk dengan Google untuk mengesahkan',
 };

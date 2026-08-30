@@ -1427,4 +1427,12 @@ const Map<String, String> cevirilerFr = {
       'L\'adresse e-mail de ton compte n\'est pas valide, l\'e-mail ne peut donc pas être remis. Contacte le support pour lier la bonne adresse.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Impossible d\'envoyer un code à cette adresse, vérifie-la',
+  'ya da': 'ou',
+  'Google ile doğrula': 'Vérifier avec Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Si tu as créé ton compte avec Google, tu n\'as pas de mot de passe ; vérifie ton identité avec Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'La vérification Google ne correspond pas à ce compte',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Ce compte a été créé avec Google ; connecte-toi avec Google pour vérifier',
 };

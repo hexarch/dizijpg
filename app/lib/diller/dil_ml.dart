@@ -1405,4 +1405,12 @@ const Map<String, String> cevirilerMl = {
       'നിന്റെ അക്കൗണ്ടിലെ ഇമെയിൽ വിലാസം സാധുവല്ല, അതിനാൽ ഇമെയിൽ എത്തിക്കാനാകുന്നില്ല. ശരിയായ വിലാസം ബന്ധിപ്പിക്കാൻ പിന്തുണയുമായി ബന്ധപ്പെടുക.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'ഈ വിലാസത്തിലേക്ക് കോഡ് അയയ്ക്കാനായില്ല, വിലാസം പരിശോധിക്കുക',
+  'ya da': 'അല്ലെങ്കിൽ',
+  'Google ile doğrula': 'Google ഉപയോഗിച്ച് പരിശോധിക്കുക',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'അക്കൗണ്ട് Google വഴി തുറന്നതെങ്കിൽ നിനക്ക് പാസ്‌വേഡ് ഇല്ല; ഐഡന്റിറ്റി Google വഴി പരിശോധിക്കുക.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google പരിശോധന ഈ അക്കൗണ്ടുമായി പൊരുത്തപ്പെട്ടില്ല',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'ഈ അക്കൗണ്ട് Google വഴി തുറന്നതാണ്; പരിശോധിക്കാൻ Google വഴി സൈൻ ഇൻ ചെയ്യുക',
 };

@@ -1414,4 +1414,12 @@ const Map<String, String> cevirilerSv = {
       'E-postadressen på ditt konto är inte giltig, så e-post kan inte levereras. Kontakta supporten för att koppla rätt adress.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Det gick inte att skicka en kod till den här adressen, kontrollera den',
+  'ya da': 'eller',
+  'Google ile doğrula': 'Verifiera med Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Om du skapade kontot med Google har du inget lösenord; verifiera din identitet med Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google-verifieringen matchade inte det här kontot',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Det här kontot skapades med Google; logga in med Google för att verifiera',
 };

@@ -153,7 +153,7 @@ test('iki adımlı ayarı bozuk adreste kullanılabilir görünmez', () => {
 // kilitliyor; hepsi kaynak denetimi, çünkü uçlar canlı DB istiyor.
 
 test('kod isteme ucu ŞİFRE sorar ve şifreyi ADRES SORGUSUNDAN ÖNCE doğrular', () => {
-  const g = ucGovdesi('/auth/eposta-degistir/kod', 3600);
+  const g = ucGovdesi('/auth/eposta-degistir/kod', 5200);
   assert.match(g, /bcrypt\.compare\(String\(sifre \|\| ''\), k\.sifre_hash\)/,
     'çalınmış oturum tek başına adresi değiştirebiliyor');
   // SIRA ÖNEMLİ: şifre yanlışken 409 "bu adres kayıtlı" dönerse uç bir
@@ -165,14 +165,14 @@ test('kod isteme ucu ŞİFRE sorar ve şifreyi ADRES SORGUSUNDAN ÖNCE doğrular
 });
 
 test('kod YENİ adrese gider ve hedef adrese BAĞLI yazılır', () => {
-  const g = ucGovdesi('/auth/eposta-degistir/kod', 3600);
+  const g = ucGovdesi('/auth/eposta-degistir/kod', 5200);
   // Dördüncü argüman `yeniEposta`: kod satırı hedef adresi taşır.
   assert.match(g, /ikiAdimKodYaz\(req\.kullanici\.id, 'eposta', null, email\)/);
   assert.match(g, /to: email/, 'kod yeni adrese değil başka bir yere gidiyor');
 });
 
 test('kod isteme ucu adresi eler ve postayı BEKLER', () => {
-  const g = ucGovdesi('/auth/eposta-degistir/kod', 3600);
+  const g = ucGovdesi('/auth/eposta-degistir/kod', 5200);
   assert.match(g, /if \(!epostaGecerli\(email\)\)/);
   assert.match(g, /epostaNormalle\(req\.body\?\.email\)/);
   // ATEŞLE-UNUT OLMAMALI: bu akışın tek amacı postanın ulaşması. Sessiz
@@ -207,7 +207,7 @@ test('e-posta değiştirme kodu günlükte MASKELENİR', () => {
   // Panelde düz görünseydi panele erişen biri adresi kendi adresine çevirip
   // hesabı devralabilirdi.
   assert.match(SERVER, /new Set\(\['sifirlama', 'iki_adim', 'eposta_degistir'\]\)/);
-  assert.match(ucGovdesi('/auth/eposta-degistir/kod', 3600), /tur: 'eposta_degistir'/);
+  assert.match(ucGovdesi('/auth/eposta-degistir/kod', 5200), /tur: 'eposta_degistir'/);
 });
 
 test('migrasyon: amaç listesi genişledi, hedef adres kodla birlikte saklanıyor', () => {
@@ -217,4 +217,89 @@ test('migrasyon: amaç listesi genişledi, hedef adres kodla birlikte saklanıyo
   assert.match(m, /CHECK \(\(amac = 'eposta'\) = \(yeni_eposta IS NOT NULL\)\)/);
   // İDEMPOTENT: iki kez koşarsa patlamamalı.
   assert.match(m, /DROP CONSTRAINT IF EXISTS iki_adim_kodlari_amac_check/);
+});
+
+// ===========================================================================
+// 4. GOOGLE HESAPLARI — ŞİFRE YERİNE TAZE GOOGLE GİRİŞİ (30 Ağu 2026)
+// ===========================================================================
+// KULLANICI TESPİTİ (birebir): "eposta değiştirme alanı ekledik ama google
+// hesabı ile giriş yapanların şifresi yok ki, oraya başka bir çözüm daha
+// eklemeliyiz".
+//
+// İnceleme iki kusur çıkardı:
+//   1. "Şifresi yok" değil: /auth/google yeni hesabın `sifre_hash` alanına
+//      RASTGELE bir hash yazıyor. Yani bcrypt.compare her zaman düşüyor ve
+//      kullanıcı anlamlandıramayacağı bir "Şifre hatalı" alıyordu.
+//   2. DAHA AĞIRI: /auth/google hesabı YALNIZ e-postayla buluyordu. E-posta
+//      değiştirme özelliği gelince bu, "adresini değiştiren Google kullanıcısı
+//      bir daha giremez, yeni boş hesap açılır" demek oluyordu.
+// Çözüm ikisini birden kapatıyor: `google_sub` (migrasyon-2026-08-30d.sql).
+
+test('GOOGLE: doğrulama TEK fonksiyonda, sub de dönüyor', () => {
+  const i = SERVER.indexOf('async function googleDogrula(');
+  assert.notEqual(i, -1, 'googleDogrula ayrı fonksiyon değil');
+  const g = SERVER.slice(i, i + 2200);
+  // İki kabul koşulu da BURADA: kopyalanırsa biri bir gün yalnız tek yerde
+  // güncellenir.
+  assert.match(g, /d\.aud === GOOGLE_ISTEMCI/);
+  assert.match(g, /String\(d\.email_verified\) === 'true'/);
+  assert.match(g, /sub: d\.sub \|\| null/);
+});
+
+test('GOOGLE GİRİŞİ: önce sub, sonra e-posta — SIRA güvenlik kararı', () => {
+  const g = ucGovdesi('/auth/google', 4000);
+  const subIdx = g.indexOf('WHERE google_sub = $1');
+  const epostaIdx = g.indexOf('WHERE email = lower($1)');
+  assert.ok(subIdx !== -1, 'sub ile arama yok');
+  assert.ok(epostaIdx !== -1, 'e-posta yedeği yok');
+  // Önce e-postaya bakılsaydı, adresini değiştirmiş kullanıcının ESKİ
+  // adresini kapan başka biri onun hesabına düşerdi.
+  assert.ok(subIdx < epostaIdx, 'e-posta araması sub aramasından ÖNCE');
+});
+
+test('GOOGLE GİRİŞİ: sub geriye doldurulur ama var olanı EZMEZ', () => {
+  const g = ucGovdesi('/auth/google', 4000);
+  assert.match(
+    g,
+    /UPDATE kullanicilar SET google_sub=\$1 WHERE id=\$2 AND google_sub IS NULL/,
+    'geriye doldurma yok ya da mevcut sub ezilebiliyor',
+  );
+});
+
+test('GOOGLE İLE AÇILAN HESAP sub işaretiyle kaydediliyor', () => {
+  const g = ucGovdesi('/auth/google', 6000);
+  assert.match(g, /INSERT INTO kullanicilar \(email, kullanici_adi, sifre_hash, eposta_dogrulandi, google_sub\)/);
+});
+
+test('E-POSTA DEĞİŞTİRME: Google jetonu şifreye ALTERNATİF', () => {
+  const g = ucGovdesi('/auth/eposta-degistir/kod', 5200);
+  assert.match(g, /const googleGirdi = req\.body\?\.kimlik \|\| req\.body\?\.erisim/);
+  assert.match(g, /await googleDogrula\(req\.body\)/);
+  // Eşleşme ölçütü: sub VEYA doğrulanmış e-posta. İkincisi yeni kapı açmaz —
+  // /auth/google zaten aynı kanıtla TAM OTURUM veriyor.
+  assert.match(g, /\(k\.google_sub && g\.sub === k\.google_sub\) \|\| g\.email === k\.email/);
+  assert.match(g, /GOOGLE_ESLESMEDI/);
+});
+
+test('E-POSTA DEĞİŞTİRME: Google kökenli hesaba ANLAMLI hata', () => {
+  const g = ucGovdesi('/auth/eposta-degistir/kod', 5200);
+  // "Şifre hatalı" demek, şifresini BİLEMEYECEK kullanıcıyı çıkışsız bir
+  // döngüde bırakırdı.
+  assert.match(g, /if \(k\.google_sub\) \{/);
+  assert.match(g, /GOOGLE_GEREKLI/);
+  assert.match(g, /google_sub FROM kullanicilar WHERE id=\$1/,
+    'google_sub sorgudan okunmuyor — dal hiç çalışamaz');
+});
+
+test('migrasyon: google_sub + KISMİ tekil indeks, idempotent', () => {
+  const m = fs.readFileSync(path.join(KOK, 'migrasyon-2026-08-30d.sql'), 'utf8');
+  assert.match(m, /ADD COLUMN IF NOT EXISTS google_sub TEXT/);
+  // Kısmi ŞART: normal UNIQUE, 181 NULL satırı indekste taşırdı ve niyeti
+  // belirsiz bırakırdı.
+  assert.match(
+    m,
+    /CREATE UNIQUE INDEX IF NOT EXISTS kullanicilar_google_sub\s*\n\s*ON kullanicilar \(google_sub\) WHERE google_sub IS NOT NULL/,
+  );
+  // Migrasyon `sub` DOLDURAMAZ (yalnız jetondan gelir) — toplu UPDATE olmamalı.
+  assert.doesNotMatch(m, /UPDATE kullanicilar SET google_sub/);
 });

@@ -284,21 +284,26 @@ void main() {
       }
     });
 
-    testWidgets('DAR SÜTUNDA (234 dp) eskisi gibi sarar — sarma korunuyor', (
+    testWidgets('DAR SÜTUNDA (234 dp) ARTIK SARMIYOR — tek sıra şart', (
       tester,
     ) async {
-      // Daralan hap sarmayı KALDIRMADI, yalnız eşiği düşürdü: dar bir alanda
-      // taşmak yerine hâlâ alt satıra iniyor (kırpma yok).
+      // 30 Ağu 2026 — İDDİA TERSİNE ÇEVRİLDİ. Eski hâli "dar alanda alt
+      // satıra iner, bu doğru davranış" diyordu. Kullanıcı aksini istedi:
+      // *"emojileri tek sıraya sığdır"*. `Wrap` yerine `Row` + `Expanded`
+      // geldi; sekiz hücre kalan genişliği eşit bölüşüyor, yani sarma artık
+      // dar alanda da olmuyor. Test SİLİNMEDİ çünkü koruduğu şey hâlâ değerli:
+      // 234 dp, kişi fotoğrafının sağındaki sütunun ÖLÇÜLEN genişliğiydi ve
+      // düzenin en sıkışık gerçek hâli orası.
       await _tepkiKur(tester, 234);
       final k = _tepkiKutulari(tester);
       expect(k.length, 8);
       expect(
         k.map((r) => r.top).toSet().length,
-        greaterThan(1),
-        reason: '234 dp\'ye sekizi sığamaz; sarmalıydı',
+        1,
+        reason: 'dar alanda alt satıra taşmış; tek sıra bozuldu',
       );
-      // Eski hâlde 3 sıra oluyordu; daralan hapla en fazla 2.
-      expect(k.map((r) => r.top).toSet().length, lessThanOrEqualTo(2));
+      // Kırpma da olmamalı: son hücre sınırın içinde bitiyor.
+      expect(k.last.right, lessThanOrEqualTo(234 + 0.5));
     });
 
     testWidgets('SAYAÇLAR çıkınca kırpılmaz, sarar', (tester) async {

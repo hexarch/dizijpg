@@ -1399,4 +1399,12 @@ const Map<String, String> cevirilerPa = {
       'ਤੁਹਾਡੇ ਖਾਤੇ ਦਾ ਈਮੇਲ ਪਤਾ ਵੈਧ ਨਹੀਂ ਹੈ, ਇਸ ਲਈ ਈਮੇਲ ਪਹੁੰਚਾਈ ਨਹੀਂ ਜਾ ਸਕਦੀ। ਸਹੀ ਪਤਾ ਜੋੜਨ ਲਈ ਸਹਾਇਤਾ ਨਾਲ ਸੰਪਰਕ ਕਰੋ।',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'ਇਸ ਪਤੇ ਉੱਤੇ ਕੋਡ ਨਹੀਂ ਭੇਜਿਆ ਜਾ ਸਕਿਆ, ਪਤਾ ਜਾਂਚੋ',
+  'ya da': 'ਜਾਂ',
+  'Google ile doğrula': 'Google ਨਾਲ ਪੁਸ਼ਟੀ ਕਰੋ',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'ਜੇ ਖਾਤਾ Google ਨਾਲ ਖੋਲ੍ਹਿਆ ਹੈ ਤਾਂ ਤੁਹਾਡਾ ਪਾਸਵਰਡ ਨਹੀਂ; ਪਛਾਣ Google ਨਾਲ ਪੁਸ਼ਟੀ ਕਰੋ।',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google ਪੁਸ਼ਟੀ ਇਸ ਖਾਤੇ ਨਾਲ ਮੇਲ ਨਹੀਂ ਖਾਂਦੀ',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'ਇਹ ਖਾਤਾ Google ਨਾਲ ਖੋਲ੍ਹਿਆ ਗਿਆ; ਪੁਸ਼ਟੀ ਲਈ Google ਨਾਲ ਸਾਈਨ ਇਨ ਕਰੋ',
 };

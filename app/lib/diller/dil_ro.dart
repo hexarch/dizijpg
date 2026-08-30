@@ -1425,4 +1425,12 @@ const Map<String, String> cevirilerRo = {
       'Adresa de e-mail din contul tău nu este validă, așa că e-mailul nu poate fi livrat. Contactează asistența pentru a conecta adresa corectă.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Nu s-a putut trimite un cod la această adresă, verific-o',
+  'ya da': 'sau',
+  'Google ile doğrula': 'Verifică cu Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Dacă ți-ai creat contul cu Google nu ai parolă; verifică-ți identitatea cu Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Verificarea Google nu se potrivește cu acest cont',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Acest cont a fost creat cu Google; conectează-te cu Google pentru a verifica',
 };

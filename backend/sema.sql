@@ -67,8 +67,20 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   dogum_yil SMALLINT,
   -- Karşılama akışı tamamlandı YA DA atlandı → bir daha açılmaz.
   karsilama_bitti BOOLEAN NOT NULL DEFAULT false,
+  -- Google hesabının DEĞİŞMEYEN kimliği (migrasyon-2026-08-30d.sql).
+  -- İKİ İŞİ VAR: (1) `/auth/google` hesabı bununla bulur — e-postayla
+  -- eşleştirme, kullanıcı adresini değiştirince kopardı; (2) dolu olması
+  -- "bu hesap Google ile açıldı" demektir, yani sahibi `sifre_hash`teki
+  -- rastgele değeri BİLMEZ ve e-posta değiştirmede şifre yerine taze Google
+  -- jetonu kabul edilir.
+  google_sub TEXT,
   olusturma TIMESTAMPTZ DEFAULT now()
 );
+-- Bir Google hesabı yalnız BİR dizi.jpg hesabına bağlanabilir. Kısmi:
+-- `sub`u olmayan (şifreyle açılmış) 181 satır indekste yer kaplamasın.
+CREATE UNIQUE INDEX IF NOT EXISTS kullanicilar_google_sub
+  ON kullanicilar (google_sub) WHERE google_sub IS NOT NULL;
+
 
 -- Bölüm bazlı izleme kaydı. Filmlerde sezon/bolum 0.
 CREATE TABLE IF NOT EXISTS izlemeler (

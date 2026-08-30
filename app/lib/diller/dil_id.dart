@@ -1404,4 +1404,12 @@ const Map<String, String> cevirilerId = {
       'Alamat email di akunmu tidak valid, jadi email tidak bisa dikirimkan. Hubungi dukungan untuk menautkan alamat yang benar.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Kode tidak bisa dikirim ke alamat ini, periksa alamatnya',
+  'ya da': 'atau',
+  'Google ile doğrula': 'Verifikasi dengan Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Kalau akunmu dibuat dengan Google, kamu tidak punya kata sandi; verifikasi identitasmu dengan Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Verifikasi Google tidak cocok dengan akun ini',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Akun ini dibuat dengan Google; masuk dengan Google untuk verifikasi',
 };

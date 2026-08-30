@@ -1331,4 +1331,11 @@ const Map<String, String> cevirilerJa = {
       'アカウントのメールアドレスが有効ではないため、メールを配信できません。正しいアドレスを登録するにはサポートに連絡してください。',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'このアドレスにコードを送信できませんでした。アドレスを確認してください',
+  'ya da': 'または',
+  'Google ile doğrula': 'Googleで確認',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Googleでアカウントを作成した場合はパスワードがありません。Googleで本人確認してください。',
+  'Google doğrulaması bu hesapla eşleşmedi': 'Googleの確認がこのアカウントと一致しませんでした',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'このアカウントはGoogleで作成されています。確認するにはGoogleでログインしてください',
 };

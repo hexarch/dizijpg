@@ -295,58 +295,54 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
 
   @override
   Widget build(BuildContext context) {
-    // ARALIK HAPIN İÇİNDE DEĞİL, DOKUNMA KUTUSUNUN İÇİNDE (30 Ağu 2026,
-    // kullanıcı: *"bir oyuncuyu ziyaret ettiğimde emojiler 3'lü şekilde alt
-    // alta dizilmişler, oysa hepsinin sağı ve solu boş, yan yana
-    // sığabilirlerdi."*)
+    // TEK SIRA, ARKA PLAN YOK, SAYI EMOJİNİN ALTINDA (30 Ağu 2026).
     //
-    // ÖLÇÜM (390 dp telefon): satır, kişi fotoğrafının SAĞINDAKİ 234 dp'lik
-    // sütunda çiziliyordu ve her hap 49 dp idi → satıra 3 hap, blok 159 dp.
-    // İki değişiklik birlikte yapıldı:
-    //   1. satır fotoğraf satırının DIŞINA alındı → 358 dp;
-    //   2. hap 49 → 39 dp'ye daraldı (yatay dolgu 12 → 7).
-    // Sekiz hap artık 8 × 44 = 352 dp ile tek satıra sığıyor.
+    // KULLANICI İSTEĞİ (birebir): *"oyuncu profilindeki emojileri tek sıraya
+    // sığdır arka planları da olmasın yani neden temadan farklı renk arka plan
+    // atıyorsun"* ve *"bu sadece oyuncu için değil dizi yönetmen firma
+    // hepsinde öyle olmalı ve aldığı emoji sayısını altında göster emojinin
+    // yanında değil"*. Tek bileşen olduğu için altı çağrı yerinin (dizi/film,
+    // bölüm, kişi, şirket, takvim) hepsi aynı anda değişiyor.
     //
-    // 44 dp KURALI ÇİĞNENMEDİ (ux md.2). Haplar arasındaki 5 dp'lik boşluk
-    // artık `Wrap`ın `spacing`i değil, dokunma kutusunun İÇİNDEKİ dolgu:
-    // görünen hap 39 dp, ama `InkWell` 44 dp'lik kutunun tamamını kaplıyor ve
-    // komşusuyla çakışmıyor. Boşluğu `spacing`te bıraksaydık ya dokunma
-    // hedefi 39'a düşerdi ya da satıra 7 hap sığardı.
+    // ÜÇ KARAR VE GEREKÇELERİ
     //
-    // Sayı rozeti çıkınca (birileri tepki verince) haplar genişler ve `Wrap`
-    // yine alt satıra taşar — bu doğru davranış: sayıyı kırpmaktansa sarmak.
-    return Wrap(
-      spacing: 0,
-      runSpacing: 6,
+    // 1. `Wrap` DEĞİL `Row` + `Expanded`. Wrap "sığmazsa alt satıra taşır"
+    //    demekti; sayı rozeti çıkınca haplar genişleyip gerçekten taşıyordu
+    //    (eski yorumda "bu doğru davranış" yazıyordu — kullanıcı aksini
+    //    istedi). Expanded sekiz hücreyi eşit böler, TAŞMA MATEMATİKSEL OLARAK
+    //    İMKÂNSIZ hale gelir: sayı üç haneye çıksa da satır tek kalır.
+    //
+    // 2. ARKA PLAN KALKTI. Hap `DiziRenkler.kart` ile boyanıyordu; sayfa
+    //    zemininden farklı bu ton, kullanıcının deyimiyle "temadan farklı
+    //    renk". Arka plan gidince emoji doğrudan sayfanın üstünde durur.
+    //
+    // 3. SEÇİLİ HÂLİ ARTIK RENK + HAREKET TAŞIYOR, KUTU DEĞİL. Dolgu ve kenar
+    //    gidince "hangisi benim tepkim" işaretini iki şey veriyor: sayı sarı
+    //    yazılır ve o emoji SÜREKLİ döner (ötekiler bir kez oynayıp durur).
+    //    Seçmek sayacı en az 1 yaptığı için sarı sayı HER ZAMAN görünür —
+    //    yani işaretin kaybolduğu bir durum yok.
+    //
+    // HİZA: sayı satırı sayaç 0 iken de çizilir (boş metin). Çizilmeseydi
+    // tepki almış ve almamış emojiler farklı yükseklikte olur, satır zıplardı.
+    //
+    // 44 dp KURALI KORUNDU (ux md.2): görünen içerik ~30 dp, ama `InkWell`
+    // `minHeight: 44` kutusunun tamamını kaplıyor.
+    return Row(
       children: [
         for (final e in tepkiEmojileri)
-          InkWell(
-            borderRadius: BorderRadius.circular(22),
-            onTap: () => _sec(e),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2.5),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 7,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  // Seçili: sarı-tint dolgu + sarı kenar (renkli emoji
-                  // kaybolmasın)
-                  color: _benim == e
-                      ? DiziRenkler.sari.withValues(alpha: 0.20)
-                      : DiziRenkler.kart,
-                  borderRadius: BorderRadius.circular(20),
-                  border: _benim == e
-                      ? Border.all(color: DiziRenkler.sari, width: 1.5)
-                      : null,
-                ),
-                child: Row(
+          Expanded(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => _sec(e),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 44),
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TepkiIkonu(
                       e,
-                      boyut: 20,
+                      boyut: 22,
                       // Satır AÇILINCA hepsi BİR KEZ oynar (kullanıcı
                       // bildirimi 14 Ağu: "diziye emoji bırakınca animasyon
                       // oynamıyor" — eskiden yalnız seçili olan dönüyordu, hiç
@@ -357,19 +353,21 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
                       oynat: _benim == e,
                       vurus: _vuruslar[e] ?? 0,
                     ),
-                    if ((_sayilar[e] ?? 0) > 0) ...[
-                      const SizedBox(width: 4),
-                      Text(
-                        '${_sayilar[e]}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          color: _benim == e
-                              ? DiziRenkler.sariMetin
-                              : DiziRenkler.metin70,
-                        ),
+                    const SizedBox(height: 1),
+                    // Sayaç 0 iken BOŞ METİN: satır yüksekliği yine ayrılır,
+                    // emojiler aynı hizada durur.
+                    Text(
+                      (_sayilar[e] ?? 0) > 0 ? '${_sayilar[e]}' : '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        color: _benim == e
+                            ? DiziRenkler.sariMetin
+                            : DiziRenkler.metin70,
                       ),
-                    ],
+                    ),
                   ],
                 ),
               ),

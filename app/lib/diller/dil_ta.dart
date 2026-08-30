@@ -1425,4 +1425,12 @@ const Map<String, String> cevirilerTa = {
       'உன் கணக்கிலுள்ள மின்னஞ்சல் முகவரி செல்லுபடியாகாது, எனவே மின்னஞ்சலை வழங்க முடியவில்லை. சரியான முகவரியை இணைக்க ஆதரவைத் தொடர்புகொள்.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'இந்த முகவரிக்குக் குறியீட்டை அனுப்ப முடியவில்லை, முகவரியைச் சரிபார்',
+  'ya da': 'அல்லது',
+  'Google ile doğrula': 'Google மூலம் சரிபார்',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'கணக்கை Google மூலம் திறந்திருந்தால் உனக்குக் கடவுச்சொல் இல்லை; அடையாளத்தை Google மூலம் சரிபார்.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google சரிபார்ப்பு இந்தக் கணக்குடன் பொருந்தவில்லை',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'இந்தக் கணக்கு Google மூலம் திறக்கப்பட்டது; சரிபார்க்க Google மூலம் உள்நுழை',
 };

@@ -1408,4 +1408,12 @@ const Map<String, String> cevirilerRu = {
       'Адрес электронной почты в твоём аккаунте недействителен, поэтому письмо доставить невозможно. Обратись в поддержку, чтобы привязать правильный адрес.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Не удалось отправить код на этот адрес, проверь адрес',
+  'ya da': 'или',
+  'Google ile doğrula': 'Подтвердить через Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Если ты создал аккаунт через Google, у тебя нет пароля; подтверди личность через Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Подтверждение Google не совпало с этим аккаунтом',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Этот аккаунт создан через Google; войди через Google, чтобы подтвердить',
 };

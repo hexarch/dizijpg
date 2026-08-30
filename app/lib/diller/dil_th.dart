@@ -1378,4 +1378,12 @@ const Map<String, String> cevirilerTh = {
       'ที่อยู่อีเมลในบัญชีของคุณไม่ถูกต้อง จึงส่งอีเมลไม่ได้ ติดต่อฝ่ายสนับสนุนเพื่อเชื่อมที่อยู่ที่ถูกต้อง',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'ส่งรหัสไปยังที่อยู่นี้ไม่ได้ ตรวจสอบที่อยู่อีกครั้ง',
+  'ya da': 'หรือ',
+  'Google ile doğrula': 'ยืนยันด้วย Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'ถ้าคุณสร้างบัญชีด้วย Google คุณจะไม่มีรหัสผ่าน ยืนยันตัวตนด้วย Google',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'การยืนยันด้วย Google ไม่ตรงกับบัญชีนี้',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'บัญชีนี้สร้างด้วย Google เข้าสู่ระบบด้วย Google เพื่อยืนยัน',
 };

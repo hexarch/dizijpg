@@ -1409,4 +1409,12 @@ const Map<String, String> cevirilerSw = {
       'Anwani ya barua pepe kwenye akaunti yako si sahihi, kwa hivyo barua pepe haiwezi kufikishwa. Wasiliana na usaidizi ili kuunganisha anwani sahihi.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Haikuwezekana kutuma msimbo kwenye anwani hii, angalia anwani',
+  'ya da': 'au',
+  'Google ile doğrula': 'Thibitisha kwa Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Ikiwa ulifungua akaunti yako kwa Google huna nenosiri; thibitisha utambulisho wako kwa Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Uthibitishaji wa Google haukulingana na akaunti hii',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Akaunti hii ilifunguliwa kwa Google; ingia kwa Google ili kuthibitisha',
 };

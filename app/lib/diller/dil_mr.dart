@@ -1396,4 +1396,12 @@ const Map<String, String> cevirilerMr = {
       'तुझ्या खात्याचा ईमेल पत्ता वैध नाही, त्यामुळे ईमेल पोहोचवता येत नाही. योग्य पत्ता जोडण्यासाठी सपोर्टशी संपर्क साध.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'या पत्त्यावर कोड पाठवता आला नाही, पत्ता तपास',
+  'ya da': 'किंवा',
+  'Google ile doğrula': 'Google ने पडताळा',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'खाते Google ने उघडले असेल तर तुझा पासवर्ड नाही; ओळख Google ने पडताळ.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google पडताळणी या खात्याशी जुळली नाही',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'हे खाते Google ने उघडले आहे; पडताळण्यासाठी Google ने साइन इन कर',
 };

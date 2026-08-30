@@ -1429,4 +1429,12 @@ const Map<String, String> cevirilerFil = {
       'Hindi wasto ang email address sa account mo, kaya hindi maihahatid ang email. Makipag-ugnayan sa support para i-link ang tamang address.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Hindi makapagpadala ng code sa address na ito, suriin ang address',
+  'ya da': 'o',
+  'Google ile doğrula': 'I-verify gamit ang Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Kung ginawa mo ang account mo gamit ang Google, wala kang password; i-verify ang pagkakakilanlan mo gamit ang Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Hindi tugma sa account na ito ang Google verification',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Ginawa ang account na ito gamit ang Google; mag-sign in gamit ang Google para i-verify',
 };

@@ -1402,4 +1402,12 @@ const Map<String, String> cevirilerUr = {
       'آپ کے اکاؤنٹ کا ای میل پتہ درست نہیں، اس لیے ای میل نہیں پہنچائی جا سکتی۔ درست پتہ منسلک کرنے کے لیے سپورٹ سے رابطہ کریں۔',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'اس پتے پر کوڈ نہیں بھیجا جا سکا، پتہ جانچیں',
+  'ya da': 'یا',
+  'Google ile doğrula': 'Google سے تصدیق کریں',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'اگر آپ نے اکاؤنٹ Google سے بنایا ہے تو آپ کا پاس ورڈ نہیں؛ شناخت Google سے تصدیق کریں۔',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google تصدیق اس اکاؤنٹ سے مطابقت نہیں رکھتی',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'یہ اکاؤنٹ Google سے بنایا گیا؛ تصدیق کے لیے Google سے سائن اِن کریں',
 };

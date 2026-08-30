@@ -1410,4 +1410,12 @@ const Map<String, String> cevirilerBg = {
       'Имейл адресът в профила ти не е валиден, затова имейлът не може да бъде доставен. Свържи се с поддръжката, за да свържеш правилния адрес.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Не можа да се изпрати код на този адрес, провери адреса',
+  'ya da': 'или',
+  'Google ile doğrula': 'Потвърди с Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Ако си създал профила си с Google, нямаш парола; потвърди самоличността си с Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Потвърждението с Google не съвпадна с този профил',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Този профил е създаден с Google; влез с Google, за да потвърдиш',
 };

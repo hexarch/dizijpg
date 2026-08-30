@@ -1426,4 +1426,12 @@ const Map<String, String> cevirilerDe = {
       'Die E-Mail-Adresse in deinem Konto ist ungültig, deshalb kann keine E-Mail zugestellt werden. Wende dich an den Support, um die richtige Adresse zu verknüpfen.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'An diese Adresse konnte kein Code gesendet werden, prüf die Adresse',
+  'ya da': 'oder',
+  'Google ile doğrula': 'Mit Google bestätigen',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Wenn du dein Konto mit Google erstellt hast, hast du kein Passwort; bestätige deine Identität mit Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Die Google-Bestätigung passt nicht zu diesem Konto',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Dieses Konto wurde mit Google erstellt; melde dich zum Bestätigen mit Google an',
 };

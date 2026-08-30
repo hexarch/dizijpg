@@ -1390,4 +1390,12 @@ const Map<String, String> cevirilerGu = {
       'તારા ખાતાનું ઈમેલ સરનામું માન્ય નથી, એટલે ઈમેલ પહોંચાડી શકાતું નથી. સાચું સરનામું જોડવા સપોર્ટનો સંપર્ક કર.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'આ સરનામે કોડ મોકલી શકાયો નહીં, સરનામું તપાસ',
+  'ya da': 'અથવા',
+  'Google ile doğrula': 'Google થી ચકાસો',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'જો તેં ખાતું Google થી બનાવ્યું હોય તો પાસવર્ડ નથી; ઓળખ Google થી ચકાસ.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'Google ચકાસણી આ ખાતા સાથે મેળ ખાતી નથી',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'આ ખાતું Google થી બન્યું છે; ચકાસવા Google થી સાઇન ઇન કર',
 };

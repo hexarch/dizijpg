@@ -366,13 +366,27 @@ class Api {
   // düzeltmenin uygulamada YOLU YOKTU. Akış iki adımlı: şifreyle kod iste,
   // kod YENİ adrese gitsin, kodla uygula.
 
-  /// Yeni adrese doğrulama kodu yollar. Şifre ister: çalınmış bir oturum tek
-  /// başına hesabın adresini değiştirememeli.
+  /// Yeni adrese doğrulama kodu yollar.
+  ///
+  /// KİMLİK KANITI İKİ TÜRLÜ OLABİLİR — çalınmış bir oturum tek başına hesabın
+  /// adresini değiştirememeli, ama kanıt herkeste "şifre" değil:
+  ///   · [sifre]                     — şifreyle açılmış hesaplar
+  ///   · [idToken] / [erisimToken]   — Google ile açılmış hesaplar
+  /// Google ile açılan hesabın `sifre_hash`i sunucuda RASTGELEDİR (bkz.
+  /// /auth/google), yani sahibi onu bilemez; tek kanıtı sağlayıcıya taze
+  /// giriştir (kullanıcı tespiti, 30 Ağu 2026).
   static Future<Map<String, dynamic>> epostaDegistirKodIste(
-    String email,
-    String sifre,
-  ) async =>
-      await post('/auth/eposta-degistir/kod', {'email': email, 'sifre': sifre})
+    String email, {
+    String? sifre,
+    String? idToken,
+    String? erisimToken,
+  }) async =>
+      await post('/auth/eposta-degistir/kod', {
+            'email': email,
+            if (sifre != null) 'sifre': sifre,
+            if (idToken != null) 'kimlik': idToken,
+            if (erisimToken != null) 'erisim': erisimToken,
+          })
           as Map<String, dynamic>;
 
   /// Kodu doğrular ve adresi uygular. Uygulanan adres SUNUCUDA saklanandır —

@@ -1411,4 +1411,12 @@ const Map<String, String> cevirilerNl = {
       'Het e-mailadres van je account is niet geldig, daarom kan er geen e-mail worden bezorgd. Neem contact op met support om het juiste adres te koppelen.',
   'Bu adrese kod gönderilemedi, adresi kontrol et':
       'Kon geen code naar dit adres sturen, controleer het adres',
+  'ya da': 'of',
+  'Google ile doğrula': 'Verifiëren met Google',
+  'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
+      'Als je je account met Google hebt aangemaakt, heb je geen wachtwoord; verifieer je identiteit met Google.',
+  'Google doğrulaması bu hesapla eşleşmedi':
+      'De Google-verificatie kwam niet overeen met dit account',
+  'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
+      'Dit account is met Google aangemaakt; log in met Google om te verifiëren',
 };
