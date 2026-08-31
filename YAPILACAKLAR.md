@@ -56,6 +56,12 @@
   `/altyazi/:dosya` segmentlere `o` (kaynak cümle) ekliyor; AltyaziKatmani
   ReelsCeviri'yi dinleyip kapalıyken orijinali basıyor (açık videoda canlı
   geçiş); medyasız gönderinin tam ekran metni de anahtara bağlandı.
+- 🚀 **Netleşme (1.105.2+170):** "çeviri kapat = alttaki yazıyı kapat" + "3
+  modu olsun" → anahtar ÜÇ KİPLİ: SARI okuyanın dili, BEYAZ orijinal metin
+  (altyazı `o` alanını basar), GRİ kapalı (altyazı hiç çizilmez; gönderi
+  metni orijinal kalır). Sıra sarı→beyaz→gri→SARI ("sarı kapalıdan sonra
+  gelsin"). Eski iki durumlu tercih taşınıyor; 'Orijinal metin gösteriliyor'
+  anahtarı 45 dile eklendi. APK: cikti/dizijpg-1.105.2-170.apk.
 
 ## 2026-08-31 — 🚀 Liste paylaşımı (Spotify gibi)
 
