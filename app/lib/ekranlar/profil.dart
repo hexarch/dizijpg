@@ -383,54 +383,48 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         ogeler: _izlenenler,
         onTap: () => context.push('/izlediklerim'),
       ),
+    // Listeler poster ŞERİDİ olarak — İzliyorum/İzlediğim'le aynı görünüm
+    // (31 Ağu 2026 isteği). Dokununca modal açılır (başkasının
+    // profilindekiyle aynı).
     for (final l in _listeler)
-      Card(
-        child: ListTile(
-          // Dokununca liste içeriği modalda açılır (başkasının profilindekiyle aynı)
-          onTap: () => ListeSheet.ac(
-            context,
-            listeId: (l['id'] as num).toInt(),
-            ad: l['ad'] as String,
-          ),
-          leading: Icon(Icons.list, color: DiziRenkler.sariMetin),
-          title: Text(l['ad'] as String),
-          subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
-          trailing: IconButton(
-            tooltip: 'Listeyi sil'.c,
-            icon: Icon(Icons.delete_outline, color: DiziRenkler.metin38),
-            onPressed: () async {
-              // Silmeden önce onay iste; hatayı kullanıcıya göster
-              final onay = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  backgroundColor: DiziRenkler.koyuGri,
-                  title: Text('Listeyi sil?'.c),
-                  content: Text(l['ad'] as String),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: Text('İptal'.c),
-                    ),
-                    FilledButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: Text('Tamam'.c),
-                    ),
-                  ],
-                ),
-              );
-              if (onay != true) return;
-              try {
-                await Api.delete('/listeler/${l['id']}');
-                _yukle();
-              } catch (e) {
-                if (!mounted) return;
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(e.toString())));
-              }
-            },
-          ),
+      ListeSeridi(
+        liste: l as Map<String, dynamic>,
+        onAc: () => ListeSheet.ac(
+          context,
+          listeId: (l['id'] as num).toInt(),
+          ad: l['ad'] as String,
         ),
+        onSil: () async {
+          // Silmeden önce onay iste; hatayı kullanıcıya göster
+          final onay = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              backgroundColor: DiziRenkler.koyuGri,
+              title: Text('Listeyi sil?'.c),
+              content: Text(l['ad'] as String),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: Text('İptal'.c),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: Text('Tamam'.c),
+                ),
+              ],
+            ),
+          );
+          if (onay != true) return;
+          try {
+            await Api.delete('/listeler/${l['id']}');
+            _yukle();
+          } catch (e) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(e.toString())));
+          }
+        },
       ),
     const SizedBox(height: 16),
   ];

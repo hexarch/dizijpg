@@ -24,6 +24,21 @@ açılsın, bağlantı kopyalanıp başkasına atılabilsin.
 - ⚠️ Test sırasında fark edildi: `testkullanici/test1234` girişi canlıda
   "şifre hatalı" veriyor (import-test-2226 çalışıyor). Şifre mi değişti?
 
+## 2026-08-31 (2. tur) — 🚀 Listeler poster şeridi + Takip Et hapı
+
+- 🚀 **Listeler profilde poster ŞERİDİ** (istek: "oluşturduğum liste de
+  diğerleri gibi gözüksün"): `ListeSeridi` (ortak.dart) — başlık (ad+sayı,
+  dokununca liste açılır) + 208px yatay `MiniIcerik` şeridi, İzliyorum/
+  İzlediğim'le aynı görünüm. Kendi profilinde silme düğmeli, başkasınınkinde
+  düğmesiz. Backend: `/listelerim` + `/profil/:ad` liste sorgularına `ogeler`
+  (ilk 30, tmdb_id+tur; açık profilde gizli öğeler süzülür) eklendi — sıra
+  liste detayıyla aynı (sira NULLS FIRST, eklenme DESC). Test:
+  `app/test/liste_seridi_test.dart` (4 kilit).
+- 🚀 **Akış "Takip Et" düğmesi küçültüldü** (istek: "çok büyük"): dolu sarı
+  FilledButton → 26px çerçeveli hap (StadiumBorder, sariMetin, 11.5px);
+  dokunma alanı 48px korunuyor. Test: `app/test/akis_takip_dugmesi_test.dart`
+  (FilledButton regresyon kilidi dahil).
+
 ## Ekran görüntüsü turunda çıkan çeviri hataları (29 Ağu 2026)
 
 Mağaza kareleri çekilirken 11 dilde uygulama gezildi; şunlar görüldü:

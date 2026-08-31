@@ -574,28 +574,13 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         ],
                       ),
                       const SizedBox(height: 8),
+                      // Poster şeridi — kendi profilindekiyle AYNI görünüm
+                      // (silme düğmesi yok: liste başkasının).
                       for (final l in listeler)
-                        Card(
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.playlist_play,
-                              color: DiziRenkler.sariMetin,
-                            ),
-                            title: Text(l['ad'] as String? ?? ''),
-                            subtitle: Text(
-                              '{} içerik'.cf([l['oge_sayisi'] ?? 0]),
-                              style: TextStyle(
-                                color: DiziRenkler.metin38,
-                                fontSize: 12,
-                              ),
-                            ),
-                            trailing: Icon(
-                              Icons.chevron_right,
-                              color: DiziRenkler.metin38,
-                            ),
-                            onTap: () =>
-                                _listeAc(l['id'] as int, l['ad'] as String?),
-                          ),
+                        ListeSeridi(
+                          liste: l as Map<String, dynamic>,
+                          onAc: () =>
+                              _listeAc(l['id'] as int, l['ad'] as String?),
                         ),
                     ],
                     // Hiç izlemesi/listesi/rozeti olmayan kullanıcıda sekme

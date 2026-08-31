@@ -1391,28 +1391,38 @@ class _AkisKartiState extends State<AkisKarti> {
   }
 }
 
-/// Akış kartındaki "Takip Et" düğmesi. Görsel yüksekliği 30px ama dokunma
+/// Akış kartındaki "Takip Et" düğmesi. Görsel yüksekliği 26px ama dokunma
 /// alanı 48px'tir (tapTargetSize.padded) — parmakla ıskalanmaz.
+///
+/// İNCE HAP, DOLU BLOK DEĞİL (31 Ağu 2026 isteği: "çok büyük"): takip,
+/// kartın İKİNCİL eylemidir — dolu sarı blok kullanıcı adından baskın
+/// çıkıyordu. Çerçeveli hap görsel ağırlığı düşürür; renk [sariMetin]
+/// (temaya duyarlı: açık temada koyu sarı, yoksa açık zeminde kaybolur).
 class _TakipDugmesi extends StatelessWidget {
   final bool isleniyor;
   final VoidCallback onTap;
   const _TakipDugmesi({required this.isleniyor, required this.onTap});
 
   @override
-  Widget build(BuildContext context) => FilledButton(
+  Widget build(BuildContext context) => OutlinedButton(
     onPressed: isleniyor ? null : onTap,
-    style: FilledButton.styleFrom(
-      minimumSize: const Size(0, 30),
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+    style: OutlinedButton.styleFrom(
+      minimumSize: const Size(0, 26),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      foregroundColor: DiziRenkler.sariMetin,
+      side: BorderSide(color: DiziRenkler.sariMetin.withValues(alpha: .55)),
+      shape: const StadiumBorder(),
+      textStyle: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w800),
     ),
     child: isleniyor
         // Yükleniyor hâli: düğme kilitli + spinner (sessiz bekleme yok)
-        ? const SizedBox(
+        ? SizedBox(
             width: 12,
             height: 12,
-            child: CircularProgressIndicator(strokeWidth: 2),
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: DiziRenkler.sariMetin,
+            ),
           )
         : Text('Takip Et'.c),
   );

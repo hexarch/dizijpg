@@ -11351,8 +11351,18 @@ app.post('/kaynak', girisZorunlu, sarici(async (req, res) => {
 
 // ---------- listeler ----------
 app.get('/listelerim', girisZorunlu, sarici(async (req, res) => {
+  // `ogeler` (ilk 30 öğe): profil listeyi poster ŞERİDİ olarak çiziyor
+  // (31 Ağu 2026 isteği) — istemci posterleri tmdb_id+tur ile kendisi çeker,
+  // burada yalnız kimlikler gider. Sıra, liste detayıyla (GET /listeler/:id)
+  // AYNI olmalı ki şeritteki önizleme ile açılan liste birbirini tutsun.
+  // Gizli öğeler DAHİL: bu uç yalnız sahibinin (girisZorunlu + kendi id'si).
   const { rows } = await havuz.query(
-    `SELECT l.*, count(o.tmdb_id)::int AS oge_sayisi
+    `SELECT l.*, count(o.tmdb_id)::int AS oge_sayisi,
+            COALESCE((SELECT json_agg(json_build_object('tmdb_id', x.tmdb_id, 'tur', x.tur))
+              FROM (SELECT o2.tmdb_id, o2.tur FROM liste_ogeleri o2
+                    WHERE o2.liste_id = l.id
+                    ORDER BY o2.sira ASC NULLS FIRST, o2.eklenme DESC
+                    LIMIT 30) x), '[]'::json) AS ogeler
      FROM listeler l LEFT JOIN liste_ogeleri o ON o.liste_id = l.id
      WHERE l.kullanici_id=$1 GROUP BY l.id ORDER BY l.olusturma DESC`,
     [req.kullanici.id],
@@ -17194,7 +17204,12 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
       [id]),
     havuz.query(
       `SELECT l.id, l.ad, l.aciklama,
-              (SELECT count(*)::int FROM liste_ogeleri o WHERE o.liste_id=l.id) AS oge_sayisi
+              (SELECT count(*)::int FROM liste_ogeleri o WHERE o.liste_id=l.id) AS oge_sayisi,
+              COALESCE((SELECT json_agg(json_build_object('tmdb_id', x.tmdb_id, 'tur', x.tur))
+                FROM (SELECT o2.tmdb_id, o2.tur FROM liste_ogeleri o2
+                      WHERE o2.liste_id = l.id AND NOT o2.gizli
+                      ORDER BY o2.sira ASC NULLS FIRST, o2.eklenme DESC
+                      LIMIT 30) x), '[]'::json) AS ogeler
        FROM listeler l WHERE l.kullanici_id=$1 AND l.herkese_acik=true
        ORDER BY l.olusturma DESC`,
       [id]),

@@ -2649,6 +2649,114 @@ class ListeDuzenleDugmesi extends StatelessWidget {
   );
 }
 
+/// Profildeki KULLANICI LİSTESİ şeridi: başlık (ad + öğe sayısı) + yatay
+/// poster şeridi — İzliyorum/İzlediğim şeritleriyle AYNI görünüm
+/// (31 Ağu 2026 isteği: "oluşturduğum liste de diğerleri gibi gözüksün").
+///
+/// ORTAK: kendi profilinde (silme düğmeli) ve başkasının profilinde
+/// (düğmesiz) aynı widget — [onSil] verilmezse silme çizilmez.
+/// Posterler sunucudan gelmez; [MiniIcerik] tmdb_id+tur ile kendisi çeker
+/// (durum şeritleriyle aynı yol). Boş listede şerit yok, yalnız başlık.
+class ListeSeridi extends StatelessWidget {
+  final Map<String, dynamic> liste;
+
+  /// Başlığa/"Tümünü gör"e dokununca liste açılır (modal ya da sayfa —
+  /// çağıran bilir).
+  final VoidCallback onAc;
+
+  /// Yalnız kendi profilinde: silme akışı (onay diyaloğu çağıranda).
+  final VoidCallback? onSil;
+
+  const ListeSeridi({
+    super.key,
+    required this.liste,
+    required this.onAc,
+    this.onSil,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ogeler = (liste['ogeler'] as List<dynamic>?) ?? const [];
+    final sayi = (liste['oge_sayisi'] as num?)?.toInt() ?? ogeler.length;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              // Başlık da dokunulur: küçük "Tümünü gör" yazısını bulamayan
+              // kullanıcı adın kendisine basar (dokunma hedefi ≥44px).
+              child: InkWell(
+                key: const Key('liste-seridi-baslik'),
+                onTap: onAc,
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.playlist_play,
+                        size: 19,
+                        color: DiziRenkler.sariMetin,
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          '${liste['ad']} ($sayi)',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: onAc,
+              child: Text(
+                'Tümünü gör'.c,
+                style: TextStyle(color: DiziRenkler.sariMetin, fontSize: 12),
+              ),
+            ),
+            if (onSil != null)
+              IconButton(
+                key: const Key('liste-seridi-sil'),
+                tooltip: 'Listeyi sil'.c,
+                icon: Icon(Icons.delete_outline, color: DiziRenkler.metin38),
+                onPressed: onSil,
+              ),
+          ],
+        ),
+        if (ogeler.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          SizedBox(
+            height: 208,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: ogeler.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 10),
+              itemBuilder: (context, i) {
+                final o = ogeler[i] as Map<String, dynamic>;
+                return MiniIcerik(
+                  key: ValueKey('${o['tur']}-${o['tmdb_id']}'),
+                  tmdbId: (o['tmdb_id'] as num).toInt(),
+                  tur: o['tur'] as String,
+                );
+              },
+            ),
+          ),
+        ],
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+}
+
 /// Liste öğesi: posteri önbellekli TMDB'den çeker, tıklayınca detaya gider.
 class _ListeOgeKart extends StatefulWidget {
   final String tur;
