@@ -14,3 +14,11 @@ app/scratchpad/
 # Tohum hesap şifreleri (yalnız sunucuda /opt/dizijpg/yedekler/)
 **/intl-kullanicilar.txt
 magaza/cikti/
+
+# iOS İMZALAMA SIRLARI — DEPOYA ASLA GİRMEZ (31 Ağu 2026).
+# Özel anahtar (.key/.p12), App Store Connect API anahtarı (.p8) ve provizyon
+# profili buradadır; biri sızarsa uygulama adımıza imzalanabilir ve mağaza
+# hesabımıza yükleme yapılabilir. Yedekleri yalnız yerelde durur.
+ios-imza/
+# Xcode yapılandırma yedekleri (dağıtım öncesi alınan tarihli kopyalar)
+**/*.yedek-*

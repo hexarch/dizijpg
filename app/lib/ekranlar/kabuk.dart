@@ -406,19 +406,32 @@ class _MasaustuAda extends StatelessWidget {
       borderRadius: BorderRadius.circular(18),
       border: Border.all(color: DiziRenkler.metin12),
     ),
-    child: ValueListenableBuilder<int>(
-      valueListenable: SohbetOlaylari.okunmamis,
-      builder: (context, okunmamis, _) => NavigationBar(
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-        height: masaustuCubukYuksekligi,
-        selectedIndex: secili,
-        // Mesajlar dâhil TÜM hedefler çağırana devredilir: `push` mi `go` mu
-        // olacağına kabuk-içi/kabuk-dışı bağlamı bilen taraf karar verir
-        // (bkz. [KabukEkrani] ve [kabukSekmeyeGit]). Ada kabuk DIŞINDA da
-        // çiziliyor; buradan `push` etmek orada ikinci bir kabuk kurup
-        // siyah ekran üretirdi.
-        onDestinationSelected: onSec,
-        destinations: _canliHedefler(context, okunmamis),
+    // ⚠ ALT GÜVENLİ ALAN ADADAN ÇIKARILIR — YOKSA İKONLAR YUKARI KAYAR.
+    // `NavigationBar` gövdesini `SafeArea` ile sarar (navigation_bar.dart:291)
+    // ve alta `MediaQuery.padding.bottom` kadar boşluk ekler. Masaüstü
+    // tarayıcıda o değer 0 olduğu için sorun görünmüyordu; iPad'de ana ekran
+    // göstergesi ~20 dp verince ada 44 dp yerine ~64 dp oldu: ikonlar adanın
+    // ÜST kenarına yapıştı, yanındaki katla düğmesi (sabit 44 dp, Row
+    // varsayılanı `center`) ortada kaldı — kullanıcının gördüğü "kayma" bu.
+    // Ada zaten ekranın altından `masaustuCubukKenar` kadar içeride durduğu
+    // için güvenli alana ayrıca ihtiyacı yok. Kanıt: test/ipad_ada_hiza_test.dart
+    child: MediaQuery.removePadding(
+      context: context,
+      removeBottom: true,
+      child: ValueListenableBuilder<int>(
+        valueListenable: SohbetOlaylari.okunmamis,
+        builder: (context, okunmamis, _) => NavigationBar(
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+          height: masaustuCubukYuksekligi,
+          selectedIndex: secili,
+          // Mesajlar dâhil TÜM hedefler çağırana devredilir: `push` mi `go` mu
+          // olacağına kabuk-içi/kabuk-dışı bağlamı bilen taraf karar verir
+          // (bkz. [KabukEkrani] ve [kabukSekmeyeGit]). Ada kabuk DIŞINDA da
+          // çiziliyor; buradan `push` etmek orada ikinci bir kabuk kurup
+          // siyah ekran üretirdi.
+          onDestinationSelected: onSec,
+          destinations: _canliHedefler(context, okunmamis),
+        ),
       ),
     ),
   );

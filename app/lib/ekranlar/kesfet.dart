@@ -522,73 +522,29 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
     // Marka bloğu ve eylem ikonları iki düzende de AYNI yerden gelir: dar
     // ekranda AppBar'a, masaüstünde AramaCubugu'nun üst barına verilir.
     //
-    // DAR EKRAN ÖLÇÜSÜ (360 dp): logo 40 + BETA 57 + sürüm 77 + boşluklar =
-    // 204 dp, iki eylem ikonu 100 dp → arama kutusuna 56 dp kalıyordu; büyüteç
-    // + tek kelimelik ipucu bile sığmaz. Bu yüzden dar ekranda logo 30'a
-    // küçültüldü ve BETA rozeti gizlendi; beta ibaresi sürümün altına indi
-    // (genişlik sürüm metniyle aynı kaldığı için kutudan yer çalmıyor).
-    // Böylece kutuya ~127 dp açıldı.
+    // DAR EKRAN ÖLÇÜSÜ (360 dp): logo 40 + sürüm 77 + boşluklar, iki eylem
+    // ikonu 100 dp → arama kutusuna yer kalsın diye dar ekranda logo 30'a
+    // küçültülür.
+    //
+    // 31 Ağu 2026: BETA ibaresi TAMAMEN KALDIRILDI (hem masaüstü pill hem
+    // dar ekran alt metni). Sebep App Store: Apple kendini "beta/demo/trial/
+    // test sürümü" olarak sunan uygulamaları reddediyor ve rozet ana ekranda
+    // hem uygulamada hem mağaza görsellerinde görünüyordu. Sürüm numarası
+    // kaldı — o bir beta iddiası değil.
     final marka = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Image.asset('assets/logo.png', height: genis ? 40 : 30),
         SizedBox(width: genis ? 8 : 6),
-        // BETA rozeti (marka sarısı pill) — yalnız masaüstünde yer var
-        if (genis) ...[
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-            decoration: BoxDecoration(
-              color: DiziRenkler.sari,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: const Text(
-              'BETA',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 10,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0.8,
-              ),
-            ),
+        // Sürüm numarası (yapı numarası olmadan), iki düzende de aynı.
+        Text(
+          'v${Api.surum.split('+').first}',
+          style: TextStyle(
+            color: DiziRenkler.metin38,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
           ),
-          const SizedBox(width: 6),
-        ],
-        // Sürüm numarası (yapı numarası olmadan). Dar ekranda BETA rozeti
-        // sığmadığı için ibare sürümün ALTINDA küçük metinle yazılır
-        // (23 Ağu 2026, kullanıcı isteği; önceki ipucu/erişilebilirlik
-        // dolambacı kalktı — beta artık gözle görülür).
-        genis
-            ? Text(
-                'v${Api.surum.split('+').first}',
-                style: TextStyle(
-                  color: DiziRenkler.metin38,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              )
-            : Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'v${Api.surum.split('+').first}',
-                    style: TextStyle(
-                      color: DiziRenkler.metin38,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    'BETA',
-                    style: TextStyle(
-                      color: DiziRenkler.sari,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 0.8,
-                    ),
-                  ),
-                ],
-              ),
+        ),
       ],
     );
     final eylemler = <Widget>[

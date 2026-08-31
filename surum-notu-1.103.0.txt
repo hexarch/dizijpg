@@ -1,0 +1,108 @@
+1.103.0 (163) — 31 Ağustos 2026
+Canlıdaki sürüm 1.100.2 (156) olduğu için notlar 1.100.4 → 1.103.0 arasını kapsıyor.
+
+YENİ
+- GIF seçici: kendi GIF arşivimizden yorum, sohbet, gönderi ve yanıtlara GIF
+  eklenebiliyor (dört yüzeyde ortak seçici).
+- Çoklu etiket: bir yoruma birden fazla dizi/film/oyuncu etiketi eklenebiliyor.
+  Etiket şeridi artık yalnız akışta değil, profilde ve içerik sayfasında da çiziliyor.
+- Tam ekran paylaşım ekranı.
+- Ayarlar > E-posta: hesabın e-posta adresi değiştirilebiliyor (şifre ya da
+  Google doğrulaması + yeni adrese giden kod).
+- İzlem çarkı: ses efekti, parmakla elle çevirme, liste büyüdükçe küçülen yazı.
+
+DÜZELTME
+- Çarkta gösterilen dilim ile çıkan yapım aynı olmuyordu (boyacı ile mantık
+  farklı başlangıç noktası kullanıyordu) — düzeldi.
+- Tepki emojileri tek sırada, arka plan hapı olmadan, sayı altta.
+- Reels'te yatay medya hizası her en-boy oranında düzeldi; akış kutusu kaydırılabiliyor.
+- Mesajlar sekmesi regresyonu ve sekmeye ikinci basışta başa dönme.
+- Akışta "görüldü" işaretinin takılması.
+- Google ile giren hesaplar e-posta değiştirmede anlamsız "Şifre hatalı"
+  alıyordu; artık Google doğrulaması isteniyor. Adresini değiştiren Google
+  kullanıcısının hesabını kaybetmesi de kapatıldı.
+- Bozuk e-posta adresleri kayıtta eleniyor — "gönderildi" denip aslında geri
+  dönen mailler kesildi.
+- Dar ekranda tür çipleri ve çark hizası taşıyordu.
+- Karşılama ekranı yalnız TV Time içe aktarımını vaat ediyor (Trakt/Letterboxd
+  iddiası kaldırıldı).
+- Masaüstünde bazı ikonların görünmemesi (bayat font önbelleği).
+
+---- Play sürüm notları (11 dil) ----
+
+[en-US]
+• GIF picker: send GIFs from our own archive in comments, chats, posts and replies.
+• Multi-tagging: add more than one show, movie or cast tag to a comment — tags now show on profiles and content pages too, not just the feed.
+• Change your account's email address from Settings.
+• Watch wheel: sound, manual spin, and the slice it lands on now matches what you get.
+• Fixes: Reels alignment at every aspect ratio, single-row reaction emojis, Messages tab, feed "seen" marker, narrow-screen layout.
+
+[ar]
+• منتقي صور GIF: أرسل صور GIF من أرشيفنا في التعليقات والمحادثات والمنشورات والردود.
+• وسوم متعددة: أضف أكثر من وسم لمسلسل أو فيلم أو ممثل إلى التعليق — تظهر الوسوم الآن في الملفات الشخصية وصفحات المحتوى أيضًا.
+• غيّر عنوان البريد الإلكتروني لحسابك من الإعدادات.
+• عجلة المشاهدة: صوت، وتدوير يدوي، والنتيجة تطابق القطاع الذي تتوقف عنده.
+• إصلاحات: محاذاة Reels بكل النسب، رموز التفاعل في صف واحد، تبويب الرسائل، وتخطيط الشاشات الضيقة.
+
+[de-DE]
+• GIF-Auswahl: GIFs aus unserem Archiv in Kommentaren, Chats, Beiträgen und Antworten.
+• Mehrfach-Tags: mehrere Serien, Filme oder Darsteller pro Kommentar — jetzt auch im Profil und auf Inhaltsseiten sichtbar.
+• Ändere die E-Mail-Adresse deines Kontos in den Einstellungen.
+• Glücksrad: Ton, manuelles Drehen, und das Ergebnis passt zum angezeigten Feld.
+• Behoben: Reels-Ausrichtung, Reaktions-Emojis in einer Zeile, Nachrichten-Tab, "Gesehen"-Markierung, schmale Bildschirme.
+
+[el-GR]
+• Επιλογή GIF: στείλε GIF από το αρχείο μας σε σχόλια, συνομιλίες, αναρτήσεις και απαντήσεις.
+• Πολλαπλές ετικέτες: περισσότερες σειρές, ταινίες ή ηθοποιούς ανά σχόλιο — φαίνονται πλέον και στα προφίλ και στις σελίδες περιεχομένου.
+• Άλλαξε το email του λογαριασμού σου από τις Ρυθμίσεις.
+• Τροχός: ήχος, χειροκίνητο γύρισμα, και το αποτέλεσμα ταιριάζει με το κομμάτι που δείχνει.
+• Διορθώσεις: στοίχιση Reels, emoji αντιδράσεων σε μία σειρά, καρτέλα Μηνύματα, στενές οθόνες.
+
+[es-ES]
+• Selector de GIF: envía GIF de nuestro archivo en comentarios, chats, publicaciones y respuestas.
+• Etiquetas múltiples: varias series, películas o intérpretes por comentario; ahora también en perfiles y páginas de contenido.
+• Cambia el correo de tu cuenta desde Ajustes.
+• Ruleta: sonido, giro manual y el resultado coincide con la casilla mostrada.
+• Correcciones: alineación de Reels, emojis de reacción en una fila, pestaña Mensajes, marca de "visto", pantallas estrechas.
+
+[fr-FR]
+• Sélecteur de GIF : envoie des GIF de notre archive dans les commentaires, discussions et publications.
+• Étiquettes multiples : plusieurs séries, films ou acteurs par commentaire — visibles aussi sur les profils et les pages de contenu.
+• Change l'adresse e-mail de ton compte dans les Réglages.
+• Roue : son, rotation manuelle, et le résultat correspond à la case affichée.
+• Corrections : alignement des Reels, émojis de réaction sur une ligne, onglet Messages, écrans étroits.
+
+[id]
+• Pemilih GIF: kirim GIF dari arsip kami sendiri di komentar, obrolan, postingan, dan balasan.
+• Tag ganda: tambahkan lebih dari satu serial, film, atau pemeran ke sebuah komentar — tag kini juga tampil di profil dan halaman konten.
+• Ubah alamat email akunmu lewat Setelan.
+• Roda tontonan: suara, putar manual, dan hasilnya kini cocok dengan bagian yang ditunjuk.
+• Perbaikan: perataan Reels di semua rasio, emoji reaksi satu baris, tab Pesan, tanda "dilihat", tata letak layar sempit.
+
+[it-IT]
+• Selettore GIF: invia GIF dal nostro archivio in commenti, chat, post e risposte.
+• Tag multipli: più serie, film o interpreti per commento — ora visibili anche nei profili e nelle pagine dei contenuti.
+• Cambia l'indirizzo email del tuo account dalle Impostazioni.
+• Ruota: suono, rotazione manuale e il risultato corrisponde allo spicchio mostrato.
+• Correzioni: allineamento dei Reels, emoji di reazione su una riga, scheda Messaggi, schermi stretti.
+
+[pt-BR]
+• Seletor de GIF: envie GIFs do nosso acervo em comentários, conversas, publicações e respostas.
+• Múltiplas tags: várias séries, filmes ou elenco por comentário — agora visíveis também nos perfis e nas páginas de conteúdo.
+• Altere o e-mail da sua conta nas Configurações.
+• Roleta: som, giro manual e o resultado bate com a fatia mostrada.
+• Correções: alinhamento dos Reels, emojis de reação em uma linha, aba Mensagens, telas estreitas.
+
+[ru-RU]
+• Выбор GIF: отправляйте GIF из нашего архива в комментариях, чатах, постах и ответах.
+• Несколько тегов: сразу несколько сериалов, фильмов или актёров в комментарии — теперь видны и в профиле, и на страницах контента.
+• Смена адреса почты аккаунта в Настройках.
+• Колесо: звук, ручное вращение, и результат совпадает с показанным сектором.
+• Исправления: выравнивание Reels, эмодзи реакций в один ряд, вкладка «Сообщения», узкие экраны.
+
+[tr-TR]
+• GIF seçici: yorum, sohbet, gönderi ve yanıtlara kendi arşivimizden GIF gönder.
+• Çoklu etiket: bir yoruma birden fazla dizi, film ya da oyuncu etiketleyebilirsin; etiketler artık profilde ve içerik sayfasında da görünüyor.
+• Ayarlar'dan hesabının e-posta adresini değiştirebilirsin.
+• İzlem çarkı: ses, elle çevirme ve çevirince çıkan yapım artık gösterilen dilimle aynı.
+• Düzeltmeler: her oranda Reels hizası, tek sıra tepki emojileri, Mesajlar sekmesi, "görüldü" işareti, dar ekran düzeni.

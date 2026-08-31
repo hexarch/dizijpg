@@ -83,5 +83,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- Dışa aktarma uyumu: yalnız standart HTTPS kullanılıyor, muaf.
+	     Bu anahtar olmadan HER yüklemede App Store Connect soruyu tekrar sorar. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

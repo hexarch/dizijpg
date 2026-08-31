@@ -183,23 +183,19 @@ void main() {
       );
     });
 
-    testWidgets('sürüm metni DURUYOR, BETA ibaresi sürümün ALTINDA', (
-      tester,
-    ) async {
+    testWidgets('sürüm metni DURUYOR, BETA ibaresi YOK', (tester) async {
       _ekran(tester, _darG, _darY);
       await _kur(tester, _anaSayfa());
 
       final surum = 'v${Api.surum.split('+').first}';
       expect(find.text(surum), findsOneWidget);
-      // 23 Ağu 2026: dar ekranda beta artık gözle görülür — sürümün hemen
-      // altında, sola hizalı küçük metin (sarı pill hâlâ yalnız masaüstünde).
-      final surumRect = tester.getRect(find.text(surum));
-      final betaRect = tester.getRect(find.text('BETA'));
-      expect(betaRect.top, greaterThanOrEqualTo(surumRect.bottom - 1));
+      // 31 Ağu 2026: BETA ibaresi kaldırıldı. Apple kendini "beta/demo/trial/
+      // test sürümü" olarak sunan uygulamaları reddediyor; rozet ana ekranda
+      // görünüyordu. Bu iddia KİLİT: rozet geri gelirse burada yakalanır.
       expect(
-        betaRect.left,
-        moreOrLessEquals(surumRect.left, epsilon: 2),
-        reason: 'beta sürümle sola hizalı olmalı',
+        find.text('BETA'),
+        findsNothing,
+        reason: 'App Store reddi: uygulama kendini beta olarak sunmamalı',
       );
     });
 
@@ -361,17 +357,17 @@ void main() {
   });
 
   group('4) MASAÜSTÜ REGRESYONU', () {
-    testWidgets('1440 dp: AppBar YOK, arama en üstte ve BETA rozeti duruyor', (
+    testWidgets('1440 dp: AppBar YOK, arama en üstte, BETA rozeti YOK', (
       tester,
     ) async {
       _ekran(tester, 1440, 900);
       await _kur(tester, _anaSayfa());
 
       // Masaüstünde eski düzen: AppBar yok, kapalı kutu yok, satır-içi
-      // TextField en üstte ve BETA rozeti görünür.
+      // TextField en üstte. BETA rozeti 31 Ağu 2026'da kaldırıldı.
       expect(find.byType(AppBar), findsNothing);
       expect(find.byKey(const Key('arama-ac')), findsNothing);
-      expect(find.text('BETA'), findsOneWidget);
+      expect(find.text('BETA'), findsNothing);
 
       final kutu = tester.getRect(find.byType(TextField));
       expect(kutu.width, masaustuAramaGenisligi);
