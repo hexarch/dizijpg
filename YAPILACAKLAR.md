@@ -50,6 +50,12 @@
   akis_karti_tasarim "Takip Et" ≥44dp ölçümleri FilledButton arıyordu; hap
   OutlinedButton olmuştu (2. turdaki değişiklik testleri güncellememişti).
 - Çeviri: 20 anahtar × 45 dil (19 yeni + 'Sesi aç' zaten vardı).
+- 🚀 **Düzeltme (1.105.1+169):** kullanıcı "çeviriyi kapatsam da çeviri metni
+  görünmeye devam ediyor, sol aşağıda kullanıcı adının üstünde" dedi — o metin
+  video ALTYAZISIYDI (ASR + çeviri; `orijinal` kolonu uca hiç konmamıştı).
+  `/altyazi/:dosya` segmentlere `o` (kaynak cümle) ekliyor; AltyaziKatmani
+  ReelsCeviri'yi dinleyip kapalıyken orijinali basıyor (açık videoda canlı
+  geçiş); medyasız gönderinin tam ekran metni de anahtara bağlandı.
 
 ## 2026-08-31 — 🚀 Liste paylaşımı (Spotify gibi)
 
