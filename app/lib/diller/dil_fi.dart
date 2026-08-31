@@ -1417,4 +1417,25 @@ const Map<String, String> cevirilerFi = {
       'Google-vahvistus ei täsmännyt tähän tiliin',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Tämä tili luotiin Googlella; kirjaudu Googlella vahvistaaksesi',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Tämä lista on yksityinen',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Tämä käyttäjä pitää listansa yksityisinä.',
+  'Bu listede henüz içerik yok': 'Tässä listassa ei ole vielä nimikkeitä',
+  'Otomatik çeviri': 'Automaattinen käännös',
+  'Otomatik çeviri açıldı': 'Automaattinen käännös käytössä',
+  'Otomatik çeviri kapatıldı': 'Automaattinen käännös pois käytöstä',
+  'Sohbet sessize alındı': 'Keskustelu mykistetty',
+  'Sessize alma kaldırıldı': 'Mykistys poistettu',
+  'Tema özelleştir': 'Mukauta teemaa',
+  'Sohbette ara': 'Hae keskustelusta',
+  'Mesajlarda ara...': 'Hae viesteistä...',
+  'Sonuç yok': 'Ei tuloksia',
+  'Profili gör': 'Näytä profiili',
+  'Medya ve dosyalar': 'Media ja tiedostot',
+  'Henüz medya yok': 'Ei vielä mediaa',
+  'Varsayılan': 'Oletus',
+  'Mor': 'Violetti',
+  'Pembe': 'Pinkki',
+  'Turuncu': 'Oranssi',
 };

@@ -1416,4 +1416,25 @@ const Map<String, String> cevirilerRu = {
       'Подтверждение Google не совпало с этим аккаунтом',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Этот аккаунт создан через Google; войди через Google, чтобы подтвердить',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Этот список скрыт',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Этот пользователь предпочитает не показывать свои списки.',
+  'Bu listede henüz içerik yok': 'В этом списке пока нет тайтлов',
+  'Otomatik çeviri': 'Автоматический перевод',
+  'Otomatik çeviri açıldı': 'Автоперевод включён',
+  'Otomatik çeviri kapatıldı': 'Автоперевод выключен',
+  'Sohbet sessize alındı': 'Чат без звука',
+  'Sessize alma kaldırıldı': 'Звук включён',
+  'Tema özelleştir': 'Настроить тему',
+  'Sohbette ara': 'Поиск в чате',
+  'Mesajlarda ara...': 'Поиск по сообщениям...',
+  'Sonuç yok': 'Нет результатов',
+  'Profili gör': 'Открыть профиль',
+  'Medya ve dosyalar': 'Медиа и файлы',
+  'Henüz medya yok': 'Пока нет медиа',
+  'Varsayılan': 'По умолчанию',
+  'Mor': 'Фиолетовый',
+  'Pembe': 'Розовый',
+  'Turuncu': 'Оранжевый',
 };

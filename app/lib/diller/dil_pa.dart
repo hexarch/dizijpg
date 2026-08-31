@@ -1407,4 +1407,25 @@ const Map<String, String> cevirilerPa = {
       'Google ਪੁਸ਼ਟੀ ਇਸ ਖਾਤੇ ਨਾਲ ਮੇਲ ਨਹੀਂ ਖਾਂਦੀ',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'ਇਹ ਖਾਤਾ Google ਨਾਲ ਖੋਲ੍ਹਿਆ ਗਿਆ; ਪੁਸ਼ਟੀ ਲਈ Google ਨਾਲ ਸਾਈਨ ਇਨ ਕਰੋ',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'ਇਹ ਸੂਚੀ ਨਿੱਜੀ ਹੈ',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'ਇਹ ਵਰਤੋਂਕਾਰ ਆਪਣੀਆਂ ਸੂਚੀਆਂ ਨਿੱਜੀ ਰੱਖਣਾ ਪਸੰਦ ਕਰਦਾ ਹੈ।',
+  'Bu listede henüz içerik yok': 'ਇਸ ਸੂਚੀ ਵਿੱਚ ਹਾਲੇ ਕੋਈ ਟਾਈਟਲ ਨਹੀਂ',
+  'Otomatik çeviri': 'ਆਟੋਮੈਟਿਕ ਅਨੁਵਾਦ',
+  'Otomatik çeviri açıldı': 'ਆਟੋਮੈਟਿਕ ਅਨੁਵਾਦ ਚਾਲੂ ਹੋਇਆ',
+  'Otomatik çeviri kapatıldı': 'ਆਟੋਮੈਟਿਕ ਅਨੁਵਾਦ ਬੰਦ ਹੋਇਆ',
+  'Sohbet sessize alındı': 'ਚੈਟ ਮਿਊਟ ਕੀਤੀ ਗਈ',
+  'Sessize alma kaldırıldı': 'ਮਿਊਟ ਹਟਾਇਆ ਗਿਆ',
+  'Tema özelleştir': 'ਥੀਮ ਕਸਟਮਾਈਜ਼ ਕਰੋ',
+  'Sohbette ara': 'ਚੈਟ ਵਿੱਚ ਖੋਜੋ',
+  'Mesajlarda ara...': 'ਸੁਨੇਹਿਆਂ ਵਿੱਚ ਖੋਜੋ...',
+  'Sonuç yok': 'ਕੋਈ ਨਤੀਜਾ ਨਹੀਂ',
+  'Profili gör': 'ਪ੍ਰੋਫਾਈਲ ਵੇਖੋ',
+  'Medya ve dosyalar': 'ਮੀਡੀਆ ਅਤੇ ਫਾਈਲਾਂ',
+  'Henüz medya yok': 'ਹਾਲੇ ਕੋਈ ਮੀਡੀਆ ਨਹੀਂ',
+  'Varsayılan': 'ਡਿਫੌਲਟ',
+  'Mor': 'ਜਾਮਨੀ',
+  'Pembe': 'ਗੁਲਾਬੀ',
+  'Turuncu': 'ਸੰਤਰੀ',
 };

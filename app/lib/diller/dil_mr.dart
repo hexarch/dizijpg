@@ -1404,4 +1404,25 @@ const Map<String, String> cevirilerMr = {
       'Google पडताळणी या खात्याशी जुळली नाही',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'हे खाते Google ने उघडले आहे; पडताळण्यासाठी Google ने साइन इन कर',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'ही यादी खाजगी आहे',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'हा वापरकर्ता त्याच्या याद्या खाजगी ठेवणे पसंत करतो.',
+  'Bu listede henüz içerik yok': 'या यादीत अजून कोणतेही टायटल नाही',
+  'Otomatik çeviri': 'स्वयंचलित भाषांतर',
+  'Otomatik çeviri açıldı': 'स्वयंचलित भाषांतर सुरू झाले',
+  'Otomatik çeviri kapatıldı': 'स्वयंचलित भाषांतर बंद झाले',
+  'Sohbet sessize alındı': 'चॅट म्यूट केला',
+  'Sessize alma kaldırıldı': 'म्यूट काढला',
+  'Tema özelleştir': 'थीम सानुकूलित करा',
+  'Sohbette ara': 'चॅटमध्ये शोधा',
+  'Mesajlarda ara...': 'संदेशांमध्ये शोधा...',
+  'Sonuç yok': 'कोणताही निकाल नाही',
+  'Profili gör': 'प्रोफाइल पहा',
+  'Medya ve dosyalar': 'मीडिया आणि फायली',
+  'Henüz medya yok': 'अजून मीडिया नाही',
+  'Varsayılan': 'डीफॉल्ट',
+  'Mor': 'जांभळा',
+  'Pembe': 'गुलाबी',
+  'Turuncu': 'नारिंगी',
 };

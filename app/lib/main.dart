@@ -18,6 +18,7 @@ import 'gorusme/arama_servisi.dart';
 import 'push.dart';
 import 'kitaplik_durumu.dart';
 import 'puan.dart';
+import 'reels_ceviri.dart';
 import 'sira_tercihi.dart';
 import 'surum_kapisi.dart';
 import 'tema.dart';
@@ -114,6 +115,8 @@ Future<void> main() async {
     await acilisAdimi('veri-tasarrufu', VeriTasarrufu.yukle);
     // videolarda altyazı gösterilsin mi
     await acilisAdimi('altyazi', AltyaziAyar.yukle);
+    // Reels'te otomatik çeviri açık mı
+    await acilisAdimi('reels-ceviri', ReelsCeviri.yukle);
     // Akış/Keşfet: Kronolojik mi Önerilen mi
     await acilisAdimi('sira', SiraTercihi.yukle);
     // Puan ölçeği (5-100): ÖNBELLEKTEN. Doğrunun kaynağı sunucudur ama ilk

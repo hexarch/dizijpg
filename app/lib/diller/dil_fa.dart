@@ -1394,4 +1394,25 @@ const Map<String, String> cevirilerFa = {
       'تأیید Google با این حساب مطابقت نداشت',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'این حساب با Google ساخته شده؛ برای تأیید با Google وارد شو',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'این فهرست خصوصی است',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'این کاربر ترجیح می‌دهد فهرست‌هایش خصوصی بمانند.',
+  'Bu listede henüz içerik yok': 'هنوز عنوانی در این فهرست نیست',
+  'Otomatik çeviri': 'ترجمه خودکار',
+  'Otomatik çeviri açıldı': 'ترجمه خودکار روشن شد',
+  'Otomatik çeviri kapatıldı': 'ترجمه خودکار خاموش شد',
+  'Sohbet sessize alındı': 'گفتگو بی‌صدا شد',
+  'Sessize alma kaldırıldı': 'بی‌صدا لغو شد',
+  'Tema özelleştir': 'شخصی‌سازی پوسته',
+  'Sohbette ara': 'جستجو در گفتگو',
+  'Mesajlarda ara...': 'جستجو در پیام‌ها...',
+  'Sonuç yok': 'نتیجه‌ای نیست',
+  'Profili gör': 'مشاهده نمایه',
+  'Medya ve dosyalar': 'رسانه و فایل‌ها',
+  'Henüz medya yok': 'هنوز رسانه‌ای نیست',
+  'Varsayılan': 'پیش‌فرض',
+  'Mor': 'بنفش',
+  'Pembe': 'صورتی',
+  'Turuncu': 'نارنجی',
 };

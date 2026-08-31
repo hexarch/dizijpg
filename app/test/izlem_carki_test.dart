@@ -10,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// "NE İZLESEM ÇARKI" (23 Ağu 2026 isteği) kilitleri:
@@ -166,19 +167,27 @@ void main() {
   ) async {
     await tester.binding.setSurfaceSize(const Size(_g, _y));
     _sunucu();
+    // Kitaplık ekranı artık paylaş düğmesi için oturumu okuyor (31 Ağu 2026).
+    final oturum = Oturum();
     await tester.pumpWidget(
-      MaterialApp(
-        theme: diziTema(acik: false),
-        home: const KitaplikListesiEkrani(durum: 'izleyecegim'),
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp(
+          theme: diziTema(acik: false),
+          home: const KitaplikListesiEkrani(durum: 'izleyecegim'),
+        ),
       ),
     );
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.byKey(const Key('izlem-carki')), findsOneWidget);
 
     await tester.pumpWidget(
-      MaterialApp(
-        theme: diziTema(acik: false),
-        home: const KitaplikListesiEkrani(durum: 'bitirdim'),
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp(
+          theme: diziTema(acik: false),
+          home: const KitaplikListesiEkrani(durum: 'bitirdim'),
+        ),
       ),
     );
     await tester.pump(const Duration(milliseconds: 300));

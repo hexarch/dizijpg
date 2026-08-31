@@ -1417,4 +1417,25 @@ const Map<String, String> cevirilerSw = {
       'Uthibitishaji wa Google haukulingana na akaunti hii',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Akaunti hii ilifunguliwa kwa Google; ingia kwa Google ili kuthibitisha',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Orodha hii ni ya faragha',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Mtumiaji huyu anapendelea kuweka orodha zake faragha.',
+  'Bu listede henüz içerik yok': 'Bado hakuna vichwa kwenye orodha hii',
+  'Otomatik çeviri': 'Tafsiri ya kiotomatiki',
+  'Otomatik çeviri açıldı': 'Tafsiri ya kiotomatiki imewashwa',
+  'Otomatik çeviri kapatıldı': 'Tafsiri ya kiotomatiki imezimwa',
+  'Sohbet sessize alındı': 'Gumzo limenyamazishwa',
+  'Sessize alma kaldırıldı': 'Kunyamazisha kumeondolewa',
+  'Tema özelleştir': 'Badilisha mandhari',
+  'Sohbette ara': 'Tafuta kwenye gumzo',
+  'Mesajlarda ara...': 'Tafuta kwenye jumbe...',
+  'Sonuç yok': 'Hakuna matokeo',
+  'Profili gör': 'Tazama wasifu',
+  'Medya ve dosyalar': 'Media na faili',
+  'Henüz medya yok': 'Bado hakuna media',
+  'Varsayılan': 'Chaguomsingi',
+  'Mor': 'Zambarau',
+  'Pembe': 'Pinki',
+  'Turuncu': 'Chungwa',
 };

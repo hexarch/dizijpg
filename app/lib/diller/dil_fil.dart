@@ -1437,4 +1437,25 @@ const Map<String, String> cevirilerFil = {
       'Hindi tugma sa account na ito ang Google verification',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Ginawa ang account na ito gamit ang Google; mag-sign in gamit ang Google para i-verify',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Pribado ang listahang ito',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Mas gusto ng user na ito na panatilihing pribado ang kanyang mga listahan.',
+  'Bu listede henüz içerik yok': 'Wala pang titulo sa listahang ito',
+  'Otomatik çeviri': 'Awtomatikong pagsasalin',
+  'Otomatik çeviri açıldı': 'Na-on ang awtomatikong pagsasalin',
+  'Otomatik çeviri kapatıldı': 'Na-off ang awtomatikong pagsasalin',
+  'Sohbet sessize alındı': 'Na-mute ang chat',
+  'Sessize alma kaldırıldı': 'Inalis ang mute',
+  'Tema özelleştir': 'I-customize ang tema',
+  'Sohbette ara': 'Maghanap sa chat',
+  'Mesajlarda ara...': 'Maghanap sa mga mensahe...',
+  'Sonuç yok': 'Walang resulta',
+  'Profili gör': 'Tingnan ang profile',
+  'Medya ve dosyalar': 'Media at mga file',
+  'Henüz medya yok': 'Wala pang media',
+  'Varsayılan': 'Default',
+  'Mor': 'Lila',
+  'Pembe': 'Pink',
+  'Turuncu': 'Orange',
 };

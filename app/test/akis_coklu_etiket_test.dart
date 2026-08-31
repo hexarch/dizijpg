@@ -87,23 +87,24 @@ void main() {
     expect(find.text('Breaking Bad'), findsNothing);
   });
 
-  testWidgets('İKİ ETİKET: ikisi de kartta — birincisi başlıkta, ikincisi şerit', (
-    tester,
-  ) async {
-    // Kullanıcı isteği (30 Ağu): "Silo ve Breaking Bad'i seçersem ikisinin de
-    // profilinde paylaşılacak".
-    await _kur(
-      tester,
-      _gonderi(
-        etiketler: [
-          {'tur': 'tv', 'tmdb_id': 100, 'sezon': null, 'bolum': null},
-          {'tur': 'tv', 'tmdb_id': 200, 'sezon': null, 'bolum': null},
-        ],
-      ),
-    );
-    expect(find.text('Silo'), findsOneWidget);
-    expect(find.text('Breaking Bad'), findsOneWidget);
-  });
+  testWidgets(
+    'İKİ ETİKET: ikisi de kartta — birincisi başlıkta, ikincisi şerit',
+    (tester) async {
+      // Kullanıcı isteği (30 Ağu): "Silo ve Breaking Bad'i seçersem ikisinin de
+      // profilinde paylaşılacak".
+      await _kur(
+        tester,
+        _gonderi(
+          etiketler: [
+            {'tur': 'tv', 'tmdb_id': 100, 'sezon': null, 'bolum': null},
+            {'tur': 'tv', 'tmdb_id': 200, 'sezon': null, 'bolum': null},
+          ],
+        ),
+      );
+      expect(find.text('Silo'), findsOneWidget);
+      expect(find.text('Breaking Bad'), findsOneWidget);
+    },
+  );
 
   testWidgets('DÖRT ETİKET: hepsi çizilir, ad TMDB haritasından çözülür', (
     tester,

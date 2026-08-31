@@ -1410,4 +1410,25 @@ const Map<String, String> cevirilerUr = {
       'Google تصدیق اس اکاؤنٹ سے مطابقت نہیں رکھتی',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'یہ اکاؤنٹ Google سے بنایا گیا؛ تصدیق کے لیے Google سے سائن اِن کریں',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'یہ فہرست نجی ہے',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'یہ صارف اپنی فہرستیں نجی رکھنا پسند کرتا ہے۔',
+  'Bu listede henüz içerik yok': 'اس فہرست میں ابھی کوئی عنوان نہیں',
+  'Otomatik çeviri': 'خودکار ترجمہ',
+  'Otomatik çeviri açıldı': 'خودکار ترجمہ آن ہو گیا',
+  'Otomatik çeviri kapatıldı': 'خودکار ترجمہ آف ہو گیا',
+  'Sohbet sessize alındı': 'چیٹ خاموش کر دی گئی',
+  'Sessize alma kaldırıldı': 'خاموشی ہٹا دی گئی',
+  'Tema özelleştir': 'تھیم اپنی مرضی کے مطابق بنائیں',
+  'Sohbette ara': 'چیٹ میں تلاش کریں',
+  'Mesajlarda ara...': 'پیغامات میں تلاش کریں...',
+  'Sonuç yok': 'کوئی نتیجہ نہیں',
+  'Profili gör': 'پروفائل دیکھیں',
+  'Medya ve dosyalar': 'میڈیا اور فائلیں',
+  'Henüz medya yok': 'ابھی کوئی میڈیا نہیں',
+  'Varsayılan': 'طے شدہ',
+  'Mor': 'جامنی',
+  'Pembe': 'گلابی',
+  'Turuncu': 'نارنجی',
 };

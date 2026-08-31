@@ -1433,4 +1433,25 @@ const Map<String, String> cevirilerRo = {
       'Verificarea Google nu se potrivește cu acest cont',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Acest cont a fost creat cu Google; conectează-te cu Google pentru a verifica',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Această listă este privată',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Acest utilizator preferă să-și țină listele private.',
+  'Bu listede henüz içerik yok': 'Încă nu există titluri în această listă',
+  'Otomatik çeviri': 'Traducere automată',
+  'Otomatik çeviri açıldı': 'Traducere automată activată',
+  'Otomatik çeviri kapatıldı': 'Traducere automată dezactivată',
+  'Sohbet sessize alındı': 'Conversație pe silențios',
+  'Sessize alma kaldırıldı': 'Silențios dezactivat',
+  'Tema özelleştir': 'Personalizează tema',
+  'Sohbette ara': 'Caută în conversație',
+  'Mesajlarda ara...': 'Caută în mesaje...',
+  'Sonuç yok': 'Niciun rezultat',
+  'Profili gör': 'Vezi profilul',
+  'Medya ve dosyalar': 'Media și fișiere',
+  'Henüz medya yok': 'Încă nu există media',
+  'Varsayılan': 'Implicit',
+  'Mor': 'Mov',
+  'Pembe': 'Roz',
+  'Turuncu': 'Portocaliu',
 };

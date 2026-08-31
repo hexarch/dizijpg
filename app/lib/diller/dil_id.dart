@@ -1412,4 +1412,25 @@ const Map<String, String> cevirilerId = {
       'Verifikasi Google tidak cocok dengan akun ini',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Akun ini dibuat dengan Google; masuk dengan Google untuk verifikasi',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Daftar ini privat',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Pengguna ini memilih merahasiakan daftarnya.',
+  'Bu listede henüz içerik yok': 'Belum ada judul di daftar ini',
+  'Otomatik çeviri': 'Terjemahan otomatis',
+  'Otomatik çeviri açıldı': 'Terjemahan otomatis diaktifkan',
+  'Otomatik çeviri kapatıldı': 'Terjemahan otomatis dinonaktifkan',
+  'Sohbet sessize alındı': 'Chat dibisukan',
+  'Sessize alma kaldırıldı': 'Bisukan dibatalkan',
+  'Tema özelleştir': 'Sesuaikan tema',
+  'Sohbette ara': 'Cari di chat',
+  'Mesajlarda ara...': 'Cari di pesan...',
+  'Sonuç yok': 'Tidak ada hasil',
+  'Profili gör': 'Lihat profil',
+  'Medya ve dosyalar': 'Media dan berkas',
+  'Henüz medya yok': 'Belum ada media',
+  'Varsayılan': 'Bawaan',
+  'Mor': 'Ungu',
+  'Pembe': 'Merah muda',
+  'Turuncu': 'Oranye',
 };

@@ -1412,4 +1412,25 @@ const Map<String, String> cevirilerNb = {
       'Google-bekreftelsen passet ikke til denne kontoen',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Denne kontoen ble opprettet med Google; logg inn med Google for å bekrefte',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Denne listen er privat',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Denne brukeren holder listene sine private.',
+  'Bu listede henüz içerik yok': 'Ingen titler i denne listen ennå',
+  'Otomatik çeviri': 'Automatisk oversettelse',
+  'Otomatik çeviri açıldı': 'Automatisk oversettelse slått på',
+  'Otomatik çeviri kapatıldı': 'Automatisk oversettelse slått av',
+  'Sohbet sessize alındı': 'Chat dempet',
+  'Sessize alma kaldırıldı': 'Demping fjernet',
+  'Tema özelleştir': 'Tilpass tema',
+  'Sohbette ara': 'Søk i chatten',
+  'Mesajlarda ara...': 'Søk i meldinger...',
+  'Sonuç yok': 'Ingen resultater',
+  'Profili gör': 'Se profil',
+  'Medya ve dosyalar': 'Medier og filer',
+  'Henüz medya yok': 'Ingen medier ennå',
+  'Varsayılan': 'Standard',
+  'Mor': 'Lilla',
+  'Pembe': 'Rosa',
+  'Turuncu': 'Oransje',
 };

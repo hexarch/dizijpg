@@ -1358,4 +1358,25 @@ const Map<String, String> cevirilerAm = {
   'Google doğrulaması bu hesapla eşleşmedi': 'የGoogle ማረጋገጫ ከዚህ መለያ ጋር አልተዛመደም',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'ይህ መለያ በGoogle ተከፍቷል፤ ለማረጋገጥ በGoogle ግባ',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'ይህ ዝርዝር የግል ነው',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'ይህ ተጠቃሚ ዝርዝሮቹን የግል ማድረግ ይመርጣል።',
+  'Bu listede henüz içerik yok': 'በዚህ ዝርዝር ውስጥ ገና ርዕሶች የሉም',
+  'Otomatik çeviri': 'ራስ-ሰር ትርጉም',
+  'Otomatik çeviri açıldı': 'ራስ-ሰር ትርጉም በርቷል',
+  'Otomatik çeviri kapatıldı': 'ራስ-ሰር ትርጉም ጠፍቷል',
+  'Sohbet sessize alındı': 'ውይይቱ ድምፀ-ተዘግቷል',
+  'Sessize alma kaldırıldı': 'ድምፀ-መዘጋት ተነስቷል',
+  'Tema özelleştir': 'ገጽታ አብጅ',
+  'Sohbette ara': 'በውይይት ውስጥ ፈልግ',
+  'Mesajlarda ara...': 'በመልዕክቶች ውስጥ ፈልግ...',
+  'Sonuç yok': 'ውጤት የለም',
+  'Profili gör': 'መገለጫ ተመልከት',
+  'Medya ve dosyalar': 'ሚዲያ እና ፋይሎች',
+  'Henüz medya yok': 'ገና ሚዲያ የለም',
+  'Varsayılan': 'ነባሪ',
+  'Mor': 'ሐምራዊ',
+  'Pembe': 'ሮዝ',
+  'Turuncu': 'ብርቱካናማ',
 };

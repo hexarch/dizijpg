@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'izlem_carki.dart';
 import 'ortak.dart';
+import 'paylas.dart';
 import 'siralanabilir_izgara.dart';
 
 /// Bir kitaplık durumunun (izliyorum/bitirdim/...) TAM listesi, dikey ızgara.
@@ -98,11 +100,33 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
       );
     }
 
+    final ben = context.watch<Oturum>().kullanici;
+    final benimAd = ben?['kullanici_adi'] as String?;
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          (_adlar[widget.durum] ?? widget.durum).c +
-              (_ogeler != null ? ' (${_ogeler!.length})' : ''),
+        // Sayı İKİNCİ SATIRDA (31 Ağu 2026): "İzleyeceğim (182)" tek satırda
+        // yanındaki 2-3 eylem ikonuyla dar telefonda sığmıyor, ellipsis sayıyı
+        // yutup "İzleyeceğim (…" bırakıyordu — kullanıcı "(.. neyin nesi" dedi.
+        // Liste tam sayfasındaki (liste.dart) ad + @sahip kalıbının aynısı.
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              (_adlar[widget.durum] ?? widget.durum).c,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            if (_ogeler != null)
+              Text(
+                '{} içerik'.cf([_ogeler!.length]),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: DiziRenkler.metin54,
+                ),
+              ),
+          ],
         ),
         actions: [
           // "Ne izlesem çarkı" — yalnız İzleyeceğim'de (23 Ağu 2026 isteği:
@@ -117,6 +141,26 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
                 _ogeler!.cast<Map<String, dynamic>>(),
               ),
               icon: const Icon(Icons.attractions),
+            ),
+          // Paylaş (31 Ağu 2026 isteği: "otomatik listelerde paylaşma özelliği
+          // yok, ekler misin"): bağlantı salt-okunur /kullanici/:ad/kitaplik/
+          // :durum sayfasına gider. İzlenenler GİZLİYSE çizilmez — gizli özel
+          // listedeki kuralın aynısı (paylas.dart): açılmayacak bağlantı
+          // üretilmez. Boş listeyi paylaşmanın da anlamı yok.
+          if (benimAd != null &&
+              ben?['izlenenler_gizli'] != true &&
+              (_ogeler?.isNotEmpty ?? false))
+            IconButton(
+              key: const Key('kitaplik-paylas'),
+              tooltip: 'Paylaş'.c,
+              onPressed: () => paylasSheet(
+                context,
+                url:
+                    'https://dizijpg.com/kullanici/$benimAd'
+                    '/kitaplik/${widget.durum}',
+                metin: (_adlar[widget.durum] ?? widget.durum).c,
+              ),
+              icon: Icon(Icons.ios_share, color: DiziRenkler.sariMetin),
             ),
           // Tek öğelik listede sıralamanın anlamı yok.
           if ((_ogeler?.length ?? 0) > 1)

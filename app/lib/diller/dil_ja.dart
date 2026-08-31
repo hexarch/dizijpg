@@ -1338,4 +1338,25 @@ const Map<String, String> cevirilerJa = {
   'Google doğrulaması bu hesapla eşleşmedi': 'Googleの確認がこのアカウントと一致しませんでした',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'このアカウントはGoogleで作成されています。確認するにはGoogleでログインしてください',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'このリストは非公開です',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'このユーザーはリストを非公開にしています。',
+  'Bu listede henüz içerik yok': 'このリストにはまだ作品がありません',
+  'Otomatik çeviri': '自動翻訳',
+  'Otomatik çeviri açıldı': '自動翻訳をオンにしました',
+  'Otomatik çeviri kapatıldı': '自動翻訳をオフにしました',
+  'Sohbet sessize alındı': 'チャットをミュートしました',
+  'Sessize alma kaldırıldı': 'ミュートを解除しました',
+  'Tema özelleştir': 'テーマをカスタマイズ',
+  'Sohbette ara': 'チャット内を検索',
+  'Mesajlarda ara...': 'メッセージを検索...',
+  'Sonuç yok': '結果がありません',
+  'Profili gör': 'プロフィールを見る',
+  'Medya ve dosyalar': 'メディアとファイル',
+  'Henüz medya yok': 'まだメディアがありません',
+  'Varsayılan': 'デフォルト',
+  'Mor': 'パープル',
+  'Pembe': 'ピンク',
+  'Turuncu': 'オレンジ',
 };

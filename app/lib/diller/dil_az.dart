@@ -1403,4 +1403,25 @@ const Map<String, String> cevirilerAz = {
       'Google doğrulaması bu hesabla uyğun gəlmədi',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Bu hesab Google ilə açılıb; doğrulamaq üçün Google ilə daxil ol',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Bu siyahı gizlidir',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Bu istifadəçi siyahılarını gizli saxlamağa üstünlük verir.',
+  'Bu listede henüz içerik yok': 'Bu siyahıda hələ başlıq yoxdur',
+  'Otomatik çeviri': 'Avtomatik tərcümə',
+  'Otomatik çeviri açıldı': 'Avtomatik tərcümə aktiv edildi',
+  'Otomatik çeviri kapatıldı': 'Avtomatik tərcümə deaktiv edildi',
+  'Sohbet sessize alındı': 'Söhbət səssizə alındı',
+  'Sessize alma kaldırıldı': 'Səssiz rejim ləğv edildi',
+  'Tema özelleştir': 'Mövzunu fərdiləşdir',
+  'Sohbette ara': 'Söhbətdə axtar',
+  'Mesajlarda ara...': 'Mesajlarda axtar...',
+  'Sonuç yok': 'Nəticə yoxdur',
+  'Profili gör': 'Profilə bax',
+  'Medya ve dosyalar': 'Media və fayllar',
+  'Henüz medya yok': 'Hələ media yoxdur',
+  'Varsayılan': 'Standart',
+  'Mor': 'Bənövşəyi',
+  'Pembe': 'Çəhrayı',
+  'Turuncu': 'Narıncı',
 };

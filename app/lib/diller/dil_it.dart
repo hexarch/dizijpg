@@ -1425,4 +1425,25 @@ const Map<String, String> cevirilerIt = {
       'La verifica Google non corrisponde a questo account',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Questo account è stato creato con Google; accedi con Google per verificare',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Questa lista è privata',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Questo utente preferisce tenere private le sue liste.',
+  'Bu listede henüz içerik yok': 'Ancora nessun titolo in questa lista',
+  'Otomatik çeviri': 'Traduzione automatica',
+  'Otomatik çeviri açıldı': 'Traduzione automatica attivata',
+  'Otomatik çeviri kapatıldı': 'Traduzione automatica disattivata',
+  'Sohbet sessize alındı': 'Chat silenziata',
+  'Sessize alma kaldırıldı': 'Silenzioso disattivato',
+  'Tema özelleştir': 'Personalizza tema',
+  'Sohbette ara': 'Cerca nella chat',
+  'Mesajlarda ara...': 'Cerca nei messaggi...',
+  'Sonuç yok': 'Nessun risultato',
+  'Profili gör': 'Vedi profilo',
+  'Medya ve dosyalar': 'Media e file',
+  'Henüz medya yok': 'Ancora nessun media',
+  'Varsayılan': 'Predefinito',
+  'Mor': 'Viola',
+  'Pembe': 'Rosa',
+  'Turuncu': 'Arancione',
 };

@@ -16,7 +16,9 @@ import '../ceviri.dart';
 import '../gonderi_olcu.dart';
 import '../gorsel_basliklari.dart';
 import '../medya_yukle.dart';
+import '../reels_ceviri.dart';
 import '../sira_tercihi.dart';
+import '../tarih.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
 import '../video_kova.dart';
@@ -1317,6 +1319,47 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
                 ),
               ),
             ),
+            // Otomatik çeviri anahtarı (31 Ağu 2026 isteği): sağ üstte,
+            // DOKUNULMADIĞINDA YARI SAYDAM — videonun üstünde durduğu için
+            // tam opak bir düğme rahatsız ederdi ("tıklanmayınca transparan
+            // olsun"). Açıkken ikon sarı, kapalıyken beyaz; basınca tercih
+            // kalıcı kaydedilir ve o an ekrandaki gönderiler de değişir
+            // (metin [ReelsCeviri.acik]'ı dinler).
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topRight,
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: ReelsCeviri.acik,
+                  builder: (context, acik, _) => Opacity(
+                    opacity: 0.45,
+                    child: IconButton(
+                      key: const Key('reels-ceviri'),
+                      tooltip: 'Otomatik çeviri'.c,
+                      onPressed: () {
+                        ReelsCeviri.sec(!acik);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              acik
+                                  ? 'Otomatik çeviri kapatıldı'.c
+                                  : 'Otomatik çeviri açıldı'.c,
+                            ),
+                            duration: const Duration(seconds: 1),
+                          ),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.translate,
+                        color: acik ? DiziRenkler.sari : Colors.white,
+                      ),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.black38,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -1717,6 +1760,18 @@ class _ReelSayfaState extends State<_ReelSayfa>
   // Reels de akış kartıyla AYNI sheet'i açar (tek açılış ayarı: yanitlariAc)
   void _yanitlarAc() => yanitlariAc(context, widget.yorum);
 
+  /// "devamı" → Instagram altyazı sayfası gibi: aynı yorum sheet'i ama en
+  /// üstte gönderi başlığı (avatar + ad + Takip Et, tam metin, tarih) ve
+  /// hemen devamında yorumlar (31 Ağu 2026 isteği).
+  void _metniAc() =>
+      yanitlariAc(context, widget.yorum, gonderiBasligi: true).then((_) {
+        // Sheet içinde takip edilmiş olabilir; durum paylaşılan haritada
+        // (`takip_ediyorum`) — sheet kapanınca buradaki düğme de tazelenir.
+        if (mounted) {
+          setState(() => _takipte = widget.yorum['takip_ediyorum'] == true);
+        }
+      });
+
   String _sure(Duration s) {
     final dk = s.inMinutes, sn = s.inSeconds % 60;
     return '$dk:${sn.toString().padLeft(2, '0')}';
@@ -2074,11 +2129,20 @@ class _ReelSayfaState extends State<_ReelSayfa>
                       ],
                     ),
                     // Yorum metni: uzunsa İKİ SATIR + "devamı"; dokununca
-                    // tamamı açılır. Kırpma kararı ÖLÇÜLÜR — bkz. [ReelsMetni].
+                    // gönderi başlıklı yorum sheet'i açılır ([_metniAc]).
+                    // Kırpma kararı ÖLÇÜLÜR — bkz. [ReelsMetni]. Otomatik
+                    // çeviri kapalıysa orijinal metin çizilir; anahtar sağ
+                    // üstte ([ReelsCeviri]).
                     if ((y['metin'] as String?)?.trim().isNotEmpty == true &&
                         (foto != null || _videoUrl != null)) ...[
                       const SizedBox(height: 8),
-                      ReelsMetni(y['metin'] as String),
+                      ValueListenableBuilder<bool>(
+                        valueListenable: ReelsCeviri.acik,
+                        builder: (context, ceviriAcik, _) => ReelsMetni(
+                          reelsGosterMetni(y, ceviriAcik),
+                          onDevami: _metniAc,
+                        ),
+                      ),
                     ],
                     const SizedBox(height: 8),
                     // İçerik rozeti → içerik sayfası
@@ -2260,7 +2324,13 @@ class ReelsMetni extends StatefulWidget {
   static const satirSiniri = 2;
 
   final String metin;
-  const ReelsMetni(this.metin, {super.key});
+
+  /// Verilirse "devamı"na (ve kırpılmış metne) dokunmak metni SATIR İÇİNDE
+  /// açmak yerine bunu çağırır — Reels bununla Instagram tarzı altyazı
+  /// sayfasını (gönderi başlıklı yorum sheet'i) açar (31 Ağu 2026 isteği).
+  final VoidCallback? onDevami;
+
+  const ReelsMetni(this.metin, {super.key, this.onDevami});
 
   @override
   State<ReelsMetni> createState() => _ReelsMetniState();
@@ -2330,7 +2400,7 @@ class _ReelsMetniState extends State<ReelsMetni> {
           button: true,
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => setState(() => _acik = true),
+            onTap: widget.onDevami ?? () => setState(() => _acik = true),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -2407,10 +2477,19 @@ class _ReelsDugme extends StatelessWidget {
 /// [ilkYanitlanan]: sheet açılır açılmaz hedeflenecek YANIT satırı (yanıtın
 /// yanıtı). İçerik sayfasının yorum bölümü bunu kullanır: kullanıcı bir
 /// yanıta "Yanıtla" dediğinde sheet ÜST yorumla açılır ama hedef kaybolmaz.
+/// Reels'te gösterilecek gönderi metni: otomatik çeviri KAPALIYSA sunucunun
+/// çevirdiği gönderilerde orijinal metne dönülür (bkz. [ReelsCeviri]).
+String reelsGosterMetni(Map<String, dynamic> y, bool ceviriAcik) {
+  final m = y['metin'] as String? ?? '';
+  if (ceviriAcik) return m;
+  return (y['orijinal_metin'] as String?) ?? m;
+}
+
 Future<void> yanitlariAc(
   BuildContext context,
   Map<String, dynamic> yorum, {
   Map<String, dynamic>? ilkYanitlanan,
+  bool gonderiBasligi = false,
 }) => showModalBottomSheet<void>(
   context: context,
   isScrollControlled: true,
@@ -2423,7 +2502,11 @@ Future<void> yanitlariAc(
   shape: const RoundedRectangleBorder(
     borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
   ),
-  builder: (_) => YanitlarSheet(yorum: yorum, ilkYanitlanan: ilkYanitlanan),
+  builder: (_) => YanitlarSheet(
+    yorum: yorum,
+    ilkYanitlanan: ilkYanitlanan,
+    gonderiBasligi: gonderiBasligi,
+  ),
 );
 
 /// Yorum kutusunun üstündeki 8'li hızlı emoji satırının kaynağı.
@@ -2511,7 +2594,19 @@ class YanitlarSheet extends StatefulWidget {
 
   /// Açılışta hedeflenecek yanıt satırı (bkz. [yanitlariAc]).
   final Map<String, dynamic>? ilkYanitlanan;
-  const YanitlarSheet({super.key, required this.yorum, this.ilkYanitlanan});
+
+  /// TRUE ise listenin başında GÖNDERİ BAŞLIĞI çizilir: avatar + ad + Takip
+  /// Et, gönderinin TAM metni ve paylaşım tarihi; yorumlar hemen devamında
+  /// akar — Instagram'ın altyazı sayfası kalıbı. Reels'te "devamı" bununla
+  /// açar (31 Ağu 2026 isteği); yorum düğmesi eskisi gibi başlıksız açar.
+  final bool gonderiBasligi;
+
+  const YanitlarSheet({
+    super.key,
+    required this.yorum,
+    this.ilkYanitlanan,
+    this.gonderiBasligi = false,
+  });
 
   @override
   State<YanitlarSheet> createState() => _YanitlarSheetState();
@@ -2538,6 +2633,14 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
   late Map<String, dynamic>? _yanitlanan = // yanıtın yanıtı: hedeflenen satır
       widget.ilkYanitlanan;
   List<String> _emojiler = SikEmojiler.onbellek ?? SikEmojiler.yedek;
+
+  // Gönderi başlığındaki Takip Et — [_ReelSayfaState._takipToggle] ile aynı
+  // mantık; durum PAYLAŞILAN haritaya da yazılır ki sheet kapanınca Reels
+  // sayfasındaki düğme tutarlı kalsın (orası kapanışta haritadan okur).
+  late bool _takipte = widget.yorum['takip_ediyorum'] == true;
+  late final bool _takipBilinir =
+      widget.yorum.containsKey('takip_ediyorum') &&
+      widget.yorum['benim'] != true;
 
   @override
   void initState() {
@@ -2570,9 +2673,121 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
   void _uyar(String mesaj) =>
       _mesajci.currentState?.showSnackBar(SnackBar(content: Text(mesaj)));
 
+  Future<void> _takipToggle() async {
+    if (!girisGerekli(context)) return;
+    final ad = widget.yorum['kullanici_adi'] as String;
+    setState(() => _takipte = !_takipte);
+    if (_takipBilinir) widget.yorum['takip_ediyorum'] = _takipte;
+    try {
+      final d = await Api.takipToggle(
+        ad,
+        kaynakGonderi: widget.yorum['id'] as int?,
+      );
+      final takip = d['takip'] == true;
+      if (_takipBilinir) widget.yorum['takip_ediyorum'] = takip;
+      if (mounted) setState(() => _takipte = takip);
+    } catch (_) {
+      if (_takipBilinir) widget.yorum['takip_ediyorum'] = !_takipte;
+      if (mounted) setState(() => _takipte = !_takipte);
+    }
+  }
+
+  /// Listenin 0. satırı ([YanitlarSheet.gonderiBasligi] kipinde): solda
+  /// avatar + ad (profile götürür), sağda Takip Et; altında gönderinin TAM
+  /// metni (otomatik çeviri tercihine uyar) ve paylaşım tarihi. Instagram'ın
+  /// altyazı sayfası kalıbı — yorumlar hemen devamında.
+  Widget _gonderiBaslik() {
+    final y = widget.yorum;
+    final ad = y['kullanici_adi'] as String? ?? '';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            GestureDetector(
+              onTap: ad.isEmpty ? null : () => kullaniciyaGit(context, ad),
+              child: KullaniciAvatari(
+                url: dosyaUrl(y['avatar'] as String?),
+                kullaniciAdi: ad,
+                yaricap: 18,
+                arkaplan: DiziRenkler.kart,
+                ikonRenk: DiziRenkler.metin54,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: GestureDetector(
+                onTap: ad.isEmpty ? null : () => kullaniciyaGit(context, ad),
+                child: Text(
+                  '@$ad',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
+            if (_takipBilinir && !_takipte) ...[
+              const SizedBox(width: 10),
+              SizedBox(
+                height: 30,
+                child: OutlinedButton(
+                  key: const Key('baslik-takip'),
+                  onPressed: _takipToggle,
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    side: BorderSide(color: DiziRenkler.sariMetin),
+                  ),
+                  child: Text(
+                    'Takip Et'.c,
+                    style: TextStyle(
+                      color: DiziRenkler.sariMetin,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 10),
+        ValueListenableBuilder<bool>(
+          valueListenable: ReelsCeviri.acik,
+          builder: (context, ceviriAcik, _) => Text(
+            reelsGosterMetni(y, ceviriAcik),
+            style: const TextStyle(height: 1.4),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          tarihBicimle(y['tarih']),
+          style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
+        ),
+        const SizedBox(height: 10),
+        Divider(color: DiziRenkler.metin12, height: 1),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
   void _emojiSec(String emoji) {
     _kutu.value = emojiEkle(_kutu.value, emoji);
   }
+
+  /// Boş yorum listesi göstergesi (hem ortalanmış hem başlık-altı kipte).
+  Widget _bosDurum() => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(Icons.forum_outlined, size: 34, color: DiziRenkler.metin24),
+      const SizedBox(height: 8),
+      Text('Henüz yorum yok.'.c, style: TextStyle(color: DiziRenkler.metin54)),
+      const SizedBox(height: 4),
+      Text(
+        'İlk yorumu sen yaz'.c,
+        style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
+      ),
+    ],
+  );
 
   String get _sorgu => widget.yorum['sezon'] != null
       ? '?sezon=${widget.yorum['sezon']}&bolum=${widget.yorum['bolum']}'
@@ -2966,41 +3181,33 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
                             color: DiziRenkler.sari,
                           ),
                         )
-                      : (_yanitlar!.isEmpty
-                            ? Center(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.forum_outlined,
-                                      size: 34,
-                                      color: DiziRenkler.metin24,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Henüz yorum yok.'.c,
-                                      style: TextStyle(
-                                        color: DiziRenkler.metin54,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'İlk yorumu sen yaz'.c,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: DiziRenkler.metin38,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
+                      // Başlık kipinde boş liste ORTALANMAZ: gönderi başlığı
+                      // her zaman üstte durur, boş durum onun altına yazılır.
+                      : (_yanitlar!.isEmpty && !widget.gonderiBasligi
+                            ? Center(child: _bosDurum())
                             : ListView.builder(
                                 controller: _liste,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 14,
                                 ),
-                                itemCount: _yanitlar!.length,
+                                itemCount:
+                                    (widget.gonderiBasligi ? 1 : 0) +
+                                    (_yanitlar!.isEmpty
+                                        ? 1
+                                        : _yanitlar!.length),
                                 itemBuilder: (context, i) {
+                                  if (widget.gonderiBasligi) {
+                                    if (i == 0) return _gonderiBaslik();
+                                    i -= 1;
+                                  }
+                                  if (_yanitlar!.isEmpty) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 28,
+                                      ),
+                                      child: _bosDurum(),
+                                    );
+                                  }
                                   final c =
                                       _yanitlar![i] as Map<String, dynamic>;
                                   return _KesfetYanitSatiri(

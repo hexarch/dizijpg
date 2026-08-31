@@ -22,6 +22,7 @@ import '../medya_yukle.dart';
 import '../yalniz_emoji.dart';
 import '../push.dart';
 import '../sohbet_olay.dart';
+import '../sohbet_tema.dart';
 import '../tema.dart';
 import 'tepki.dart';
 import 'medya_goster.dart';
@@ -821,6 +822,16 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   Map<String, dynamic>? _bekleyenIcerik;
   final _metin = TextEditingController();
 
+  /// Kutuda yazı var mı? VARSA foto/GIF/içerik/mikrofon ikonları GİZLENİR
+  /// (31 Ağu 2026 isteği: "çok dar alana yazı yazılıyor") — metin silinince
+  /// ya da mesaj gönderilince (kutu boşalınca) geri gelirler. Gönder kalır.
+  bool _yaziVar = false;
+
+  /// Sohbete özel tema (31 Ağu 2026): kendi balon rengi + zemin tonu.
+  /// Tercih yerel ([SohbetTemalari]); detay ekranında değişince `nesil`
+  /// yayını buradaki kopyayı tazeler.
+  SohbetTema _sohbetTema = SohbetTemalari.listesi.first;
+
   /// Bu sohbet bekleyen bir MESAJ İSTEĞİ mi? Sunucudan gelir:
   /// 'bekliyor' | 'red' | null. Null değilse yanıt kutusu yerine
   /// Kabul et / Reddet çubuğu çizilir (24 Ağu 2026 kullanıcı isteği:
@@ -948,6 +959,20 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     }
   }
 
+  void _temaYukle() {
+    SohbetTemalari.getir(widget.kullaniciAdi).then((t) {
+      if (mounted && t.anahtar != _sohbetTema.anahtar) {
+        setState(() => _sohbetTema = t);
+      }
+    });
+  }
+
+  /// Kutu doluluk bayrağını günceller (ikon gizleme — bkz. [_yaziVar]).
+  void _yaziVarGuncelle() {
+    final dolu = _metin.text.trim().isNotEmpty;
+    if (dolu != _yaziVar && mounted) setState(() => _yaziVar = dolu);
+  }
+
   /// Yazarken karşı tarafa "yazıyor" sinyali.
   void _yaziyorBildir() {
     if (_kaydediyor) return;
@@ -969,6 +994,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     );
     _yukle(ilk: true);
     _metin.addListener(_yaziyorBildir);
+    _metin.addListener(_yaziVarGuncelle);
+    _temaYukle();
+    SohbetTemalari.nesil.addListener(_temaYukle);
     WidgetsBinding.instance.addObserver(this);
     SohbetOlaylari.nesil.addListener(_sohbetOlayi);
     SohbetOlaylari.acikPartner = widget.kullaniciAdi;
@@ -1055,6 +1083,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     _seviyeAbonelik?.cancel();
     _kaydedici?.dispose();
     _metin.removeListener(_yaziyorBildir);
+    _metin.removeListener(_yaziVarGuncelle);
+    SohbetTemalari.nesil.removeListener(_temaYukle);
     _metin.dispose();
     _metinOdak.dispose();
     _kaydirma.dispose();
@@ -1819,12 +1849,18 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     final karsiYazi = sohbetDurumYazi(_karsiDurum);
 
     return Scaffold(
+      // Sohbete özel tema zemini: uygulama zemininin üstüne balon renginin
+      // çok hafif tonu; varsayılan temada null → hiçbir şey değişmez.
+      backgroundColor: _sohbetTema.zemin(context),
       appBar: AppBar(
         // Tema title 22 px; alt satır (yazıyor) 56 px araç çubuğunda
         // kırpılıyordu. 17+12 bu yükseklikte sığar, büyük yazı ölçeğinde de.
         toolbarHeight: 64,
         title: InkWell(
-          onTap: () => context.push('/kullanici/${widget.kullaniciAdi}'),
+          // 31 Ağu 2026 isteği: ada dokunmak artık profile DEĞİL, WhatsApp
+          // tarzı sohbet detayına (tema / arama / sessize al / medya) gider.
+          // Profil kaybolmadı: detay ekranındaki "Profili gör" oraya götürür.
+          onTap: () => context.push('/sohbet/${widget.kullaniciAdi}/detay'),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -1985,6 +2021,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                       (m['id'] as num).toInt(),
                                       emoji,
                                     ),
+                              balonRenk: _sohbetTema.balon,
+                              balonYazi: _sohbetTema.yazi,
                             );
                             // Saat balonun ALTINDA değil, satırın SAĞINDAKİ
                             // gizli sütunda; sürükleme boyunca açılır.
@@ -2155,6 +2193,12 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
+                                        // Ataç yazarken de KALIR: "fotoğraf +
+                                        // altyazı" akışı kutudaki yazıyla
+                                        // gider (_fotoGonder) ve inceleme
+                                        // ekranında ayrı yazı alanı yok —
+                                        // gizlense akış tamamen kopardı.
+                                        // WhatsApp da yazarken ataçı tutar.
                                         _kutuIkonu(
                                           ipucu: 'Fotoğraf / video ekle'.c,
                                           ikon: Icons
@@ -2165,29 +2209,36 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                           yukleniyor: _ekYukleniyor,
                                           onTap: _fotoGonder,
                                         ),
-                                        _kutuIkonu(
-                                          ipucu: 'GIF ekle'.c,
-                                          ikon: Icons.gif_box_outlined,
-                                          kapali:
-                                              _ekYukleniyor ||
-                                              _duzenlenenId != null,
-                                          onTap: _gifGonder,
-                                        ),
-                                        _kutuIkonu(
-                                          ipucu: 'İçerik paylaş'.c,
-                                          ikon: Icons.local_movies_outlined,
-                                          kapali: _duzenlenenId != null,
-                                          onTap: _icerikPaylas,
-                                        ),
-                                        if (!kIsWeb)
+                                        // Yazı VARKEN kalan ek ikonlar
+                                        // gizlenir, kutu genişler (31 Ağu
+                                        // 2026 isteği: "çok dar alana yazı
+                                        // yazılıyor"); metin silinince ya da
+                                        // gönderilince geri gelirler.
+                                        if (!_yaziVar) ...[
                                           _kutuIkonu(
-                                            ipucu: 'Sesli mesaj'.c,
-                                            ikon: Icons.mic_none,
+                                            ipucu: 'GIF ekle'.c,
+                                            ikon: Icons.gif_box_outlined,
                                             kapali:
                                                 _ekYukleniyor ||
                                                 _duzenlenenId != null,
-                                            onTap: _kayitBasla,
+                                            onTap: _gifGonder,
                                           ),
+                                          _kutuIkonu(
+                                            ipucu: 'İçerik paylaş'.c,
+                                            ikon: Icons.local_movies_outlined,
+                                            kapali: _duzenlenenId != null,
+                                            onTap: _icerikPaylas,
+                                          ),
+                                          if (!kIsWeb)
+                                            _kutuIkonu(
+                                              ipucu: 'Sesli mesaj'.c,
+                                              ikon: Icons.mic_none,
+                                              kapali:
+                                                  _ekYukleniyor ||
+                                                  _duzenlenenId != null,
+                                              onTap: _kayitBasla,
+                                            ),
+                                        ],
                                         _kutuIkonu(
                                           ipucu: 'Gönder'.c,
                                           ikon: Icons.send,
@@ -2384,6 +2435,12 @@ class _MesajBaloncugu extends StatelessWidget {
   /// Mesajın id'si yoksa (henüz gönderilmemiş iyimser satır) null gelir.
   final void Function(String? emoji)? tepkiVer;
 
+  /// Sohbete özel tema (31 Ağu 2026): KENDİ balonunun zemin/yazı rengi.
+  /// Varsayılanlar bugünkü görünümün aynısı (sarı balon, siyah yazı) —
+  /// tema seçilmemiş sohbetlerde hiçbir şey değişmez. Bkz. [SohbetTemalari].
+  final Color balonRenk;
+  final Color balonYazi;
+
   const _MesajBaloncugu({
     super.key,
     required this.mesaj,
@@ -2395,6 +2452,8 @@ class _MesajBaloncugu extends StatelessWidget {
     this.sikayet,
     this.tepkiVer,
     this.gonderiler = const {},
+    this.balonRenk = DiziRenkler.sari,
+    this.balonYazi = Colors.black,
   });
 
   /// Kullanıcının bu mesaja verdiği tepki (yoksa null).
@@ -2542,7 +2601,7 @@ class _MesajBaloncugu extends StatelessWidget {
         ? gonderiler['$gonderiId'] as Map<String, dynamic>?
         : null;
     final saatKisa = mesajSaati(m);
-    final yaziRengi = benim ? Colors.black : DiziRenkler.metin;
+    final yaziRengi = benim ? balonYazi : DiziRenkler.metin;
 
     final yanitId = m['yanit_id'];
     final duzenlendi = m['duzenlendi'] == true;
@@ -2582,7 +2641,7 @@ class _MesajBaloncugu extends StatelessWidget {
                 : MediaQuery.of(context).size.width * 0.75,
           ),
           decoration: BoxDecoration(
-            color: benim ? DiziRenkler.sari : DiziRenkler.kart,
+            color: benim ? balonRenk : DiziRenkler.kart,
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(14),
               topRight: const Radius.circular(14),
@@ -2603,12 +2662,17 @@ class _MesajBaloncugu extends StatelessWidget {
                     margin: const EdgeInsets.only(bottom: 5),
                     padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
                     decoration: BoxDecoration(
-                      color: (benim ? Colors.black : DiziRenkler.metin)
-                          .withValues(alpha: 0.08),
+                      // Alıntı tonu balonun YAZI renginden türer: koyu balonlu
+                      // temalarda (mor/pembe) siyah ton kaybolurdu.
+                      color: (benim ? balonYazi : DiziRenkler.metin).withValues(
+                        alpha: 0.08,
+                      ),
                       borderRadius: BorderRadius.circular(8),
                       border: Border(
                         left: BorderSide(
-                          color: benim ? Colors.black54 : DiziRenkler.sari,
+                          color: benim
+                              ? balonYazi.withValues(alpha: 0.54)
+                              : DiziRenkler.sari,
                           width: 3,
                         ),
                       ),

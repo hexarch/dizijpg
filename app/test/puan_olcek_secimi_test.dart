@@ -36,7 +36,8 @@ http.Client _istemci({int puanOlcegiDurum = 200}) => MockClient((istek) async {
     return cevap({'tamam': true});
   }
   if (yol == '/puan-olcegi') {
-    if (puanOlcegiDurum != 200) return cevap({'hata': 'olmaz'}, puanOlcegiDurum);
+    if (puanOlcegiDurum != 200)
+      return cevap({'hata': 'olmaz'}, puanOlcegiDurum);
     return cevap({'olcek': 50});
   }
   return cevap(<String, dynamic>{});

@@ -1415,4 +1415,25 @@ const Map<String, String> cevirilerSr = {
       'Google потврда се не поклапа са овим налогом',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Овај налог је направљен преко Google-а; пријави се преко Google-а да потврдиш',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Ova lista je privatna',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Ovaj korisnik radije drži svoje liste privatnim.',
+  'Bu listede henüz içerik yok': 'U ovoj listi još nema naslova',
+  'Otomatik çeviri': 'Automatski prevod',
+  'Otomatik çeviri açıldı': 'Automatski prevod uključen',
+  'Otomatik çeviri kapatıldı': 'Automatski prevod isključen',
+  'Sohbet sessize alındı': 'Ćaskanje utišano',
+  'Sessize alma kaldırıldı': 'Utišavanje uklonjeno',
+  'Tema özelleştir': 'Prilagodi temu',
+  'Sohbette ara': 'Pretraži ćaskanje',
+  'Mesajlarda ara...': 'Pretraži poruke...',
+  'Sonuç yok': 'Nema rezultata',
+  'Profili gör': 'Pogledaj profil',
+  'Medya ve dosyalar': 'Mediji i datoteke',
+  'Henüz medya yok': 'Još nema medija',
+  'Varsayılan': 'Podrazumevano',
+  'Mor': 'Ljubičasta',
+  'Pembe': 'Roze',
+  'Turuncu': 'Narandžasta',
 };

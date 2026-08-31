@@ -1322,4 +1322,25 @@ const Map<String, String> cevirilerZh = {
   'Google doğrulaması bu hesapla eşleşmedi': 'Google 验证与此账号不匹配',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       '此账号是用 Google 创建的；请用 Google 登录以验证',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': '此列表为私密',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      '该用户选择将其片单设为私密。',
+  'Bu listede henüz içerik yok': '此列表暂无作品',
+  'Otomatik çeviri': '自动翻译',
+  'Otomatik çeviri açıldı': '已开启自动翻译',
+  'Otomatik çeviri kapatıldı': '已关闭自动翻译',
+  'Sohbet sessize alındı': '聊天已静音',
+  'Sessize alma kaldırıldı': '已取消静音',
+  'Tema özelleştir': '自定义主题',
+  'Sohbette ara': '在聊天中搜索',
+  'Mesajlarda ara...': '搜索消息...',
+  'Sonuç yok': '无结果',
+  'Profili gör': '查看资料',
+  'Medya ve dosyalar': '媒体与文件',
+  'Henüz medya yok': '暂无媒体',
+  'Varsayılan': '默认',
+  'Mor': '紫色',
+  'Pembe': '粉色',
+  'Turuncu': '橙色',
 };

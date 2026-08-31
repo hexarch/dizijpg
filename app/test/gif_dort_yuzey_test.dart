@@ -97,7 +97,10 @@ void main() {
       isFalse,
       reason: 'istemci tarafında GIF durumu süzülüyor — kural ikiye ayrıldı',
     );
-    expect(k.contains("g['durum'] == 'bekliyor'"), isTrue,
-        reason: 'bekleyen rozeti kayboldu');
+    expect(
+      k.contains("g['durum'] == 'bekliyor'"),
+      isTrue,
+      reason: 'bekleyen rozeti kayboldu',
+    );
   });
 }

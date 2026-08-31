@@ -1401,4 +1401,25 @@ const Map<String, String> cevirilerBn = {
       'Google যাচাই এই অ্যাকাউন্টের সঙ্গে মেলেনি',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'এই অ্যাকাউন্ট Google দিয়ে খোলা; যাচাই করতে Google দিয়ে লগ ইন করো',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'এই তালিকাটি ব্যক্তিগত',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'এই ব্যবহারকারী তার তালিকাগুলো ব্যক্তিগত রাখতে পছন্দ করেন।',
+  'Bu listede henüz içerik yok': 'এই তালিকায় এখনো কোনো টাইটেল নেই',
+  'Otomatik çeviri': 'স্বয়ংক্রিয় অনুবাদ',
+  'Otomatik çeviri açıldı': 'স্বয়ংক্রিয় অনুবাদ চালু হয়েছে',
+  'Otomatik çeviri kapatıldı': 'স্বয়ংক্রিয় অনুবাদ বন্ধ হয়েছে',
+  'Sohbet sessize alındı': 'চ্যাট নিঃশব্দ করা হয়েছে',
+  'Sessize alma kaldırıldı': 'নিঃশব্দ তুলে নেওয়া হয়েছে',
+  'Tema özelleştir': 'থিম কাস্টমাইজ করুন',
+  'Sohbette ara': 'চ্যাটে খুঁজুন',
+  'Mesajlarda ara...': 'বার্তায় খুঁজুন...',
+  'Sonuç yok': 'কোনো ফলাফল নেই',
+  'Profili gör': 'প্রোফাইল দেখুন',
+  'Medya ve dosyalar': 'মিডিয়া ও ফাইল',
+  'Henüz medya yok': 'এখনো কোনো মিডিয়া নেই',
+  'Varsayılan': 'ডিফল্ট',
+  'Mor': 'বেগুনি',
+  'Pembe': 'গোলাপি',
+  'Turuncu': 'কমলা',
 };

@@ -35,28 +35,29 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///   ProfilYorumKarti→ BİRİNCİ etiket elenir (sıraya göre; başlıkta duruyor)
 const _benimId = 7;
 
-Map<String, dynamic> _yorum({required List<Map<String, dynamic>> etiketler}) => {
-  'id': 5519,
-  'kullanici_id': _benimId,
-  'kullanici_adi': 'alcelik',
-  'avatar': null,
-  'metin': 'Lance Reddick sen gördüğüm en iyi oyuncu',
-  'tur': 'tv',
-  'tmdb_id': 1438,
-  'sezon': null,
-  'bolum': null,
-  'medya': const <String>[],
-  'begeni': 0,
-  'yanit': 0,
-  'goruntulenme': 3,
-  'begendim': false,
-  'spoiler': false,
-  'tarih': '2026-08-29T23:10:38Z',
-  'kaynak_dil': 'tr',
-  'ceviri_var': false,
-  'cevrildi': false,
-  'etiketler': etiketler,
-};
+Map<String, dynamic> _yorum({required List<Map<String, dynamic>> etiketler}) =>
+    {
+      'id': 5519,
+      'kullanici_id': _benimId,
+      'kullanici_adi': 'alcelik',
+      'avatar': null,
+      'metin': 'Lance Reddick sen gördüğüm en iyi oyuncu',
+      'tur': 'tv',
+      'tmdb_id': 1438,
+      'sezon': null,
+      'bolum': null,
+      'medya': const <String>[],
+      'begeni': 0,
+      'yanit': 0,
+      'goruntulenme': 3,
+      'begendim': false,
+      'spoiler': false,
+      'tarih': '2026-08-29T23:10:38Z',
+      'kaynak_dil': 'tr',
+      'ceviri_var': false,
+      'cevrildi': false,
+      'etiketler': etiketler,
+    };
 
 const _dizi = {'tur': 'tv', 'tmdb_id': 1438, 'sezon': null, 'bolum': null};
 const _oyuncu = {
@@ -98,8 +99,7 @@ Future<void> _kur(WidgetTester tester, Widget kart) async {
     routes: [
       GoRoute(
         path: '/',
-        builder: (_, _) =>
-            Scaffold(body: SingleChildScrollView(child: kart)),
+        builder: (_, _) => Scaffold(body: SingleChildScrollView(child: kart)),
       ),
       for (final yol in [
         '/icerik/:tur/:id',
@@ -138,18 +138,17 @@ Widget _yorumKarti(List<Map<String, dynamic>> etiketler) => YorumKarti(
 );
 
 void main() {
-  testWidgets(
-    'İÇERİK SAYFASI: oyuncu etiketi ÇİZİLİYOR (hatanın kendisi)',
-    (tester) async {
-      await _kur(tester, _yorumKarti(const [_dizi, _oyuncu]));
-      expect(
-        find.byType(EkEtiketSeridi),
-        findsOneWidget,
-        reason: 'oyuncu etiketli gönderide rozet şeridi hiç çizilmiyor',
-      );
-      expect(find.text('Lance Reddick'), findsOneWidget);
-    },
-  );
+  testWidgets('İÇERİK SAYFASI: oyuncu etiketi ÇİZİLİYOR (hatanın kendisi)', (
+    tester,
+  ) async {
+    await _kur(tester, _yorumKarti(const [_dizi, _oyuncu]));
+    expect(
+      find.byType(EkEtiketSeridi),
+      findsOneWidget,
+      reason: 'oyuncu etiketli gönderide rozet şeridi hiç çizilmiyor',
+    );
+    expect(find.text('Lance Reddick'), findsOneWidget);
+  });
 
   testWidgets('İÇERİK SAYFASI: sayfanın KENDİ dizisi rozet olarak TEKRARLANMAZ', (
     tester,

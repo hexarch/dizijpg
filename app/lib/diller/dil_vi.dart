@@ -1411,4 +1411,25 @@ const Map<String, String> cevirilerVi = {
       'Xác minh Google không khớp với tài khoản này',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Tài khoản này được tạo bằng Google; đăng nhập bằng Google để xác minh',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Danh sách này ở chế độ riêng tư',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Người dùng này muốn giữ danh sách của mình ở chế độ riêng tư.',
+  'Bu listede henüz içerik yok': 'Chưa có tựa phim nào trong danh sách này',
+  'Otomatik çeviri': 'Dịch tự động',
+  'Otomatik çeviri açıldı': 'Đã bật dịch tự động',
+  'Otomatik çeviri kapatıldı': 'Đã tắt dịch tự động',
+  'Sohbet sessize alındı': 'Đã tắt tiếng cuộc trò chuyện',
+  'Sessize alma kaldırıldı': 'Đã bật tiếng lại',
+  'Tema özelleştir': 'Tùy chỉnh chủ đề',
+  'Sohbette ara': 'Tìm trong cuộc trò chuyện',
+  'Mesajlarda ara...': 'Tìm trong tin nhắn...',
+  'Sonuç yok': 'Không có kết quả',
+  'Profili gör': 'Xem hồ sơ',
+  'Medya ve dosyalar': 'Phương tiện và tệp',
+  'Henüz medya yok': 'Chưa có phương tiện',
+  'Varsayılan': 'Mặc định',
+  'Mor': 'Tím',
+  'Pembe': 'Hồng',
+  'Turuncu': 'Cam',
 };

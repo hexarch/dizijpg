@@ -1417,4 +1417,25 @@ const Map<String, String> cevirilerMs = {
       'Pengesahan Google tidak sepadan dengan akaun ini',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Akaun ini dibuka dengan Google; log masuk dengan Google untuk mengesahkan',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Senarai ini peribadi',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Pengguna ini lebih suka merahsiakan senarainya.',
+  'Bu listede henüz içerik yok': 'Belum ada tajuk dalam senarai ini',
+  'Otomatik çeviri': 'Terjemahan automatik',
+  'Otomatik çeviri açıldı': 'Terjemahan automatik dihidupkan',
+  'Otomatik çeviri kapatıldı': 'Terjemahan automatik dimatikan',
+  'Sohbet sessize alındı': 'Sembang disenyapkan',
+  'Sessize alma kaldırıldı': 'Senyap dibatalkan',
+  'Tema özelleştir': 'Sesuaikan tema',
+  'Sohbette ara': 'Cari dalam sembang',
+  'Mesajlarda ara...': 'Cari dalam mesej...',
+  'Sonuç yok': 'Tiada hasil',
+  'Profili gör': 'Lihat profil',
+  'Medya ve dosyalar': 'Media dan fail',
+  'Henüz medya yok': 'Belum ada media',
+  'Varsayılan': 'Lalai',
+  'Mor': 'Ungu',
+  'Pembe': 'Merah jambu',
+  'Turuncu': 'Jingga',
 };

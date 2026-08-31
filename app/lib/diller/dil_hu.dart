@@ -1421,4 +1421,25 @@ const Map<String, String> cevirilerHu = {
       'A Google-ellenőrzés nem egyezik ezzel a fiókkal',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Ez a fiók Google-lel készült; az igazoláshoz jelentkezz be Google-lel',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Ez a lista privát',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Ez a felhasználó priváton tartja a listáit.',
+  'Bu listede henüz içerik yok': 'Ebben a listában még nincsenek címek',
+  'Otomatik çeviri': 'Automatikus fordítás',
+  'Otomatik çeviri açıldı': 'Automatikus fordítás bekapcsolva',
+  'Otomatik çeviri kapatıldı': 'Automatikus fordítás kikapcsolva',
+  'Sohbet sessize alındı': 'Csevegés némítva',
+  'Sessize alma kaldırıldı': 'Némítás feloldva',
+  'Tema özelleştir': 'Téma testreszabása',
+  'Sohbette ara': 'Keresés a csevegésben',
+  'Mesajlarda ara...': 'Keresés az üzenetekben...',
+  'Sonuç yok': 'Nincs találat',
+  'Profili gör': 'Profil megtekintése',
+  'Medya ve dosyalar': 'Média és fájlok',
+  'Henüz medya yok': 'Még nincs média',
+  'Varsayılan': 'Alapértelmezett',
+  'Mor': 'Lila',
+  'Pembe': 'Rózsaszín',
+  'Turuncu': 'Narancssárga',
 };

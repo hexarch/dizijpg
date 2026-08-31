@@ -56,7 +56,9 @@ const _bekleyen = {
 void _sunucu({List<Object> gifler = const [_onayli, _bekleyen]}) {
   _istenen = [];
   Api.istemci = MockClient((istek) async {
-    _istenen.add('${istek.method} ${istek.url.path}${istek.url.query.isEmpty ? '' : '?${istek.url.query}'}');
+    _istenen.add(
+      '${istek.method} ${istek.url.path}${istek.url.query.isEmpty ? '' : '?${istek.url.query}'}',
+    );
     if (istek.url.path.endsWith('/kullanildi')) return _json({'tamam': true});
     return _json({'gifler': gifler, 'devam_var': false});
   });
@@ -178,10 +180,7 @@ void main() {
     // Bu yüzden arama IZGARANIN İÇİNE kısıtlanıyor.
     await tester.tap(
       find
-          .descendant(
-            of: find.byType(GridView),
-            matching: find.byType(InkWell),
-          )
+          .descendant(of: find.byType(GridView), matching: find.byType(InkWell))
           .first,
     );
     await tester.pumpAndSettle();
@@ -189,7 +188,9 @@ void main() {
     expect(donen, isNotNull, reason: 'seçim çağırana dönmedi');
     expect(donen!['yol'], _onayli['yol']);
     expect(
-      _istenen.any((u) => u.startsWith('POST') && u.contains('/gif/11/kullanildi')),
+      _istenen.any(
+        (u) => u.startsWith('POST') && u.contains('/gif/11/kullanildi'),
+      ),
       isTrue,
       reason: 'kullanım sayacı artmadı — trend listesinin tek sinyali bu',
     );
@@ -224,10 +225,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(
       find
-          .descendant(
-            of: find.byType(GridView),
-            matching: find.byType(InkWell),
-          )
+          .descendant(of: find.byType(GridView), matching: find.byType(InkWell))
           .first,
     );
     await tester.pumpAndSettle();

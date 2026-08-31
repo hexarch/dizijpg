@@ -1386,4 +1386,25 @@ const Map<String, String> cevirilerTh = {
       'การยืนยันด้วย Google ไม่ตรงกับบัญชีนี้',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'บัญชีนี้สร้างด้วย Google เข้าสู่ระบบด้วย Google เพื่อยืนยัน',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'รายการนี้เป็นส่วนตัว',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'ผู้ใช้รายนี้ต้องการเก็บรายการของตนเป็นส่วนตัว',
+  'Bu listede henüz içerik yok': 'ยังไม่มีเรื่องในรายการนี้',
+  'Otomatik çeviri': 'แปลอัตโนมัติ',
+  'Otomatik çeviri açıldı': 'เปิดการแปลอัตโนมัติแล้ว',
+  'Otomatik çeviri kapatıldı': 'ปิดการแปลอัตโนมัติแล้ว',
+  'Sohbet sessize alındı': 'ปิดเสียงแชทแล้ว',
+  'Sessize alma kaldırıldı': 'เลิกปิดเสียงแล้ว',
+  'Tema özelleştir': 'ปรับแต่งธีม',
+  'Sohbette ara': 'ค้นหาในแชท',
+  'Mesajlarda ara...': 'ค้นหาในข้อความ...',
+  'Sonuç yok': 'ไม่มีผลลัพธ์',
+  'Profili gör': 'ดูโปรไฟล์',
+  'Medya ve dosyalar': 'สื่อและไฟล์',
+  'Henüz medya yok': 'ยังไม่มีสื่อ',
+  'Varsayılan': 'ค่าเริ่มต้น',
+  'Mor': 'ม่วง',
+  'Pembe': 'ชมพู',
+  'Turuncu': 'ส้ม',
 };

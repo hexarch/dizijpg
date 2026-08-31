@@ -6807,11 +6807,18 @@ const BOT_ROTALARI = [
   { yol: '/kullanici/:ad', desen: /^\/kullanici\/[^/]+$/ },
   { yol: '/kullanici/:ad/takipciler', desen: /^\/kullanici\/[^/]+\/takipciler$/ },
   { yol: '/kullanici/:ad/takip', desen: /^\/kullanici\/[^/]+\/takip$/ },
+  // Kitaplık listesi paylaşım sayfası (31 Ağu 2026)
+  {
+    yol: '/kullanici/:ad/kitaplik/:durum',
+    desen: /^\/kullanici\/[^/]+\/kitaplik\/[a-z]+$/,
+  },
   { yol: '/kisi-ara', desen: /^\/kisi-ara$/ },
   { yol: '/bildirimler', desen: /^\/bildirimler$/ },
   { yol: '/sohbetler', desen: /^\/sohbetler$/ },
   { yol: '/mesaj-istekleri', desen: /^\/mesaj-istekleri$/ },
   { yol: '/sohbet/:ad', desen: /^\/sohbet\/[^/]+$/ },
+  // Sohbet detayı: tema, arama, sessize al, medya (31 Ağu 2026)
+  { yol: '/sohbet/:ad/detay', desen: /^\/sohbet\/[^/]+\/detay$/ },
   { yol: '/gorusme/:ad', desen: /^\/gorusme\/[^/]+$/ },
   { yol: '/arama-gelen', desen: /^\/arama-gelen$/ },
 
@@ -12511,8 +12518,11 @@ app.get('/profilim', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
     // testci de gelir: kendi profil ekranı (profil.dart) başlığını `/profilim`
     // ile çizer, `/profil/:kullaniciAdi` ile değil — rozet orada da görünmeli.
+    // izlenenler_gizli (31 Ağu 2026): kitaplık ekranı paylaş düğmesini bu
+    // bayrakla gizler — gizli listeye "paylaşılabilir ama açılmaz" bağlantı
+    // üretilmesin (özel listelerdeki kuralın aynısı, bkz. app paylas.dart).
     `SELECT id, kullanici_adi, email, misafir, avatar, kapak, bio, ulke, sosyal,
-            testci, ad, kullanici_adi_degisim
+            testci, ad, kullanici_adi_degisim, izlenenler_gizli
      FROM kullanicilar WHERE id=$1`,
     [req.kullanici.id],
   );
@@ -15162,12 +15172,113 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
       `SELECT 1 FROM mesaj_istek_kararlari
        WHERE kullanici_id=$1 AND partner_id=$2 AND karar='red'`,
       [aliciId, req.kullanici.id]);
-    if (!red.rows.length) {
+    // SESSİZE ALINAN GÖNDERİCİ DE SUSAR (31 Ağu 2026, dm_sessiz): mesaj
+    // normal iner ve okunmamış rozeti işler, yalnız zil + FCM üretilmez —
+    // WhatsApp'ın sessize alma davranışı. Karar alıcınındır, tek yönlüdür.
+    const sessiz = await havuz.query(
+      `SELECT 1 FROM dm_sessiz WHERE kullanici_id=$1 AND sessiz_id=$2`,
+      [aliciId, req.kullanici.id]);
+    if (!red.rows.length && !sessiz.rows.length) {
       bildirimEkle(aliciId, 'mesaj', req.kullanici.id, null,
         temiz ? { metin: temiz } : null);
     }
   }
   res.json({ id: rows[0].id, tarih: rows[0].tarih });
+}));
+
+// ---------------------------------------------------------------------------
+// SOHBET DETAYI (31 Ağu 2026 isteği: "adına tıkladığımda WhatsApp'taki gibi
+// ekran açılmalı — tema, arama, sessize al, altta gönderilen dosyalar")
+// ---------------------------------------------------------------------------
+
+// Sohbeti sessize al / sesini aç (tablo: dm_sessiz, migrasyon-2026-08-31.sql).
+app.post('/sohbet-sessiz/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
+  const k = await havuz.query(
+    'SELECT id FROM kullanicilar WHERE kullanici_adi=$1',
+    [req.params.kullaniciAdi]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const partnerId = k.rows[0].id;
+  if (partnerId === req.kullanici.id) {
+    return res.status(400).json({ hata: 'Kendini sessize alamazsın' });
+  }
+  const sessiz = req.body?.sessiz !== false && req.body?.sessiz !== 'false';
+  if (sessiz) {
+    await havuz.query(
+      `INSERT INTO dm_sessiz (kullanici_id, sessiz_id) VALUES ($1,$2)
+       ON CONFLICT DO NOTHING`,
+      [req.kullanici.id, partnerId]);
+  } else {
+    await havuz.query(
+      'DELETE FROM dm_sessiz WHERE kullanici_id=$1 AND sessiz_id=$2',
+      [req.kullanici.id, partnerId]);
+  }
+  res.json({ tamam: true, sessiz });
+}));
+
+// Sohbet detay ekranının yükü: sessiz bayrağı + bu sohbette paylaşılan medya
+// (yeniden eskiye, 200 tavan — WhatsApp'ın "medya, bağlantılar ve belgeler"
+// bölümü). Medya DM kuralıyla AYNI şekilde İMZALI-SÜRELİ yolla gider.
+// Engelli çiftte medya listesi de gösterilmez (sohbet geçmişi kuralı).
+app.get('/sohbet-detay/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
+  const k = await havuz.query(
+    'SELECT id, kullanici_adi, ad, avatar FROM kullanicilar WHERE kullanici_adi=$1',
+    [req.params.kullaniciAdi]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const partnerId = k.rows[0].id;
+  const [sessiz, engel] = await Promise.all([
+    havuz.query(
+      'SELECT 1 FROM dm_sessiz WHERE kullanici_id=$1 AND sessiz_id=$2',
+      [req.kullanici.id, partnerId]),
+    engelliMi(req.kullanici.id, partnerId),
+  ]);
+  const medya = engel ? { rows: [] } : await havuz.query(
+    `SELECT id, medya, tarih, gonderen_id FROM mesajlar
+     WHERE ((gonderen_id=$1 AND alici_id=$2) OR (gonderen_id=$2 AND alici_id=$1))
+       AND medya IS NOT NULL
+     ORDER BY id DESC LIMIT 200`,
+    [req.kullanici.id, partnerId]);
+  res.json({
+    partner: {
+      kullanici_adi: k.rows[0].kullanici_adi,
+      ad: k.rows[0].ad,
+      avatar: k.rows[0].avatar,
+    },
+    sessiz: sessiz.rows.length > 0,
+    medya: medya.rows.map((r) => ({
+      ...r, medya: medyaImzali(r.medya, MEDYA_IMZA_ANAHTARI),
+    })),
+  });
+}));
+
+// Sohbet içi arama. Metinler DB'de ŞİFRELİ durduğu için SQL LIKE çalışmaz:
+// son 2000 mesaj çekilir, sunucuda çözülüp süzülür (çözme zaten GET /mesajlar
+// için her sayfada yapılan işin aynısı, yalnız penceresi büyük). Bu yüzden uç
+// hız limitli ve en az 2 harf ister; ilk 50 eşleşme döner (yeniden eskiye).
+const sohbetAramaLimiti = hizLimiti(60, (req) => `sba:${req.kullanici.id}`);
+app.get('/sohbet-ara/:kullaniciAdi', girisZorunlu, sohbetAramaLimiti, sarici(async (req, res) => {
+  const q = String(req.query.q || '').trim().toLowerCase();
+  if (q.length < 2) return res.status(400).json({ hata: 'En az 2 harf yaz' });
+  const k = await havuz.query(
+    'SELECT id FROM kullanicilar WHERE kullanici_adi=$1',
+    [req.params.kullaniciAdi]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const partnerId = k.rows[0].id;
+  if (await engelliMi(req.kullanici.id, partnerId)) return res.json({ sonuclar: [] });
+  const { rows } = await havuz.query(
+    `SELECT id, metin, tarih, gonderen_id FROM mesajlar
+     WHERE ((gonderen_id=$1 AND alici_id=$2) OR (gonderen_id=$2 AND alici_id=$1))
+       AND metin IS NOT NULL
+     ORDER BY id DESC LIMIT 2000`,
+    [req.kullanici.id, partnerId]);
+  const sonuclar = [];
+  for (const r of rows) {
+    const m = cozGoster(r.metin);
+    if (m && m.toLowerCase().includes(q)) {
+      sonuclar.push({ id: r.id, metin: m, tarih: r.tarih, gonderen_id: r.gonderen_id });
+      if (sonuclar.length >= 50) break;
+    }
+  }
+  res.json({ sonuclar });
 }));
 
 // Sohbet ekranı açıldı/kapandı. GET ?bakiyor=1 yoklamada damgayı taze tutar;
@@ -17083,6 +17194,48 @@ app.post('/veri/ice-aktar',
 // Yorum/puan/takipçi/beğeni rozetleri BU LİSTEDE DEĞİL: onlar başka
 // eksenlerin verisi ve bu tercihle ilgileri yok.
 const IZLEME_ROZETLERI = /^(ilk_bolum|bolum_|ilk_film|film_|bitiren_)/;
+
+// ---------------------------------------------------------------------------
+// KİTAPLIK LİSTESİ PAYLAŞIMI (31 Ağu 2026 isteği: "otomatik listelere de
+// paylaşma özelliği ekler misin")
+// ---------------------------------------------------------------------------
+// Bir kullanıcının kitaplık listesinin (izliyorum/izleyecegim/bitirdim/
+// biraktim) SALT OKUNUR dökümü — uygulamadaki /kullanici/:ad/kitaplik/:durum
+// sayfası bunu çizer; kitaplık ekranındaki paylaş düğmesi oraya bağlantı verir.
+// GİZLİLİK: `izlenenler_gizli` açıksa (ve bakan sahibi değilse) ya da çift
+// ENGELLİYSE liste yerine `gizli: true` döner (404 değil: bağlantıyı alan kişi
+// "liste gizli" görmeli, "sayfa yok" değil). Tek tek "profilimde gizle" denen
+// içerikler de ziyaretçiye düşer — profil sayfasının gizli_icerikler kuralı.
+// Sıra sahibinin elle verdiği sırayla AYNI (/kitapligim sorgusunun süzülmüşü).
+app.get('/profil/:kullaniciAdi/kitaplik/:durum', girisZorunlu, sarici(async (req, res) => {
+  const durum = String(req.params.durum || '');
+  if (!['izliyorum', 'izleyecegim', 'bitirdim', 'biraktim'].includes(durum)) {
+    return res.status(400).json({ hata: 'Geçersiz liste' });
+  }
+  const k = await havuz.query(
+    `SELECT id, kullanici_adi, ad, avatar, izlenenler_gizli
+     FROM kullanicilar WHERE kullanici_adi=$1`,
+    [req.params.kullaniciAdi]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const sahipId = k.rows[0].id;
+  const benMi = sahipId === req.kullanici.id;
+  const gizli = !benMi &&
+    (k.rows[0].izlenenler_gizli === true ||
+     await engelliMi(req.kullanici.id, sahipId));
+  if (gizli) return res.json({ gizli: true, ogeler: [] });
+  const { rows } = await havuz.query(
+    `SELECT d.tur, d.tmdb_id
+       FROM durumlar d
+       LEFT JOIN kitaplik_sirasi s
+              ON s.kullanici_id = d.kullanici_id AND s.liste = d.durum
+             AND s.tur = d.tur AND s.tmdb_id = d.tmdb_id
+      WHERE d.kullanici_id=$1 AND d.durum=$2
+        ${benMi ? '' : `AND NOT EXISTS (SELECT 1 FROM gizli_icerikler g
+           WHERE g.kullanici_id=$1 AND g.tur=d.tur AND g.tmdb_id=d.tmdb_id)`}
+      ORDER BY s.sira ASC NULLS FIRST, d.guncelleme DESC`,
+    [sahipId, durum]);
+  res.json({ gizli: false, ogeler: rows });
+}));
 
 app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   const k = await havuz.query(

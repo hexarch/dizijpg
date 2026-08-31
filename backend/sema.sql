@@ -555,6 +555,17 @@ CREATE INDEX IF NOT EXISTS sohbet_canli_alici_z ON sohbet_canli (alici_id, z);
 -- 'red' => Reddedilenler bölümüne + göndericinin mesajları bildirim üretmez.
 -- Satır yoksa karar verilmemiştir ('bekliyor' değeri bilerek yok). 'red'
 -- cevap yazılınca 'kabul'e yükseltilir (cevap vermek kabuldür).
+-- Sohbeti sessize alma (migrasyon-2026-08-31.sql): sessize alınan partnerden
+-- gelen mesajlar bildirim (zil + FCM) üretmez; mesajın kendisi normal iner.
+-- Karar alıcıya aittir ve karşı tarafa GÖSTERİLMEZ.
+CREATE TABLE IF NOT EXISTS dm_sessiz (
+  kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  sessiz_id    INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  tarih        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (kullanici_id, sessiz_id),
+  CHECK (kullanici_id <> sessiz_id)
+);
+
 CREATE TABLE IF NOT EXISTS mesaj_istek_kararlari (
   kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
   partner_id   INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,

@@ -79,7 +79,11 @@ void main() {
       for (var deneme = 0; deneme < 400; deneme++) {
         final n = 1 + r.nextInt(20);
         final aci = (r.nextDouble() - 0.5) * 40; // eksi ve artı, çok turlu
-        expect(carkIbreDilimi(aci, n), beklenen(aci, n), reason: 'n=$n aci=$aci');
+        expect(
+          carkIbreDilimi(aci, n),
+          beklenen(aci, n),
+          reason: 'n=$n aci=$aci',
+        );
       }
     });
 

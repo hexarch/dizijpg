@@ -1434,4 +1434,25 @@ const Map<String, String> cevirilerEl = {
       'Η επαλήθευση Google δεν ταιριάζει με αυτόν τον λογαριασμό',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Ο λογαριασμός δημιουργήθηκε με Google· συνδέσου με Google για επαλήθευση',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Αυτή η λίστα είναι ιδιωτική',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Αυτός ο χρήστης προτιμά να κρατά τις λίστες του ιδιωτικές.',
+  'Bu listede henüz içerik yok': 'Δεν υπάρχουν ακόμη τίτλοι σε αυτή τη λίστα',
+  'Otomatik çeviri': 'Αυτόματη μετάφραση',
+  'Otomatik çeviri açıldı': 'Η αυτόματη μετάφραση ενεργοποιήθηκε',
+  'Otomatik çeviri kapatıldı': 'Η αυτόματη μετάφραση απενεργοποιήθηκε',
+  'Sohbet sessize alındı': 'Η συνομιλία τέθηκε σε σίγαση',
+  'Sessize alma kaldırıldı': 'Η σίγαση καταργήθηκε',
+  'Tema özelleştir': 'Προσαρμογή θέματος',
+  'Sohbette ara': 'Αναζήτηση στη συνομιλία',
+  'Mesajlarda ara...': 'Αναζήτηση στα μηνύματα...',
+  'Sonuç yok': 'Κανένα αποτέλεσμα',
+  'Profili gör': 'Προβολή προφίλ',
+  'Medya ve dosyalar': 'Πολυμέσα και αρχεία',
+  'Henüz medya yok': 'Δεν υπάρχουν ακόμη πολυμέσα',
+  'Varsayılan': 'Προεπιλογή',
+  'Mor': 'Μοβ',
+  'Pembe': 'Ροζ',
+  'Turuncu': 'Πορτοκαλί',
 };

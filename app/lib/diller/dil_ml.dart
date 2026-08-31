@@ -1413,4 +1413,25 @@ const Map<String, String> cevirilerMl = {
       'Google പരിശോധന ഈ അക്കൗണ്ടുമായി പൊരുത്തപ്പെട്ടില്ല',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'ഈ അക്കൗണ്ട് Google വഴി തുറന്നതാണ്; പരിശോധിക്കാൻ Google വഴി സൈൻ ഇൻ ചെയ്യുക',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'ഈ ലിസ്റ്റ് സ്വകാര്യമാണ്',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'ഈ ഉപയോക്താവ് തന്റെ ലിസ്റ്റുകൾ സ്വകാര്യമായി സൂക്ഷിക്കാൻ ഇഷ്ടപ്പെടുന്നു.',
+  'Bu listede henüz içerik yok': 'ഈ ലിസ്റ്റിൽ ഇതുവരെ ടൈറ്റിലുകളില്ല',
+  'Otomatik çeviri': 'ഓട്ടോമാറ്റിക് വിവർത്തനം',
+  'Otomatik çeviri açıldı': 'ഓട്ടോമാറ്റിക് വിവർത്തനം ഓണാക്കി',
+  'Otomatik çeviri kapatıldı': 'ഓട്ടോമാറ്റിക് വിവർത്തനം ഓഫാക്കി',
+  'Sohbet sessize alındı': 'ചാറ്റ് മ്യൂട്ട് ചെയ്തു',
+  'Sessize alma kaldırıldı': 'മ്യൂട്ട് നീക്കി',
+  'Tema özelleştir': 'തീം ഇഷ്ടാനുസൃതമാക്കുക',
+  'Sohbette ara': 'ചാറ്റിൽ തിരയുക',
+  'Mesajlarda ara...': 'സന്ദേശങ്ങളിൽ തിരയുക...',
+  'Sonuç yok': 'ഫലങ്ങളില്ല',
+  'Profili gör': 'പ്രൊഫൈൽ കാണുക',
+  'Medya ve dosyalar': 'മീഡിയയും ഫയലുകളും',
+  'Henüz medya yok': 'ഇതുവരെ മീഡിയയില്ല',
+  'Varsayılan': 'സ്ഥിരം',
+  'Mor': 'പർപ്പിൾ',
+  'Pembe': 'പിങ്ക്',
+  'Turuncu': 'ഓറഞ്ച്',
 };

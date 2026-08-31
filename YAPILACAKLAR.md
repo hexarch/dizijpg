@@ -1,6 +1,56 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-31 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-31 (3. tur) — 🔨 Altı istek: kitaplık paylaşımı, Reels çeviri +
+## "devamı" modalı, sohbet detayı (tema/arama/sessiz/medya), yazarken ikonlar
+
+- 🔨 **Kitaplık listeleri paylaşılabilir** (istek: "izliyorum/izleyeceğim gibi
+  otomatik listelerde paylaşma yok"): kitaplık ekranına paylaş düğmesi;
+  bağlantı yeni salt-okunur `/kullanici/:ad/kitaplik/:durum` sayfasına
+  (KullaniciKitaplikEkrani) gider. Backend: `GET /profil/:ad/kitaplik/:durum`
+  (girisZorunlu; `izlenenler_gizli`/engel → `gizli:true`, gizli_icerikler
+  ziyaretçiye süzülür, sıra kitaplik_sirasi ile aynı); `/profilim`e
+  `izlenenler_gizli` eklendi (gizliyse düğme çizilmez). Rota app + sunucu
+  rota tablosunda. Test: `app/test/kitaplik_paylas_test.dart` (5 kilit).
+- 🔨 **Kitaplık başlığındaki "(.." düzeldi** (istek: "yukarıda İzleyeceğim (..
+  yazıyor, neyin nesi"): o, öğe SAYISIYDI — dar ekranda 2-3 eylem ikonu
+  yanında "İzleyeceğim (182)" kırpılıyordu. Sayı artık ikinci satırda
+  "182 içerik" (liste tam sayfası kalıbı).
+- 🔨 **Reels otomatik çeviri anahtarı** (istek: "sağ yukarıda translate ikonu,
+  açma kapama; tıklanmayınca transparan"): sağ üstte %45 saydam düğme
+  ([ReelsCeviri], cihazda kalıcı, varsayılan açık); kapalıyken sunucunun
+  çevirdiği gönderiler orijinal metniyle çizilir (`orijinal_metin` zaten
+  geliyordu, ağ isteği yok). Test: `app/test/reels_ceviri_test.dart`.
+- 🔨 **Reels "devamı" → Instagram tarzı modal** (istek: "... bastığımda yukarı
+  modal açılacak: solda avatar yanında isim, takip etmiyorsa Takip Et,
+  altında yazı, en altta tarih, bittiği yerden yorumlar"): "devamı" artık
+  satır içi açmıyor; yorum sheet'i `gonderiBasligi` kipiyle açılıyor —
+  başlıkta avatar+ad+Takip Et (paylaşılan haritayla senkron), tam metin
+  (çeviri tercihine uyar), tarih; yorumlar hemen altında.
+- 🔨 **Sohbet detay ekranı** (istek: "ada tıklayınca WhatsApp'taki gibi ekran:
+  tema özelleştir, arama, sessize al, altta gönderilen dosyalar"):
+  `/sohbet/:ad/detay` (SohbetDetayEkrani). TEMA: sohbete özel balon+zemin
+  rengi, 6 seçenek, YEREL tercih ([SohbetTemalari]) — balon rengi
+  _MesajBaloncugu'na parametre oldu. ARAMA: `GET /sohbet-ara/:ad?q=` (metinler
+  DB'de şifreli → sunucu son 2000 mesajı çözüp süzer, hız limitli, ilk 50).
+  SESSİZE AL: `dm_sessiz` tablosu (migrasyon-2026-08-31.sql) + `POST
+  /sohbet-sessiz/:ad`; `POST /mesajlar` bildirim üretmeden önce bakar (mesaj
+  normal iner, zil+FCM susar). MEDYA: `GET /sohbet-detay/:ad` son 200 medya
+  (imzalı yol). Profil kaybolmadı: "Profili gör" düğmesi. Test:
+  `app/test/sohbet_detay_test.dart` (6 kilit).
+- 🔨 **Yazarken ek ikonlar gizleniyor** (istek: "görsel/gif/dizi film/mikrofon
+  kaybolmalı, çok dar alana yazı yazılıyor; silinince/gönderilince geri"):
+  GIF + içerik + mikrofon yazı varken gizlenir. ATAÇ BİLEREK KALDI: "fotoğraf
+  + altyazı" akışı kutudaki yazıyla gidiyor (31 Tem düzeltmesi) ve inceleme
+  ekranında ayrı yazı alanı yok — ataç da gizlense o akış tamamen kopardı
+  (WhatsApp da yazarken ataçı tutar). İstenirse ayrıca konuşulur.
+- ✅ Sürüm tutarlılığı: pubspec 1.104.1+167 iken Api.surum 1.103.2+165
+  kalmıştı (surum_esleme_test kırmızıydı) — ikisi de 1.105.0+168.
+- ✅ HEAD'de kırık iki test onarıldı: akis_karti_baslik_bosluk +
+  akis_karti_tasarim "Takip Et" ≥44dp ölçümleri FilledButton arıyordu; hap
+  OutlinedButton olmuştu (2. turdaki değişiklik testleri güncellememişti).
+- Çeviri: 20 anahtar × 45 dil (19 yeni + 'Sesi aç' zaten vardı).
+
 ## 2026-08-31 — 🚀 Liste paylaşımı (Spotify gibi)
 
 Kullanıcı isteği: profildeki listeler paylaşılabilsin — paylaş deyince modal

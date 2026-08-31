@@ -1406,4 +1406,25 @@ const Map<String, String> cevirilerKn = {
       'Google ಪರಿಶೀಲನೆ ಈ ಖಾತೆಗೆ ಹೊಂದಿಕೆಯಾಗಲಿಲ್ಲ',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'ಈ ಖಾತೆ Google ಮೂಲಕ ತೆರೆಯಲಾಗಿದೆ; ಪರಿಶೀಲಿಸಲು Google ಮೂಲಕ ಸೈನ್ ಇನ್ ಮಾಡು',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'ಈ ಪಟ್ಟಿ ಖಾಸಗಿಯಾಗಿದೆ',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'ಈ ಬಳಕೆದಾರ ತನ್ನ ಪಟ್ಟಿಗಳನ್ನು ಖಾಸಗಿಯಾಗಿಡಲು ಬಯಸುತ್ತಾರೆ.',
+  'Bu listede henüz içerik yok': 'ಈ ಪಟ್ಟಿಯಲ್ಲಿ ಇನ್ನೂ ಶೀರ್ಷಿಕೆಗಳಿಲ್ಲ',
+  'Otomatik çeviri': 'ಸ್ವಯಂಚಾಲಿತ ಅನುವಾದ',
+  'Otomatik çeviri açıldı': 'ಸ್ವಯಂಚಾಲಿತ ಅನುವಾದ ಆನ್ ಆಗಿದೆ',
+  'Otomatik çeviri kapatıldı': 'ಸ್ವಯಂಚಾಲಿತ ಅನುವಾದ ಆಫ್ ಆಗಿದೆ',
+  'Sohbet sessize alındı': 'ಚಾಟ್ ಮ್ಯೂಟ್ ಆಗಿದೆ',
+  'Sessize alma kaldırıldı': 'ಮ್ಯೂಟ್ ತೆಗೆದುಹಾಕಲಾಗಿದೆ',
+  'Tema özelleştir': 'ಥೀಮ್ ಕಸ್ಟಮೈಸ್ ಮಾಡಿ',
+  'Sohbette ara': 'ಚಾಟ್‌ನಲ್ಲಿ ಹುಡುಕಿ',
+  'Mesajlarda ara...': 'ಸಂದೇಶಗಳಲ್ಲಿ ಹುಡುಕಿ...',
+  'Sonuç yok': 'ಫಲಿತಾಂಶಗಳಿಲ್ಲ',
+  'Profili gör': 'ಪ್ರೊಫೈಲ್ ನೋಡಿ',
+  'Medya ve dosyalar': 'ಮಾಧ್ಯಮ ಮತ್ತು ಫೈಲ್‌ಗಳು',
+  'Henüz medya yok': 'ಇನ್ನೂ ಮಾಧ್ಯಮವಿಲ್ಲ',
+  'Varsayılan': 'ಡೀಫಾಲ್ಟ್',
+  'Mor': 'ನೇರಳೆ',
+  'Pembe': 'ಗುಲಾಬಿ',
+  'Turuncu': 'ಕಿತ್ತಳೆ',
 };

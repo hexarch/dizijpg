@@ -15,6 +15,7 @@ import 'ekranlar/kesfet_akis.dart';
 import 'ekranlar/bildirimler.dart';
 import 'ekranlar/ozet.dart';
 import 'ekranlar/sohbet.dart';
+import 'ekranlar/sohbet_detay.dart';
 import 'ekranlar/ayarlar.dart';
 import 'ekranlar/bolum.dart';
 import 'ekranlar/detay.dart';
@@ -39,6 +40,7 @@ import 'ekranlar/kisi_yapimlar.dart';
 import 'ekranlar/sirket.dart';
 import 'ekranlar/liste.dart';
 import 'ekranlar/kitaplik_liste.dart';
+import 'ekranlar/kullanici_kitaplik.dart';
 import 'ekranlar/kullanici_profil.dart';
 import 'ekranlar/ortak.dart' show kabugaDon, kabukIcindeMi;
 import 'ekranlar/profil.dart';
@@ -375,6 +377,15 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
                       takipciler: false,
                     ),
                   ),
+                  // Kitaplık listesi paylaşım sayfası (salt okunur) —
+                  // kitaplık ekranındaki paylaş düğmesi buraya bağlantı verir.
+                  GoRoute(
+                    path: 'kitaplik/:durum',
+                    builder: (_, s) => KullaniciKitaplikEkrani(
+                      kullaniciAdi: s.pathParameters['ad']!,
+                      durum: s.pathParameters['durum']!,
+                    ),
+                  ),
                 ],
               ),
               GoRoute(
@@ -397,6 +408,16 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
                 path: '/sohbet/:ad',
                 builder: (_, s) =>
                     SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+                routes: [
+                  // WhatsApp tarzı sohbet detayı: tema / arama / sessize al /
+                  // medya (31 Ağu 2026) — başlıktaki ada dokununca açılır.
+                  GoRoute(
+                    path: 'detay',
+                    builder: (_, s) => SohbetDetayEkrani(
+                      kullaniciAdi: s.pathParameters['ad']!,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

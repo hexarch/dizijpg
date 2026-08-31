@@ -1406,4 +1406,25 @@ const Map<String, String> cevirilerCs = {
       'Ověření přes Google k tomuto účtu nesedí',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'Tenhle účet byl založen přes Google; pro ověření se přihlas přes Google',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'Tento seznam je soukromý',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'Tento uživatel si své seznamy nechává soukromé.',
+  'Bu listede henüz içerik yok': 'V tomto seznamu zatím nejsou žádné tituly',
+  'Otomatik çeviri': 'Automatický překlad',
+  'Otomatik çeviri açıldı': 'Automatický překlad zapnut',
+  'Otomatik çeviri kapatıldı': 'Automatický překlad vypnut',
+  'Sohbet sessize alındı': 'Chat ztlumen',
+  'Sessize alma kaldırıldı': 'Ztlumení zrušeno',
+  'Tema özelleştir': 'Přizpůsobit motiv',
+  'Sohbette ara': 'Hledat v chatu',
+  'Mesajlarda ara...': 'Hledat ve zprávách...',
+  'Sonuç yok': 'Žádné výsledky',
+  'Profili gör': 'Zobrazit profil',
+  'Medya ve dosyalar': 'Média a soubory',
+  'Henüz medya yok': 'Zatím žádná média',
+  'Varsayılan': 'Výchozí',
+  'Mor': 'Fialová',
+  'Pembe': 'Růžová',
+  'Turuncu': 'Oranžová',
 };

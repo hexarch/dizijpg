@@ -351,7 +351,7 @@ void main() {
             .getSize(
               find.ancestor(
                 of: find.text('Takip Et'),
-                matching: find.byType(FilledButton),
+                matching: find.byType(OutlinedButton),
               ),
             )
             .height,

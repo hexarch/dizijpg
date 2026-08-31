@@ -1425,4 +1425,25 @@ const Map<String, String> cevirilerMy = {
       'Google အတည်ပြုချက်သည် ဤအကောင့်နှင့် မကိုက်ညီပါ',
   'Bu hesap Google ile açıldı; doğrulamak için Google ile giriş yap':
       'ဤအကောင့်ကို Google ဖြင့် ဖွင့်ထားသည်။ အတည်ပြုရန် Google ဖြင့် ဝင်ရောက်ပါ',
+  // --- 31 Agu 2026: kitaplik paylasimi + reels ceviri + sohbet detayi ---
+  'Bu liste gizli': 'ဤစာရင်းသည် သီးသန့်ဖြစ်သည်',
+  'Bu kullanıcı izleme listelerini gizli tutmayı tercih ediyor.':
+      'ဤအသုံးပြုသူသည် သူ့စာရင်းများကို သီးသန့်ထားလိုသည်။',
+  'Bu listede henüz içerik yok': 'ဤစာရင်းတွင် ခေါင်းစဉ်များ မရှိသေးပါ',
+  'Otomatik çeviri': 'အလိုအလျောက် ဘာသာပြန်',
+  'Otomatik çeviri açıldı': 'အလိုအလျောက် ဘာသာပြန် ဖွင့်လိုက်ပြီ',
+  'Otomatik çeviri kapatıldı': 'အလိုအလျောက် ဘာသာပြန် ပိတ်လိုက်ပြီ',
+  'Sohbet sessize alındı': 'စကားပြောခန်းကို အသံပိတ်လိုက်ပြီ',
+  'Sessize alma kaldırıldı': 'အသံပိတ်ခြင်း ဖယ်ရှားပြီ',
+  'Tema özelleştir': 'အပြင်အဆင် စိတ်ကြိုက်ပြင်ရန်',
+  'Sohbette ara': 'စကားပြောခန်းတွင် ရှာရန်',
+  'Mesajlarda ara...': 'မက်ဆေ့ဂျ်များတွင် ရှာရန်...',
+  'Sonuç yok': 'ရလဒ်မရှိပါ',
+  'Profili gör': 'ပရိုဖိုင်ကြည့်ရန်',
+  'Medya ve dosyalar': 'မီဒီယာနှင့် ဖိုင်များ',
+  'Henüz medya yok': 'မီဒီယာ မရှိသေးပါ',
+  'Varsayılan': 'မူရင်း',
+  'Mor': 'ခရမ်းရောင်',
+  'Pembe': 'ပန်းရောင်',
+  'Turuncu': 'လိမ္မော်ရောင်',
 };
