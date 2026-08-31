@@ -12941,17 +12941,21 @@ app.get('/altyazi/:dosya', girisIsteğeBagli, altyaziLimiti, sarici(async (req, 
   }
   const medya = `/medya/${dosya}`;
   const { rows } = await havuz.query(
-    `SELECT baslangic_ms, bitis_ms, metin, kaynak_dil, hedef_dil
+    `SELECT baslangic_ms, bitis_ms, metin, orijinal, kaynak_dil, hedef_dil
        FROM video_altyazilar WHERE medya = $1 ORDER BY sira LIMIT 2000`,
     [medya],
   );
   // Kısa anahtar: tek videoda yüzlerce segment olabiliyor, alan adları
-  // gövdenin yarısını yiyordu. b=başlangıç ms, s=son ms, m=metin.
+  // gövdenin yarısını yiyordu. b=başlangıç ms, s=son ms, m=metin,
+  // o=orijinal (KAYNAK dildeki cümle — 31 Ağu 2026: Reels'teki otomatik
+  // çeviri anahtarı kapalıyken istemci bunu gösterir; çeviriyle aynıysa ya da
+  // yoksa hiç gönderilmez, gövde şişmez, eski istemciler alanı görmezden gelir).
   res.json({
     kaynak_dil: rows[0]?.kaynak_dil || null,
     hedef_dil: rows[0]?.hedef_dil || null,
     segmentler: rows.map((r) => ({
       b: r.baslangic_ms, s: r.bitis_ms, m: r.metin,
+      ...(r.orijinal && r.orijinal !== r.metin ? { o: r.orijinal } : {}),
     })),
   });
 }));

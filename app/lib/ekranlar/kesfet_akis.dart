@@ -1873,15 +1873,21 @@ class _ReelSayfaState extends State<_ReelSayfa>
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(28, 28, 28, 160),
-                  child: EtiketliMetin(
-                    y['metin'] as String? ?? '',
-                    // Reels daima siyah zemin → parlak sarı etiket
-                    koyuZemin: true,
-                    stil: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      height: 1.5,
-                      fontWeight: FontWeight.w600,
+                  // Otomatik çeviri anahtarına UYAR (alt bloktaki ReelsMetni
+                  // gibi): kapalıyken orijinal metin — yazılı gönderinin
+                  // "medyası" metnin kendisi, anahtar onu da kapsamalı.
+                  child: ValueListenableBuilder<bool>(
+                    valueListenable: ReelsCeviri.acik,
+                    builder: (context, ceviriAcik, _) => EtiketliMetin(
+                      reelsGosterMetni(y, ceviriAcik),
+                      // Reels daima siyah zemin → parlak sarı etiket
+                      koyuZemin: true,
+                      stil: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        height: 1.5,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),

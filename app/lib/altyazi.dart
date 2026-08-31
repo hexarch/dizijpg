@@ -9,6 +9,7 @@ import 'package:video_player/video_player.dart';
 import 'altyazi_font.dart';
 import 'api.dart';
 import 'ceviri.dart';
+import 'reels_ceviri.dart';
 
 /// Videoda o an konuşulan cümlenin zaman damgalı karşılığı.
 ///
@@ -19,18 +20,26 @@ import 'ceviri.dart';
 class AltyaziSegment {
   final int baslangicMs;
   final int bitisMs;
+
+  /// GÖSTERİLECEK metin — sunucu bunu okuyanın diline ÇEVİRMİŞ olabilir.
   final String metin;
+
+  /// Kaynak dildeki cümle. Sunucu yalnız çeviriden FARKLIYSA gönderir
+  /// (`o` alanı); otomatik çeviri kapalıyken ([ReelsCeviri]) bu gösterilir.
+  final String? orijinal;
 
   const AltyaziSegment({
     required this.baslangicMs,
     required this.bitisMs,
     required this.metin,
+    this.orijinal,
   });
 
   factory AltyaziSegment.json(Map<String, dynamic> j) => AltyaziSegment(
     baslangicMs: (j['b'] as num?)?.toInt() ?? 0,
     bitisMs: (j['s'] as num?)?.toInt() ?? 0,
     metin: (j['m'] as String?) ?? '',
+    orijinal: j['o'] as String?,
   );
 }
 
@@ -700,6 +709,10 @@ class _AltyaziKatmaniState extends State<AltyaziKatmani> {
     _segmentleriHazirla();
     _dinlemeyeBasla();
     AltyaziAyar.acik.addListener(_ayarDegisti);
+    // Otomatik çeviri anahtarı (Reels sağ üst) değişince açık altyazı ANINDA
+    // orijinal/çeviri arasında geçer — kullanıcı "kapattım ama çeviri metni
+    // görünmeye devam ediyor" demişti (31 Ağu 2026): altyazı da bir çeviridir.
+    ReelsCeviri.acik.addListener(_konumIsle);
   }
 
   @override
@@ -754,12 +767,19 @@ class _AltyaziKatmaniState extends State<AltyaziKatmani> {
     }
     final i = altyaziIndeks(_segmentler, v.position.inMilliseconds);
     // Aynı metinse ValueNotifier hiç haber vermez → yeniden çizim olmaz.
-    _metin.value = i < 0 ? null : _segmentler[i].metin;
+    // Otomatik çeviri KAPALIYSA kaynak dildeki cümle gösterilir (yoksa
+    // çeviriyle aynıdır, sunucu `o` alanını hiç göndermez).
+    _metin.value = i < 0
+        ? null
+        : (ReelsCeviri.acik.value
+              ? _segmentler[i].metin
+              : (_segmentler[i].orijinal ?? _segmentler[i].metin));
   }
 
   @override
   void dispose() {
     AltyaziAyar.acik.removeListener(_ayarDegisti);
+    ReelsCeviri.acik.removeListener(_konumIsle);
     _dinlenen?.removeListener(_konumIsle);
     _metin.dispose();
     super.dispose();

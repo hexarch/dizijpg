@@ -1,4 +1,5 @@
 import 'package:dizijpg/altyazi.dart';
+import 'package:dizijpg/reels_ceviri.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player/video_player.dart';
@@ -58,6 +59,67 @@ void main() {
   setUp(() {
     AltyaziDeposu.temizle();
     AltyaziAyar.acik.value = true;
+    ReelsCeviri.acik.value = true;
+  });
+
+  // ---------------- otomatik çeviri anahtarı (31 Ağu 2026) ----------------
+  // Kullanıcı: "Reels'te çeviriyi kapatsam da çeviri metni görünmeye devam
+  // ediyor, sol aşağıda kullanıcı adının üstünde" — o metin video ALTYAZISI
+  // (sunucu ASR + çeviri). Anahtar kapalıyken kaynak dildeki cümle gösterilir.
+  group('otomatik çeviri anahtarı altyazıyı da kapsar', () {
+    test('segment json `o` (orijinal) alanını okur', () {
+      final s = AltyaziSegment.json(const {
+        'b': 0,
+        's': 2000,
+        'm': 'Merhaba dünya',
+        'o': 'Hello world',
+      });
+      expect(s.orijinal, 'Hello world');
+      expect(
+        AltyaziSegment.json(const {'b': 0, 's': 1, 'm': 'x'}).orijinal,
+        isNull,
+      );
+    });
+
+    testWidgets('kapalıyken ORİJİNAL cümle; açınca ANINDA çeviriye döner', (
+      tester,
+    ) async {
+      AltyaziDeposu.ekle(_url, const [
+        AltyaziSegment(
+          baslangicMs: 0,
+          bitisMs: 2000,
+          metin: 'Merhaba dünya',
+          orijinal: 'Hello world',
+        ),
+      ]);
+      final oynatici = SahteOynatici();
+      addTearDown(oynatici.dispose);
+      await _kur(tester, oynatici);
+      oynatici.konum(500);
+      await tester.pump();
+      expect(find.text('Merhaba dünya'), findsOneWidget);
+
+      ReelsCeviri.acik.value = false; // anahtar kapatıldı
+      await tester.pump();
+      expect(find.text('Merhaba dünya'), findsNothing);
+      expect(find.text('Hello world'), findsOneWidget);
+
+      ReelsCeviri.acik.value = true; // yeniden açıldı
+      await tester.pump();
+      expect(find.text('Merhaba dünya'), findsOneWidget);
+    });
+
+    testWidgets('orijinali OLMAYAN segmentte (aynı dil) kapalıyken de çeviri '
+        'metni durur', (tester) async {
+      AltyaziDeposu.ekle(_url, _ornek());
+      final oynatici = SahteOynatici();
+      addTearDown(oynatici.dispose);
+      await _kur(tester, oynatici);
+      ReelsCeviri.acik.value = false;
+      oynatici.konum(500);
+      await tester.pump();
+      expect(find.text('Birinci cümle'), findsOneWidget);
+    });
   });
 
   // ---------------- birim: segment seçme mantığı ----------------
