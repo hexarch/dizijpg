@@ -39,6 +39,39 @@ Future<void> gonderiPaylas(BuildContext context, Map<String, dynamic> yorum) =>
       yorumId: yorum['id'] as int,
     );
 
+/// Liste adının yanındaki paylaş düğmesi.
+///
+/// ORTAK: hem modalde ([ListeSheet]) hem tam sayfada (`liste.dart`) —
+/// [ListeDuzenleDugmesi] ile aynı gerekçe. Bağlantı tam sayfa listeye
+/// (`/listeler/:id`) gider: rota oturumsuz açılır ve `/og/listeler/:id`
+/// SSR'ı sayesinde WhatsApp/Twitter önizleme kartı basar.
+///
+/// YALNIZ HERKESE AÇIK listede çizilmeli: gizli listenin bağlantısını alan
+/// yabancı 404 görür, "paylaşılabilir ama açılmaz" bağlantı üretmeyiz —
+/// karar çağıranda (`herkese_acik` sunucudan gelir).
+class ListePaylasDugmesi extends StatelessWidget {
+  final int listeId;
+  final String ad;
+
+  const ListePaylasDugmesi({
+    super.key,
+    required this.listeId,
+    required this.ad,
+  });
+
+  @override
+  Widget build(BuildContext context) => IconButton(
+    key: const Key('liste-paylas'),
+    tooltip: 'Paylaş'.c,
+    onPressed: () => paylasSheet(
+      context,
+      url: 'https://dizijpg.com/listeler/$listeId',
+      metin: ad,
+    ),
+    icon: Icon(Icons.ios_share, color: DiziRenkler.sariMetin),
+  );
+}
+
 class _PaylasSheet extends StatefulWidget {
   final String url;
   final String? metin;
@@ -277,19 +310,25 @@ class _PaylasSheetState extends State<_PaylasSheet> {
             ),
           Divider(color: DiziRenkler.metin12, height: 20),
           // Telefonun paylaşım sayfası + bağlantıyı kopyala
+          // Düğmeler Flexible: uzun çevirili dilde (Almanca vb.) dar
+          // telefonda etiketler satırı taşırıyordu — etiket kısalır, taşmaz.
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               if (!kIsWeb)
-                _PaylasDugme(
-                  ikon: Icons.ios_share,
-                  etiket: 'Diğer uygulamalar'.c,
-                  onTap: _sistemPaylas,
+                Flexible(
+                  child: _PaylasDugme(
+                    ikon: Icons.ios_share,
+                    etiket: 'Diğer uygulamalar'.c,
+                    onTap: _sistemPaylas,
+                  ),
                 ),
-              _PaylasDugme(
-                ikon: Icons.link,
-                etiket: 'Bağlantıyı kopyala'.c,
-                onTap: _kopyala,
+              Flexible(
+                child: _PaylasDugme(
+                  ikon: Icons.link,
+                  etiket: 'Bağlantıyı kopyala'.c,
+                  onTap: _kopyala,
+                ),
               ),
             ],
           ),
@@ -326,7 +365,12 @@ class _PaylasDugme extends StatelessWidget {
               child: Icon(ikon, color: DiziRenkler.sari),
             ),
             const SizedBox(height: 8),
-            Text(etiket, style: const TextStyle(fontSize: 12)),
+            Text(
+              etiket,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 12),
+            ),
           ],
         ),
       ),

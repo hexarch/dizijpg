@@ -1,5 +1,28 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-30 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-31 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-31 — 🚀 Liste paylaşımı (Spotify gibi)
+
+Kullanıcı isteği: profildeki listeler paylaşılabilsin — paylaş deyince modal
+açılsın, bağlantı kopyalanıp başkasına atılabilsin.
+
+- 🚀 `ListePaylasDugmesi` (paylas.dart): liste modalı ([ListeSheet] başlığı) +
+  tam sayfa liste (`/listeler/:id` AppBar) — mevcut `paylasSheet`i açar
+  (kişilere DM ile gönder + bağlantıyı kopyala). Bağlantı
+  `https://dizijpg.com/listeler/<id>`; rota oturumsuz açılıyor ve
+  `/og/listeler/:id` SSR'ı WhatsApp/Twitter önizleme kartı basıyor (ikisi de
+  ZATEN vardı, yalnız düğme eksikti). Düğme yalnız `herkese_acik` listede —
+  gizli listenin bağlantısı yabancıya 404 verirdi. Çeviri: mevcut `'Paylaş'`
+  anahtarı, yeni anahtar yok. Test: `app/test/liste_paylas_test.dart` (3 kilit).
+- 🚀 Paylaşım sayfası alt düğme satırı Flexible + etiket ellipsis: uzun
+  çevirili dilde dar telefonda taşıyordu (widget testi yakaladı).
+- ✅ `analysis_options.yaml`'a `build/**` dışlaması: iOS SwiftPM checkout'ları
+  (`build/ios/SourcePackages`) analyze'a 13 bin sahte hata basıyordu.
+- ⬜ Liste gizliliği arayüzden yönetilemiyor: `PUT /listeler/:id` yok,
+  `_yeniListe` yalnız `ad` gönderiyor — her liste `herkese_acik=true` doğuyor.
+  "Listeyi gizle" anahtarı istenirse uç + diyalog gerekecek.
+- ⚠️ Test sırasında fark edildi: `testkullanici/test1234` girişi canlıda
+  "şifre hatalı" veriyor (import-test-2226 çalışıyor). Şifre mi değişti?
 
 ## Ekran görüntüsü turunda çıkan çeviri hataları (29 Ağu 2026)
 

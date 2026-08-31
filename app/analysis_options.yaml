@@ -9,6 +9,13 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:flutter_lints/flutter.yaml
 
+# iOS derlemesi (SwiftPM) build/ios/SourcePackages altına flutterfire'ın
+# KAYNAĞINI indiriyor; analizci onları tarayınca bizim olmayan yüzlerce
+# hata basıyordu. build/ bizim kodumuz değildir.
+analyzer:
+  exclude:
+    - build/**
+
 linter:
   # The lint rules applied to this project can be customized in the
   # section below to disable rules from the `package:flutter_lints/flutter.yaml`

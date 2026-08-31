@@ -22,6 +22,7 @@ import '../veri_tasarrufu.dart';
 import '../video_kova.dart';
 import 'izlem_carki.dart';
 import 'medya_goster.dart';
+import 'paylas.dart';
 
 /// Yorum/akış postlarındaki fotoğraf-video galerisi.
 /// Tek medya: TAM GENİŞLİK, yükseklik medyanın KENDİ oranından — her post
@@ -2537,6 +2538,10 @@ class _ListeSheetState extends State<ListeSheet> {
   bool _duzenleme = false;
   bool _sahibiyim = false;
 
+  /// Paylaş düğmesi yalnız HERKESE AÇIK listede — sunucudan gelene kadar
+  /// çizilmez ki gizli listede belirip kaybolmasın.
+  bool _herkeseAcik = false;
+
   /// Çark için liste öğeleri (tur + tmdb_id) — [ListeIcerigi.onListe]
   /// yüklenince doldurur; boşken çark düğmesi çizilmez.
   List<dynamic> _ogeler = const [];
@@ -2574,6 +2579,8 @@ class _ListeSheetState extends State<ListeSheet> {
                     ),
                     icon: const Icon(Icons.attractions),
                   ),
+                if (_herkeseAcik)
+                  ListePaylasDugmesi(listeId: widget.listeId, ad: widget.ad),
                 // Düğme YALNIZ SAHİBİNE çizilir; sahiplik sunucudan gelir
                 // (`GET /listeler/:id` → `sahibiyim`), istemcide tahmin
                 // edilmez.
@@ -2594,6 +2601,7 @@ class _ListeSheetState extends State<ListeSheet> {
                 if (!mounted) return;
                 setState(() {
                   _ogeler = (l['ogeler'] as List<dynamic>?) ?? const [];
+                  _herkeseAcik = l['herkese_acik'] != false;
                 });
               },
               onSahiplik: (v) {

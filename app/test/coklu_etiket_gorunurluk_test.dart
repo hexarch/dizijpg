@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/ek_etiket_seridi.dart';
 import 'package:dizijpg/ekranlar/kullanici_profil.dart' show ProfilYorumKarti;
-import 'package:dizijpg/ekranlar/profil.dart' show Oturum;
 import 'package:dizijpg/ekranlar/yorumlar.dart' show YorumKarti;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

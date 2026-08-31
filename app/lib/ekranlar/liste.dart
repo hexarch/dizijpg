@@ -5,6 +5,7 @@ import '../tema.dart';
 import 'giris_istem.dart';
 import 'izlem_carki.dart';
 import 'ortak.dart';
+import 'paylas.dart';
 
 /// `/listeler/:id` — tek listenin TAM SAYFA hâli.
 ///
@@ -78,6 +79,11 @@ class _ListeEkraniState extends State<ListeEkrani> {
               ),
               icon: const Icon(Icons.attractions),
             ),
+          // Paylaş yalnız HERKESE AÇIK listede (gizli listenin bağlantısı
+          // yabancıya 404 verir) ve liste yüklenince — modal ([ListeSheet])
+          // ile aynı davranış.
+          if (_liste != null && _liste!['herkese_acik'] != false)
+            ListePaylasDugmesi(listeId: widget.listeId, ad: ad),
           if (_sahibiyim)
             ListeDuzenleDugmesi(
               duzenleme: _duzenleme,
