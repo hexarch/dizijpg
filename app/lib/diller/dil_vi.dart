@@ -1432,4 +1432,5 @@ const Map<String, String> cevirilerVi = {
   'Mor': 'Tím',
   'Pembe': 'Hồng',
   'Turuncu': 'Cam',
+  'Orijinal metin gösteriliyor': 'Đang hiển thị văn bản gốc',
 };

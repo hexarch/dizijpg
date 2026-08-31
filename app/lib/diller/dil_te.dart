@@ -1429,4 +1429,5 @@ const Map<String, String> cevirilerTe = {
   'Mor': 'ఊదా',
   'Pembe': 'గులాబీ',
   'Turuncu': 'నారింజ',
+  'Orijinal metin gösteriliyor': 'అసలు వచనం చూపబడుతోంది',
 };

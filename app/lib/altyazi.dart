@@ -25,7 +25,8 @@ class AltyaziSegment {
   final String metin;
 
   /// Kaynak dildeki cümle. Sunucu yalnız çeviriden FARKLIYSA gönderir
-  /// (`o` alanı); otomatik çeviri kapalıyken ([ReelsCeviri]) bu gösterilir.
+  /// (`o` alanı); anahtarın BEYAZ (orijinal) kipinde bu gösterilir, GRİ
+  /// kipte altyazı tamamen gizlenir (bkz. [ReelsCeviriKip]).
   final String? orijinal;
 
   const AltyaziSegment({
@@ -709,10 +710,11 @@ class _AltyaziKatmaniState extends State<AltyaziKatmani> {
     _segmentleriHazirla();
     _dinlemeyeBasla();
     AltyaziAyar.acik.addListener(_ayarDegisti);
-    // Otomatik çeviri anahtarı (Reels sağ üst) değişince açık altyazı ANINDA
-    // orijinal/çeviri arasında geçer — kullanıcı "kapattım ama çeviri metni
-    // görünmeye devam ediyor" demişti (31 Ağu 2026): altyazı da bir çeviridir.
-    ReelsCeviri.acik.addListener(_konumIsle);
+    // Otomatik çeviri anahtarı (Reels sağ üst) değişince açık video ANINDA
+    // tepki verir: gri kip altyazıyı siler, beyaz kip orijinal cümleye,
+    // sarı kip çeviriye döner — kullanıcı "kapattım ama çeviri metni
+    // görünmeye devam ediyor" demişti (31 Ağu 2026).
+    ReelsCeviri.kip.addListener(_konumIsle);
   }
 
   @override
@@ -756,7 +758,15 @@ class _AltyaziKatmaniState extends State<AltyaziKatmani> {
   void _konumIsle() {
     if (!mounted) return;
     final d = _dinlenen;
-    if (d == null || _segmentler.isEmpty || !AltyaziAyar.acik.value) {
+    final kip = ReelsCeviri.kip.value;
+    // Otomatik çeviri anahtarının GRİ (kapalı) kipinde altyazı HİÇ çizilmez —
+    // kullanıcı netleştirdi (31 Ağu 2026): "çeviri kapat demek alttaki yazıyı
+    // kapat demek, dili değiştir demek değil". BEYAZ kip kaynak dildeki
+    // cümleyi basar (`o` alanı, yoksa eldeki metin zaten kaynak dildedir).
+    if (d == null ||
+        _segmentler.isEmpty ||
+        !AltyaziAyar.acik.value ||
+        kip == ReelsCeviriKip.kapali) {
       _metin.value = null;
       return;
     }
@@ -767,19 +777,17 @@ class _AltyaziKatmaniState extends State<AltyaziKatmani> {
     }
     final i = altyaziIndeks(_segmentler, v.position.inMilliseconds);
     // Aynı metinse ValueNotifier hiç haber vermez → yeniden çizim olmaz.
-    // Otomatik çeviri KAPALIYSA kaynak dildeki cümle gösterilir (yoksa
-    // çeviriyle aynıdır, sunucu `o` alanını hiç göndermez).
     _metin.value = i < 0
         ? null
-        : (ReelsCeviri.acik.value
-              ? _segmentler[i].metin
-              : (_segmentler[i].orijinal ?? _segmentler[i].metin));
+        : (kip == ReelsCeviriKip.orijinal
+              ? (_segmentler[i].orijinal ?? _segmentler[i].metin)
+              : _segmentler[i].metin);
   }
 
   @override
   void dispose() {
     AltyaziAyar.acik.removeListener(_ayarDegisti);
-    ReelsCeviri.acik.removeListener(_konumIsle);
+    ReelsCeviri.kip.removeListener(_konumIsle);
     _dinlenen?.removeListener(_konumIsle);
     _metin.dispose();
     super.dispose();

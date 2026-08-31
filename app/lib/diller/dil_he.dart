@@ -1398,4 +1398,5 @@ const Map<String, String> cevirilerHe = {
   'Mor': 'סגול',
   'Pembe': 'ורוד',
   'Turuncu': 'כתום',
+  'Orijinal metin gösteriliyor': 'מוצג הטקסט המקורי',
 };

@@ -1458,4 +1458,5 @@ const Map<String, String> cevirilerFil = {
   'Mor': 'Lila',
   'Pembe': 'Pink',
   'Turuncu': 'Orange',
+  'Orijinal metin gösteriliyor': 'Ipinapakita ang orihinal na teksto',
 };

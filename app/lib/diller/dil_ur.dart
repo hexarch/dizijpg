@@ -1431,4 +1431,5 @@ const Map<String, String> cevirilerUr = {
   'Mor': 'جامنی',
   'Pembe': 'گلابی',
   'Turuncu': 'نارنجی',
+  'Orijinal metin gösteriliyor': 'اصل متن دکھایا جا رہا ہے',
 };

@@ -1428,4 +1428,5 @@ const Map<String, String> cevirilerPa = {
   'Mor': 'ਜਾਮਨੀ',
   'Pembe': 'ਗੁਲਾਬੀ',
   'Turuncu': 'ਸੰਤਰੀ',
+  'Orijinal metin gösteriliyor': 'ਅਸਲ ਲਿਖਤ ਦਿਖਾਈ ਜਾ ਰਹੀ ਹੈ',
 };

@@ -1422,4 +1422,5 @@ const Map<String, String> cevirilerBn = {
   'Mor': 'বেগুনি',
   'Pembe': 'গোলাপি',
   'Turuncu': 'কমলা',
+  'Orijinal metin gösteriliyor': 'মূল লেখা দেখানো হচ্ছে',
 };

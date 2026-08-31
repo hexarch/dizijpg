@@ -1359,4 +1359,5 @@ const Map<String, String> cevirilerJa = {
   'Mor': 'パープル',
   'Pembe': 'ピンク',
   'Turuncu': 'オレンジ',
+  'Orijinal metin gösteriliyor': '原文を表示しています',
 };

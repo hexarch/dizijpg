@@ -1442,4 +1442,5 @@ const Map<String, String> cevirilerHu = {
   'Mor': 'Lila',
   'Pembe': 'Rózsaszín',
   'Turuncu': 'Narancssárga',
+  'Orijinal metin gösteriliyor': 'Eredeti szöveg megjelenítve',
 };

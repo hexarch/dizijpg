@@ -1427,4 +1427,5 @@ const Map<String, String> cevirilerKn = {
   'Mor': 'ನೇರಳೆ',
   'Pembe': 'ಗುಲಾಬಿ',
   'Turuncu': 'ಕಿತ್ತಳೆ',
+  'Orijinal metin gösteriliyor': 'ಮೂಲ ಪಠ್ಯ ತೋರಿಸಲಾಗುತ್ತಿದೆ',
 };

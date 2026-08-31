@@ -1434,4 +1434,5 @@ const Map<String, String> cevirilerMl = {
   'Mor': 'പർപ്പിൾ',
   'Pembe': 'പിങ്ക്',
   'Turuncu': 'ഓറഞ്ച്',
+  'Orijinal metin gösteriliyor': 'യഥാർത്ഥ വാചകം കാണിക്കുന്നു',
 };

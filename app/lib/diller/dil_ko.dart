@@ -1361,4 +1361,5 @@ const Map<String, String> cevirilerKo = {
   'Mor': '보라',
   'Pembe': '분홍',
   'Turuncu': '주황',
+  'Orijinal metin gösteriliyor': '원문을 표시합니다',
 };

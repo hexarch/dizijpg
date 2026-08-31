@@ -1419,4 +1419,5 @@ const Map<String, String> cevirilerGu = {
   'Mor': 'જાંબલી',
   'Pembe': 'ગુલાબી',
   'Turuncu': 'નારંગી',
+  'Orijinal metin gösteriliyor': 'મૂળ લખાણ બતાવાઈ રહ્યું છે',
 };

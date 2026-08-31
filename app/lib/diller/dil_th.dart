@@ -1407,4 +1407,5 @@ const Map<String, String> cevirilerTh = {
   'Mor': 'ม่วง',
   'Pembe': 'ชมพู',
   'Turuncu': 'ส้ม',
+  'Orijinal metin gösteriliyor': 'กำลังแสดงข้อความต้นฉบับ',
 };

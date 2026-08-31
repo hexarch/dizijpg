@@ -1455,4 +1455,5 @@ const Map<String, String> cevirilerEl = {
   'Mor': 'Μοβ',
   'Pembe': 'Ροζ',
   'Turuncu': 'Πορτοκαλί',
+  'Orijinal metin gösteriliyor': 'Εμφανίζεται το πρωτότυπο κείμενο',
 };

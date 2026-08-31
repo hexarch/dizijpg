@@ -1424,4 +1424,5 @@ const Map<String, String> cevirilerAz = {
   'Mor': 'Bənövşəyi',
   'Pembe': 'Çəhrayı',
   'Turuncu': 'Narıncı',
+  'Orijinal metin gösteriliyor': 'Orijinal mətn göstərilir',
 };

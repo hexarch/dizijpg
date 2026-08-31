@@ -1438,4 +1438,5 @@ const Map<String, String> cevirilerMs = {
   'Mor': 'Ungu',
   'Pembe': 'Merah jambu',
   'Turuncu': 'Jingga',
+  'Orijinal metin gösteriliyor': 'Memaparkan teks asal',
 };

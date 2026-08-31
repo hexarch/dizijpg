@@ -59,13 +59,15 @@ void main() {
   setUp(() {
     AltyaziDeposu.temizle();
     AltyaziAyar.acik.value = true;
-    ReelsCeviri.acik.value = true;
+    ReelsCeviri.kip.value = ReelsCeviriKip.ceviri;
   });
 
   // ---------------- otomatik çeviri anahtarı (31 Ağu 2026) ----------------
   // Kullanıcı: "Reels'te çeviriyi kapatsam da çeviri metni görünmeye devam
   // ediyor, sol aşağıda kullanıcı adının üstünde" — o metin video ALTYAZISI
-  // (sunucu ASR + çeviri). Anahtar kapalıyken kaynak dildeki cümle gösterilir.
+  // (sunucu ASR + çeviri). Netleşen davranış üç kip ([ReelsCeviriKip]):
+  // SARI çeviri, BEYAZ kaynak dildeki cümle, GRİ altyazı HİÇ çizilmez
+  // ("çeviri kapat demek alttaki yazıyı kapat demek").
   group('otomatik çeviri anahtarı altyazıyı da kapsar', () {
     test('segment json `o` (orijinal) alanını okur', () {
       final s = AltyaziSegment.json(const {
@@ -81,9 +83,8 @@ void main() {
       );
     });
 
-    testWidgets('kapalıyken ORİJİNAL cümle; açınca ANINDA çeviriye döner', (
-      tester,
-    ) async {
+    testWidgets('üç kip AÇIK videoda ANINDA uygulanır: sarı çeviri, beyaz '
+        'orijinal, gri hiçbir şey', (tester) async {
       AltyaziDeposu.ekle(_url, const [
         AltyaziSegment(
           baslangicMs: 0,
@@ -97,28 +98,37 @@ void main() {
       await _kur(tester, oynatici);
       oynatici.konum(500);
       await tester.pump();
-      expect(find.text('Merhaba dünya'), findsOneWidget);
+      expect(find.text('Merhaba dünya'), findsOneWidget); // sarı = çeviri
 
-      ReelsCeviri.acik.value = false; // anahtar kapatıldı
+      ReelsCeviri.kip.value = ReelsCeviriKip.orijinal; // beyaz
       await tester.pump();
       expect(find.text('Merhaba dünya'), findsNothing);
       expect(find.text('Hello world'), findsOneWidget);
 
-      ReelsCeviri.acik.value = true; // yeniden açıldı
+      ReelsCeviri.kip.value = ReelsCeviriKip.kapali; // gri
+      await tester.pump();
+      expect(find.text('Merhaba dünya'), findsNothing);
+      expect(find.text('Hello world'), findsNothing);
+
+      ReelsCeviri.kip.value = ReelsCeviriKip.ceviri; // sarıya dönüş
       await tester.pump();
       expect(find.text('Merhaba dünya'), findsOneWidget);
     });
 
-    testWidgets('orijinali OLMAYAN segmentte (aynı dil) kapalıyken de çeviri '
-        'metni durur', (tester) async {
+    testWidgets('orijinali OLMAYAN (aynı dil) segment: beyazda metin durur, '
+        'gride gizlenir', (tester) async {
       AltyaziDeposu.ekle(_url, _ornek());
       final oynatici = SahteOynatici();
       addTearDown(oynatici.dispose);
       await _kur(tester, oynatici);
-      ReelsCeviri.acik.value = false;
+      ReelsCeviri.kip.value = ReelsCeviriKip.orijinal;
       oynatici.konum(500);
       await tester.pump();
       expect(find.text('Birinci cümle'), findsOneWidget);
+
+      ReelsCeviri.kip.value = ReelsCeviriKip.kapali;
+      await tester.pump();
+      expect(find.textContaining('cümle'), findsNothing);
     });
   });
 

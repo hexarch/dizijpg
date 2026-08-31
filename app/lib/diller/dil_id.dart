@@ -1433,4 +1433,5 @@ const Map<String, String> cevirilerId = {
   'Mor': 'Ungu',
   'Pembe': 'Merah muda',
   'Turuncu': 'Oranye',
+  'Orijinal metin gösteriliyor': 'Menampilkan teks asli',
 };

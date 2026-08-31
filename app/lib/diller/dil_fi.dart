@@ -1438,4 +1438,5 @@ const Map<String, String> cevirilerFi = {
   'Mor': 'Violetti',
   'Pembe': 'Pinkki',
   'Turuncu': 'Oranssi',
+  'Orijinal metin gösteriliyor': 'Näytetään alkuperäinen teksti',
 };

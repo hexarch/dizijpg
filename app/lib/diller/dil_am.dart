@@ -1379,4 +1379,5 @@ const Map<String, String> cevirilerAm = {
   'Mor': 'ሐምራዊ',
   'Pembe': 'ሮዝ',
   'Turuncu': 'ብርቱካናማ',
+  'Orijinal metin gösteriliyor': 'ዋናው ጽሑፍ እየታየ ነው',
 };

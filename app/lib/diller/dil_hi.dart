@@ -1428,4 +1428,5 @@ const Map<String, String> cevirilerHi = {
   'Mor': 'बैंगनी',
   'Pembe': 'गुलाबी',
   'Turuncu': 'नारंगी',
+  'Orijinal metin gösteriliyor': 'मूल पाठ दिखाया जा रहा है',
 };

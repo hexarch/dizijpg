@@ -1438,4 +1438,5 @@ const Map<String, String> cevirilerSw = {
   'Mor': 'Zambarau',
   'Pembe': 'Pinki',
   'Turuncu': 'Chungwa',
+  'Orijinal metin gösteriliyor': 'Inaonyesha maandishi asilia',
 };

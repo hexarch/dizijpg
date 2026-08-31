@@ -1437,4 +1437,5 @@ const Map<String, String> cevirilerRu = {
   'Mor': 'Фиолетовый',
   'Pembe': 'Розовый',
   'Turuncu': 'Оранжевый',
+  'Orijinal metin gösteriliyor': 'Показан оригинальный текст',
 };

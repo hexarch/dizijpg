@@ -1343,4 +1343,5 @@ const Map<String, String> cevirilerZh = {
   'Mor': '紫色',
   'Pembe': '粉色',
   'Turuncu': '橙色',
+  'Orijinal metin gösteriliyor': '正在显示原文',
 };

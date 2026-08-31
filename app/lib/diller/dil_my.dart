@@ -1446,4 +1446,5 @@ const Map<String, String> cevirilerMy = {
   'Mor': 'ခရမ်းရောင်',
   'Pembe': 'ပန်းရောင်',
   'Turuncu': 'လိမ္မော်ရောင်',
+  'Orijinal metin gösteriliyor': 'မူရင်းစာသားကို ပြသနေသည်',
 };

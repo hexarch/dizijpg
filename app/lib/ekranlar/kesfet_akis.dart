@@ -1322,35 +1322,46 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
             // Otomatik çeviri anahtarı (31 Ağu 2026 isteği): sağ üstte,
             // DOKUNULMADIĞINDA YARI SAYDAM — videonun üstünde durduğu için
             // tam opak bir düğme rahatsız ederdi ("tıklanmayınca transparan
-            // olsun"). Açıkken ikon sarı, kapalıyken beyaz; basınca tercih
-            // kalıcı kaydedilir ve o an ekrandaki gönderiler de değişir
-            // (metin [ReelsCeviri.acik]'ı dinler).
+            // olsun"). ÜÇ KİP (aynı gün netleşti): SARI = okuyanın dili,
+            // BEYAZ = orijinal metin, GRİ = kapalı (altyazı hiç çizilmez).
+            // Dokunma sırası sarı→beyaz→gri→SARI: kapalıdan sonra bilerek
+            // çeviriye dönülür ("sarı kapalıdan sonra gelsin ki kullanıcı
+            // şaşırmasın"). Tercih kalıcı; ekrandaki gönderiler ve açık
+            // videonun altyazısı ANINDA uyar ([ReelsCeviri.kip] dinleniyor).
             SafeArea(
               child: Align(
                 alignment: Alignment.topRight,
-                child: ValueListenableBuilder<bool>(
-                  valueListenable: ReelsCeviri.acik,
-                  builder: (context, acik, _) => Opacity(
+                child: ValueListenableBuilder<ReelsCeviriKip>(
+                  valueListenable: ReelsCeviri.kip,
+                  builder: (context, kip, _) => Opacity(
                     opacity: 0.45,
                     child: IconButton(
                       key: const Key('reels-ceviri'),
                       tooltip: 'Otomatik çeviri'.c,
                       onPressed: () {
-                        ReelsCeviri.sec(!acik);
+                        final yeni = ReelsCeviri.sonraki(kip);
+                        ReelsCeviri.sec(yeni);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(
-                              acik
-                                  ? 'Otomatik çeviri kapatıldı'.c
-                                  : 'Otomatik çeviri açıldı'.c,
-                            ),
+                            content: Text(switch (yeni) {
+                              ReelsCeviriKip.ceviri =>
+                                'Otomatik çeviri açıldı'.c,
+                              ReelsCeviriKip.orijinal =>
+                                'Orijinal metin gösteriliyor'.c,
+                              ReelsCeviriKip.kapali =>
+                                'Otomatik çeviri kapatıldı'.c,
+                            }),
                             duration: const Duration(seconds: 1),
                           ),
                         );
                       },
                       icon: Icon(
                         Icons.translate,
-                        color: acik ? DiziRenkler.sari : Colors.white,
+                        color: switch (kip) {
+                          ReelsCeviriKip.ceviri => DiziRenkler.sari,
+                          ReelsCeviriKip.orijinal => Colors.white,
+                          ReelsCeviriKip.kapali => Colors.grey,
+                        },
                       ),
                       style: IconButton.styleFrom(
                         backgroundColor: Colors.black38,
@@ -1876,10 +1887,10 @@ class _ReelSayfaState extends State<_ReelSayfa>
                   // Otomatik çeviri anahtarına UYAR (alt bloktaki ReelsMetni
                   // gibi): kapalıyken orijinal metin — yazılı gönderinin
                   // "medyası" metnin kendisi, anahtar onu da kapsamalı.
-                  child: ValueListenableBuilder<bool>(
-                    valueListenable: ReelsCeviri.acik,
-                    builder: (context, ceviriAcik, _) => EtiketliMetin(
-                      reelsGosterMetni(y, ceviriAcik),
+                  child: ValueListenableBuilder<ReelsCeviriKip>(
+                    valueListenable: ReelsCeviri.kip,
+                    builder: (context, kip, _) => EtiketliMetin(
+                      reelsGosterMetni(y, kip),
                       // Reels daima siyah zemin → parlak sarı etiket
                       koyuZemin: true,
                       stil: const TextStyle(
@@ -2142,10 +2153,10 @@ class _ReelSayfaState extends State<_ReelSayfa>
                     if ((y['metin'] as String?)?.trim().isNotEmpty == true &&
                         (foto != null || _videoUrl != null)) ...[
                       const SizedBox(height: 8),
-                      ValueListenableBuilder<bool>(
-                        valueListenable: ReelsCeviri.acik,
-                        builder: (context, ceviriAcik, _) => ReelsMetni(
-                          reelsGosterMetni(y, ceviriAcik),
+                      ValueListenableBuilder<ReelsCeviriKip>(
+                        valueListenable: ReelsCeviri.kip,
+                        builder: (context, kip, _) => ReelsMetni(
+                          reelsGosterMetni(y, kip),
                           onDevami: _metniAc,
                         ),
                       ),
@@ -2483,11 +2494,13 @@ class _ReelsDugme extends StatelessWidget {
 /// [ilkYanitlanan]: sheet açılır açılmaz hedeflenecek YANIT satırı (yanıtın
 /// yanıtı). İçerik sayfasının yorum bölümü bunu kullanır: kullanıcı bir
 /// yanıta "Yanıtla" dediğinde sheet ÜST yorumla açılır ama hedef kaybolmaz.
-/// Reels'te gösterilecek gönderi metni: otomatik çeviri KAPALIYSA sunucunun
-/// çevirdiği gönderilerde orijinal metne dönülür (bkz. [ReelsCeviri]).
-String reelsGosterMetni(Map<String, dynamic> y, bool ceviriAcik) {
+/// Reels'te gösterilecek gönderi metni. SARI kipte sunucunun verdiği (gerekirse
+/// çevrilmiş) metin; BEYAZ ve GRİ kipte orijinal metin — gri "çeviri yok"
+/// demek, gönderinin KENDİ yazısı gizlenmez (yazılı gönderide bomboş ekran
+/// olurdu); gri yalnız video ALTYAZISINI tamamen kapatır (bkz. [ReelsCeviri]).
+String reelsGosterMetni(Map<String, dynamic> y, ReelsCeviriKip kip) {
   final m = y['metin'] as String? ?? '';
-  if (ceviriAcik) return m;
+  if (kip == ReelsCeviriKip.ceviri) return m;
   return (y['orijinal_metin'] as String?) ?? m;
 }
 
@@ -2757,10 +2770,10 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
           ],
         ),
         const SizedBox(height: 10),
-        ValueListenableBuilder<bool>(
-          valueListenable: ReelsCeviri.acik,
-          builder: (context, ceviriAcik, _) => Text(
-            reelsGosterMetni(y, ceviriAcik),
+        ValueListenableBuilder<ReelsCeviriKip>(
+          valueListenable: ReelsCeviri.kip,
+          builder: (context, kip, _) => Text(
+            reelsGosterMetni(y, kip),
             style: const TextStyle(height: 1.4),
           ),
         ),

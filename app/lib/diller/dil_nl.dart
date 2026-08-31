@@ -1440,4 +1440,5 @@ const Map<String, String> cevirilerNl = {
   'Mor': 'Paars',
   'Pembe': 'Roze',
   'Turuncu': 'Oranje',
+  'Orijinal metin gösteriliyor': 'Originele tekst wordt getoond',
 };

@@ -1415,4 +1415,5 @@ const Map<String, String> cevirilerFa = {
   'Mor': 'بنفش',
   'Pembe': 'صورتی',
   'Turuncu': 'نارنجی',
+  'Orijinal metin gösteriliyor': 'متن اصلی نمایش داده می‌شود',
 };

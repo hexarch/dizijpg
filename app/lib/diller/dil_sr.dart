@@ -1436,4 +1436,5 @@ const Map<String, String> cevirilerSr = {
   'Mor': 'Ljubičasta',
   'Pembe': 'Roze',
   'Turuncu': 'Narandžasta',
+  'Orijinal metin gösteriliyor': 'Prikazan je originalni tekst',
 };

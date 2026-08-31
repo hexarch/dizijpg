@@ -1,28 +1,60 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Reels'te OTOMATİK ÇEVİRİ tercihi (31 Ağu 2026 isteği: "sağ yukarıda
-/// çeviri butonu olmalı, otomatik çeviriler açıp kapatılabilsin").
+/// Reels'teki OTOMATİK ÇEVİRİ anahtarının kipi (31 Ağu 2026 isteği, aynı gün
+/// netleşti: "3 modu olsun; gri kapalı, beyaz orijinal, sarı kullanıcının
+/// dili").
 ///
-/// Sunucu yabancı dildeki gönderinin metnini okuyanın dilinde HAZIR gönderir
-/// (`cevrildi` + `orijinal_metin`, bkz. server.js `ceviriUygula`). Bu tercih
-/// KAPALIYKEN Reels o gönderileri orijinal dilinde çizer — ağ isteği yok,
-/// yalnız hangi alanın gösterildiği değişir. Tercih cihazda saklanır
-/// ([VeriTasarrufu] ile aynı kalıp) ve main.dart'ta yüklenir.
-class ReelsCeviri {
-  static const _anahtar = 'reels_otomatik_ceviri';
+///  * [ceviri]   — SARI ikon: gönderi metni ve video altyazısı okuyanın
+///                 dilinde (sunucunun bugünkü varsayılan davranışı).
+///  * [orijinal] — BEYAZ ikon: metinler kaynak dilinde; altyazı da kaynak
+///                 dildeki cümleyi basar (`o` alanı, yoksa eldeki metin).
+///  * [kapali]   — GRİ ikon: video altyazısı HİÇ çizilmez ("çeviri kapat
+///                 demek alttaki yazıyı kapat demek"); gönderi metni
+///                 orijinal dilinde kalır (gönderinin kendisi gizlenmez —
+///                 yazılı gönderide bomboş ekran olurdu).
+enum ReelsCeviriKip { ceviri, orijinal, kapali }
 
-  /// Otomatik çeviri açık mı (varsayılan: açık — sunucunun bugünkü davranışı).
-  static final ValueNotifier<bool> acik = ValueNotifier(true);
+/// Tercihin saklandığı/dinlendiği tek yer ([VeriTasarrufu] kalıbı; cihazda
+/// kalıcı, main.dart'ta yüklenir).
+class ReelsCeviri {
+  static const _anahtar = 'reels_ceviri_kip';
+
+  /// Eski (iki durumlu) sürümün anahtarı — bir kez okunup taşınır.
+  static const _eskiAnahtar = 'reels_otomatik_ceviri';
+
+  static final ValueNotifier<ReelsCeviriKip> kip = ValueNotifier(
+    ReelsCeviriKip.ceviri,
+  );
+
+  /// Dokunma sırası: sarı → beyaz → gri → SARI... Kapalıdan sonra bilerek
+  /// çeviriye dönülür ("sarı kapalıdan sonra gelsin ki kullanıcı şaşırmasın").
+  static ReelsCeviriKip sonraki(ReelsCeviriKip k) => switch (k) {
+    ReelsCeviriKip.ceviri => ReelsCeviriKip.orijinal,
+    ReelsCeviriKip.orijinal => ReelsCeviriKip.kapali,
+    ReelsCeviriKip.kapali => ReelsCeviriKip.ceviri,
+  };
+
+  static ReelsCeviriKip _coz(String? ad) => switch (ad) {
+    'orijinal' => ReelsCeviriKip.orijinal,
+    'kapali' => ReelsCeviriKip.kapali,
+    _ => ReelsCeviriKip.ceviri,
+  };
 
   static Future<void> yukle() async {
     final p = await SharedPreferences.getInstance();
-    acik.value = p.getBool(_anahtar) ?? true;
+    final ham = p.getString(_anahtar);
+    if (ham != null) {
+      kip.value = _coz(ham);
+      return;
+    }
+    // Eski iki durumlu tercihten taşı: kapalıydıysa kapalı kalsın.
+    if (p.getBool(_eskiAnahtar) == false) kip.value = ReelsCeviriKip.kapali;
   }
 
-  static Future<void> sec(bool v) async {
-    acik.value = v;
+  static Future<void> sec(ReelsCeviriKip v) async {
+    kip.value = v;
     final p = await SharedPreferences.getInstance();
-    await p.setBool(_anahtar, v);
+    await p.setString(_anahtar, v.name);
   }
 }

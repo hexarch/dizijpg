@@ -1443,4 +1443,5 @@ const Map<String, String> cevirilerSv = {
   'Mor': 'Lila',
   'Pembe': 'Rosa',
   'Turuncu': 'Orange',
+  'Orijinal metin gösteriliyor': 'Visar originaltexten',
 };

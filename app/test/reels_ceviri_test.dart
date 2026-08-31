@@ -1,6 +1,8 @@
 // REELS OTOMATİK ÇEVİRİ ANAHTARI + "devamı" MODALI (31 Ağu 2026 istekleri):
-//  1. "sağ yukarıda çeviri butonu olmalı ... açıp kapatılabilsin otomatik
-//     çeviriler" → [ReelsCeviri] tercihi + [reelsGosterMetni] seçimi.
+//  1. "sağ yukarıda çeviri butonu olmalı ... açıp kapatılabilsin" → aynı gün
+//     netleşti: "3 modu olsun; gri kapalı, beyaz orijinal, sarı kullanıcının
+//     dili" ve "sarı kapalıdan sonra gelsin ki kullanıcı şaşırmasın" →
+//     [ReelsCeviri] üç kipli, dokunma sırası sarı→beyaz→gri→SARI.
 //  2. "devamını okumak için ... bastığımda reels modunda yukarı modal
 //     açılacak" → [ReelsMetni.onDevami] verildiğinde dokunuş SATIR İÇİ
 //     açılım yerine callback'i çağırır (Reels bununla sheet açar).
@@ -11,6 +13,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  setUp(() {
+    ReelsCeviri.kip.value = ReelsCeviriKip.ceviri;
+  });
+
   group('reelsGosterMetni', () {
     final y = {
       'metin': 'çeviri metni',
@@ -18,39 +24,73 @@ void main() {
       'cevrildi': true,
     };
 
-    test('çeviri açıkken sunucunun verdiği metin (çeviri) gösterilir', () {
-      expect(reelsGosterMetni(y, true), 'çeviri metni');
+    test('SARI kipte sunucunun verdiği metin (çeviri) gösterilir', () {
+      expect(reelsGosterMetni(y, ReelsCeviriKip.ceviri), 'çeviri metni');
     });
 
-    test('çeviri kapalıyken orijinal metne dönülür', () {
-      expect(reelsGosterMetni(y, false), 'original text');
+    test('BEYAZ ve GRİ kipte orijinal metne dönülür (gönderi yazısı '
+        'gizlenmez)', () {
+      expect(reelsGosterMetni(y, ReelsCeviriKip.orijinal), 'original text');
+      expect(reelsGosterMetni(y, ReelsCeviriKip.kapali), 'original text');
     });
 
     test('orijinal yoksa (çevrilmemiş gönderi) metin olduğu gibi kalır', () {
-      expect(reelsGosterMetni({'metin': 'düz'}, false), 'düz');
-      expect(reelsGosterMetni({'metin': 'düz'}, true), 'düz');
+      for (final kip in ReelsCeviriKip.values) {
+        expect(reelsGosterMetni({'metin': 'düz'}, kip), 'düz');
+      }
     });
   });
 
-  group('ReelsCeviri tercihi', () {
+  group('ReelsCeviri kipi', () {
+    test('dokunma sırası sarı→beyaz→gri→SARI (kapalıdan sonra çeviri)', () {
+      expect(
+        ReelsCeviri.sonraki(ReelsCeviriKip.ceviri),
+        ReelsCeviriKip.orijinal,
+      );
+      expect(
+        ReelsCeviri.sonraki(ReelsCeviriKip.orijinal),
+        ReelsCeviriKip.kapali,
+      );
+      expect(ReelsCeviri.sonraki(ReelsCeviriKip.kapali), ReelsCeviriKip.ceviri);
+    });
+
+    test('varsayılan sarı; seçim kalıcı yazılır ve geri okunur', () async {
+      SharedPreferences.setMockInitialValues({});
+      await ReelsCeviri.yukle();
+      expect(ReelsCeviri.kip.value, ReelsCeviriKip.ceviri);
+
+      await ReelsCeviri.sec(ReelsCeviriKip.orijinal);
+      final p = await SharedPreferences.getInstance();
+      expect(p.getString('reels_ceviri_kip'), 'orijinal');
+
+      ReelsCeviri.kip.value = ReelsCeviriKip.ceviri;
+      await ReelsCeviri.yukle();
+      expect(ReelsCeviri.kip.value, ReelsCeviriKip.orijinal);
+    });
+
     test(
-      'varsayılan açık; seçim kalıcı yazılır ve dinleyiciye yayılır',
+      'eski iki durumlu tercih taşınır: kapalıysa GRİ, yoksa SARI',
       () async {
-        SharedPreferences.setMockInitialValues({});
+        SharedPreferences.setMockInitialValues({
+          'reels_otomatik_ceviri': false,
+        });
+        ReelsCeviri.kip.value = ReelsCeviriKip.ceviri;
         await ReelsCeviri.yukle();
-        expect(ReelsCeviri.acik.value, isTrue);
+        expect(ReelsCeviri.kip.value, ReelsCeviriKip.kapali);
 
-        await ReelsCeviri.sec(false);
-        expect(ReelsCeviri.acik.value, isFalse);
-        final p = await SharedPreferences.getInstance();
-        expect(p.getBool('reels_otomatik_ceviri'), isFalse);
-
-        // Yeni açılış tercihi geri okur.
-        ReelsCeviri.acik.value = true;
+        SharedPreferences.setMockInitialValues({'reels_otomatik_ceviri': true});
+        ReelsCeviri.kip.value = ReelsCeviriKip.kapali;
         await ReelsCeviri.yukle();
-        expect(ReelsCeviri.acik.value, isFalse);
-
-        await ReelsCeviri.sec(true); // sonraki testlere temiz durum
+        // Eski anahtar true = bugünkü varsayılan; yeni anahtar yoksa sarı kalır
+        // (yukle yalnız false'u taşır, true zaten varsayılanla aynı).
+        expect(ReelsCeviri.kip.value, ReelsCeviriKip.kapali);
+        // Yeni anahtar HER ZAMAN öncelikli:
+        SharedPreferences.setMockInitialValues({
+          'reels_otomatik_ceviri': false,
+          'reels_ceviri_kip': 'ceviri',
+        });
+        await ReelsCeviri.yukle();
+        expect(ReelsCeviri.kip.value, ReelsCeviriKip.ceviri);
       },
     );
   });
