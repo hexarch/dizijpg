@@ -64,3 +64,50 @@ farkli = sum(1 for r,g,b in box.getdata() if abs(r-11)>25 or abs(g-11)>25 or abs
 `simctl uninstall` bunu TEMİZLEMEZ. Açılış ekranı değişikliğini sınamak için
 **`xcrun simctl erase <UDID>`** şart. Yoksa eski açılış ekranını görüp
 "değişiklik geçmedi" sanırsın.
+
+---
+
+## 31 Ağu 2026 — AppleScript'e GEREK YOK: `simctl launch --route=`
+
+Yukarıdaki AppleScript tıklama yöntemi ARTIK GEREKMİYOR (ve kullanıcının
+ekranını devraldığı için istenmiyor). Flutter'ın iOS gömücüsü başlangıç
+rotasını komut satırı argümanından okuyor ve `GoRouter` platform varsayılan
+rotasını `initialLocation`'ın ÜSTÜNDE tutuyor — yani her ekrana tek komutla
+doğrudan atlanıyor:
+
+```bash
+xcrun simctl terminate <UDID> com.dizijpg.dizijpg
+xcrun simctl launch    <UDID> com.dizijpg.dizijpg --route=/ozet/2026
+sleep 17   # ilk açılış + ağdan veri
+xcrun simctl io <UDID> screenshot kare.png
+```
+
+`flutter run -d <UDID> --route=/kullanici/alcelik` da aynı işi yapar ve
+üstüne konsol günlüğü verir — hata ayıklarken bunu kullan.
+
+**Kullanılan rotalar (1.103.2 mağaza seti):** `/kesfet` · `/icerik/tv/1396`
+(Breaking Bad) · `/ozet/2026` · `/takvim` · `/akis` · `/kitaplik/bitirdim`
+
+**ÖLÇÜ ÖLÇEKLEMEYE GEREK YOK.** App Store Connect API iPhone 17 Pro Max'in
+ham çıktısını (**1320×2868**) `APP_IPHONE_67` setinde, iPad Pro 13"ün ham
+çıktısını (**2064×2752**) `APP_IPAD_PRO_3GEN_129` setinde olduğu gibi kabul
+etti; 12 kare de `COMPLETE`, sıfır hata. Eski nottaki "1284×2778'e ölçekle"
+adımı gereksiz.
+
+**Ortam hazırlığı (kareler tutarlı olsun):**
+```bash
+xcrun simctl ui <UDID> appearance dark          # Play kareleriyle aynı koyu tema
+xcrun simctl status_bar <UDID> override --time "9:41" \
+  --wifiMode active --wifiBars 3 --batteryState charged --batteryLevel 100
+```
+
+**SEÇİLMEYEN EKRANLAR ve nedeni:**
+- `/izleme-istatistik` — demo hesapta son 30 gün düşüşte (`-%76`, `0 gün seri`);
+  doğru ama mağaza karesi olarak zayıf. Yerine `/ozet/2026` (367 bölüm,
+  13 gün 3 saat) kullanıldı.
+- `/istatistiklerim` — boş durum ("Henüz gönderin yok").
+- `/profil` — emma.watches'un KAPAĞI BOZUK: sunucudaki
+  `kapak15-1784747260100.gif` 42 baytlık 1×1 yer tutucu (22 Tem 2026'dan kalma
+  test artığı), `BoxFit.cover` ile gerilince bomboş şerit çıkıyor.
+- `/kitaplik/izliyorum` — üç yapımın (Respect, Pavilion, …) posteri yok,
+  gri yer tutucu düşüyor. `/kitaplik/bitirdim` (496 yapım) temiz.
