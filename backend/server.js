@@ -12318,24 +12318,54 @@ app.get('/izlediklerim', girisZorunlu, sarici(async (req, res) => {
       ogeler: rows.map(({ tur, tmdb_id, sayi, sira }) => ({ tur, tmdb_id, sayi, sira })),
     });
   }
-  // TÜRSÜZ ÇAĞRI ELLE SIRA UYGULAMAZ — bilinçli. Burası bir ÖNİZLEME/sayaç
-  // beslemesi (profil şeridi + kitaplık ekranındaki bölüm sayıları) ve tür
-  // başına 200 ile kırpılıyor; 406 filmi olan kullanıcıda kırpılmış pencereye
-  // elle sıra uygulamak ya sıralanmışları kesecek ya da önizlemeyi tam listeden
-  // farklı dizecekti. Sıralanabilir altı listenin ikisi `?tur=` ile açılıyor.
+  // TÜRSÜZ ÇAĞRI DA ELLE SIRAYI UYGULAR (1 Eyl 2026, canlıda bildirilen hata:
+  // "listeyi açıp geriye aldığım diziler/filmler profildeki kapakta hâlâ önde").
+  // Profildeki "İzlediklerim" kartının kapak kolajı bu beslemenin İLK 5'inden
+  // çiziliyor; sıra uygulanmayınca sona taşınan yapım — en son izlenen o
+  // olduğu için — kapakta EN ÖNE çıkıyordu.
   //
-  // Tür belirtilmezse her türden ayrı limit: tek LIMIT 200 bir türü aç bırakıyordu
+  // ESKİ GEREKÇE ("kırpılmış pencereye sıra uygulamak sıralananı keser")
+  // ÇÖZÜLDÜ: tür başına satırlar TAM listeyle (`?tur=` ucu) AYNI anahtarla
+  // sıralanıp `row_number` ile ÜSTTEN 200'e kırpılıyor — önizleme artık tam
+  // listenin birebir ÖNEKİ, kesilen hep listenin DİBİ. `NULLS FIRST` + LIMIT
+  // tuzağı, kesme sıralamadan SONRA yapıldığı için oluşamıyor. Tavan aşımında
+  // (`toplam > pencere`) `?tur=` ucuyla aynı geri düşüş: sıra yok sayılır.
+  //
+  // Tür başına AYRI pencere korunuyor: tek LIMIT 200 bir türü aç bırakıyordu
   // (son 200 film olunca diziler 3'e düşüyordu).
+  //
+  // BİRLEŞTİRME FERMUARLA (`tur_sira` üzerinden): iki türün listesi kendi
+  // İÇİNDE tam listeyle aynı sırada, aralarında konum konuma örülür (dizi 1,
+  // film 1, dizi 2, ...; eşitliği son izlenme çözer). `etkin_sira NULLS FIRST`
+  // ile küresel birleştirme DENENDİ ve canlı veriyle çürüdü (1 Eyl 2026,
+  // kullanıcı 3): dizileri TAMAMEN sıralayıp filmlere dokunmamış kullanıcıda
+  // sırasız 40 filmin hepsi NULL diye öne doldu, kapakta tek dizi kalmadı —
+  // tür başına limitin ta kendisiyle savaştığı "filmler dizileri atıyor"
+  // sorununun geri gelişi. Fermuar iki listenin ZİRVESİNİ kapağa taşır.
   const { rows } = await havuz.query(
-    `(SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
-      FROM izlemeler WHERE kullanici_id=$1 AND tur='tv'
-      GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 200)
-     UNION ALL
-     (SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
-      FROM izlemeler WHERE kullanici_id=$1 AND tur='movie'
-      GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 200)
-     ORDER BY son DESC, tmdb_id DESC`,
-    [req.kullanici.id],
+    `WITH ozet AS (
+       SELECT i.tur, i.tmdb_id, count(*)::int AS sayi, max(i.tarih) AS son
+         FROM izlemeler i
+        WHERE i.kullanici_id=$1
+        GROUP BY i.tur, i.tmdb_id
+     ), sirali AS (
+       SELECT o.*, s.sira, count(*) OVER (PARTITION BY o.tur) AS toplam
+         FROM ozet o
+         LEFT JOIN kitaplik_sirasi s
+                ON s.kullanici_id=$1 AND s.liste = 'izlenen_' || o.tur
+               AND s.tur=o.tur AND s.tmdb_id=o.tmdb_id
+     ), numarali AS (
+       SELECT *,
+              row_number() OVER (
+                PARTITION BY tur
+                ORDER BY (CASE WHEN toplam > $2 THEN NULL ELSE sira END)
+                         ASC NULLS FIRST, son DESC, tmdb_id DESC) AS tur_sira
+         FROM sirali
+     )
+     SELECT tur, tmdb_id, sayi FROM numarali
+      WHERE tur_sira <= 200
+      ORDER BY tur_sira ASC, son DESC, tmdb_id DESC`,
+    [req.kullanici.id, IZLENEN_PENCERE],
   );
   res.json({
     ogeler: rows.map(({ tur, tmdb_id, sayi }) => ({ tur, tmdb_id, sayi })),
@@ -17459,19 +17489,36 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
       `SELECT EXISTS(SELECT 1 FROM takipler WHERE takip_eden_id=$1 AND takip_edilen_id=$2) AS var,
               EXISTS(SELECT 1 FROM engellemeler WHERE engelleyen_id=$1 AND engellenen_id=$2) AS engel`,
       [benId, id]),
-    // Tür başına ayrı limit: yoksa son izlenen filmler dizileri listeden atıyor
+    // Tür başına ayrı limit: yoksa son izlenen filmler dizileri listeden atıyor.
+    // ELLE SIRA BURADA DA UYGULANIR (1 Eyl 2026, türsüz /izlediklerim ile aynı
+    // hata/aynı çare): sahibinin listede sona taşıdığı yapım, ziyaretçinin
+    // gördüğü şeridin en önünde çıkıyordu. Sıralama anahtarı ve önek-güvenli
+    // kırpma /izlediklerim'in türsüz dalıyla birebir; pencere burada 60.
     izlenenlerGizli
       ? Promise.resolve({ rows: [] })
       : havuz.query(
-          `(SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
-            FROM izlemeler WHERE kullanici_id=$1 AND tur='tv' ${gizliFiltre('izlemeler')}
-            GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 60)
-           UNION ALL
-           (SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
-            FROM izlemeler WHERE kullanici_id=$1 AND tur='movie' ${gizliFiltre('izlemeler')}
-            GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 60)
-           ORDER BY son DESC, tmdb_id DESC`,
-          [id]),
+          `WITH ozet AS (
+             SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
+               FROM izlemeler WHERE kullanici_id=$1 ${gizliFiltre('izlemeler')}
+              GROUP BY tur, tmdb_id
+           ), sirali AS (
+             SELECT o.*, s.sira, count(*) OVER (PARTITION BY o.tur) AS toplam
+               FROM ozet o
+               LEFT JOIN kitaplik_sirasi s
+                      ON s.kullanici_id=$1 AND s.liste = 'izlenen_' || o.tur
+                     AND s.tur=o.tur AND s.tmdb_id=o.tmdb_id
+           ), numarali AS (
+             SELECT *,
+                    row_number() OVER (
+                      PARTITION BY tur
+                      ORDER BY (CASE WHEN toplam > $2 THEN NULL ELSE sira END)
+                               ASC NULLS FIRST, son DESC, tmdb_id DESC) AS tur_sira
+               FROM sirali
+           )
+           SELECT tur, tmdb_id, sayi FROM numarali
+            WHERE tur_sira <= 60
+            ORDER BY tur_sira ASC, son DESC, tmdb_id DESC`,
+          [id, IZLENEN_PENCERE]),
     rozetleriHesapla(id),
     // İZLEDİKLERİMİ GİZLE, EKRAN SÜRESİNİ DE GİZLER (14 Ağu, md. 21):
     // "tahmini 41.230 dakika" doğrudan izleme satırlarından türüyor, yani

@@ -137,12 +137,43 @@ test('IZLENEN_PENCERE hem pencere hem yazma tavanı (tek sabit)', () => {
   assert.match(put, /ham\.length > IZLENEN_PENCERE/, 'yazma tavanı ayrı sabit');
 });
 
-test('TÜRSÜZ /izlediklerim sırayı UYGULAMAZ (kırpılmış önizleme)', () => {
+test('TÜRSÜZ /izlediklerim elle sırayı ÖNEK-GÜVENLİ uygular (kapak kolajı)', () => {
+  // 1 Eyl 2026 canlı hatası: profildeki "İzlediklerim" kartının kapak kolajı
+  // bu beslemenin ilk 5'inden çiziliyor; sıra uygulanmayınca listede SONA
+  // taşınan yapım (en son izlenen o olduğu için) kapakta EN ÖNE çıkıyordu.
+  // Eski "kırpılmış pencereye sıra uygulamak sıralananı keser" tuzağı, tür
+  // başına TAM listeyle aynı anahtarla sıralayıp `row_number` ile ÜSTTEN
+  // kırparak çözüldü: önizleme tam listenin birebir ÖNEKİ, kesilen hep dip.
   const govde = ucGovdesi('/izlediklerim', 'get');
-  // Tür başına LIMIT 200'lük önizleme beslemesi; kırpılmış pencereye elle sıra
-  // uygulamak ya sıralananı keser ya da tam listeden farklı dizerdi.
-  const turSuz = govde.slice(govde.indexOf('UNION ALL') - 400);
-  assert.doesNotMatch(turSuz, /kitaplik_sirasi/);
+  const turSuz = govde.slice(govde.lastIndexOf('WITH ozet'));
+  assert.match(turSuz, /LEFT JOIN kitaplik_sirasi s/, 'türsüz dal sırayı hiç okumuyor');
+  assert.match(turSuz, /'izlenen_' \|\| o\.tur/, 'liste anahtarı türden türetilmiyor');
+  assert.match(turSuz, /row_number\(\) OVER \(\s*PARTITION BY tur/, 'kırpma tür başına ve üstten değil');
+  assert.match(turSuz, /count\(\*\) OVER \(PARTITION BY o\.tur\) AS toplam/);
+  assert.match(
+    turSuz,
+    /CASE WHEN toplam > \$2 THEN NULL ELSE sira END/,
+    'tavan aşımında ?tur= ucuyla aynı geri düşüş uygulanmıyor',
+  );
+  assert.match(turSuz, /tur_sira <= 200/, 'tür başına pencere kaybolmuş');
+  assert.match(turSuz, /ASC NULLS FIRST, son DESC/, 'düzenlenmemiş liste eski (en yeni önce) sırasını kaybediyor');
+  // Türler FERMUARLA örülür (dizi 1, film 1, dizi 2, ...). `etkin_sira NULLS
+  // FIRST` ile küresel birleştirme canlı veriyle çürüdü (1 Eyl 2026): yalnız
+  // dizilerini sıralamış kullanıcıda sırasız filmlerin HEPSİ öne doldu.
+  assert.match(turSuz, /ORDER BY tur_sira ASC, son DESC/, 'fermuar birleştirme kaybolmuş');
+});
+
+test('açık profildeki izlenenler şeridi de elle sırayı uygular', () => {
+  // Aynı hatanın ziyaretçi yüzü: sahibinin sona taşıdığı yapım, başkasının
+  // gördüğü profil şeridinin en önünde çıkıyordu. Sorgu türsüz
+  // /izlediklerim'le aynı kalıp; pencere 60.
+  const govde = ucGovdesi('/profil/:kullaniciAdi', 'get');
+  const serit = govde.slice(govde.indexOf('WITH ozet'));
+  assert.match(serit, /LEFT JOIN kitaplik_sirasi s/, 'profil şeridi sırayı okumuyor');
+  assert.match(serit, /'izlenen_' \|\| o\.tur/);
+  assert.match(serit, /CASE WHEN toplam > \$2 THEN NULL ELSE sira END/);
+  assert.match(serit, /tur_sira <= 60/, 'tür başına 60 penceresi kaybolmuş');
+  assert.match(serit, /ORDER BY tur_sira ASC, son DESC/, 'fermuar birleştirme kaybolmuş');
 });
 
 // ---------------------------------------------------------------------------

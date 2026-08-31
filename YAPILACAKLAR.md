@@ -1,5 +1,22 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-31 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-01 — 🚀 Profil kapağı elle sırayı yansıtıyor
+
+- 🚀 **Listede sona taşınan yapım profil kapağında öne çıkıyordu** (istek:
+  "listeyi açıp geriye aldığım diziler filmler profilimdeki listedeki kapakta
+  gözüküyor ama oysa gerideler"): türsüz `/izlediklerim` (profildeki
+  "İzlediklerim" kartının kapak kolajı buradan) ve açık profil `izlenenler`
+  şeridi elle sırayı hiç okumuyordu — en son izlenen önce dizince sona
+  taşınan yapım (en son izlenen o olduğundan) kapağın başına geliyordu.
+  Artık iki uç da tür başına TAM listeyle aynı anahtarla sıralayıp
+  `row_number` ile ÜSTTEN kırpar (önizleme = tam listenin öneki; eski "LIMIT
+  sıralananı keser" tuzağı oluşamaz) ve türleri FERMUARLA örer (dizi 1,
+  film 1, ...) — `NULLS FIRST` küresel birleştirme canlı veriyle çürüdü:
+  yalnız dizilerini sıralamış kullanıcıda sırasız filmlerin hepsi öne
+  doluyordu. Test: kitaplik_sirasi.test.js (türsüz + açık profil); ayrıca
+  dm_sessiz'in bayat bıraktığı mesaj_istek_karari testi onarıldı. Canlıda
+  alcelik profiliyle doğrulandı (sona taşınan tv/3796 kapaktan düştü).
 
 ## 2026-08-31 (3. tur) — 🚀 Altı istek: kitaplık paylaşımı, Reels çeviri +
 ## "devamı" modalı, sohbet detayı (tema/arama/sessiz/medya), yazarken ikonlar

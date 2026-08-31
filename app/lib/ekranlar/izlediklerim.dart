@@ -12,10 +12,10 @@ import 'siralanabilir_izgara.dart';
 ///
 /// SIRALAMA (21 Ağu 2026): "İzlediğim Diziler" ve "İzlediğim Filmler" de elle
 /// sıralanabilir altı listeden ikisi — afişi basılı tutup sürükle.
-/// TÜRSÜZ çağrıda (tümü bir arada) sıralama YOK: sunucu orada tür başına 200
-/// ile kırpıyor, kırpılmış bir pencereye elle sıra uygulamak ya sıralananı
-/// keser ya da listeyi tam listeden farklı dizerdi (bkz. server.js
-/// `/izlediklerim`).
+/// TÜRSÜZ görünümde (tümü bir arada) SÜRÜKLEME yok ama sunucu elle sırayı
+/// 1 Eyl 2026'dan beri BURADA DA uygular (tür başına önek-güvenli kırpma):
+/// profildeki kapak kolajı bu beslemeden çizildiği için sona taşınan yapım
+/// kapakta öne çıkıyordu (bkz. server.js `/izlediklerim`).
 class IzlenenlerEkrani extends StatefulWidget {
   final String? tur;
   const IzlenenlerEkrani({super.key, this.tur});

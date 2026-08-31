@@ -132,8 +132,10 @@ test('POST /mesajlar: reddedilen gönderici bildirim üretmez, cevap reddi kald�
   assert.match(govde, /karar='red'/, 'red süzgeci yok');
   assert.match(govde, /\[aliciId, req\.kullanici\.id\]/,
     'süzgeç yanlış yön: ALICININ kararı okunmalı');
-  assert.match(govde, /if \(!red\.rows\.length\) \{\s*\n\s*bildirimEkle/,
-    'bildirimEkle red kontrolünün arkasında değil');
+  // dm_sessiz (31 Ağu 2026) aynı kapıya ikinci koşul ekledi: sessize alınan
+  // gönderici de zil/FCM üretmez. Red kontrolü hâlâ bildirimin ÖNÜNDE olmalı.
+  assert.match(govde, /if \(!red\.rows\.length && !sessiz\.rows\.length\) \{\s*\n\s*bildirimEkle/,
+    'bildirimEkle red/sessiz kontrolünün arkasında değil');
   // Cevap vermek kabuldür: gönderenin kendi red kararı kabule yükselir.
   assert.match(govde, /SET karar='kabul'/, 'cevap reddi kabule yükseltmiyor');
   assert.match(govde, /WHERE kullanici_id=\$1 AND partner_id=\$2 AND karar='red'/);
