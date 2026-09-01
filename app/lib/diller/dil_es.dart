@@ -289,6 +289,8 @@ const Map<String, String> cevirilerEs = {
   'Şifreni gir': 'Ingresa tu contraseña',
   'Hesabımı kalıcı sil': 'Eliminar mi cuenta para siempre',
   'Sesli mesaj': 'Mensaje de voz',
+  'Görüldü': 'Visto',
+  'Gönderi': 'Publicación',
   'Ses gönderilemedi': 'No se pudo enviar el audio',
   'Kaydediliyor…': 'Grabando…',
   'Ses oynatılamadı': 'No se pudo reproducir el audio',

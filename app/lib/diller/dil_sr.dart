@@ -287,6 +287,8 @@ const Map<String, String> cevirilerSr = {
   'Şifreni gir': 'Унеси лозинку',
   'Hesabımı kalıcı sil': 'Трајно обриши налог',
   'Sesli mesaj': 'Гласовна порука',
+  'Görüldü': 'Виђено',
+  'Gönderi': 'Објава',
   'Ses gönderilemedi': 'Гласовна порука није послата',
   'Kaydediliyor…': 'Снимање…',
   'Ses oynatılamadı': 'Није могуће репродуковати аудио',

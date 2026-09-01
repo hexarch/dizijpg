@@ -289,6 +289,8 @@ const Map<String, String> cevirilerFil = {
   'Şifreni gir': 'Ilagay ang password mo',
   'Hesabımı kalıcı sil': 'Permanenteng burahin ang account ko',
   'Sesli mesaj': 'Voice message',
+  'Görüldü': 'Nakita',
+  'Gönderi': 'Post',
   'Ses gönderilemedi': 'Hindi naipadala ang voice message',
   'Kaydediliyor…': 'Nagre-record…',
   'Ses oynatılamadı': 'Hindi ma-play ang audio',
@@ -1463,5 +1465,6 @@ const Map<String, String> cevirilerFil = {
   'İnternet bağlantısı yok': 'Walang koneksyon sa internet',
   'Sunucu yanıt vermedi': 'Hindi tumugon ang server',
   'Güvenli bağlantı kurulamadı': 'Hindi makapagtatag ng ligtas na koneksyon',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'Hindi inaasahang tugon mula sa server',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'Hindi inaasahang tugon mula sa server',
 };

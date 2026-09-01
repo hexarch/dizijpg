@@ -288,6 +288,8 @@ const Map<String, String> cevirilerFi = {
   'Şifreni gir': 'Anna salasanasi',
   'Hesabımı kalıcı sil': 'Poista tilini pysyvästi',
   'Sesli mesaj': 'Ääniviesti',
+  'Görüldü': 'Nähty',
+  'Gönderi': 'Julkaisu',
   'Ses gönderilemedi': 'Ääniviestiä ei voitu lähettää',
   'Kaydediliyor…': 'Tallennetaan…',
   'Ses oynatılamadı': 'Ääniviestiä ei voitu toistaa',
@@ -1443,5 +1445,6 @@ const Map<String, String> cevirilerFi = {
   'İnternet bağlantısı yok': 'Ei internetyhteyttä',
   'Sunucu yanıt vermedi': 'Palvelin ei vastannut',
   'Güvenli bağlantı kurulamadı': 'Suojattua yhteyttä ei voitu muodostaa',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'Palvelimelta tuli odottamaton vastaus',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'Palvelimelta tuli odottamaton vastaus',
 };

@@ -289,6 +289,8 @@ const Map<String, String> cevirilerTa = {
   'Şifreni gir': 'உன் கடவுச்சொல்லை உள்ளிடு',
   'Hesabımı kalıcı sil': 'என் கணக்கை நிரந்தரமாக நீக்கு',
   'Sesli mesaj': 'குரல் செய்தி',
+  'Görüldü': 'பார்த்தார்',
+  'Gönderi': 'இடுகை',
   'Ses gönderilemedi': 'குரல் செய்தியை அனுப்ப முடியவில்லை',
   'Kaydediliyor…': 'பதிவாகிறது…',
   'Ses oynatılamadı': 'ஆடியோவை இயக்க முடியவில்லை',
@@ -1459,5 +1461,6 @@ const Map<String, String> cevirilerTa = {
   'İnternet bağlantısı yok': 'இணைய இணைப்பு இல்லை',
   'Sunucu yanıt vermedi': 'சேவையகம் பதிலளிக்கவில்லை',
   'Güvenli bağlantı kurulamadı': 'பாதுகாப்பான இணைப்பை ஏற்படுத்த முடியவில்லை',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'சேவையகத்திலிருந்து எதிர்பாராத பதில் வந்தது',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'சேவையகத்திலிருந்து எதிர்பாராத பதில் வந்தது',
 };

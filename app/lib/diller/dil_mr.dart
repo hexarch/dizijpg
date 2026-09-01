@@ -288,6 +288,8 @@ const Map<String, String> cevirilerMr = {
   'Şifreni gir': 'तुझा पासवर्ड टाक',
   'Hesabımı kalıcı sil': 'माझे खाते कायमचे हटवा',
   'Sesli mesaj': 'व्हॉइस मेसेज',
+  'Görüldü': 'पाहिले',
+  'Gönderi': 'पोस्ट',
   'Ses gönderilemedi': 'व्हॉइस मेसेज पाठवता आला नाही',
   'Kaydediliyor…': 'रेकॉर्ड होत आहे…',
   'Ses oynatılamadı': 'ऑडिओ प्ले होऊ शकला नाही',

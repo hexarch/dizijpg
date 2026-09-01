@@ -288,6 +288,8 @@ const Map<String, String> cevirilerUk = {
   'Şifreni gir': 'Введи пароль',
   'Hesabımı kalıcı sil': 'Видалити акаунт назавжди',
   'Sesli mesaj': 'Голосове повідомлення',
+  'Görüldü': 'Переглянуто',
+  'Gönderi': 'Допис',
   'Ses gönderilemedi': 'Не вдалося надіслати голосове повідомлення',
   'Kaydediliyor…': 'Запис…',
   'Ses oynatılamadı': 'Не вдалося відтворити аудіо',

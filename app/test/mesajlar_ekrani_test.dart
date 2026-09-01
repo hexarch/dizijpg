@@ -256,7 +256,10 @@ void main() {
     expect(dekor.border, Border.all(color: DiziRenkler.siyah, width: 2));
   });
 
-  testWidgets('sağ üstte "Gelen mesaj istekleri" girişi var ve 44 dp', (
+  // 1 Eyl 2026 isteği: *"gelen istekler yazısı olmasın, ikon olarak onu en
+  // sağa al"*. 5 Ağu'daki "yazısı olsun" isteğinin yerini alır; yazı yalnız
+  // tooltip/Semantics'te kalır (ikon-only düğme ekran okuyucuda dilsiz olmaz).
+  testWidgets('sağ üstte istekler girişi YALNIZ İKON, 44 dp ve en sağda', (
     tester,
   ) async {
     _sunucu(sohbetler: [_sohbet('ayse')], istekler: [_sohbet('yabanci')]);
@@ -264,14 +267,36 @@ void main() {
 
     final dugme = find.byType(MesajIstekleriDugmesi);
     expect(dugme, findsOneWidget);
+    // YAZI ÇİZİLMEZ
     expect(
       find.descendant(of: dugme, matching: find.text('Gelen mesaj istekleri')),
+      findsNothing,
+    );
+    // ...ama etiket kaybolmadı: tooltip + Semantics aynı metni taşır.
+    expect(
+      find.descendant(of: dugme, matching: find.byType(Tooltip)),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<Tooltip>(
+            find.descendant(of: dugme, matching: find.byType(Tooltip)),
+          )
+          .message,
+      'Gelen mesaj istekleri',
+    );
+    expect(
+      find.descendant(
+        of: dugme,
+        matching: find.byIcon(Icons.mark_email_unread_outlined),
+      ),
       findsOneWidget,
     );
     final r = tester.getRect(dugme);
     expect(r.height, greaterThanOrEqualTo(44.0));
-    // SAĞ ÜST: başlığın sağında ve ekranın sağ yarısında
-    expect(r.center.dx, greaterThan(390 / 2));
+    // EN SAĞ: başlıkta kendinden sonra başka eylem yok, sağ kenara 12 dp'den
+    // yakın oturur (AppBar'ın kendi kenar payı).
+    expect(390 - r.right, lessThan(12.0));
     expect(r.center.dy, lessThan(56.0 + 8));
   });
 
@@ -311,12 +336,17 @@ void main() {
     );
     await _kur(tester);
 
+    // Rozet artık [Badge] (ikonun köşesinde), ayrı bir [OkunmamisRozeti]
+    // pulu değil: yazı gidince pulu yan yana koyacak yer kalmadı.
     final rozet = find.descendant(
       of: find.byType(MesajIstekleriDugmesi),
-      matching: find.byType(OkunmamisRozeti),
+      matching: find.byType(Badge),
     );
     expect(rozet, findsOneWidget);
-    expect(tester.widget<OkunmamisRozeti>(rozet).adet, 2);
+    expect(
+      find.descendant(of: rozet, matching: find.text('2')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('istek yokken rozet YOK', (tester) async {
@@ -325,7 +355,7 @@ void main() {
     expect(
       find.descendant(
         of: find.byType(MesajIstekleriDugmesi),
-        matching: find.byType(OkunmamisRozeti),
+        matching: find.byType(Badge),
       ),
       findsNothing,
     );
@@ -404,7 +434,7 @@ void main() {
     }
   });
 
-  testWidgets('360 dp: uzun çeviride istekler girişi başlığı taşırmaz', (
+  testWidgets('360 dp: ikon girişi başlığı taşırmaz (yazı yer kaplamaz)', (
     tester,
   ) async {
     _sunucu(sohbetler: [_sohbet('ayse')]);
@@ -413,10 +443,8 @@ void main() {
     expect(tester.takeException(), isNull);
     final r = tester.getRect(find.byType(MesajIstekleriDugmesi));
     expect(r.right, lessThanOrEqualTo(360.0));
-    expect(r.width, lessThanOrEqualTo(168.0 + 4));
-    // İki satıra sarabilir: en uzun çeviri (Almanca) kırpılmadan sığsın.
-    final yazi = tester.widget<Text>(find.text('Gelen mesaj istekleri'));
-    expect(yazi.maxLines, 2);
+    // Yazılı hâli 168 dp'ye kadar çıkıyordu; ikon 44 + 4 dp kenar payı.
+    expect(r.width, lessThanOrEqualTo(48.0));
   });
 
   testWidgets('masaüstü: sohbet satırları 720 kolonunda ortalanır', (

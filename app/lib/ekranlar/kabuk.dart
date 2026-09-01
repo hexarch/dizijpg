@@ -111,6 +111,19 @@ class SekmeTekrar {
 bool mesajYuzeyiMi(String yol) =>
     yol.startsWith('/sohbet') || yol.startsWith('/mesaj-istekleri');
 
+/// TEK BİR KONUŞMANIN ekranı mı (liste değil)?
+///
+/// KULLANICI İSTEĞİ (1 Eyl 2026): *"sohbete girince alttaki navigasyon
+/// barları kaybolmalı"*. Sohbet, klavye + giriş kutusu + mesaj listesiyle
+/// zaten dolu bir ekran; altına bir de 52 dp'lik gezinme çubuğu binince
+/// yazarken görünen mesaj sayısı iki satıra düşüyordu. WhatsApp/Telegram/
+/// Instagram üçü de konuşmanın içinde sekme çubuğunu gizler.
+///
+/// KAPSAM DAR: yalnız `/sohbet/<ad>` ve altı (`/detay`). `/sohbetler`
+/// LİSTESİ çubuğu KORUR — orası bir sekme yüzeyi, kullanıcı listeden başka
+/// bir sekmeye tek dokunuşla geçebilmeli.
+bool sohbetIcindeMi(String yol) => yol.startsWith('/sohbet/');
+
 /// Çubukta HANGİ hedefin sarı yanacağı — DAL ÜYELİĞİNDEN AYRI bir sorudur.
 ///
 /// NEDEN AYRI (29 Ağu 2026, kullanıcı: "aşağıdaki 5'li navigasyonda mesajlar
@@ -621,65 +634,84 @@ class _KabukEkraniState extends State<KabukEkrani> {
       // çizilmiyordu — çubuk eski hedefte kalıyordu. (29 Ağu 2026: ilk
       // denemede tam bu yüzden sarı yanmadı, emülatörde görüldü.)
       // `routerDelegate` bir `ChangeNotifier`; push/pop'ta haber verir.
-      bottomNavigationBar: kabukCubugu(
-        context,
-        // Dal → hedef çevirisi ŞART: Keşfet dalındayken (3) çeviri olmadan
-        // çubukta Mesajlar seçili görünürdü (bkz. [hedefIndeksi]).
-        // Üstüne mesaj yüzeyi kontrolü (bkz. [kabukSecili]).
-        secili: _mesajda ? mesajIndeksi : hedefIndeksi(shell.currentIndex),
-        onSec: (i) async {
-          // Mesajlar bir dal DEĞİL: `push` ile üste açılır (üst bardaki DM
-          // düğmeleriyle aynı davranış), dönünce rozet tazelenir. `go`
-          // kullansaydık kullanıcı geri tuşuyla bulunduğu sayfaya dönemezdi.
-          if (i == mesajIndeksi) {
-            setState(() => _mesajda = true);
-            try {
-              await context.push('/sohbetler');
-            } finally {
-              // `finally`: geri tuşuyla çıkılsa da hata atsa da bayrak
-              // MUTLAKA iner; yoksa çubuk Mesajlar'da takılı kalırdı.
-              if (mounted) setState(() => _mesajda = false);
-            }
-            await SohbetOlaylari.okunmamisYenile();
-            return;
+      bottomNavigationBar: ListenableBuilder(
+        // ROUTER GERÇEKTEN DİNLENİR. Bir konuşma (`/sohbet/<ad>`) dalın
+        // İÇİNE `push` edildiği için `shell.currentIndex` değişmiyor ve kabuk
+        // kendiliğinden yeniden çizilmiyor — yolu `GoRouter.maybeOf` ile bir
+        // kez okumak (abone olmadan) çubuğu ESKİ hâlinde bırakırdı. Bu
+        // tuzağa 29 Ağu'da `_mesajda` bayrağı eklenirken bir kez düşülmüştü;
+        // `routerDelegate` bir `ChangeNotifier` ve push/pop'ta haber verir.
+        listenable: GoRouter.of(context).routerDelegate,
+        builder: (context, _) {
+          // Konuşmanın içinde çubuk HİÇ ÇİZİLMEZ (bkz. [sohbetIcindeMi]).
+          // Yığının EN ÜSTÜ okunur: `push` `currentConfiguration.uri`yi
+          // değiştirmez (bkz. [sohbetUstKonum] başlığı).
+          if (sohbetIcindeMi(sohbetUstKonum(GoRouter.maybeOf(context)) ?? '')) {
+            return const SizedBox.shrink();
           }
-          // MESAJLAR AÇIKKEN BAŞKA SEKMEYE BASILDI (29 Ağu 2026 regresyonu,
-          // kullanıcı bildirdi: "mesajlara tıklayınca sarı oluyor ama sonra
-          // diğer tuşlara tıklayınca onlar sarı olmuyor").
-          //
-          // KÖK: `/sohbetler` üste `push` edilmiş ve yukarıdaki `await` hâlâ
-          // bekliyor. `goBranch` alttaki dalı değiştirse de mesaj sayfası
-          // ÜSTTE kalıyor, `await` çözülmediği için `finally` çalışmıyor ve
-          // `_mesajda` true kalıyordu — çubuk sonsuza kadar Mesajlar'ı
-          // boyuyordu.
-          //
-          // ÇÖZÜM: önce mesaj sayfasını KAPAT. `pop` yukarıdaki `await`i
-          // çözer, `finally` bayrağı indirir; sonra dal değişir. Bayrağı
-          // burada elle indirmiyoruz — tek kaynak `finally` olsun, yoksa iki
-          // yerden yönetilen bir durum doğar.
-          if (_mesajda && context.canPop()) context.pop();
-          if (i == profilHedefi) profilYenileTetik.value++;
-          // AYNI DAL MI — `goBranch`ten ÖNCE ölçülür (sonra `currentIndex`
-          // zaten değişmiş olurdu). Keşfet dalındayken (3) Akış'a (2) basmak
-          // BİR DAL DEĞİŞİMİDİR: kullanıcı yeni bir ekran istedi, "yenile"
-          // istemedi. Tetik yalnız gerçekten aynı dalda kalınca atar.
-          final ayniDal = shell.currentIndex == i;
-          shell.goBranch(
-            i,
-            // Aynı hedefe tekrar basınca köke dön. Karşılaştırma ÇEVRİLMİŞ
-            // hedefle yapılır: Keşfet dalındayken (3) çubukta Akış (2) seçili
-            // görünüyor, yani kullanıcı için bu "seçili sekmeye tekrar
-            // basmak"tır ve karşılığı Akış'ın kökü olmalıdır. Dal indeksiyle
-            // karşılaştırsaydık akış dalında en son ne açıksa (ör. bildirimler)
-            // o gelirdi — kullanıcı Akış istemişken.
-            initialLocation: i == hedefIndeksi(shell.currentIndex),
-          );
-          // Seçili sekmeye TEKRAR basıldı → ekran başa dönüp yenilenir
-          // (bkz. [SekmeTekrar]). `goBranch`ten SONRA: dal kökü açıldıktan
-          // sonra tetiklenmezse ekran daha kurulmadan haber verilirdi.
-          if (ayniDal) SekmeTekrar.bas(i);
+          return _cubuk(context);
         },
       ),
     );
   }
+
+  Widget _cubuk(BuildContext context) => kabukCubugu(
+    context,
+    // Dal → hedef çevirisi ŞART: Keşfet dalındayken (3) çeviri olmadan
+    // çubukta Mesajlar seçili görünürdü (bkz. [hedefIndeksi]).
+    // Üstüne mesaj yüzeyi kontrolü (bkz. [kabukSecili]).
+    secili: _mesajda ? mesajIndeksi : hedefIndeksi(shell.currentIndex),
+    onSec: (i) async {
+      // Mesajlar bir dal DEĞİL: `push` ile üste açılır (üst bardaki DM
+      // düğmeleriyle aynı davranış), dönünce rozet tazelenir. `go`
+      // kullansaydık kullanıcı geri tuşuyla bulunduğu sayfaya dönemezdi.
+      if (i == mesajIndeksi) {
+        setState(() => _mesajda = true);
+        try {
+          await context.push('/sohbetler');
+        } finally {
+          // `finally`: geri tuşuyla çıkılsa da hata atsa da bayrak
+          // MUTLAKA iner; yoksa çubuk Mesajlar'da takılı kalırdı.
+          if (mounted) setState(() => _mesajda = false);
+        }
+        await SohbetOlaylari.okunmamisYenile();
+        return;
+      }
+      // MESAJLAR AÇIKKEN BAŞKA SEKMEYE BASILDI (29 Ağu 2026 regresyonu,
+      // kullanıcı bildirdi: "mesajlara tıklayınca sarı oluyor ama sonra
+      // diğer tuşlara tıklayınca onlar sarı olmuyor").
+      //
+      // KÖK: `/sohbetler` üste `push` edilmiş ve yukarıdaki `await` hâlâ
+      // bekliyor. `goBranch` alttaki dalı değiştirse de mesaj sayfası
+      // ÜSTTE kalıyor, `await` çözülmediği için `finally` çalışmıyor ve
+      // `_mesajda` true kalıyordu — çubuk sonsuza kadar Mesajlar'ı
+      // boyuyordu.
+      //
+      // ÇÖZÜM: önce mesaj sayfasını KAPAT. `pop` yukarıdaki `await`i
+      // çözer, `finally` bayrağı indirir; sonra dal değişir. Bayrağı
+      // burada elle indirmiyoruz — tek kaynak `finally` olsun, yoksa iki
+      // yerden yönetilen bir durum doğar.
+      if (_mesajda && context.canPop()) context.pop();
+      if (i == profilHedefi) profilYenileTetik.value++;
+      // AYNI DAL MI — `goBranch`ten ÖNCE ölçülür (sonra `currentIndex`
+      // zaten değişmiş olurdu). Keşfet dalındayken (3) Akış'a (2) basmak
+      // BİR DAL DEĞİŞİMİDİR: kullanıcı yeni bir ekran istedi, "yenile"
+      // istemedi. Tetik yalnız gerçekten aynı dalda kalınca atar.
+      final ayniDal = shell.currentIndex == i;
+      shell.goBranch(
+        i,
+        // Aynı hedefe tekrar basınca köke dön. Karşılaştırma ÇEVRİLMİŞ
+        // hedefle yapılır: Keşfet dalındayken (3) çubukta Akış (2) seçili
+        // görünüyor, yani kullanıcı için bu "seçili sekmeye tekrar
+        // basmak"tır ve karşılığı Akış'ın kökü olmalıdır. Dal indeksiyle
+        // karşılaştırsaydık akış dalında en son ne açıksa (ör. bildirimler)
+        // o gelirdi — kullanıcı Akış istemişken.
+        initialLocation: i == hedefIndeksi(shell.currentIndex),
+      );
+      // Seçili sekmeye TEKRAR basıldı → ekran başa dönüp yenilenir
+      // (bkz. [SekmeTekrar]). `goBranch`ten SONRA: dal kökü açıldıktan
+      // sonra tetiklenmezse ekran daha kurulmadan haber verilirdi.
+      if (ayniDal) SekmeTekrar.bas(i);
+    },
+  );
 }

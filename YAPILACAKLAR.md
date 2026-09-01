@@ -1,6 +1,61 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-01 — 🚀 Sohbet: paylaşılan gönderi kartı + başlık + Görüldü
+
+- 🚀 **CANLIDA (web + backend).** `server.js` kopyalandı, `dizijpg-api`
+  yeniden derlenip ayağa kalktı (`/api/saglik` → ok); web derlemesi
+  `main.a67d6353f2c7.dart.js` (+ `main.dart.js_1.13dd7be011ac.part.js`),
+  SW sökücü yazıldı, eski hash'liler silindi, brotli 106 dosya (%71).
+  Canlı doğrulama: gerçek paylaşımlar üzerinde `medya_oran` (9:16 → 0.5625,
+  16:9 → 1.7778 — eskiden hepsi kareye kırpılıyordu) ve video kapakları
+  (`/api/medya/<video>.mp4.jpg` → image/jpeg 200) çalışıyor. Mesaj 266 tam
+  da bildirilen boş satır: metin/medya/içerik yok, yalnız `yorum_id=5543`.
+- 📦 **APK: `cikti/dizijpg-1.107.0-173.apk`** (77 MB) — versionCode 173,
+  versionName 1.107.0, paket com.dizijpg.dizijpg, minSdk 24 / targetSdk 36,
+  gerçek yükleme anahtarıyla imzalı (SHA1 2E:38:AB:…:AB:58).
+
+
+Kullanıcının üç isteği (hepsi 1 Eyl), tek turda:
+
+- ✅ **Paylaşılan gönderi artık ÇIPLAK önizleme.** ("akışta gezerken sohbette
+  gönderdiği gönderiler güzel gözükmüyor... arka planı olmasın, içeriğin
+  boyutunda olsun, videoysa kapak resmi, paylaşanın adı içeride sol altta
+  beyaz.") Üç kök düzeltildi: (1) `black18` kart zemini + yazı şeridi KALKTI —
+  yalnız gönderiden ibaret mesajda baloncuk hiç çizilmiyor; (2) kapak
+  `AspectRatio(1)` ile KARE'ye kırpılıyordu, artık gönderinin kendi oranında
+  (sunucu `/sohbet` yanıtına `medya_oran` ekledi, `medya_olculer`'den — /akis
+  ile aynı kaynak), 220×300 dp kutusuna oran bozulmadan sığdırılıyor;
+  (3) video için siyah kutu + dev oynat ikonu yerine `<dosya>.jpg` kapak
+  karesi (backend/video_kare.js zaten üretiyor; 486/486 videoda dosya MEVCUT,
+  sunucuda sayıldı). Ad kapağın içinde, sol altta, beyaz — okunurluk için alt
+  kenarda siyah geçiş perdesi. Tepki rozetleri kapağın ALTINDA.
+- ✅ **Sohbette alt gezinme çubuğu gizleniyor** ("sohbete girince alttaki
+  navigasyon barları kaybolmalı"). Yalnız `/sohbet/<ad>` ve altı; `/sohbetler`
+  LİSTESİ çubuğu koruyor (sekme yüzeyi). Kabuk artık `routerDelegate`'i
+  GERÇEKTEN dinliyor — `push` `uri`yi değiştirmediği için abone olmadan
+  okumak çalışmazdı (29 Ağu'daki bilinen tuzak).
+- ✅ **Sohbet başlığı 64 → 44 dp** ("kullanıcı adı kısmını %35 daha küçük yap,
+  sohbete alan açılsın"). %35 tam olarak 41,6 dp ederdi ve geri okunun dokunma
+  hedefini 44 dp altına düşürürdü; alt çubukta 3 Ağu'daki aynı istekte de
+  aynı yerde durulmuştu. Yazılar 17→15 ve 12→11 px.
+- ✅ **Okundu tikleri gitti, "Görüldü" yazısı geldi** ("görüldü işaretleri de
+  olmasın, mesaj görüldüyse mesajın altında görüldü yazsın"). Yalnız son
+  okunan kendi mesajımın altında (Instagram DM geleneği) — her balona basmak
+  aynı kelimeyi onlarca kez tekrarlamak olurdu.
+- ✅ **"Gelen mesaj istekleri" yazısı → ikon, en sağda** ("gelen istekler
+  yazısı olmasın, ikon olarak onu en sağa al"). 168 dp'lik yazı gitti; metin
+  tooltip + Semantics'te duruyor, rozet ikonun köşesinde `Badge`.
+- ✅ **Sohbet listesinde gönderi önizlemesi BOŞ kalmıyor** ("bir postu birisine
+  gönderince o mesajlar kısmında boş gözüküyor"). Kök: `/sohbetler` sorgusu
+  `m.yorum_id` seçmiyordu ve gönderi mesajının metni de medyası da yok. Alan
+  eklendi, istemci "Gönderi" etiketi basıyor. Alıntı kutusu için de
+  `yanit_yorum_id` eklendi (aynı kök).
+- Kanıt: `test/sohbet_gonderi_karti_test.dart` (19 test) +
+  `test/kabuk_sohbet_cubugu_test.dart` (4 test); tüm paket **2402 geçti**,
+  backend `npm test` **2154 geçti**. Yeni metinler ('Görüldü', 'Gönderi')
+  45 dile çevrildi (`scratchpad/sohbet_goruldu_ceviri.py`).
+
 ## 2026-09-01 — 🚀 171 (1.106.0) ÜRETİME İNCELEMEYE GÖNDERİLDİ
 
 - 🚀 **Play üretim kanalına 171 (1.106.0) gönderildi.** Öncesinde doğrulandı:

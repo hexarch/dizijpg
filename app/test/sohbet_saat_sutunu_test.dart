@@ -426,8 +426,12 @@ void main() {
     expect(gelen.center.dy, lessThanOrEqualTo(gelenBalon.bottom + 12));
     expect(giden.center.dy, greaterThanOrEqualTo(gidenBalon.top - 12));
     expect(giden.center.dy, lessThanOrEqualTo(gidenBalon.bottom + 12));
-    // Okundu tiki balonda KALDI (saat gitti, tik gitmedi).
-    expect(find.byIcon(Icons.done_all), findsOneWidget);
+    // TİK YOK, YAZI VAR (1 Eyl 2026: "görüldü işaretleri de olmasın, mesaj
+    // görüldüyse mesajın altında görüldü yazsın"). Saat sütunu bunu
+    // etkilemez: iki gösterge ayrı satırlarda yaşar.
+    expect(find.byIcon(Icons.done_all), findsNothing);
+    expect(find.byIcon(Icons.done), findsNothing);
+    expect(find.text('Görüldü'), findsOneWidget);
 
     await jest.up();
     await tester.pumpAndSettle();

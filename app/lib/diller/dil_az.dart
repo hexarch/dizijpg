@@ -287,6 +287,8 @@ const Map<String, String> cevirilerAz = {
   'Şifreni gir': 'Şifrəni daxil et',
   'Hesabımı kalıcı sil': 'Hesabımı həmişəlik sil',
   'Sesli mesaj': 'Səsli mesaj',
+  'Görüldü': 'Görüldü',
+  'Gönderi': 'Paylaşım',
   'Ses gönderilemedi': 'Səsli mesaj göndərilə bilmədi',
   'Kaydediliyor…': 'Yazılır…',
   'Ses oynatılamadı': 'Səs oxudula bilmədi',

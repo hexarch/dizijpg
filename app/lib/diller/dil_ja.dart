@@ -283,6 +283,8 @@ const Map<String, String> cevirilerJa = {
   'Şifreni gir': 'パスワードを入力',
   'Hesabımı kalıcı sil': 'アカウントを完全に削除',
   'Sesli mesaj': 'ボイスメッセージ',
+  'Görüldü': '既読',
+  'Gönderi': '投稿',
   'Ses gönderilemedi': 'ボイスメッセージを送信できませんでした',
   'Kaydediliyor…': '録音中…',
   'Ses oynatılamadı': '音声を再生できませんでした',

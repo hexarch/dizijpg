@@ -289,6 +289,8 @@ const Map<String, String> cevirilerBn = {
   'Şifreni gir': 'তোমার পাসওয়ার্ড দাও',
   'Hesabımı kalıcı sil': 'আমার অ্যাকাউন্ট স্থায়ীভাবে মুছুন',
   'Sesli mesaj': 'ভয়েস মেসেজ',
+  'Görüldü': 'দেখা হয়েছে',
+  'Gönderi': 'পোস্ট',
   'Ses gönderilemedi': 'ভয়েস মেসেজ পাঠানো যায়নি',
   'Kaydediliyor…': 'রেকর্ড হচ্ছে…',
   'Ses oynatılamadı': 'অডিও চালানো যায়নি',
@@ -1427,5 +1429,6 @@ const Map<String, String> cevirilerBn = {
   'İnternet bağlantısı yok': 'ইন্টারনেট সংযোগ নেই',
   'Sunucu yanıt vermedi': 'সার্ভার সাড়া দেয়নি',
   'Güvenli bağlantı kurulamadı': 'নিরাপদ সংযোগ স্থাপন করা যায়নি',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'সার্ভার থেকে অপ্রত্যাশিত সাড়া এসেছে',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'সার্ভার থেকে অপ্রত্যাশিত সাড়া এসেছে',
 };

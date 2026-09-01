@@ -287,6 +287,8 @@ const Map<String, String> cevirilerPa = {
   'Şifreni gir': 'ਆਪਣਾ ਪਾਸਵਰਡ ਭਰੋ',
   'Hesabımı kalıcı sil': 'ਮੇਰਾ ਖਾਤਾ ਪੱਕੇ ਤੌਰ ਤੇ ਮਿਟਾਓ',
   'Sesli mesaj': 'ਵੌਇਸ ਸੁਨੇਹਾ',
+  'Görüldü': 'ਵੇਖਿਆ',
+  'Gönderi': 'ਪੋਸਟ',
   'Ses gönderilemedi': 'ਵੌਇਸ ਸੁਨੇਹਾ ਨਹੀਂ ਭੇਜਿਆ ਜਾ ਸਕਿਆ',
   'Kaydediliyor…': 'ਰਿਕਾਰਡ ਹੋ ਰਿਹਾ ਹੈ…',
   'Ses oynatılamadı': 'ਆਡੀਓ ਚਲਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ',

@@ -289,6 +289,8 @@ const Map<String, String> cevirilerSv = {
   'Şifreni gir': 'Ange ditt lösenord',
   'Hesabımı kalıcı sil': 'Radera mitt konto permanent',
   'Sesli mesaj': 'Röstmeddelande',
+  'Görüldü': 'Sedd',
+  'Gönderi': 'Inlägg',
   'Ses gönderilemedi': 'Röstmeddelandet kunde inte skickas',
   'Kaydediliyor…': 'Spelar in…',
   'Ses oynatılamadı': 'Röstmeddelandet kunde inte spelas upp',
@@ -1447,6 +1449,7 @@ const Map<String, String> cevirilerSv = {
   'Orijinal metin gösteriliyor': 'Visar originaltexten',
   'İnternet bağlantısı yok': 'Ingen internetanslutning',
   'Sunucu yanıt vermedi': 'Servern svarade inte',
-  'Güvenli bağlantı kurulamadı': 'Det gick inte att upprätta en säker anslutning',
+  'Güvenli bağlantı kurulamadı':
+      'Det gick inte att upprätta en säker anslutning',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Oväntat svar från servern',
 };

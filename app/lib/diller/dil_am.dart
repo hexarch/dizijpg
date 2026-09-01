@@ -283,6 +283,8 @@ const Map<String, String> cevirilerAm = {
   'Şifreni gir': 'የይለፍ ቃልህን አስገባ',
   'Hesabımı kalıcı sil': 'መለያዬን በቋሚነት ሰርዝ',
   'Sesli mesaj': 'የድምፅ መልእክት',
+  'Görüldü': 'ታይቷል',
+  'Gönderi': 'ልጥፍ',
   'Ses gönderilemedi': 'የድምፅ መልእክት መላክ አልተቻለም',
   'Kaydediliyor…': 'በመቅዳት ላይ…',
   'Ses oynatılamadı': 'ድምፁን ማጫወት አልተቻለም',

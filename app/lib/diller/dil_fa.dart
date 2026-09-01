@@ -287,6 +287,8 @@ const Map<String, String> cevirilerFa = {
   'Şifreni gir': 'رمز عبورت را وارد کن',
   'Hesabımı kalıcı sil': 'حذف همیشگی حساب',
   'Sesli mesaj': 'پیام صوتی',
+  'Görüldü': 'دیده شد',
+  'Gönderi': 'پست',
   'Ses gönderilemedi': 'پیام صوتی ارسال نشد',
   'Kaydediliyor…': 'در حال ضبط…',
   'Ses oynatılamadı': 'پخش صدا ممکن نشد',
@@ -1420,5 +1422,6 @@ const Map<String, String> cevirilerFa = {
   'İnternet bağlantısı yok': 'اتصال اینترنت وجود ندارد',
   'Sunucu yanıt vermedi': 'سرور پاسخ نداد',
   'Güvenli bağlantı kurulamadı': 'اتصال امن برقرار نشد',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'پاسخ غیرمنتظره‌ای از سرور دریافت شد',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'پاسخ غیرمنتظره‌ای از سرور دریافت شد',
 };

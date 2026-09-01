@@ -289,6 +289,8 @@ const Map<String, String> cevirilerMl = {
   'Şifreni gir': 'നിന്റെ പാസ്‌വേഡ് നൽകുക',
   'Hesabımı kalıcı sil': 'എന്റെ അക്കൗണ്ട് ശാശ്വതമായി ഇല്ലാതാക്കുക',
   'Sesli mesaj': 'വോയ്‌സ് സന്ദേശം',
+  'Görüldü': 'കണ്ടു',
+  'Gönderi': 'പോസ്റ്റ്',
   'Ses gönderilemedi': 'വോയ്‌സ് സന്ദേശം അയയ്‌ക്കാനായില്ല',
   'Kaydediliyor…': 'റെക്കോർഡ് ചെയ്യുന്നു…',
   'Ses oynatılamadı': 'ഓഡിയോ പ്ലേ ചെയ്യാനായില്ല',
@@ -1439,5 +1441,6 @@ const Map<String, String> cevirilerMl = {
   'İnternet bağlantısı yok': 'ഇന്റർനെറ്റ് കണക്ഷൻ ഇല്ല',
   'Sunucu yanıt vermedi': 'സെർവർ പ്രതികരിച്ചില്ല',
   'Güvenli bağlantı kurulamadı': 'സുരക്ഷിത കണക്ഷൻ സ്ഥാപിക്കാനായില്ല',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'സെർവറിൽ നിന്ന് അപ്രതീക്ഷിത പ്രതികരണം ലഭിച്ചു',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'സെർവറിൽ നിന്ന് അപ്രതീക്ഷിത പ്രതികരണം ലഭിച്ചു',
 };

@@ -282,6 +282,8 @@ const Map<String, String> cevirilerZh = {
   'Şifreni gir': '输入你的密码',
   'Hesabımı kalıcı sil': '永久删除我的账号',
   'Sesli mesaj': '语音消息',
+  'Görüldü': '已读',
+  'Gönderi': '帖子',
   'Ses gönderilemedi': '语音消息发送失败',
   'Kaydediliyor…': '录音中…',
   'Ses oynatılamadı': '无法播放语音',

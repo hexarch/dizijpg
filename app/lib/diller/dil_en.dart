@@ -287,6 +287,8 @@ const Map<String, String> cevirilerEn = {
   'Şifreni gir': 'Enter your password',
   'Hesabımı kalıcı sil': 'Permanently delete my account',
   'Sesli mesaj': 'Voice message',
+  'Görüldü': 'Seen',
+  'Gönderi': 'Post',
   'Ses gönderilemedi': 'Voice couldn’t be sent',
   'Kaydediliyor…': 'Recording…',
   'Ses oynatılamadı': 'Voice couldn’t be played',
@@ -1435,5 +1437,6 @@ const Map<String, String> cevirilerEn = {
   'İnternet bağlantısı yok': 'No internet connection',
   'Sunucu yanıt vermedi': 'The server did not respond',
   'Güvenli bağlantı kurulamadı': 'Could not establish a secure connection',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'Unexpected response from the server',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'Unexpected response from the server',
 };

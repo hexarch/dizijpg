@@ -287,6 +287,8 @@ const Map<String, String> cevirilerCs = {
   'Şifreni gir': 'Zadej své heslo',
   'Hesabımı kalıcı sil': 'Trvale smazat můj účet',
   'Sesli mesaj': 'Hlasová zpráva',
+  'Görüldü': 'Zobrazeno',
+  'Gönderi': 'Příspěvek',
   'Ses gönderilemedi': 'Hlasovou zprávu se nepodařilo odeslat',
   'Kaydediliyor…': 'Nahrávání…',
   'Ses oynatılamadı': 'Zvuk se nepodařilo přehrát',
@@ -1432,5 +1434,6 @@ const Map<String, String> cevirilerCs = {
   'İnternet bağlantısı yok': 'Není připojení k internetu',
   'Sunucu yanıt vermedi': 'Server neodpověděl',
   'Güvenli bağlantı kurulamadı': 'Nepodařilo se navázat zabezpečené připojení',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'Ze serveru přišla neočekávaná odpověď',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'Ze serveru přišla neočekávaná odpověď',
 };

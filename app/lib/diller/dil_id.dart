@@ -287,6 +287,8 @@ const Map<String, String> cevirilerId = {
   'Şifreni gir': 'Masukkan kata sandimu',
   'Hesabımı kalıcı sil': 'Hapus akunku permanen',
   'Sesli mesaj': 'Pesan suara',
+  'Görüldü': 'Dilihat',
+  'Gönderi': 'Postingan',
   'Ses gönderilemedi': 'Pesan suara gagal dikirim',
   'Kaydediliyor…': 'Merekam…',
   'Ses oynatılamadı': 'Audio tidak bisa diputar',

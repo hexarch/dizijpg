@@ -286,6 +286,8 @@ const Map<String, String> cevirilerTe = {
   'Şifreni gir': 'నీ పాస్‌వర్డ్ ఎంటర్ చెయ్యి',
   'Hesabımı kalıcı sil': 'నా ఖాతాను శాశ్వతంగా తొలగించు',
   'Sesli mesaj': 'వాయిస్ మెసేజ్',
+  'Görüldü': 'చూశారు',
+  'Gönderi': 'పోస్ట్',
   'Ses gönderilemedi': 'వాయిస్ మెసేజ్ పంపడం సాధ్యపడలేదు',
   'Kaydediliyor…': 'రికార్డ్ అవుతోంది…',
   'Ses oynatılamadı': 'ఆడియో ప్లే చేయలేకపోయాం',
@@ -1434,5 +1436,6 @@ const Map<String, String> cevirilerTe = {
   'İnternet bağlantısı yok': 'ఇంటర్నెట్ కనెక్షన్ లేదు',
   'Sunucu yanıt vermedi': 'సర్వర్ స్పందించలేదు',
   'Güvenli bağlantı kurulamadı': 'సురక్షిత కనెక్షన్‌ను ఏర్పరచలేకపోయాం',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'సర్వర్ నుండి ఊహించని స్పందన వచ్చింది',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'సర్వర్ నుండి ఊహించని స్పందన వచ్చింది',
 };

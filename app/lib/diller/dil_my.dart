@@ -293,6 +293,8 @@ const Map<String, String> cevirilerMy = {
   'Şifreni gir': 'မင်းရဲ့စကားဝှက်ကို ထည့်ပါ',
   'Hesabımı kalıcı sil': 'ကျွန်ုပ်အကောင့်ကို အပြီးအပိုင်ဖျက်ရန်',
   'Sesli mesaj': 'အသံမက်ဆေ့ချ်',
+  'Görüldü': 'ဖတ်ပြီး',
+  'Gönderi': 'ပို့စ်',
   'Ses gönderilemedi': 'အသံမက်ဆေ့ချ် ပို့၍မရပါ',
   'Kaydediliyor…': 'အသံဖမ်းနေသည်…',
   'Ses oynatılamadı': 'အသံဖွင့်၍ မရပါ',
@@ -1451,5 +1453,6 @@ const Map<String, String> cevirilerMy = {
   'İnternet bağlantısı yok': 'အင်တာနက် ချိတ်ဆက်မှု မရှိပါ',
   'Sunucu yanıt vermedi': 'ဆာဗာမှ တုံ့ပြန်မှု မရှိပါ',
   'Güvenli bağlantı kurulamadı': 'လုံခြုံသော ချိတ်ဆက်မှု မတည်ဆောက်နိုင်ပါ',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'ဆာဗာမှ မမျှော်လင့်ထားသော တုံ့ပြန်မှု ရရှိသည်',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'ဆာဗာမှ မမျှော်လင့်ထားသော တုံ့ပြန်မှု ရရှိသည်',
 };

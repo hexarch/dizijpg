@@ -285,6 +285,8 @@ const Map<String, String> cevirilerTh = {
   'Şifreni gir': 'ใส่รหัสผ่านของคุณ',
   'Hesabımı kalıcı sil': 'ลบบัญชีของฉันถาวร',
   'Sesli mesaj': 'ข้อความเสียง',
+  'Görüldü': 'อ่านแล้ว',
+  'Gönderi': 'โพสต์',
   'Ses gönderilemedi': 'ส่งข้อความเสียงไม่สำเร็จ',
   'Kaydediliyor…': 'กำลังบันทึก…',
   'Ses oynatılamadı': 'เล่นเสียงไม่ได้',
@@ -1412,5 +1414,6 @@ const Map<String, String> cevirilerTh = {
   'İnternet bağlantısı yok': 'ไม่มีการเชื่อมต่ออินเทอร์เน็ต',
   'Sunucu yanıt vermedi': 'เซิร์ฟเวอร์ไม่ตอบสนอง',
   'Güvenli bağlantı kurulamadı': 'ไม่สามารถสร้างการเชื่อมต่อที่ปลอดภัยได้',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'ได้รับการตอบกลับที่ไม่คาดคิดจากเซิร์ฟเวอร์',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'ได้รับการตอบกลับที่ไม่คาดคิดจากเซิร์ฟเวอร์',
 };

@@ -287,6 +287,8 @@ const Map<String, String> cevirilerMs = {
   'Şifreni gir': 'Masukkan kata laluan kamu',
   'Hesabımı kalıcı sil': 'Padam akaun saya secara kekal',
   'Sesli mesaj': 'Mesej suara',
+  'Görüldü': 'Dilihat',
+  'Gönderi': 'Siaran',
   'Ses gönderilemedi': 'Mesej suara gagal dihantar',
   'Kaydediliyor…': 'Merakam…',
   'Ses oynatılamadı': 'Audio tidak dapat dimainkan',
@@ -1443,5 +1445,6 @@ const Map<String, String> cevirilerMs = {
   'İnternet bağlantısı yok': 'Tiada sambungan internet',
   'Sunucu yanıt vermedi': 'Pelayan tidak memberi respons',
   'Güvenli bağlantı kurulamadı': 'Tidak dapat mewujudkan sambungan selamat',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'Respons tidak dijangka daripada pelayan',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'Respons tidak dijangka daripada pelayan',
 };

@@ -289,6 +289,8 @@ const Map<String, String> cevirilerEl = {
   'Şifreni gir': 'Εισάγαγε τον κωδικό σου',
   'Hesabımı kalıcı sil': 'Οριστική διαγραφή λογαριασμού',
   'Sesli mesaj': 'Φωνητικό μήνυμα',
+  'Görüldü': 'Προβλήθηκε',
+  'Gönderi': 'Ανάρτηση',
   'Ses gönderilemedi': 'Δεν ήταν δυνατή η αποστολή του φωνητικού μηνύματος',
   'Kaydediliyor…': 'Εγγραφή…',
   'Ses oynatılamadı': 'Δεν ήταν δυνατή η αναπαραγωγή του ήχου',
@@ -1460,5 +1462,6 @@ const Map<String, String> cevirilerEl = {
   'İnternet bağlantısı yok': 'Δεν υπάρχει σύνδεση στο διαδίκτυο',
   'Sunucu yanıt vermedi': 'Ο διακομιστής δεν απάντησε',
   'Güvenli bağlantı kurulamadı': 'Δεν ήταν δυνατή η ασφαλής σύνδεση',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'Απροσδόκητη απάντηση από τον διακομιστή',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'Απροσδόκητη απάντηση από τον διακομιστή',
 };

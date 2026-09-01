@@ -289,6 +289,8 @@ const Map<String, String> cevirilerHu = {
   'Şifreni gir': 'Add meg a jelszavad',
   'Hesabımı kalıcı sil': 'Fiókom végleges törlése',
   'Sesli mesaj': 'Hangüzenet',
+  'Görüldü': 'Látta',
+  'Gönderi': 'Bejegyzés',
   'Ses gönderilemedi': 'A hangüzenetet nem sikerült elküldeni',
   'Kaydediliyor…': 'Felvétel…',
   'Ses oynatılamadı': 'A hangüzenetet nem sikerült lejátszani',
@@ -1446,6 +1448,8 @@ const Map<String, String> cevirilerHu = {
   'Orijinal metin gösteriliyor': 'Eredeti szöveg megjelenítve',
   'İnternet bağlantısı yok': 'Nincs internetkapcsolat',
   'Sunucu yanıt vermedi': 'A szerver nem válaszolt',
-  'Güvenli bağlantı kurulamadı': 'Nem sikerült biztonságos kapcsolatot létesíteni',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'Váratlan válasz érkezett a szervertől',
+  'Güvenli bağlantı kurulamadı':
+      'Nem sikerült biztonságos kapcsolatot létesíteni',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'Váratlan válasz érkezett a szervertől',
 };

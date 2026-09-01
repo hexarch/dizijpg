@@ -14560,7 +14560,11 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
   // toplanır (yoksa 20 sohbet = 40 ek sorgu, liste 400ms+ sürerdi).
   const { rows } = await havuz.query(
     `SELECT DISTINCT ON (LEAST(m.gonderen_id,m.alici_id), GREATEST(m.gonderen_id,m.alici_id))
-            m.id, m.metin, m.medya, m.icerik_tur, m.tarih, m.gonderen_id,
+            -- yorum_id: PAYLASILAN GONDERI mesaji. Alan eksikken sohbet
+            -- listesindeki onizleme BOMBOS kaliyordu (metin yok, medya yok,
+            -- icerik_tur yok) — kullanici "bir postu birine gonderince
+            -- mesajlar kisminda bos gozukuyor" diye bildirdi (1 Eyl 2026).
+            m.id, m.metin, m.medya, m.icerik_tur, m.yorum_id, m.tarih, m.gonderen_id,
             k.id AS partner_id, k.kullanici_adi AS partner, k.avatar AS partner_avatar,
             -- Çevrimiçi HESABI SUNUCUDA yapılır: gizleyen kullanıcının
             -- son_gorulme damgası istemciye HİÇ gitmez (gizlilik tercihi
@@ -15061,7 +15065,11 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   const secim = `SELECT m.id, m.gonderen_id, m.metin, m.medya, m.ses_dalga, m.icerik_tur, m.icerik_id,
             m.yorum_id, m.okundu, m.iletildi, m.duzenlendi, m.yanit_id, m.tarih,
             y.metin AS yanit_metin, y.gonderen_id AS yanit_gonderen,
-            y.medya AS yanit_medya, y.icerik_tur AS yanit_icerik_tur
+            y.medya AS yanit_medya, y.icerik_tur AS yanit_icerik_tur,
+            -- Alıntılanan mesaj bir PAYLAŞILAN GÖNDERİ olabilir; alansız
+            -- kalınca alıntı kutusu da bomboş çiziliyordu (aynı kök,
+            -- bkz. /sohbetler'deki yorum_id notu).
+            y.yorum_id AS yanit_yorum_id
      FROM mesajlar m
      LEFT JOIN mesajlar y ON y.id = m.yanit_id
      WHERE ((m.gonderen_id=$1 AND m.alici_id=$2) OR (m.gonderen_id=$2 AND m.alici_id=$1))`;
@@ -15133,7 +15141,13 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   const gonderiler = {};
   if (gonderiIdler.length) {
     const g = await havuz.query(
-      `SELECT y.id, y.metin, y.medya, y.tur, y.tmdb_id, k.kullanici_adi, k.avatar
+      // medya_oran: kapağın GERÇEK en/boy oranı (/akis ile AYNI kaynak,
+      // `medya_olculer`). Sohbet kartı eskiden kapağı 1:1'e kırpıyordu —
+      // dikey Reels'in yarısı kesiliyor, yatay video da bandajlanıyordu.
+      // Oran bilinmiyorsa NULL gider, istemci dikey varsayımına düşer.
+      `SELECT y.id, y.metin, y.medya, y.tur, y.tmdb_id, k.kullanici_adi, k.avatar,
+              (SELECT mo.en::float / mo.boy FROM medya_olculer mo
+                 WHERE mo.medya = y.medya[1]) AS medya_oran
        FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
        WHERE y.id = ANY($1::int[])`,
       [gonderiIdler],
@@ -15145,6 +15159,7 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
         avatar: r.avatar,
         metin: (r.metin || '').slice(0, 140),
         kapak: (r.medya || [])[0] || null,
+        medya_oran: r.medya_oran,
         tur: r.tur,
         tmdb_id: r.tmdb_id,
       };

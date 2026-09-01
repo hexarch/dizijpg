@@ -288,6 +288,8 @@ const Map<String, String> cevirilerVi = {
   'Şifreni gir': 'Nhập mật khẩu của bạn',
   'Hesabımı kalıcı sil': 'Xóa vĩnh viễn tài khoản của tôi',
   'Sesli mesaj': 'Tin nhắn thoại',
+  'Görüldü': 'Đã xem',
+  'Gönderi': 'Bài đăng',
   'Ses gönderilemedi': 'Không thể gửi tin nhắn thoại',
   'Kaydediliyor…': 'Đang ghi…',
   'Ses oynatılamadı': 'Không phát được âm thanh',

@@ -375,12 +375,18 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani>
   }
 }
 
-/// Sağ üstteki "Gelen mesaj istekleri" girişi (kullanıcı isteği: yazı olsun).
+/// Başlığın EN SAĞINDAKİ "Gelen mesaj istekleri" girişi — YALNIZ İKON.
 ///
-/// Neden ikon değil de YAZI + ikon: kullanıcı açıkça "yazısı olsun" dedi.
-/// Genişlik 168 dp ile sınırlı ve metin İKİ SATIRA sarabiliyor — Almanca
-/// "Eingegangene Nachrichtenanfragen" gibi uzun çeviriler 360 dp'de başlığı
-/// taşırmasın diye. Dokunma alanı en az 44 dp yüksekliğinde.
+/// 5 Ağu 2026'da yazı + ikon istenmişti; 1 Eyl 2026'da kullanıcı geri aldı:
+/// *"Mesajlar kısmında 'gelen istekler' yazısı olmasın, ikon olarak onu en
+/// sağa al."* Yazı 168 dp'ye kadar yer kaplıyor ve uzun çevirilerde (Almanca
+/// "Eingegangene Nachrichtenanfragen") iki satıra sararak başlığı şişiriyordu.
+///
+/// METİN KAYBOLMADI: `tooltip` (fare/uzun basış) ve `Semantics` (TalkBack)
+/// aynı 45 dilli anahtarı okur — ikon-only bir düğmenin ne yaptığını ekran
+/// okuyucu kullanan biri de bilmeli.
+///
+/// Dokunma alanı [dokunmaAsgari] (44 dp) — ui-ux-pro-max "Touch Target Size".
 class MesajIstekleriDugmesi extends StatelessWidget {
   final int okunmamisIstek;
   final VoidCallback onTap;
@@ -390,47 +396,45 @@ class MesajIstekleriDugmesi extends StatelessWidget {
     required this.onTap,
   });
 
+  /// Sayı 0'ken [Badge] hiç çizilmez: boş rozet ikonu kaydırırdı.
+  Widget _rozetle(Widget ikon) => okunmamisIstek > 0
+      ? Badge.count(
+          count: okunmamisIstek,
+          backgroundColor: DiziRenkler.sari,
+          textColor: Colors.black,
+          child: ikon,
+        )
+      : ikon;
+
   @override
   Widget build(BuildContext context) {
+    final etiket = 'Gelen mesaj istekleri'.c;
     return Padding(
       padding: const EdgeInsets.only(right: 4),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 44, maxWidth: 168),
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.mark_email_unread_outlined,
-                size: 18,
-                color: DiziRenkler.sariMetin,
-              ),
-              const SizedBox(width: 6),
-              Flexible(
-                child: Text(
-                  'Gelen mesaj istekleri'.c,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 12,
-                    height: 1.15,
-                    fontWeight: FontWeight.w600,
+      child: Tooltip(
+        message: etiket,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(22),
+          child: Semantics(
+            button: true,
+            label: etiket,
+            child: SizedBox(
+              width: 44,
+              height: 44,
+              child: Center(
+                // Rozet KIRMIZI değil marka sarısı: istek kutusu düşük
+                // öncelikli, alarm değil. Rozet olmasaydı yeni istek hiçbir
+                // yerde görünmezdi (istekler ana listeden çıkarıldı).
+                child: _rozetle(
+                  Icon(
+                    Icons.mark_email_unread_outlined,
+                    size: 22,
                     color: DiziRenkler.sariMetin,
                   ),
                 ),
               ),
-              // Rozet KIRMIZI değil marka sarısı: istek kutusu düşük öncelikli,
-              // alarm değil. Rozet olmasaydı yeni istek hiçbir yerde
-              // görünmezdi (istekler ana listeden çıkarıldı).
-              if (okunmamisIstek > 0) ...[
-                const SizedBox(width: 6),
-                OkunmamisRozeti(adet: okunmamisIstek),
-              ],
-            ],
+            ),
           ),
         ),
       ),
@@ -1847,15 +1851,24 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   Widget build(BuildContext context) {
     final benimId = context.watch<Oturum>().kullanici?['id'];
     final karsiYazi = sohbetDurumYazi(_karsiDurum);
+    // "Görüldü" satırının sahibi. LİSTE BAŞINA BİR KEZ hesaplanır: her
+    // balonda yeniden aramak O(n²) olurdu ve uzun sohbette kaydırma takılırdı.
+    final gorulduIndeksi = sonGorulenIndeks(_mesajlar, benimId);
 
     return Scaffold(
       // Sohbete özel tema zemini: uygulama zemininin üstüne balon renginin
       // çok hafif tonu; varsayılan temada null → hiçbir şey değişmez.
       backgroundColor: _sohbetTema.zemin(context),
       appBar: AppBar(
-        // Tema title 22 px; alt satır (yazıyor) 56 px araç çubuğunda
-        // kırpılıyordu. 17+12 bu yükseklikte sığar, büyük yazı ölçeğinde de.
-        toolbarHeight: 64,
+        // BAŞLIK YÜKSEKLİĞİ (1 Eyl 2026 isteği: "yukarıdaki kullanıcı adı
+        // kısmını %35 daha küçük yap, sohbete alan açılsın"). 64 × 0.65 =
+        // 41.6 dp ederdi ve bu, geri okunun dokunma hedefini [dokunmaAsgari]
+        // (44 dp) ALTINA düşürürdü — alt çubukta 3 Ağu'da aynı %35 isteği
+        // gelince de aynı yerde durulmuştu (bkz. kabuk.dart
+        // masaustuCubukYuksekligi). Tavan 44'te kesildi: %31 kısalma, kazanç
+        // 20 dp ve erişilebilirlik bozulmadı. Yazı ölçüleri de küçüldü
+        // (17→15, 12→11) ki iki satır 44 dp'ye sığsın.
+        toolbarHeight: 44,
         title: InkWell(
           // 31 Ağu 2026 isteği: ada dokunmak artık profile DEĞİL, WhatsApp
           // tarzı sohbet detayına (tema / arama / sessize al / medya) gider.
@@ -1871,7 +1884,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'Poppins',
-                  fontSize: 17,
+                  fontSize: 15,
+                  height: 1.1,
                   fontWeight: FontWeight.w700,
                   color: DiziRenkler.metin,
                 ),
@@ -1882,7 +1896,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
+                    height: 1.1,
                     fontWeight: FontWeight.w500,
                     color: DiziRenkler.sariMetin,
                   ),
@@ -1997,6 +2012,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                               benim: benimMi,
                               icerikler: _icerikler,
                               gonderiler: _gonderiler,
+                              // "Görüldü" YALNIZ son okunan kendi mesajımda.
+                              gorulduGoster: i == gorulduIndeksi,
                               yanitla: m['id'] != null
                                   ? () => _yanitBaslat(m)
                                   : null,
@@ -2377,8 +2394,13 @@ class _DurumSatiri extends StatelessWidget {
     }
     return Text(
       etiket,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
-        fontSize: 12,
+        // 11 px: küçülen 44 dp'lik başlığa iki satır sığsın (bkz. AppBar
+        // toolbarHeight notu).
+        fontSize: 11,
+        height: 1.1,
         fontWeight: FontWeight.w500,
         color: cevrimici ? DiziRenkler.sariMetin : DiziRenkler.metin54,
       ),
@@ -2391,6 +2413,25 @@ bool sesDosyasi(String yol) =>
     yol.endsWith('.m4a') ||
     yol.endsWith('.mp3') ||
     yol.endsWith('.aac');
+
+/// Karşı tarafın okuduğu EN SON kendi mesajımın indeksi (yoksa -1).
+///
+/// NEDEN TEK BİR SATIR (1 Eyl 2026 isteği: "mesaj görüldüyse mesajın altında
+/// görüldü yazsın"): okunmuş HER balonun altına "Görüldü" basmak, uzun bir
+/// sohbette aynı kelimeyi onlarca kez tekrarlamak olurdu — Instagram DM de
+/// yalnız sondakinde gösterir. Sondan başa taranır: okundu bayrağı zaman
+/// içinde monoton değil (eski bir mesaj okunmamış kalabilir), o yüzden
+/// "ilk okunmamışın bir öncesi" değil, GERÇEKTEN sondaki okunmuş aranır.
+@visibleForTesting
+int sonGorulenIndeks(List<dynamic> mesajlar, Object? benimId) {
+  for (var i = mesajlar.length - 1; i >= 0; i--) {
+    final m = mesajlar[i];
+    if (m is! Map) continue;
+    if (m['gonderen_id'] != benimId) continue;
+    if (m['okundu'] == true) return i;
+  }
+  return -1;
+}
 
 /// Metinsiz mesajın (ses/foto/video/içerik) kısa özeti: ikon + söz.
 /// Hem sohbet listesindeki son mesaj satırında hem alıntı kutusunda kullanılır.
@@ -2409,6 +2450,13 @@ bool sesDosyasi(String yol) =>
   }
   if (m['icerik_tur'] != null || m['yanit_icerik_tur'] != null) {
     return (ikon: Icons.local_movies, metin: 'İçerik'.c);
+  }
+  // PAYLAŞILAN GÖNDERİ (1 Eyl 2026, kullanıcı: "bir postu birisine gönderince
+  // o mesajlar kısmında BOŞ gözüküyor"). Gönderi mesajının metni de medyası
+  // da yoktur — yalnız `yorum_id` taşır; buraya bakılmayınca satır bomboş
+  // kalıyordu. Sunucu alanı /sohbetler yanıtına 1 Eyl'de eklendi.
+  if (m['yorum_id'] != null || m['yanit_yorum_id'] != null) {
+    return (ikon: Icons.dynamic_feed, metin: 'Gönderi'.c);
   }
   return (ikon: null, metin: '');
 }
@@ -2435,6 +2483,13 @@ class _MesajBaloncugu extends StatelessWidget {
   /// Mesajın id'si yoksa (henüz gönderilmemiş iyimser satır) null gelir.
   final void Function(String? emoji)? tepkiVer;
 
+  /// Bu balonun altına "Görüldü" yazılsın mı (1 Eyl 2026 isteği).
+  ///
+  /// KİMDE TRUE: yalnız BENİM gönderdiğim, karşı tarafın okuduğu EN SON
+  /// mesajda. Karar burada değil listede verilir ([_sonGorulenIndeks]):
+  /// balon kendi başına "sonuncu muyum" sorusunu cevaplayamaz.
+  final bool gorulduGoster;
+
   /// Sohbete özel tema (31 Ağu 2026): KENDİ balonunun zemin/yazı rengi.
   /// Varsayılanlar bugünkü görünümün aynısı (sarı balon, siyah yazı) —
   /// tema seçilmemiş sohbetlerde hiçbir şey değişmez. Bkz. [SohbetTemalari].
@@ -2451,6 +2506,7 @@ class _MesajBaloncugu extends StatelessWidget {
     this.duzenle,
     this.sikayet,
     this.tepkiVer,
+    this.gorulduGoster = false,
     this.gonderiler = const {},
     this.balonRenk = DiziRenkler.sari,
     this.balonYazi = Colors.black,
@@ -2605,8 +2661,23 @@ class _MesajBaloncugu extends StatelessWidget {
 
     final yanitId = m['yanit_id'];
     final duzenlendi = m['duzenlendi'] == true;
-    // Balonun altında yalnız "düzenlendi" + okundu tiki kalır; saat gitti.
-    final altBilgi = duzenlendi || benim;
+    // ÇIPLAK MESAJ (1 Eyl 2026 isteği: "öncelikle arka planı olmasın"):
+    // yalnız paylaşılan bir gönderiden ibaret mesajın baloncuğu ÇİZİLMEZ —
+    // kapak doğrudan sohbetin üstünde durur. Mesajda başka bir şey varsa
+    // (yazı, medya, içerik kartı, alıntı) baloncuk gerekir: onlar zeminsiz
+    // okunmaz.
+    final ciplak =
+        gonderiId != null &&
+        (metin == null || metin.isEmpty) &&
+        medya == null &&
+        icerikTur == null &&
+        yanitId == null;
+    // Balonun altında yalnız "düzenlendi" + "Görüldü" kalır; saat gitti.
+    final altBilgi = duzenlendi || (benim && gorulduGoster);
+    // Alt satırın ("düzenlendi" / "Görüldü") rengi: çıplak mesajda balon
+    // yok, yani balonun yazı rengi (sarı üstü siyah) sohbet zemininde
+    // kaybolurdu — orada tema metni kullanılır.
+    final altYaziRengi = ciplak ? DiziRenkler.metin : yaziRengi;
     // Md. 43 — sunucudan mesajla BİRLİKTE gelen tepkiler (ayrı istek yok).
     final tepkiler = <Map<String, dynamic>>[
       for (final t in (m['tepkiler'] as List<dynamic>? ?? const []))
@@ -2631,24 +2702,30 @@ class _MesajBaloncugu extends StatelessWidget {
         onDoubleTap: tepkiVer == null ? null : _kalpDegistir,
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 3),
-          // Alt bilgi satırı (düzenlendi/tik) yoksa saatin bıraktığı boşluk
-          // kapansın diye alt dolgu üstle eşitlenir.
-          padding: EdgeInsets.fromLTRB(12, 8, 12, altBilgi ? 6 : 8),
+          // Alt bilgi satırı (düzenlendi/Görüldü) yoksa saatin bıraktığı
+          // boşluk kapansın diye alt dolgu üstle eşitlenir. Çıplak mesajda
+          // dolgu da YOK: zeminsiz bir kutuda dolgu, kapağı sohbetin
+          // ortasından kaydırmaktan başka bir şey yapmaz.
+          padding: ciplak
+              ? EdgeInsets.zero
+              : EdgeInsets.fromLTRB(12, 8, 12, altBilgi ? 6 : 8),
           constraints: BoxConstraints(
             // PC'de dev baloncuk olmasın: dar ekranda %75, genişte 420px tavan
             maxWidth: MediaQuery.of(context).size.width > 560
                 ? 420
                 : MediaQuery.of(context).size.width * 0.75,
           ),
-          decoration: BoxDecoration(
-            color: benim ? balonRenk : DiziRenkler.kart,
-            borderRadius: BorderRadius.only(
-              topLeft: const Radius.circular(14),
-              topRight: const Radius.circular(14),
-              bottomLeft: Radius.circular(benim ? 14 : 3),
-              bottomRight: Radius.circular(benim ? 3 : 14),
-            ),
-          ),
+          decoration: ciplak
+              ? null
+              : BoxDecoration(
+                  color: benim ? balonRenk : DiziRenkler.kart,
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(14),
+                    topRight: const Radius.circular(14),
+                    bottomLeft: Radius.circular(benim ? 14 : 3),
+                    bottomRight: Radius.circular(benim ? 3 : 14),
+                  ),
+                ),
           // IntrinsicWidth: baloncuk en geniş çocuğuna (metin/footer) göre küçülür;
           // kısa mesaj ("selam") artık tüm satırı kaplamaz (WhatsApp/Telegram gibi).
           child: IntrinsicWidth(
@@ -2682,6 +2759,7 @@ class _MesajBaloncugu extends StatelessWidget {
                         'metin': m['yanit_metin'],
                         'yanit_medya': m['yanit_medya'],
                         'yanit_icerik_tur': m['yanit_icerik_tur'],
+                        'yanit_yorum_id': m['yanit_yorum_id'],
                       }),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -2747,85 +2825,14 @@ class _MesajBaloncugu extends StatelessWidget {
                       ),
                     ),
                   ),
-                // Paylaşılan gönderi kartı: dokununca Reels'te açılır
+                // Paylaşılan gönderi: ÇIPLAK önizleme (dokununca Reels'te açılır)
                 if (gonderiId != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4),
-                    child: InkWell(
+                    child: PaylasilanGonderi(
+                      gonderi: gonderi,
                       onTap: () => context.push('/gonderi/$gonderiId'),
-                      child: Container(
-                        width: 210,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.18),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (gonderi?['kapak'] != null)
-                              AspectRatio(
-                                aspectRatio: 1,
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    CachedNetworkImage(
-                                      imageUrl: dosyaUrl(
-                                        gonderi!['kapak'] as String?,
-                                      )!,
-                                      fit: BoxFit.cover,
-                                      errorWidget: (_, _, _) =>
-                                          Container(color: Colors.black26),
-                                    ),
-                                    if ((gonderi['kapak'] as String).endsWith(
-                                          '.mp4',
-                                        ) ||
-                                        (gonderi['kapak'] as String).endsWith(
-                                          '.webm',
-                                        ))
-                                      const Center(
-                                        child: Icon(
-                                          Icons.play_circle_outline,
-                                          size: 40,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '@${gonderi?['kullanici_adi'] ?? '...'}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w800,
-                                      color: yaziRengi,
-                                    ),
-                                  ),
-                                  if ((gonderi?['metin'] as String?)
-                                          ?.isNotEmpty ==
-                                      true) ...[
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      gonderi!['metin'] as String,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: yaziRengi,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      yaziRengi: yaziRengi,
                     ),
                   ),
                 // Dizi/film kartı
@@ -2906,42 +2913,12 @@ class _MesajBaloncugu extends StatelessWidget {
                 // balonun erişilebilirlik etiketinin SONUNA eklenir:
                 // görsel kayıp var, BİLGİ kaybı yok.
                 Semantics(label: saatKisa, child: const SizedBox.shrink()),
-                if (altBilgi)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (duzenlendi) ...[
-                          Text(
-                            'düzenlendi'.c,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontStyle: FontStyle.italic,
-                              color: yaziRengi.withValues(alpha: 0.5),
-                            ),
-                          ),
-                          if (benim) const SizedBox(width: 5),
-                        ],
-                        if (benim)
-                          // WhatsApp geleneği: ✓ gönderildi, ✓✓ soluk
-                          // iletildi (push cihaza ulaştı), ✓✓ MAVİ okundu.
-                          Icon(
-                            m['okundu'] == true || m['iletildi'] == true
-                                ? Icons.done_all
-                                : Icons.done,
-                            size: 13,
-                            color: m['okundu'] == true
-                                ? const Color(0xFF1976D2)
-                                : yaziRengi.withValues(alpha: 0.55),
-                          ),
-                      ],
-                    ),
-                  ),
-                // Md. 43 — tepki rozetleri baloncuğun İÇİNDE, en altta.
-                // Dışında (üste taşan bir pul olarak) denenmedi: baloncuk
-                // Align+IntrinsicWidth içinde, taşan Positioned tıklanamaz
-                // olurdu (projedeki bilinen hit-test tuzağı).
+                // Md. 43 — tepki rozetleri mesajın ALTINDA. Baloncuklu
+                // mesajda baloncuğun içinde, çıplak gönderide kapağın hemen
+                // altında kalır (1 Eyl 2026 isteği: "emoji bırakınca altında
+                // göstersin emojiyi"). Balonun DIŞINA taşan bir pul olarak
+                // denenmedi: baloncuk Align+IntrinsicWidth içinde, sınırı
+                // aşan Positioned tıklanamaz olurdu (bilinen hit-test tuzağı).
                 if (tepkiler.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
@@ -2954,7 +2931,9 @@ class _MesajBaloncugu extends StatelessWidget {
                             emoji: t['emoji'] as String? ?? '',
                             adet: (t['adet'] as num?)?.toInt() ?? 0,
                             benim: t['benim'] == true,
-                            koyuZemin: benim,
+                            // Çıplak gönderide sarı balon YOK: rozet sohbet
+                            // zemininin üstünde durur, kontrast oradan kurulur.
+                            koyuZemin: benim && !ciplak,
                             // Kendi tepkine dokunmak kaldırır, başkasınınkine
                             // dokunmak seni de ekler (WhatsApp davranışı).
                             onTap: tepkiVer == null
@@ -2968,9 +2947,267 @@ class _MesajBaloncugu extends StatelessWidget {
                       ],
                     ),
                   ),
+                // EN ALT SATIR: "düzenlendi" ve "Görüldü".
+                //
+                // TİK YOK (1 Eyl 2026 isteği: "görüldü işaretleri de olmasın,
+                // mesaj görüldüyse mesajın altında görüldü yazsın"). Eskiden
+                // WhatsApp tikleri vardı (✓ gönderildi, ✓✓ iletildi, mavi ✓✓
+                // okundu); üçünün farkını simgeden okumak öğrenilmesi gereken
+                // bir dildi. Yazı bunu kendi söylüyor.
+                //
+                // YALNIZ SON OKUNAN MESAJDA ([gorulduGoster]): her okunmuş
+                // balonun altına "Görüldü" basmak, uzun bir sohbette aynı
+                // kelimeyi onlarca kez tekrarlamak olurdu. Instagram DM de
+                // yalnız sondakinde gösterir.
+                if (altBilgi)
+                  Padding(
+                    padding: EdgeInsets.only(top: ciplak ? 3 : 0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (duzenlendi) ...[
+                            Text(
+                              'düzenlendi'.c,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontStyle: FontStyle.italic,
+                                color: altYaziRengi.withValues(alpha: 0.5),
+                              ),
+                            ),
+                            if (benim && gorulduGoster)
+                              const SizedBox(width: 5),
+                          ],
+                          if (benim && gorulduGoster)
+                            Text(
+                              'Görüldü'.c,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: altYaziRengi.withValues(alpha: 0.6),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Sohbette paylaşılan gönderinin ÇIPLAK önizlemesi.
+///
+/// KULLANICI İSTEĞİ (1 Eyl 2026): *"akışta gezerken sohbette gönderdiği
+/// gönderiler güzel gözükmüyor tasarım olarak. Öncelikle arka planı olmasın
+/// ve video/görsel yani içeriğin boyutunda olacak — tabii orijinal boyut
+/// değil, sohbeti kapatmayacak şekilde. Videoysa kapak resmi gözükecek,
+/// yoksa başlangıç sahnesi. Paylaşanın adı içeriğin İÇİNDE sol altta
+/// gözükecek beyaz yazıyla."*
+///
+/// Eski kart üç yerde yanlıştı ve üçü de burada düzeltildi:
+///   1. **Zemin**: kapağın altında `black18` bir kutu + 8 dp dolgulu yazı
+///      şeridi vardı; medya bir kartın İÇİNDE duruyor gibi görünüyordu.
+///      Artık zemin YOK — medya doğrudan sohbetin üstünde durur.
+///   2. **Oran**: kapak `AspectRatio(1)` ile KARE'ye kırpılıyordu; dikey bir
+///      Reels'in yarısı kesiliyordu. Artık gönderinin KENDİ oranı kullanılır
+///      (sunucudan `medya_oran`, bkz. /sohbet yanıtı). Oran bilinmiyorsa
+///      dikey varsayılır (4:5) — akış kartıyla aynı varsayım.
+///   3. **Video kapağı**: siyah kutu + oynat ikonu çiziliyordu, yani
+///      gönderinin neyi gösterdiği belli olmuyordu. Sunucu her videonun ilk
+///      karesini `<dosya>.jpg` olarak üretiyor (backend/video_kare.js) ve
+///      486/486 videoda dosya MEVCUT (1 Eyl 2026'da sayıldı); kapak artık o.
+///      Kare yoksa eski siyah kutuya düşülür — akış hiç boş kalmaz.
+class PaylasilanGonderi extends StatelessWidget {
+  /// Sunucudan gelen önizleme (`gonderiler['<id>']`). Yoklama henüz
+  /// dönmediyse null gelebilir — o zaman iskelet çizilir.
+  final Map<String, dynamic>? gonderi;
+  final VoidCallback onTap;
+
+  /// Metin-only gönderide (kapağı olmayan post) kullanılacak yazı rengi:
+  /// üstünde medya olmadığı için BEYAZ okunmaz, balonun yazı rengi gerekir.
+  final Color yaziRengi;
+
+  const PaylasilanGonderi({
+    super.key,
+    required this.gonderi,
+    required this.onTap,
+    required this.yaziRengi,
+  });
+
+  /// Önizlemenin azami genişliği (dp). Sohbeti "kapatmasın" diye baloncuk
+  /// tavanının (420 / ekranın %75'i) belirgin şekilde altında tutulur.
+  static const double azamiEn = 220;
+
+  /// Azami yükseklik (dp). 9:16 bir Reels 220 dp genişlikte 391 dp olurdu —
+  /// telefonda ekranın yarısı. Tavana çarpınca ORAN KORUNARAK küçültülür.
+  static const double azamiBoy = 300;
+
+  /// Oranı bilinmeyen gönderi için varsayım: akış kartıyla aynı 4:5 dikey.
+  static const double varsayilanOran = 4 / 5;
+
+  static bool videoMu(String yol) =>
+      yol.endsWith('.mp4') || yol.endsWith('.webm');
+
+  /// Video kapak karesinin adresi — `<video>.jpg` (backend/video_kare.js).
+  static String kapakAdresi(String kapak) {
+    final url = dosyaUrl(kapak)!;
+    return videoMu(kapak) ? '$url.jpg' : url;
+  }
+
+  /// [azamiEn] × [azamiBoy] kutusuna ORAN BOZULMADAN sığan ölçü.
+  @visibleForTesting
+  static Size olcu(double? oran) {
+    final o = (oran == null || oran <= 0) ? varsayilanOran : oran;
+    var en = azamiEn;
+    var boy = en / o;
+    if (boy > azamiBoy) {
+      boy = azamiBoy;
+      en = boy * o;
+    }
+    return Size(en, boy);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final kapak = gonderi?['kapak'] as String?;
+    final ad = gonderi?['kullanici_adi'] as String?;
+    // Kapaksız (yalnız metin) gönderi: üstüne beyaz yazı basacak bir medya
+    // yok. Zemin yine YOK — yalnız ince bir çerçeve mesajın bir gönderi
+    // olduğunu söyler.
+    if (kapak == null) return _metinOnizleme(ad);
+    final olculer = olcu((gonderi?['medya_oran'] as num?)?.toDouble());
+    final kapakUrl = kapakAdresi(kapak);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: SizedBox(
+          width: olculer.width,
+          height: olculer.height,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CachedNetworkImage(
+                imageUrl: kapakUrl,
+                // Karar TEK YERDE: adres KENDİ sunucumuz olduğu için başlık
+                // `null` döner (bkz. gorsel_basliklari.dart) — çağrı noktası
+                // yine de sormalı, yoksa TMDB adresi buraya düştüğü gün
+                // pazarlık sessizce kaybolur.
+                httpHeaders: gorselBasliklari(kapakUrl),
+                fit: BoxFit.cover,
+                placeholder: (_, _) => Container(color: Colors.black26),
+                // Kare üretilememiş eski video / silinmiş görsel: eski
+                // davranışa düş (koyu kutu + oynat ikonu), boş kutu bırakma.
+                errorWidget: (_, _, _) => Container(
+                  color: Colors.black54,
+                  child: Icon(
+                    videoMu(kapak)
+                        ? Icons.play_circle_outline
+                        : Icons.broken_image_outlined,
+                    size: 36,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              // Videoyu KAPAKTAN ayıran tek işaret: küçük oynat pulu. Ortadaki
+              // 40 dp'lik dev ikon kapağı kapatıyordu.
+              if (videoMu(kapak))
+                const Positioned(
+                  top: 6,
+                  right: 6,
+                  child: Icon(
+                    Icons.play_circle_fill,
+                    size: 22,
+                    color: Colors.white,
+                    shadows: [Shadow(color: Colors.black54, blurRadius: 4)],
+                  ),
+                ),
+              // Adın perdesi: kapağın alt kenarına siyah geçiş. Perdesiz beyaz
+              // yazı, açık bir kapakta (kar, gökyüzü) okunmaz olurdu.
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(8, 16, 8, 7),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.transparent, Colors.black87],
+                    ),
+                  ),
+                  child: Text(
+                    '@${ad ?? '...'}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      // İSTEK: "paylaşanın adı içeriğin içinde sol altta
+                      // BEYAZ yazıyla". Tema renginden türetilmez — kapak
+                      // her iki temada da koyu bir görseldir.
+                      color: Colors.white,
+                      shadows: [Shadow(color: Colors.black54, blurRadius: 3)],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Kapaksız gönderi (yalnız yazı): zeminsiz, ince çerçeveli önizleme.
+  Widget _metinOnizleme(String? ad) {
+    final metin = (gonderi?['metin'] as String?)?.trim();
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: azamiEn,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: yaziRengi.withValues(alpha: 0.35)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '@${ad ?? '...'}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: yaziRengi,
+              ),
+            ),
+            if (metin != null && metin.isNotEmpty) ...[
+              const SizedBox(height: 3),
+              Text(
+                metin,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  height: 1.3,
+                  color: yaziRengi.withValues(alpha: 0.8),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

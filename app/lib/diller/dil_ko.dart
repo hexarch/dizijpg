@@ -283,6 +283,8 @@ const Map<String, String> cevirilerKo = {
   'Şifreni gir': '비밀번호를 입력해',
   'Hesabımı kalıcı sil': '내 계정 영구 삭제',
   'Sesli mesaj': '음성 메시지',
+  'Görüldü': '읽음',
+  'Gönderi': '게시물',
   'Ses gönderilemedi': '음성 메시지를 보내지 못했어요',
   'Kaydediliyor…': '녹음 중…',
   'Ses oynatılamadı': '음성을 재생할 수 없어요',

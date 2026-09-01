@@ -284,6 +284,8 @@ const Map<String, String> cevirilerHe = {
   'Şifreni gir': 'הזן את הסיסמה שלך',
   'Hesabımı kalıcı sil': 'מחק את החשבון שלי לצמיתות',
   'Sesli mesaj': 'הודעה קולית',
+  'Görüldü': 'נצפה',
+  'Gönderi': 'פוסט',
   'Ses gönderilemedi': 'לא ניתן היה לשלוח את ההודעה הקולית',
   'Kaydediliyor…': 'מקליט…',
   'Ses oynatılamadı': 'לא ניתן להפעיל את ההודעה הקולית',

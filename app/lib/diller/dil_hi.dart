@@ -287,6 +287,8 @@ const Map<String, String> cevirilerHi = {
   'Şifreni gir': 'अपना पासवर्ड डालो',
   'Hesabımı kalıcı sil': 'मेरा खाता हमेशा के लिए हटाएं',
   'Sesli mesaj': 'वॉइस मैसेज',
+  'Görüldü': 'देखा गया',
+  'Gönderi': 'पोस्ट',
   'Ses gönderilemedi': 'वॉइस मैसेज नहीं भेजा जा सका',
   'Kaydediliyor…': 'रिकॉर्ड हो रहा है…',
   'Ses oynatılamadı': 'ऑडियो नहीं चल सका',

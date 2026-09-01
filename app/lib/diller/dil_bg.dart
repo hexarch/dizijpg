@@ -289,6 +289,8 @@ const Map<String, String> cevirilerBg = {
   'Şifreni gir': 'Въведи паролата си',
   'Hesabımı kalıcı sil': 'Изтрий акаунта ми завинаги',
   'Sesli mesaj': 'Гласово съобщение',
+  'Görüldü': 'Видяно',
+  'Gönderi': 'Публикация',
   'Ses gönderilemedi': 'Гласовото съобщение не можа да бъде изпратено',
   'Kaydediliyor…': 'Записване…',
   'Ses oynatılamadı': 'Аудиото не можа да се възпроизведе',
@@ -1444,5 +1446,6 @@ const Map<String, String> cevirilerBg = {
   'İnternet bağlantısı yok': 'Няма интернет връзка',
   'Sunucu yanıt vermedi': 'Сървърът не отговори',
   'Güvenli bağlantı kurulamadı': 'Не може да се установи защитена връзка',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'Получен е неочакван отговор от сървъра',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'Получен е неочакван отговор от сървъра',
 };

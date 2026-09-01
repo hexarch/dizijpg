@@ -286,6 +286,8 @@ const Map<String, String> cevirilerAr = {
   'Şifreni gir': 'أدخل كلمة مرورك',
   'Hesabımı kalıcı sil': 'حذف حسابي نهائيًا',
   'Sesli mesaj': 'رسالة صوتية',
+  'Görüldü': 'تمت المشاهدة',
+  'Gönderi': 'منشور',
   'Ses gönderilemedi': 'تعذّر إرسال الرسالة الصوتية',
   'Kaydediliyor…': 'جارٍ التسجيل…',
   'Ses oynatılamadı': 'تعذّر تشغيل الصوت',

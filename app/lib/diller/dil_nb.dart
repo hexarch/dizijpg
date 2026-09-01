@@ -289,6 +289,8 @@ const Map<String, String> cevirilerNb = {
   'Şifreni gir': 'Skriv inn passordet ditt',
   'Hesabımı kalıcı sil': 'Slett kontoen min permanent',
   'Sesli mesaj': 'Talemelding',
+  'Görüldü': 'Sett',
+  'Gönderi': 'Innlegg',
   'Ses gönderilemedi': 'Talemeldingen kunne ikke sendes',
   'Kaydediliyor…': 'Tar opp…',
   'Ses oynatılamadı': 'Talemeldingen kunne ikke spilles av',

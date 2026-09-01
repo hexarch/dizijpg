@@ -289,6 +289,8 @@ const Map<String, String> cevirilerRo = {
   'Şifreni gir': 'Introdu parola',
   'Hesabımı kalıcı sil': 'Șterge definitiv contul meu',
   'Sesli mesaj': 'Mesaj vocal',
+  'Görüldü': 'Văzut',
+  'Gönderi': 'Postare',
   'Ses gönderilemedi': 'Mesajul vocal nu a putut fi trimis',
   'Kaydediliyor…': 'Se înregistrează…',
   'Ses oynatılamadı': 'Audio nu a putut fi redat',

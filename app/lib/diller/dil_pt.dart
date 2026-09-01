@@ -290,6 +290,8 @@ const Map<String, String> cevirilerPt = {
   'Şifreni gir': 'Digite sua senha',
   'Hesabımı kalıcı sil': 'Excluir minha conta permanentemente',
   'Sesli mesaj': 'Mensagem de voz',
+  'Görüldü': 'Visto',
+  'Gönderi': 'Publicação',
   'Ses gönderilemedi': 'Não foi possível enviar o áudio',
   'Kaydediliyor…': 'Gravando…',
   'Ses oynatılamadı': 'Não foi possível reproduzir o áudio',
@@ -1460,6 +1462,7 @@ const Map<String, String> cevirilerPt = {
   'Orijinal metin gösteriliyor': 'Mostrando o texto original',
   'İnternet bağlantısı yok': 'Sem conexão com a internet',
   'Sunucu yanıt vermedi': 'O servidor não respondeu',
-  'Güvenli bağlantı kurulamadı': 'Não foi possível estabelecer uma conexão segura',
+  'Güvenli bağlantı kurulamadı':
+      'Não foi possível estabelecer uma conexão segura',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Resposta inesperada do servidor',
 };

@@ -287,6 +287,8 @@ const Map<String, String> cevirilerDa = {
   'Şifreni gir': 'Indtast din adgangskode',
   'Hesabımı kalıcı sil': 'Slet min konto permanent',
   'Sesli mesaj': 'Talebesked',
+  'Görüldü': 'Set',
+  'Gönderi': 'Opslag',
   'Ses gönderilemedi': 'Talebeskeden kunne ikke sendes',
   'Kaydediliyor…': 'Optager…',
   'Ses oynatılamadı': 'Talebeskeden kunne ikke afspilles',

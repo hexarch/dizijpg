@@ -287,6 +287,8 @@ const Map<String, String> cevirilerGu = {
   'Şifreni gir': 'તારો પાસવર્ડ દાખલ કરો',
   'Hesabımı kalıcı sil': 'મારું ખાતું કાયમ માટે કાઢી નાખો',
   'Sesli mesaj': 'વૉઇસ મેસેજ',
+  'Görüldü': 'જોયું',
+  'Gönderi': 'પોસ્ટ',
   'Ses gönderilemedi': 'વૉઇસ મેસેજ મોકલી શકાયો નહીં',
   'Kaydediliyor…': 'રેકોર્ડ થઈ રહ્યું છે…',
   'Ses oynatılamadı': 'ઑડિયો ચલાવી શકાયો નહીં',

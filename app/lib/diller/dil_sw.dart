@@ -287,6 +287,8 @@ const Map<String, String> cevirilerSw = {
   'Şifreni gir': 'Weka nywila yako',
   'Hesabımı kalıcı sil': 'Futa akaunti yangu kabisa',
   'Sesli mesaj': 'Ujumbe wa sauti',
+  'Görüldü': 'Imeonwa',
+  'Gönderi': 'Chapisho',
   'Ses gönderilemedi': 'Ujumbe wa sauti haukutumwa',
   'Kaydediliyor…': 'Inarekodi…',
   'Ses oynatılamadı': 'Sauti haikuweza kuchezwa',
@@ -1443,5 +1445,6 @@ const Map<String, String> cevirilerSw = {
   'İnternet bağlantısı yok': 'Hakuna muunganisho wa intaneti',
   'Sunucu yanıt vermedi': 'Seva haikujibu',
   'Güvenli bağlantı kurulamadı': 'Imeshindwa kuanzisha muunganisho salama',
-  'Sunucudan beklenmeyen bir yanıt geldi': 'Jibu lisilotarajiwa kutoka kwa seva',
+  'Sunucudan beklenmeyen bir yanıt geldi':
+      'Jibu lisilotarajiwa kutoka kwa seva',
 };
