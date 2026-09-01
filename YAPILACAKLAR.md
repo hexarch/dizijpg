@@ -35,11 +35,13 @@
   reels_yenilikler'e %60 modal testi); backend 2156 yeşil (BOT_ROTALARI
   eşleşme + robots kapsam testleri dahil). Api.surum 1.114.0+181'e eşitlendi
   (testin yakaladığı kayma).
-- 📦 APK+AAB: `cikti/dizijpg-1.114.0-181.apk` / `.aab` — **Play yüklemesi
-  KULLANICI ONAYI BEKLİYOR** ("önce apk ver bana, onayımdan sonra
-  yükleyeceğiz").
-- ⬜ Onay sonrası: (1) AAB'yi Play'e yükle (notları paketten ÖNCE bas),
-  (2) `hedef:herkes` ile duyuruyu koş.
+- 📦 APK: `cikti/dizijpg-1.114.0-181.apk`. 🚀 **AAB 181 (1.114.0) 2 Eyl'de
+  ÜRETİME İNCELEMEYE GÖNDERİLDİ** (önceki 171 onaylanıp canlıya çıkmıştı;
+  notlar `surum-notu-1.114.0.txt` 11 dil; başlık "İncelenmekte olan
+  değişiklikler" doğrulandı). Kullanıcı prova bildirimini onayladı
+  ("tamam gelmiş bildirim").
+- ⬜ Duyuruyu HERKESE gönder: `/admin/surum-duyuru` {surum:1.114.0,
+  hedef:herkes} — kullanıcıya soruldu, cevabı bekleniyor.
 
 ## 2026-09-02 — 🚀 Bildirimler yenilendi · aile rozeti her yerde · sohbet güvenli alan (1.114.0+181)
 

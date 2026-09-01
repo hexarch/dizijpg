@@ -1,0 +1,33 @@
+<en-US>
+Redesigned notifications: likes grouped into one row per post with a small post preview. Yellow verification badge now shows next to badged users everywhere. Reels comments and captions open in a half sheet while the video keeps playing. Single-color progress bars in list view. Chat input no longer hides behind system navigation buttons. New "What's New" page.
+</en-US>
+<ar>
+إشعارات مجددة: الإعجابات في سطر واحد لكل منشور مع معاينة صغيرة. شارة التحقق الصفراء تظهر الآن بجانب الأسماء في كل مكان. تعليقات Reels تُفتح في نصف الشاشة والفيديو يستمر بالتشغيل. أشرطة تقدم بلون واحد في عرض القائمة. لم يعد صندوق الدردشة يختبئ خلف أزرار التنقل. صفحة "الجديد" أضيفت.
+</ar>
+<de-DE>
+Benachrichtigungen neu gestaltet: Likes pro Beitrag in einer Zeile mit kleiner Vorschau. Gelbes Verifizierungsabzeichen erscheint jetzt überall neben dem Namen. Reels-Kommentare öffnen sich im Halbbild, das Video läuft weiter. Einfarbige Fortschrittsbalken in der Listenansicht. Chat-Eingabe verschwindet nicht mehr hinter den Navigationstasten. Neue "Neuigkeiten"-Seite.
+</de-DE>
+<el-GR>
+Ανανεωμένες ειδοποιήσεις: τα likes ομαδοποιούνται σε μία γραμμή ανά ανάρτηση με μικρή προεπισκόπηση. Το κίτρινο σήμα επαλήθευσης εμφανίζεται πλέον δίπλα στο όνομα παντού. Τα σχόλια στα Reels ανοίγουν σε μισή οθόνη ενώ το βίντεο συνεχίζει. Μονόχρωμες μπάρες προόδου στη λίστα. Το πεδίο συνομιλίας δεν κρύβεται πια πίσω από τα πλήκτρα πλοήγησης.
+</el-GR>
+<es-ES>
+Notificaciones renovadas: los me gusta se agrupan en una fila por publicación con una miniatura. La insignia amarilla de verificación aparece ahora junto al nombre en todas partes. Los comentarios de Reels se abren a media pantalla mientras el video sigue. Barras de progreso de un solo color en la lista. El cuadro del chat ya no se oculta tras los botones de navegación.
+</es-ES>
+<fr-FR>
+Notifications repensées : les j'aime sont regroupés en une ligne par publication avec un petit aperçu. Le badge jaune de vérification s'affiche désormais partout à côté du nom. Les commentaires Reels s'ouvrent en demi-écran pendant que la vidéo continue. Barres de progression monochromes dans la liste. La zone de saisie du chat ne se cache plus derrière les boutons de navigation.
+</fr-FR>
+<id>
+Notifikasi didesain ulang: suka dikelompokkan dalam satu baris per postingan dengan pratinjau kecil. Lencana verifikasi kuning kini tampil di samping nama di mana saja. Komentar Reels terbuka setengah layar sementara video terus diputar. Bilah kemajuan satu warna di tampilan daftar. Kotak chat tidak lagi tertutup tombol navigasi. Halaman "Yang Baru" ditambahkan.
+</id>
+<it-IT>
+Notifiche rinnovate: i mi piace raggruppati in una riga per post con una piccola anteprima. Il badge giallo di verifica ora appare ovunque accanto al nome. I commenti dei Reels si aprono a metà schermo mentre il video continua. Barre di avanzamento monocolore nella vista elenco. La casella della chat non si nasconde più dietro i tasti di navigazione. Nuova pagina "Novità".
+</it-IT>
+<pt-BR>
+Notificações renovadas: curtidas agrupadas em uma linha por publicação com uma pequena prévia. O selo amarelo de verificação agora aparece ao lado do nome em todo lugar. Comentários dos Reels abrem em meia tela enquanto o vídeo continua. Barras de progresso de cor única na lista. A caixa do chat não fica mais atrás dos botões de navegação. Nova página "Novidades".
+</pt-BR>
+<ru-RU>
+Обновлённые уведомления: лайки собраны в одну строку с мини-превью публикации. Жёлтый значок подтверждения теперь виден рядом с именем везде. Комментарии Reels открываются на полэкрана, видео продолжает играть. Однотонные полосы прогресса в списке. Поле чата больше не прячется за кнопками навигации. Добавлена страница «Что нового».
+</ru-RU>
+<tr-TR>
+Bildirimler yenilendi: beğeniler gönderi başına tek satırda, yanında gönderinin küçük görseli. Sarı onay rozeti artık her yerde adın yanında. Reels'te yorumlar ve yazının devamı yarım ekranda açılıyor, video oynamaya devam ediyor. Liste görünümünde tek renk ilerleme çubuğu. Sohbette yazı kutusu artık telefonun gezinme tuşlarının altında kalmıyor. Yenilikler sayfası eklendi.
+</tr-TR>
