@@ -1,6 +1,46 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-02 (2. tur) — 🚀 Sürüm duyurusu sistemi · Reels %60 yorum modalı · tek renk çubuk (1.114.0+181)
+
+- 🚀 **CANLIDA (web + backend).** `main.68c37068b7cd.dart.js`
+  (+ `main.dart.js_1.073de7989b42.part.js`); backend: migrasyon-2026-09-02
+  (bildirimler.tur += 'surum', surum kolonu, tekil indeks) CANLIYA UYGULANDI,
+  robots.txt += `Disallow: /yenilikler/`.
+- ✅ **Sürüm duyurusu**: `POST /admin/surum-duyuru` {surum, hedef:
+  kullanici|herkes, push} — bildirimler tablosuna 'surum' satırı (tekil,
+  tekrar koşmak güvenli) + kullanıcının dilinde FCM push (derin bağlantı
+  `/yenilikler/<surum>`). Bildirim satırı "dizi.jpg X yayında", dokununca
+  YENİ SAYFA: `yenilikler.dart` — kartlar + CANLI MİNİ MAKETLER (bildirim
+  satırı, rozetli ad, %60 Reels modalı, üç renkli çubuk; bitmap yok, tema
+  duyarlı, çeviriden geçer). Bilinmeyen sürümde "uygulamayı güncelle".
+  **PROVA GÖNDERİLDİ: alcelik'e 1 bildirim + 1 push (2 Eyl 00:58)** —
+  onaydan sonra `hedef:herkes` koşulacak.
+- ✅ **Çeviri kararı**: yeni metinler YALNIZ gerçek kullanıcı dillerine
+  (cihaz_tokenlari ölçümü: en ru ar es zh ro; kullanıcı isteği "45'e gerek
+  yok"). Yeni kavram `sinirliDilAnahtarlari` (diller.dart) — 45/45 eşitlik
+  testleri kümeyi dışta tutar, ayrıca "kullanıcı dillerinin HEPSİNDE var"
+  testi eklendi.
+- ✅ **Reels %60 yorum/devamı modalı** (istek: "tam modal açılmayacak, %60
+  kaplayacak, video oynamaya devam edecek"): `yanitlariAc(yariEkran:)` —
+  Reels'ten yorumlar + "devamı" + yanıt bildirimi %60'ta açılır; akış
+  kartından tam yükseklik SÜRÜYOR.
+- ✅ **Liste görünümü ilerleme çubuğu TEK RENK** (istek: "rengarenk
+  olmayacak"): dolgu degrade değil, rampanın [oran] noktasındaki düz renk —
+  yüzde yazısıyla birebir aynı.
+- ✅ Rota altyapısı: `/yenilikler/:surum` (kabuk içi) + BOT_ROTALARI +
+  robots + push derin bağlantısı (`bildirimHedefi` 'surum' dalı, bozuk
+  sürümde /bildirimler'e düşer).
+- Kanıt: `flutter test` 2459 yeşil (yeni: `surum_duyurusu_test` 6,
+  reels_yenilikler'e %60 modal testi); backend 2156 yeşil (BOT_ROTALARI
+  eşleşme + robots kapsam testleri dahil). Api.surum 1.114.0+181'e eşitlendi
+  (testin yakaladığı kayma).
+- 📦 APK+AAB: `cikti/dizijpg-1.114.0-181.apk` / `.aab` — **Play yüklemesi
+  KULLANICI ONAYI BEKLİYOR** ("önce apk ver bana, onayımdan sonra
+  yükleyeceğiz").
+- ⬜ Onay sonrası: (1) AAB'yi Play'e yükle (notları paketten ÖNCE bas),
+  (2) `hedef:herkes` ile duyuruyu koş.
+
 ## 2026-09-02 — 🚀 Bildirimler yenilendi · aile rozeti her yerde · sohbet güvenli alan (1.114.0+181)
 
 - 🚀 **CANLIDA (web + backend).** `main.a3351c0553ef.dart.js`

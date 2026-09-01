@@ -363,6 +363,14 @@ String? bildirimHedefi(Map<String, dynamic> veri) {
           // Yanıt bildiriminde id YANITIN kendisidir: ekran üst gönderiyi
           // çözüp normal yorum ekranını açsın (md.15, bkz. [gonderiYolu]).
           : gonderiYolu(yorumId, yanit: tur == 'yanit');
+    case 'surum':
+      // Sürüm duyurusu (2 Eyl 2026): dokununca yeniliklerin tanıtım sayfası.
+      // Sürüm eksik/bozuksa bildirim listesine düş (yanlış rota açmaktansa
+      // liste güvenli — bolum/kisi ile aynı kural).
+      final surum = _alan(veri, 'surum');
+      return RegExp(r'^\d+\.\d+\.\d+$').hasMatch(surum)
+          ? '/yenilikler/$surum'
+          : '/bildirimler';
   }
   return null;
 }

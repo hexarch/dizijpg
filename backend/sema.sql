@@ -1540,3 +1540,16 @@ CREATE TABLE IF NOT EXISTS seo_kisi_olcu (
 CREATE INDEX IF NOT EXISTS seo_kisi_olcu_kaynak ON seo_kisi_olcu (kaynak_zaman);
 CREATE INDEX IF NOT EXISTS seo_kisi_olcu_esik
   ON seo_kisi_olcu (biyo_uzunluk, yapim_sayisi);
+
+-- 2026-09-02 — SÜRÜM DUYURUSU uygulama içi bildirim türü ('surum').
+-- Uzun gerekçe: migrasyon-2026-09-02.sql. Aktörsüz dördüncü tür; satır yalnız
+-- `surum` taşır, tanıtım içeriği uygulamada gömülü (/yenilikler/:surum).
+ALTER TABLE bildirimler DROP CONSTRAINT IF EXISTS bildirimler_tur_check;
+ALTER TABLE bildirimler ADD CONSTRAINT bildirimler_tur_check
+  CHECK (tur IN ('yanit', 'begeni', 'takip', 'mesaj', 'etiket',
+                 'kacirilan_arama', 'bolum', 'kisi', 'geri_bildirim',
+                 'surum'));
+ALTER TABLE bildirimler ADD COLUMN IF NOT EXISTS surum TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS bildirimler_surum_tekil
+  ON bildirimler (kullanici_id, surum)
+  WHERE tur = 'surum';

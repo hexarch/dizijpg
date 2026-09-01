@@ -178,8 +178,13 @@ void main() {
   });
 
   test('45/45 EŞİTLİK: her dilin anahtar sayısı aynı', () {
+    // [sinirliDilAnahtarlari] sayım DIŞI: bilerek yalnız gerçek kullanıcı
+    // dillerinde var (2 Eyl 2026 kararı — gerekçe kümenin başlığında).
     final sayilar = {
-      for (final g in tumCeviriler.entries) g.key: g.value.length,
+      for (final g in tumCeviriler.entries)
+        g.key: g.value.keys
+            .where((a) => !sinirliDilAnahtarlari.contains(a))
+            .length,
     };
     final benzersiz = sayilar.values.toSet();
     expect(

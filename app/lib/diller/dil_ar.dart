@@ -1421,4 +1421,24 @@ const Map<String, String> cevirilerAr = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'عند الإيقاف، تُعرض المنشورات الموسومة بأنها تحرق الأحداث مباشرةً دون ستار.',
   'Etiketler': 'الإشارات',
+  'dizi.jpg {} yayında': 'صدر إصدار dizi.jpg {}',
+  'Yenilikler': 'الجديد',
+  'Bu sürümde neler değişti, aşağıda.': 'إليك ما تغيّر في هذا الإصدار.',
+  'Bildirimler yenilendi': 'تم تجديد الإشعارات',
+  'Beğeniler artık gönderi başına tek satırda toplanıyor, satırın sağında gönderinin küçük görseli duruyor ve liste arka planla tek parça görünüyor.':
+      'أصبحت الإعجابات تُجمع في سطر واحد لكل منشور، مع صورة مصغّرة للمنشور على اليمين، وتندمج القائمة مع الخلفية كقطعة واحدة.',
+  'Sarı rozet her yerde': 'الشارة الصفراء في كل مكان',
+  'Rozetli kullanıcıların adının yanında artık bildirimlerde, gönderilerde ve beğenenler listesinde sarı onay rozeti görünüyor.':
+      'أصبحت شارة التحقق الصفراء تظهر بجانب اسم المستخدم في الإشعارات والمنشورات وقائمة المعجبين.',
+  'Reels yorumları yarım ekranda': 'تعليقات Reels في نصف الشاشة',
+  'Reels izlerken yorumlar ve yazının devamı ekranın yarısından biraz fazlasını kaplayan bir pencerede açılıyor; video üstte oynamaya devam ediyor.':
+      'أثناء مشاهدة Reels تُفتح التعليقات والنص الكامل في لوحة تغطي أكثر من نصف الشاشة بقليل؛ ويستمر الفيديو بالتشغيل في الأعلى.',
+  'Tek renkli ilerleme çubuğu': 'شريط تقدّم بلون واحد',
+  'Liste görünümündeki izleme çubuğu artık tek renk: az izlediysen kırmızı, ortalarındaysan sarı, sona yaklaştıysan yeşil.':
+      'أصبح شريط المشاهدة في عرض القائمة بلون واحد: أحمر إذا شاهدت قليلاً، أصفر في المنتصف، أخضر قرب النهاية.',
+  'Sohbet düzeltmeleri': 'إصلاحات الدردشة',
+  'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
+      'لم يعد صندوق الكتابة وأزرار الطلبات يختبئان خلف أزرار التنقل في الهاتف؛ وتختفي القائمة السفلية تلقائياً داخل الدردشة.',
+  'Bu sürümün notlarını görmek için uygulamayı güncelle':
+      'حدّث التطبيق لرؤية ملاحظات هذا الإصدار',
 };

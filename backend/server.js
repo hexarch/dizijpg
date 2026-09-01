@@ -6814,6 +6814,11 @@ const BOT_ROTALARI = [
   },
   { yol: '/kisi-ara', desen: /^\/kisi-ara$/ },
   { yol: '/bildirimler', desen: /^\/bildirimler$/ },
+  // Sürüm tanıtım sayfası (2 Eyl 2026): bildirimdeki "dizi.jpg X yayında"
+  // satırı buraya götürür. İçerik uygulamada gömülü, SSR'ı yok. Desen gevşek
+  // ([\d.]+): ekran bilinmeyen sürümü kendisi karşılıyor ("güncelle" der) ve
+  // testin örnek üreticisi (ornekYol) parametreye '1' basıyor.
+  { yol: '/yenilikler/:surum', desen: /^\/yenilikler\/[\d.]+$/ },
   { yol: '/sohbetler', desen: /^\/sohbetler$/ },
   { yol: '/mesaj-istekleri', desen: /^\/mesaj-istekleri$/ },
   { yol: '/sohbet/:ad', desen: /^\/sohbet\/[^/]+$/ },
@@ -14550,6 +14555,9 @@ app.get('/bildirimler', girisZorunlu, sarici(async (req, res) => {
       `SELECT b.id, b.tur, b.yorum_id, b.okundu, b.tarih,
               b.tmdb_id, b.sezon, b.bolum,
               b.kisi_id, b.icerik_tur,
+              -- 'surum' (2 Eyl 2026): surum duyurusu satiri — istemci
+              -- /yenilikler/<surum> sayfasini acar.
+              b.surum,
               k.kullanici_adi AS aktor, k.avatar AS aktor_avatar,
               -- Aile rozeti: bildirim satiri aktor adinin yanina mini tik
               -- cizer (1 Eyl 2026 istegi). Herkese acik nisan.
@@ -20388,6 +20396,111 @@ app.post('/admin/duyuru', adminKisit, sarici(async (req, res) => {
      VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
     [baslik, metin, metinEn || null, platform, cihazlar.length, basarili, basarisiz]);
   res.json({ durum: 'ok', ...rows[0], temizlenen: gecersiz.length });
+}));
+
+// ---------- sürüm duyurusu (uygulama içi bildirim + push) ----------
+// 2 Eyl 2026 isteği: "gelen güncellemeleri kullanıcılara tanıtalım; önce bana
+// bildirim gönder, bildirimler kısmıma da düşsün, tıklayınca yeni sayfada
+// tanıtım olsun."
+//
+// /admin/duyuru'dan FARKI: o YALNIZ push atar ve iz bırakmaz; bu uç
+// `bildirimler` tablosuna 'surum' satırı yazar (zilde görünür, dokununca
+// /yenilikler/<surum> açılır) ve İSTEĞE BAĞLI push'u da AYNI derin bağlantıyla
+// gönderir. Tanıtım içeriği SUNUCUDA DEĞİL uygulamada gömülü — satır yalnız
+// sürüm numarası taşır (gerekçe: migrasyon-2026-09-02.sql).
+//
+// hedef: 'kullanici' (kullanici_adi ŞART — önce tek kişide prova) | 'herkes'.
+// İki kez çalıştırmak güvenli: `bildirimler_surum_tekil` kısmi indeksi
+// sayesinde ON CONFLICT satırı İKİNCİ KEZ YAZMAZ (push de yalnız yeni satır
+// yazılan kullanıcılara gider — prova sonrası 'herkes' çalıştırılınca provayı
+// almış hesaba İKİNCİ push gitmez).
+const SURUM_PUSH_BASLIK = {
+  tr: 'dizi.jpg {surum} yayında',
+  en: 'dizi.jpg {surum} is out',
+  ru: 'Вышла dizi.jpg {surum}',
+  ar: 'صدر إصدار dizi.jpg {surum}',
+  es: 'dizi.jpg {surum} ya está disponible',
+  zh: 'dizi.jpg {surum} 已发布',
+  ro: 'dizi.jpg {surum} este disponibil',
+};
+const SURUM_PUSH_GOVDE = {
+  tr: 'Yenilikleri görmek için dokun',
+  en: 'Tap to see what’s new',
+  ru: 'Нажми, чтобы увидеть новинки',
+  ar: 'اضغط لرؤية الجديد',
+  es: 'Toca para ver las novedades',
+  zh: '点按查看新功能',
+  ro: 'Atinge ca să vezi noutățile',
+};
+app.post('/admin/surum-duyuru', adminKisit, sarici(async (req, res) => {
+  const surum = String(req.body?.surum || '').trim();
+  // Sürüm biçimi derin bağlantıya giriyor (/yenilikler/<surum>) — serbest
+  // metin rota deseninden (BOT_ROTALARI) ve istemci ayrıştırmasından kaçar.
+  if (!/^\d+\.\d+\.\d+$/.test(surum)) {
+    return res.status(400).json({ hata: 'Geçersiz sürüm (örn. 1.114.0)' });
+  }
+  const hedef = req.body?.hedef;
+  const pushIstendi = req.body?.push !== false; // varsayılan: push da gider
+  let hedefKosul;
+  let params;
+  if (hedef === 'kullanici') {
+    const ad = String(req.body?.kullanici_adi || '').trim();
+    if (!ad) return res.status(400).json({ hata: 'kullanici_adi gerekli' });
+    hedefKosul = 'kullanici_adi=$2';
+    params = [surum, ad];
+  } else if (hedef === 'herkes') {
+    hedefKosul = 'NOT yasakli';
+    params = [surum];
+  } else {
+    return res.status(400).json({ hata: "hedef 'kullanici' ya da 'herkes' olmalı" });
+  }
+  // RETURNING yalnız GERÇEKTEN eklenen satırları verir (çakışanlar hariç) —
+  // push listesi de bu: tekrar koşuşta kimseye ikinci bildirim gitmez.
+  const { rows: eklenen } = await havuz.query(
+    `INSERT INTO bildirimler (kullanici_id, tur, surum)
+     SELECT id, 'surum', $1 FROM kullanicilar WHERE ${hedefKosul}
+     ON CONFLICT (kullanici_id, surum) WHERE tur='surum' DO NOTHING
+     RETURNING kullanici_id`,
+    params);
+  let pushBasarili = 0;
+  let pushBasarisiz = 0;
+  if (pushIstendi && fcmHazir && eklenen.length) {
+    const { rows: cihazlar } = await havuz.query(
+      `SELECT token, COALESCE(dil,'tr') dil FROM cihaz_tokenlari
+       WHERE kullanici_id = ANY($1)`,
+      [eklenen.map((r) => r.kullanici_id)]);
+    // Dil dile ayrı paket: başlık kullanıcının dilinde. Bilinmeyen dil → en.
+    const gruplar = new Map();
+    for (const c of cihazlar) {
+      const dil = SURUM_PUSH_BASLIK[c.dil] ? c.dil : 'en';
+      if (!gruplar.has(dil)) gruplar.set(dil, []);
+      gruplar.get(dil).push(c.token);
+    }
+    for (const [dil, tokenListe] of gruplar) {
+      for (let i = 0; i < tokenListe.length; i += 500) {
+        const parca = tokenListe.slice(i, i + 500);
+        const yanit = await admin.messaging().sendEachForMulticast({
+          tokens: parca,
+          notification: {
+            title: SURUM_PUSH_BASLIK[dil].replace('{surum}', surum),
+            body: SURUM_PUSH_GOVDE[dil],
+          },
+          // Dokununca /yenilikler/<surum> (istemci push.dart → bildirimHedefi).
+          data: { tur: 'surum', surum },
+          android: { priority: 'high', notification: { channelId: 'dizijpg_bildirim' } },
+        });
+        pushBasarili += yanit.successCount;
+        pushBasarisiz += yanit.failureCount;
+      }
+    }
+  }
+  res.json({
+    durum: 'ok',
+    surum,
+    bildirim_yazilan: eklenen.length,
+    push_basarili: pushBasarili,
+    push_basarisiz: pushBasarisiz,
+  });
 }));
 
 // ESKİ UÇ — GERİYE DÖNÜK UYUM. Panelin eski sürümü ve dışarıdaki betikler

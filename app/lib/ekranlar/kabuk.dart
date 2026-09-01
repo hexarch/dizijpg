@@ -536,6 +536,7 @@ int kabukSekmeIndeksi(String yol) {
       yol == '/arama' ||
       yol.startsWith('/kullanici') ||
       yol.startsWith('/bildirim') ||
+      yol.startsWith('/yenilikler') ||
       yol.startsWith('/sohbet') ||
       yol.startsWith('/kisi-ara') ||
       yol.startsWith('/mesaj-istekleri')) {

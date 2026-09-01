@@ -1363,4 +1363,23 @@ const Map<String, String> cevirilerZh = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       '关闭后，标记为剧透的帖子将直接显示，不再遮挡。',
   'Etiketler': '标记',
+  'dizi.jpg {} yayında': 'dizi.jpg {} 已发布',
+  'Yenilikler': '新功能',
+  'Bu sürümde neler değişti, aşağıda.': '以下是此版本的变化。',
+  'Bildirimler yenilendi': '通知全新改版',
+  'Beğeniler artık gönderi başına tek satırda toplanıyor, satırın sağında gönderinin küçük görseli duruyor ve liste arka planla tek parça görünüyor.':
+      '点赞现在按帖子合并为一行，右侧显示帖子的小预览图，列表与背景融为一体。',
+  'Sarı rozet her yerde': '黄色徽章无处不在',
+  'Rozetli kullanıcıların adının yanında artık bildirimlerde, gönderilerde ve beğenenler listesinde sarı onay rozeti görünüyor.':
+      '带徽章用户的黄色认证标志现在会显示在通知、帖子和点赞列表中的用户名旁边。',
+  'Reels yorumları yarım ekranda': 'Reels 评论半屏显示',
+  'Reels izlerken yorumlar ve yazının devamı ekranın yarısından biraz fazlasını kaplayan bir pencerede açılıyor; video üstte oynamaya devam ediyor.':
+      '观看 Reels 时，评论和完整文字会在覆盖略超半屏的面板中打开；视频在上方继续播放。',
+  'Tek renkli ilerleme çubuğu': '单色进度条',
+  'Liste görünümündeki izleme çubuğu artık tek renk: az izlediysen kırmızı, ortalarındaysan sarı, sona yaklaştıysan yeşil.':
+      '列表视图中的观看进度条现在是单一颜色：看得少是红色，过半是黄色，接近完成是绿色。',
+  'Sohbet düzeltmeleri': '聊天修复',
+  'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
+      '消息输入框和请求按钮不再被手机导航键遮挡；进入聊天时底部菜单会自动隐藏。',
+  'Bu sürümün notlarını görmek için uygulamayı güncelle': '更新应用以查看此版本的说明',
 };

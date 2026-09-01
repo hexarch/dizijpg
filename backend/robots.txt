@@ -36,6 +36,7 @@ Disallow: /giris
 Disallow: /karsilama
 Disallow: /ayarlar
 Disallow: /bildirimler
+Disallow: /yenilikler/
 Disallow: /profil
 Disallow: /izlediklerim
 Disallow: /sohbetler

@@ -1451,4 +1451,24 @@ const Map<String, String> cevirilerEn = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'When off, posts marked as spoilers are shown directly, without the curtain.',
   'Etiketler': 'Tags',
+  'dizi.jpg {} yayında': 'dizi.jpg {} is out',
+  'Yenilikler': 'What\'s New',
+  'Bu sürümde neler değişti, aşağıda.': 'Here\'s what changed in this version.',
+  'Bildirimler yenilendi': 'Notifications redesigned',
+  'Beğeniler artık gönderi başına tek satırda toplanıyor, satırın sağında gönderinin küçük görseli duruyor ve liste arka planla tek parça görünüyor.':
+      'Likes are now grouped into a single row per post, a small preview of the post sits on the right, and the list blends into the background as one piece.',
+  'Sarı rozet her yerde': 'Yellow badge everywhere',
+  'Rozetli kullanıcıların adının yanında artık bildirimlerde, gönderilerde ve beğenenler listesinde sarı onay rozeti görünüyor.':
+      'Badged users now show their yellow verification badge next to their name in notifications, posts and the likes list.',
+  'Reels yorumları yarım ekranda': 'Reels comments in a half sheet',
+  'Reels izlerken yorumlar ve yazının devamı ekranın yarısından biraz fazlasını kaplayan bir pencerede açılıyor; video üstte oynamaya devam ediyor.':
+      'While watching Reels, comments and the full caption now open in a sheet covering a bit more than half the screen; the video keeps playing above.',
+  'Tek renkli ilerleme çubuğu': 'Single-color progress bar',
+  'Liste görünümündeki izleme çubuğu artık tek renk: az izlediysen kırmızı, ortalarındaysan sarı, sona yaklaştıysan yeşil.':
+      'The watch-progress bar in list view is now one solid color: red when you\'ve watched little, yellow around the middle, green near the end.',
+  'Sohbet düzeltmeleri': 'Chat fixes',
+  'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
+      'The message box and request buttons no longer hide behind your phone’s navigation buttons; the bottom menu now hides itself inside a chat.',
+  'Bu sürümün notlarını görmek için uygulamayı güncelle':
+      'Update the app to see the notes for this version',
 };

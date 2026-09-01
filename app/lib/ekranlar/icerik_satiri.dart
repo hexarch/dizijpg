@@ -327,25 +327,12 @@ class _IcerikSatiriState extends State<IcerikSatiri> {
               child: FractionallySizedBox(
                 widthFactor: dolu,
                 heightFactor: 1,
-                child: DecoratedBox(
-                  // RAMPANIN [0, oran] DİLİMİ — geçişin TAMAMI dolu kısma
-                  // sıkıştırılmaz. Ayrım görünür: %20'lik bir çubuk baştan
-                  // sona kırmızı olmalı, kendi içinde kırmızıdan yeşile
-                  // geçmemeli. Ara durak (sarı) yalnız oran onu GEÇTİYSE
-                  // eklenir ve durağı orana göre normalize edilir.
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: AlignmentDirectional.centerStart,
-                      end: AlignmentDirectional.centerEnd,
-                      colors: [
-                        DiziRenkler.ilerlemeKirmizi,
-                        if (oran > 0.5) DiziRenkler.ilerlemeSari,
-                        ucRengi,
-                      ],
-                      stops: [0, if (oran > 0.5) 0.5 / oran, 1],
-                    ),
-                  ),
-                ),
+                // TEK DÜZ RENK, DEGRADE DEĞİL (2 Eyl 2026 isteği: "rengarenk
+                // olmayacak, tek renk olacak; az izlediyse kırmızı, ortaya
+                // geldiyse sarı, sona yaklaştıysa yeşil"). Çubuğun TAMAMI
+                // rampanın [oran] noktasındaki renge boyanır — altındaki
+                // yüzde yazısıyla birebir aynı renk, ikisi aynı şeyi söyler.
+                child: ColoredBox(color: ucRengi),
               ),
             ),
           ),

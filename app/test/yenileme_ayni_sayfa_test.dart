@@ -47,6 +47,7 @@ const _ornekler = <String, String>{
   'durum': 'izledim',
   'yil': '2025',
   'slug': 'haftanin-dizileri',
+  'surum': '1.114.0',
 };
 
 /// Süzgeç taşıyan örnek adresler (yenilemede sorgu dizesi KAYBOLMAMALI).

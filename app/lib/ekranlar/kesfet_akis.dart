@@ -932,7 +932,11 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
       _yorumlarAcilacak = false;
       final yorum = _yorum!;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) yanitlariAc(context, yorum);
+        // Altta REELS varsa %60 (video görünür kalsın); yazılı gönderi akış
+        // kartıysa bugünkü gibi tam yükseklik.
+        if (mounted) {
+          yanitlariAc(context, yorum, yariEkran: !gonderiYaziliMi(yorum));
+        }
       });
     }
     if (gonderiYaziliMi(_yorum)) {
@@ -1811,14 +1815,21 @@ class _ReelSayfaState extends State<_ReelSayfa>
   // Akış kartı da AYNI çağrıyı yapar (gonderiPaylas).
   Future<void> _paylas() => gonderiPaylas(context, widget.yorum);
 
-  // Reels de akış kartıyla AYNI sheet'i açar (tek açılış ayarı: yanitlariAc)
-  void _yanitlarAc() => yanitlariAc(context, widget.yorum);
+  // Reels de akış kartıyla AYNI sheet'i açar; tek fark [yariEkran]: modal
+  // ekranın %60'ında kalır, üstte video oynamaya devam eder (2 Eyl 2026).
+  void _yanitlarAc() => yanitlariAc(context, widget.yorum, yariEkran: true);
 
   /// "devamı" → Instagram altyazı sayfası gibi: aynı yorum sheet'i ama en
   /// üstte gönderi başlığı (avatar + ad + Takip Et, tam metin, tarih) ve
-  /// hemen devamında yorumlar (31 Ağu 2026 isteği).
+  /// hemen devamında yorumlar (31 Ağu 2026 isteği). O da %60'ta açılır —
+  /// metin okunurken video görünür kalır (2 Eyl 2026).
   void _metniAc() =>
-      yanitlariAc(context, widget.yorum, gonderiBasligi: true).then((_) {
+      yanitlariAc(
+        context,
+        widget.yorum,
+        gonderiBasligi: true,
+        yariEkran: true,
+      ).then((_) {
         // Sheet içinde takip edilmiş olabilir; durum paylaşılan haritada
         // (`takip_ediyorum`) — sheet kapanınca buradaki düğme de tazelenir.
         if (mounted) {
@@ -2821,6 +2832,7 @@ Future<void> yanitlariAc(
   Map<String, dynamic> yorum, {
   Map<String, dynamic>? ilkYanitlanan,
   bool gonderiBasligi = false,
+  bool yariEkran = false,
 }) => showModalBottomSheet<void>(
   context: context,
   isScrollControlled: true,
@@ -2837,6 +2849,7 @@ Future<void> yanitlariAc(
     yorum: yorum,
     ilkYanitlanan: ilkYanitlanan,
     gonderiBasligi: gonderiBasligi,
+    yariEkran: yariEkran,
   ),
 );
 
@@ -2932,11 +2945,19 @@ class YanitlarSheet extends StatefulWidget {
   /// açar (31 Ağu 2026 isteği); yorum düğmesi eskisi gibi başlıksız açar.
   final bool gonderiBasligi;
 
+  /// TRUE ise sheet ekranın %60'ında açılır — REELS'TEN açılan yorumlar ve
+  /// "devamı" bunun için (2 Eyl 2026 isteği: "tam modal açılmayacak, %60
+  /// kaplayacak, yukarıda video oynamaya devam edecek"). Etiket modalıyla
+  /// aynı mantık: sayfa sökülmediği için video arkada oynamayı sürdürür.
+  /// Akış kartından açılışlar bugünkü gibi TAM yükseklikte kalır.
+  final bool yariEkran;
+
   const YanitlarSheet({
     super.key,
     required this.yorum,
     this.ilkYanitlanan,
     this.gonderiBasligi = false,
+    this.yariEkran = false,
   });
 
   @override
@@ -3443,12 +3464,15 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
   Widget build(BuildContext context) {
     final olcum = MediaQuery.of(context);
     final klavye = olcum.viewInsets.bottom;
-    // TAM AÇILIŞ: kullanılabilir yüksekliğin tamamı (eskiden ekranın %60'ı).
-    // Klavye açılınca sheet kısalır, yazma kutusu klavyenin ÜSTÜNDE kalır.
-    final yukseklik = (olcum.size.height - olcum.padding.top - klavye).clamp(
-      200.0,
-      olcum.size.height,
-    );
+    // Akıştan TAM AÇILIŞ (kullanılabilir yüksekliğin tamamı); Reels'ten
+    // [yariEkran] ile ekranın %60'ı — üstte video görünür ve oynamaya devam
+    // eder (2 Eyl 2026 isteği). Klavye açılınca iki kipte de sheet kısalır,
+    // yazma kutusu klavyenin ÜSTÜNDE kalır.
+    final kullanilabilir = olcum.size.height - olcum.padding.top - klavye;
+    final hedef = widget.yariEkran ? olcum.size.height * 0.6 : double.infinity;
+    final yukseklik = kullanilabilir
+        .clamp(200.0, olcum.size.height)
+        .clamp(0.0, hedef);
     final ben = context.watch<Oturum>().kullanici;
     return Padding(
       padding: EdgeInsets.only(bottom: klavye),

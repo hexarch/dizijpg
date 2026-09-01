@@ -1458,4 +1458,24 @@ const Map<String, String> cevirilerRu = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Если выключено, записи с пометкой «спойлер» показываются сразу, без шторки.',
   'Etiketler': 'Отметки',
+  'dizi.jpg {} yayında': 'Вышла dizi.jpg {}',
+  'Yenilikler': 'Что нового',
+  'Bu sürümde neler değişti, aşağıda.': 'Вот что изменилось в этой версии.',
+  'Bildirimler yenilendi': 'Уведомления обновлены',
+  'Beğeniler artık gönderi başına tek satırda toplanıyor, satırın sağında gönderinin küçük görseli duruyor ve liste arka planla tek parça görünüyor.':
+      'Лайки теперь собираются в одну строку на публикацию, справа — маленькое превью публикации, а список сливается с фоном в единое целое.',
+  'Sarı rozet her yerde': 'Жёлтый значок везде',
+  'Rozetli kullanıcıların adının yanında artık bildirimlerde, gönderilerde ve beğenenler listesinde sarı onay rozeti görünüyor.':
+      'У пользователей со значком жёлтая галочка теперь видна рядом с именем в уведомлениях, публикациях и списке лайков.',
+  'Reels yorumları yarım ekranda': 'Комментарии Reels в полуэкране',
+  'Reels izlerken yorumlar ve yazının devamı ekranın yarısından biraz fazlasını kaplayan bir pencerede açılıyor; video üstte oynamaya devam ediyor.':
+      'При просмотре Reels комментарии и полный текст открываются в панели, занимающей чуть больше половины экрана; видео продолжает играть сверху.',
+  'Tek renkli ilerleme çubuğu': 'Однотонная полоса прогресса',
+  'Liste görünümündeki izleme çubuğu artık tek renk: az izlediysen kırmızı, ortalarındaysan sarı, sona yaklaştıysan yeşil.':
+      'Полоса просмотра в списке теперь одного цвета: красная в начале, жёлтая в середине, зелёная ближе к концу.',
+  'Sohbet düzeltmeleri': 'Исправления чата',
+  'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
+      'Поле ввода и кнопки запросов больше не прячутся за системными кнопками телефона; нижнее меню скрывается внутри чата.',
+  'Bu sürümün notlarını görmek için uygulamayı güncelle':
+      'Обнови приложение, чтобы увидеть заметки этой версии',
 };

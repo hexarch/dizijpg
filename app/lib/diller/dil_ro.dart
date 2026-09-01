@@ -1475,4 +1475,25 @@ const Map<String, String> cevirilerRo = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Când este dezactivat, postările marcate ca spoiler sunt afișate direct, fără cortină.',
   'Etiketler': 'Etichetări',
+  'dizi.jpg {} yayında': 'dizi.jpg {} este disponibil',
+  'Yenilikler': 'Noutăți',
+  'Bu sürümde neler değişti, aşağıda.':
+      'Iată ce s-a schimbat în această versiune.',
+  'Bildirimler yenilendi': 'Notificări reînnoite',
+  'Beğeniler artık gönderi başına tek satırda toplanıyor, satırın sağında gönderinin küçük görseli duruyor ve liste arka planla tek parça görünüyor.':
+      'Aprecierile sunt acum grupate într-un singur rând per postare, în dreapta apare o miniatură a postării, iar lista se contopește cu fundalul ca o singură piesă.',
+  'Sarı rozet her yerde': 'Insigna galbenă peste tot',
+  'Rozetli kullanıcıların adının yanında artık bildirimlerde, gönderilerde ve beğenenler listesinde sarı onay rozeti görünüyor.':
+      'Insigna galbenă de verificare apare acum lângă numele utilizatorului în notificări, postări și lista de aprecieri.',
+  'Reels yorumları yarım ekranda': 'Comentariile Reels pe jumătate de ecran',
+  'Reels izlerken yorumlar ve yazının devamı ekranın yarısından biraz fazlasını kaplayan bir pencerede açılıyor; video üstte oynamaya devam ediyor.':
+      'În timp ce urmărești Reels, comentariile și textul complet se deschid într-un panou care acoperă puțin peste jumătate de ecran; videoclipul continuă să ruleze deasupra.',
+  'Tek renkli ilerleme çubuğu': 'Bară de progres într-o singură culoare',
+  'Liste görünümündeki izleme çubuğu artık tek renk: az izlediysen kırmızı, ortalarındaysan sarı, sona yaklaştıysan yeşil.':
+      'Bara de vizionare din lista de vizualizare are acum o singură culoare: roșie dacă ai văzut puțin, galbenă pe la mijloc, verde aproape de final.',
+  'Sohbet düzeltmeleri': 'Remedieri la conversații',
+  'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
+      'Caseta de mesaj și butoanele de cerere nu mai rămân sub butoanele de navigare ale telefonului; meniul de jos se ascunde singur în conversație.',
+  'Bu sürümün notlarını görmek için uygulamayı güncelle':
+      'Actualizează aplicația ca să vezi notele acestei versiuni',
 };

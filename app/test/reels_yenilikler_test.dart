@@ -107,6 +107,29 @@ void main() {
     );
   });
 
+  testWidgets('YORUMLAR yarım ekranda açılır, video arkada durur '
+      '(2 Eyl 2026)', (tester) async {
+    await _reelsKur(tester, _gonderi());
+    await tester.tap(find.byIcon(Icons.mode_comment_outlined));
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 60));
+    }
+    expect(find.byType(YanitlarSheet), findsOneWidget);
+    // Reels sayfası SÖKÜLMEDİ → video oynamaya devam eder.
+    expect(find.byType(ReelsGorunumu), findsOneWidget);
+    // %60 tavan: sheet'in üst kenarı ekranın üst %35'inden AŞAĞIDA olmalı
+    // (tam ekran olsaydı tepeye yapışırdı).
+    final ekranBoyu =
+        tester.view.physicalSize.height / tester.view.devicePixelRatio;
+    expect(
+      tester.getTopLeft(find.byType(YanitlarSheet)).dy,
+      greaterThan(ekranBoyu * 0.35),
+      reason:
+          'Reels yorum modalı ekranın %60 kadarını kaplamalı, '
+          'tam ekran açılmamalı',
+    );
+  });
+
   testWidgets('yazılı gönderi: metin ORTADA, düzen standart Reels', (
     tester,
   ) async {

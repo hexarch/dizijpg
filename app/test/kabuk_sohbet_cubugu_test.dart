@@ -177,36 +177,33 @@ void main() {
     expect(find.byType(NavigationBar), findsOneWidget);
   });
 
-  testWidgets(
-    'SOHBETTE yazı kutusu SİSTEM GEZİNME TUŞLARININ ÜSTÜNDE kalır '
-    '(1 Eyl 2026, kullanıcı bildirdi)',
-    (tester) async {
-      // 3 tuşlu Android gezinmesi: alttan 48 px sistem şeridi.
-      //
-      // TUZAK (düzeltmenin kökü): kabuk Scaffold'unun bottomNavigationBar
-      // YUVASI doluyken (0 yükseklikli SizedBox bile olsa) gövdenin
-      // MediaQuery alt dolgusu SIFIRLANIR ve sohbetin SafeArea'sı çalışmaz —
-      // yazı kutusu sistem tuşlarının altında kalırdı. Yuva artık gizliyken
-      // gerçekten null (kabuk.dart).
-      tester.view.viewPadding = FakeViewPadding(bottom: 48);
-      tester.view.padding = FakeViewPadding(bottom: 48);
-      addTearDown(tester.view.reset);
-      final r = await _uygulama(tester, ekran: const Size(390, 844));
-      r.go('/sohbetler');
-      await _bekle(tester);
-      r.push('/sohbet/ayse');
-      await _bekle(tester);
+  testWidgets('SOHBETTE yazı kutusu SİSTEM GEZİNME TUŞLARININ ÜSTÜNDE kalır '
+      '(1 Eyl 2026, kullanıcı bildirdi)', (tester) async {
+    // 3 tuşlu Android gezinmesi: alttan 48 px sistem şeridi.
+    //
+    // TUZAK (düzeltmenin kökü): kabuk Scaffold'unun bottomNavigationBar
+    // YUVASI doluyken (0 yükseklikli SizedBox bile olsa) gövdenin
+    // MediaQuery alt dolgusu SIFIRLANIR ve sohbetin SafeArea'sı çalışmaz —
+    // yazı kutusu sistem tuşlarının altında kalırdı. Yuva artık gizliyken
+    // gerçekten null (kabuk.dart).
+    tester.view.viewPadding = FakeViewPadding(bottom: 48);
+    tester.view.padding = FakeViewPadding(bottom: 48);
+    addTearDown(tester.view.reset);
+    final r = await _uygulama(tester, ekran: const Size(390, 844));
+    r.go('/sohbetler');
+    await _bekle(tester);
+    r.push('/sohbet/ayse');
+    await _bekle(tester);
 
-      final kutu = find.byType(TextField);
-      expect(kutu, findsWidgets, reason: 'mesaj yazma kutusu çizilmeli');
-      final alt = tester.getRect(kutu.first).bottom;
-      expect(
-        alt,
-        lessThanOrEqualTo(844 - 48),
-        reason:
-            'yazı kutusu sistem gezinme şeridinin (48 px) ÜSTÜNDE durmalı; '
-            'altında kalıyorsa SafeArea dolgusu yutulmuş demektir',
-      );
-    },
-  );
+    final kutu = find.byType(TextField);
+    expect(kutu, findsWidgets, reason: 'mesaj yazma kutusu çizilmeli');
+    final alt = tester.getRect(kutu.first).bottom;
+    expect(
+      alt,
+      lessThanOrEqualTo(844 - 48),
+      reason:
+          'yazı kutusu sistem gezinme şeridinin (48 px) ÜSTÜNDE durmalı; '
+          'altında kalıyorsa SafeArea dolgusu yutulmuş demektir',
+    );
+  });
 }

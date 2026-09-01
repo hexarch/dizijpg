@@ -45,6 +45,7 @@ import 'ekranlar/kullanici_profil.dart';
 import 'ekranlar/ortak.dart' show kabugaDon, kabukIcindeMi;
 import 'ekranlar/profil.dart';
 import 'ekranlar/takvim.dart';
+import 'ekranlar/yenilikler.dart';
 
 /// Son kurulan yönlendirici — push bildirimi dokunuşları buradan gezinir
 /// (bildirim işleyicilerinin BuildContext'i yoktur).
@@ -395,6 +396,17 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
               GoRoute(
                 path: '/bildirimler',
                 builder: (_, __) => const BildirimlerEkrani(),
+              ),
+              // Sürüm tanıtım sayfası (2 Eyl 2026): "dizi.jpg X yayında"
+              // bildirimi buraya götürür. İçerik uygulamada gömülü
+              // (yenilikler.dart); bilinmeyen sürümde ekran "güncelle" der,
+              // rota ayrıca doğrulamaz. Akış şubesinin İÇİNDE: alt gezinme
+              // çubuğu yerinde kalır, F5'te sekme doğru seçilir
+              // (/bildirimler ile aynı kalıp).
+              GoRoute(
+                path: '/yenilikler/:surum',
+                builder: (_, s) =>
+                    YeniliklerEkrani(surum: s.pathParameters['surum'] ?? ''),
               ),
               GoRoute(
                 path: '/sohbetler',

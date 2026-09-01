@@ -1472,4 +1472,25 @@ const Map<String, String> cevirilerEs = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Si está desactivado, las publicaciones marcadas como spoiler se muestran directamente, sin cortina.',
   'Etiketler': 'Etiquetas',
+  'dizi.jpg {} yayında': 'dizi.jpg {} ya está disponible',
+  'Yenilikler': 'Novedades',
+  'Bu sürümde neler değişti, aşağıda.':
+      'Esto es lo que cambió en esta versión.',
+  'Bildirimler yenilendi': 'Notificaciones renovadas',
+  'Beğeniler artık gönderi başına tek satırda toplanıyor, satırın sağında gönderinin küçük görseli duruyor ve liste arka planla tek parça görünüyor.':
+      'Los me gusta ahora se agrupan en una sola fila por publicación, a la derecha hay una miniatura de la publicación y la lista se funde con el fondo como una sola pieza.',
+  'Sarı rozet her yerde': 'Insignia amarilla en todas partes',
+  'Rozetli kullanıcıların adının yanında artık bildirimlerde, gönderilerde ve beğenenler listesinde sarı onay rozeti görünüyor.':
+      'La insignia amarilla de verificación ahora aparece junto al nombre en notificaciones, publicaciones y la lista de me gusta.',
+  'Reels yorumları yarım ekranda': 'Comentarios de Reels a media pantalla',
+  'Reels izlerken yorumlar ve yazının devamı ekranın yarısından biraz fazlasını kaplayan bir pencerede açılıyor; video üstte oynamaya devam ediyor.':
+      'Al ver Reels, los comentarios y el texto completo se abren en un panel que cubre poco más de la mitad de la pantalla; el video sigue reproduciéndose arriba.',
+  'Tek renkli ilerleme çubuğu': 'Barra de progreso de un solo color',
+  'Liste görünümündeki izleme çubuğu artık tek renk: az izlediysen kırmızı, ortalarındaysan sarı, sona yaklaştıysan yeşil.':
+      'La barra de progreso en la vista de lista ahora es de un solo color: roja si viste poco, amarilla a mitad de camino, verde cerca del final.',
+  'Sohbet düzeltmeleri': 'Correcciones del chat',
+  'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
+      'El cuadro de mensaje y los botones de solicitud ya no quedan detrás de los botones de navegación del teléfono; el menú inferior se oculta dentro del chat.',
+  'Bu sürümün notlarını görmek için uygulamayı güncelle':
+      'Actualiza la app para ver las notas de esta versión',
 };

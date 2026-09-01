@@ -518,30 +518,24 @@ void main() {
     // 101 → 4/10, 102 → 10/10. Yüzde CLDR kalıbından ('%{}' anahtarı).
     expect(icinde('tv-101', find.text('%40')), findsOneWidget);
     expect(icinde('tv-102', find.text('%100')), findsOneWidget);
-    // ÇUBUK RAMPASI kırmızı → sarı → yeşil (kullanıcı isteği: "kırmızıdan
-    // yeşile gitsin, yeşilden kırmızıya değil"). Dolgu artık düz renk değil
-    // gradyan: rampanın [0, oran] DİLİMİ.
-    LinearGradient dolgu(String anahtar) =>
-        (tester
-                        .widget<DecoratedBox>(
-                          icinde(anahtar, find.byType(DecoratedBox)),
-                        )
-                        .decoration
-                    as BoxDecoration)
-                .gradient!
-            as LinearGradient;
+    // ÇUBUK TEK DÜZ RENK (2 Eyl 2026 isteği: "rengarenk olmayacak, tek renk
+    // olacak; az izlediyse kırmızı, ortada sarı, sona yaklaştıysa yeşil").
+    // Renk rampadan ([DiziRenkler.ilerlemeRengi]) orana göre seçilir; dolu
+    // kısmın İÇİNDE degrade YOKTUR.
+    ColoredBox dolguKutusu(String anahtar) => tester.widget<ColoredBox>(
+      icinde(
+        anahtar,
+        find.descendant(
+          of: find.byType(FractionallySizedBox),
+          matching: find.byType(ColoredBox),
+        ),
+      ),
+    );
 
-    // %40 → yarıyı geçmedi: ara durak YOK, uç rengi kırmızı-sarı arası.
-    final g40 = dolgu('tv-101');
-    expect(g40.colors.first, DiziRenkler.ilerlemeKirmizi);
-    expect(g40.colors, hasLength(2));
-    expect(g40.colors.last, DiziRenkler.ilerlemeRengi(0.4));
-    // %100 → sarı ara durak VAR ve uç YEŞİL.
-    final g100 = dolgu('tv-102');
-    expect(g100.colors.first, DiziRenkler.ilerlemeKirmizi);
-    expect(g100.colors[1], DiziRenkler.ilerlemeSari);
-    expect(g100.colors.last, DiziRenkler.ilerlemeYesil);
-    expect(g100.stops, [0.0, 0.5, 1.0]);
+    // %40 → rampanın 0.4 noktası (kırmızı-sarı arası) — TEK renk.
+    expect(dolguKutusu('tv-101').color, DiziRenkler.ilerlemeRengi(0.4));
+    // %100 → yeşil — TEK renk.
+    expect(dolguKutusu('tv-102').color, DiziRenkler.ilerlemeYesil);
 
     // Yüzde YAZISI çubuğun ucuyla aynı renk.
     Color yaziRengi(String metin) =>

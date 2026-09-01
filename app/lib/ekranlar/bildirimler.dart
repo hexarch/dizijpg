@@ -117,6 +117,12 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
       if (t == 'tv' || t == 'movie') return '/icerik/$t/${b['tmdb_id']}';
       return null;
     }
+    // Sürüm duyurusu (2 Eyl 2026): aktörsüz dördüncü tür, hedefi tanıtım
+    // sayfası. Sürüm bozuksa satır tıklanmaz (yanlış rota açmaktansa).
+    if (b['tur'] == 'surum') {
+      final s = b['surum'] as String? ?? '';
+      return RegExp(r'^\d+\.\d+\.\d+$').hasMatch(s) ? '/yenilikler/$s' : null;
+    }
     if (b['tur'] == 'mesaj') return '/sohbet/${b['aktor']}';
     final yorumId = b['yorum_id'];
     // yorum silinmişse (JOIN'de yorum_tur null) gönderi 404 verir → profile git
@@ -188,6 +194,13 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
         return (
           Icons.mark_email_read_outlined,
           'Geri bildirimine yanıt verdik'.c,
+        );
+      // 2 Eyl 2026 — SÜRÜM DUYURUSU. Aktörsüz dördüncü tür: gönderen SİTEDİR,
+      // '@' kalıbına GİRMEZ. Dokununca /yenilikler/<surum> tanıtım sayfası.
+      case 'surum':
+        return (
+          Icons.auto_awesome,
+          'dizi.jpg {} yayında'.cf([b['surum'] ?? '']),
         );
       case 'kisi':
         // Md. 28 — aktörsüz ikinci tür. Adlar TMDB'den gelir ve KULLANICI ADI
@@ -358,7 +371,8 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
             final aktorsuz =
                 b['tur'] == 'bolum' ||
                 b['tur'] == 'kisi' ||
-                b['tur'] == 'geri_bildirim';
+                b['tur'] == 'geri_bildirim' ||
+                b['tur'] == 'surum';
             final avatar = aktorsuz
                 ? posterUrl(b['poster'] as String?, boyut: 'w185')
                 : dosyaUrl(b['aktor_avatar'] as String?);

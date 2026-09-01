@@ -92,3 +92,32 @@ const Map<String, Map<String, String>> tumCeviriler = {
   'fi': cevirilerFi,
   'nb': cevirilerNb,
 };
+
+/// YALNIZ GERÇEK KULLANICI DİLLERİNE çevrilen anahtarlar.
+///
+/// KULLANICI KARARI (2 Eyl 2026, sürüm duyurusu işi): "45 dile çevirmene
+/// gerek yok, kaç dilde kullanıcımız varsa ona çevir." Ölçüm (cihaz_tokenlari
+/// dil dağılımı, 2 Eyl): tr 234 · en 18 · ru 2 · ar 2 · es 1 · zh 1 · ro 1.
+/// Bu kümedeki anahtarlar SADECE en/ru/ar/es/zh/ro haritalarında bulunur;
+/// diğer 39 dil Türkçe kaynağa düşer (o dillerde bugün kullanıcı yok, yeni
+/// bir dilde kullanıcı belirirse anahtarlar o dile de eklenir).
+///
+/// 45/45 eşitlik testleri (`ceviri_bosluklari_test`,
+/// `arama_ceviri_gizlilik_test`) bu kümeyi karşılaştırma DIŞI tutar — küme
+/// buradan okunur ki kod ile test aynı listeye baksın.
+const Set<String> sinirliDilAnahtarlari = {
+  'dizi.jpg {} yayında',
+  'Yenilikler',
+  'Bu sürümde neler değişti, aşağıda.',
+  'Bildirimler yenilendi',
+  'Beğeniler artık gönderi başına tek satırda toplanıyor, satırın sağında gönderinin küçük görseli duruyor ve liste arka planla tek parça görünüyor.',
+  'Sarı rozet her yerde',
+  'Rozetli kullanıcıların adının yanında artık bildirimlerde, gönderilerde ve beğenenler listesinde sarı onay rozeti görünüyor.',
+  'Reels yorumları yarım ekranda',
+  'Reels izlerken yorumlar ve yazının devamı ekranın yarısından biraz fazlasını kaplayan bir pencerede açılıyor; video üstte oynamaya devam ediyor.',
+  'Tek renkli ilerleme çubuğu',
+  'Liste görünümündeki izleme çubuğu artık tek renk: az izlediysen kırmızı, ortalarındaysan sarı, sona yaklaştıysan yeşil.',
+  'Sohbet düzeltmeleri',
+  'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.',
+  'Bu sürümün notlarını görmek için uygulamayı güncelle',
+};

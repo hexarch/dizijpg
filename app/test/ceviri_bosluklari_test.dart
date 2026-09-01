@@ -414,14 +414,34 @@ void main() {
     test('45 dil dosyası EŞİT anahtar sayısında (hiçbiri geride kalmadı)', () {
       // Bir dile eklenip diğerine unutulan anahtar, o dilde sessizce
       // Türkçe basar. Sayı eşitliği bunu tek satırda yakalar.
-      final referans = tumCeviriler['en']!.keys.toSet();
+      //
+      // [sinirliDilAnahtarlari] karşılaştırma DIŞI: o anahtarlar BİLEREK
+      // yalnız gerçek kullanıcı dillerinde var (2 Eyl 2026 kararı, gerekçe
+      // kümenin başlığında).
+      final referans = tumCeviriler['en']!.keys.toSet()
+        ..removeAll(sinirliDilAnahtarlari);
       expect(referans, hasLength(greaterThanOrEqualTo(611)));
       for (final kod in _cevrilenDiller) {
         expect(
-          tumCeviriler[kod]!.keys.toSet(),
+          tumCeviriler[kod]!.keys.toSet()..removeAll(sinirliDilAnahtarlari),
           equals(referans),
           reason: '$kod anahtar kümesi en ile aynı değil',
         );
+      }
+    });
+
+    test('SINIRLI DİL anahtarları kullanıcı dillerinin HEPSİNDE var', () {
+      // Küme "hiçbir dile çevirmeden geç" bahanesi değil: ölçülen kullanıcı
+      // dillerinin tamamında karşılık ŞART. Yeni bir dilde kullanıcı
+      // belirdiğinde bu listeye eklenir ve test o dili de zorlar.
+      for (final kod in ['en', 'ru', 'ar', 'es', 'zh', 'ro']) {
+        for (final anahtar in sinirliDilAnahtarlari) {
+          expect(
+            tumCeviriler[kod]![anahtar],
+            isNotNull,
+            reason: '$kod → sınırlı dil anahtarı eksik: "$anahtar"',
+          );
+        }
       }
     });
   });
