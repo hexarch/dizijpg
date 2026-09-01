@@ -174,6 +174,9 @@ const Map<String, String> cevirilerVi = {
   'Henüz bildirim yok': 'Chưa có thông báo',
   '@{} yorumuna yanıt verdi': '@{} đã trả lời bình luận của bạn',
   '@{} yorumunu beğendi': '@{} đã thích bình luận của bạn',
+  '{} ve {} yorumunu beğendi': '{} và {} đã thích bình luận của bạn',
+  '{} ve {} kişi yorumunu beğendi':
+      '{} và {} người khác đã thích bình luận của bạn',
   '@{} seni takip etti': '@{} đã theo dõi bạn',
   '@{} sana mesaj gönderdi': '@{} đã gửi tin nhắn cho bạn',
   'Mesajlar': 'Tin nhắn',

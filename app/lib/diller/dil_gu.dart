@@ -174,6 +174,8 @@ const Map<String, String> cevirilerGu = {
   'Henüz bildirim yok': 'હજી કોઈ સૂચના નથી',
   '@{} yorumuna yanıt verdi': '@{} એ તમારી ટિપ્પણીનો જવાબ આપ્યો',
   '@{} yorumunu beğendi': '@{} ને તમારી ટિપ્પણી ગમી',
+  '{} ve {} yorumunu beğendi': '{} અને {} ને તમારી ટિપ્પણી ગમી',
+  '{} ve {} kişi yorumunu beğendi': '{} અને બીજા {} ને તમારી ટિપ્પણી ગમી',
   '@{} seni takip etti': '@{} તમને ફોલો કરે છે',
   '@{} sana mesaj gönderdi': '@{} એ તમને સંદેશ મોકલ્યો',
   'Mesajlar': 'સંદેશા',

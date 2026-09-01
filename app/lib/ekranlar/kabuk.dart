@@ -124,6 +124,16 @@ bool mesajYuzeyiMi(String yol) =>
 /// bir sekmeye tek dokunuşla geçebilmeli.
 bool sohbetIcindeMi(String yol) => yol.startsWith('/sohbet/');
 
+/// Alt gezinme çubuğu bu yolda TAMAMEN gizlenir mi?
+///
+/// Sohbetin gerekçesi [sohbetIcindeMi] başlığında. `/bildirimler` de
+/// listede (1 Eyl 2026 isteği: "bildirimler kısmı açılınca aşağıdaki
+/// navigasyon tuşlarını da gizle") — bildirimler tam yüzeyli bir okuma
+/// listesi, sekme değiştirme yüzeyi değil; zilden `push` ile açılıyor ve
+/// geri tuşu kullanıcıyı geldiği sekmeye döndürüyor.
+bool kabukCubuguGizliMi(String yol) =>
+    sohbetIcindeMi(yol) || yol.startsWith('/bildirimler');
+
 /// Çubukta HANGİ hedefin sarı yanacağı — DAL ÜYELİĞİNDEN AYRI bir sorudur.
 ///
 /// NEDEN AYRI (29 Ağu 2026, kullanıcı: "aşağıdaki 5'li navigasyonda mesajlar
@@ -615,43 +625,49 @@ class _KabukEkraniState extends State<KabukEkrani> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Hesap askıya alındıysa üstte ince bir şerit çıkar (dokununca sebep +
-      // kalan süre). Yasak yokken hiçbir yer kaplamaz — kabuk aynen eskisi
-      // gibi çizilir. Buraya konmasının sebebi: kullanıcı hangi sekmede olursa
-      // olsun cezasından haberdar olmalı; tek bir ekrana koysaydık oraya hiç
-      // uğramayan kullanıcı sessizce kısıtlanmış olurdu.
-      // DOĞUM GÜNÜ (md. 36): kutlama kabuğun GÖVDESİNİ sarar, tek bir sekmeye
-      // konmaz — kullanıcı hangi sekmede açarsa açsın görsün. Doğum günü
-      // değilse ya da tarih girilmemişse katman hiçbir şey çizmez, ölçüye de
-      // dokunmaz (`build` doğrudan `child`ı döndürür).
-      body: OturumDustuKatmani(
-        child: DogumGunuKatmani(child: YasakSeridi(child: shell)),
-      ),
-      // ROUTER DİNLENİR, tek seferlik OKUNMAZ. `GoRouter.maybeOf(context)` ile
-      // yolu okumak değişikliğe ABONE OLMAZ: mesajlar dalın İÇİNE `push`
-      // edildiği için `shell.currentIndex` değişmiyor, kabuk da yeniden
-      // çizilmiyordu — çubuk eski hedefte kalıyordu. (29 Ağu 2026: ilk
-      // denemede tam bu yüzden sarı yanmadı, emülatörde görüldü.)
-      // `routerDelegate` bir `ChangeNotifier`; push/pop'ta haber verir.
-      bottomNavigationBar: ListenableBuilder(
-        // ROUTER GERÇEKTEN DİNLENİR. Bir konuşma (`/sohbet/<ad>`) dalın
-        // İÇİNE `push` edildiği için `shell.currentIndex` değişmiyor ve kabuk
-        // kendiliğinden yeniden çizilmiyor — yolu `GoRouter.maybeOf` ile bir
-        // kez okumak (abone olmadan) çubuğu ESKİ hâlinde bırakırdı. Bu
-        // tuzağa 29 Ağu'da `_mesajda` bayrağı eklenirken bir kez düşülmüştü;
-        // `routerDelegate` bir `ChangeNotifier` ve push/pop'ta haber verir.
-        listenable: GoRouter.of(context).routerDelegate,
-        builder: (context, _) {
-          // Konuşmanın içinde çubuk HİÇ ÇİZİLMEZ (bkz. [sohbetIcindeMi]).
-          // Yığının EN ÜSTÜ okunur: `push` `currentConfiguration.uri`yi
-          // değiştirmez (bkz. [sohbetUstKonum] başlığı).
-          if (sohbetIcindeMi(sohbetUstKonum(GoRouter.maybeOf(context)) ?? '')) {
-            return const SizedBox.shrink();
-          }
-          return _cubuk(context);
-        },
-      ),
+    // ROUTER DİNLENİR, tek seferlik OKUNMAZ. `GoRouter.maybeOf(context)` ile
+    // yolu okumak değişikliğe ABONE OLMAZ: mesajlar dalın İÇİNE `push`
+    // edildiği için `shell.currentIndex` değişmiyor, kabuk da yeniden
+    // çizilmiyordu — çubuk eski hedefte kalıyordu. (29 Ağu 2026: ilk
+    // denemede tam bu yüzden sarı yanmadı, emülatörde görüldü.)
+    // `routerDelegate` bir `ChangeNotifier`; push/pop'ta haber verir.
+    return ListenableBuilder(
+      listenable: GoRouter.of(context).routerDelegate,
+      builder: (context, _) {
+        // Konuşmanın ve bildirimlerin içinde çubuk HİÇ ÇİZİLMEZ (bkz.
+        // [kabukCubuguGizliMi]). Yığının EN ÜSTÜ okunur: `push`
+        // `currentConfiguration.uri`yi değiştirmez ([sohbetUstKonum] başlığı).
+        //
+        // GİZLİYKEN YUVA NULL, `SizedBox.shrink()` DEĞİL (1 Eyl 2026,
+        // kullanıcı bildirdi: "sohbetin mesaj yaz kısmı telefon navigasyon
+        // tuşlarının altında kalıyor"): Scaffold, `bottomNavigationBar`
+        // yuvası DOLUYKEN gövdenin MediaQuery alt dolgusunu SIFIRLAR (çubuk
+        // o alanı örtüyor varsayımı). Yuvaya 0 yükseklikli bir widget koymak
+        // da "dolu" sayılıyordu — sohbetteki SafeArea alt dolguyu 0 görüyor,
+        // yazı kutusu ve Kabul et / Reddet çubuğu telefonun sistem gezinme
+        // tuşlarının ALTINDA kalıyordu (3 tuşlu gezinmede bariz, jest
+        // çubuğunda az farkla). Yuva gerçekten null olunca dolgu gövdeye
+        // iner ve ekranların kendi SafeArea'ları çalışır.
+        final gizli = kabukCubuguGizliMi(
+          sohbetUstKonum(GoRouter.maybeOf(context)) ?? '',
+        );
+        return Scaffold(
+          // Hesap askıya alındıysa üstte ince bir şerit çıkar (dokununca
+          // sebep + kalan süre). Yasak yokken hiçbir yer kaplamaz — kabuk
+          // aynen eskisi gibi çizilir. Buraya konmasının sebebi: kullanıcı
+          // hangi sekmede olursa olsun cezasından haberdar olmalı; tek bir
+          // ekrana koysaydık oraya hiç uğramayan kullanıcı sessizce
+          // kısıtlanmış olurdu.
+          // DOĞUM GÜNÜ (md. 36): kutlama kabuğun GÖVDESİNİ sarar, tek bir
+          // sekmeye konmaz — kullanıcı hangi sekmede açarsa açsın görsün.
+          // Doğum günü değilse ya da tarih girilmemişse katman hiçbir şey
+          // çizmez, ölçüye de dokunmaz (`build` doğrudan `child`ı döndürür).
+          body: OturumDustuKatmani(
+            child: DogumGunuKatmani(child: YasakSeridi(child: shell)),
+          ),
+          bottomNavigationBar: gizli ? null : _cubuk(context),
+        );
+      },
     );
   }
 

@@ -174,6 +174,8 @@ const Map<String, String> cevirilerMs = {
   'Henüz bildirim yok': 'Belum ada pemberitahuan',
   '@{} yorumuna yanıt verdi': '@{} membalas komen anda',
   '@{} yorumunu beğendi': '@{} menyukai komen anda',
+  '{} ve {} yorumunu beğendi': '{} dan {} menyukai komen anda',
+  '{} ve {} kişi yorumunu beğendi': '{} dan {} lagi menyukai komen anda',
   '@{} seni takip etti': '@{} mengikuti anda',
   '@{} sana mesaj gönderdi': '@{} menghantar mesej kepada anda',
   'Mesajlar': 'Mesej',

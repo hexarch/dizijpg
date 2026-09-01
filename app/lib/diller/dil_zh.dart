@@ -170,6 +170,8 @@ const Map<String, String> cevirilerZh = {
   'Henüz bildirim yok': '还没有通知',
   '@{} yorumuna yanıt verdi': '@{} 回复了你的评论',
   '@{} yorumunu beğendi': '@{} 赞了你的评论',
+  '{} ve {} yorumunu beğendi': '{} 和 {} 赞了你的评论',
+  '{} ve {} kişi yorumunu beğendi': '{} 和另外 {} 人赞了你的评论',
   '@{} seni takip etti': '@{} 关注了你',
   '@{} sana mesaj gönderdi': '@{} 给你发了消息',
   'Mesajlar': '消息',

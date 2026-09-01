@@ -171,6 +171,8 @@ const Map<String, String> cevirilerKo = {
   'Henüz bildirim yok': '아직 알림이 없어요',
   '@{} yorumuna yanıt verdi': '@{} 님이 댓글에 답글을 달았어요',
   '@{} yorumunu beğendi': '@{} 님이 댓글을 좋아해요',
+  '{} ve {} yorumunu beğendi': '{} 님과 {} 님이 댓글을 좋아해요',
+  '{} ve {} kişi yorumunu beğendi': '{} 님 외 {}명이 댓글을 좋아해요',
   '@{} seni takip etti': '@{} 님이 나를 팔로우했어요',
   '@{} sana mesaj gönderdi': '@{} 님이 메시지를 보냈어요',
   'Mesajlar': '메시지',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../aile_rozeti.dart' show MiniRozet;
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
@@ -264,8 +265,22 @@ class _BegenenSatiri extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                '@$ad',
+              child: Text.rich(
+                TextSpan(
+                  text: '@$ad',
+                  children: [
+                    // Aile rozeti adın hemen yanında (1 Eyl 2026 isteği:
+                    // "beğenenlerde sarı rozet varsa adın yanında olacak").
+                    if (kullanici['testci'] == true)
+                      const WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 3),
+                          child: MiniRozet(),
+                        ),
+                      ),
+                  ],
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(

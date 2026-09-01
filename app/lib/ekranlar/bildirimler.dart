@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../aile_rozeti.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
@@ -32,17 +33,50 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
     try {
       final d = await Api.get('/bildirimler');
       if (!mounted) return;
-      // Hafif gruplama: aynı yoruma art arda gelen aynı tür bildirimler
-      // tek satıra iner, "+N" eklenir.
       final ham = d['bildirimler'] as List<dynamic>;
       final grupsuz = <Map<String, dynamic>>[];
+      // BEĞENİLER GÖNDERİ BAŞINA TEK SATIRA İNER (1 Eyl 2026 isteği: "her
+      // gönderinin beğenisi ayrı satırda gözükmesin, son beğenenleri göster —
+      // alcelik, melisa ve 10 kişi yorumunu beğendi gibi"). Ardışıklık ŞARTI
+      // YOK: listenin neresinde olursa olsun aynı gönderinin beğenileri EN
+      // YENİSİNİN yerinde toplanır. `begenenler` = [{ad, testci}] — sırası
+      // yeniden eskiye; metinde ilk ikisi ad olarak yazılır.
+      //
+      // AYNI KİŞİ TEKRAR SAYILMAZ: beğen-vazgeç-beğen üç satır üretebiliyor;
+      // adlar kümeyle teklenir, sayı GERÇEK kişi sayısıdır.
+      final begeniGruplari = <Object, Map<String, dynamic>>{};
+      final begenenAdlari = <Object, Set<String>>{};
       for (final b in ham) {
         final m = Map<String, dynamic>.from(b as Map<String, dynamic>);
+        final yorumId = m['yorum_id'];
+        if (m['tur'] == 'begeni' && yorumId != null) {
+          final ad = m['aktor'] as String? ?? '';
+          final grup = begeniGruplari[yorumId];
+          if (grup != null) {
+            if (begenenAdlari[yorumId]!.add(ad)) {
+              (grup['begenenler'] as List).add({
+                'ad': ad,
+                'testci': m['aktor_testci'] == true,
+              });
+            }
+            if (m['okundu'] == false) grup['okundu'] = false;
+            continue;
+          }
+          m['begenenler'] = [
+            {'ad': ad, 'testci': m['aktor_testci'] == true},
+          ];
+          begeniGruplari[yorumId] = m;
+          begenenAdlari[yorumId] = {ad};
+          grupsuz.add(m);
+          continue;
+        }
+        // Diğer türlerde eski hafif gruplama sürer: aynı yoruma art arda
+        // gelen aynı tür bildirimler tek satıra iner, "+N" eklenir.
         final onceki = grupsuz.isNotEmpty ? grupsuz.last : null;
         if (onceki != null &&
             onceki['tur'] == m['tur'] &&
-            m['yorum_id'] != null &&
-            onceki['yorum_id'] == m['yorum_id']) {
+            yorumId != null &&
+            onceki['yorum_id'] == yorumId) {
           onceki['ek'] = ((onceki['ek'] as int?) ?? 0) + 1;
           if (m['okundu'] == false) onceki['okundu'] = false;
         } else {
@@ -108,6 +142,27 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
           '@{} bir yorumda seni etiketledi'.cf([b['aktor']]),
         );
       case 'begeni':
+        // Gruplu satır: son iki beğenen adla, kalanı sayıyla yazılır
+        // ("@alcelik ve @melisa" / "@alcelik, @melisa ve 10 kişi").
+        final grup = (b['begenenler'] as List?)?.cast<Map<String, dynamic>>();
+        if (grup != null && grup.length == 2) {
+          return (
+            Icons.favorite,
+            '{} ve {} yorumunu beğendi'.cf([
+              '@${grup[0]['ad']}',
+              '@${grup[1]['ad']}',
+            ]),
+          );
+        }
+        if (grup != null && grup.length > 2) {
+          return (
+            Icons.favorite,
+            '{} ve {} kişi yorumunu beğendi'.cf([
+              '@${grup[0]['ad']}, @${grup[1]['ad']}',
+              grup.length - 2,
+            ]),
+          );
+        }
         return (Icons.favorite, '@{} yorumunu beğendi'.cf([b['aktor']]));
       case 'takip':
         return (Icons.person_add, '@{} seni takip etti'.cf([b['aktor']]));
@@ -149,6 +204,117 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
       default:
         return (Icons.notifications, '@${b['aktor']}');
     }
+  }
+
+  /// Satırdaki aktör adları → aile rozeti var mı? Metin içindeki `@ad`
+  /// geçişlerinin ardına mini tik konacak adların haritası.
+  Map<String, bool> _rozetliAdlar(Map<String, dynamic> b) {
+    final grup = (b['begenenler'] as List?)?.cast<Map<String, dynamic>>();
+    if (grup != null) {
+      return {
+        for (final u in grup)
+          if ((u['ad'] as String?)?.isNotEmpty == true)
+            u['ad'] as String: u['testci'] == true,
+      };
+    }
+    final ad = b['aktor'] as String?;
+    if (ad == null || ad.isEmpty) return const {};
+    return {ad: b['aktor_testci'] == true};
+  }
+
+  /// Bildirim metnini, rozetli aktör adlarının HEMEN ARDINA [MiniRozet]
+  /// yerleştirerek çizer.
+  ///
+  /// AD ÇEVİRİDEN SONRA ARANIR, kalıptan önce değil: bazı dillerde ad cümlenin
+  /// sonunda (ör. Arapça "…: @{}"), o yüzden "@ ile başlar" varsayımı YOK.
+  /// Sınır kontrolü şart: aktör "ali" iken metindeki "@alican"a tik konmasın
+  /// diye adın bittiği yerde kullanıcı adı karakteri (harf/rakam/._) devam
+  /// ediyorsa eşleşme sayılmaz. Uzun ad önce denenir (@ali / @alican ikisi de
+  /// satırdaysa doğru olanı kazansın).
+  Widget _rozetliBaslik(String metin, Map<String, bool> rozetler) {
+    final stil = TextStyle(fontSize: 14, color: DiziRenkler.metin);
+    final adlar = rozetler.keys.toList()
+      ..sort((a, b) => b.length.compareTo(a.length));
+    final spans = <InlineSpan>[];
+    var kalan = metin;
+    while (adlar.isNotEmpty) {
+      var enErken = -1;
+      String? bulunan;
+      for (final ad in adlar) {
+        var i = kalan.indexOf('@$ad');
+        while (i >= 0) {
+          final son = i + 1 + ad.length;
+          final devam = son < kalan.length ? kalan[son] : '';
+          if (!RegExp(r'[A-Za-z0-9._]').hasMatch(devam)) break;
+          i = kalan.indexOf('@$ad', i + 1);
+        }
+        if (i >= 0 && (enErken < 0 || i < enErken)) {
+          enErken = i;
+          bulunan = ad;
+        }
+      }
+      if (bulunan == null) break;
+      final son = enErken + 1 + bulunan.length;
+      spans.add(TextSpan(text: kalan.substring(0, son)));
+      if (rozetler[bulunan] == true) {
+        spans.add(
+          const WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Padding(
+              padding: EdgeInsets.only(left: 3),
+              child: MiniRozet(),
+            ),
+          ),
+        );
+      }
+      kalan = kalan.substring(son);
+    }
+    if (kalan.isNotEmpty) spans.add(TextSpan(text: kalan));
+    // RichText tema rengini DEVRALMAZ (skill md. 2) — renk açıkça verilir.
+    return Text.rich(TextSpan(style: stil, children: spans));
+  }
+
+  /// Satırın sağ ucu: okunmamış noktası + ilgili gönderinin mini görseli.
+  /// İkisi de yoksa null (ListTile hiç yer ayırmaz).
+  Widget? _sagUc(Map<String, dynamic> b) {
+    final okunmamis = b['okundu'] == false;
+    final medya = b['yorum_medya'] as String?;
+    // Yorum silinmişse görsel de anlamsız (hedef zaten profile düşüyor).
+    final silinmis = b['yorum_tur'] == null;
+    String? url;
+    if (medya != null && medya.isNotEmpty && !silinmis) {
+      // Video kapağı sunucuda `<yol>.jpg` olarak hazır (video_kare.js);
+      // fotoğraf olduğu gibi gösterilir.
+      final video = medya.endsWith('.mp4') || medya.endsWith('.webm');
+      url = dosyaUrl(video ? '$medya.jpg' : medya);
+    }
+    if (!okunmamis && url == null) return null;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (okunmamis)
+          const CircleAvatar(radius: 4, backgroundColor: DiziRenkler.sari),
+        if (url != null) ...[
+          if (okunmamis) const SizedBox(width: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: CachedNetworkImage(
+              imageUrl: url,
+              httpHeaders: gorselBasliklari(url),
+              width: 44,
+              height: 44,
+              fit: BoxFit.cover,
+              placeholder: (_, _) =>
+                  Container(width: 44, height: 44, color: DiziRenkler.kart),
+              // Kapak karesi henüz üretilmemiş eski bir video olabilir —
+              // kırık görsel ikonu yerine sessizce boş kutu.
+              errorWidget: (_, _, _) =>
+                  Container(width: 44, height: 44, color: DiziRenkler.kart),
+            ),
+          ),
+        ],
+      ],
+    );
   }
 
   @override
@@ -197,77 +363,79 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
                 ? posterUrl(b['poster'] as String?, boyut: 'w185')
                 : dosyaUrl(b['aktor_avatar'] as String?);
             final tarih = (b['tarih'] as String? ?? '').split('T').first;
-            return Card(
-              child: ListTile(
-                leading: Stack(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: DiziRenkler.koyuGri,
-                      // Aynı yuvarlak ya TMDB posteri ya kendi sunucumuzdaki
-                      // avatarı gösteriyor; WebP başlığının gerekip
-                      // gerekmediğine ADRESE bakarak tek yerde karar veriliyor.
-                      backgroundImage: avatar != null
-                          ? CachedNetworkImageProvider(
-                              avatar,
-                              headers: gorselBasliklari(avatar),
-                            )
-                          : null,
-                      child: avatar == null
-                          ? Icon(switch (b['tur']) {
-                              'bolum' => Icons.tv_outlined,
-                              'kisi' => Icons.movie_outlined,
-                              // Geri bildirim yanıtının posteri/avatarı YOK;
-                              // kişi ikonu "biri bir şey yaptı" der ve
-                              // yanıltırdı.
-                              'geri_bildirim' => Icons.support_agent,
-                              _ => Icons.person,
-                            }, color: DiziRenkler.metin38)
-                          : null,
+            // KART YOK (1 Eyl 2026 isteği: "arka planla aynı renkte olsunlar,
+            // tek parça olacak"): satır doğrudan sayfa zemininde durur.
+            return ListTile(
+              leading: Stack(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: DiziRenkler.koyuGri,
+                    // Aynı yuvarlak ya TMDB posteri ya kendi sunucumuzdaki
+                    // avatarı gösteriyor; WebP başlığının gerekip
+                    // gerekmediğine ADRESE bakarak tek yerde karar veriliyor.
+                    backgroundImage: avatar != null
+                        ? CachedNetworkImageProvider(
+                            avatar,
+                            headers: gorselBasliklari(avatar),
+                          )
+                        : null,
+                    child: avatar == null
+                        ? Icon(switch (b['tur']) {
+                            'bolum' => Icons.tv_outlined,
+                            'kisi' => Icons.movie_outlined,
+                            // Geri bildirim yanıtının posteri/avatarı YOK;
+                            // kişi ikonu "biri bir şey yaptı" der ve
+                            // yanıltırdı.
+                            'geri_bildirim' => Icons.support_agent,
+                            _ => Icons.person,
+                          }, color: DiziRenkler.metin38)
+                        : null,
+                  ),
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: CircleAvatar(
+                      radius: 9,
+                      backgroundColor: DiziRenkler.sari,
+                      child: Icon(ikon, size: 11, color: Colors.black),
                     ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: CircleAvatar(
-                        radius: 9,
-                        backgroundColor: DiziRenkler.sari,
-                        child: Icon(ikon, size: 11, color: Colors.black),
-                      ),
-                    ),
-                  ],
-                ),
-                title: Text(
-                  metin + (((b['ek'] as int?) ?? 0) > 0 ? '  +${b['ek']}' : ''),
-                  style: const TextStyle(fontSize: 14),
-                ),
-                subtitle: Text(
-                  tarih,
-                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
-                ),
-                trailing: b['okundu'] == false
-                    ? const CircleAvatar(
-                        radius: 4,
-                        backgroundColor: DiziRenkler.sari,
-                      )
-                    : null,
-                // Hedefi olmayan satır TIKLANMAZ (onTap null → dalga da yok):
-                // "dokundum, hiçbir şey olmadı" hissi vermek yerine satır
-                // baştan etkileşimsiz görünsün.
-                // GERİ BİLDİRİM YANITI GİDİLECEK BİR SAYFA DEĞİL, OKUNACAK
-                // BİR METİNDİR: rota yerine modal açılır (gönderi detayıyla
-                // aynı kalıp). Ayrı bir ekran/rota açmak robots.txt ve derin
-                // bağlantı tarafında bedel getirirdi; metin tek yerde yaşıyor.
-                onTap: b['tur'] == 'geri_bildirim'
-                    ? () => showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: DiziRenkler.koyuGri,
-                        builder: (_) => _GeriBildirimYanitSheet(bildirim: b),
-                      )
-                    : switch (_hedef(b)) {
-                        final String yol => () => context.push(yol),
-                        _ => null,
-                      },
+                  ),
+                ],
               ),
+              // Aile rozetli aktörlerin adının hemen ardına mini tik girer
+              // (WidgetSpan) — metin akışı bozulmaz, satır kaydırmada tik
+              // adıyla birlikte taşınır.
+              title: _rozetliBaslik(
+                metin + (((b['ek'] as int?) ?? 0) > 0 ? '  +${b['ek']}' : ''),
+                _rozetliAdlar(b),
+              ),
+              subtitle: Text(
+                tarih,
+                style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
+              ),
+              // Sağ uç: okunmamış noktası + ilgili gönderinin mini görseli
+              // (1 Eyl 2026 isteği: "en sağda hangi gönderiyi beğendiğinin
+              // minik bir görseli olsun; video ise videodan, fotoğraf ise
+              // fotoğraftan"). Medyasız gönderide görsel çizilmez.
+              trailing: _sagUc(b),
+              // Hedefi olmayan satır TIKLANMAZ (onTap null → dalga da yok):
+              // "dokundum, hiçbir şey olmadı" hissi vermek yerine satır
+              // baştan etkileşimsiz görünsün.
+              // GERİ BİLDİRİM YANITI GİDİLECEK BİR SAYFA DEĞİL, OKUNACAK
+              // BİR METİNDİR: rota yerine modal açılır (gönderi detayıyla
+              // aynı kalıp). Ayrı bir ekran/rota açmak robots.txt ve derin
+              // bağlantı tarafında bedel getirirdi; metin tek yerde yaşıyor.
+              onTap: b['tur'] == 'geri_bildirim'
+                  ? () => showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: DiziRenkler.koyuGri,
+                      builder: (_) => _GeriBildirimYanitSheet(bildirim: b),
+                    )
+                  : switch (_hedef(b)) {
+                      final String yol => () => context.push(yol),
+                      _ => null,
+                    },
             );
           },
         ),

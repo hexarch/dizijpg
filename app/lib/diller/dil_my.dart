@@ -176,6 +176,9 @@ const Map<String, String> cevirilerMy = {
   'Henüz bildirim yok': 'အသိပေးချက် မရှိသေးပါ',
   '@{} yorumuna yanıt verdi': '@{} က သင့်မှတ်ချက်ကို ပြန်ဖြေခဲ့သည်',
   '@{} yorumunu beğendi': '@{} က သင့်မှတ်ချက်ကို ကြိုက်ခဲ့သည်',
+  '{} ve {} yorumunu beğendi': '{} နှင့် {} က သင့်မှတ်ချက်ကို ကြိုက်ခဲ့သည်',
+  '{} ve {} kişi yorumunu beğendi':
+      '{} နှင့် အခြား {} ဦးက သင့်မှတ်ချက်ကို ကြိုက်ခဲ့သည်',
   '@{} seni takip etti': '@{} က သင့်ကို စောင့်ကြည့်ခဲ့သည်',
   '@{} sana mesaj gönderdi': '@{} က သင့်ထံ စာပို့ခဲ့သည်',
   'Mesajlar': 'စာများ',

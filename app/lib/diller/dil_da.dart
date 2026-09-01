@@ -173,6 +173,9 @@ const Map<String, String> cevirilerDa = {
   'Henüz bildirim yok': 'Ingen notifikationer endnu',
   '@{} yorumuna yanıt verdi': '@{} svarede på din kommentar',
   '@{} yorumunu beğendi': '@{} synes godt om din kommentar',
+  '{} ve {} yorumunu beğendi': '{} og {} synes godt om din kommentar',
+  '{} ve {} kişi yorumunu beğendi':
+      '{} og {} andre synes godt om din kommentar',
   '@{} seni takip etti': '@{} følger dig',
   '@{} sana mesaj gönderdi': '@{} sendte dig en besked',
   'Mesajlar': 'Beskeder',

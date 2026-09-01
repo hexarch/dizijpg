@@ -13347,7 +13347,7 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
   const { rows } = await havuz.query(
     `SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
             y.metin, y.medya, y.tarih, y.goruntulenme, y.spoiler,
-            k.kullanici_adi, k.avatar, y.kaynak_dil,
+            k.kullanici_adi, k.avatar, k.testci, y.kaynak_dil,
             (SELECT c.metin FROM metin_cevirileri c
                    WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $3) AS ceviri_metin,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
@@ -13439,7 +13439,7 @@ app.get('/yorumlar/:id/begenenler', girisIsteğeBagli, begenenLimiti, sarici(asy
 
   // Bir fazlasını iste: dönen satır sayısı sayfayı aşıyorsa devamı var.
   const { rows } = await havuz.query(
-    `SELECT k.id AS kullanici_id, k.kullanici_adi, k.avatar, b.tarih,
+    `SELECT k.id AS kullanici_id, k.kullanici_adi, k.avatar, k.testci, b.tarih,
             ($2::int > 0 AND EXISTS (SELECT 1 FROM takipler t
                WHERE t.takip_eden_id=$2 AND t.takip_edilen_id=k.id)) AS takip_ediyorum,
             (k.id = $2::int) AS ben_mi
@@ -13461,6 +13461,8 @@ app.get('/yorumlar/:id/begenenler', girisIsteğeBagli, begenenLimiti, sarici(asy
       kullanici_id: r.kullanici_id,
       kullanici_adi: r.kullanici_adi,
       avatar: r.avatar,
+      // Aile rozeti: begenenler listesi adin yanina mini tik cizer.
+      testci: r.testci,
       takip_ediyorum: r.takip_ediyorum,
       ben_mi: r.ben_mi,
     })),
@@ -13530,7 +13532,8 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
        WHERE $3::int IS NULL AND i.kullanici_id=$5
          AND i.tur=$1 AND i.tmdb_id=$2::int)
      SELECT y.id, y.kullanici_id, y.metin, y.medya, y.tarih, y.sezon, y.bolum,
-            y.ust_id, y.goruntulenme, k.kullanici_adi, k.avatar, y.kaynak_dil,
+            y.ust_id, y.goruntulenme, k.kullanici_adi, k.avatar, k.testci,
+            y.kaynak_dil,
             ${ETIKET_ALANI},
             -- SPOILER PERDESI ESLESEN ETIKETE BAKAR, birincil etikete degil.
             -- Coklu etikette ikisi farkli olabilir: birincili Silo 2x3 olan
@@ -13628,6 +13631,10 @@ const AKIS_ALANLAR = `
             -- sutunla: ad degistirilebilir bir alan (migrasyon-2026-08-21d.sql).
             -- Yanita CIKMAZ; akisSatiri onu ayiklar. (Sablon dizesi: BACKTICK YOK.)
             k.ai AS ai_hesap,
+            -- Aile rozeti (testci): akis/kesfet kartlari kullanici adinin
+            -- yanina mini tik cizer (1 Eyl 2026 istegi). Herkese acik nisan,
+            -- /profil/:ad da zaten donduruyor. (Sablon dizesi: BACKTICK YOK.)
+            k.testci,
             -- Ilk medyanin en/boy orani (medya_olculer): istemci karti bu
             -- oranda kurar, medya yuklenince ziplama olmaz. Kayit yoksa NULL,
             -- istemci bugunku gibi olcer. (Sablon dizesi: BACKTICK YOK.)
@@ -14544,8 +14551,16 @@ app.get('/bildirimler', girisZorunlu, sarici(async (req, res) => {
               b.tmdb_id, b.sezon, b.bolum,
               b.kisi_id, b.icerik_tur,
               k.kullanici_adi AS aktor, k.avatar AS aktor_avatar,
+              -- Aile rozeti: bildirim satiri aktor adinin yanina mini tik
+              -- cizer (1 Eyl 2026 istegi). Herkese acik nisan.
+              k.testci AS aktor_testci,
               y.tur AS yorum_tur, y.tmdb_id AS yorum_tmdb,
               y.sezon AS yorum_sezon, y.bolum AS yorum_bolum,
+              -- Ilgili gonderinin ILK medyasi: satirin sag ucundaki mini
+              -- gorsel (1 Eyl 2026 istegi). Video ise istemci <yol>.jpg kapak
+              -- karesini gosterir (video_kare.js uretiyor); medyasiz
+              -- gonderide NULL doner, gorsel cizilmez.
+              y.medya[1] AS yorum_medya,
               -- Geri bildirim yanıtı: metin BİLDİRİMDE DEĞİL, kaynağında
               -- durur (yanıt panelden düzeltilirse kopya ayrışmasın).
               -- Kullanıcının kendi yazdığı da gelir: aylar sonra açılan

@@ -174,6 +174,9 @@ const Map<String, String> cevirilerTe = {
   'Henüz bildirim yok': 'ఇంకా నోటిఫికేషన్లు లేవు',
   '@{} yorumuna yanıt verdi': '@{} నీ కామెంట్‌కు బదులిచ్చారు',
   '@{} yorumunu beğendi': '@{} నీ కామెంట్‌ను ఇష్టపడ్డారు',
+  '{} ve {} yorumunu beğendi': '{} మరియు {} నీ కామెంట్‌ను ఇష్టపడ్డారు',
+  '{} ve {} kişi yorumunu beğendi':
+      '{} మరియు మరో {} మంది నీ కామెంట్‌ను ఇష్టపడ్డారు',
   '@{} seni takip etti': '@{} నిన్ను ఫాలో చేశారు',
   '@{} sana mesaj gönderdi': '@{} నీకు సందేశం పంపారు',
   'Mesajlar': 'సందేశాలు',

@@ -174,6 +174,8 @@ const Map<String, String> cevirilerAz = {
   'Henüz bildirim yok': 'Hələ bildiriş yoxdur',
   '@{} yorumuna yanıt verdi': '@{} şərhinə cavab verdi',
   '@{} yorumunu beğendi': '@{} şərhini bəyəndi',
+  '{} ve {} yorumunu beğendi': '{} və {} şərhini bəyəndi',
+  '{} ve {} kişi yorumunu beğendi': '{} və daha {} nəfər şərhini bəyəndi',
   '@{} seni takip etti': '@{} səni izlədi',
   '@{} sana mesaj gönderdi': '@{} sənə mesaj göndərdi',
   'Mesajlar': 'Mesajlar',

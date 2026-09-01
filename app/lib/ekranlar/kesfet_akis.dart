@@ -2161,8 +2161,29 @@ class _ReelSayfaState extends State<_ReelSayfa>
                               context,
                               y['kullanici_adi'] as String,
                             ),
-                            child: Text(
-                              '@${y['kullanici_adi']}',
+                            child: Text.rich(
+                              TextSpan(
+                                text: '@${y['kullanici_adi']}',
+                                children: [
+                                  // Aile rozeti (1 Eyl 2026). MiniRozet
+                                  // DEĞİL: o tema-duyarlı sariMetin kullanır;
+                                  // Reels katmanı temadan bağımsız hep koyu
+                                  // (beyaz yazı gibi), marka sarısı koyuda
+                                  // 12:1 ile geçer.
+                                  if (y['testci'] == true)
+                                    const WidgetSpan(
+                                      alignment: PlaceholderAlignment.middle,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 3),
+                                        child: Icon(
+                                          Icons.verified,
+                                          size: 14,
+                                          color: DiziRenkler.sari,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(

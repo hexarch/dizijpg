@@ -172,6 +172,8 @@ const Map<String, String> cevirilerHe = {
   'Henüz bildirim yok': 'אין התראות עדיין',
   '@{} yorumuna yanıt verdi': 'תשובה חדשה לתגובה שלך: @{}',
   '@{} yorumunu beğendi': 'לייק חדש לתגובה שלך: @{}',
+  '{} ve {} yorumunu beğendi': '{} ו-{} אהבו את התגובה שלך',
+  '{} ve {} kişi yorumunu beğendi': '{} ועוד {} אהבו את התגובה שלך',
   '@{} seni takip etti': 'מעקב חדש: @{}',
   '@{} sana mesaj gönderdi': 'הודעה חדשה מ-@{}',
   'Mesajlar': 'הודעות',

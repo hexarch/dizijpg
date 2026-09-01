@@ -174,6 +174,8 @@ const Map<String, String> cevirilerFi = {
   'Henüz bildirim yok': 'Ei ilmoituksia vielä',
   '@{} yorumuna yanıt verdi': '@{} vastasi kommenttiisi',
   '@{} yorumunu beğendi': '@{} tykkäsi kommentistasi',
+  '{} ve {} yorumunu beğendi': '{} ja {} tykkäsivät kommentistasi',
+  '{} ve {} kişi yorumunu beğendi': '{} ja {} muuta tykkäsivät kommentistasi',
   '@{} seni takip etti': '@{} seurasi sinua',
   '@{} sana mesaj gönderdi': '@{} lähetti sinulle viestin',
   'Mesajlar': 'Viestit',

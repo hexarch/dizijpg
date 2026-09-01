@@ -174,6 +174,8 @@ const Map<String, String> cevirilerBg = {
   'Henüz bildirim yok': 'Още няма известия',
   '@{} yorumuna yanıt verdi': '@{} отговори на коментара ти',
   '@{} yorumunu beğendi': '@{} хареса коментара ти',
+  '{} ve {} yorumunu beğendi': '{} и {} харесаха коментара ти',
+  '{} ve {} kişi yorumunu beğendi': '{} и още {} души харесаха коментара ти',
   '@{} seni takip etti': '@{} те последва',
   '@{} sana mesaj gönderdi': '@{} ти изпрати съобщение',
   'Mesajlar': 'Съобщения',

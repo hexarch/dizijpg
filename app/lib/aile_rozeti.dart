@@ -100,6 +100,34 @@ class AileRozeti extends StatelessWidget {
   }
 }
 
+/// Kullanıcı adının HEMEN YANINA konan satır içi mini tik (1 Eyl 2026
+/// isteği: "sarı rozetli kişilerin gönderilerinde / bildirimlerde kullanıcı
+/// adının yanında da sarı rozet olacak").
+///
+/// [AileRozeti]'nden farkı: TIKLANMAZ ve 44 dp'lik dokunma kutusu YOKTUR —
+/// akış kartının ad satırı, bildirim metni ve Reels başlığı gibi sıkışık
+/// satırlarda duruyor; oralarda adın kendisi zaten profil bağlantısı, tik
+/// yalnız görsel bir işaret. Modalı profildeki tıklanabilir rozet açıyor.
+///
+/// Renk yine `sariMetin` (marka sarısı DEĞİL) — gerekçe ve kontrast ölçümleri
+/// [AileRozeti] başlığında.
+class MiniRozet extends StatelessWidget {
+  const MiniRozet({super.key, this.olcu = 14});
+
+  /// İkon boyutu — yanındaki yazının puntosuyla orantılı verilir.
+  final double olcu;
+
+  @override
+  Widget build(BuildContext context) {
+    return Icon(
+      Icons.verified,
+      size: olcu,
+      color: DiziRenkler.sariMetin,
+      semanticLabel: AileRozeti.erisimEtiketi.c,
+    );
+  }
+}
+
 /// Tikin ne anlama geldiğini anlatan alt sayfa.
 ///
 /// KARAR (7 Ağu): metinli rozet kalkınca modal KORUNDU. Üç gerekçe:

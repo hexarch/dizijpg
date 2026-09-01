@@ -174,6 +174,8 @@ const Map<String, String> cevirilerSw = {
   'Henüz bildirim yok': 'Hakuna arifa bado',
   '@{} yorumuna yanıt verdi': '@{} alijibu maoni yako',
   '@{} yorumunu beğendi': '@{} alipenda maoni yako',
+  '{} ve {} yorumunu beğendi': '{} na {} walipenda maoni yako',
+  '{} ve {} kişi yorumunu beğendi': '{} na wengine {} walipenda maoni yako',
   '@{} seni takip etti': '@{} alikufuata',
   '@{} sana mesaj gönderdi': '@{} alikutumia ujumbe',
   'Mesajlar': 'Jumbe',

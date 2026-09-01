@@ -174,6 +174,9 @@ const Map<String, String> cevirilerFil = {
   'Henüz bildirim yok': 'Wala pang notipikasyon',
   '@{} yorumuna yanıt verdi': 'Sumagot si @{} sa komento mo',
   '@{} yorumunu beğendi': 'Nagustuhan ni @{} ang komento mo',
+  '{} ve {} yorumunu beğendi': 'Nagustuhan nina {} at {} ang komento mo',
+  '{} ve {} kişi yorumunu beğendi':
+      'Nagustuhan nina {} at {} pa ang komento mo',
   '@{} seni takip etti': 'Sinundan ka ni @{}',
   '@{} sana mesaj gönderdi': 'Pinadalhan ka ni @{} ng mensahe',
   'Mesajlar': 'Mga Mensahe',

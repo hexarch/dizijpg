@@ -492,6 +492,12 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     if (kadi.isEmpty) return;
     try {
       final d = await Api.acikProfil(kadi);
+      // Aile rozeti akış kartında adın yanında çizilsin diye (1 Eyl 2026)
+      // profil düzeyindeki `testci` her yorum satırına kopyalanır — profil
+      // ucu yorumu satır satır kullanıcıya JOIN'lemiyor (hepsi aynı kişinin).
+      for (final y in (d['yorumlar'] as List<dynamic>? ?? [])) {
+        (y as Map<String, dynamic>)['testci'] = d['testci'] == true;
+      }
       if (mounted) setState(() => _yorumVeri = d);
     } catch (_) {
       /* liste eski hâliyle kalır; kullanıcı aşağı çekip yenileyebilir */

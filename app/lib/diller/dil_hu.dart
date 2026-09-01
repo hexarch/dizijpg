@@ -174,6 +174,8 @@ const Map<String, String> cevirilerHu = {
   'Henüz bildirim yok': 'Még nincs értesítés',
   '@{} yorumuna yanıt verdi': '@{} válaszolt a kommentedre',
   '@{} yorumunu beğendi': '@{} kedvelte a kommentedet',
+  '{} ve {} yorumunu beğendi': '{} és {} kedvelte a kommentedet',
+  '{} ve {} kişi yorumunu beğendi': '{} és még {} ember kedvelte a kommentedet',
   '@{} seni takip etti': '@{} bekövetett',
   '@{} sana mesaj gönderdi': '@{} üzenetet küldött neked',
   'Mesajlar': 'Üzenetek',

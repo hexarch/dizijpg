@@ -173,6 +173,8 @@ const Map<String, String> cevirilerTh = {
   'Henüz bildirim yok': 'ยังไม่มีการแจ้งเตือน',
   '@{} yorumuna yanıt verdi': '@{} ตอบกลับคอมเมนต์ของคุณ',
   '@{} yorumunu beğendi': '@{} ถูกใจคอมเมนต์ของคุณ',
+  '{} ve {} yorumunu beğendi': '{} และ {} ถูกใจคอมเมนต์ของคุณ',
+  '{} ve {} kişi yorumunu beğendi': '{} และอีก {} คนถูกใจคอมเมนต์ของคุณ',
   '@{} seni takip etti': '@{} ติดตามคุณ',
   '@{} sana mesaj gönderdi': '@{} ส่งข้อความถึงคุณ',
   'Mesajlar': 'ข้อความ',

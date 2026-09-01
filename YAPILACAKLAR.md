@@ -1,5 +1,45 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-02 — 🚀 Bildirimler yenilendi · aile rozeti her yerde · sohbet güvenli alan (1.114.0+181)
+
+- 🚀 **CANLIDA (web + backend).** `main.a3351c0553ef.dart.js`
+  (+ `main.dart.js_1.3e573bc0dd7d.part.js`), SW sökücü + brotli (108 dosya,
+  %74) tamam; eski hash'liler silindi. **Backend DEĞİŞTİ** (server.js:
+  `/bildirimler`e `aktor_testci` + `yorum_medya`, `AKIS_ALANLAR`/`/yorum/:id`/
+  `/yorumlar/:tur/:id`/begenenler'e `k.testci`) — migrasyon YOK, konteyner
+  yeniden kuruldu, canlıda uçtan uca doğrulandı (beğeni at → bildirimde
+  `aktor_testci`+`yorum_medya` geldi → beğeni geri alındı).
+- ✅ **Bildirimler tek parça görünüm** ("arka planla aynı renk olsunlar,
+  parça parça değil"): Card kalktı, satırlar sayfa zemininde düz ListTile.
+  Soldaki avatar + sarı yuvarlak/siyah ikon aynen durdu.
+- ✅ **Beğeniler gönderi başına TEK satır** ("alcelik, melisa ve 10 kişi
+  yorumunu beğendi gibi"): ardışıklık şartı olmadan yorum_id'ye göre toplanır,
+  son iki ad + "ve N kişi"; aynı kişinin beğen-vazgeç-beğen tekrarı teklenir.
+  İki yeni çeviri anahtarı 45 dile eklendi (`scratchpad/ceviri_ekle.py`).
+- ✅ **Satırın sağında gönderinin mini görseli** (video ise `<yol>.jpg` kapak
+  karesi, fotoğraf ise kendisi; medyasız gönderide çizilmez). Okunmamış sarı
+  nokta görselin soluna alındı.
+- ✅ **Aile rozeti (testci) kullanıcı adının yanında her yerde**: bildirim
+  metinlerinde (`_rozetliBaslik` — ad çeviride cümlenin neresinde olursa
+  olsun bulunur, `@ali`≠`@alican` sınır kontrolü), akış kartında, Reels
+  başlığında (orada tema-bağımsız marka sarısı), beğenenler listesinde ve
+  profil gönderilerinde (profil `testci`si satırlara kopyalanır). Yeni
+  `MiniRozet` (aile_rozeti.dart): tıklamasız satır içi tik.
+- ✅ **Bildirimler açılınca alt gezinme çubuğu gizlenir**
+  (`kabukCubuguGizliMi` = sohbet içi + `/bildirimler`).
+- ✅ **Sohbette yazı kutusu / Kabul-Reddet çubuğu telefonun sistem gezinme
+  tuşlarının altında kalıyordu — düzeltildi.** KÖK: kabuk Scaffold'unun
+  `bottomNavigationBar` YUVASI gizliyken bile doluydu (0 yükseklikli
+  SizedBox); Scaffold yuva doluyken gövdenin MediaQuery alt dolgusunu
+  sıfırlıyor, sohbetin SafeArea'sı 0 görüyordu. Yuva artık gizliyken
+  gerçekten `null` (ListenableBuilder Scaffold'u sarıyor). Test eski
+  davranışla KIRMIZI, düzeltmeyle yeşil doğrulandı.
+- Kanıt: `flutter test` 2450 yeşil (yeni: `bildirim_toplu_gorunum_test` 11
+  test; `kabuk_sohbet_cubugu_test`e bildirim çubuğu + güvenli alan testleri);
+  backend 2154 yeşil; `flutter analyze` yalnız info.
+- ⬜ Play/App Store paketlerine girmesi sonraki mağaza turunda
+  (APK `cikti/dizijpg-1.114.0-181.apk`).
 
 ## 2026-09-01 (3. tur) — 🚀 Reels etiket modalı · yazılı gönderi orta blok (1.113.1+180)
 

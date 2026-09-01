@@ -175,6 +175,9 @@ const Map<String, String> cevirilerPt = {
   'Henüz bildirim yok': 'Nenhuma notificação ainda',
   '@{} yorumuna yanıt verdi': '@{} respondeu seu comentário',
   '@{} yorumunu beğendi': '@{} curtiu seu comentário',
+  '{} ve {} yorumunu beğendi': '{} e {} curtiram seu comentário',
+  '{} ve {} kişi yorumunu beğendi':
+      '{} e mais {} pessoas curtiram seu comentário',
   '@{} seni takip etti': '@{} seguiu você',
   '@{} sana mesaj gönderdi': '@{} te enviou uma mensagem',
   'Mesajlar': 'Mensagens',

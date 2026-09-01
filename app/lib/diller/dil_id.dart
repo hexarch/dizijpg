@@ -174,6 +174,8 @@ const Map<String, String> cevirilerId = {
   'Henüz bildirim yok': 'Belum ada notifikasi',
   '@{} yorumuna yanıt verdi': '@{} membalas komentarmu',
   '@{} yorumunu beğendi': '@{} menyukai komentarmu',
+  '{} ve {} yorumunu beğendi': '{} dan {} menyukai komentarmu',
+  '{} ve {} kişi yorumunu beğendi': '{} dan {} lainnya menyukai komentarmu',
   '@{} seni takip etti': '@{} mengikutimu',
   '@{} sana mesaj gönderdi': '@{} mengirimimu pesan',
   'Mesajlar': 'Pesan',

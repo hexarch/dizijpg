@@ -174,6 +174,8 @@ const Map<String, String> cevirilerPa = {
   'Henüz bildirim yok': 'ਹਾਲੇ ਕੋਈ ਸੂਚਨਾ ਨਹੀਂ',
   '@{} yorumuna yanıt verdi': '@{} ਨੇ ਤੇਰੀ ਟਿੱਪਣੀ ਦਾ ਜਵਾਬ ਦਿੱਤਾ',
   '@{} yorumunu beğendi': '@{} ਨੂੰ ਤੇਰੀ ਟਿੱਪਣੀ ਪਸੰਦ ਆਈ',
+  '{} ve {} yorumunu beğendi': '{} ਅਤੇ {} ਨੂੰ ਤੇਰੀ ਟਿੱਪਣੀ ਪਸੰਦ ਆਈ',
+  '{} ve {} kişi yorumunu beğendi': '{} ਅਤੇ ਹੋਰ {} ਨੂੰ ਤੇਰੀ ਟਿੱਪਣੀ ਪਸੰਦ ਆਈ',
   '@{} seni takip etti': '@{} ਨੇ ਤੈਨੂੰ ਫਾਲੋ ਕੀਤਾ',
   '@{} sana mesaj gönderdi': '@{} ਨੇ ਤੈਨੂੰ ਸੁਨੇਹਾ ਭੇਜਿਆ',
   'Mesajlar': 'ਸੁਨੇਹੇ',

@@ -142,6 +142,12 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
       // sebebini söyleyip geri alma yolunu göstermek gerekir.
       final engelledim = p['engel'] == true;
       final yorumlar = (p['yorumlar'] as List<dynamic>? ?? []);
+      // Aile rozeti akış kartında adın yanında çizilsin diye (1 Eyl 2026)
+      // profil düzeyindeki `testci` her yorum satırına kopyalanır — profil
+      // ucu yorumu satır satır kullanıcıya JOIN'lemiyor (hepsi aynı kişinin).
+      for (final y in yorumlar) {
+        (y as Map<String, dynamic>)['testci'] = p['testci'] == true;
+      }
       final listeler = (p['listeler'] as List<dynamic>? ?? []);
       final izlenenler = (p['izlenenler'] as List<dynamic>? ?? []);
 

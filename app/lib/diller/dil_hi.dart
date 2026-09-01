@@ -174,6 +174,9 @@ const Map<String, String> cevirilerHi = {
   'Henüz bildirim yok': 'अभी कोई सूचना नहीं',
   '@{} yorumuna yanıt verdi': '@{} ने तुम्हारे कमेंट का जवाब दिया',
   '@{} yorumunu beğendi': '@{} ने तुम्हारा कमेंट पसंद किया',
+  '{} ve {} yorumunu beğendi': '{} और {} ने तुम्हारा कमेंट पसंद किया',
+  '{} ve {} kişi yorumunu beğendi':
+      '{} और {} अन्य लोगों ने तुम्हारा कमेंट पसंद किया',
   '@{} seni takip etti': '@{} ने तुम्हें फ़ॉलो किया',
   '@{} sana mesaj gönderdi': '@{} ने तुम्हें संदेश भेजा',
   'Mesajlar': 'संदेश',

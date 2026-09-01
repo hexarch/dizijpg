@@ -174,6 +174,8 @@ const Map<String, String> cevirilerUk = {
   'Henüz bildirim yok': 'Поки немає сповіщень',
   '@{} yorumuna yanıt verdi': 'Нова відповідь на твій коментар: @{}',
   '@{} yorumunu beğendi': '@{} подобається твій коментар',
+  '{} ve {} yorumunu beğendi': '{} і {} вподобали твій коментар',
+  '{} ve {} kişi yorumunu beğendi': '{} і ще {} людей вподобали твій коментар',
   '@{} seni takip etti': 'Новий підписник: @{}',
   '@{} sana mesaj gönderdi': 'Нове повідомлення від @{}',
   'Mesajlar': 'Повідомлення',

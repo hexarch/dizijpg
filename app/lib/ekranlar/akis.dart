@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../aile_rozeti.dart' show MiniRozet;
 import '../api.dart';
 import '../ceviri.dart';
 import '../gonderi_olcu.dart';
@@ -1097,8 +1098,24 @@ class _AkisKartiState extends State<AkisKarti> {
                                   // widthFactor: kutu yazı kadar GENİŞ kalsın,
                                   // yoksa "Takip Et" satırın sonuna savrulur.
                                   widthFactor: 1,
-                                  child: Text(
-                                    '@${y['kullanici_adi']}',
+                                  child: Text.rich(
+                                    TextSpan(
+                                      text: '@${y['kullanici_adi']}',
+                                      children: [
+                                        // Aile rozeti adın hemen yanında
+                                        // (1 Eyl 2026 isteği). WidgetSpan:
+                                        // ad kırpılsa da tik adla kalır.
+                                        if (y['testci'] == true)
+                                          const WidgetSpan(
+                                            alignment:
+                                                PlaceholderAlignment.middle,
+                                            child: Padding(
+                                              padding: EdgeInsets.only(left: 3),
+                                              child: MiniRozet(),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(

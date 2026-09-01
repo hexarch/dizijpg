@@ -174,6 +174,9 @@ const Map<String, String> cevirilerMl = {
   'Henüz bildirim yok': 'ഇതുവരെ അറിയിപ്പുകളില്ല',
   '@{} yorumuna yanıt verdi': '@{} നിന്റെ കമന്റിന് മറുപടി നൽകി',
   '@{} yorumunu beğendi': '@{} നിന്റെ കമന്റ് ഇഷ്ടപ്പെട്ടു',
+  '{} ve {} yorumunu beğendi': '{} ഉം {} ഉം നിന്റെ കമന്റ് ഇഷ്ടപ്പെട്ടു',
+  '{} ve {} kişi yorumunu beğendi':
+      '{} ഉം മറ്റ് {} പേരും നിന്റെ കമന്റ് ഇഷ്ടപ്പെട്ടു',
   '@{} seni takip etti': '@{} നിന്നെ ഫോളോ ചെയ്തു',
   '@{} sana mesaj gönderdi': '@{} നിനക്ക് സന്ദേശം അയച്ചു',
   'Mesajlar': 'സന്ദേശങ്ങൾ',

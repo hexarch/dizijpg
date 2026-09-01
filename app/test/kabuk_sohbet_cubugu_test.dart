@@ -33,6 +33,9 @@ void _sunucu() {
   Api.istemci = MockClient((istek) async {
     final yol = istek.url.path;
     if (yol.contains('/sohbetler/okunmamis')) return _json({'okunmamis': 0});
+    if (yol.contains('/bildirimler')) {
+      return _json({'bildirimler': const [], 'okunmamis': 0});
+    }
     if (yol.contains('/sohbetler')) {
       return _json({
         'sohbetler': const [],
@@ -154,4 +157,56 @@ void main() {
     await _bekle(tester);
     expect(find.byType(NavigationBar), findsNothing);
   });
+
+  testWidgets('BİLDİRİMLERDE de çubuk yok (1 Eyl 2026 isteği)', (tester) async {
+    final r = await _uygulama(tester, ekran: const Size(390, 844));
+    r.go('/akis');
+    await _bekle(tester);
+    expect(find.byType(NavigationBar), findsOneWidget);
+
+    r.push('/bildirimler');
+    await _bekle(tester);
+    expect(
+      find.byType(NavigationBar),
+      findsNothing,
+      reason: 'bildirimler açılınca alt gezinme çubuğu gizlenmeli',
+    );
+
+    r.pop();
+    await _bekle(tester);
+    expect(find.byType(NavigationBar), findsOneWidget);
+  });
+
+  testWidgets(
+    'SOHBETTE yazı kutusu SİSTEM GEZİNME TUŞLARININ ÜSTÜNDE kalır '
+    '(1 Eyl 2026, kullanıcı bildirdi)',
+    (tester) async {
+      // 3 tuşlu Android gezinmesi: alttan 48 px sistem şeridi.
+      //
+      // TUZAK (düzeltmenin kökü): kabuk Scaffold'unun bottomNavigationBar
+      // YUVASI doluyken (0 yükseklikli SizedBox bile olsa) gövdenin
+      // MediaQuery alt dolgusu SIFIRLANIR ve sohbetin SafeArea'sı çalışmaz —
+      // yazı kutusu sistem tuşlarının altında kalırdı. Yuva artık gizliyken
+      // gerçekten null (kabuk.dart).
+      tester.view.viewPadding = FakeViewPadding(bottom: 48);
+      tester.view.padding = FakeViewPadding(bottom: 48);
+      addTearDown(tester.view.reset);
+      final r = await _uygulama(tester, ekran: const Size(390, 844));
+      r.go('/sohbetler');
+      await _bekle(tester);
+      r.push('/sohbet/ayse');
+      await _bekle(tester);
+
+      final kutu = find.byType(TextField);
+      expect(kutu, findsWidgets, reason: 'mesaj yazma kutusu çizilmeli');
+      final alt = tester.getRect(kutu.first).bottom;
+      expect(
+        alt,
+        lessThanOrEqualTo(844 - 48),
+        reason:
+            'yazı kutusu sistem gezinme şeridinin (48 px) ÜSTÜNDE durmalı; '
+            'altında kalıyorsa SafeArea dolgusu yutulmuş demektir',
+      );
+    },
+  );
 }
