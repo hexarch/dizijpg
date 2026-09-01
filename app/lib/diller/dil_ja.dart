@@ -1376,4 +1376,5 @@ const Map<String, String> cevirilerJa = {
   'Spoiler uyarısını göster': 'ネタバレ警告を表示',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'オフにすると、ネタバレとしてマークされた投稿はカバーなしでそのまま表示されます。',
+  'Etiketler': 'タグ',
 };

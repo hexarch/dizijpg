@@ -1448,4 +1448,5 @@ const Map<String, String> cevirilerUr = {
   'Spoiler uyarısını göster': 'اسپائلر انتباہ دکھائیں',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'بند ہونے پر اسپائلر کے طور پر نشان زد پوسٹس بغیر پردے کے براہِ راست دکھائی جاتی ہیں۔',
+  'Etiketler': 'ٹیگز',
 };

@@ -1461,4 +1461,5 @@ const Map<String, String> cevirilerSv = {
   'Spoiler uyarısını göster': 'Visa spoilervarning',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'När den är avstängd visas inlägg markerade som spoiler direkt, utan skynke.',
+  'Etiketler': 'Taggar',
 };

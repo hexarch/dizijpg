@@ -1471,4 +1471,5 @@ const Map<String, String> cevirilerRo = {
   'Spoiler uyarısını göster': 'Afișează avertismentul de spoiler',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Când este dezactivat, postările marcate ca spoiler sunt afișate direct, fără cortină.',
+  'Etiketler': 'Etichetări',
 };

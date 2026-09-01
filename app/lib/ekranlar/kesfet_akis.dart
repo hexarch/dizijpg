@@ -1806,29 +1806,6 @@ class _ReelSayfaState extends State<_ReelSayfa>
       ? Icons.business
       : Icons.local_movies_outlined;
 
-  /// Ek etiketin görünen adı (+ varsa sezon/bölüm soneki, birincil rozetle
-  /// aynı 'S{}B{}' biçimi).
-  String _etiketAdi(Map<String, dynamic> e) {
-    final bilgi =
-        widget.icerikler['${e['tur']}:${e['tmdb_id']}']
-            as Map<String, dynamic>? ??
-        const {'ad': '?'};
-    final sonek = e['sezon'] != null
-        ? ' · ${'S{}B{}'.cf([e['sezon'], e['bolum']])}'
-        : '';
-    return '${bilgi['ad']}$sonek';
-  }
-
-  /// Ek etiketin hedef yolu — `EkEtiketSeridi` ile aynı kurallar (sezonun
-  /// kendi sayfası yok; bölümlüyse bölüme, değilse içeriğe/kişiye).
-  static String _etiketYolu(Map<String, dynamic> e) {
-    if (e['tur'] == 'person') return '/kisi/${e['tmdb_id']}';
-    if (e['bolum'] != null) {
-      return '/dizi/${e['tmdb_id']}/sezon/${e['sezon']}/bolum/${e['bolum']}';
-    }
-    return '/icerik/${e['tur']}/${e['tmdb_id']}';
-  }
-
   // Paylaşım sayfası: kişilere DM olarak gönder + telefonun kendi paylaşım
   // sayfası (WhatsApp/e-posta/Instagram...) + bağlantıyı kopyala.
   // Akış kartı da AYNI çağrıyı yapar (gonderiPaylas).
@@ -1873,112 +1850,6 @@ class _ReelSayfaState extends State<_ReelSayfa>
     final benimGonderi =
         y['kullanici_id'] == context.read<Oturum>().kullanici?['id'];
 
-    // YAZI-GÖNDERİSİ (medyasız) REELS'TE AKIŞ KARTI KALIBINDA (1 Eyl 2026
-    // isteği: "sadece yazının olduğu gönderiler çok çirkin duruyor, akıştaki
-    // kalıbında göster"). Eski hâli: soluk poster + ortada iri metin — eylem
-    // sütunuyla birlikte dağınık duruyordu. [AkisKarti] aynı paylaşılan
-    // haritayı okuyup yazdığı için beğeni/takip Reels listesiyle senkron
-    // kalır; spoiler perdesi ve çeviri bağlantısı da kartın kendi işi.
-    // Eylem sütunu/alt blok ÇİZİLMEZ — kart hepsini kendisi taşıyor, ikisi
-    // birden aynı eylemleri iki kez gösterirdi.
-    if (_medya.isEmpty) {
-      return Stack(
-        fit: StackFit.expand,
-        children: [
-          if (poster != null)
-            Opacity(
-              opacity: 0.25,
-              child: CachedNetworkImage(
-                imageUrl: poster,
-                httpHeaders: gorselBasliklari(poster),
-                fit: BoxFit.cover,
-              ),
-            )
-          else
-            const ColoredBox(color: Colors.black),
-          // Jest katmanı: kart DIŞINDAKİ boşlukta da Reels alışkanlıkları
-          // sürsün — yana fırlatma profil geçişi, çift dokunuş beğeni.
-          // Kartın KENDİSİ üstte (Stack sırası) — düğmeleri buna takılmaz.
-          Positioned.fill(
-            child: PointerInterceptor(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onDoubleTapDown: (d) => _ciftDokunus(d.localPosition),
-                onDoubleTap: () {},
-                onHorizontalDragEnd: (detay) {
-                  final hiz = detay.primaryVelocity ?? 0;
-                  if (hiz.abs() > 250) _yanaKaydir(hiz);
-                },
-              ),
-            ),
-          ),
-          // BİLEREK KAYDIRICISIZ: kartta dikey kaydırılabilir bir şey yoksa
-          // dikey sürükleme PageView'a düşer ve kartın ÜSTÜNDEN de gönderi
-          // geçilebilir (ScrollView olsaydı jesti yutar, sayfa dönmezdi).
-          // Bedeli: "devamı" ile açılan ÇOK uzun metin ekranı aşarsa altı
-          // kırpılır — metin sheet'te ("devamı" olmadan yorumlar yoluyla)
-          // zaten tam okunabiliyor.
-          //
-          // deferToChild sarmalayıcı: Reels alışkanlıkları kartın ÜSTÜNDE de
-          // sürer — çift dokunuş beğenir (kalp uçar), yana fırlatma profil/
-          // medya geçişi yapar. Kartın kendi düğmeleri (beğeni, yanıt, takip)
-          // tek dokunuşta çalışmaya devam eder; çift-dokunuş tanıyıcısının
-          // ~300 ms bekletmesi eski tam-ekran metin düzeninde de vardı.
-          GestureDetector(
-            behavior: HitTestBehavior.deferToChild,
-            onDoubleTapDown: (d) => _ciftDokunus(d.localPosition),
-            onDoubleTap: () {},
-            onHorizontalDragEnd: (detay) {
-              final hiz = detay.primaryVelocity ?? 0;
-              if (hiz.abs() > 250) _yanaKaydir(hiz);
-            },
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: masaustuKolonGenisligi,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 40,
-                  ),
-                  child: AkisKarti(yorum: y, icerikler: widget.icerikler),
-                ),
-              ),
-            ),
-          ),
-          // Çift dokunuş kalbi (medyalı sayfayla aynı animasyon).
-          if (_kalpKonum != null)
-            AnimatedBuilder(
-              animation: _kalpAnim,
-              builder: (context, _) {
-                final t = _kalpAnim.value;
-                if (t == 0 || t == 1) return const SizedBox.shrink();
-                final olcek = t < 0.3 ? (0.4 + t / 0.3 * 0.9) : 1.3;
-                final opaklik = t < 0.6 ? 1.0 : (1 - (t - 0.6) / 0.4);
-                return Positioned(
-                  left: _kalpKonum!.dx - 55,
-                  top: _kalpKonum!.dy - 55 - t * 40,
-                  child: IgnorePointer(
-                    child: Opacity(
-                      opacity: opaklik.clamp(0, 1),
-                      child: Transform.scale(
-                        scale: olcek,
-                        child: const Icon(
-                          Icons.favorite,
-                          size: 110,
-                          color: Colors.redAccent,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-        ],
-      );
-    }
-
     Widget zemin;
     if (d != null && d.value.isInitialized) {
       final videoOrani = d.value.aspectRatio == 0
@@ -2021,10 +1892,19 @@ class _ReelSayfaState extends State<_ReelSayfa>
         ),
       );
     } else {
-      // OLAMAZ: medyasız (yazılı) gönderi yukarıda akış kartı olarak erken
-      // döndü; medyalı gönderide ekrandaki medya ya video ya fotoğraftır.
-      // Dal yalnız `zemin`in atanmışlığı için duruyor.
-      zemin = const ColoredBox(color: Colors.black);
+      // Yazılı yorum: yalnız soluk poster arka planı. METİN ortada, ayrı
+      // katmanda çizilir (aşağıda) — burada kalsaydı tam ekran opak dokunuş
+      // katmanı etiketlerini yutardı.
+      zemin = poster != null
+          ? Opacity(
+              opacity: 0.25,
+              child: CachedNetworkImage(
+                imageUrl: poster,
+                httpHeaders: gorselBasliklari(poster),
+                fit: BoxFit.cover,
+              ),
+            )
+          : const SizedBox.expand();
     }
 
     return Stack(
@@ -2051,6 +1931,57 @@ class _ReelSayfaState extends State<_ReelSayfa>
             ),
           ),
         ),
+        // YAZILI GÖNDERİ: metin EKRANIN ORTASINDA, yumuşak köşeli koyu bir
+        // blok içinde (1 Eyl 2026, 3. istek: "beğeni/kullanıcı adı Reels'teki
+        // yerlerinde kalsın, yazı ortada olsun" — akış kartı kopyası GERİ
+        // ALINDI, eylem sütunu ve alt blok standart Reels düzeninde).
+        // Dokunuş katmanının ÜSTÜNDE ayrı katman: içindeki @kullanıcı ve
+        // dizi/film etiketleri dokunulabilir kalır. deferToChild: yalnız
+        // bloğun kendisi bu katmana düşer, boş alan alttaki opak katmana
+        // geçer — çift dokunuş/kaydırma her yerde sürsün diye aynı eylemler
+        // burada da bağlı. Alt kenar payı bloğu alt bilgi şeridinden uzak
+        // tutar ama ortalamayı bozacak kadar itmez.
+        if (_medya.isEmpty)
+          Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.deferToChild,
+              onDoubleTapDown: (d) => _ciftDokunus(d.localPosition),
+              onDoubleTap: () {},
+              onHorizontalDragEnd: (detay) {
+                final hiz = detay.primaryVelocity ?? 0;
+                if (hiz.abs() > 250) _yanaKaydir(hiz);
+              },
+              child: Center(
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(24, 24, 24, 140),
+                  constraints: const BoxConstraints(maxWidth: 520),
+                  padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+                  decoration: BoxDecoration(
+                    color: Colors.black45,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white12),
+                  ),
+                  // Otomatik çeviri anahtarına UYAR (alt bloktaki ReelsMetni
+                  // gibi): kapalıyken orijinal metin — yazılı gönderinin
+                  // "medyası" metnin kendisi, anahtar onu da kapsamalı.
+                  child: ValueListenableBuilder<ReelsCeviriKip>(
+                    valueListenable: ReelsCeviri.kip,
+                    builder: (context, kip, _) => EtiketliMetin(
+                      reelsGosterMetni(y, kip),
+                      // Reels daima koyu zemin → parlak sarı etiket
+                      koyuZemin: true,
+                      stil: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 19,
+                        height: 1.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         // Çoklu medya sayacı sağ üstte ("3/10") — noktalar altta, alt blokta.
         if (_medya.length > 1)
           Positioned(
@@ -2290,27 +2221,64 @@ class _ReelSayfaState extends State<_ReelSayfa>
                     // /icerik/null/null adresine götürürdü.
                     if (y['tur'] != null) ...[
                       const SizedBox(height: 8),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            _ReelsEtiket(
+                      Row(
+                        children: [
+                          Flexible(
+                            child: _ReelsEtiket(
                               ikon: _etiketIkonu(y['tur'] as String?),
                               metin:
                                   '${icerik['ad']}'
                                   '${y['sezon'] != null ? ' · ${'S{}B{}'.cf([y['sezon'], y['bolum']])}' : ''}',
-                              yol: _icerikYolu,
+                              onTap: () =>
+                                  rotayaGitGuvenli(context, _icerikYolu),
                             ),
-                            for (final e in _ekEtiketler) ...[
-                              const SizedBox(width: 14),
-                              _ReelsEtiket(
-                                ikon: _etiketIkonu(e['tur'] as String?),
-                                metin: _etiketAdi(e),
-                                yol: _etiketYolu(e),
+                          ),
+                          // EK ETİKETLER SATIRA DİZİLMEZ (1 Eyl 2026, 2.
+                          // istek: "isimleri tam ekrana sığmıyor"): birincil
+                          // içeriğin yanında yalnız "+N" çipi durur; dokununca
+                          // TÜM etiketler alttan yarım modalda listelenir —
+                          // video üstte oynamaya devam eder ([etiketleriAc]).
+                          if (_ekEtiketler.isNotEmpty) ...[
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: () => etiketleriAc(
+                                context,
+                                widget.yorum,
+                                widget.icerikler,
                               ),
-                            ],
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black38,
+                                  borderRadius: BorderRadius.circular(11),
+                                  border: Border.all(color: Colors.white24),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.person_outline,
+                                      size: 13,
+                                      color: DiziRenkler.sari,
+                                    ),
+                                    const SizedBox(width: 3),
+                                    Text(
+                                      '+${_ekEtiketler.length}',
+                                      style: const TextStyle(
+                                        color: DiziRenkler.sari,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
-                        ),
+                        ],
                       ),
                     ],
                     if (d != null && d.value.isInitialized) ...[
@@ -2564,33 +2532,31 @@ class _ReelsMetniState extends State<ReelsMetni> {
   }
 }
 
-/// Reels alt rozet satırındaki tek etiket: sarı ikon + ad, dokununca kendi
-/// sayfası (içerik/kişi/bölüm). Birincil içerik de ek etiketler de bununla
-/// çizilir — biçim tek yerde kalsın (1 Eyl 2026, oyuncu etiketleri isteği).
+/// Reels alt rozet satırındaki birincil içerik etiketi: sarı ikon + ad.
+/// (1 Eyl 2026, 2. istek: ek etiketler artık satıra dizilmiyor — "+N" çipi
+/// [etiketleriAc] modalını açıyor; bu widget yalnız birincil rozeti çizer.)
 class _ReelsEtiket extends StatelessWidget {
   final IconData ikon;
   final String metin;
-  final String yol;
+  final VoidCallback onTap;
 
   const _ReelsEtiket({
     required this.ikon,
     required this.metin,
-    required this.yol,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => rotayaGitGuvenli(context, yol),
+      onTap: onTap,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(ikon, size: 15, color: DiziRenkler.sari),
           const SizedBox(width: 5),
-          // Tek etiket taşarsa kendi içinde kırpılır; satırın tamamı zaten
-          // yatay kaydırılabilir (çok etiketli gönderi).
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 220),
+          // Uzun ad kendi içinde kırpılır (üst Row'daki Flexible daraltır).
+          Flexible(
             child: Text(
               metin,
               maxLines: 1,
@@ -2600,6 +2566,160 @@ class _ReelsEtiket extends StatelessWidget {
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// GÖNDERİNİN TÜM ETİKETLERİNİ (birincil içerik + oyuncular/ikinci içerikler)
+/// alttan açılan YARIM modalda listeler (1 Eyl 2026, 2. istek: "isimleri tam
+/// ekrana sığmıyor... yorumlardaki gibi modal aç, tam ekran olmasın, %60-70
+/// kaplasın, video yukarıda oynamaya devam etsin").
+///
+/// TAM EKRAN DEĞİL: yükseklik tavanı ekranın %65'i ([_EtiketlerSheet]);
+/// yorum sheet'inin aksine `isScrollControlled` yine true — yükseklik
+/// denetimi çocuktaki ConstrainedBox'ta, yoksa varsayılan tavan %56'ya
+/// (9/16) kilitliyordu. Reels sayfası sökülmediği için VİDEO DURMAZ:
+/// `_videoDurumGuncelle` yalnız sayfa aktifliğine bakar, modal onu değiştirmez.
+///
+/// Satıra dokununca [rotayaGitGuvenli] hem modalı hem Reels katmanını
+/// kapatıp hedef sayfayı açar (yoksa sayfa Reels'in altında kalırdı).
+Future<void> etiketleriAc(
+  BuildContext context,
+  Map<String, dynamic> yorum,
+  Map<String, dynamic> icerikler,
+) => showModalBottomSheet<void>(
+  context: context,
+  isScrollControlled: true,
+  // Yorum sheet'iyle aynı genişlik disiplini: masaüstünde 720 kolonda,
+  // mobilde tam genişlik.
+  constraints: const BoxConstraints(maxWidth: masaustuKolonGenisligi),
+  backgroundColor: DiziRenkler.koyuGri,
+  shape: const RoundedRectangleBorder(
+    borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+  ),
+  builder: (_) => _EtiketlerSheet(yorum: yorum, icerikler: icerikler),
+);
+
+class _EtiketlerSheet extends StatelessWidget {
+  final Map<String, dynamic> yorum;
+  final Map<String, dynamic> icerikler;
+
+  const _EtiketlerSheet({required this.yorum, required this.icerikler});
+
+  @override
+  Widget build(BuildContext context) {
+    final etiketler = (yorum['etiketler'] as List<dynamic>? ?? const [])
+        .cast<Map<String, dynamic>>();
+    return ConstrainedBox(
+      // %65: istenen %60-70 bandının ortası — üstte video görünür kalır.
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.65,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 10),
+          // Tutamaç: alttan sürüklenip kapanabildiğinin görsel ipucu.
+          Center(
+            child: Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
+            child: Text(
+              'Etiketler'.c,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          Flexible(
+            child: ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.only(
+                bottom: 12 + MediaQuery.of(context).padding.bottom,
+              ),
+              itemCount: etiketler.length,
+              itemBuilder: (context, i) {
+                final e = etiketler[i];
+                final tur = e['tur'] as String?;
+                final bilgi =
+                    icerikler['$tur:${e['tmdb_id']}']
+                        as Map<String, dynamic>? ??
+                    const {'ad': '?', 'poster': null};
+                final sezon = e['sezon'] as int?;
+                final bolum = e['bolum'] as int?;
+                final poster = posterUrl(
+                  bilgi['poster'] as String?,
+                  boyut: 'w92',
+                );
+                final yol = tur == 'person'
+                    ? '/kisi/${e['tmdb_id']}'
+                    : bolum != null
+                    ? '/dizi/${e['tmdb_id']}/sezon/$sezon/bolum/$bolum'
+                    : '/icerik/$tur/${e['tmdb_id']}';
+                return ListTile(
+                  onTap: () => rotayaGitGuvenli(context, yol),
+                  leading: ClipOval(
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: poster == null
+                          ? Container(
+                              color: DiziRenkler.acikGri,
+                              child: Icon(
+                                tur == 'person'
+                                    ? Icons.person
+                                    : tur == 'company'
+                                    ? Icons.business
+                                    : Icons.movie_outlined,
+                                size: 18,
+                                color: DiziRenkler.metin38,
+                              ),
+                            )
+                          : CachedNetworkImage(
+                              imageUrl: poster,
+                              httpHeaders: gorselBasliklari(poster),
+                              fit: tur == 'company'
+                                  ? BoxFit.contain
+                                  : BoxFit.cover,
+                            ),
+                    ),
+                  ),
+                  title: Text(
+                    '${bilgi['ad']}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  subtitle: bolum != null
+                      ? Text(
+                          'S{}B{}'.cf([sezon, bolum]),
+                          style: const TextStyle(color: Colors.white54),
+                        )
+                      : null,
+                  trailing: const Icon(
+                    Icons.chevron_right,
+                    color: Colors.white38,
+                  ),
+                );
+              },
             ),
           ),
         ],

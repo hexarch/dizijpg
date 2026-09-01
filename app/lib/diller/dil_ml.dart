@@ -1452,4 +1452,5 @@ const Map<String, String> cevirilerMl = {
   'Spoiler uyarısını göster': 'സ്പോയ്‌ലർ മുന്നറിയിപ്പ് കാണിക്കുക',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'ഓഫായിരിക്കുമ്പോൾ സ്പോയ്‌ലർ എന്ന് അടയാളപ്പെടുത്തിയ പോസ്റ്റുകൾ മറയില്ലാതെ നേരിട്ട് കാണിക്കും.',
+  'Etiketler': 'ടാഗുകൾ',
 };

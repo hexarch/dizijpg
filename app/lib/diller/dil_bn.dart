@@ -1440,4 +1440,5 @@ const Map<String, String> cevirilerBn = {
   'Spoiler uyarısını göster': 'স্পয়লার সতর্কতা দেখান',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'বন্ধ থাকলে স্পয়লার হিসেবে চিহ্নিত পোস্টগুলি পর্দা ছাড়াই সরাসরি দেখানো হয়।',
+  'Etiketler': 'ট্যাগ',
 };

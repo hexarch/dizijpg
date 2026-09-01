@@ -1456,4 +1456,5 @@ const Map<String, String> cevirilerSw = {
   'Spoiler uyarısını göster': 'Onyesha onyo la spoila',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Ikizimwa, machapisho yaliyowekwa alama ya spoila huonyeshwa moja kwa moja bila pazia.',
+  'Etiketler': 'Lebo',
 };

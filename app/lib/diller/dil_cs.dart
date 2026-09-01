@@ -1445,4 +1445,5 @@ const Map<String, String> cevirilerCs = {
   'Spoiler uyarısını göster': 'Zobrazovat upozornění na spoilery',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Když je vypnuto, příspěvky označené jako spoiler se zobrazují rovnou, bez clony.',
+  'Etiketler': 'Označení',
 };

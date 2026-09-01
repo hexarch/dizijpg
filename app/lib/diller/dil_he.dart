@@ -1415,4 +1415,5 @@ const Map<String, String> cevirilerHe = {
   'Spoiler uyarısını göster': 'הצגת אזהרת ספוילר',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'כשכבוי, פוסטים המסומנים כספוילר מוצגים ישירות, ללא מסך.',
+  'Etiketler': 'תיוגים',
 };

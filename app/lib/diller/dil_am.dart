@@ -1396,4 +1396,5 @@ const Map<String, String> cevirilerAm = {
   'Spoiler uyarısını göster': 'የስፖይለር ማስጠንቀቂያ አሳይ',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'ሲጠፋ እንደ ስፖይለር የተመለከቱ ልጥፎች ያለ መጋረጃ በቀጥታ ይታያሉ።',
+  'Etiketler': 'መለያዎች',
 };

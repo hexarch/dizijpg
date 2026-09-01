@@ -1464,4 +1464,5 @@ const Map<String, String> cevirilerMy = {
   'Spoiler uyarısını göster': 'ဇာတ်လမ်းပေါက်ကြားချက် သတိပေးချက် ပြရန်',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'ပိတ်ထားပါက ဇာတ်လမ်းပေါက်ကြားချက်အဖြစ် မှတ်သားထားသော ပို့စ်များကို ကာရံမှုမရှိဘဲ တိုက်ရိုက်ပြသသည်။',
+  'Etiketler': 'တဂ်များ',
 };

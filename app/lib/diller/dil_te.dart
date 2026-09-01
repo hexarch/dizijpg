@@ -1447,4 +1447,5 @@ const Map<String, String> cevirilerTe = {
   'Spoiler uyarısını göster': 'స్పాయిలర్ హెచ్చరికను చూపించు',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'ఆఫ్‌లో ఉన్నప్పుడు స్పాయిలర్‌గా గుర్తించిన పోస్టులు తెర లేకుండా నేరుగా చూపబడతాయి.',
+  'Etiketler': 'ట్యాగ్‌లు',
 };

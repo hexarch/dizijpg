@@ -1461,4 +1461,5 @@ const Map<String, String> cevirilerHu = {
   'Spoiler uyarısını göster': 'Spoilerfigyelmeztetés megjelenítése',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Kikapcsolva a spoilerként megjelölt bejegyzések azonnal, takarás nélkül jelennek meg.',
+  'Etiketler': 'Megjelölések',
 };

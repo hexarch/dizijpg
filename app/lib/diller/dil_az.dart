@@ -1441,4 +1441,5 @@ const Map<String, String> cevirilerAz = {
   'Spoiler uyarısını göster': 'Spoyler xəbərdarlığını göstər',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Söndürüldükdə spoyler kimi işarələnmiş paylaşımlar pərdəsiz, birbaşa göstərilir.',
+  'Etiketler': 'Etiketlər',
 };

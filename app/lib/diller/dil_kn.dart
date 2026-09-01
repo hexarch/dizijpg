@@ -1445,4 +1445,5 @@ const Map<String, String> cevirilerKn = {
   'Spoiler uyarısını göster': 'ಸ್ಪಾಯ್ಲರ್ ಎಚ್ಚರಿಕೆ ತೋರಿಸಿ',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'ಆಫ್ ಆಗಿದ್ದಾಗ ಸ್ಪಾಯ್ಲರ್ ಎಂದು ಗುರುತಿಸಲಾದ ಪೋಸ್ಟ್‌ಗಳು ಪರದೆ ಇಲ್ಲದೆ ನೇರವಾಗಿ ತೋರಿಸಲ್ಪಡುತ್ತವೆ.',
+  'Etiketler': 'ಟ್ಯಾಗ್‌ಗಳು',
 };

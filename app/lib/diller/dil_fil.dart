@@ -1476,4 +1476,5 @@ const Map<String, String> cevirilerFil = {
   'Spoiler uyarısını göster': 'Ipakita ang babala sa spoiler',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Kapag naka-off, ang mga post na minarkahang spoiler ay direktang ipinapakita, walang takip.',
+  'Etiketler': 'Mga tag',
 };

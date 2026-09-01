@@ -1449,4 +1449,5 @@ const Map<String, String> cevirilerVi = {
   'Spoiler uyarısını göster': 'Hiện cảnh báo tiết lộ nội dung',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Khi tắt, các bài viết được đánh dấu tiết lộ nội dung sẽ hiển thị trực tiếp, không có màn che.',
+  'Etiketler': 'Gắn thẻ',
 };

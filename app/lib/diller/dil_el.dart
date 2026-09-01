@@ -1473,4 +1473,5 @@ const Map<String, String> cevirilerEl = {
   'Spoiler uyarısını göster': 'Εμφάνιση προειδοποίησης σπόιλερ',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Όταν είναι απενεργοποιημένο, οι αναρτήσεις με σήμανση σπόιλερ εμφανίζονται απευθείας, χωρίς κάλυμμα.',
+  'Etiketler': 'Επισημάνσεις',
 };

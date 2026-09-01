@@ -1473,4 +1473,5 @@ const Map<String, String> cevirilerDe = {
   'Spoiler uyarısını göster': 'Spoiler-Warnung anzeigen',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Wenn ausgeschaltet, werden als Spoiler markierte Beiträge direkt und ohne Abdeckung angezeigt.',
+  'Etiketler': 'Markierungen',
 };

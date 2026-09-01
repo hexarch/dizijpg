@@ -1472,4 +1472,5 @@ const Map<String, String> cevirilerTa = {
   'Spoiler uyarısını göster': 'ஸ்பாய்லர் எச்சரிக்கையைக் காட்டு',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'அணைக்கப்பட்டிருந்தால், ஸ்பாய்லர் எனக் குறிக்கப்பட்ட இடுகைகள் திரையின்றி நேரடியாகக் காட்டப்படும்.',
+  'Etiketler': 'குறியீடுகள்',
 };

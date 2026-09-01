@@ -1378,4 +1378,5 @@ const Map<String, String> cevirilerKo = {
   'Spoiler uyarısını göster': '스포일러 경고 표시',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       '끄면 스포일러로 표시된 게시물이 가림막 없이 바로 표시됩니다.',
+  'Etiketler': '태그',
 };

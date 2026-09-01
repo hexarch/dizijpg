@@ -1,6 +1,30 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-01 (3. tur) — 🚀 Reels etiket modalı · yazılı gönderi orta blok (1.113.1+180)
+
+- 🚀 **CANLIDA (web).** `main.10e98b7eab8d.dart.js`
+  (+ `main.dart.js_1.aabd3b115804.part.js`), SW sökücü + brotli tamam.
+  **Backend DEĞİŞMEDİ.** 📦 APK: `cikti/dizijpg-1.113.1-180.apk` (78 MB).
+- ✅ **Etiketler yarım modalda** ("oyuncuların isimleri tam ekrana sığmıyor…
+  yorumlardaki gibi modal aç, tam ekran olmasın %60-70 kaplasın, video
+  oynamaya devam etsin"). Rozet satırında yalnız birincil içerik + "+N" çipi;
+  çip [etiketleriAc] modalını açar: tavan ekranın %65'i, üstte video oynamaya
+  devam eder (sayfa sökülmüyor). Satırlar `rotayaGitGuvenli` ile modal+Reels
+  kapatıp hedefe gider. 'Etiketler' anahtarı 45 dile eklendi
+  (`scratchpad/etiketler_sheet_ceviri.py`).
+- ✅ **Yazılı gönderi düzeni düzeltildi** ("%100 aynı olmamalı; beğeni,
+  kullanıcı adı Reels'teki yerlerinde olmalı, yazı ortada"): 2. turdaki
+  AkisKarti kopyası GERİ ALINDI. Standart Reels düzeni (sağ eylem sütunu,
+  sol alt kullanıcı bloğu, içerik rozeti + çip) + metin ekranın ortasında
+  yumuşak köşeli koyu blokta (siyah %45, 16px köşe, ince beyaz ayrıt).
+  Çift dokunuş beğenisi ve yana kaydırma metnin üstünde de çalışıyor.
+- Ayrıca: `api.dart Api.surum` 2. turda pubspec'le kaymıştı (177 kalmış),
+  yakalandı → sürüm eşitleme artık testte (`surum_esleme_test` yeşil).
+- Kanıt: `flutter test` 2437 yeşil; `reels_yenilikler_test` (çip + yarım
+  modal ölçümü + orta metin bandı), `reels_gezinme_test`e "etiket modalından
+  kişi sayfası" testi eklendi.
+
 ## 2026-09-01 (2. tur) — 🚀 Akış↔Reels video sürekliliği · Reels rötuşları · spoiler ayarı (1.112.0+178)
 
 - 🚀 **CANLIDA (web).** `main.8d9e17a48e88.dart.js`

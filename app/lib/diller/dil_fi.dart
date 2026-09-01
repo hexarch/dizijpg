@@ -1456,4 +1456,5 @@ const Map<String, String> cevirilerFi = {
   'Spoiler uyarısını göster': 'Näytä spoilerivaroitus',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Kun tämä on pois päältä, spoileriksi merkityt julkaisut näytetään suoraan ilman verhoa.',
+  'Etiketler': 'Tunnisteet',
 };

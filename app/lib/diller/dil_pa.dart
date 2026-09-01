@@ -1445,4 +1445,5 @@ const Map<String, String> cevirilerPa = {
   'Spoiler uyarısını göster': 'ਸਪੌਇਲਰ ਚੇਤਾਵਨੀ ਦਿਖਾਓ',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'ਬੰਦ ਹੋਣ \'ਤੇ ਸਪੌਇਲਰ ਵਜੋਂ ਨਿਸ਼ਾਨਬੱਧ ਪੋਸਟਾਂ ਪਰਦੇ ਤੋਂ ਬਿਨਾਂ ਸਿੱਧੀਆਂ ਦਿਖਾਈਆਂ ਜਾਂਦੀਆਂ ਹਨ।',
+  'Etiketler': 'ਟੈਗ',
 };

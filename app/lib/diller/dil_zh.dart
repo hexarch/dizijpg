@@ -1360,4 +1360,5 @@ const Map<String, String> cevirilerZh = {
   'Spoiler uyarısını göster': '显示剧透警告',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       '关闭后，标记为剧透的帖子将直接显示，不再遮挡。',
+  'Etiketler': '标记',
 };

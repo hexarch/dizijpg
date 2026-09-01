@@ -1433,4 +1433,5 @@ const Map<String, String> cevirilerFa = {
   'Spoiler uyarısını göster': 'نمایش هشدار اسپویل',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'وقتی خاموش باشد، پست‌های دارای برچسب اسپویل مستقیم و بدون پرده نمایش داده می‌شوند.',
+  'Etiketler': 'برچسب‌ها',
 };

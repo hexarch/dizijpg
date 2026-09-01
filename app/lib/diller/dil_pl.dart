@@ -1465,4 +1465,5 @@ const Map<String, String> cevirilerPl = {
   'Spoiler uyarısını göster': 'Pokazuj ostrzeżenie o spoilerach',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Gdy wyłączone, wpisy oznaczone jako spoiler są pokazywane od razu, bez zasłony.',
+  'Etiketler': 'Oznaczenia',
 };

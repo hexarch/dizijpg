@@ -1456,4 +1456,5 @@ const Map<String, String> cevirilerMs = {
   'Spoiler uyarısını göster': 'Tunjukkan amaran spoiler',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Apabila dimatikan, hantaran yang ditanda sebagai spoiler dipaparkan terus tanpa tirai.',
+  'Etiketler': 'Tag',
 };

@@ -1457,4 +1457,5 @@ const Map<String, String> cevirilerBg = {
   'Spoiler uyarısını göster': 'Показвай предупреждение за спойлери',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Когато е изключено, публикациите, отбелязани като спойлер, се показват направо, без завеса.',
+  'Etiketler': 'Отбелязвания',
 };

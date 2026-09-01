@@ -5,6 +5,7 @@ import 'package:dizijpg/ekranlar/akis.dart';
 import 'package:dizijpg/ekranlar/begenenler.dart';
 import 'package:dizijpg/ekranlar/detay.dart';
 import 'package:dizijpg/ekranlar/kesfet_akis.dart';
+import 'package:dizijpg/ekranlar/kisi.dart' show KisiEkrani;
 import 'package:dizijpg/ekranlar/kullanici_profil.dart';
 import 'package:dizijpg/ekranlar/yorumlar.dart';
 import 'package:dizijpg/tema.dart';
@@ -61,6 +62,7 @@ Map<String, dynamic> _gonderi({
 
 const _icerikler = {
   'tv:100': {'ad': 'Test Dizi', 'poster': null},
+  'person:300': {'ad': 'Bir Oyuncu', 'poster': null},
 };
 
 http.Response _json(Object govde) => http.Response(
@@ -277,6 +279,32 @@ void main() {
     _gorunur(DetayEkrani);
     expect(find.byType(ReelsGorunumu), findsNothing);
   });
+
+  testWidgets(
+    'Reels: etiket modalından oyuncuya dokununca kişi sayfası GÖRÜNÜR',
+    (tester) async {
+      await ekran(tester);
+      await _uygulama(tester, '/akis');
+      // MEDYALI gönderi: "+N" çipi medyalı Reels düzeninde; yazı-gönderisi
+      // kart kalıbında açılır ve etiketleri kartın kendi şeridinde taşır.
+      final y = _gonderi(medya: const ['/medya/a.jpg']);
+      y['etiketler'] = [
+        {'tur': 'tv', 'tmdb_id': 100},
+        {'tur': 'person', 'tmdb_id': 300},
+      ];
+      await _reelsAc(tester, yorum: y);
+
+      // "+1" çipi yarım modalı açar; oyuncu satırına dokununca modal DA
+      // Reels DE kapanıp kişi sayfası açılır (rotayaGitGuvenli).
+      await tester.tap(find.text('+1'));
+      await _bekle(tester);
+      await tester.tap(find.text('Bir Oyuncu'));
+      await _bekle(tester, 20);
+
+      _gorunur(KisiEkrani);
+      expect(find.byType(ReelsGorunumu), findsNothing);
+    },
+  );
 
   testWidgets('Reels: metindeki @etiketten profil GÖRÜNÜR', (tester) async {
     await ekran(tester);

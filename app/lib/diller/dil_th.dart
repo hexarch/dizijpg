@@ -1425,4 +1425,5 @@ const Map<String, String> cevirilerTh = {
   'Spoiler uyarısını göster': 'แสดงคำเตือนสปอยล์',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'เมื่อปิด โพสต์ที่ทำเครื่องหมายว่าสปอยล์จะแสดงทันทีโดยไม่มีม่านบัง',
+  'Etiketler': 'แท็ก',
 };

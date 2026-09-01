@@ -69,7 +69,9 @@ Future<void> _reelsKur(WidgetTester tester, Map<String, dynamic> yorum) async {
 }
 
 void main() {
-  testWidgets('oyuncu etiketi alt rozet satırında görünür', (tester) async {
+  testWidgets('oyuncu etiketleri "+N" çipiyle YARIM modalda açılır', (
+    tester,
+  ) async {
     await _reelsKur(
       tester,
       _gonderi(
@@ -79,19 +81,51 @@ void main() {
         ],
       ),
     );
+    // Satırda yalnız birincil içerik + "+N" çipi: oyuncu adı SATIRDA DEĞİL
+    // (1 Eyl 2026, 2. istek — "isimleri tam ekrana sığmıyor").
     expect(find.text('Test Dizi'), findsOneWidget);
+    expect(find.text('Bir Oyuncu'), findsNothing);
+    expect(find.text('+1'), findsOneWidget);
+
+    await tester.tap(find.text('+1'));
+    for (var i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 60));
+    }
+    // Modal açıldı: başlık + tüm etiketler listede; Reels arkada duruyor
+    // (sayfa sökülmedi → video oynamaya devam eder).
+    expect(find.text('Etiketler'), findsOneWidget);
     expect(find.text('Bir Oyuncu'), findsOneWidget);
-    expect(find.byIcon(Icons.person_outline), findsOneWidget);
+    expect(find.byType(ReelsGorunumu), findsOneWidget);
+    // TAM EKRAN DEĞİL: modal en çok ekranın %70'i — başlık ekranın üst
+    // %30'luk bandından AŞAĞIDA başlamalı ki video üstte görünür kalsın.
+    final ekranBoyu =
+        tester.view.physicalSize.height / tester.view.devicePixelRatio;
+    expect(
+      tester.getTopLeft(find.text('Etiketler')).dy,
+      greaterThan(ekranBoyu * 0.30),
+      reason: 'etiket modalı yarım açılmalı, tam ekran değil',
+    );
   });
 
-  testWidgets('yazılı gönderi Reels\'te akış kartı kalıbında çizilir', (
+  testWidgets('yazılı gönderi: metin ORTADA, düzen standart Reels', (
     tester,
   ) async {
+    // 1 Eyl 2026, 3. istek: akış kartı kopyası GERİ ALINDI — beğeni ve
+    // kullanıcı adı Reels'teki yerlerinde, yazı ekranın ortasında.
     await _reelsKur(tester, _gonderi(medyaSayisi: 0, metin: 'Yalnız yazı'));
-    expect(find.byType(AkisKarti), findsOneWidget);
-    // Eylem sütunu çizilmez: kart kendi eylemlerini taşıyor (çift gösterim
-    // olmasın) — Reels'e özgü "Paylaş" etiketli düğme yok.
-    expect(find.byIcon(Icons.send_outlined), findsOneWidget); // karttaki
+    expect(find.byType(AkisKarti), findsNothing);
+    // Standart Reels düzeni duruyor: sağ eylem sütunu + sol alt kullanıcı adı.
+    expect(find.byIcon(Icons.send_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.favorite_border), findsOneWidget);
+    expect(find.text('@dizi.jpg.ai'), findsOneWidget);
+    // Metin dikeyde ekranın orta bandında.
+    final ekranBoyu =
+        tester.view.physicalSize.height / tester.view.devicePixelRatio;
+    final metin = tester.getCenter(
+      find.text('Yalnız yazı', findRichText: true),
+    );
+    expect(metin.dy, greaterThan(ekranBoyu * 0.25));
+    expect(metin.dy, lessThan(ekranBoyu * 0.75));
   });
 
   testWidgets('etiketsiz medyalı gönderide rozet satırı çizilmez', (

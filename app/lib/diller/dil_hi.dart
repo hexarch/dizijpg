@@ -1445,4 +1445,5 @@ const Map<String, String> cevirilerHi = {
   'Spoiler uyarısını göster': 'स्पॉइलर चेतावनी दिखाएँ',
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'बंद होने पर स्पॉइलर के रूप में चिह्नित पोस्ट बिना पर्दे के सीधे दिखाई जाती हैं।',
+  'Etiketler': 'टैग',
 };
