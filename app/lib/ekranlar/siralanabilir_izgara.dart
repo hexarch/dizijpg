@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../icerik_deposu.dart';
+import '../liste_gorunumu.dart';
 import '../puan_favori_deposu.dart';
 import '../tema.dart';
 import 'icerik_satiri.dart';
@@ -127,14 +128,15 @@ class _SiralanabilirPosterIzgarasiState
   bool _adlarYukleniyor = false;
 
   /// SATIR GÖRÜNÜMÜ (1 Eyl 2026 isteği): afiş ızgarası yerine satır satır
-  /// liste — afiş + ad + yıl + kendi puanın + favoriyse kırmızı kalp
-  /// (bkz. [IcerikSatiri]). Anahtarı süzgecin YANINDAKİ liste ikonudur.
+  /// liste — afiş + ad + yıl + kendi puanın + favoriyse kırmızı kalp + son
+  /// izleme + emoji + dizide ilerleme çubuğu (bkz. [IcerikSatiri]). Anahtarı
+  /// süzgecin YANINDAKİ liste ikonudur.
   ///
-  /// SIRALAMA KİPİNDEN BAĞIMSIZ: kullanıcı "Bitti"ye basıp süzgeç şeridini
-  /// kapattığında görünüm satır olarak KALIR — bu bir görünüm tercihi, geçici
-  /// bir kip değil. Izgaraya dönmek için aynı ikona basılır (ikon o an
-  /// "afiş görünümü"ne döner).
-  bool _satirKipi = false;
+  /// TERCİH BURADA DEĞİL [ListeGorunumu]'NDE TUTULUR: State'te tutulduğu ilk
+  /// sürümde ekran kapanınca seçim ölüyordu ("uygulamayı yeniden başlatıp
+  /// listelere girdiğimde yine eski görünüşte oluyor"). Artık disketen okunur
+  /// ve altı kitaplık listesi aynı tercihi paylaşır.
+  bool get _satirKipi => ListeGorunumu.satir.value;
 
   /// 'tur:id' → küçük harfe indirgenmiş ad (süzgeç için).
   final Map<String, String> _adlar = {};
@@ -147,6 +149,18 @@ class _SiralanabilirPosterIzgarasiState
   void initState() {
     super.initState();
     _ogeler = [...widget.ogeler];
+    ListeGorunumu.satir.addListener(_gorunumDegisti);
+    // Tercih SATIR olarak kayıtlıysa ekran daha ilk karede puan/kalp/tarih/
+    // emoji ile açılmalı; veri yalnız kullanıcı ikona bastığında çekilseydi
+    // yeniden başlatmadan sonraki ilk açılış süssüz kalırdı.
+    if (_satirKipi) PuanFavoriDeposu.yukle();
+  }
+
+  /// Görünüm tercihi (bu ekrandan ya da başka bir listeden) değişti.
+  void _gorunumDegisti() {
+    if (!mounted) return;
+    if (_satirKipi) PuanFavoriDeposu.yukle();
+    setState(() {});
   }
 
   @override
@@ -163,6 +177,7 @@ class _SiralanabilirPosterIzgarasiState
 
   @override
   void dispose() {
+    ListeGorunumu.satir.removeListener(_gorunumDegisti);
     _kaydirmaSaati?.cancel();
     _kaydirma.dispose();
     super.dispose();
@@ -475,6 +490,8 @@ class _SiralanabilirPosterIzgarasiState
         key: ValueKey(anahtar),
         tur: o['tur'] as String,
         tmdbId: (o['tmdb_id'] as num).toInt(),
+        // İlerleme çubuğunun payı — afiş ızgarasındaki çubukla AYNI kaynak.
+        izlenenSayi: widget.izlenenSayi?.call(o),
         sonEk: widget.siralamaKipi && ustteDegil
             ? IconButton(
                 key: Key('sira-uste-satir-$anahtar'),
@@ -521,10 +538,10 @@ class _SiralanabilirPosterIzgarasiState
             IconButton(
               key: const Key('satir-kipi'),
               tooltip: _satirKipi ? 'Afiş görünümü'.c : 'Satır görünümü'.c,
-              onPressed: () {
-                setState(() => _satirKipi = !_satirKipi);
-                if (_satirKipi) PuanFavoriDeposu.yukle();
-              },
+              // Tercihi YAZAN tek yer; ekran kendini `_gorunumDegisti`
+              // dinleyicisiyle tazeler (setState burada gereksiz olurdu ve
+              // iki kaynak arasında ayrışma riski açardı).
+              onPressed: () => ListeGorunumu.ayarla(!_satirKipi),
               icon: Icon(
                 _satirKipi ? Icons.grid_view : Icons.view_list,
                 color: DiziRenkler.sariMetin,

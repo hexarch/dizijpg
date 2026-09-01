@@ -17,6 +17,7 @@ import 'ekranlar/kabuk.dart' show KabukKatlama;
 import 'gorusme/arama_servisi.dart';
 import 'push.dart';
 import 'kitaplik_durumu.dart';
+import 'liste_gorunumu.dart';
 import 'puan.dart';
 import 'reels_ceviri.dart';
 import 'sira_tercihi.dart';
@@ -119,6 +120,11 @@ Future<void> main() async {
     await acilisAdimi('reels-ceviri', ReelsCeviri.yukle);
     // Akış/Keşfet: Kronolojik mi Önerilen mi
     await acilisAdimi('sira', SiraTercihi.yukle);
+    // Kitaplık listeleri: afiş ızgarası mı satır listesi mi. İLK KAREDEN
+    // ÖNCE okunmalı — sonraya kalsaydı liste ızgarayla açılıp bir kare sonra
+    // satıra dönerdi (kullanıcının şikâyet ettiği "yine eski görünüş"ün
+    // gözle görünür hâli).
+    await acilisAdimi('liste-gorunumu', ListeGorunumu.yukle);
     // Puan ölçeği (5-100): ÖNBELLEKTEN. Doğrunun kaynağı sunucudur ama ilk
     // kare ağı bekleyemez — yanlış ölçekte çizilen yıldız satırı saniye sonra
     // 100'lük rozete dönüşseydi göze çarpan bir zıplama olurdu. Sunucu

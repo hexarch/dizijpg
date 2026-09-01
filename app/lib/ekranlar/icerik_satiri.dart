@@ -30,12 +30,24 @@ import 'tepki.dart';
 /// SIĞMAYABİLİR. Row olsaydı taşma çizgisi çıkardı; Wrap alta sarar ve hiçbir
 /// bilgi kırpılmaz.
 ///
+/// İLERLEME ÇUBUĞU YALNIZ DİZİDE (kullanıcı isteği: *"liste görünümünde de
+/// bar koy, izleme yüzdesine göre dolsun ve altında yüzdeyi göster; tabii
+/// filmlerde olmayacak ama dizilerde olacak"*). Filmde "izlenen/toplam" diye
+/// bir oran yok — tek bölümlük bir şeyin çubuğu ya boş ya dolu olurdu, bilgi
+/// taşımazdı. Afiş kartındaki ([MiniIcerik]) çubukla AYNI kaynak
+/// (`izlenenSayi` / `number_of_episodes`) ve AYNI renk kuralı: sarı = devam
+/// ediyor, turuncu = tamamlandı.
+///
 /// YIL ESKİ SUNUCUDA YOK: `yil` alanı 1 Eyl 2026'da eklendi. Gelmezse satır
 /// yılsız çizilir; boş parantez ya da "(...)" BASILMAZ — kullanıcının
 /// başlıklarda şikâyet ettiği tam olarak buydu.
 class IcerikSatiri extends StatefulWidget {
   final String tur;
   final int tmdbId;
+
+  /// Dizide izlenen bölüm sayısı — ilerleme çubuğunun payı. Filmde ANLAMSIZ
+  /// olduğu için verilse bile çizilmez.
+  final int? izlenenSayi;
 
   /// Sağ uçta çizilecek ek eylem (sıralama kipinde "en üste taşı").
   final Widget? sonEk;
@@ -44,6 +56,7 @@ class IcerikSatiri extends StatefulWidget {
     super.key,
     required this.tur,
     required this.tmdbId,
+    this.izlenenSayi,
     this.sonEk,
   });
 
@@ -266,6 +279,7 @@ class _IcerikSatiriState extends State<IcerikSatiri> {
                       },
                     ),
                   ),
+                  ..._ilerleme(),
                 ],
               ),
             ),
@@ -274,5 +288,60 @@ class _IcerikSatiriState extends State<IcerikSatiri> {
         ),
       ),
     );
+  }
+
+  /// DİZİ İLERLEMESİ: dolan çubuk + ALTINDA yüzde.
+  ///
+  /// Film: boş liste — filmde "kaç bölümünü izledin" diye bir soru yok.
+  /// İzlenen 0 iken de çizilmez: "İzleyeceğim" listesinin TAMAMI %0 olurdu ve
+  /// aynı sıfır her satırda tekrarlanınca bilgi değil gürültü olur (afiş
+  /// kartındaki çubukta da 21 Ağu'dan beri aynı kural var).
+  /// Toplam bölüm sayısı TMDB'den gelmezse (eski önbellek) de çizilmez —
+  /// paydası olmayan bir yüzde uydurmak yalan olurdu.
+  List<Widget> _ilerleme() {
+    if (widget.tur != 'tv') return const [];
+    final toplam = (_icerik?['number_of_episodes'] as num?)?.toInt() ?? 0;
+    final izlenen = widget.izlenenSayi ?? 0;
+    if (toplam <= 0 || izlenen <= 0) return const [];
+    // TMDB'nin bölüm sayısı geriden gelebiliyor (yeni sezon henüz işlenmemiş):
+    // izlenen > toplam olduğunda oran 1'i aşmasın, yüzde 100'ü geçmesin.
+    final oran = (izlenen / toplam).clamp(0.0, 1.0).toDouble();
+    final tamamlandi = izlenen >= toplam;
+    return [
+      const SizedBox(height: 6),
+      ClipRRect(
+        borderRadius: BorderRadius.circular(3),
+        child: SizedBox(
+          height: 5,
+          width: double.infinity,
+          child: ColoredBox(
+            color: DiziRenkler.metin12,
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: FractionallySizedBox(
+                // Görünür taban: %1'lik ilerleme bile bir çizgi bıraksın,
+                // "hiç izlememişim" gibi durmasın.
+                widthFactor: oran.clamp(0.03, 1.0),
+                heightFactor: 1,
+                child: ColoredBox(
+                  color: tamamlandi ? Colors.deepOrange : DiziRenkler.sari,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      const SizedBox(height: 2),
+      Text(
+        // '%{}' anahtarı CLDR'den çıkarıldı (tool/yuzde_kalibi.dart): de/fr/ru
+        // "42 %", fa "٪42" — elle "%$n" yazmak 45 dilde yanlış olurdu.
+        '%{}'.cf([(oran * 100).round()]),
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: tamamlandi ? Colors.deepOrange : DiziRenkler.metin38,
+        ),
+      ),
+    ];
   }
 }

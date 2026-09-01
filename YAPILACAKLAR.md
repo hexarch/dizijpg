@@ -1,6 +1,44 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-01 — 🚀 Görünüm tercihi KALICI + dizide ilerleme çubuğu
+
+- 🚀 **CANLIDA (web).** `main.5a77d5260d20.dart.js`
+  (+ `main.dart.js_1.86291d9e37f7.part.js`), SW sökücü yazıldı, eski
+  hash'liler silindi, brotli 108 dosya (%74). **Backend DEĞİŞMEDİ** — bu tur
+  tamamen istemci tarafı, `server.js` kopyalanmadı, kapsayıcı yeniden
+  derlenmedi.
+- 📦 **APK: `cikti/dizijpg-1.110.0-176.apk`** (78 MB) — versionCode 176,
+  gerçek yükleme anahtarıyla imzalı (SHA1 2E:38:AB:…:AB:58).
+
+Kullanıcı bildirimi (birebir): *"liste görünüşüne geçiyorum, uygulamayı
+yeniden başlatıp listelere girdiğimde yine eski görünüşte oluyor; kullanıcı
+tercihleri her zaman kaydedilmeli"* + *"liste görünümünde de bar koy, izleme
+yüzdesine göre dolsun ve altında yüzdeyi göster; tabii filmlerde olmayacak
+ama dizilerde olacak."*
+
+- ✅ **HATA: görünüm tercihi kaydedilmiyordu.** Bayrak
+  `SiralanabilirPosterIzgarasi`'nın State'indeydi — ekran kapanınca ölüyordu.
+  Yeni `lib/liste_gorunumu.dart`: `ValueNotifier` + SharedPreferences,
+  `main.dart`ta **ilk kareden ÖNCE** okunuyor (`liste-gorunumu` açılış adımı)
+  — sonraya kalsaydı liste ızgarayla açılıp bir kare sonra satıra dönerdi.
+  **TEK ANAHTAR, liste başına değil:** İzliyorum'da satır seçip İzlediğim
+  Filmler'de yine ızgara bulmak aynı şikâyetin devamı olurdu.
+  Tercih satıra dönünce `/puanlarim` ilk karede çekiliyor; yoksa yeniden
+  başlatmadan sonraki ilk açılış puansız/tarihsiz kalırdı.
+- ✅ **Dizide ilerleme çubuğu + altında yüzde.** Kaynak afiş kartındakiyle
+  ([MiniIcerik]) AYNI: `izlenenSayi` / `number_of_episodes`; renk kuralı da
+  aynı — sarı devam ediyor, turuncu tamamlandı. **Filmde çizilmiyor** (istek);
+  izlenen 0 iken de çizilmiyor — "İzleyeceğim" listesinin tamamı %0 olurdu ve
+  aynı sıfır her satırda tekrarlanınca bilgi değil gürültü olur. Toplam bölüm
+  sayısı gelmezse de çizilmiyor: paydası olmayan yüzde uydurulmaz.
+  Yüzde `'%{}'` anahtarıyla — CLDR kalıbı (de/fr/ru "42 %", fa "٪42"); elle
+  `"%$n"` yazmak 45 dilde yanlış olurdu. Yeni metin anahtarı AÇILMADI.
+- Kanıt: `test/kitaplik_satir_gorunumu_test.dart` 10 → **13 test** (tercih
+  diske yazılıyor · yeniden başlatınca satır açılıyor · tercih iki liste
+  arasında paylaşılıyor · dizide çubuk+yüzde var, filmde yok); paket
+  **2418 geçti**.
+
 ## 2026-09-01 — 🚀 Satır görünümüne izleme tarihi + en çok verilen emoji
 
 - 🚀 **CANLIDA (web + backend).** Web `main.87080233fbf2.dart.js`

@@ -18,6 +18,11 @@
 //   5) Hiçbir süsü olmayan satırda ikinci satır HİÇ çizilmiyor.
 //   6) Satır görünümünde "En üste taşı" çalışıyor ve sunucuya TAM sıra yazıyor.
 //   7) "Bitti"ye basınca görünüm satır olarak KALIYOR (görünüm tercihi).
+//   8) TERCİH DİSKE YAZILIYOR ve uygulama yeniden başlayınca liste DOĞRUDAN
+//      satır görünümüyle açılıyor (kullanıcı bildirimi: "uygulamayı yeniden
+//      başlatıp listelere girdiğimde yine eski görünüşte oluyor").
+//   9) Dizide izleme yüzdesine göre dolan çubuk + ALTINDA yüzde var;
+//      FİLMDE YOK.
 import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
@@ -26,6 +31,7 @@ import 'package:dizijpg/ekranlar/izlediklerim.dart';
 import 'package:dizijpg/ekranlar/kitaplik_liste.dart';
 import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:dizijpg/icerik_deposu.dart';
+import 'package:dizijpg/liste_gorunumu.dart';
 import 'package:dizijpg/puan.dart';
 import 'package:dizijpg/ekranlar/tepki.dart';
 import 'package:dizijpg/puan_favori_deposu.dart';
@@ -40,6 +46,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 late List<({String metot, String yol, String govde})> _istekler;
 late List<Map<String, dynamic>> _durumlar;
 late List<Map<String, dynamic>> _izlenenTv;
+
+/// Tür süzgeçsiz `/izlediklerim` — kitaplık ekranı ilerleme çubuğunun payını
+/// (izlenen bölüm sayısı) buradan kuruyor.
+late List<Map<String, dynamic>> _izlenenHepsi;
+
+/// TMDB kartındaki toplam bölüm sayısı ('tv:104' → null: paydası olmayan
+/// dizide çubuk çizilmemeli).
+late Map<String, int?> _bolumSayisi;
 
 /// `/puanlarim` yanıtı: 101 puanlı + favori, 102 yalnız puanlı,
 /// 103 yalnız favori, 104 ÇIPLAK (ikinci satırı olmamalı).
@@ -66,7 +80,7 @@ void _sunucu() {
     if (yol == '/izlediklerim') {
       final tur = istek.url.queryParameters['tur'];
       if (tur == 'tv') return cevap({'ogeler': _izlenenTv});
-      return cevap({'ogeler': <dynamic>[]});
+      return cevap({'ogeler': _izlenenHepsi});
     }
     if (yol == '/puanlarim') {
       _puanCagrisi++;
@@ -90,6 +104,9 @@ void _sunucu() {
               'vote_average': 8.0,
               // Yıl: 101 → 2011, 102 → 2012, 201 → 2111 (her yapıma tekil).
               'yil': '${1910 + int.parse(a.split(':')[1])}',
+              'number_of_episodes': _bolumSayisi.containsKey(a)
+                  ? _bolumSayisi[a]
+                  : (a.startsWith('tv:') ? 10 : null),
             },
         },
       });
@@ -104,14 +121,25 @@ Future<void> _bekle(WidgetTester tester) async {
   }
 }
 
-Future<void> _kur(WidgetTester tester, Widget ekran) async {
+Future<void> _kur(
+  WidgetTester tester,
+  Widget ekran, {
+  bool? kayitliSatirKipi,
+}) async {
   _istekler = [];
   _puanCagrisi = 0;
   IcerikDeposu.temizle();
   PuanFavoriDeposu.temizle();
   PuanOlcegi.deger.value = 5;
-  SharedPreferences.setMockInitialValues({'token': 'sahte'});
+  SharedPreferences.setMockInitialValues({
+    'token': 'sahte',
+    if (kayitliSatirKipi != null) ListeGorunumu.anahtar: kayitliSatirKipi,
+  });
   await Api.tokenYukle();
+  // Uygulama açılışını taklit et: tercih DİSKTEN okunur (main.dart'taki
+  // `liste-gorunumu` adımı). Testler arasında sızmasın diye her kurulumda.
+  ListeGorunumu.satir.value = false;
+  await ListeGorunumu.yukle();
   _sunucu();
   tester.view.physicalSize = const Size(600, 1600);
   tester.view.devicePixelRatio = 1.0;
@@ -162,6 +190,13 @@ void main() {
       for (final id in [201, 202, 203])
         {'tur': 'tv', 'tmdb_id': id, 'sayi': 3, 'sira': null},
     ];
+    // 101 → 4/10 (%40, devam ediyor) · 102 → 10/10 (%100, tamamlandı)
+    // 103/104 → izleme kaydı yok, çubuk çizilmemeli.
+    _izlenenHepsi = [
+      {'tur': 'tv', 'tmdb_id': 101, 'sayi': 4},
+      {'tur': 'tv', 'tmdb_id': 102, 'sayi': 10},
+    ];
+    _bolumSayisi = {};
     // 80/100 → 5'lik ölçekte 4 yıldız.
     _puanlar = [
       {'tur': 'tv', 'tmdb_id': 101, 'puan': 80},
@@ -356,6 +391,104 @@ void main() {
       find.byType(IcerikSatiri),
       findsNWidgets(4),
       reason: 'görünüm tercihi kip kapanınca kayboldu',
+    );
+  });
+
+  testWidgets(
+    'TERCİH DİSKE YAZILIR: yeniden başlatınca satır görünümü açılır',
+    (tester) async {
+      await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
+      await _seridiAc(tester, 'kitaplik-sirala');
+      await _satirKipineGec(tester);
+
+      // Kullanıcının seçimi SharedPreferences'a yazıldı mı?
+      final p = await SharedPreferences.getInstance();
+      expect(
+        p.getBool(ListeGorunumu.anahtar),
+        isTrue,
+        reason: 'görünüm tercihi diske yazılmadı',
+      );
+
+      // UYGULAMA YENİDEN BAŞLADI: tercih diskte, ekran ilk karede SATIR olmalı
+      // ve şerit açmaya gerek KALMAMALI.
+      await _kur(
+        tester,
+        const KitaplikListesiEkrani(durum: 'izliyorum'),
+        kayitliSatirKipi: true,
+      );
+      expect(
+        find.byType(IcerikSatiri),
+        findsNWidgets(4),
+        reason: 'yeniden başlatmadan sonra yine ızgara açıldı',
+      );
+      expect(find.byType(MiniIcerik), findsNothing);
+      // Süsler de ilk karede gelmeli: veri yalnız ikona basınca çekilseydi
+      // yeniden başlatmadan sonraki ilk açılış puansız/tarihsiz kalırdı.
+      expect(_puanCagrisi, greaterThan(0));
+      expect(find.text('4/5'), findsOneWidget);
+    },
+  );
+
+  testWidgets('tercih İKİ LİSTE ARASINDA da paylaşılır', (tester) async {
+    await _kur(
+      tester,
+      const IzlenenlerEkrani(tur: 'tv'),
+      kayitliSatirKipi: true,
+    );
+    expect(
+      find.byType(IcerikSatiri),
+      findsNWidgets(3),
+      reason: 'tercih altı kitaplık listesinin ortak ayarı olmalı',
+    );
+  });
+
+  testWidgets('DİZİDE ilerleme çubuğu + altında yüzde var, FİLMDE YOK', (
+    tester,
+  ) async {
+    // Listeye bir FİLM ekle: izleme kaydı olsa bile çubuk çizilmemeli.
+    _durumlar = [
+      ..._durumlar,
+      {
+        'tur': 'movie',
+        'tmdb_id': 301,
+        'durum': 'izliyorum',
+        'tekrar': 0,
+        'sira': null,
+      },
+    ];
+    _izlenenHepsi = [
+      ..._izlenenHepsi,
+      {'tur': 'movie', 'tmdb_id': 301, 'sayi': 1},
+    ];
+    await _kur(
+      tester,
+      const KitaplikListesiEkrani(durum: 'izliyorum'),
+      kayitliSatirKipi: true,
+    );
+
+    Finder icinde(String anahtar, Finder ne) =>
+        find.descendant(of: find.byKey(ValueKey(anahtar)), matching: ne);
+
+    // 101 → 4/10, 102 → 10/10. Yüzde CLDR kalıbından ('%{}' anahtarı).
+    expect(icinde('tv-101', find.text('%40')), findsOneWidget);
+    expect(icinde('tv-102', find.text('%100')), findsOneWidget);
+    // Çubuk: tamamlanan turuncu, devam eden marka sarısı.
+    Color dolgu(String anahtar) => tester
+        .widgetList<ColoredBox>(icinde(anahtar, find.byType(ColoredBox)))
+        .last
+        .color;
+    expect(dolgu('tv-101'), DiziRenkler.sari);
+    expect(dolgu('tv-102'), Colors.deepOrange);
+
+    // 103/104: izleme kaydı yok → çubuk da yüzde de yok.
+    expect(icinde('tv-104', find.textContaining('%')), findsNothing);
+
+    // FİLM: izleme kaydı VAR ama çubuk YOK (kullanıcı isteği).
+    expect(find.byKey(const ValueKey('movie-301')), findsOneWidget);
+    expect(
+      icinde('movie-301', find.textContaining('%')),
+      findsNothing,
+      reason: 'filmde ilerleme yüzdesi çizilmemeliydi',
     );
   });
 
