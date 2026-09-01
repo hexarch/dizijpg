@@ -1452,4 +1452,10 @@ const Map<String, String> cevirilerSv = {
   'Güvenli bağlantı kurulamadı':
       'Det gick inte att upprätta en säker anslutning',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Oväntat svar från servern',
+  'İzlediğim Diziler': 'Serier jag sett',
+  'İzlediğim Filmler': 'Filmer jag sett',
+  'Satır görünümü': 'Listvy',
+  'Afiş görünümü': 'Affischvy',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Dra är avstängt i listvyn; använd ”Flytta överst” för att flytta fram.',
 };

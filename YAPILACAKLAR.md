@@ -1,6 +1,40 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-01 — 🔨 Kitaplık listeleri: satır görünümü + başlık/ikon temizliği
+
+Kullanıcının dört isteği (hepsi 1 Eyl), tek turda:
+
+- ✅ **Profilden "Bitirdim" şeridi kalktı** ("zaten izlediğim diziler ve
+  izlediğim filmler kısmı var, bitirdime gerek yok"). İkisi AYNI kümeydi:
+  "bitirdim" işaretlemek yayınlanmış bölümleri `izlemeler`e yazıyor ve o tablo
+  "İzlediğim Diziler/Filmler" şeritlerini besliyor.
+- ✅ **Liste başlığında "(…" yok** ("izlediğim dizilerin yanında (... bir şey
+  yazıyor gözükmüyor, kaldır onu, sadece listenin adı olsun ve sol taraftaki
+  oka yanaştır"). `İzlediğim Diziler (215)` tek satırda eylem ikonuyla
+  sığmıyor, ellipsis sayının üstüne düşüp okunmayan bir parantez bırakıyordu.
+  Sayı kalktı, `titleSpacing: 0` ile ad geri okuna yaslandı (kitaplık durum
+  listesinde de aynı hizalama). Yeni anahtarlar `İzlediğim Diziler` /
+  `İzlediğim Filmler` mevcut çevirilerden sayı eki kırpılarak türetildi.
+- ✅ **Çift yönlü ok → ayar çarkı** ("sağ tarafta yukarı aşağı ok yerine
+  setting ikonu koy, tıklayınca aynı ekran açılsın"). Davranış aynı; şerit
+  artık yalnız sıralama değil GÖRÜNÜM de barındırdığı için ok eksik anlatıyordu.
+- ✅ **SATIR GÖRÜNÜMÜ** ("listede aramanın yanında liste ikonu olsun, tıklayınca
+  satır satır görünüme geçecek: sol tarafta dizi afişi, yanında adı, adın
+  yanında yılı, yıl ve adın altında kullanıcının verdiği puan ve favori dizi
+  veya filmi ise kırmızı kalp"). Yeni `IcerikSatiri` + `PuanFavoriDeposu`;
+  ikon süzgecin yanında, görünüm tercihi kip kapansa da KALIYOR. Satır
+  görünümünde sürükleme kapalı, her satırda "En üste taşı" var.
+- Backend: `GET /puanlarim` (kendi puanların + favorilerin, `sezon IS NULL`,
+  tavan 5000, saatte 240) ve `POST /icerikler` kartlarına `yil` alanı.
+  Yeni tablo/kolon YOK — migrasyon gerekmiyor.
+- Kanıt: `test/kitaplik_satir_gorunumu_test.dart` (9 test) +
+  `test/profil_bitirdim_kaldirildi_test.dart` (3 test); tüm paket **2414
+  geçti**. Yeni metinler ('Satır görünümü', 'Afiş görünümü', satır ipucu)
+  45 dile çevrildi (`scratchpad/ceviri_ekle.py`).
+- Not: sürüm 1.107.0+173 → **1.108.0+174**; `api.dart` sabiti 1.106.1+172'de
+  KALMIŞTI (önceki commit'te unutulmuş), ikisi birlikte yükseltildi.
+
 ## 2026-09-01 — 🚀 Sohbet: paylaşılan gönderi kartı + başlık + Görüldü
 
 - 🚀 **CANLIDA (web + backend).** `server.js` kopyalandı, `dizijpg-api`

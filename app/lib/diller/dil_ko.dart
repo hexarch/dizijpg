@@ -1369,4 +1369,10 @@ const Map<String, String> cevirilerKo = {
   'Sunucu yanıt vermedi': '서버가 응답하지 않았습니다',
   'Güvenli bağlantı kurulamadı': '보안 연결을 설정할 수 없습니다',
   'Sunucudan beklenmeyen bir yanıt geldi': '서버에서 예기치 않은 응답이 왔습니다',
+  'İzlediğim Diziler': '시청한 시리즈',
+  'İzlediğim Filmler': '시청한 영화',
+  'Satır görünümü': '목록 보기',
+  'Afiş görünümü': '포스터 보기',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      '목록 보기에서는 끌기가 꺼져 있습니다. “맨 위로 이동”로 앞으로 옮기세요.',
 };

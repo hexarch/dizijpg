@@ -1067,12 +1067,20 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Kitaplık grupları
-                    // Sabit sıra: İzliyorum → İzleyeceğim → Bitirdim.
-                    // Bıraktım poster şeridi olarak GÖSTERİLMEZ (kullanıcı isteği);
-                    // aşağıda yalnız soluk bir satır olarak durur.
+                    // Sabit sıra: İzliyorum → İzleyeceğim.
+                    //
+                    // BİTİRDİM ŞERİDİ KALDIRILDI (1 Eyl 2026, kullanıcı
+                    // isteği birebir: "bitirdim listesini kaldır, zaten
+                    // izlediğim diziler ve izlediğim filmler kısmı var").
+                    // İkisi AYNI kümeyi gösteriyordu: "bitirdim" işaretlemek
+                    // yayınlanmış bölümleri `izlemeler`e yazıyor, o da
+                    // "İzlediğim Diziler/Filmler" şeridini besliyor.
+                    // Bıraktım da poster şeridi olarak GÖSTERİLMEZ; aşağıda
+                    // yalnız soluk bir satır olarak durur.
                     for (final e in [
                       for (final durum in durumAdlari.keys)
                         if (durum != 'biraktim' &&
+                            durum != 'bitirdim' &&
                             gruplar[durum]?.isNotEmpty == true)
                           MapEntry(durum, gruplar[durum]!),
                     ]) ...[

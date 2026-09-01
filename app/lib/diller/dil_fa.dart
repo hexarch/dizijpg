@@ -1424,4 +1424,10 @@ const Map<String, String> cevirilerFa = {
   'Güvenli bağlantı kurulamadı': 'اتصال امن برقرار نشد',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'پاسخ غیرمنتظره‌ای از سرور دریافت شد',
+  'İzlediğim Diziler': 'سریال‌های دیده‌شده',
+  'İzlediğim Filmler': 'فیلم‌های دیده‌شده',
+  'Satır görünümü': 'نمای فهرست',
+  'Afiş görünümü': 'نمای پوستر',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'در نمای فهرست کشیدن غیرفعال است؛ با «انتقال به بالا» به جلو بیاور.',
 };

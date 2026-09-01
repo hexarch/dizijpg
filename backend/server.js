@@ -11862,6 +11862,46 @@ app.get('/kitapligim', girisZorunlu, sarici(async (req, res) => {
 }));
 
 // ---------------------------------------------------------------------------
+// SATIR GÖRÜNÜMÜNÜN VERİSİ — kendi puanlarım + favorilerim (1 Eyl 2026)
+// ---------------------------------------------------------------------------
+// Kitaplık listeleri (İzliyorum, İzlediğim Diziler, ...) artık afiş ızgarası
+// yerine SATIR SATIR da çizilebiliyor; satırda adın/yılın altında KULLANICININ
+// VERDİĞİ PUAN ve favoriyse kırmızı kalp var.
+//
+// NEDEN AYRI UÇ: bu iki bilgi liste besleyen üç ayrı uca (`/kitapligim`,
+// `/izlediklerim`, liste içeriği) dağılmış durumda ve satır görünümü ÜÇÜNDE DE
+// aynı. Tek uç → tek yerde bakım, ekran başına TEK ek istek. İçerik başına
+// `/detay` çağırmak 578 öğelik listede 578 istek ederdi.
+//
+// SEZON/BÖLÜM PUANLARI DIŞARIDA (`sezon IS NULL`): satırda gösterilen, o
+// BAŞLIĞA verilen puandır. Bölüm puanları buraya karışsaydı aynı tmdb_id için
+// düzinelerce satır dönerdi.
+//
+// TAVAN: en büyük gerçek kitaplık 578 başlık; 5000 dört kattan fazla pay
+// bırakıyor ve satır ~12 bayt. Aşılırsa satırda yalnız puan/kalp eksik kalır,
+// liste yine çizilir.
+const puanlarimLimiti = hizLimiti(240, (req) => `pz:${req.kullanici.id}`);
+
+app.get('/puanlarim', girisZorunlu, puanlarimLimiti, sarici(async (req, res) => {
+  const [puanlar, favoriler] = await Promise.all([
+    havuz.query(
+      `SELECT tur, tmdb_id, puan FROM puanlar
+        WHERE kullanici_id=$1 AND sezon IS NULL AND puan IS NOT NULL
+          AND tur IN ('tv','movie')
+        LIMIT 5000`,
+      [req.kullanici.id],
+    ),
+    havuz.query(
+      `SELECT tur, tmdb_id FROM favoriler
+        WHERE kullanici_id=$1 AND tur IN ('tv','movie')
+        LIMIT 5000`,
+      [req.kullanici.id],
+    ),
+  ]);
+  res.json({ puanlar: puanlar.rows, favoriler: favoriler.rows });
+}));
+
+// ---------------------------------------------------------------------------
 // EKRAN SÜRESİ — TEK KAYNAK (istek listesi md. 22, "tekrar izleme")
 //
 // Formül üç ayrı uçta (kendi istatistiğin, açık profil, yıl özeti) kopyala-
@@ -13984,6 +14024,11 @@ async function icerikKartlari(anahtarlar) {
       poster_path: v.poster_path || null,
       vote_average: v.vote_average ?? 0,
       number_of_episodes: v.number_of_episodes ?? null,
+      // Yapım yılı (1 Eyl 2026): kitaplık listelerinin SATIR görünümü adın
+      // yanında yılı gösteriyor. Tam tarih değil YIL gönderiliyor — kart
+      // yükü zaten 120 satırlık partiler hâlinde taşınıyor ve satırda
+      // gösterilen tek şey yıl. Eski istemciler alanı görmezden gelir.
+      yil: String(v.first_air_date || v.release_date || '').slice(0, 4) || null,
     };
   });
   return kartlar;

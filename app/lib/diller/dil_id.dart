@@ -1441,4 +1441,10 @@ const Map<String, String> cevirilerId = {
   'Sunucu yanıt vermedi': 'Server tidak merespons',
   'Güvenli bağlantı kurulamadı': 'Tidak dapat membuat koneksi aman',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Respons tak terduga dari server',
+  'İzlediğim Diziler': 'Serial yang kutonton',
+  'İzlediğim Filmler': 'Film yang kutonton',
+  'Satır görünümü': 'Tampilan daftar',
+  'Afiş görünümü': 'Tampilan poster',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Seret dimatikan di tampilan daftar; gunakan “Pindah ke atas” untuk memajukannya.',
 };

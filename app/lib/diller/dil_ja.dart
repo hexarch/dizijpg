@@ -1367,4 +1367,10 @@ const Map<String, String> cevirilerJa = {
   'Sunucu yanıt vermedi': 'サーバーが応答しませんでした',
   'Güvenli bağlantı kurulamadı': '安全な接続を確立できませんでした',
   'Sunucudan beklenmeyen bir yanıt geldi': 'サーバーから予期しない応答がありました',
+  'İzlediğim Diziler': '視聴したドラマ',
+  'İzlediğim Filmler': '視聴した映画',
+  'Satır görünümü': 'リスト表示',
+  'Afiş görünümü': 'ポスター表示',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'リスト表示ではドラッグできません。「先頭へ移動」で前に移動できます。',
 };

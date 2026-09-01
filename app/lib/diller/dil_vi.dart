@@ -1440,4 +1440,10 @@ const Map<String, String> cevirilerVi = {
   'Sunucu yanıt vermedi': 'Máy chủ không phản hồi',
   'Güvenli bağlantı kurulamadı': 'Không thể thiết lập kết nối an toàn',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Phản hồi không mong đợi từ máy chủ',
+  'İzlediğim Diziler': 'Phim bộ đã xem',
+  'İzlediğim Filmler': 'Phim lẻ đã xem',
+  'Satır görünümü': 'Xem dạng danh sách',
+  'Afiş görünümü': 'Xem dạng áp phích',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Không kéo được ở dạng danh sách; dùng “Đưa lên đầu” để đưa lên trước.',
 };

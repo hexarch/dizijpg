@@ -6,7 +6,9 @@ import 'package:flutter/services.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../icerik_deposu.dart';
+import '../puan_favori_deposu.dart';
 import '../tema.dart';
+import 'icerik_satiri.dart';
 import 'ortak.dart';
 
 /// Kitaplık listelerinin (İzliyorum, İzleyeceğim, Bitirdim, Bıraktım,
@@ -123,6 +125,16 @@ class _SiralanabilirPosterIzgarasiState
   bool _surukleniyor = false;
   String _suzgec = '';
   bool _adlarYukleniyor = false;
+
+  /// SATIR GÖRÜNÜMÜ (1 Eyl 2026 isteği): afiş ızgarası yerine satır satır
+  /// liste — afiş + ad + yıl + kendi puanın + favoriyse kırmızı kalp
+  /// (bkz. [IcerikSatiri]). Anahtarı süzgecin YANINDAKİ liste ikonudur.
+  ///
+  /// SIRALAMA KİPİNDEN BAĞIMSIZ: kullanıcı "Bitti"ye basıp süzgeç şeridini
+  /// kapattığında görünüm satır olarak KALIR — bu bir görünüm tercihi, geçici
+  /// bir kip değil. Izgaraya dönmek için aynı ikona basılır (ikon o an
+  /// "afiş görünümü"ne döner).
+  bool _satirKipi = false;
 
   /// 'tur:id' → küçük harfe indirgenmiş ad (süzgeç için).
   final Map<String, String> _adlar = {};
@@ -397,6 +409,16 @@ class _SiralanabilirPosterIzgarasiState
   @override
   Widget build(BuildContext context) {
     final gorunen = _gorunenler;
+    if (_satirKipi) {
+      final liste = _satirListesi(gorunen);
+      if (!widget.siralamaKipi) return liste;
+      return Column(
+        children: [
+          _araclar(gorunen.length),
+          Expanded(child: liste),
+        ],
+      );
+    }
     final izgara = Listener(
       onPointerMove: (e) => _isaretciHareket(e.position),
       onPointerUp: (_) => _kaydirmayiDurdur(),
@@ -431,6 +453,44 @@ class _SiralanabilirPosterIzgarasiState
     );
   }
 
+  /// SATIR GÖRÜNÜMÜ. Sürükle-bırak burada KAPALI: satır düzeninde afişi
+  /// tutup taşımak ızgaradaki jest değil ve iki ayrı sürükleme semantiğini
+  /// aynı ekranda taşımak, kullanıcının 26 Ağu'da düzelttiğimiz "basılı tutma
+  /// ≠ sürükleme" ayrımını yeniden bulanıklaştırırdı. Sıralama kipinde her
+  /// satırın sağında "En üste taşı" durur — uzun listenin asıl çözümü zaten
+  /// oydu (bkz. sınıf başlığı).
+  Widget _satirListesi(List<dynamic> gorunen) => ListView.separated(
+    controller: _kaydirma,
+    padding:
+        widget.dolgu ?? EdgeInsets.fromLTRB(12, 4, 12, altGuvenli(context)),
+    itemCount: gorunen.length,
+    separatorBuilder: (_, _) =>
+        Divider(height: 1, thickness: 1, color: DiziRenkler.metin12),
+    itemBuilder: (context, i) {
+      final o = gorunen[i] as Map<String, dynamic>;
+      final anahtar = _anahtar(o);
+      // Zaten en üstteki öğeye "en üste taşı" çizilmez (işlevsiz düğme).
+      final ustteDegil = _ogeler.indexOf(o) > 0;
+      return IcerikSatiri(
+        key: ValueKey(anahtar),
+        tur: o['tur'] as String,
+        tmdbId: (o['tmdb_id'] as num).toInt(),
+        sonEk: widget.siralamaKipi && ustteDegil
+            ? IconButton(
+                key: Key('sira-uste-satir-$anahtar'),
+                tooltip: 'En üste taşı'.c,
+                onPressed: _yaziliyor ? null : () => _usteTasi(o),
+                icon: Icon(
+                  Icons.vertical_align_top,
+                  size: 20,
+                  color: DiziRenkler.sariMetin,
+                ),
+              )
+            : null,
+      );
+    },
+  );
+
   Widget _araclar(int bulunan) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
     child: Column(
@@ -454,6 +514,22 @@ class _SiralanabilirPosterIzgarasiState
                 ),
               ),
             ),
+            // GÖRÜNÜM ANAHTARI — kullanıcı isteği birebir: "listede aramanın
+            // yanında liste ikonu olsun, tıklayınca satır satır görünüme
+            // geçsin". Puan/kalp verisi YALNIZ burada çekilir: ızgara
+            // görünümünde kullanılmıyor, açılışta boşuna istek atılmasın.
+            IconButton(
+              key: const Key('satir-kipi'),
+              tooltip: _satirKipi ? 'Afiş görünümü'.c : 'Satır görünümü'.c,
+              onPressed: () {
+                setState(() => _satirKipi = !_satirKipi);
+                if (_satirKipi) PuanFavoriDeposu.yukle();
+              },
+              icon: Icon(
+                _satirKipi ? Icons.grid_view : Icons.view_list,
+                color: DiziRenkler.sariMetin,
+              ),
+            ),
             if (_elleSirali)
               IconButton(
                 key: const Key('sira-sifirla'),
@@ -465,7 +541,10 @@ class _SiralanabilirPosterIzgarasiState
         ),
         const SizedBox(height: 6),
         Text(
-          _suzgec.isEmpty
+          _satirKipi
+              ? 'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.'
+                    .c
+              : _suzgec.isEmpty
               ? 'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.'
                     .c
               : (_adlarYukleniyor

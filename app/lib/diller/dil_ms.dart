@@ -1447,4 +1447,10 @@ const Map<String, String> cevirilerMs = {
   'Güvenli bağlantı kurulamadı': 'Tidak dapat mewujudkan sambungan selamat',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'Respons tidak dijangka daripada pelayan',
+  'İzlediğim Diziler': 'Siri yang saya tonton',
+  'İzlediğim Filmler': 'Filem yang saya tonton',
+  'Satır görünümü': 'Paparan senarai',
+  'Afiş görünümü': 'Paparan poster',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Seret dimatikan dalam paparan senarai; guna “Alih ke atas sekali” untuk ke depan.',
 };

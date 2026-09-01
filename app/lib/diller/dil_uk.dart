@@ -1445,4 +1445,10 @@ const Map<String, String> cevirilerUk = {
   'Sunucu yanıt vermedi': 'Сервер не відповів',
   'Güvenli bağlantı kurulamadı': 'Не вдалося встановити захищене з’єднання',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Неочікувана відповідь сервера',
+  'İzlediğim Diziler': 'Переглянуті серіали',
+  'İzlediğim Filmler': 'Переглянуті фільми',
+  'Satır görünümü': 'Списком',
+  'Afiş görünümü': 'Постерами',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'У вигляді списку перетягування вимкнено; скористайся «Перемістити на початок», щоб винести вперед.',
 };

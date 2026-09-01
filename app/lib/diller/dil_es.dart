@@ -1459,4 +1459,10 @@ const Map<String, String> cevirilerEs = {
   'Sunucu yanıt vermedi': 'El servidor no respondió',
   'Güvenli bağlantı kurulamadı': 'No se pudo establecer una conexión segura',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Respuesta inesperada del servidor',
+  'İzlediğim Diziler': 'Series que vi',
+  'İzlediğim Filmler': 'Películas que vi',
+  'Satır görünümü': 'Vista de lista',
+  'Afiş görünümü': 'Vista de pósteres',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Arrastrar está desactivado en la vista de lista; usa «Mover al principio» para adelantarlo.',
 };

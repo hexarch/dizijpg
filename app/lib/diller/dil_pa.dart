@@ -1436,4 +1436,10 @@ const Map<String, String> cevirilerPa = {
   'Sunucu yanıt vermedi': 'ਸਰਵਰ ਨੇ ਜਵਾਬ ਨਹੀਂ ਦਿੱਤਾ',
   'Güvenli bağlantı kurulamadı': 'ਸੁਰੱਖਿਅਤ ਕਨੈਕਸ਼ਨ ਨਹੀਂ ਬਣ ਸਕਿਆ',
   'Sunucudan beklenmeyen bir yanıt geldi': 'ਸਰਵਰ ਤੋਂ ਅਣਕਿਆਸਿਆ ਜਵਾਬ ਆਇਆ',
+  'İzlediğim Diziler': 'ਮੇਰੇ ਦੇਖੇ ਸ਼ੋਅ',
+  'İzlediğim Filmler': 'ਮੇਰੀਆਂ ਦੇਖੀਆਂ ਫ਼ਿਲਮਾਂ',
+  'Satır görünümü': 'ਸੂਚੀ ਦ੍ਰਿਸ਼',
+  'Afiş görünümü': 'ਪੋਸਟਰ ਦ੍ਰਿਸ਼',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'ਸੂਚੀ ਦ੍ਰਿਸ਼ ਵਿੱਚ ਖਿੱਚਣਾ ਬੰਦ ਹੈ; ਅੱਗੇ ਲਿਆਉਣ ਲਈ “ਸਭ ਤੋਂ ਉੱਪਰ ਲੈ ਜਾਓ” ਵਰਤੋ।',
 };

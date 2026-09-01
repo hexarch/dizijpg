@@ -1351,4 +1351,10 @@ const Map<String, String> cevirilerZh = {
   'Sunucu yanıt vermedi': '服务器未响应',
   'Güvenli bağlantı kurulamadı': '无法建立安全连接',
   'Sunucudan beklenmeyen bir yanıt geldi': '服务器返回了意外的响应',
+  'İzlediğim Diziler': '我看过的剧集',
+  'İzlediğim Filmler': '我看过的电影',
+  'Satır görünümü': '列表视图',
+  'Afiş görünümü': '海报视图',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      '列表视图中无法拖动，请使用“移到最前”移到前面。',
 };

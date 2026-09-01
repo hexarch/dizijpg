@@ -1409,4 +1409,10 @@ const Map<String, String> cevirilerAr = {
   'Sunucu yanıt vermedi': 'لم يستجب الخادم',
   'Güvenli bağlantı kurulamadı': 'تعذّر إنشاء اتصال آمن',
   'Sunucudan beklenmeyen bir yanıt geldi': 'ورد رد غير متوقع من الخادم',
+  'İzlediğim Diziler': 'مسلسلات شاهدتها',
+  'İzlediğim Filmler': 'أفلام شاهدتها',
+  'Satır görünümü': 'عرض القائمة',
+  'Afiş görünümü': 'عرض الملصقات',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'السحب معطّل في عرض القائمة؛ استخدم «نقل إلى الأعلى» للتقديم.',
 };

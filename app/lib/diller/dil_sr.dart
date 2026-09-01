@@ -1444,4 +1444,10 @@ const Map<String, String> cevirilerSr = {
   'Sunucu yanıt vermedi': 'Сервер није одговорио',
   'Güvenli bağlantı kurulamadı': 'Није могуће успоставити безбедну везу',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Неочекиван одговор сервера',
+  'İzlediğim Diziler': 'Одгледане серије',
+  'İzlediğim Filmler': 'Одгледани филмови',
+  'Satır görünümü': 'Приказ листе',
+  'Afiş görünümü': 'Приказ постера',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'У приказу листе превлачење је искључено; користи „Премести на врх“ да га помериш напред.',
 };

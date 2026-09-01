@@ -1436,4 +1436,10 @@ const Map<String, String> cevirilerKn = {
   'Güvenli bağlantı kurulamadı': 'ಸುರಕ್ಷಿತ ಸಂಪರ್ಕ ಸ್ಥಾಪಿಸಲಾಗಲಿಲ್ಲ',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'ಸರ್ವರ್‌ನಿಂದ ಅನಿರೀಕ್ಷಿತ ಪ್ರತಿಕ್ರಿಯೆ ಬಂದಿದೆ',
+  'İzlediğim Diziler': 'ನಾನು ನೋಡಿದ ಶೋಗಳು',
+  'İzlediğim Filmler': 'ನಾನು ನೋಡಿದ ಸಿನಿಮಾಗಳು',
+  'Satır görünümü': 'ಪಟ್ಟಿ ನೋಟ',
+  'Afiş görünümü': 'ಪೋಸ್ಟರ್ ನೋಟ',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'ಪಟ್ಟಿ ನೋಟದಲ್ಲಿ ಎಳೆಯುವುದು ಆಫ್ ಆಗಿದೆ; ಮುಂದೆ ತರಲು “ಮೇಲಕ್ಕೆ ಸರಿಸಿ” ಬಳಸಿ.',
 };

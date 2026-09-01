@@ -1427,4 +1427,10 @@ const Map<String, String> cevirilerGu = {
   'Sunucu yanıt vermedi': 'સર્વરે જવાબ આપ્યો નથી',
   'Güvenli bağlantı kurulamadı': 'સુરક્ષિત કનેક્શન સ્થાપિત કરી શકાયું નથી',
   'Sunucudan beklenmeyen bir yanıt geldi': 'સર્વર તરફથી અનપેક્ષિત જવાબ મળ્યો',
+  'İzlediğim Diziler': 'મેં જોયેલા શો',
+  'İzlediğim Filmler': 'મેં જોયેલી ફિલ્મો',
+  'Satır görünümü': 'યાદી દૃશ્ય',
+  'Afiş görünümü': 'પોસ્ટર દૃશ્ય',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'યાદી દૃશ્યમાં ખેંચવું બંધ છે; આગળ લાવવા “સૌથી ઉપર ખસેડો” વાપરો.',
 };

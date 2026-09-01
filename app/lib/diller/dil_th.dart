@@ -1416,4 +1416,10 @@ const Map<String, String> cevirilerTh = {
   'Güvenli bağlantı kurulamadı': 'ไม่สามารถสร้างการเชื่อมต่อที่ปลอดภัยได้',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'ได้รับการตอบกลับที่ไม่คาดคิดจากเซิร์ฟเวอร์',
+  'İzlediğim Diziler': 'ซีรีส์ที่ดูแล้ว',
+  'İzlediğim Filmler': 'หนังที่ดูแล้ว',
+  'Satır görünümü': 'มุมมองรายการ',
+  'Afiş görünümü': 'มุมมองโปสเตอร์',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'ปิดการลากในมุมมองรายการ ใช้ “ย้ายขึ้นบนสุด” เพื่อเลื่อนขึ้นก่อน',
 };

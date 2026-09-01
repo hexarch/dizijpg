@@ -1449,4 +1449,10 @@ const Map<String, String> cevirilerNl = {
   'Güvenli bağlantı kurulamadı':
       'Kan geen beveiligde verbinding tot stand brengen',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Onverwacht antwoord van de server',
+  'İzlediğim Diziler': 'Bekeken series',
+  'İzlediğim Filmler': 'Bekeken films',
+  'Satır görünümü': 'Lijstweergave',
+  'Afiş görünümü': 'Posterweergave',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Slepen staat uit in lijstweergave; gebruik “Naar boven verplaatsen” om het naar voren te halen.',
 };

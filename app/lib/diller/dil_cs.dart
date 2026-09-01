@@ -1436,4 +1436,10 @@ const Map<String, String> cevirilerCs = {
   'Güvenli bağlantı kurulamadı': 'Nepodařilo se navázat zabezpečené připojení',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'Ze serveru přišla neočekávaná odpověď',
+  'İzlediğim Diziler': 'Zhlédnuté seriály',
+  'İzlediğim Filmler': 'Zhlédnuté filmy',
+  'Satır görünümü': 'Zobrazení v řádcích',
+  'Afiş görünümü': 'Zobrazení plakátů',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'V zobrazení v řádcích je přetahování vypnuté; posuň dopředu přes „Přesunout nahoru“.',
 };

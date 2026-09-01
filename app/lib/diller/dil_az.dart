@@ -1432,4 +1432,10 @@ const Map<String, String> cevirilerAz = {
   'Sunucu yanıt vermedi': 'Server cavab vermədi',
   'Güvenli bağlantı kurulamadı': 'Təhlükəsiz bağlantı qurulmadı',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Serverdən gözlənilməz cavab gəldi',
+  'İzlediğim Diziler': 'İzlədiyim seriallar',
+  'İzlediğim Filmler': 'İzlədiyim filmlər',
+  'Satır görünümü': 'Sətir görünüşü',
+  'Afiş görünümü': 'Afişa görünüşü',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Sətir görünüşündə sürükləmə bağlıdır; “Ən yuxarı daşı” ilə önə çək.',
 };

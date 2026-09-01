@@ -1433,4 +1433,10 @@ const Map<String, String> cevirilerMr = {
   'Sunucu yanıt vermedi': 'सर्व्हरने प्रतिसाद दिला नाही',
   'Güvenli bağlantı kurulamadı': 'सुरक्षित कनेक्शन स्थापित करता आले नाही',
   'Sunucudan beklenmeyen bir yanıt geldi': 'सर्व्हरकडून अनपेक्षित प्रतिसाद आला',
+  'İzlediğim Diziler': 'मी पाहिलेले शो',
+  'İzlediğim Filmler': 'मी पाहिलेले चित्रपट',
+  'Satır görünümü': 'सूची दृश्य',
+  'Afiş görünümü': 'पोस्टर दृश्य',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'सूची दृश्यात ओढणे बंद आहे; पुढे आणण्यासाठी “सर्वात वर न्या” वापरा.',
 };

@@ -1442,4 +1442,10 @@ const Map<String, String> cevirilerDa = {
   'Sunucu yanıt vermedi': 'Serveren svarede ikke',
   'Güvenli bağlantı kurulamadı': 'Kunne ikke oprette en sikker forbindelse',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Uventet svar fra serveren',
+  'İzlediğim Diziler': 'Serier jeg har set',
+  'İzlediğim Filmler': 'Film jeg har set',
+  'Satır görünümü': 'Listevisning',
+  'Afiş görünümü': 'Plakatvisning',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Træk er slået fra i listevisning; brug “Flyt øverst” for at rykke frem.',
 };

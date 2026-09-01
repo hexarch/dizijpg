@@ -12,6 +12,7 @@ import 'icerik_deposu.dart';
 import 'kitaplik_durumu.dart';
 import 'onbellek.dart';
 import 'puan.dart';
+import 'puan_favori_deposu.dart';
 
 /// dizi.jpg API istemcisi (nginx + Cloudflare arkasında, TLS'li).
 const String apiTaban = 'https://dizijpg.com/api';
@@ -639,7 +640,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.106.1+172';
+  static const surum = '1.108.0+174';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.
@@ -895,6 +896,7 @@ class Oturum extends ChangeNotifier {
     // `signOut()`/`disconnect()` kararı: google_kapisi.dart.
     await googleOturumunuKapat(web: kIsWeb);
     KitaplikDurumu.temizle(); // başka hesap önceki kitaplığı görmesin
+    PuanFavoriDeposu.temizle(); // satır görünümündeki puan/kalp de gitsin
     IcerikDeposu.temizle();
     kullanici = null;
     final prefs = await SharedPreferences.getInstance();

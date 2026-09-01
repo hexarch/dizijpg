@@ -1452,4 +1452,10 @@ const Map<String, String> cevirilerHu = {
       'Nem sikerült biztonságos kapcsolatot létesíteni',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'Váratlan válasz érkezett a szervertől',
+  'İzlediğim Diziler': 'Megnézett sorozatok',
+  'İzlediğim Filmler': 'Megnézett filmek',
+  'Satır görünümü': 'Listanézet',
+  'Afiş görünümü': 'Poszternézet',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Listanézetben a húzás ki van kapcsolva; hozd előre a(z) „Legfelülre” gombbal.',
 };

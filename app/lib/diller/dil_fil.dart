@@ -1467,4 +1467,10 @@ const Map<String, String> cevirilerFil = {
   'Güvenli bağlantı kurulamadı': 'Hindi makapagtatag ng ligtas na koneksyon',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'Hindi inaasahang tugon mula sa server',
+  'İzlediğim Diziler': 'Mga show na napanood ko',
+  'İzlediğim Filmler': 'Mga pelikulang napanood ko',
+  'Satır görünümü': 'Tanawing listahan',
+  'Afiş görünümü': 'Tanawing poster',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Naka-off ang pag-drag sa tanawing listahan; gamitin ang “Ilipat sa itaas” para iuna.',
 };

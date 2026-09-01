@@ -32,8 +32,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 /// Her istekte [hata]yı fırlatan sahte istemci.
-http.Client _firlatan(Object hata) =>
-    MockClient((istek) async => throw hata);
+http.Client _firlatan(Object hata) => MockClient((istek) async => throw hata);
 
 /// Gövdesi [govde], kodu [kod] olan yanıtı dönen sahte istemci.
 http.Client _donen(String govde, int kod) =>
@@ -81,7 +80,9 @@ void main() {
 
     test('bağlantı yarıda düştü → "Bağlantı koptu"', () async {
       Api.istemci = _firlatan(
-        http.ClientException('Connection closed before full header was received'),
+        http.ClientException(
+          'Connection closed before full header was received',
+        ),
       );
       final e = await _yakala(() => Api.post('/yorum', {}));
       expect(e.toString(), 'Bağlantı koptu');
@@ -145,11 +146,13 @@ void main() {
   });
 
   group('sunucu reddi ile ağ hatası ayrı kalır', () {
-    test('AgHatasi bir ApiHata\'dır (115 çağrı noktası değişmeden düzelsin)',
-        () async {
-      Api.istemci = _firlatan(http.ClientException('Failed host lookup: x'));
-      expect(await _yakala(() => Api.get('/profilim')), isA<ApiHata>());
-    });
+    test(
+      'AgHatasi bir ApiHata\'dır (115 çağrı noktası değişmeden düzelsin)',
+      () async {
+        Api.istemci = _firlatan(http.ClientException('Failed host lookup: x'));
+        expect(await _yakala(() => Api.get('/profilim')), isA<ApiHata>());
+      },
+    );
 
     test('sunucunun bilinçli reddi AgHatasi DEĞİLDİR', () async {
       Api.istemci = _donen(jsonEncode({'hata': 'Dosya çok büyük'}), 413);

@@ -1387,4 +1387,10 @@ const Map<String, String> cevirilerAm = {
   'Sunucu yanıt vermedi': 'አገልጋዩ ምላሽ አልሰጠም',
   'Güvenli bağlantı kurulamadı': 'ደኅንነቱ የተጠበቀ ግንኙነት መመሥረት አልተቻለም',
   'Sunucudan beklenmeyen bir yanıt geldi': 'ከአገልጋዩ ያልተጠበቀ ምላሽ ደረሰ',
+  'İzlediğim Diziler': 'የተመለከትኳቸው ድራማዎች',
+  'İzlediğim Filmler': 'የተመለከትኳቸው ፊልሞች',
+  'Satır görünümü': 'የመስመር እይታ',
+  'Afiş görünümü': 'የፖስተር እይታ',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'በመስመር እይታ ላይ መጎተት ጠፍቷል፤ “ወደ አናት አንቀሳቅስ” በመጠቀም ወደ ፊት አምጣ።',
 };

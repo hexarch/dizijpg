@@ -1431,4 +1431,10 @@ const Map<String, String> cevirilerBn = {
   'Güvenli bağlantı kurulamadı': 'নিরাপদ সংযোগ স্থাপন করা যায়নি',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'সার্ভার থেকে অপ্রত্যাশিত সাড়া এসেছে',
+  'İzlediğim Diziler': 'আমার দেখা শো',
+  'İzlediğim Filmler': 'আমার দেখা সিনেমা',
+  'Satır görünümü': 'তালিকা ভিউ',
+  'Afiş görünümü': 'পোস্টার ভিউ',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'তালিকা ভিউতে টেনে আনা বন্ধ; “একদম উপরে নাও” দিয়ে সামনে আনো।',
 };

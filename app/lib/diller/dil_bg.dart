@@ -1448,4 +1448,10 @@ const Map<String, String> cevirilerBg = {
   'Güvenli bağlantı kurulamadı': 'Не може да се установи защитена връзка',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'Получен е неочакван отговор от сървъра',
+  'İzlediğim Diziler': 'Изгледани сериали',
+  'İzlediğim Filmler': 'Изгледани филми',
+  'Satır görünümü': 'Списъчен изглед',
+  'Afiş görünümü': 'Изглед с постери',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'В списъчния изглед плъзгането е изключено; използвай „Премести най-горе“, за да преместиш напред.',
 };

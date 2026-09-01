@@ -1464,4 +1464,10 @@ const Map<String, String> cevirilerFr = {
   'Sunucu yanıt vermedi': 'Le serveur n’a pas répondu',
   'Güvenli bağlantı kurulamadı': 'Impossible d’établir une connexion sécurisée',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Réponse inattendue du serveur',
+  'İzlediğim Diziler': 'Séries vues',
+  'İzlediğim Filmler': 'Films vus',
+  'Satır görünümü': 'Vue liste',
+  'Afiş görünümü': 'Vue affiches',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Le glisser-déposer est désactivé en vue liste ; utilise « Placer en tête » pour le remonter.',
 };

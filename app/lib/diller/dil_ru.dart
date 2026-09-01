@@ -1445,4 +1445,10 @@ const Map<String, String> cevirilerRu = {
   'Sunucu yanıt vermedi': 'Сервер не ответил',
   'Güvenli bağlantı kurulamadı': 'Не удалось установить защищённое соединение',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Неожиданный ответ сервера',
+  'İzlediğim Diziler': 'Просмотренные сериалы',
+  'İzlediğim Filmler': 'Просмотренные фильмы',
+  'Satır görünümü': 'Списком',
+  'Afiş görünümü': 'Постерами',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'В виде списка перетаскивание отключено; используй «Переместить в начало», чтобы вынести вперёд.',
 };

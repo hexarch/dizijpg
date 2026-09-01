@@ -1439,4 +1439,10 @@ const Map<String, String> cevirilerEn = {
   'Güvenli bağlantı kurulamadı': 'Could not establish a secure connection',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'Unexpected response from the server',
+  'İzlediğim Diziler': 'Shows I watched',
+  'İzlediğim Filmler': 'Movies I watched',
+  'Satır görünümü': 'List view',
+  'Afiş görünümü': 'Poster view',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Dragging is off in list view; use “Move to top” to bring it forward.',
 };

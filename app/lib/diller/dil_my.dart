@@ -1455,4 +1455,10 @@ const Map<String, String> cevirilerMy = {
   'Güvenli bağlantı kurulamadı': 'လုံခြုံသော ချိတ်ဆက်မှု မတည်ဆောက်နိုင်ပါ',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'ဆာဗာမှ မမျှော်လင့်ထားသော တုံ့ပြန်မှု ရရှိသည်',
+  'İzlediğim Diziler': 'ကြည့်ပြီး ဇာတ်လမ်းများ',
+  'İzlediğim Filmler': 'ကြည့်ပြီး ရုပ်ရှင်များ',
+  'Satır görünümü': 'စာရင်းမြင်ကွင်း',
+  'Afiş görünümü': 'ပိုစတာမြင်ကွင်း',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'စာရင်းမြင်ကွင်းတွင် ဆွဲချခြင်း ပိတ်ထားသည်။ ရှေ့သို့ ရွှေ့ရန် “အပေါ်ဆုံးသို့ ရွှေ့ရန်” ကို သုံးပါ။',
 };

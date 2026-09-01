@@ -1439,4 +1439,10 @@ const Map<String, String> cevirilerUr = {
   'Sunucu yanıt vermedi': 'سرور نے جواب نہیں دیا',
   'Güvenli bağlantı kurulamadı': 'محفوظ کنکشن قائم نہیں ہو سکا',
   'Sunucudan beklenmeyen bir yanıt geldi': 'سرور سے غیر متوقع جواب موصول ہوا',
+  'İzlediğim Diziler': 'میرے دیکھے شوز',
+  'İzlediğim Filmler': 'میری دیکھی فلمیں',
+  'Satır görünümü': 'فہرست منظر',
+  'Afiş görünümü': 'پوسٹر منظر',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'فہرست منظر میں گھسیٹنا بند ہے؛ آگے لانے کے لیے “سب سے اوپر لے جائیں” استعمال کریں۔',
 };

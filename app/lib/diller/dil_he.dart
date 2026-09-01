@@ -1406,4 +1406,10 @@ const Map<String, String> cevirilerHe = {
   'Sunucu yanıt vermedi': 'השרת לא הגיב',
   'Güvenli bağlantı kurulamadı': 'לא ניתן ליצור חיבור מאובטח',
   'Sunucudan beklenmeyen bir yanıt geldi': 'התקבלה תגובה בלתי צפויה מהשרת',
+  'İzlediğim Diziler': 'סדרות שצפיתי',
+  'İzlediğim Filmler': 'סרטים שצפיתי',
+  'Satır görünümü': 'תצוגת רשימה',
+  'Afiş görünümü': 'תצוגת פוסטרים',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'גרירה כבויה בתצוגת רשימה; השתמש ב־“העבר לראש הרשימה” כדי להקדים.',
 };

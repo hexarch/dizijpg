@@ -1443,4 +1443,10 @@ const Map<String, String> cevirilerMl = {
   'Güvenli bağlantı kurulamadı': 'സുരക്ഷിത കണക്ഷൻ സ്ഥാപിക്കാനായില്ല',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'സെർവറിൽ നിന്ന് അപ്രതീക്ഷിത പ്രതികരണം ലഭിച്ചു',
+  'İzlediğim Diziler': 'ഞാൻ കണ്ട ഷോകൾ',
+  'İzlediğim Filmler': 'ഞാൻ കണ്ട സിനിമകൾ',
+  'Satır görünümü': 'ലിസ്റ്റ് കാഴ്ച',
+  'Afiş görünümü': 'പോസ്റ്റർ കാഴ്ച',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'ലിസ്റ്റ് കാഴ്ചയിൽ വലിച്ചിടൽ ഓഫാണ്; മുന്നിലേക്ക് കൊണ്ടുവരാൻ “ഏറ്റവും മുകളിലേക്ക് മാറ്റുക” ഉപയോഗിക്കൂ.',
 };

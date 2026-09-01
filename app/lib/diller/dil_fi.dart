@@ -1447,4 +1447,10 @@ const Map<String, String> cevirilerFi = {
   'Güvenli bağlantı kurulamadı': 'Suojattua yhteyttä ei voitu muodostaa',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'Palvelimelta tuli odottamaton vastaus',
+  'İzlediğim Diziler': 'Katsomani sarjat',
+  'İzlediğim Filmler': 'Katsomani elokuvat',
+  'Satır görünümü': 'Luettelonäkymä',
+  'Afiş görünümü': 'Julistenäkymä',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Vetäminen on pois päältä luettelonäkymässä; siirrä eteen valinnalla ”Siirrä ylimmäksi”.',
 };

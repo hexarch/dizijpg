@@ -1447,4 +1447,10 @@ const Map<String, String> cevirilerSw = {
   'Güvenli bağlantı kurulamadı': 'Imeshindwa kuanzisha muunganisho salama',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'Jibu lisilotarajiwa kutoka kwa seva',
+  'İzlediğim Diziler': 'Vipindi nilivyotazama',
+  'İzlediğim Filmler': 'Filamu nilizotazama',
+  'Satır görünümü': 'Mwonekano wa orodha',
+  'Afiş görünümü': 'Mwonekano wa mabango',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Kuburuta kumezimwa katika mwonekano wa orodha; tumia “Sogeza juu kabisa” kuisogeza mbele.',
 };

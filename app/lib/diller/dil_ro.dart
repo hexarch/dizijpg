@@ -1462,4 +1462,10 @@ const Map<String, String> cevirilerRo = {
   'Sunucu yanıt vermedi': 'Serverul nu a răspuns',
   'Güvenli bağlantı kurulamadı': 'Nu s-a putut stabili o conexiune securizată',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Răspuns neașteptat de la server',
+  'İzlediğim Diziler': 'Seriale vizionate',
+  'İzlediğim Filmler': 'Filme vizionate',
+  'Satır görünümü': 'Vizualizare listă',
+  'Afiş görünümü': 'Vizualizare afișe',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Tragerea este dezactivată în vizualizarea listă; folosește „Mută la început” pentru a-l aduce în față.',
 };

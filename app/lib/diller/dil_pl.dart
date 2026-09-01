@@ -1456,4 +1456,10 @@ const Map<String, String> cevirilerPl = {
   'Güvenli bağlantı kurulamadı':
       'Nie udało się nawiązać bezpiecznego połączenia',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Nieoczekiwana odpowiedź serwera',
+  'İzlediğim Diziler': 'Obejrzane seriale',
+  'İzlediğim Filmler': 'Obejrzane filmy',
+  'Satır görünümü': 'Widok listy',
+  'Afiş görünümü': 'Widok plakatów',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'W widoku listy przeciąganie jest wyłączone; przesuń na przód przez „Przenieś na górę”.',
 };

@@ -1464,4 +1464,10 @@ const Map<String, String> cevirilerDe = {
   'Güvenli bağlantı kurulamadı':
       'Sichere Verbindung konnte nicht hergestellt werden',
   'Sunucudan beklenmeyen bir yanıt geldi': 'Unerwartete Antwort vom Server',
+  'İzlediğim Diziler': 'Gesehene Serien',
+  'İzlediğim Filmler': 'Gesehene Filme',
+  'Satır görünümü': 'Listenansicht',
+  'Afiş görünümü': 'Posteransicht',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'In der Listenansicht ist Ziehen deaktiviert; nutze „Nach ganz oben“, um nach vorn zu holen.',
 };

@@ -1464,4 +1464,10 @@ const Map<String, String> cevirilerEl = {
   'Güvenli bağlantı kurulamadı': 'Δεν ήταν δυνατή η ασφαλής σύνδεση',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'Απροσδόκητη απάντηση από τον διακομιστή',
+  'İzlediğim Diziler': 'Σειρές που είδα',
+  'İzlediğim Filmler': 'Ταινίες που είδα',
+  'Satır görünümü': 'Προβολή λίστας',
+  'Afiş görünümü': 'Προβολή αφισών',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'Στην προβολή λίστας η μεταφορά είναι απενεργοποιημένη· χρησιμοποίησε «Μετακίνηση στην κορυφή» για να το φέρεις μπροστά.',
 };

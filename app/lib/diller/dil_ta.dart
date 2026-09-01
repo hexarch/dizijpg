@@ -1463,4 +1463,10 @@ const Map<String, String> cevirilerTa = {
   'Güvenli bağlantı kurulamadı': 'பாதுகாப்பான இணைப்பை ஏற்படுத்த முடியவில்லை',
   'Sunucudan beklenmeyen bir yanıt geldi':
       'சேவையகத்திலிருந்து எதிர்பாராத பதில் வந்தது',
+  'İzlediğim Diziler': 'நான் பார்த்த தொடர்கள்',
+  'İzlediğim Filmler': 'நான் பார்த்த படங்கள்',
+  'Satır görünümü': 'பட்டியல் காட்சி',
+  'Afiş görünümü': 'சுவரொட்டி காட்சி',
+  'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
+      'பட்டியல் காட்சியில் இழுத்தல் அணைக்கப்பட்டுள்ளது; முன்னே கொண்டுவர “மேலே கொண்டு செல்” ஐப் பயன்படுத்து.',
 };

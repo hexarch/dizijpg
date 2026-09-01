@@ -104,6 +104,9 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
     final benimAd = ben?['kullanici_adi'] as String?;
     return Scaffold(
       appBar: AppBar(
+        // Ad geri okuna yaslanır (1 Eyl 2026 isteği: "sol taraftaki oka
+        // yanaştır") — [IzlenenlerEkrani] ile aynı hizalama.
+        titleSpacing: 0,
         // Sayı İKİNCİ SATIRDA (31 Ağu 2026): "İzleyeceğim (182)" tek satırda
         // yanındaki 2-3 eylem ikonuyla dar telefonda sığmıyor, ellipsis sayıyı
         // yutup "İzleyeceğim (…" bırakıyordu — kullanıcı "(.. neyin nesi" dedi.
@@ -163,12 +166,16 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
               icon: Icon(Icons.ios_share, color: DiziRenkler.sariMetin),
             ),
           // Tek öğelik listede sıralamanın anlamı yok.
+          //
+          // İKON AYAR ÇARKI (1 Eyl 2026 isteği): açtığı şerit artık yalnız
+          // sıralama değil GÖRÜNÜM de sunuyor (satır/afiş anahtarı süzgecin
+          // yanında) — çift yönlü ok bunu eksik anlatıyordu. Davranış aynı.
           if ((_ogeler?.length ?? 0) > 1)
             IconButton(
               key: const Key('kitaplik-sirala'),
               tooltip: _siralama ? 'Bitti'.c : 'Sırala'.c,
               onPressed: () => setState(() => _siralama = !_siralama),
-              icon: Icon(_siralama ? Icons.check : Icons.swap_vert),
+              icon: Icon(_siralama ? Icons.check : Icons.settings),
             ),
         ],
       ),

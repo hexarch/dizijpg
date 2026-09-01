@@ -103,27 +103,38 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
       );
     }
 
+    // BAŞLIKTA SAYI YOK (1 Eyl 2026, kullanıcı isteği birebir: "izlediğim
+    // dizilerin yanında (... bir şey yazıyor gözükmüyor, kaldır onu, sadece
+    // listenin adı olsun ve sol taraftaki oka yanaştır").
+    //
+    // NE OLUYORDU: "İzlediğim Diziler (215)" tek satırda, sağındaki eylem
+    // ikonuyla birlikte dar telefona sığmıyor; ellipsis tam sayının üstüne
+    // düşüp geriye "İzlediğim Diziler (…" bırakıyordu — yani ekranı kaplayan
+    // tek fazlalık, okunamayan bir parantezdi. Sayı zaten listenin kendisinde
+    // görünüyor; `titleSpacing: 0` ile de ad geri okuna yaslandı.
     final baslik = widget.tur == 'movie'
-        ? 'İzlediğim Filmler ({})'
+        ? 'İzlediğim Filmler'
         : widget.tur == 'tv'
-        ? 'İzlediğim Diziler ({})'
-        : null;
+        ? 'İzlediğim Diziler'
+        : 'İzlediklerim';
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          baslik != null
-              ? baslik.cf([ogeler?.length ?? 0])
-              : 'İzlediklerim'.c +
-                    (ogeler != null ? ' (${ogeler.length})' : ''),
-        ),
+        titleSpacing: 0,
+        title: Text(baslik.c, maxLines: 1, overflow: TextOverflow.ellipsis),
         actions: [
           // Yalnız tür süzülmüş (sıralanabilir) listede ve en az iki öğede.
+          //
+          // İKON AYAR ÇARKI (1 Eyl 2026 isteği: "sağ tarafta yukarı aşağı ok
+          // yerine setting ikonu koy, tıklayınca aynı ekran açılsın"). Davranış
+          // AYNI: şerit artık yalnız sıralama değil GÖRÜNÜM de barındırıyor
+          // (satır/afiş anahtarı süzgecin yanında), yani çift yönlü ok şeridin
+          // yaptığı işi eksik anlatıyordu.
           if (widget.tur != null && (ogeler?.length ?? 0) > 1)
             IconButton(
               key: const Key('izlenen-sirala'),
               tooltip: _siralama ? 'Bitti'.c : 'Sırala'.c,
               onPressed: () => setState(() => _siralama = !_siralama),
-              icon: Icon(_siralama ? Icons.check : Icons.swap_vert),
+              icon: Icon(_siralama ? Icons.check : Icons.settings),
             ),
         ],
       ),
