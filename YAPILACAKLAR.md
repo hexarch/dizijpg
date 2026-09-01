@@ -1,9 +1,21 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-01 — ✅ Play paketi derlendi (1.106.0+171)
+## 2026-09-01 — 🚀 171 (1.106.0) ÜRETİME İNCELEMEYE GÖNDERİLDİ
 
-- ✅ **AAB + APK 1.106.0+171 derlendi, Play'e yüklenmeyi bekliyor.**
+- 🚀 **Play üretim kanalına 171 (1.106.0) gönderildi.** Öncesinde doğrulandı:
+  canlıdaki sürüm **163 (1.103.0)** idi (31 Ağu gönderimi ONAYLANMIŞ, kanal
+  "Etkin", 177 ülke, 81 yükleme) ve bekleyen değişiklik yoktu. Akış: Yeni sürüm
+  oluştur → sürüm notları 11/11 dil (JS native setter, paket yüklenmeden ÖNCE
+  basıldı ve yükleme sonrası KORUNDU) → kullanıcı AAB'yi sürükledi (109 MB,
+  ~2 dk + "dağıtım için optimize ediliyor" ~30 sn) → `App bundle 171 (1.106.0)`
+  satırı göründü, sürüm adı otomatik doldu → İleri → önizleme **"Yayınlamaya
+  hazır"**, cihaz kaybı 0 (telefon 12.405 / tablet 6.657 / TV 3 / otomobil 25 /
+  Chromebook 72 aynen), indirme 23,8 MB, güncelleme 4,89 MB, uyarı yok →
+  Kaydet → "Genel bakışa git" → "1 değişikliği incelemeye gönder" → başlık
+  **"İncelenmekte olan değişiklikler"** (doğrulandı). Hızlı kontroller ~12 dk,
+  sonra inceleme (7 güne kadar); sonuç alcelikbcayir@gmail.com'a gelir.
+- ✅ **AAB + APK 1.106.0+171 derlendi.**
   `cikti/dizijpg-1.106.0+171.aab` (108,8 MB) ve
   `cikti/dizijpg-1.106.0-171.apk` (81,2 MB). Doğrulandı: `versionCode=171`,
   `versionName=1.106.0`, paket `com.dizijpg.dizijpg`, minSdk 24 / targetSdk 36.
@@ -12,8 +24,8 @@
   (`CN=dizi.jpg`), yani hata ayıklama anahtarına düşülmedi. Öncesinde
   `dart format` + `flutter analyze` (0 error / 0 warning, 102 info) ve
   `flutter test` (**2367 geçti**).
-- ⬜ **Yükleme KULLANICIDA:** dosya 108 MB, tarayıcı yükleme aracı 10 MB ile
-  sınırlı — Claude Play Console'a AAB yükleyemez.
+- Yükleme yine KULLANICIDA oldu (dosya 109 MB, tarayıcı aracı 10 MB sınırlı);
+  taslak, notlar ve gönderim adımları asistanda.
 - Sürüm notu: `surum-notu-1.106.0.txt` (1.103.0+163 → 1.106.0+171 arası).
   Dosyanın sonunda Play Console "Bu sürümdeki yenilikler" için 415 karakterlik
   hazır TR metin var (sınır 500).
