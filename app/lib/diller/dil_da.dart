@@ -1448,4 +1448,7 @@ const Map<String, String> cevirilerDa = {
   'Afiş görünümü': 'Plakatvisning',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Træk er slået fra i listevisning; brug “Flyt øverst” for at rykke frem.',
+  'Spoiler uyarısını göster': 'Vis spoiler-advarsel',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Når den er slået fra, vises opslag markeret som spoiler direkte, uden tildækning.',
 };

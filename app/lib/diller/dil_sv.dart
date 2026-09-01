@@ -1458,4 +1458,7 @@ const Map<String, String> cevirilerSv = {
   'Afiş görünümü': 'Affischvy',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Dra är avstängt i listvyn; använd ”Flytta överst” för att flytta fram.',
+  'Spoiler uyarısını göster': 'Visa spoilervarning',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'När den är avstängd visas inlägg markerade som spoiler direkt, utan skynke.',
 };

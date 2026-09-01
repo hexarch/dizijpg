@@ -1446,4 +1446,7 @@ const Map<String, String> cevirilerVi = {
   'Afiş görünümü': 'Xem dạng áp phích',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Không kéo được ở dạng danh sách; dùng “Đưa lên đầu” để đưa lên trước.',
+  'Spoiler uyarısını göster': 'Hiện cảnh báo tiết lộ nội dung',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Khi tắt, các bài viết được đánh dấu tiết lộ nội dung sẽ hiển thị trực tiếp, không có màn che.',
 };

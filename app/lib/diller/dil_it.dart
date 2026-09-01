@@ -1460,4 +1460,7 @@ const Map<String, String> cevirilerIt = {
   'Afiş görünümü': 'Vista poster',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Nella vista elenco il trascinamento è disattivato; usa «Sposta in cima» per portarlo avanti.',
+  'Spoiler uyarısını göster': 'Mostra avviso spoiler',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Se disattivato, i post contrassegnati come spoiler vengono mostrati direttamente, senza copertura.',
 };

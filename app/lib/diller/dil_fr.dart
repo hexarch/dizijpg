@@ -1470,4 +1470,7 @@ const Map<String, String> cevirilerFr = {
   'Afiş görünümü': 'Vue affiches',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Le glisser-déposer est désactivé en vue liste ; utilise « Placer en tête » pour le remonter.',
+  'Spoiler uyarısını göster': 'Afficher l\'avertissement de spoiler',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Si désactivé, les publications marquées comme spoiler s\'affichent directement, sans voile.',
 };

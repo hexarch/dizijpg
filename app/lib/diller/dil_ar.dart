@@ -1415,4 +1415,7 @@ const Map<String, String> cevirilerAr = {
   'Afiş görünümü': 'عرض الملصقات',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'السحب معطّل في عرض القائمة؛ استخدم «نقل إلى الأعلى» للتقديم.',
+  'Spoiler uyarısını göster': 'إظهار تحذير حرق الأحداث',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'عند الإيقاف، تُعرض المنشورات الموسومة بأنها تحرق الأحداث مباشرةً دون ستار.',
 };

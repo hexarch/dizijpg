@@ -1393,4 +1393,7 @@ const Map<String, String> cevirilerAm = {
   'Afiş görünümü': 'የፖስተር እይታ',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'በመስመር እይታ ላይ መጎተት ጠፍቷል፤ “ወደ አናት አንቀሳቅስ” በመጠቀም ወደ ፊት አምጣ።',
+  'Spoiler uyarısını göster': 'የስፖይለር ማስጠንቀቂያ አሳይ',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'ሲጠፋ እንደ ስፖይለር የተመለከቱ ልጥፎች ያለ መጋረጃ በቀጥታ ይታያሉ።',
 };

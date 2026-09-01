@@ -22,6 +22,7 @@ import 'ortak.dart' show AgGorsel, DaireGorsel, altGuvenli;
 import 'sosyal.dart';
 import '../puan.dart';
 import '../tema.dart';
+import '../spoiler_tercihi.dart';
 import '../veri_tasarrufu.dart';
 
 const List<String> ulkeler = [
@@ -1295,6 +1296,42 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                         child: Text(
                           'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.'
+                              .c,
+                          style: TextStyle(
+                            color: DiziRenkler.metin54,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Spoiler'.c,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 8),
+                Card(
+                  child: Column(
+                    children: [
+                      ValueListenableBuilder<bool>(
+                        valueListenable: SpoilerTercihi.uyari,
+                        builder: (context, acik, _) => SwitchListTile(
+                          value: acik,
+                          activeColor: DiziRenkler.sari,
+                          secondary: Icon(
+                            Icons.visibility_off_outlined,
+                            color: DiziRenkler.sariMetin,
+                          ),
+                          title: Text('Spoiler uyarısını göster'.c),
+                          onChanged: SpoilerTercihi.sec,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                        child: Text(
+                          'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.'
                               .c,
                           style: TextStyle(
                             color: DiziRenkler.metin54,

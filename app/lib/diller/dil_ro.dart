@@ -1468,4 +1468,7 @@ const Map<String, String> cevirilerRo = {
   'Afiş görünümü': 'Vizualizare afișe',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Tragerea este dezactivată în vizualizarea listă; folosește „Mută la început” pentru a-l aduce în față.',
+  'Spoiler uyarısını göster': 'Afișează avertismentul de spoiler',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Când este dezactivat, postările marcate ca spoiler sunt afișate direct, fără cortină.',
 };

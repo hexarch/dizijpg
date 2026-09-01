@@ -1442,4 +1442,7 @@ const Map<String, String> cevirilerPa = {
   'Afiş görünümü': 'ਪੋਸਟਰ ਦ੍ਰਿਸ਼',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'ਸੂਚੀ ਦ੍ਰਿਸ਼ ਵਿੱਚ ਖਿੱਚਣਾ ਬੰਦ ਹੈ; ਅੱਗੇ ਲਿਆਉਣ ਲਈ “ਸਭ ਤੋਂ ਉੱਪਰ ਲੈ ਜਾਓ” ਵਰਤੋ।',
+  'Spoiler uyarısını göster': 'ਸਪੌਇਲਰ ਚੇਤਾਵਨੀ ਦਿਖਾਓ',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'ਬੰਦ ਹੋਣ \'ਤੇ ਸਪੌਇਲਰ ਵਜੋਂ ਨਿਸ਼ਾਨਬੱਧ ਪੋਸਟਾਂ ਪਰਦੇ ਤੋਂ ਬਿਨਾਂ ਸਿੱਧੀਆਂ ਦਿਖਾਈਆਂ ਜਾਂਦੀਆਂ ਹਨ।',
 };

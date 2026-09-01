@@ -13,6 +13,7 @@ import '../gorsel_basliklari.dart';
 import '../icerik_deposu.dart';
 import '../onbellek.dart';
 import '../seviye.dart';
+import '../spoiler_tercihi.dart';
 import '../tema.dart';
 import 'etiket.dart' show duzMetin;
 import 'favori_oyuncular.dart' show FavoriOyuncuKarti;
@@ -2589,7 +2590,8 @@ class YanitBlogu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ust = yorum;
-    final spoiler = ust['spoiler'] == true;
+    // Spoiler uyarısı Ayarlar'dan kapatıldıysa alıntı da açık yazılır.
+    final spoiler = ust['spoiler'] == true && SpoilerTercihi.acik;
     final metin = (ust['metin'] as String?) ?? '';
     final medyaVar = (ust['medya'] as List<dynamic>? ?? const []).isNotEmpty;
     return Padding(

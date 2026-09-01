@@ -1430,4 +1430,7 @@ const Map<String, String> cevirilerFa = {
   'Afiş görünümü': 'نمای پوستر',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'در نمای فهرست کشیدن غیرفعال است؛ با «انتقال به بالا» به جلو بیاور.',
+  'Spoiler uyarısını göster': 'نمایش هشدار اسپویل',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'وقتی خاموش باشد، پست‌های دارای برچسب اسپویل مستقیم و بدون پرده نمایش داده می‌شوند.',
 };

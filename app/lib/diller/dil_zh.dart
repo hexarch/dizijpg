@@ -1357,4 +1357,7 @@ const Map<String, String> cevirilerZh = {
   'Afiş görünümü': '海报视图',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       '列表视图中无法拖动，请使用“移到最前”移到前面。',
+  'Spoiler uyarısını göster': '显示剧透警告',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      '关闭后，标记为剧透的帖子将直接显示，不再遮挡。',
 };

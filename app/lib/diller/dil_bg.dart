@@ -1454,4 +1454,7 @@ const Map<String, String> cevirilerBg = {
   'Afiş görünümü': 'Изглед с постери',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'В списъчния изглед плъзгането е изключено; използвай „Премести най-горе“, за да преместиш напред.',
+  'Spoiler uyarısını göster': 'Показвай предупреждение за спойлери',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Когато е изключено, публикациите, отбелязани като спойлер, се показват направо, без завеса.',
 };

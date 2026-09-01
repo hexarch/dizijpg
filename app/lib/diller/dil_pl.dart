@@ -1462,4 +1462,7 @@ const Map<String, String> cevirilerPl = {
   'Afiş görünümü': 'Widok plakatów',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'W widoku listy przeciąganie jest wyłączone; przesuń na przód przez „Przenieś na górę”.',
+  'Spoiler uyarısını göster': 'Pokazuj ostrzeżenie o spoilerach',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Gdy wyłączone, wpisy oznaczone jako spoiler są pokazywane od razu, bez zasłony.',
 };

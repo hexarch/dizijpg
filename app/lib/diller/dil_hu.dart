@@ -1458,4 +1458,7 @@ const Map<String, String> cevirilerHu = {
   'Afiş görünümü': 'Poszternézet',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Listanézetben a húzás ki van kapcsolva; hozd előre a(z) „Legfelülre” gombbal.',
+  'Spoiler uyarısını göster': 'Spoilerfigyelmeztetés megjelenítése',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Kikapcsolva a spoilerként megjelölt bejegyzések azonnal, takarás nélkül jelennek meg.',
 };

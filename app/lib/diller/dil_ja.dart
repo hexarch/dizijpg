@@ -1373,4 +1373,7 @@ const Map<String, String> cevirilerJa = {
   'Afiş görünümü': 'ポスター表示',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'リスト表示ではドラッグできません。「先頭へ移動」で前に移動できます。',
+  'Spoiler uyarısını göster': 'ネタバレ警告を表示',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'オフにすると、ネタバレとしてマークされた投稿はカバーなしでそのまま表示されます。',
 };

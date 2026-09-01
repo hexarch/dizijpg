@@ -19,6 +19,7 @@ import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
+import '../video_konum.dart';
 import '../video_kova.dart';
 import 'izlem_carki.dart';
 import 'medya_goster.dart';
@@ -510,6 +511,9 @@ class _AkisVideoState extends State<AkisVideo> {
   void _konumDinle() {
     final d = _d;
     if (d == null || !d.value.isInitialized) return;
+    // AKIŞ ↔ REELS SÜREKLİLİĞİ: konum deftere yazılır; Reels aynı videoyu
+    // kurunca kaldığı yerden sürer (video_konum.dart).
+    VideoKonumDefteri.yaz(widget.url, d.value.position, d.value.duration);
     _kova.guncelle(
       url: widget.url,
       konum: d.value.position,
@@ -563,6 +567,11 @@ class _AkisVideoState extends State<AkisVideo> {
     final d = _d;
     // Kurulum sürerken kart merkezden çıktıysa başlatma
     if (!mounted || d == null || _aktif != this) return;
+    // REELS'TEN DÖNÜŞ: Reels aynı videoyu ilerletmişse (defterdeki konum
+    // bizimkinden ayrıysa) kaldığı yerden sür — kart baştan başlamasın.
+    // Normal kaydırmada defter zaten bu kartın yazdığı konumu tutar → null.
+    final hedef = VideoKonumDefteri.devral(widget.url, d.value.position);
+    if (hedef != null) await d.seekTo(hedef);
     await d.setVolume(_sesli ? 1 : 0);
     await d.play();
   }
@@ -573,12 +582,19 @@ class _AkisVideoState extends State<AkisVideo> {
     try {
       final d = VideoPlayerController.networkUrl(Uri.parse(widget.url));
       await d.initialize();
+      // Bu video bu oturumda izlenmişse (Reels'te ya da kartın önceki
+      // ömründe) kurulur kurulmaz oraya sarılır: duraklatılmış kapak bile
+      // kalınan kareyi gösterir, oynayınca oradan sürer.
+      final hedef = VideoKonumDefteri.devral(widget.url, d.value.position);
+      if (hedef != null) await d.seekTo(hedef);
       if (!mounted) {
         d.dispose();
         return;
       }
       d.setLooping(true);
-      if (_kova.acik) d.addListener(_konumDinle);
+      // Dinleyici HEP takılır: kova ölçüsü kapalıyken de konum defteri
+      // güncellenmeli (kova kendi içinde gonderiId yoksa zaten yazmaz).
+      d.addListener(_konumDinle);
       setState(() => _d = d);
       // Postun yüksekliği videonun kendi oranından belirlensin
       if (d.value.aspectRatio > 0) widget.onOran?.call(d.value.aspectRatio);

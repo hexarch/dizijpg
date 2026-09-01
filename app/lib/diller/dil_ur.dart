@@ -1445,4 +1445,7 @@ const Map<String, String> cevirilerUr = {
   'Afiş görünümü': 'پوسٹر منظر',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'فہرست منظر میں گھسیٹنا بند ہے؛ آگے لانے کے لیے “سب سے اوپر لے جائیں” استعمال کریں۔',
+  'Spoiler uyarısını göster': 'اسپائلر انتباہ دکھائیں',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'بند ہونے پر اسپائلر کے طور پر نشان زد پوسٹس بغیر پردے کے براہِ راست دکھائی جاتی ہیں۔',
 };

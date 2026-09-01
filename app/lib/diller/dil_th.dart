@@ -1422,4 +1422,7 @@ const Map<String, String> cevirilerTh = {
   'Afiş görünümü': 'มุมมองโปสเตอร์',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'ปิดการลากในมุมมองรายการ ใช้ “ย้ายขึ้นบนสุด” เพื่อเลื่อนขึ้นก่อน',
+  'Spoiler uyarısını göster': 'แสดงคำเตือนสปอยล์',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'เมื่อปิด โพสต์ที่ทำเครื่องหมายว่าสปอยล์จะแสดงทันทีโดยไม่มีม่านบัง',
 };

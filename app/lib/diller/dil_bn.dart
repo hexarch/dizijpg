@@ -1437,4 +1437,7 @@ const Map<String, String> cevirilerBn = {
   'Afiş görünümü': 'পোস্টার ভিউ',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'তালিকা ভিউতে টেনে আনা বন্ধ; “একদম উপরে নাও” দিয়ে সামনে আনো।',
+  'Spoiler uyarısını göster': 'স্পয়লার সতর্কতা দেখান',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'বন্ধ থাকলে স্পয়লার হিসেবে চিহ্নিত পোস্টগুলি পর্দা ছাড়াই সরাসরি দেখানো হয়।',
 };

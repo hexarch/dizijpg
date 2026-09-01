@@ -1453,4 +1453,7 @@ const Map<String, String> cevirilerSw = {
   'Afiş görünümü': 'Mwonekano wa mabango',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Kuburuta kumezimwa katika mwonekano wa orodha; tumia “Sogeza juu kabisa” kuisogeza mbele.',
+  'Spoiler uyarısını göster': 'Onyesha onyo la spoila',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Ikizimwa, machapisho yaliyowekwa alama ya spoila huonyeshwa moja kwa moja bila pazia.',
 };

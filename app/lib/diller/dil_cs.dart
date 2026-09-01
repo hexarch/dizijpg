@@ -1442,4 +1442,7 @@ const Map<String, String> cevirilerCs = {
   'Afiş görünümü': 'Zobrazení plakátů',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'V zobrazení v řádcích je přetahování vypnuté; posuň dopředu přes „Přesunout nahoru“.',
+  'Spoiler uyarısını göster': 'Zobrazovat upozornění na spoilery',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Když je vypnuto, příspěvky označené jako spoiler se zobrazují rovnou, bez clony.',
 };

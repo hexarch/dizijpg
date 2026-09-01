@@ -1444,4 +1444,7 @@ const Map<String, String> cevirilerTe = {
   'Afiş görünümü': 'పోస్టర్ వీక్షణ',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'జాబితా వీక్షణలో లాగడం ఆఫ్‌లో ఉంది; ముందుకు తేవడానికి “మొదటికి తరలించు” ఉపయోగించు.',
+  'Spoiler uyarısını göster': 'స్పాయిలర్ హెచ్చరికను చూపించు',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'ఆఫ్‌లో ఉన్నప్పుడు స్పాయిలర్‌గా గుర్తించిన పోస్టులు తెర లేకుండా నేరుగా చూపబడతాయి.',
 };

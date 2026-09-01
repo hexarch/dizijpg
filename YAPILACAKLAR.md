@@ -1,6 +1,47 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-01 (2. tur) — 🚀 Akış↔Reels video sürekliliği · Reels rötuşları · spoiler ayarı (1.112.0+178)
+
+- 🚀 **CANLIDA (web).** `main.8d9e17a48e88.dart.js`
+  (+ `main.dart.js_1.0748aac5db3e.part.js`), SW sökücü yazıldı, eski
+  hash'liler silindi, brotli 106 dosya (%71). **Backend DEĞİŞMEDİ.**
+- 📦 **APK: `cikti/dizijpg-1.112.0-178.apk`** (78 MB) — versionCode 178.
+
+Altı kullanıcı isteği (hepsi 1 Eyl, tek turda):
+
+- ✅ **Akış ↔ Reels video geçişi baştan başlamıyor** ("akışta gönderi ve
+  reels arası geçişlerde video baştan başlıyor"). Yeni `video_konum.dart`:
+  oturum boyu URL→konum defteri (LRU 100, eşik 800 ms). Akış kartı
+  (`AkisVideo`), Reels sayfası ve keşfet karosu oynarken deftere yazar;
+  oynatıcı kurulurken/başlarken `devral` + `seekTo` ile kaldığı yerden sürer.
+  Kanıt: `test/video_konum_test.dart` (6 test).
+- ✅ **Reels eylem ikonları %35 küçük + sağa yaslı + "..." Paylaş'ın altında**
+  (`_ReelsDugme` 30→20, right 10→4, `UcNoktaMenu` sütunun en altına).
+- ✅ **Oyuncu etiketleri Reels'te görünüyor** ("oyuncu etiketli paylaşımlarda
+  oyuncuların etiketi gözükmüyor"). Alt rozet satırı artık TÜM ek etiketleri
+  (oyuncu dahil) birincil içeriğin yanında, yatay kaydırılır şeritte çizer
+  (`_ReelsEtiket`); etiketsiz gönderide satır hiç çizilmez.
+- ✅ **Yazılı gönderi Reels'te akış kartı kalıbında** ("sadece yazının olduğu
+  gönderiler çok çirkin duruyor"). `AkisKarti` soluk poster üstünde ortada;
+  eylem sütunu/alt blok çizilmez (kart hepsini taşıyor). Çift dokunuş beğeni
+  + kalp, yana kaydırma ve dikey sayfa geçişi korunuyor. Kartın gezinme
+  yardımcıları (`gonderidenProfile/Icerige`) katman-güvenli yapıldı — Reels
+  içinden profile gitmek artık Reels'in altına açılmıyor.
+- ✅ **Akışta yazı-gönderisinde `@ad` öneki kalktı** ("kullanıcı adından
+  sonra yazıyı yazma, zaten yukarıda yazıyor") — yalnız MEDYASIZ gönderide;
+  medyalıda Instagram kalıbı sürüyor. Öneksiz metinde "Devam et" semantiği
+  çocuk düğümle birleşip kayboluyordu; iç `Semantics(container:true)` kabı
+  eklendi.
+- ✅ **Ayarlar → Spoiler: "Spoiler uyarısını göster" anahtarı**
+  (`spoiler_tercihi.dart`, varsayılan AÇIK). Kapatınca akış kartı, Reels,
+  keşfet karosu, yorum satırları ve profil alıntıları perdesiz gösterir.
+  2 yeni metin 45 dile eklendi (`scratchpad/spoiler_ayari_ceviri.py`).
+- Kanıt: `flutter test` 2436 test yeşil (`reels_yenilikler_test.dart`,
+  `spoiler_tercihi_test.dart`, `video_konum_test.dart` yeni; eylem satırında
+  tarih artık Expanded — dar kutuda taşmak yerine kısalır).
+
+
 ## 2026-09-01 — 🚀 Görünüm anahtarı AppBar'a · kırmızı→yeşil çubuk · profil temizliği
 
 - 🚀 **CANLIDA (web).** `main.77000f61e6a1.dart.js`

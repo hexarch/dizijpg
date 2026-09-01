@@ -1412,4 +1412,7 @@ const Map<String, String> cevirilerHe = {
   'Afiş görünümü': 'תצוגת פוסטרים',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'גרירה כבויה בתצוגת רשימה; השתמש ב־“העבר לראש הרשימה” כדי להקדים.',
+  'Spoiler uyarısını göster': 'הצגת אזהרת ספוילר',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'כשכבוי, פוסטים המסומנים כספוילר מוצגים ישירות, ללא מסך.',
 };

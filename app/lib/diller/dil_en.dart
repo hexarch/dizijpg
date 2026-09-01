@@ -1445,4 +1445,7 @@ const Map<String, String> cevirilerEn = {
   'Afiş görünümü': 'Poster view',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Dragging is off in list view; use “Move to top” to bring it forward.',
+  'Spoiler uyarısını göster': 'Show spoiler warning',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'When off, posts marked as spoilers are shown directly, without the curtain.',
 };

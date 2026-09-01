@@ -9,6 +9,7 @@ import '../ceviri.dart';
 import '../gonderi_olcu.dart';
 import '../icerik_deposu.dart';
 import '../medya_yukle.dart';
+import '../spoiler_tercihi.dart';
 import '../tema.dart';
 import 'begenenler.dart';
 import 'etiket.dart';
@@ -714,7 +715,9 @@ class _YorumKartiState extends State<YorumKarti> {
   late int _begeni = (widget.yorum['begeni'] as int?) ?? 0;
   // Perde kapalıyken MEDYA da çizilmez (akıştaki kartla aynı): tek bir ekran
   // görüntüsü metinden fazlasını ele verir. Metne dokununca ikisi de açılır.
-  late bool _spoilerAcik = widget.yorum['spoiler'] != true;
+  // Ayarlar'dan spoiler uyarısı kapatıldıysa perde HİÇ kurulmaz.
+  late bool _spoilerAcik =
+      widget.yorum['spoiler'] != true || !SpoilerTercihi.acik;
   bool _isleniyor = false;
 
   @override
@@ -725,7 +728,7 @@ class _YorumKartiState extends State<YorumKarti> {
     if (!_isleniyor) _haritadanTazele(kur: true);
     // Liste tazelenip kart başka yoruma denk gelirse perde yeniden kapanır.
     if (eski.yorum['id'] != widget.yorum['id']) {
-      _spoilerAcik = widget.yorum['spoiler'] != true;
+      _spoilerAcik = widget.yorum['spoiler'] != true || !SpoilerTercihi.acik;
     }
   }
 
@@ -1370,7 +1373,9 @@ class _YanitSatiriState extends State<_YanitSatiri> {
   late int _begeni = (widget.yanit['begeni'] as int?) ?? 0;
   // Yanıt, üst yorumun sezon/bölümünü devralır — bölüm yorumuna gelen yanıt da
   // perdelenir. Perde kapalıyken medyası da çizilmez (üst yorumla aynı kural).
-  late bool _spoilerAcik = widget.yanit['spoiler'] != true;
+  // Ayarlar'dan spoiler uyarısı kapatıldıysa perde HİÇ kurulmaz.
+  late bool _spoilerAcik =
+      widget.yanit['spoiler'] != true || !SpoilerTercihi.acik;
   bool _isleniyor = false;
 
   @override
@@ -1380,7 +1385,7 @@ class _YanitSatiriState extends State<_YanitSatiri> {
       _begendim = widget.yanit['begendim'] == true;
       _begeni = (widget.yanit['begeni'] as int?) ?? 0;
       if (eski.yanit['id'] != widget.yanit['id']) {
-        _spoilerAcik = widget.yanit['spoiler'] != true;
+        _spoilerAcik = widget.yanit['spoiler'] != true || !SpoilerTercihi.acik;
       }
     }
   }

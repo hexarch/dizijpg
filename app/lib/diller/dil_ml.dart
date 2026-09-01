@@ -1449,4 +1449,7 @@ const Map<String, String> cevirilerMl = {
   'Afiş görünümü': 'പോസ്റ്റർ കാഴ്ച',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'ലിസ്റ്റ് കാഴ്ചയിൽ വലിച്ചിടൽ ഓഫാണ്; മുന്നിലേക്ക് കൊണ്ടുവരാൻ “ഏറ്റവും മുകളിലേക്ക് മാറ്റുക” ഉപയോഗിക്കൂ.',
+  'Spoiler uyarısını göster': 'സ്പോയ്‌ലർ മുന്നറിയിപ്പ് കാണിക്കുക',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'ഓഫായിരിക്കുമ്പോൾ സ്പോയ്‌ലർ എന്ന് അടയാളപ്പെടുത്തിയ പോസ്റ്റുകൾ മറയില്ലാതെ നേരിട്ട് കാണിക്കും.',
 };

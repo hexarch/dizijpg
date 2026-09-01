@@ -18,9 +18,11 @@ import '../gorsel_basliklari.dart';
 import '../medya_yukle.dart';
 import '../reels_ceviri.dart';
 import '../sira_tercihi.dart';
+import '../spoiler_tercihi.dart';
 import '../tarih.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
+import '../video_konum.dart';
 import '../video_kova.dart';
 import 'akis.dart' show AkisGorunumSecici, AkisGorunumu, AkisKarti;
 import 'begenenler.dart';
@@ -553,13 +555,23 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
   Future<void> _oynatmayiKur() async {
     final v = _ilkVideo;
     if (v == null || _d != null) return;
-    final d = VideoPlayerController.networkUrl(Uri.parse(dosyaUrl(v)!));
+    final u = dosyaUrl(v)!;
+    final d = VideoPlayerController.networkUrl(Uri.parse(u));
     _d = d;
     try {
       await d.initialize();
       if (!mounted || !widget.oynat) return _oynatmayiBirak();
+      // AKIŞ ↔ REELS SÜREKLİLİĞİ (video_konum.dart): bu video oturumda
+      // izlenmişse karo da oradan sürer; karodan Reels'e geçiş de baştan
+      // başlamaz (dinleyici konumu deftere yazar).
+      final hedef = VideoKonumDefteri.devral(u, d.value.position);
+      if (hedef != null) await d.seekTo(hedef);
+      if (!mounted || !widget.oynat) return _oynatmayiBirak();
       await d.setVolume(0); // ızgarada ses ASLA çalmaz
       await d.setLooping(true);
+      d.addListener(
+        () => VideoKonumDefteri.yaz(u, d.value.position, d.value.duration),
+      );
       await d.play();
       if (mounted) setState(() {});
     } catch (_) {
@@ -584,7 +596,8 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
   Widget build(BuildContext context) {
     final medya = _medya;
     final videolu = widget.yorum['videolu'] == true;
-    final spoiler = widget.yorum['spoiler'] == true;
+    // Spoiler uyarısı Ayarlar'dan kapatıldıysa karo da örtüsüz çizilir.
+    final spoiler = widget.yorum['spoiler'] == true && SpoilerTercihi.acik;
     final icerik =
         widget.icerikler['${widget.yorum['tur']}:${widget.yorum['tmdb_id']}']
             as Map<String, dynamic>? ??
@@ -1430,7 +1443,9 @@ class _ReelSayfaState extends State<_ReelSayfa>
   late final bool _takipBilinir =
       widget.yorum.containsKey('takip_ediyorum') &&
       widget.yorum['benim'] != true;
-  late bool _spoilerAcik = widget.yorum['spoiler'] != true;
+  // Ayarlar'dan spoiler uyarısı kapatıldıysa örtü HİÇ kurulmaz.
+  late bool _spoilerAcik =
+      widget.yorum['spoiler'] != true || !SpoilerTercihi.acik;
   // Çift dokunuş kalbi: dokunulan KONUMDA belirir, yükselip solar.
   // DİKKAT: `late final` ile TEMBEL kurulmamalı — kullanıcı hiç çift
   // dokunmadan sayfadan çıkarsa ilk erişim dispose() içinde olur ve vsync
@@ -1618,7 +1633,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
     final d = VideoPlayerController.networkUrl(Uri.parse(v));
     d
         .initialize()
-        .then((_) {
+        .then((_) async {
           if (!mounted || _kuruluUrl != v) {
             d.dispose();
             return;
@@ -1631,10 +1646,19 @@ class _ReelSayfaState extends State<_ReelSayfa>
             _oranBildir();
           }
           d.setLooping(true);
+          // AKIŞ → REELS SÜREKLİLİĞİ (video_konum.dart): akış kartında (ya
+          // da bu oturumda başka yerde) izlenen video kaldığı yerden sürer.
+          final hedef = VideoKonumDefteri.devral(v, d.value.position);
+          if (hedef != null) await d.seekTo(hedef);
+          // Sarma beklerken kullanıcı yana kaydırmış olabilir: `_videoKur`
+          // yeni URL için `_d`yi (yani bu d'yi) DISPOSE etmiştir — dinleyici
+          // takmak/oynatmak patlardı.
+          if (!mounted || _kuruluUrl != v) return;
           _videoDurumGuncelle(); // yalnız aktifse oynar
           d.addListener(() {
             // md. 23 ÖLÇÜSÜ ÇİZİMDEN ÖNCE: `setState` kart koparıldıysa
             // atlanır, ölçü ise her konum değişiminde güncellenmeli.
+            VideoKonumDefteri.yaz(v, d.value.position, d.value.duration);
             _kova.guncelle(
               url: v,
               konum: d.value.position,
@@ -1763,6 +1787,48 @@ class _ReelSayfaState extends State<_ReelSayfa>
     return '/icerik/${y['tur']}/${y['tmdb_id']}';
   }
 
+  /// GÖNDERİNİN EK ETİKETLERİ (1 Eyl 2026): birincisi rozet satırının başında
+  /// (yukarıdaki `_icerikYolu`/`icerik`), KALANLARI — oyuncular dahil —
+  /// yanına dizilir. Akış kartındaki `EkEtiketSeridi` ile aynı veri: sunucu
+  /// `etiketler` listesinde tümünü gönderir, ilki başlıktaki içerikle aynıdır.
+  List<Map<String, dynamic>> get _ekEtiketler {
+    final e = widget.yorum['etiketler'] as List<dynamic>? ?? const [];
+    return e.length > 1
+        ? e.sublist(1).cast<Map<String, dynamic>>()
+        : const <Map<String, dynamic>>[];
+  }
+
+  /// Etiket türüne göre rozet ikonu (EkEtiketSeridi'nin daire-poster'ı yerine
+  /// Reels'in ince satırına uyan küçük ikon).
+  static IconData _etiketIkonu(String? tur) => tur == 'person'
+      ? Icons.person_outline
+      : tur == 'company'
+      ? Icons.business
+      : Icons.local_movies_outlined;
+
+  /// Ek etiketin görünen adı (+ varsa sezon/bölüm soneki, birincil rozetle
+  /// aynı 'S{}B{}' biçimi).
+  String _etiketAdi(Map<String, dynamic> e) {
+    final bilgi =
+        widget.icerikler['${e['tur']}:${e['tmdb_id']}']
+            as Map<String, dynamic>? ??
+        const {'ad': '?'};
+    final sonek = e['sezon'] != null
+        ? ' · ${'S{}B{}'.cf([e['sezon'], e['bolum']])}'
+        : '';
+    return '${bilgi['ad']}$sonek';
+  }
+
+  /// Ek etiketin hedef yolu — `EkEtiketSeridi` ile aynı kurallar (sezonun
+  /// kendi sayfası yok; bölümlüyse bölüme, değilse içeriğe/kişiye).
+  static String _etiketYolu(Map<String, dynamic> e) {
+    if (e['tur'] == 'person') return '/kisi/${e['tmdb_id']}';
+    if (e['bolum'] != null) {
+      return '/dizi/${e['tmdb_id']}/sezon/${e['sezon']}/bolum/${e['bolum']}';
+    }
+    return '/icerik/${e['tur']}/${e['tmdb_id']}';
+  }
+
   // Paylaşım sayfası: kişilere DM olarak gönder + telefonun kendi paylaşım
   // sayfası (WhatsApp/e-posta/Instagram...) + bağlantıyı kopyala.
   // Akış kartı da AYNI çağrıyı yapar (gonderiPaylas).
@@ -1807,6 +1873,112 @@ class _ReelSayfaState extends State<_ReelSayfa>
     final benimGonderi =
         y['kullanici_id'] == context.read<Oturum>().kullanici?['id'];
 
+    // YAZI-GÖNDERİSİ (medyasız) REELS'TE AKIŞ KARTI KALIBINDA (1 Eyl 2026
+    // isteği: "sadece yazının olduğu gönderiler çok çirkin duruyor, akıştaki
+    // kalıbında göster"). Eski hâli: soluk poster + ortada iri metin — eylem
+    // sütunuyla birlikte dağınık duruyordu. [AkisKarti] aynı paylaşılan
+    // haritayı okuyup yazdığı için beğeni/takip Reels listesiyle senkron
+    // kalır; spoiler perdesi ve çeviri bağlantısı da kartın kendi işi.
+    // Eylem sütunu/alt blok ÇİZİLMEZ — kart hepsini kendisi taşıyor, ikisi
+    // birden aynı eylemleri iki kez gösterirdi.
+    if (_medya.isEmpty) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          if (poster != null)
+            Opacity(
+              opacity: 0.25,
+              child: CachedNetworkImage(
+                imageUrl: poster,
+                httpHeaders: gorselBasliklari(poster),
+                fit: BoxFit.cover,
+              ),
+            )
+          else
+            const ColoredBox(color: Colors.black),
+          // Jest katmanı: kart DIŞINDAKİ boşlukta da Reels alışkanlıkları
+          // sürsün — yana fırlatma profil geçişi, çift dokunuş beğeni.
+          // Kartın KENDİSİ üstte (Stack sırası) — düğmeleri buna takılmaz.
+          Positioned.fill(
+            child: PointerInterceptor(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onDoubleTapDown: (d) => _ciftDokunus(d.localPosition),
+                onDoubleTap: () {},
+                onHorizontalDragEnd: (detay) {
+                  final hiz = detay.primaryVelocity ?? 0;
+                  if (hiz.abs() > 250) _yanaKaydir(hiz);
+                },
+              ),
+            ),
+          ),
+          // BİLEREK KAYDIRICISIZ: kartta dikey kaydırılabilir bir şey yoksa
+          // dikey sürükleme PageView'a düşer ve kartın ÜSTÜNDEN de gönderi
+          // geçilebilir (ScrollView olsaydı jesti yutar, sayfa dönmezdi).
+          // Bedeli: "devamı" ile açılan ÇOK uzun metin ekranı aşarsa altı
+          // kırpılır — metin sheet'te ("devamı" olmadan yorumlar yoluyla)
+          // zaten tam okunabiliyor.
+          //
+          // deferToChild sarmalayıcı: Reels alışkanlıkları kartın ÜSTÜNDE de
+          // sürer — çift dokunuş beğenir (kalp uçar), yana fırlatma profil/
+          // medya geçişi yapar. Kartın kendi düğmeleri (beğeni, yanıt, takip)
+          // tek dokunuşta çalışmaya devam eder; çift-dokunuş tanıyıcısının
+          // ~300 ms bekletmesi eski tam-ekran metin düzeninde de vardı.
+          GestureDetector(
+            behavior: HitTestBehavior.deferToChild,
+            onDoubleTapDown: (d) => _ciftDokunus(d.localPosition),
+            onDoubleTap: () {},
+            onHorizontalDragEnd: (detay) {
+              final hiz = detay.primaryVelocity ?? 0;
+              if (hiz.abs() > 250) _yanaKaydir(hiz);
+            },
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: masaustuKolonGenisligi,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 40,
+                  ),
+                  child: AkisKarti(yorum: y, icerikler: widget.icerikler),
+                ),
+              ),
+            ),
+          ),
+          // Çift dokunuş kalbi (medyalı sayfayla aynı animasyon).
+          if (_kalpKonum != null)
+            AnimatedBuilder(
+              animation: _kalpAnim,
+              builder: (context, _) {
+                final t = _kalpAnim.value;
+                if (t == 0 || t == 1) return const SizedBox.shrink();
+                final olcek = t < 0.3 ? (0.4 + t / 0.3 * 0.9) : 1.3;
+                final opaklik = t < 0.6 ? 1.0 : (1 - (t - 0.6) / 0.4);
+                return Positioned(
+                  left: _kalpKonum!.dx - 55,
+                  top: _kalpKonum!.dy - 55 - t * 40,
+                  child: IgnorePointer(
+                    child: Opacity(
+                      opacity: opaklik.clamp(0, 1),
+                      child: Transform.scale(
+                        scale: olcek,
+                        child: const Icon(
+                          Icons.favorite,
+                          size: 110,
+                          color: Colors.redAccent,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+        ],
+      );
+    }
+
     Widget zemin;
     if (d != null && d.value.isInitialized) {
       final videoOrani = d.value.aspectRatio == 0
@@ -1849,63 +2021,11 @@ class _ReelSayfaState extends State<_ReelSayfa>
         ),
       );
     } else {
-      // Yazılı yorum: yalnız poster arka planı. ALINTI METNİ dokunuş
-      // katmanının ÜSTÜNDE ayrı bir katmanda çizilir (aşağıya bak) — burada
-      // kalsaydı tam ekran opak dokunuş katmanı etiketleri yutardı.
-      zemin = poster != null
-          ? Opacity(
-              opacity: 0.25,
-              child: CachedNetworkImage(
-                imageUrl: poster,
-                httpHeaders: gorselBasliklari(poster),
-                fit: BoxFit.cover,
-              ),
-            )
-          : const SizedBox.expand();
+      // OLAMAZ: medyasız (yazılı) gönderi yukarıda akış kartı olarak erken
+      // döndü; medyalı gönderide ekrandaki medya ya video ya fotoğraftır.
+      // Dal yalnız `zemin`in atanmışlığı için duruyor.
+      zemin = const ColoredBox(color: Colors.black);
     }
-
-    // Yazılı gönderinin alıntı kartı: metin dokunuş katmanının ÜSTÜNDE durur,
-    // yoksa içindeki @kullanıcı ve dizi/film etiketleri HİÇ dokunulamazdı
-    // (opak GestureDetector hepsini yutuyordu). `deferToChild`: yalnız YAZININ
-    // olduğu yer bu katmana düşer, boş alan alttaki katmana geçer — çift
-    // dokunuş/kaydırma her yerde çalışmaya devam etsin diye aynı eylemler
-    // burada da bağlanır.
-    final alintiKarti = foto == null && _videoUrl == null
-        ? Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.deferToChild,
-              onTap: _dokunus,
-              onDoubleTapDown: (d) => _ciftDokunus(d.localPosition),
-              onDoubleTap: () {},
-              onHorizontalDragEnd: (detay) {
-                final hiz = detay.primaryVelocity ?? 0;
-                if (hiz.abs() > 250) _yanaKaydir(hiz);
-              },
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 28, 28, 160),
-                  // Otomatik çeviri anahtarına UYAR (alt bloktaki ReelsMetni
-                  // gibi): kapalıyken orijinal metin — yazılı gönderinin
-                  // "medyası" metnin kendisi, anahtar onu da kapsamalı.
-                  child: ValueListenableBuilder<ReelsCeviriKip>(
-                    valueListenable: ReelsCeviri.kip,
-                    builder: (context, kip, _) => EtiketliMetin(
-                      reelsGosterMetni(y, kip),
-                      // Reels daima siyah zemin → parlak sarı etiket
-                      koyuZemin: true,
-                      stil: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        height: 1.5,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          )
-        : null;
 
     return Stack(
       fit: StackFit.expand,
@@ -1931,7 +2051,6 @@ class _ReelSayfaState extends State<_ReelSayfa>
             ),
           ),
         ),
-        if (alintiKarti != null) alintiKarti,
         // Çoklu medya sayacı sağ üstte ("3/10") — noktalar altta, alt blokta.
         if (_medya.length > 1)
           Positioned(
@@ -2161,35 +2280,39 @@ class _ReelSayfaState extends State<_ReelSayfa>
                         ),
                       ),
                     ],
-                    const SizedBox(height: 8),
-                    // İçerik rozeti → içerik sayfası
-                    GestureDetector(
-                      onTap: () => rotayaGitGuvenli(context, _icerikYolu),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.local_movies_outlined,
-                            size: 15,
-                            color: DiziRenkler.sari,
-                          ),
-                          const SizedBox(width: 5),
-                          Flexible(
-                            child: Text(
-                              '${icerik['ad']}'
-                              '${y['sezon'] != null ? ' · ${'S{}B{}'.cf([y['sezon'], y['bolum']])}' : ''}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: DiziRenkler.sari,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                              ),
+                    // İçerik rozeti + EK ETİKETLER (1 Eyl 2026 isteği:
+                    // "oyuncu etiketli paylaşımlarda oyuncuların etiketi
+                    // gözükmüyor"). Birincil etiket akıştaki gibi başta;
+                    // kalan etiketler (oyuncu/ikinci içerik) yanına dizilir.
+                    // YATAY KAYDIRILIR, sarmalanmaz — alt blok yükselip
+                    // medyayı boğmasın (EkEtiketSeridi ile aynı gerekçe).
+                    // Etiketsiz gönderide satır HİÇ çizilmez: sarı "?" yazıp
+                    // /icerik/null/null adresine götürürdü.
+                    if (y['tur'] != null) ...[
+                      const SizedBox(height: 8),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _ReelsEtiket(
+                              ikon: _etiketIkonu(y['tur'] as String?),
+                              metin:
+                                  '${icerik['ad']}'
+                                  '${y['sezon'] != null ? ' · ${'S{}B{}'.cf([y['sezon'], y['bolum']])}' : ''}',
+                              yol: _icerikYolu,
                             ),
-                          ),
-                        ],
+                            for (final e in _ekEtiketler) ...[
+                              const SizedBox(width: 14),
+                              _ReelsEtiket(
+                                ikon: _etiketIkonu(e['tur'] as String?),
+                                metin: _etiketAdi(e),
+                                yol: _etiketYolu(e),
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                     if (d != null && d.value.isInitialized) ...[
                       const SizedBox(height: 6),
                       Text(
@@ -2232,11 +2355,13 @@ class _ReelSayfaState extends State<_ReelSayfa>
             ],
           ),
         ),
-        // Sağ alt: görüntülenme / beğeni / yorum / paylaş
+        // Sağ alt: görüntülenme / beğeni / yorum / paylaş / üç nokta.
         // (`benimGonderi` yukarıda hesaplandı: hem istatistik girişi hem üç
         // nokta menüsü aynı kararı kullanır.)
+        // 1 Eyl 2026 isteği: ikonlar %35 küçük (30→20, _ReelsDugme), sütun
+        // sağa yaslı (right 10→4) ve üç nokta menüsü Paylaş'ın ALTINDA.
         Positioned(
-          right: 10,
+          right: 4,
           bottom: 30 + altInset,
           child: Column(
             children: [
@@ -2255,7 +2380,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
                       ).push('/gonderi-istatistik/${y['id']}')
                     : null,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               _ReelsDugme(
                 ikon: _begendim ? Icons.favorite : Icons.favorite_border,
                 renk: _begendim ? Colors.redAccent : Colors.white,
@@ -2263,26 +2388,26 @@ class _ReelSayfaState extends State<_ReelSayfa>
                 onTap: _begenToggle,
                 onUzunBas: () => begenenleriAc(context, y['id'] as int),
               ),
-              const SizedBox(height: 8),
-              // Şikayet menüsü (kendi gönderinde ve misafirde gizli)
-              UcNoktaMenu(
-                tur: 'yorum',
-                hedefId: y['id'] as int,
-                benimMi: benimGonderi,
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               _ReelsDugme(
                 ikon: Icons.mode_comment_outlined,
                 etiket: 'Yanıtlar'.c,
                 onTap: _yanitlarAc,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               _ReelsDugme(
                 // Sohbete gönder: alt sayfada kişiler listelenir, dokunulan
                 // kişiye gönderinin KENDİSİ gider (kart olarak).
                 ikon: Icons.send_outlined,
                 etiket: 'Paylaş'.c,
                 onTap: _paylas,
+              ),
+              // Şikayet menüsü (kendi gönderinde ve misafirde gizli) —
+              // eylemlerin EN ALTINDA durur, kendi iç dolgusu boşluğu verir.
+              UcNoktaMenu(
+                tur: 'yorum',
+                hedefId: y['id'] as int,
+                benimMi: benimGonderi,
               ),
             ],
           ),
@@ -2439,6 +2564,50 @@ class _ReelsMetniState extends State<ReelsMetni> {
   }
 }
 
+/// Reels alt rozet satırındaki tek etiket: sarı ikon + ad, dokununca kendi
+/// sayfası (içerik/kişi/bölüm). Birincil içerik de ek etiketler de bununla
+/// çizilir — biçim tek yerde kalsın (1 Eyl 2026, oyuncu etiketleri isteği).
+class _ReelsEtiket extends StatelessWidget {
+  final IconData ikon;
+  final String metin;
+  final String yol;
+
+  const _ReelsEtiket({
+    required this.ikon,
+    required this.metin,
+    required this.yol,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => rotayaGitGuvenli(context, yol),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(ikon, size: 15, color: DiziRenkler.sari),
+          const SizedBox(width: 5),
+          // Tek etiket taşarsa kendi içinde kırpılır; satırın tamamı zaten
+          // yatay kaydırılabilir (çok etiketli gönderi).
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 220),
+            child: Text(
+              metin,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: DiziRenkler.sari,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ReelsDugme extends StatelessWidget {
   final IconData ikon;
   final Color renk;
@@ -2472,12 +2641,14 @@ class _ReelsDugme extends StatelessWidget {
       onTap: onTap,
       onLongPress: onUzunBas,
       child: Padding(
-        padding: const EdgeInsets.all(6),
+        // İkon %35 küçüldü (1 Eyl 2026: 30→20); dolgu BÜYÜDÜ ki dokunma
+        // hedefi 44px'e yakın kalsın (ux md.2 — ikonu değil dolguyu büyüt).
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
         child: Column(
           children: [
-            Icon(ikon, size: 30, color: renk),
-            const SizedBox(height: 3),
-            Text(etiket, style: TextStyle(color: etiketRenk, fontSize: 11)),
+            Icon(ikon, size: 20, color: renk),
+            const SizedBox(height: 2),
+            Text(etiket, style: TextStyle(color: etiketRenk, fontSize: 10)),
           ],
         ),
       ),

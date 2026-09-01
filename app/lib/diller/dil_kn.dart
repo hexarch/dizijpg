@@ -1442,4 +1442,7 @@ const Map<String, String> cevirilerKn = {
   'Afiş görünümü': 'ಪೋಸ್ಟರ್ ನೋಟ',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'ಪಟ್ಟಿ ನೋಟದಲ್ಲಿ ಎಳೆಯುವುದು ಆಫ್ ಆಗಿದೆ; ಮುಂದೆ ತರಲು “ಮೇಲಕ್ಕೆ ಸರಿಸಿ” ಬಳಸಿ.',
+  'Spoiler uyarısını göster': 'ಸ್ಪಾಯ್ಲರ್ ಎಚ್ಚರಿಕೆ ತೋರಿಸಿ',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'ಆಫ್ ಆಗಿದ್ದಾಗ ಸ್ಪಾಯ್ಲರ್ ಎಂದು ಗುರುತಿಸಲಾದ ಪೋಸ್ಟ್‌ಗಳು ಪರದೆ ಇಲ್ಲದೆ ನೇರವಾಗಿ ತೋರಿಸಲ್ಪಡುತ್ತವೆ.',
 };

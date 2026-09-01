@@ -12,6 +12,7 @@ import '../gonderi_olcu.dart';
 import '../gorsel_basliklari.dart';
 import '../onbellek.dart';
 import '../sira_tercihi.dart';
+import '../spoiler_tercihi.dart';
 import '../sohbet_olay.dart';
 import '../tema.dart';
 import 'begenenler.dart';
@@ -849,8 +850,10 @@ class AkisKarti extends StatefulWidget {
 
 class _AkisKartiState extends State<AkisKarti> {
   late bool _begendim = widget.yorum['begendim'] == true;
-  // spoiler=true gelen kart dokunulana dek bulanık başlar
-  late bool _spoilerAcik = widget.yorum['spoiler'] != true;
+  // spoiler=true gelen kart dokunulana dek bulanık başlar — kullanıcı
+  // Ayarlar'dan spoiler uyarısını kapattıysa perde HİÇ kurulmaz.
+  late bool _spoilerAcik =
+      widget.yorum['spoiler'] != true || !SpoilerTercihi.acik;
   late int _begeni = (widget.yorum['begeni'] as int?) ?? 0;
   late int _yanit = (widget.yorum['yanit'] as int?) ?? 0;
 
@@ -1307,7 +1310,11 @@ class _AkisKartiState extends State<AkisKarti> {
                 orijinalMetin: y['orijinal_metin'] as String?,
                 yapici: (m) => KisaltilmisYorum(
                   metin: m,
-                  kullaniciAdi: y['kullanici_adi'] as String? ?? '',
+                  // YAZI-GÖNDERİSİNDE önek yok: ad başlıkta zaten yazıyor
+                  // (1 Eyl 2026 isteği). Medyalıda Instagram kalıbı sürer.
+                  kullaniciAdi: medya.isEmpty
+                      ? null
+                      : y['kullanici_adi'] as String? ?? '',
                 ),
               ),
             ),
@@ -1357,12 +1364,23 @@ class _AkisKartiState extends State<AkisKarti> {
                       ? () => gonderiIstatistikAc(context, y['id'] as int)
                       : null,
                 ),
-                const Spacer(),
-                Text(
-                  tarih,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: DiziRenkler.gonderiEylem,
+                // Spacer DEĞİL Expanded+Align: satır daralınca (Reels'teki
+                // kart kutusu, çok dar ekran, testlerin geniş Ahem fontu)
+                // önce TARİH kısalır; Spacer'lı halde satır taşıyordu.
+                // Genişken davranış birebir aynı: tarih sağa yaslı, doğal
+                // genişliğinde.
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      tarih,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: DiziRenkler.gonderiEylem,
+                      ),
+                    ),
                   ),
                 ),
                 _EylemDugmesi(
@@ -1504,7 +1522,13 @@ class KisaltilmisYorum extends StatefulWidget {
   static const satirSiniri = 3;
 
   final String metin;
-  final String kullaniciAdi;
+
+  /// Metnin başına konan kalın `@kullanıcı` öneki. null → ÖNEK YOK.
+  /// YAZI-GÖNDERİSİNDE (medyasız) null verilir (1 Eyl 2026 isteği): kartın
+  /// başlığında ad zaten duruyor, metnin hemen üstünde bir kez daha yazmak
+  /// tekrar. Medyalı gönderide önek kalır — Instagram kalıbı: görselin
+  /// altında "kim ne dedi" tek satırda okunur.
+  final String? kullaniciAdi;
   const KisaltilmisYorum({
     super.key,
     required this.metin,
@@ -1549,10 +1573,12 @@ class _KisaltilmisYorumState extends State<KisaltilmisYorum> {
           text: TextSpan(
             style: stil,
             children: [
-              TextSpan(
-                text: '@${widget.kullaniciAdi}  ',
-                style: stil.copyWith(fontWeight: FontWeight.w800),
-              ),
+              // Önek çizimde varsa ölçümde de olmalı (yoksa kırpma kayar).
+              if (widget.kullaniciAdi != null)
+                TextSpan(
+                  text: '@${widget.kullaniciAdi}  ',
+                  style: stil.copyWith(fontWeight: FontWeight.w800),
+                ),
               TextSpan(text: duzMetin(widget.metin)),
             ],
           ),
@@ -1577,7 +1603,13 @@ class _KisaltilmisYorumState extends State<KisaltilmisYorum> {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () => setState(() => _acik = true),
-            child: govde,
+            // İç Semantics: metnin KENDİ düğümü. Öneksiz (yazı-gönderisi)
+            // metinde span'da jest tanıyıcı kalmayınca metin, üstteki düğümle
+            // birleşip "Devam et" etiketini metnin içine gömüyordu — ekran
+            // okuyucu düğmeyi ayrı duyuramazdı (akis_karti_tasarim_test
+            // yakalar). Önekli halde tanıyıcı zaten sınır çiziyordu; bu kap
+            // iki durumu eşitler.
+            child: Semantics(container: true, child: govde),
           ),
         );
       },

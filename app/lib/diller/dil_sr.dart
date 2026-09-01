@@ -1450,4 +1450,7 @@ const Map<String, String> cevirilerSr = {
   'Afiş görünümü': 'Приказ постера',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'У приказу листе превлачење је искључено; користи „Премести на врх“ да га помериш напред.',
+  'Spoiler uyarısını göster': 'Прикажи упозорење о спојлеру',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Када је искључено, објаве означене као спојлер приказују се одмах, без завесе.',
 };

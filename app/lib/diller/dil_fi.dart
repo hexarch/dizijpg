@@ -1453,4 +1453,7 @@ const Map<String, String> cevirilerFi = {
   'Afiş görünümü': 'Julistenäkymä',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Vetäminen on pois päältä luettelonäkymässä; siirrä eteen valinnalla ”Siirrä ylimmäksi”.',
+  'Spoiler uyarısını göster': 'Näytä spoilerivaroitus',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Kun tämä on pois päältä, spoileriksi merkityt julkaisut näytetään suoraan ilman verhoa.',
 };

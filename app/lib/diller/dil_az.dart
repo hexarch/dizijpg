@@ -1438,4 +1438,7 @@ const Map<String, String> cevirilerAz = {
   'Afiş görünümü': 'Afişa görünüşü',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Sətir görünüşündə sürükləmə bağlıdır; “Ən yuxarı daşı” ilə önə çək.',
+  'Spoiler uyarısını göster': 'Spoyler xəbərdarlığını göstər',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Söndürüldükdə spoyler kimi işarələnmiş paylaşımlar pərdəsiz, birbaşa göstərilir.',
 };

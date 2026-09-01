@@ -1375,4 +1375,7 @@ const Map<String, String> cevirilerKo = {
   'Afiş görünümü': '포스터 보기',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       '목록 보기에서는 끌기가 꺼져 있습니다. “맨 위로 이동”로 앞으로 옮기세요.',
+  'Spoiler uyarısını göster': '스포일러 경고 표시',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      '끄면 스포일러로 표시된 게시물이 가림막 없이 바로 표시됩니다.',
 };

@@ -1451,4 +1451,7 @@ const Map<String, String> cevirilerUk = {
   'Afiş görünümü': 'Постерами',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'У вигляді списку перетягування вимкнено; скористайся «Перемістити на початок», щоб винести вперед.',
+  'Spoiler uyarısını göster': 'Показувати попередження про спойлери',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Якщо вимкнено, дописи з позначкою «спойлер» показуються одразу, без завіси.',
 };

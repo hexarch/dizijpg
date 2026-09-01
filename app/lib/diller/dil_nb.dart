@@ -1447,4 +1447,7 @@ const Map<String, String> cevirilerNb = {
   'Afiş görünümü': 'Plakatvisning',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Dra er av i listevisning; bruk «Flytt øverst» for å flytte den frem.',
+  'Spoiler uyarısını göster': 'Vis spoiler-advarsel',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Når den er av, vises innlegg merket som spoiler direkte, uten tildekking.',
 };

@@ -1453,4 +1453,7 @@ const Map<String, String> cevirilerMs = {
   'Afiş görünümü': 'Paparan poster',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Seret dimatikan dalam paparan senarai; guna “Alih ke atas sekali” untuk ke depan.',
+  'Spoiler uyarısını göster': 'Tunjukkan amaran spoiler',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Apabila dimatikan, hantaran yang ditanda sebagai spoiler dipaparkan terus tanpa tirai.',
 };

@@ -21,6 +21,7 @@ import 'liste_gorunumu.dart';
 import 'puan.dart';
 import 'reels_ceviri.dart';
 import 'sira_tercihi.dart';
+import 'spoiler_tercihi.dart';
 import 'surum_kapisi.dart';
 import 'tema.dart';
 import 'veri_tasarrufu.dart';
@@ -114,6 +115,8 @@ Future<void> main() async {
     await acilisAdimi('tema', TemaAyar.yukle);
     // bağlantı türü + veri tasarrufu tercihleri
     await acilisAdimi('veri-tasarrufu', VeriTasarrufu.yukle);
+    // spoiler uyarısı (perdesi) gösterilsin mi
+    await acilisAdimi('spoiler-tercihi', SpoilerTercihi.yukle);
     // videolarda altyazı gösterilsin mi
     await acilisAdimi('altyazi', AltyaziAyar.yukle);
     // Reels'te otomatik çeviri açık mı

@@ -1447,4 +1447,7 @@ const Map<String, String> cevirilerId = {
   'Afiş görünümü': 'Tampilan poster',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Seret dimatikan di tampilan daftar; gunakan “Pindah ke atas” untuk memajukannya.',
+  'Spoiler uyarısını göster': 'Tampilkan peringatan spoiler',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Saat dimatikan, kiriman yang ditandai spoiler ditampilkan langsung tanpa tirai.',
 };

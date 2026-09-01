@@ -516,10 +516,21 @@ void main() {
       expect(eylemUst(tester), greaterThanOrEqualTo(yorum.bottom));
     });
 
-    testWidgets('metin bloğunda kullanıcı adı da yazar', (tester) async {
-      await _kur(tester, _gonderi());
+    testWidgets('MEDYALI kartta metin bloğunda kullanıcı adı da yazar', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(medya: const ['/medya/a.jpg']));
       // Başlıkta bir, yorum bloğunun başında bir → iki kez geçer
       expect(find.textContaining('@thelostvibe0'), findsNWidgets(2));
+    });
+
+    testWidgets('YAZI-GÖNDERİSİNDE metin bloğunda önek YOK (1 Eyl 2026)', (
+      tester,
+    ) async {
+      // Ad başlıkta zaten yazıyor; medyasız gönderide metnin başında bir kez
+      // daha yazmak tekrar (kullanıcı isteği). YALNIZ başlıktaki kalır.
+      await _kur(tester, _gonderi());
+      expect(find.textContaining('@thelostvibe0'), findsOneWidget);
     });
   });
 
@@ -634,7 +645,13 @@ void main() {
     testWidgets('kırpılmış metindeki @kullanıcı bağlantısı hâlâ tıklanır', (
       tester,
     ) async {
-      await _kur(tester, _gonderi(metin: uzun));
+      // MEDYALI gönderi: önek yalnız medyalıda çiziliyor (1 Eyl 2026 —
+      // yazı-gönderisinde ad başlıkta zaten var, metinde tekrar etmiyor).
+      await _kur(
+        tester,
+        _gonderi(metin: uzun, medya: const ['/medya/a.jpg']),
+        ekran: const Size(400, 1600),
+      );
       // İlk satırın başındaki kalın "@thelostvibe0" öneki: genişletme
       // dokunuşunu YENMELİ (RichText tanıyıcısı arenaya önce girer).
       final sol = tester.getTopLeft(find.byType(EtiketliMetin));

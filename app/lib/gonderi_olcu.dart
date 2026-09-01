@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:go_router/go_router.dart';
 
 import 'api.dart';
+import 'ekranlar/ortak.dart' show rotayaGitGuvenli;
 
 /// GÖNDERİ ÖLÇÜLERİ (md. 23) — istemcinin sunucuya bildirdiği kapalı sözlük.
 ///
@@ -78,7 +78,11 @@ class GonderiOlcu {
 /// artırması hem ucuz hem agregat.
 void gonderidenProfile(BuildContext context, Map<String, dynamic> yorum) {
   GonderiOlcu.bildir(yorum['id'], GonderiOlcu.profilZiyaret);
-  GoRouter.of(context).push('/kullanici/${yorum['kullanici_adi']}');
+  // KATMAN-GÜVENLİ (1 Eyl 2026): yazı-gönderisi Reels'te AKIŞ KARTI olarak
+  // çizildiğinden bu yardımcı artık Reels katmanının İÇİNDEN de çağrılıyor.
+  // Düz push hedefi Reels'in ALTINA iterdi (3 Ağu'daki "profiline gitmiyor"
+  // hatasının aynısı); önce katmanlar kapatılır. Akışta katman yok → no-op.
+  rotayaGitGuvenli(context, '/kullanici/${yorum['kullanici_adi']}');
 }
 
 /// Gönderi kartından DİZİ/FİLM sayfasına git ve atfı bildir.
@@ -90,5 +94,6 @@ void gonderidenIcerige(
   String yol,
 ) {
   GonderiOlcu.bildir(yorum['id'], GonderiOlcu.icerikTikla);
-  GoRouter.of(context).push(yol);
+  // Katman-güvenli — gerekçe [gonderidenProfile]'da.
+  rotayaGitGuvenli(context, yol);
 }

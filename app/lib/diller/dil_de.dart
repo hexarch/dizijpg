@@ -1470,4 +1470,7 @@ const Map<String, String> cevirilerDe = {
   'Afiş görünümü': 'Posteransicht',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'In der Listenansicht ist Ziehen deaktiviert; nutze „Nach ganz oben“, um nach vorn zu holen.',
+  'Spoiler uyarısını göster': 'Spoiler-Warnung anzeigen',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Wenn ausgeschaltet, werden als Spoiler markierte Beiträge direkt und ohne Abdeckung angezeigt.',
 };

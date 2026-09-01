@@ -1473,4 +1473,7 @@ const Map<String, String> cevirilerFil = {
   'Afiş görünümü': 'Tanawing poster',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Naka-off ang pag-drag sa tanawing listahan; gamitin ang “Ilipat sa itaas” para iuna.',
+  'Spoiler uyarısını göster': 'Ipakita ang babala sa spoiler',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Kapag naka-off, ang mga post na minarkahang spoiler ay direktang ipinapakita, walang takip.',
 };

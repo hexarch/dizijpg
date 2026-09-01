@@ -1461,4 +1461,7 @@ const Map<String, String> cevirilerMy = {
   'Afiş görünümü': 'ပိုစတာမြင်ကွင်း',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'စာရင်းမြင်ကွင်းတွင် ဆွဲချခြင်း ပိတ်ထားသည်။ ရှေ့သို့ ရွှေ့ရန် “အပေါ်ဆုံးသို့ ရွှေ့ရန်” ကို သုံးပါ။',
+  'Spoiler uyarısını göster': 'ဇာတ်လမ်းပေါက်ကြားချက် သတိပေးချက် ပြရန်',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'ပိတ်ထားပါက ဇာတ်လမ်းပေါက်ကြားချက်အဖြစ် မှတ်သားထားသော ပို့စ်များကို ကာရံမှုမရှိဘဲ တိုက်ရိုက်ပြသသည်။',
 };

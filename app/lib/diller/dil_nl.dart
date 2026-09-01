@@ -1455,4 +1455,7 @@ const Map<String, String> cevirilerNl = {
   'Afiş görünümü': 'Posterweergave',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Slepen staat uit in lijstweergave; gebruik “Naar boven verplaatsen” om het naar voren te halen.',
+  'Spoiler uyarısını göster': 'Spoilerwaarschuwing tonen',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Indien uitgeschakeld worden als spoiler gemarkeerde berichten direct getoond, zonder afdekking.',
 };

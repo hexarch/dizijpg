@@ -1470,4 +1470,7 @@ const Map<String, String> cevirilerEl = {
   'Afiş görünümü': 'Προβολή αφισών',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Στην προβολή λίστας η μεταφορά είναι απενεργοποιημένη· χρησιμοποίησε «Μετακίνηση στην κορυφή» για να το φέρεις μπροστά.',
+  'Spoiler uyarısını göster': 'Εμφάνιση προειδοποίησης σπόιλερ',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Όταν είναι απενεργοποιημένο, οι αναρτήσεις με σήμανση σπόιλερ εμφανίζονται απευθείας, χωρίς κάλυμμα.',
 };

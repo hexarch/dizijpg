@@ -1433,4 +1433,7 @@ const Map<String, String> cevirilerGu = {
   'Afiş görünümü': 'પોસ્ટર દૃશ્ય',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'યાદી દૃશ્યમાં ખેંચવું બંધ છે; આગળ લાવવા “સૌથી ઉપર ખસેડો” વાપરો.',
+  'Spoiler uyarısını göster': 'સ્પોઇલર ચેતવણી બતાવો',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'બંધ હોય ત્યારે સ્પોઇલર તરીકે ચિહ્નિત પોસ્ટ પડદા વિના સીધી બતાવવામાં આવે છે.',
 };

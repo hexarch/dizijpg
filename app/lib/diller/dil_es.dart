@@ -1465,4 +1465,7 @@ const Map<String, String> cevirilerEs = {
   'Afiş görünümü': 'Vista de pósteres',
   'Satır görünümünde sürükleme kapalı; "En üste taşı" ile öne al.':
       'Arrastrar está desactivado en la vista de lista; usa «Mover al principio» para adelantarlo.',
+  'Spoiler uyarısını göster': 'Mostrar aviso de spoiler',
+  'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
+      'Si está desactivado, las publicaciones marcadas como spoiler se muestran directamente, sin cortina.',
 };
