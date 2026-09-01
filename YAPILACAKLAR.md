@@ -1,6 +1,44 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-01 — 🚀 Satır görünümüne izleme tarihi + en çok verilen emoji
+
+- 🚀 **CANLIDA (web + backend).** Web `main.87080233fbf2.dart.js`
+  (+ `main.dart.js_1.42e551c5541d.part.js`), SW sökücü yazıldı, eski
+  hash'liler silindi, brotli 108 dosya (%74). `dizijpg-api` yeniden derlendi.
+- 📦 **APK: `cikti/dizijpg-1.109.0-175.apk`** (78 MB) — versionCode 175,
+  gerçek yükleme anahtarıyla imzalı (SHA1 2E:38:AB:…:AB:58). AAB üretilmedi.
+
+Kullanıcı isteği (birebir): *"bu alt alta dizilen liste görünümde izlenme
+tarihini de göster, dizilerde en son izlenen bölümün izlenme tarihi olsun; ve
+verdiğim emojiyi de göster, dizilerde en çok kullandığım 1 tane emojiyi
+göster."*
+
+- ✅ **Son izleme tarihi** satırın ikinci sırasında, takvim ikonuyla.
+  Kaynak `max(izlemeler.tarih)` — dizide bu TAM OLARAK en son izlenen bölümün
+  tarihi demektir. `durumlar.guncelleme` KULLANILMADI: o, "izliyorum"a
+  geçirdiğin ana da liste sırasını değiştirdiğin ana da kayıyor. Detay
+  sayfasındaki "Son izleme" ile aynı kaynak. Biçim `tarihSayi(hepYil: true)`
+  → "20.01.2026"; dar satırda ay adı yer yerdi, yıl ise yıllara yayılmış
+  kitaplıkta ayırt edici.
+- ✅ **En çok verilen emoji** — projedeki tek tepki çizeri `TepkiIkonu`
+  (Lottie), VARSAYILAN DURAĞAN: 578 satırlık listede animasyon dönmez.
+  Sunucuda başlık başına `DISTINCT ON` + `adet DESC, son DESC`.
+  **Bölüm tepkileri de sayılıyor** (puanın aksine `sezon IS NULL` süzgeci
+  YOK): dizi geneline tepki vermek seyrek, asıl tepki bölüm bölüm veriliyor —
+  süzgeç konsaydı çoğu dizide emoji hiç çıkmazdı.
+- İkinci satır artık `Row` değil **`Wrap`**: dört süs (puan · emoji · kalp ·
+  tarih) 360 dp telefonda "En üste taşı" düğmesiyle tek satıra sığmayabilir;
+  Row taşma çizgisi çizerdi, Wrap alta sarar.
+- Backend: `GET /puanlarim` yanıtına `izlemeler` ve `emojiler` dizileri
+  eklendi. Yeni tablo/kolon YOK — migrasyon gerekmiyor.
+- Kanıt: `test/kitaplik_satir_gorunumu_test.dart` 9 → **10 test**; paket
+  **2415 geçti**. Canlı çapraz doğrulama: tv:95350'de kullanıcı 😱 iki kez,
+  😢 (daha yeni) ve 😮 birer kez vermiş — uç doğru şekilde 😱 döndü
+  (sıklık, tazeliği yener); son izleme `2026-08-31T11:54:57` = o dizinin
+  7 bölümünün max'ı. Yeni metin anahtarı AÇILMADI ('Tepki verdin' zaten
+  45 dilde vardı).
+
 ## 2026-09-01 — 🚀 Kitaplık listeleri: satır görünümü + başlık/ikon temizliği
 
 - 🚀 **CANLIDA (web + backend).** `server.js` kopyalandı, `dizijpg-api`

@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 
 import 'api.dart';
 
-/// Kullanıcının KENDİ puanları + favorileri — satır görünümünün deposu.
+/// Kullanıcının KENDİ puanları, favorileri, son izleme tarihleri ve o başlığa
+/// EN ÇOK verdiği emoji — satır görünümünün deposu.
 ///
 /// NEDEN STATİK DEPO: satır görünümü üç ekranda birden var (İzlediklerim,
 /// kitaplık durum listesi ve ileride liste içeriği). Her satır kendi puanını
@@ -22,6 +23,16 @@ class PuanFavoriDeposu {
   /// "tur:tmdbId" — favorilenmiş dizi/filmler.
   static final Set<String> _favoriler = {};
 
+  /// "tur:tmdbId" → SON izleme tarihi (ISO 8601, sunucudan geldiği gibi).
+  /// Dizide bu, en son izlenen BÖLÜMÜN tarihidir (bkz. server.js
+  /// `/puanlarim`); filmde filmin kendisininki.
+  static final Map<String, String> _sonIzleme = {};
+
+  /// "tur:tmdbId" → o başlığa EN ÇOK verdiğin tepki emojisi.
+  /// Bölüm tepkileri de sayılır: dizi geneline tepki vermek seyrek, asıl
+  /// tepki bölüm bölüm veriliyor.
+  static final Map<String, String> _emoji = {};
+
   /// Veri değişince artar; satırlar bunu dinleyip kendini yeniler.
   static final ValueNotifier<int> surum = ValueNotifier(0);
 
@@ -35,9 +46,17 @@ class PuanFavoriDeposu {
   static bool favoriMi(String tur, int tmdbId) =>
       _favoriler.contains(_anahtar(tur, tmdbId));
 
-  /// Puan + favori haritasını çeker. Giriş yapılmamışsa sessizce boş kalır;
-  /// ağ hatası da SESSİZDİR — satır o zaman puansız/kalpsiz çizilir, liste
-  /// yine görünür (puan satırın süsü, listenin kendisi değil).
+  /// Son izleme tarihi (ISO 8601) — yoksa null.
+  static String? sonIzleme(String tur, int tmdbId) =>
+      _sonIzleme[_anahtar(tur, tmdbId)];
+
+  /// Bu başlığa en çok verdiğin emoji — yoksa null.
+  static String? emoji(String tur, int tmdbId) => _emoji[_anahtar(tur, tmdbId)];
+
+  /// Puan + favori + son izleme + emoji haritalarını çeker. Giriş
+  /// yapılmamışsa sessizce boş kalır; ağ hatası da SESSİZDİR — satır o zaman
+  /// süssüz çizilir, liste yine görünür (bunlar satırın süsü, listenin
+  /// kendisi değil).
   static Future<void> yukle() async {
     if (_yukleniyor || !Api.girisli) return;
     _yukleniyor = true;
@@ -62,12 +81,42 @@ class PuanFavoriDeposu {
             (f['tmdb_id'] as num).toInt(),
           ),
       };
+      final yeniIzleme = <String, String>{};
+      for (final i in (d['izlemeler'] as List<dynamic>? ?? [])) {
+        final m = i as Map<String, dynamic>;
+        final son = (m['son'] as String?)?.trim();
+        if (son != null && son.isNotEmpty) {
+          yeniIzleme[_anahtar(
+                m['tur'] as String,
+                (m['tmdb_id'] as num).toInt(),
+              )] =
+              son;
+        }
+      }
+      final yeniEmoji = <String, String>{};
+      for (final e in (d['emojiler'] as List<dynamic>? ?? [])) {
+        final m = e as Map<String, dynamic>;
+        final emoji = (m['emoji'] as String?)?.trim();
+        if (emoji != null && emoji.isNotEmpty) {
+          yeniEmoji[_anahtar(
+                m['tur'] as String,
+                (m['tmdb_id'] as num).toInt(),
+              )] =
+              emoji;
+        }
+      }
       _puanlar
         ..clear()
         ..addAll(yeniPuan);
       _favoriler
         ..clear()
         ..addAll(yeniFavori);
+      _sonIzleme
+        ..clear()
+        ..addAll(yeniIzleme);
+      _emoji
+        ..clear()
+        ..addAll(yeniEmoji);
       surum.value++;
     } catch (_) {
       // sessiz: satırlar puansız çizilir
@@ -78,9 +127,16 @@ class PuanFavoriDeposu {
 
   /// Çıkışta temizlenir; başka hesap önceki puanları görmesin.
   static void temizle() {
-    if (_puanlar.isEmpty && _favoriler.isEmpty) return;
+    if (_puanlar.isEmpty &&
+        _favoriler.isEmpty &&
+        _sonIzleme.isEmpty &&
+        _emoji.isEmpty) {
+      return;
+    }
     _puanlar.clear();
     _favoriler.clear();
+    _sonIzleme.clear();
+    _emoji.clear();
     surum.value++;
   }
 }

@@ -13,8 +13,9 @@
 //      yaslı.
 //   2) Sağdaki eylem AYAR ÇARKI (çift yönlü ok DEĞİL) ve aynı şeridi açıyor.
 //   3) Aramanın yanındaki liste ikonu ızgarayı SATIR listesine çeviriyor.
-//   4) Satırda ad + yıl + KULLANICININ puanı + favoriyse KIRMIZI kalp var.
-//   5) Puanı da favorisi de olmayan satırda ikinci satır HİÇ çizilmiyor.
+//   4) Satırda ad + yıl + KULLANICININ puanı + favoriyse KIRMIZI kalp +
+//      SON İZLEME TARİHİ + o başlığa EN ÇOK verdiği emoji var.
+//   5) Hiçbir süsü olmayan satırda ikinci satır HİÇ çizilmiyor.
 //   6) Satır görünümünde "En üste taşı" çalışıyor ve sunucuya TAM sıra yazıyor.
 //   7) "Bitti"ye basınca görünüm satır olarak KALIYOR (görünüm tercihi).
 import 'dart:convert';
@@ -26,6 +27,7 @@ import 'package:dizijpg/ekranlar/kitaplik_liste.dart';
 import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:dizijpg/icerik_deposu.dart';
 import 'package:dizijpg/puan.dart';
+import 'package:dizijpg/ekranlar/tepki.dart';
 import 'package:dizijpg/puan_favori_deposu.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +45,8 @@ late List<Map<String, dynamic>> _izlenenTv;
 /// 103 yalnız favori, 104 ÇIPLAK (ikinci satırı olmamalı).
 late List<Map<String, dynamic>> _puanlar;
 late List<Map<String, dynamic>> _favoriler;
+late List<Map<String, dynamic>> _izlemeler;
+late List<Map<String, dynamic>> _emojiler;
 
 /// `/puanlarim` kaç kez çekildi (satır görünümü açılmadan çekilmemeli).
 int _puanCagrisi = 0;
@@ -66,7 +70,12 @@ void _sunucu() {
     }
     if (yol == '/puanlarim') {
       _puanCagrisi++;
-      return cevap({'puanlar': _puanlar, 'favoriler': _favoriler});
+      return cevap({
+        'puanlar': _puanlar,
+        'favoriler': _favoriler,
+        'izlemeler': _izlemeler,
+        'emojiler': _emojiler,
+      });
     }
     if (yol == '/icerikler') {
       final govde = jsonDecode(istek.body) as Map<String, dynamic>;
@@ -162,6 +171,15 @@ void main() {
       {'tur': 'tv', 'tmdb_id': 101},
       {'tur': 'tv', 'tmdb_id': 103},
     ];
+    // 101: son izlenen bölümün tarihi · 102: başka yıl · 104: HİÇBİR ŞEY yok.
+    _izlemeler = [
+      {'tur': 'tv', 'tmdb_id': 101, 'son': '2026-01-20T18:30:00.000Z'},
+      {'tur': 'tv', 'tmdb_id': 102, 'son': '2024-11-03T09:00:00.000Z'},
+    ];
+    _emojiler = [
+      {'tur': 'tv', 'tmdb_id': 101, 'emoji': '😍'},
+      {'tur': 'tv', 'tmdb_id': 103, 'emoji': '😱'},
+    ];
   });
 
   testWidgets('BAŞLIKTA SAYI YOK ve ad geri okuna YASLI', (tester) async {
@@ -246,9 +264,40 @@ void main() {
     }
   });
 
-  testWidgets('puanı da favorisi de olmayan satırda İKİNCİ SATIR YOK', (
+  testWidgets('SATIRDA son izleme tarihi ve EN ÇOK verilen emoji var', (
     tester,
   ) async {
+    await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
+    await _seridiAc(tester, 'kitaplik-sirala');
+    await _satirKipineGec(tester);
+
+    Finder icinde(String anahtar, Finder ne) =>
+        find.descendant(of: find.byKey(ValueKey(anahtar)), matching: ne);
+
+    // Tarih SAYISAL ve YIL DAİMA yazılır (dar satır + yıllara yayılı kitaplık).
+    expect(find.text('20.01.2026'), findsOneWidget);
+    expect(find.text('03.11.2024'), findsOneWidget);
+    // 104'ün izleme kaydı yok → tarih ikonu da yok.
+    expect(
+      icinde('tv-104', find.byIcon(Icons.event_available_outlined)),
+      findsNothing,
+    );
+
+    // Emoji: projedeki tek tepki çizeri [TepkiIkonu] ile, DURAĞAN (uzun
+    // listede 578 animasyon dönmesin).
+    final emojiler = tester
+        .widgetList<TepkiIkonu>(find.byType(TepkiIkonu))
+        .toList();
+    expect(emojiler.map((e) => e.emoji).toList(), ['😍', '😱']);
+    for (final e in emojiler) {
+      expect(e.oynat, isFalse, reason: 'satırdaki emoji sürekli dönüyor');
+    }
+    // 101 → 😍 (kendi satırında), 102 → emoji yok.
+    expect(icinde('tv-101', find.byType(TepkiIkonu)), findsOneWidget);
+    expect(icinde('tv-102', find.byType(TepkiIkonu)), findsNothing);
+  });
+
+  testWidgets('hiçbir süsü olmayan satırda İKİNCİ SATIR YOK', (tester) async {
     await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
     await _seridiAc(tester, 'kitaplik-sirala');
     await _satirKipineGec(tester);
@@ -259,9 +308,14 @@ void main() {
     Finder icinde(String anahtar, Finder ne) =>
         find.descendant(of: find.byKey(ValueKey(anahtar)), matching: ne);
 
-    // 104: ne puan ne favori → ikinci satırda HİÇBİR ŞEY yok.
+    // 104: ne puan, ne favori, ne emoji, ne izleme → ikinci satır HİÇ YOK.
     expect(icinde('tv-104', find.byIcon(Icons.star)), findsNothing);
     expect(icinde('tv-104', find.byIcon(Icons.favorite)), findsNothing);
+    expect(icinde('tv-104', find.byType(TepkiIkonu)), findsNothing);
+    expect(
+      icinde('tv-104', find.byIcon(Icons.event_available_outlined)),
+      findsNothing,
+    );
     // 103: favori ama puansız → kalp var, yıldız yok.
     expect(icinde('tv-103', find.byIcon(Icons.favorite)), findsOneWidget);
     expect(icinde('tv-103', find.byIcon(Icons.star)), findsNothing);

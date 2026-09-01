@@ -11862,13 +11862,15 @@ app.get('/kitapligim', girisZorunlu, sarici(async (req, res) => {
 }));
 
 // ---------------------------------------------------------------------------
-// SATIR GÖRÜNÜMÜNÜN VERİSİ — kendi puanlarım + favorilerim (1 Eyl 2026)
+// SATIR GÖRÜNÜMÜNÜN VERİSİ — puanım · favorim · son izleme · en çok verdiğim
+// emoji (1 Eyl 2026)
 // ---------------------------------------------------------------------------
 // Kitaplık listeleri (İzliyorum, İzlediğim Diziler, ...) artık afiş ızgarası
 // yerine SATIR SATIR da çizilebiliyor; satırda adın/yılın altında KULLANICININ
-// VERDİĞİ PUAN ve favoriyse kırmızı kalp var.
+// VERDİĞİ PUAN, favoriyse kırmızı kalp, SON İZLEME TARİHİ ve o başlığa EN ÇOK
+// VERDİĞİ EMOJİ var.
 //
-// NEDEN AYRI UÇ: bu iki bilgi liste besleyen üç ayrı uca (`/kitapligim`,
+// NEDEN AYRI UÇ: bu bilgiler liste besleyen üç ayrı uca (`/kitapligim`,
 // `/izlediklerim`, liste içeriği) dağılmış durumda ve satır görünümü ÜÇÜNDE DE
 // aynı. Tek uç → tek yerde bakım, ekran başına TEK ek istek. İçerik başına
 // `/detay` çağırmak 578 öğelik listede 578 istek ederdi.
@@ -11877,13 +11879,26 @@ app.get('/kitapligim', girisZorunlu, sarici(async (req, res) => {
 // BAŞLIĞA verilen puandır. Bölüm puanları buraya karışsaydı aynı tmdb_id için
 // düzinelerce satır dönerdi.
 //
+// SON İZLEME `max(izlemeler.tarih)`: dizide bu, EN SON İZLENEN BÖLÜMÜN tarihi
+// demektir (kullanıcı isteği birebir) — `durumlar.guncelleme` DEĞİL, çünkü o
+// "izliyorum"a geçirdiğin ana da, listeyi düzenlediğin ana da kayabilir.
+// Filmde tek satır zaten filmin kendisidir. Detay sayfasındaki "Son izleme"
+// satırıyla AYNI kaynak.
+//
+// EMOJİ, PUANIN AKSİNE, BÖLÜM TEPKİLERİNİ DE SAYAR: kullanıcı "dizilerde en
+// çok kullandığım 1 tane emojiyi göster" dedi. Dizi geneline tepki vermek
+// SEYREKTİR, asıl tepki bölüm bölüm veriliyor; `sezon IS NULL` süzgeci
+// konsaydı çoğu dizide emoji hiç çıkmazdı. Eşitliği EN SON verilen tepki
+// çözer (`son DESC`) — "bugünlerde ne hissediyorum" daha bilgilendirici.
+//
 // TAVAN: en büyük gerçek kitaplık 578 başlık; 5000 dört kattan fazla pay
-// bırakıyor ve satır ~12 bayt. Aşılırsa satırda yalnız puan/kalp eksik kalır,
-// liste yine çizilir.
+// bırakıyor ve satır ~12 bayt. Her sorgu tavana kadar EN TAZEYİ tutar
+// (`ORDER BY ... DESC LIMIT`), yani kırpma listenin dibini keser.
+// Aşılırsa satırda yalnız o süs eksik kalır, liste yine çizilir.
 const puanlarimLimiti = hizLimiti(240, (req) => `pz:${req.kullanici.id}`);
 
 app.get('/puanlarim', girisZorunlu, puanlarimLimiti, sarici(async (req, res) => {
-  const [puanlar, favoriler] = await Promise.all([
+  const [puanlar, favoriler, izlemeler, emojiler] = await Promise.all([
     havuz.query(
       `SELECT tur, tmdb_id, puan FROM puanlar
         WHERE kullanici_id=$1 AND sezon IS NULL AND puan IS NOT NULL
@@ -11897,8 +11912,36 @@ app.get('/puanlarim', girisZorunlu, puanlarimLimiti, sarici(async (req, res) => 
         LIMIT 5000`,
       [req.kullanici.id],
     ),
+    havuz.query(
+      `SELECT tur, tmdb_id, max(tarih) AS son
+         FROM izlemeler WHERE kullanici_id=$1
+        GROUP BY tur, tmdb_id
+        ORDER BY son DESC
+        LIMIT 5000`,
+      [req.kullanici.id],
+    ),
+    // DISTINCT ON: başlık başına TEK satır — en çok verilen emoji, eşitlikte
+    // en son verilen. `ORDER BY` DISTINCT ON sütunlarıyla BAŞLAMAK ZORUNDA
+    // (PostgreSQL kuralı), sıralama ölçütleri ondan sonra gelir.
+    havuz.query(
+      `SELECT DISTINCT ON (tur, tmdb_id) tur, tmdb_id, emoji
+         FROM (
+           SELECT tur, tmdb_id, emoji, count(*) AS adet, max(tarih) AS son
+             FROM tepkiler
+            WHERE kullanici_id=$1 AND tur IN ('tv','movie')
+            GROUP BY tur, tmdb_id, emoji
+         ) t
+        ORDER BY tur, tmdb_id, adet DESC, son DESC
+        LIMIT 5000`,
+      [req.kullanici.id],
+    ),
   ]);
-  res.json({ puanlar: puanlar.rows, favoriler: favoriler.rows });
+  res.json({
+    puanlar: puanlar.rows,
+    favoriler: favoriler.rows,
+    izlemeler: izlemeler.rows,
+    emojiler: emojiler.rows,
+  });
 }));
 
 // ---------------------------------------------------------------------------
