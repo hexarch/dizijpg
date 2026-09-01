@@ -9442,11 +9442,20 @@ async function tmdbBolumSayisi(tmdbId) {
 }
 
 // Film adından TMDB film id'si (izlenen filmleri eşlemek için, önbellekli).
-async function isimdenTmdbFilm(isim) {
+// `yil` verilirse (Letterboxd Name+Year taşır) arama o yıla daraltılır:
+// aynı adlı yeniden çevrimler ("Blair Witch" 1999/2016) yanlış eşleşmesin.
+// Yıl süzgeci SONUÇSUZ kalırsa yılsız denenir — Letterboxd yılı bazen
+// gösterim yılına göre yazar ve TMDB'ninkiyle bir yıl kayabilir; katı süzgeç
+// o filmleri sessizce düşürürdü.
+async function isimdenTmdbFilm(isim, yil = null) {
   const q = encodeURIComponent(String(isim).slice(0, 100));
+  const y = Number.isInteger(yil) && yil > 1870 && yil < 2100 ? yil : null;
   const veri = await tmdbGetir(
-    `/search/movie?query=${q}&language=tr-TR`, aramaTtl(ONBELLEK_TTL_SN.uzun));
-  return enIyiEslesme(veri?.results, isim)?.id || null;
+    `/search/movie?query=${q}&language=tr-TR${y ? `&primary_release_year=${y}` : ''}`,
+    aramaTtl(ONBELLEK_TTL_SN.uzun));
+  const id = enIyiEslesme(veri?.results, isim)?.id || null;
+  if (!id && y) return isimdenTmdbFilm(isim, null);
+  return id;
 }
 
 app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {

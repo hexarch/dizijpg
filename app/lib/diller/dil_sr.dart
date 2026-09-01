@@ -82,8 +82,8 @@ const Map<String, String> cevirilerSr = {
   'Tekrar dene': 'Покушај поново',
   'Toplam İzleme Süresi': 'Укупно време гледања',
   'Tüm Zamanların En İyileri': 'Најбоље свих времена',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'Преузми све своје податке (гледања, оцене, коментаре, листе) као ZIP компатибилан са TV Time или увези ZIP из друге апликације.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'Преузми све своје податке (гледања, оцене, коментаре, листе) као ZIP компатибилан са TV Time или увези ZIP из TV Time / Letterboxd.',
   'Tümünü Kaldır': 'Уклони све',
   'Tümünü İzledim': 'Све одгледано',
   'Türk Dizileri': 'Турске серије',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerSr = {
   'İçe aktarım tamamlandı': 'Увоз је завршен',
   'Şifre': 'Лозинка',
   '• profil bilgisi': '• подаци о профилу',
-  '• {} dizi durumu': '• {} статуса серија',
+  '• {} kitaplık kaydı': '• {} ставки библиотеке',
+  '• {} favori': '• {} омиљених',
   '• {} izleme kaydı': '• {} записа гледања',
   '• {} liste': '• {} листа',
   '• {} puan': '• {} оцена',

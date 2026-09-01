@@ -1,6 +1,25 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-01 — 🚀 Letterboxd içe aktarımı (1.106.0+171)
+
+- 🚀 **Ayarlar > Verilerim artık Letterboxd ZIP'ini de içe aktarıyor** (istek:
+  "letterbox dosyası... oraya letterbox desteği de ekle"). Algılama dosya
+  adından değil BAŞLIKTAN: "Letterboxd URI" sütunu yalnız Letterboxd'da var
+  (ratings.csv adı bizim dışa aktarımımızla çakışıyor). Yol farkındalığı:
+  deleted/ + orphaned/ kopyaları ve likes/reviews.csv (başkalarının
+  incelemeleri) elenir; likes/films.csv → favoriler. Eşleme Ad+Yıl ile
+  (`isimdenTmdbFilm` artık `primary_release_year` daraltmalı, sonuçsuzsa
+  yılsız dener — Blair Witch 1999/2016 ayrımı). Tarih güvenilirliği:
+  watched.csv Date İŞARETLEME günüdür → `tarih_kesin=false`; yalnız
+  diary/reviews "Watched Date" kesin. Puan 0,5-5 yıldız → ×20 → 1-100;
+  incelemeler puana yorum olarak bağlanır, puansızsa yorumlar tablosuna.
+  UI: karşılama kartı "TV Time / Letterboxd", ayarlar metni + '• {} kitaplık
+  kaydı' + yeni '• {} favori' anahtarı 45 dilde. Testler:
+  letterboxd_ice_aktarim.test.js (3, uçtan uca sahte havuzla) + tüm süit
+  (2153 backend / 2367 Flutter). Canlıda import-test-2226 ile gerçek ZIP:
+  36 film, 36 eşleşme, 0 atlanan, 2,2 sn; ikinci koşu çiftlemedi.
+
 ## 2026-09-01 — 🚀 Profil kapağı elle sırayı yansıtıyor
 
 - 🚀 **Listede sona taşınan yapım profil kapağında öne çıkıyordu** (istek:

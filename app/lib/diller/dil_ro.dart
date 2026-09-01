@@ -82,8 +82,8 @@ const Map<String, String> cevirilerRo = {
   'Tekrar dene': 'Încearcă din nou',
   'Toplam İzleme Süresi': 'Timp total de vizionare',
   'Tüm Zamanların En İyileri': 'Cele mai bune din toate timpurile',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'Descarcă-ți toate datele (vizionări, note, comentarii, liste) ca ZIP compatibil cu TV Time sau importă un ZIP din altă aplicație.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'Descarcă-ți toate datele (vizionări, note, comentarii, liste) ca ZIP compatibil cu TV Time sau importă un ZIP din TV Time / Letterboxd.',
   'Tümünü Kaldır': 'Elimină tot',
   'Tümünü İzledim': 'Le-am văzut pe toate',
   'Türk Dizileri': 'Seriale turcești',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerRo = {
   'İçe aktarım tamamlandı': 'Import finalizat',
   'Şifre': 'Parolă',
   '• profil bilgisi': '• informații de profil',
-  '• {} dizi durumu': '• {} statusuri de serial',
+  '• {} kitaplık kaydı': '• {} intrări în bibliotecă',
+  '• {} favori': '• {} favorite',
   '• {} izleme kaydı': '• {} vizionări',
   '• {} liste': '• {} liste',
   '• {} puan': '• {} note',

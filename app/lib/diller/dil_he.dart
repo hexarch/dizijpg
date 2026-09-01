@@ -80,8 +80,8 @@ const Map<String, String> cevirilerHe = {
   'Tekrar dene': 'נסה שוב',
   'Toplam İzleme Süresi': 'זמן מסך כולל',
   'Tüm Zamanların En İyileri': 'הטובים בכל הזמנים',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'ייצא את כל הנתונים שלך (צפיות, דירוגים, תגובות, רשימות) כקובץ ZIP תואם TV Time, או ייבא ZIP מאפליקציה אחרת.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'ייצא את כל הנתונים שלך (צפיות, דירוגים, תגובות, רשימות) כקובץ ZIP תואם TV Time, או ייבא ZIP של TV Time / Letterboxd.',
   'Tümünü Kaldır': 'הסר הכל',
   'Tümünü İzledim': 'צפיתי בהכל',
   'Türk Dizileri': 'סדרות טורקיות',
@@ -141,7 +141,8 @@ const Map<String, String> cevirilerHe = {
   'İçe aktarım tamamlandı': 'הייבוא הושלם',
   'Şifre': 'סיסמה',
   '• profil bilgisi': '• פרטי פרופיל',
-  '• {} dizi durumu': '• {} סטטוסי סדרות',
+  '• {} kitaplık kaydı': '• {} רשומות ספרייה',
+  '• {} favori': '• {} מועדפים',
   '• {} izleme kaydı': '• {} רשומות צפייה',
   '• {} liste': '• {} רשימות',
   '• {} puan': '• {} דירוגים',

@@ -79,8 +79,8 @@ const Map<String, String> cevirilerAm = {
   'Tekrar dene': 'እንደገና ሞክር',
   'Toplam İzleme Süresi': 'ጠቅላላ የእይታ ጊዜ',
   'Tüm Zamanların En İyileri': 'የሁሉም ጊዜ ምርጦች',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'ሁሉንም ዳታህን (እይታ፣ ነጥብ፣ አስተያየት፣ ዝርዝር) ከTV Time ጋር ተኳሃኝ በሆነ ZIP መልክ አውርድ ወይም ከሌላ መተግበሪያ የመጣ ZIP አስገባ።',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'ሁሉንም ዳታህን (እይታ፣ ነጥብ፣ አስተያየት፣ ዝርዝር) ከTV Time ጋር ተኳሃኝ በሆነ ZIP መልክ አውርድ ወይም የTV Time / Letterboxd ZIP አስገባ።',
   'Tümünü Kaldır': 'ሁሉንም አስወግድ',
   'Tümünü İzledim': 'ሁሉንም አይቻለሁ',
   'Türk Dizileri': 'የቱርክ ድራማዎች',
@@ -140,7 +140,8 @@ const Map<String, String> cevirilerAm = {
   'İçe aktarım tamamlandı': 'ማስገባት ተጠናቋል',
   'Şifre': 'የይለፍ ቃል',
   '• profil bilgisi': '• የመገለጫ መረጃ',
-  '• {} dizi durumu': '• {} የድራማ ሁኔታ',
+  '• {} kitaplık kaydı': '• {} የላይብረሪ መዝገብ',
+  '• {} favori': '• {} ተወዳጅ',
   '• {} izleme kaydı': '• {} የእይታ መዝገብ',
   '• {} liste': '• {} ዝርዝር',
   '• {} puan': '• {} ነጥብ',

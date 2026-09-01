@@ -660,11 +660,12 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
       Navigator.pop(context); // yükleniyor kapat
       int say(String k) => (ozet[k] as num?)?.toInt() ?? 0;
       final satirlar = [
-        if (say('durum') > 0) '• {} dizi durumu'.cf([say('durum')]),
+        if (say('durum') > 0) '• {} kitaplık kaydı'.cf([say('durum')]),
         if (say('izleme') > 0) '• {} izleme kaydı'.cf([say('izleme')]),
         if (say('puan') > 0) '• {} puan'.cf([say('puan')]),
         if (say('yorum') > 0) '• {} yorum'.cf([say('yorum')]),
         if (say('liste') > 0) '• {} liste'.cf([say('liste')]),
+        if (say('favori') > 0) '• {} favori'.cf([say('favori')]),
         if (say('profil') > 0) '• profil bilgisi'.c,
       ];
       final metin = satirlar.isEmpty
@@ -1518,7 +1519,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                 _Bolum('Verilerim'.c, Icons.folder_outlined),
                 Text(
                   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak '
-                          'al ya da başka uygulamadan gelen ZIP\'i içe aktar.'
+                          'al ya da TV Time / Letterboxd ZIP\'ini içe aktar.'
                       .c,
                   style: TextStyle(color: DiziRenkler.metin38, fontSize: 12),
                 ),

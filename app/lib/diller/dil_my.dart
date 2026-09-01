@@ -84,8 +84,8 @@ const Map<String, String> cevirilerMy = {
   'Tekrar dene': 'ထပ်စမ်းကြည့်ပါ',
   'Toplam İzleme Süresi': 'စုစုပေါင်း ကြည့်ရှုချိန်',
   'Tüm Zamanların En İyileri': 'အချိန်တိုင်းရဲ့ အကောင်းဆုံးများ',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'မင်းရဲ့ ဒေတာအားလုံး (ကြည့်ရှုမှတ်တမ်း၊ အမှတ်၊ မှတ်ချက်၊ စာရင်း) ကို TV Time နဲ့ ကိုက်ညီတဲ့ ZIP အနေနဲ့ ထုတ်ယူပါ ဒါမှမဟုတ် တခြားအက်ပ်က ZIP ကို ထည့်သွင်းပါ။',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'မင်းရဲ့ ဒေတာအားလုံး (ကြည့်ရှုမှတ်တမ်း၊ အမှတ်၊ မှတ်ချက်၊ စာရင်း) ကို TV Time နဲ့ ကိုက်ညီတဲ့ ZIP အနေနဲ့ ထုတ်ယူပါ ဒါမှမဟုတ် TV Time / Letterboxd ZIP ကို ထည့်သွင်းပါ။',
   'Tümünü Kaldır': 'အားလုံး ဖယ်ရှားရန်',
   'Tümünü İzledim': 'အားလုံး ကြည့်ပြီးပြီ',
   'Türk Dizileri': 'တူရကီ ဇာတ်လမ်းတွဲများ',
@@ -145,7 +145,8 @@ const Map<String, String> cevirilerMy = {
   'İçe aktarım tamamlandı': 'ထည့်သွင်းမှု ပြီးပါပြီ',
   'Şifre': 'စကားဝှက်',
   '• profil bilgisi': '• ပရိုဖိုင် အချက်အလက်',
-  '• {} dizi durumu': '• ဇာတ်လမ်းတွဲ အခြေအနေ {} ခု',
+  '• {} kitaplık kaydı': '• စာကြည့်တိုက် မှတ်တမ်း {} ခု',
+  '• {} favori': '• အကြိုက်ဆုံး {} ခု',
   '• {} izleme kaydı': '• ကြည့်ရှုမှတ်တမ်း {} ခု',
   '• {} liste': '• စာရင်း {} ခု',
   '• {} puan': '• အမှတ် {} ခု',

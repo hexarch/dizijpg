@@ -205,6 +205,14 @@ const IZIN_LI_DOSYALAR = new Set([
   'tracking-prod-records-v2.csv', 'tracking-prod-records.csv',
   'comments.csv', 'show_comment.csv', 'episode_comment.csv', 'ratings.csv', 'lists.csv',
 ]);
+// Letterboxd dışa aktarım dosyaları (1 Eyl 2026). Ad çakışması bilinçli
+// yönetilir: Letterboxd'un ratings.csv'si ile kendi dışa aktarımımızın
+// ratings.csv'si AYNI ADI taşır ama başlıkları farklıdır — hangi format
+// olduğuna dosya adı değil, "Letterboxd URI" başlık sütunu karar verir.
+const LB_DOSYALAR = new Set([
+  'watched.csv', 'ratings.csv', 'diary.csv', 'reviews.csv',
+  'watchlist.csv', 'profile.csv',
+]);
 const MAX_TOPLAM_ACIK = 200 * 1024 * 1024; // 200MB açılmış boyut (zip-bomb koruması)
 const MAX_DOSYA_ACIK = 60 * 1024 * 1024;
 const MAX_GIRIS = 300; // en fazla dosya girişi
@@ -275,13 +283,28 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
     throw Object.assign(new Error('ZIP çok fazla dosya içeriyor'), { status: 400 });
   }
   const metinler = {};
+  // Letterboxd dosyaları AYRI toplanır çünkü tek istisna olarak YOL da
+  // önemlidir: arşivde deleted/ ve orphaned/ altında aynı adlı (silinmiş)
+  // kopyalar, likes/ altında ise BAŞKALARININ beğenilen incelemeleri
+  // (reviews.csv) durur. Yol atılarak toplansaydı silinmiş günlük canlıymış
+  // gibi, beğenilen filmler listesi de inceleme dosyasıymış gibi okunurdu.
+  const lbMetinler = {};
   let toplam = 0;
   for (const giris of girisler) {
     if (giris.dir) continue;
-    let ad = giris.name.split('/').pop(); // yol kısmı atılır → traversal engellenir
+    const parcalar = giris.name.split('/').filter(Boolean);
+    let ad = parcalar.pop() || ''; // yol kısmı atılır → traversal engellenir
+    const dizinler = parcalar.map((d) => d.toLowerCase());
+    let lbAd = null;
+    if (!dizinler.some((d) => d === 'deleted' || d === 'orphaned')) {
+      if (dizinler[dizinler.length - 1] === 'likes') {
+        // Beğenilerden yalnız filmler alınır; likes/reviews.csv ELENİR.
+        if (ad === 'films.csv') lbAd = 'begeni-films.csv';
+      } else if (LB_DOSYALAR.has(ad)) lbAd = ad;
+    }
     // TV Time'ın yeni tek dosyalı dışa aktarımı: "tv-time-export (1).csv" gibi
     if (/^tv-time-export.*\.csv$/i.test(ad)) ad = 'tv-time-export.csv';
-    else if (!IZIN_LI_DOSYALAR.has(ad)) continue; // token/şifre/ip dosyaları okunmaz
+    else if (!IZIN_LI_DOSYALAR.has(ad) && !lbAd) continue; // token/şifre/ip dosyaları okunmaz
     // ---- ZIP BOMBASI: ÖNCE BEYANA BAK (denetim 2026-08-17 §5.1) ----
     // Eski hâlde boyut kontrolü `async('nodebuffer')`DAN SONRA yapılıyordu:
     // 60 MB sınırının çok üstünde bir giriş, sınıra takılmadan ÖNCE belleğe
@@ -313,7 +336,9 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
     if (toplam > MAX_TOPLAM_ACIK) {
       throw Object.assign(new Error('ZIP içeriği çok büyük'), { status: 400 });
     }
-    metinler[ad] = veri.toString('utf8');
+    const metin = veri.toString('utf8');
+    if (lbAd) lbMetinler[lbAd] = metin;
+    if (IZIN_LI_DOSYALAR.has(ad) || ad === 'tv-time-export.csv') metinler[ad] = metin;
   }
 
   const ozet = { durum: 0, izleme: 0, puan: 0, yorum: 0, liste: 0, profil: 0, atlanan: 0 };
@@ -321,6 +346,14 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
   // 1) Kayıpsız kendi biçimimiz varsa onu kullan.
   if (metinler['dizijpg.json']) {
     return iceAktarNative(havuz, userId, metinler['dizijpg.json'], ozet);
+  }
+
+  // 1.2) Letterboxd: karar dosya ADINDAN değil BAŞLIKTAN verilir —
+  // "Letterboxd URI" sütunu yalnız Letterboxd dışa aktarımında bulunur.
+  // (Kendi ratings.csv'miz user_id,type,tmdb_id... başlığı taşır.)
+  if (['watched.csv', 'diary.csv', 'watchlist.csv', 'ratings.csv']
+    .some((a) => lbMetinler[a] && lbMetinler[a].slice(0, 300).includes('Letterboxd URI'))) {
+    return iceAktarLetterboxd(havuz, userId, lbMetinler, ozet, tmdbAraFilm);
   }
 
   // 1.5) TV Time'ın YENİ tek dosyalı formatı (2026+):
@@ -691,6 +724,215 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
   ozet.durum += await filmDurumlariniEsitle(havuz, userId);
   await izleyecegimCelikisiniCoz(havuz, userId);
   ozet.tmdb_eslesme = findSayisi;
+  return ozet;
+}
+
+// ---------- LETTERBOXD İÇE AKTARIMI (1 Eyl 2026) ----------
+// Letterboxd yalnız FİLM taşır ve TMDB kimliği vermez; eşleme Ad+Yıl ile
+// yapılır (isimdenTmdbFilm yıl daraltmalı arar). Dosya sözleşmesi:
+//   watched.csv   Date,Name,Year,Letterboxd URI            → izleme
+//   diary.csv     ... ,Rating,Rewatch,Tags,Watched Date    → GERÇEK izleme tarihi
+//   ratings.csv   ... ,Rating (0,5-5 yıldız)               → puan (×20 → 1-100)
+//   reviews.csv   ... ,Rating,Review,Watched Date          → puan yorumu / yorum
+//   watchlist.csv Date,Name,Year,URI                       → durum 'izleyecegim'
+//   likes/films.csv                                        → favoriler
+//   profile.csv   ...,Bio,...                              → bio (boşsa doldur)
+//
+// TARİH GÜVENİLİRLİĞİ (27 Ağu derslerinin devamı): watched.csv'deki Date
+// İŞARETLEME günüdür — toplu geçişte binlerce film aynı güne damgalanır.
+// Bu yüzden watched tarihi alınır ama `tarih_kesin=false` yazılır; yalnız
+// diary/reviews'daki "Watched Date" (kullanıcının bizzat girdiği gün) kesin
+// sayılır. /benim ucu kesin olmayan tarihi zaten göstermiyor.
+async function iceAktarLetterboxd(havuz, userId, metinler, ozet, tmdbAraFilm) {
+  const csv = (ad) => {
+    if (!metinler[ad]) return [];
+    try {
+      return parse(metinler[ad],
+        { columns: true, skip_empty_lines: true, relax_column_count: true, bom: true });
+    } catch { return []; }
+  };
+  const tarihOku = (ham) => {
+    const s = String(ham || '').trim();
+    return s && !Number.isNaN(Date.parse(s)) ? new Date(s) : null;
+  };
+  // Letterboxd puanı 0,5-5 yıldız (yarımlar dahil) → kanonik 1-100.
+  const puanOku = (ham) => {
+    const p = Number(String(ham ?? '').trim());
+    if (!Number.isFinite(p) || p <= 0 || p > 5) return null;
+    return Math.min(100, Math.max(1, Math.round(p * 20)));
+  };
+
+  // Film başına TEK kayıt (Ad+Yıl anahtar): aynı film birden çok dosyada
+  // geçer; burada birleştirilir, DB'ye tek elden yazılır.
+  const filmler = new Map();
+  const kayit = (r) => {
+    const ad = String(r?.Name || '').trim();
+    if (!ad) return null;
+    const yil = parseInt(r?.Year, 10);
+    const anahtar = `${ad}|${Number.isInteger(yil) ? yil : ''}`;
+    let f = filmler.get(anahtar);
+    if (!f) {
+      f = {
+        ad, yil: Number.isInteger(yil) ? yil : null,
+        izleme: false, tarih: null, kesin: false,
+        puan: null, inceleme: null, izleyecegim: false, favori: false,
+      };
+      filmler.set(anahtar, f);
+    }
+    return f;
+  };
+  // Kesin tarih kesin olmayanı EZER; aynı kesinlikte en erken kazanır
+  // (IZLEME_CAKISMA'nın LEAST kuralıyla aynı akıl).
+  const tarihIsle = (f, t, kesin) => {
+    if (!t) return;
+    if (kesin) {
+      if (!f.kesin || !f.tarih || t < f.tarih) { f.tarih = t; f.kesin = true; }
+    } else if (!f.kesin && (!f.tarih || t < f.tarih)) f.tarih = t;
+  };
+
+  for (const r of csv('watched.csv')) {
+    const f = kayit(r);
+    if (!f) { ozet.atlanan++; continue; }
+    f.izleme = true;
+    tarihIsle(f, tarihOku(r.Date), false);
+  }
+  for (const r of csv('diary.csv')) {
+    const f = kayit(r);
+    if (!f) { ozet.atlanan++; continue; }
+    f.izleme = true;
+    tarihIsle(f, tarihOku(r['Watched Date']), true);
+    const p = puanOku(r.Rating);
+    if (p) f.puan = p;
+  }
+  // Puanlı film izlenmiş sayılır: Letterboxd'da puan izlemeden verilemez.
+  for (const r of csv('ratings.csv')) {
+    const f = kayit(r);
+    if (!f) { ozet.atlanan++; continue; }
+    const p = puanOku(r.Rating);
+    if (p) { f.puan = p; f.izleme = true; }
+    tarihIsle(f, tarihOku(r.Date), false);
+  }
+  for (const r of csv('reviews.csv')) {
+    const f = kayit(r);
+    if (!f) { ozet.atlanan++; continue; }
+    f.izleme = true;
+    tarihIsle(f, tarihOku(r['Watched Date']), true);
+    const p = puanOku(r.Rating);
+    if (p) f.puan = p;
+    const metin = String(r.Review || '').trim();
+    if (metin && !f.inceleme) f.inceleme = metin.slice(0, 2000);
+  }
+  for (const r of csv('watchlist.csv')) {
+    const f = kayit(r);
+    if (!f) { ozet.atlanan++; continue; }
+    f.izleyecegim = true;
+  }
+  for (const r of csv('begeni-films.csv')) {
+    const f = kayit(r);
+    if (!f) { ozet.atlanan++; continue; }
+    f.favori = true;
+  }
+
+  // Bio yalnız BOŞSA doldurulur (COALESCE) — mevcut profil ezilmez.
+  const profil = csv('profile.csv')[0];
+  const bio = typeof profil?.Bio === 'string' ? profil.Bio.trim() : '';
+  if (bio) {
+    await havuz.query(
+      'UPDATE kullanicilar SET bio=COALESCE(NULLIF(bio,\'\'),$1) WHERE id=$2',
+      [bio.slice(0, 300), userId]);
+    ozet.profil++;
+  }
+
+  // TMDB eşlemesi: 8'erli paralel öbeklerle önden doldur (nginx zaman aşımı).
+  ozet.isim_eslesme = 0;
+  ozet.favori = 0;
+  const idOnbellek = new Map(); // 'Ad|Yıl' → tmdbId|null
+  async function coz(f) {
+    const anahtar = `${f.ad}|${f.yil ?? ''}`;
+    if (idOnbellek.has(anahtar)) return idOnbellek.get(anahtar);
+    if (!tmdbAraFilm || idOnbellek.size >= MAX_FIND) return null;
+    let id = null;
+    try { id = await tmdbAraFilm(f.ad, f.yil); } catch { id = null; }
+    if (id) ozet.isim_eslesme++;
+    idOnbellek.set(anahtar, id);
+    return id;
+  }
+  const hepsi = [...filmler.values()];
+  for (let i = 0; i < hepsi.length; i += 8) {
+    await Promise.all(hepsi.slice(i, i + 8).map((f) => coz(f)));
+  }
+
+  // İki farklı ad aynı TMDB filmine çözülebilir; izlemeler tmdb_id ile
+  // TEKİLLEŞTİRİLİR — ON CONFLICT DO UPDATE aynı satıra tek deyimde iki kez
+  // dokunamaz (PostgreSQL 21000).
+  const izlemeler = new Map(); // tmdbId → { t, kesin }
+  for (const f of hepsi) {
+    const id = await coz(f); // önbellekten döner
+    if (!id) { ozet.atlanan++; continue; }
+    if (f.izleme) {
+      const s = izlemeler.get(id);
+      if (!s) izlemeler.set(id, { t: f.tarih, kesin: f.kesin && !!f.tarih });
+      else if (f.tarih && (f.kesin && !s.kesin
+        ? true : f.kesin === s.kesin && (!s.t || f.tarih < s.t))) {
+        s.t = f.tarih;
+        s.kesin = f.kesin;
+      }
+    }
+    if (f.izleyecegim && !f.izleme) {
+      const { rowCount } = await havuz.query(
+        `INSERT INTO durumlar (kullanici_id, tur, tmdb_id, durum)
+         VALUES ($1,'movie',$2,'izleyecegim')
+         ON CONFLICT (kullanici_id, tur, tmdb_id) DO NOTHING`,
+        [userId, id]);
+      ozet.durum += rowCount;
+    }
+    if (f.puan) {
+      const { rowCount } = await havuz.query(
+        `INSERT INTO puanlar (kullanici_id, tur, tmdb_id, sezon, bolum, puan, yorum)
+         VALUES ($1,'movie',$2,NULL,NULL,$3,$4)
+         ON CONFLICT (kullanici_id, tur, tmdb_id, COALESCE(sezon,-1), COALESCE(bolum,-1))
+         DO NOTHING`,
+        [userId, id, f.puan, f.inceleme]);
+      ozet.puan += rowCount;
+    } else if (f.inceleme) {
+      // Puansız inceleme puan satırına bağlanamaz → yorum olarak taşınır.
+      const eklendi = await yorumEkleTekil(
+        havuz, userId, 'movie', id, null, null, f.inceleme.slice(0, 1000));
+      if (eklendi) ozet.yorum++;
+    }
+    if (f.favori) {
+      const { rowCount } = await havuz.query(
+        `INSERT INTO favoriler (kullanici_id, tur, tmdb_id)
+         VALUES ($1,'movie',$2) ON CONFLICT DO NOTHING`,
+        [userId, id]);
+      ozet.favori += rowCount;
+    }
+  }
+
+  // İzlemeler 500'lük toplu gruplarla (iceAktarNative ile aynı kalıp).
+  const izlemeListe = [...izlemeler.entries()];
+  for (let g = 0; g < izlemeListe.length; g += 500) {
+    const grup = izlemeListe.slice(g, g + 500);
+    const parametreler = [userId];
+    const degerler = grup.map(([id, s], j) => {
+      const b = j * 3;
+      parametreler.push(id, s.t, s.kesin === true);
+      return `($1,'movie',$${b + 2},0,0,`
+        + `COALESCE($${b + 3}::timestamptz, now()),`
+        + `$${b + 3}::timestamptz IS NOT NULL AND $${b + 4}::boolean)`;
+    });
+    await havuz.query(
+      `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih,
+                              tarih_kesin)
+       VALUES ${degerler.join(',')}
+       ${IZLEME_CAKISMA}`,
+      parametreler);
+    ozet.izleme += grup.length;
+  }
+
+  // İzlenen filmlere durum='bitirdim' + izleyeceğim çelişkisi çözümü.
+  ozet.durum += await filmDurumlariniEsitle(havuz, userId);
+  await izleyecegimCelikisiniCoz(havuz, userId);
   return ozet;
 }
 

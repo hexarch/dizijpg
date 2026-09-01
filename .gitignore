@@ -22,3 +22,4 @@ magaza/cikti/
 ios-imza/
 # Xcode yapılandırma yedekleri (dağıtım öncesi alınan tarihli kopyalar)
 **/*.yedek-*
+letterboxd-*.zip

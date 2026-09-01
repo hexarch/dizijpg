@@ -82,8 +82,8 @@ const Map<String, String> cevirilerFi = {
   'Tekrar dene': 'Yritä uudelleen',
   'Toplam İzleme Süresi': 'Ruutuaika yhteensä',
   'Tüm Zamanların En İyileri': 'Kaikkien aikojen parhaat',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'Lataa kaikki tietosi (katselut, arvosanat, kommentit, listat) TV Time -yhteensopivana ZIP-tiedostona tai tuo ZIP toisesta sovelluksesta.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'Lataa kaikki tietosi (katselut, arvosanat, kommentit, listat) TV Time -yhteensopivana ZIP-tiedostona tai tuo ZIP TV Timesta / Letterboxdista.',
   'Tümünü Kaldır': 'Poista kaikki',
   'Tümünü İzledim': 'Katsoin kaikki',
   'Türk Dizileri': 'Turkkilaiset sarjat',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerFi = {
   'İçe aktarım tamamlandı': 'Tuonti valmis',
   'Şifre': 'Salasana',
   '• profil bilgisi': '• profiilitiedot',
-  '• {} dizi durumu': '• {} sarjan tilaa',
+  '• {} kitaplık kaydı': '• {} kirjastomerkintää',
+  '• {} favori': '• {} suosikkia',
   '• {} izleme kaydı': '• {} katselumerkintää',
   '• {} liste': '• {} listaa',
   '• {} puan': '• {} arvosanaa',

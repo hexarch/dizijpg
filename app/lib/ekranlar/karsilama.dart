@@ -640,11 +640,12 @@ class _AktarmaAdimiState extends State<_AktarmaAdimi> {
       if (!mounted) return;
       int say(String k) => (ozet[k] as num?)?.toInt() ?? 0;
       final satirlar = [
-        if (say('durum') > 0) '• {} dizi durumu'.cf([say('durum')]),
+        if (say('durum') > 0) '• {} kitaplık kaydı'.cf([say('durum')]),
         if (say('izleme') > 0) '• {} izleme kaydı'.cf([say('izleme')]),
         if (say('puan') > 0) '• {} puan'.cf([say('puan')]),
         if (say('yorum') > 0) '• {} yorum'.cf([say('yorum')]),
         if (say('liste') > 0) '• {} liste'.cf([say('liste')]),
+        if (say('favori') > 0) '• {} favori'.cf([say('favori')]),
       ];
       showDialog<void>(
         context: context,
@@ -686,7 +687,9 @@ class _AktarmaAdimiState extends State<_AktarmaAdimi> {
         ),
         const _BilgiKarti(
           ikon: Icons.file_upload_outlined,
-          baslik: 'TV Time',
+          // Marka adları çevrilmez; harita karşılığı yoksa anahtar aynen
+          // basılır — tüm dillerde doğru görünür.
+          baslik: 'TV Time / Letterboxd',
           metin:
               'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.',
         ),

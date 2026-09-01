@@ -79,8 +79,8 @@ const Map<String, String> cevirilerKo = {
   'Tekrar dene': '다시 시도',
   'Toplam İzleme Süresi': '총 시청 시간',
   'Tüm Zamanların En İyileri': '역대 최고 작품',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      '모든 데이터(시청, 평점, 댓글, 리스트)를 TV Time 호환 ZIP으로 내보내거나, 다른 앱의 ZIP을 가져올 수 있어요.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      '모든 데이터(시청, 평점, 댓글, 리스트)를 TV Time 호환 ZIP으로 내보내거나, TV Time / Letterboxd ZIP을 가져올 수 있어요.',
   'Tümünü Kaldır': '전체 해제',
   'Tümünü İzledim': '전체 시청 완료',
   'Türk Dizileri': '터키 드라마',
@@ -140,7 +140,8 @@ const Map<String, String> cevirilerKo = {
   'İçe aktarım tamamlandı': '가져오기 완료',
   'Şifre': '비밀번호',
   '• profil bilgisi': '• 프로필 정보',
-  '• {} dizi durumu': '• 드라마 상태 {}개',
+  '• {} kitaplık kaydı': '• 보관함 항목 {}개',
+  '• {} favori': '• 즐겨찾기 {}개',
   '• {} izleme kaydı': '• 시청 기록 {}개',
   '• {} liste': '• 리스트 {}개',
   '• {} puan': '• 평점 {}개',

@@ -82,8 +82,8 @@ const Map<String, String> cevirilerUr = {
   'Tekrar dene': 'دوبارہ کوشش کریں',
   'Toplam İzleme Süresi': 'کل اسکرین ٹائم',
   'Tüm Zamanların En İyileri': 'ہر دور کی بہترین',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'اپنا سارا ڈیٹا (واچ، ریٹنگ، تبصرے، لسٹیں) TV Time سے ہم آہنگ ZIP کے طور پر حاصل کریں یا کسی اور ایپ سے آنے والی ZIP درآمد کریں۔',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'اپنا سارا ڈیٹا (واچ، ریٹنگ، تبصرے، لسٹیں) TV Time سے ہم آہنگ ZIP کے طور پر حاصل کریں یا TV Time / Letterboxd کی ZIP درآمد کریں۔',
   'Tümünü Kaldır': 'سب ہٹائیں',
   'Tümünü İzledim': 'سب دیکھ لیے',
   'Türk Dizileri': 'ترک ڈرامے',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerUr = {
   'İçe aktarım tamamlandı': 'درآمد مکمل ہو گئی',
   'Şifre': 'پاس ورڈ',
   '• profil bilgisi': '• پروفائل معلومات',
-  '• {} dizi durumu': '• {} سیریز اسٹیٹس',
+  '• {} kitaplık kaydı': '• {} لائبریری اندراج',
+  '• {} favori': '• {} پسندیدہ',
   '• {} izleme kaydı': '• {} واچ اندراجات',
   '• {} liste': '• {} لسٹیں',
   '• {} puan': '• {} ریٹنگز',

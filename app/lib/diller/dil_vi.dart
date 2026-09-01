@@ -82,8 +82,8 @@ const Map<String, String> cevirilerVi = {
   'Tekrar dene': 'Thử lại',
   'Toplam İzleme Süresi': 'Tổng thời gian xem',
   'Tüm Zamanların En İyileri': 'Hay nhất mọi thời đại',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'Xuất toàn bộ dữ liệu của bạn (lượt xem, điểm, bình luận, danh sách) dưới dạng ZIP tương thích TV Time, hoặc nhập ZIP từ ứng dụng khác.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'Xuất toàn bộ dữ liệu của bạn (lượt xem, điểm, bình luận, danh sách) dưới dạng ZIP tương thích TV Time, hoặc nhập ZIP từ TV Time / Letterboxd.',
   'Tümünü Kaldır': 'Xóa tất cả',
   'Tümünü İzledim': 'Đã xem tất cả',
   'Türk Dizileri': 'Phim bộ Thổ Nhĩ Kỳ',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerVi = {
   'İçe aktarım tamamlandı': 'Nhập dữ liệu hoàn tất',
   'Şifre': 'Mật khẩu',
   '• profil bilgisi': '• thông tin hồ sơ',
-  '• {} dizi durumu': '• {} trạng thái phim',
+  '• {} kitaplık kaydı': '• {} mục thư viện',
+  '• {} favori': '• {} mục yêu thích',
   '• {} izleme kaydı': '• {} lượt xem',
   '• {} liste': '• {} danh sách',
   '• {} puan': '• {} điểm',

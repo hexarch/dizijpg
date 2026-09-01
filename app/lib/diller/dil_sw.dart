@@ -82,8 +82,8 @@ const Map<String, String> cevirilerSw = {
   'Tekrar dene': 'Jaribu tena',
   'Toplam İzleme Süresi': 'Jumla ya muda wa kutazama',
   'Tüm Zamanların En İyileri': 'Bora Zaidi za Wakati Wote',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'Pakua data zako zote (kutazama, alama, maoni, orodha) kama ZIP inayooana na TV Time, au leta ZIP kutoka programu nyingine.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'Pakua data zako zote (kutazama, alama, maoni, orodha) kama ZIP inayooana na TV Time, au leta ZIP ya TV Time / Letterboxd.',
   'Tümünü Kaldır': 'Ondoa Zote',
   'Tümünü İzledim': 'Nimetazama Zote',
   'Türk Dizileri': 'Mifululizo ya Kituruki',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerSw = {
   'İçe aktarım tamamlandı': 'Uhamishaji umekamilika',
   'Şifre': 'Nenosiri',
   '• profil bilgisi': '• taarifa za wasifu',
-  '• {} dizi durumu': '• hali za mifululizo {}',
+  '• {} kitaplık kaydı': '• maingizo ya maktaba {}',
+  '• {} favori': '• vipendwa {}',
   '• {} izleme kaydı': '• rekodi za kutazama {}',
   '• {} liste': '• orodha {}',
   '• {} puan': '• alama {}',

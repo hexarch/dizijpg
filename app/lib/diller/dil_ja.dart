@@ -79,8 +79,8 @@ const Map<String, String> cevirilerJa = {
   'Tekrar dene': 'もう一度試す',
   'Toplam İzleme Süresi': '合計視聴時間',
   'Tüm Zamanların En İyileri': '歴代ベスト',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      '全データ（視聴・評価・コメント・リスト）をTV Time互換のZIPでエクスポート、または他のアプリのZIPをインポートできます。',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      '全データ（視聴・評価・コメント・リスト）をTV Time互換のZIPでエクスポート、またはTV Time / LetterboxdのZIPをインポートできます。',
   'Tümünü Kaldır': 'すべて解除',
   'Tümünü İzledim': 'すべて視聴済みにする',
   'Türk Dizileri': 'トルコドラマ',
@@ -140,7 +140,8 @@ const Map<String, String> cevirilerJa = {
   'İçe aktarım tamamlandı': 'インポート完了',
   'Şifre': 'パスワード',
   '• profil bilgisi': '• プロフィール情報',
-  '• {} dizi durumu': '• ドラマステータス {}件',
+  '• {} kitaplık kaydı': '• ライブラリ項目 {}件',
+  '• {} favori': '• お気に入り {}件',
   '• {} izleme kaydı': '• 視聴記録 {}件',
   '• {} liste': '• リスト {}件',
   '• {} puan': '• 評価 {}件',

@@ -82,8 +82,8 @@ const Map<String, String> cevirilerFil = {
   'Tekrar dene': 'Subukan ulit',
   'Toplam İzleme Süresi': 'Kabuuang screen time',
   'Tüm Zamanların En İyileri': 'Pinakamahusay sa Lahat ng Panahon',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'I-export ang lahat ng data mo (panonood, rating, komento, listahan) bilang TV Time-compatible na ZIP, o mag-import ng ZIP mula sa ibang app.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'I-export ang lahat ng data mo (panonood, rating, komento, listahan) bilang TV Time-compatible na ZIP, o mag-import ng ZIP mula sa TV Time / Letterboxd.',
   'Tümünü Kaldır': 'Alisin Lahat',
   'Tümünü İzledim': 'Napanood Ko Lahat',
   'Türk Dizileri': 'Mga Seryeng Turkish',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerFil = {
   'İçe aktarım tamamlandı': 'Tapos na ang pag-import',
   'Şifre': 'Password',
   '• profil bilgisi': '• impormasyon ng profile',
-  '• {} dizi durumu': '• {} status ng serye',
+  '• {} kitaplık kaydı': '• {} entry sa library',
+  '• {} favori': '• {} paborito',
   '• {} izleme kaydı': '• {} watch record',
   '• {} liste': '• {} listahan',
   '• {} puan': '• {} rating',

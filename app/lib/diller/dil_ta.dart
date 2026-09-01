@@ -82,8 +82,8 @@ const Map<String, String> cevirilerTa = {
   'Tekrar dene': 'மீண்டும் முயற்சி செய்',
   'Toplam İzleme Süresi': 'மொத்த திரை நேரம்',
   'Tüm Zamanların En İyileri': 'எல்லா காலத்திலும் சிறந்தவை',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'உன் எல்லா தரவையும் (பார்த்தவை, மதிப்பீடுகள், கருத்துகள், பட்டியல்கள்) TV Time இணக்கமான ZIP ஆக பதிவிறக்கு அல்லது வேறு ஆப்பிலிருந்து வந்த ZIP ஐ இறக்குமதி செய்.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'உன் எல்லா தரவையும் (பார்த்தவை, மதிப்பீடுகள், கருத்துகள், பட்டியல்கள்) TV Time இணக்கமான ZIP ஆக பதிவிறக்கு அல்லது TV Time / Letterboxd ZIP ஐ இறக்குமதி செய்.',
   'Tümünü Kaldır': 'அனைத்தையும் நீக்கு',
   'Tümünü İzledim': 'அனைத்தையும் பார்த்துவிட்டேன்',
   'Türk Dizileri': 'துருக்கிய தொடர்கள்',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerTa = {
   'İçe aktarım tamamlandı': 'இறக்குமதி முடிந்தது',
   'Şifre': 'கடவுச்சொல்',
   '• profil bilgisi': '• சுயவிவரத் தகவல்',
-  '• {} dizi durumu': '• {} தொடர் நிலை',
+  '• {} kitaplık kaydı': '• {} நூலக பதிவுகள்',
+  '• {} favori': '• {} பிடித்தவை',
   '• {} izleme kaydı': '• {} பார்வை பதிவு',
   '• {} liste': '• {} பட்டியல்',
   '• {} puan': '• {} மதிப்பீடு',

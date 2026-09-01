@@ -78,8 +78,8 @@ const Map<String, String> cevirilerZh = {
   'Tekrar dene': '重试',
   'Toplam İzleme Süresi': '总观看时长',
   'Tüm Zamanların En İyileri': '史上最佳',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      '将你的全部数据（观看、评分、评论、片单）导出为 TV Time 兼容的 ZIP，或导入来自其他应用的 ZIP。',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      '将你的全部数据（观看、评分、评论、片单）导出为 TV Time 兼容的 ZIP，或导入 TV Time / Letterboxd 的 ZIP。',
   'Tümünü Kaldır': '全部移除',
   'Tümünü İzledim': '全部标记已看',
   'Türk Dizileri': '土耳其剧集',
@@ -139,7 +139,8 @@ const Map<String, String> cevirilerZh = {
   'İçe aktarım tamamlandı': '导入完成',
   'Şifre': '密码',
   '• profil bilgisi': '• 个人资料',
-  '• {} dizi durumu': '• {} 个剧集状态',
+  '• {} kitaplık kaydı': '• {} 个片库条目',
+  '• {} favori': '• {} 个收藏',
   '• {} izleme kaydı': '• {} 条观看记录',
   '• {} liste': '• {} 个片单',
   '• {} puan': '• {} 个评分',

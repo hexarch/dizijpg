@@ -212,10 +212,12 @@ test('veri_aktar: geri yükleme çelişkiyi KAYIT SİLMEDEN çözer', () => {
   assert.ok(!/DELETE FROM izlemeler/.test(govde),
     'içe aktarım izleme kaydı siliyor — orada onay sorulacak kimse yok');
   assert.match(govde, /'movie' THEN 'bitirdim' ELSE 'izliyorum'/);
-  // Her üç geri yükleme yolunda da çağrılmalı (json, TV Time CSV, Letterboxd).
+  // Her geri yükleme yolunda çağrılmalı:
+  // json (iceAktarNative), tek dosyalı TV Time CSV, çok dosyalı TV Time
+  // CSV'leri ve Letterboxd (1 Eyl 2026'da eklendi).
   const cagri = (AKTAR.match(/await izleyecegimCelikisiniCoz\(havuz, userId\)/g) || []).length;
-  assert.equal(cagri, 3,
-    `beklenen 3 çağrı yerine ${cagri} — bir aktarım yolu düzeltmesiz kalmış`);
+  assert.equal(cagri, 4,
+    `beklenen 4 çağrı yerine ${cagri} — bir aktarım yolu düzeltmesiz kalmış`);
 });
 
 test('sema.sql: tablolar arası kural yazılı (CHECK ile ifade edilemez)', () => {

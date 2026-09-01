@@ -82,8 +82,8 @@ const Map<String, String> cevirilerEl = {
   'Tekrar dene': 'Δοκίμασε ξανά',
   'Toplam İzleme Süresi': 'Συνολικός χρόνος οθόνης',
   'Tüm Zamanların En İyileri': 'Τα Καλύτερα Όλων των Εποχών',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'Κατέβασε όλα τα δεδομένα σου (προβολές, βαθμολογίες, σχόλια, λίστες) ως ZIP συμβατό με TV Time ή κάνε εισαγωγή ενός ZIP από άλλη εφαρμογή.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'Κατέβασε όλα τα δεδομένα σου (προβολές, βαθμολογίες, σχόλια, λίστες) ως ZIP συμβατό με TV Time ή κάνε εισαγωγή ενός ZIP από TV Time / Letterboxd.',
   'Tümünü Kaldır': 'Κατάργηση όλων',
   'Tümünü İzledim': 'Τα είδα όλα',
   'Türk Dizileri': 'Τουρκικές Σειρές',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerEl = {
   'İçe aktarım tamamlandı': 'Η εισαγωγή ολοκληρώθηκε',
   'Şifre': 'Κωδικός',
   '• profil bilgisi': '• στοιχεία προφίλ',
-  '• {} dizi durumu': '• {} καταστάσεις σειρών',
+  '• {} kitaplık kaydı': '• {} καταχωρίσεις βιβλιοθήκης',
+  '• {} favori': '• {} αγαπημένα',
   '• {} izleme kaydı': '• {} εγγραφές προβολής',
   '• {} liste': '• {} λίστες',
   '• {} puan': '• {} βαθμολογίες',

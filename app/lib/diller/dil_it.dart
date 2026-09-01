@@ -83,8 +83,8 @@ const Map<String, String> cevirilerIt = {
   'Tekrar dene': 'Riprova',
   'Toplam İzleme Süresi': 'Tempo di visione totale',
   'Tüm Zamanların En İyileri': 'I migliori di sempre',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      "Esporta tutti i tuoi dati (visioni, voti, commenti, liste) come ZIP compatibile con TV Time o importa uno ZIP da un'altra app.",
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'Esporta tutti i tuoi dati (visioni, voti, commenti, liste) come ZIP compatibile con TV Time o importa uno ZIP di TV Time / Letterboxd.',
   'Tümünü Kaldır': 'Rimuovi tutto',
   'Tümünü İzledim': 'Ho visto tutto',
   'Türk Dizileri': 'Serie turche',
@@ -144,7 +144,8 @@ const Map<String, String> cevirilerIt = {
   'İçe aktarım tamamlandı': 'Importazione completata',
   'Şifre': 'Password',
   '• profil bilgisi': '• info profilo',
-  '• {} dizi durumu': '• {} stati delle serie',
+  '• {} kitaplık kaydı': '• {} voci in libreria',
+  '• {} favori': '• {} preferiti',
   '• {} izleme kaydı': '• {} visioni',
   '• {} liste': '• {} liste',
   '• {} puan': '• {} voti',

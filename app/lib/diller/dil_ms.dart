@@ -82,8 +82,8 @@ const Map<String, String> cevirilerMs = {
   'Tekrar dene': 'Cuba lagi',
   'Toplam İzleme Süresi': 'Jumlah masa tontonan',
   'Tüm Zamanların En İyileri': 'Terbaik Sepanjang Zaman',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'Eksport semua data anda (tontonan, rating, komen, senarai) sebagai ZIP serasi TV Time, atau import ZIP dari aplikasi lain.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'Eksport semua data anda (tontonan, rating, komen, senarai) sebagai ZIP serasi TV Time, atau import ZIP TV Time / Letterboxd.',
   'Tümünü Kaldır': 'Buang Semua',
   'Tümünü İzledim': 'Dah Tonton Semua',
   'Türk Dizileri': 'Siri Turki',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerMs = {
   'İçe aktarım tamamlandı': 'Import selesai',
   'Şifre': 'Kata laluan',
   '• profil bilgisi': '• maklumat profil',
-  '• {} dizi durumu': '• {} status siri',
+  '• {} kitaplık kaydı': '• {} entri pustaka',
+  '• {} favori': '• {} kegemaran',
   '• {} izleme kaydı': '• {} rekod tontonan',
   '• {} liste': '• {} senarai',
   '• {} puan': '• {} rating',

@@ -81,8 +81,8 @@ const Map<String, String> cevirilerTh = {
   'Tekrar dene': 'ลองอีกครั้ง',
   'Toplam İzleme Süresi': 'เวลาดูทั้งหมด',
   'Tüm Zamanların En İyileri': 'สุดยอดตลอดกาล',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'ส่งออกข้อมูลทั้งหมดของคุณ (การดู คะแนน คอมเมนต์ ลิสต์) เป็น ZIP ที่ใช้ได้กับ TV Time หรือนำเข้า ZIP จากแอปอื่น',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'ส่งออกข้อมูลทั้งหมดของคุณ (การดู คะแนน คอมเมนต์ ลิสต์) เป็น ZIP ที่ใช้ได้กับ TV Time หรือนำเข้า ZIP จาก TV Time / Letterboxd',
   'Tümünü Kaldır': 'เอาออกทั้งหมด',
   'Tümünü İzledim': 'ดูครบทุกตอนแล้ว',
   'Türk Dizileri': 'ซีรีส์ตุรกี',
@@ -142,7 +142,8 @@ const Map<String, String> cevirilerTh = {
   'İçe aktarım tamamlandı': 'นำเข้าข้อมูลเสร็จแล้ว',
   'Şifre': 'รหัสผ่าน',
   '• profil bilgisi': '• ข้อมูลโปรไฟล์',
-  '• {} dizi durumu': '• สถานะซีรีส์ {} รายการ',
+  '• {} kitaplık kaydı': '• รายการคลัง {} รายการ',
+  '• {} favori': '• รายการโปรด {} รายการ',
   '• {} izleme kaydı': '• ประวัติการดู {} รายการ',
   '• {} liste': '• ลิสต์ {} รายการ',
   '• {} puan': '• คะแนน {} รายการ',

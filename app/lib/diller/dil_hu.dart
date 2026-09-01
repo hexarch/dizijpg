@@ -82,8 +82,8 @@ const Map<String, String> cevirilerHu = {
   'Tekrar dene': 'Próbáld újra',
   'Toplam İzleme Süresi': 'Teljes képernyőidő',
   'Tüm Zamanların En İyileri': 'Minden idők legjobbjai',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'Töltsd le az összes adatodat (megtekintések, értékelések, hozzászólások, listák) TV Time-kompatibilis ZIP-ként, vagy importálj ZIP-et egy másik alkalmazásból.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'Töltsd le az összes adatodat (megtekintések, értékelések, hozzászólások, listák) TV Time-kompatibilis ZIP-ként, vagy importálj TV Time / Letterboxd ZIP-et.',
   'Tümünü Kaldır': 'Összes eltávolítása',
   'Tümünü İzledim': 'Mindet láttam',
   'Türk Dizileri': 'Török sorozatok',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerHu = {
   'İçe aktarım tamamlandı': 'Importálás kész',
   'Şifre': 'Jelszó',
   '• profil bilgisi': '• profiladatok',
-  '• {} dizi durumu': '• {} sorozatállapot',
+  '• {} kitaplık kaydı': '• {} könyvtárbejegyzés',
+  '• {} favori': '• {} kedvenc',
   '• {} izleme kaydı': '• {} nézési bejegyzés',
   '• {} liste': '• {} lista',
   '• {} puan': '• {} értékelés',

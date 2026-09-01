@@ -82,8 +82,8 @@ const Map<String, String> cevirilerCs = {
   'Tekrar dene': 'Zkus to znovu',
   'Toplam İzleme Süresi': 'Celkový čas u obrazovky',
   'Tüm Zamanların En İyileri': 'Nejlepší všech dob',
-  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
-      'Stáhni si všechna svá data (sledování, hodnocení, komentáře, seznamy) jako ZIP kompatibilní s TV Time, nebo importuj ZIP z jiné aplikace.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da TV Time / Letterboxd ZIP'ini içe aktar.":
+      'Stáhni si všechna svá data (sledování, hodnocení, komentáře, seznamy) jako ZIP kompatibilní s TV Time, nebo importuj ZIP z TV Time / Letterboxd.',
   'Tümünü Kaldır': 'Odebrat vše',
   'Tümünü İzledim': 'Vše zhlédnuto',
   'Türk Dizileri': 'Turecké seriály',
@@ -143,7 +143,8 @@ const Map<String, String> cevirilerCs = {
   'İçe aktarım tamamlandı': 'Import dokončen',
   'Şifre': 'Heslo',
   '• profil bilgisi': '• informace o profilu',
-  '• {} dizi durumu': '• {} stavů seriálů',
+  '• {} kitaplık kaydı': '• {} záznamů v knihovně',
+  '• {} favori': '• {} oblíbených',
   '• {} izleme kaydı': '• {} záznamů sledování',
   '• {} liste': '• {} seznamů',
   '• {} puan': '• {} hodnocení',
