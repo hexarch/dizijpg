@@ -1440,4 +1440,8 @@ const Map<String, String> cevirilerSw = {
   'Pembe': 'Pinki',
   'Turuncu': 'Chungwa',
   'Orijinal metin gösteriliyor': 'Inaonyesha maandishi asilia',
+  'İnternet bağlantısı yok': 'Hakuna muunganisho wa intaneti',
+  'Sunucu yanıt vermedi': 'Seva haikujibu',
+  'Güvenli bağlantı kurulamadı': 'Imeshindwa kuanzisha muunganisho salama',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Jibu lisilotarajiwa kutoka kwa seva',
 };

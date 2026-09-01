@@ -1409,4 +1409,8 @@ const Map<String, String> cevirilerTh = {
   'Pembe': 'ชมพู',
   'Turuncu': 'ส้ม',
   'Orijinal metin gösteriliyor': 'กำลังแสดงข้อความต้นฉบับ',
+  'İnternet bağlantısı yok': 'ไม่มีการเชื่อมต่ออินเทอร์เน็ต',
+  'Sunucu yanıt vermedi': 'เซิร์ฟเวอร์ไม่ตอบสนอง',
+  'Güvenli bağlantı kurulamadı': 'ไม่สามารถสร้างการเชื่อมต่อที่ปลอดภัยได้',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'ได้รับการตอบกลับที่ไม่คาดคิดจากเซิร์ฟเวอร์',
 };

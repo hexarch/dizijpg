@@ -276,6 +276,15 @@ const _yeniAnahtarlar = [
   // işareti eklenerek ayrıldı ('diziler' eşi de aynı kalıba çekildi).
   'En çok izlediğin filmler',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır',
+  // api.dart — AĞ HATASI CÜMLELERİ (1 Eyl 2026). Ekranda ham
+  // `ClientException with SocketException: Failed host lookup...` görünüyordu;
+  // taşıma hataları artık `AgHatasi` olarak sebebe göre ayrışıp bu metinlere
+  // dönüşüyor. Kullanıcının hata anında GÖRDÜĞÜ tek metin bunlar olduğu için
+  // 45 dilde de dolu olmaları şart — biri eksik kalırsa o dilde Türkçe düşer.
+  'İnternet bağlantısı yok',
+  'Sunucu yanıt vermedi',
+  'Güvenli bağlantı kurulamadı',
+  'Sunucudan beklenmeyen bir yanıt geldi',
 ];
 
 /// Türkçe hariç bütün dil kodları (Türkçe'nin haritası yoktur: anahtar zaten o).

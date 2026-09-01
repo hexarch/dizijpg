@@ -1417,4 +1417,8 @@ const Map<String, String> cevirilerFa = {
   'Pembe': 'صورتی',
   'Turuncu': 'نارنجی',
   'Orijinal metin gösteriliyor': 'متن اصلی نمایش داده می‌شود',
+  'İnternet bağlantısı yok': 'اتصال اینترنت وجود ندارد',
+  'Sunucu yanıt vermedi': 'سرور پاسخ نداد',
+  'Güvenli bağlantı kurulamadı': 'اتصال امن برقرار نشد',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'پاسخ غیرمنتظره‌ای از سرور دریافت شد',
 };

@@ -1433,4 +1433,8 @@ const Map<String, String> cevirilerUr = {
   'Pembe': 'گلابی',
   'Turuncu': 'نارنجی',
   'Orijinal metin gösteriliyor': 'اصل متن دکھایا جا رہا ہے',
+  'İnternet bağlantısı yok': 'انٹرنیٹ کنکشن نہیں ہے',
+  'Sunucu yanıt vermedi': 'سرور نے جواب نہیں دیا',
+  'Güvenli bağlantı kurulamadı': 'محفوظ کنکشن قائم نہیں ہو سکا',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'سرور سے غیر متوقع جواب موصول ہوا',
 };

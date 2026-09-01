@@ -1440,4 +1440,8 @@ const Map<String, String> cevirilerFi = {
   'Pembe': 'Pinkki',
   'Turuncu': 'Oranssi',
   'Orijinal metin gösteriliyor': 'Näytetään alkuperäinen teksti',
+  'İnternet bağlantısı yok': 'Ei internetyhteyttä',
+  'Sunucu yanıt vermedi': 'Palvelin ei vastannut',
+  'Güvenli bağlantı kurulamadı': 'Suojattua yhteyttä ei voitu muodostaa',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Palvelimelta tuli odottamaton vastaus',
 };

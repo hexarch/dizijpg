@@ -100,6 +100,43 @@ class ApiHata implements Exception {
   String toString() => mesaj.c;
 }
 
+/// AĞ (TAŞIMA) HATASI — istek sunucuya HİÇ ULAŞMADI ya da yanıt yarıda kaldı.
+///
+/// ---------------------------------------------------------------------
+/// HANGİ HATAYI ÇÖZÜYOR (1 Eyl 2026, kullanıcı bildirdi)
+/// ---------------------------------------------------------------------
+/// İnternet kopunca ekranda `ClientException with SocketException: Failed
+/// host lookup: 'dizijpg.com' (OS Error: nodename nor servname provided,
+/// errno = 8), uri=https://dizijpg.com/api/...` yazıyordu. Bu bir HATA
+/// AYIKLAMA metnidir, kullanıcıya söylediği tek şey "bir şey bozuldu"dur;
+/// üstelik İngilizce ve 45 dilin hiçbirine çevrilmiyordu.
+///
+/// KÖK NEDEN: `Api.get/post/...` yalnız SUNUCUDAN GELEN hataları (`_isle`,
+/// HTTP >= 400) [ApiHata]'ya çeviriyordu. Taşıma katmanının istisnaları
+/// (`ClientException`, `SocketException`, `TimeoutException`,
+/// `HandshakeException`) hiç yakalanmıyor, `catch (e) ... e.toString()`
+/// yapan 115 ekran çağrısına HAM hâlde düşüyordu.
+///
+/// ÇÖZÜM VE NEDEN ALT SINIF: taşıma hatası tek yerde ([Api._agHatasi])
+/// çevrili tek cümleye dönüşüyor. [ApiHata]'dan TÜREDİĞİ için o 115 çağrı
+/// noktasının HİÇBİRİ değişmeden düzeliyor — `e.toString()` artık
+/// "İnternet bağlantısı yok" basıyor. Ayrı bir sınıf olması ise ayırt
+/// etmeyi sürdürüyor: sunucunun bilinçli reddi TEKRARLANMAZ, ağ kopması
+/// TEKRARLANIR (bkz. `medya_yukle.dart` `_yukleDenemeli`).
+///
+/// [mesaj] KURULURKEN ÇEVRİLİR (`.c`), sunucu hatalarındaki gibi anahtar
+/// olarak saklanmaz: `e.mesaj`i `.c` uygulamadan doğrudan basan yerler var
+/// (`gif_sec.dart`, `ayarlar.dart`, `ortak.dart`) ve orada Türkçe anahtar
+/// görünürdü. Zaten çevrilmiş metne [ApiHata.toString]'in tekrar `.c`
+/// uygulaması zararsızdır — haritada karşılığı yoktur, metin aynen kalır.
+class AgHatasi extends ApiHata {
+  /// İstisnanın HAM metni. Ekranda GÖSTERİLMEZ; hata bildirimi ve `debugPrint`
+  /// için saklanır — teşhis bilgisini büsbütün kaybetmemek için.
+  final String ham;
+
+  AgHatasi(super.mesaj, {required this.ham, super.makineKodu});
+}
+
 class Api {
   static String? _token;
 
@@ -209,60 +246,148 @@ class Api {
   /// proxy_read_timeout 300 sn olduğu için 60 sn güvenli üst sınır.
   static const Duration zamanAsimiAgir = Duration(seconds: 60);
 
-  static Future<dynamic> get(String yol, {Duration? zamanAsimi}) async {
-    final cevap = await _istemci
-        .get(Uri.parse('$apiTaban${_dilliYol(yol)}'), headers: _basliklar)
-        .timeout(zamanAsimi ?? zamanAsimiVarsayilan);
+  /// TAŞIMA KATMANI istisnasını kullanıcıya okunur, çevrili [AgHatasi]'ya
+  /// çevirir. Sebep AYRIŞTIRILIR — "bir şeyler ters gitti" tek cümlesi
+  /// kullanıcıya ne yapacağını söylemez, oysa "internet yok" (uçak modu,
+  /// kapsama dışı) ile "sunucu yanıt vermedi" (yavaş hat, sunucu yoğun)
+  /// farklı davranış gerektirir.
+  ///
+  /// NEDEN METİN EŞLEŞTİRME: `SocketException` `dart:io` tipidir ve bu dosya
+  /// web'de de derleniyor — `dart:io` import edilemez. `http` paketi zaten
+  /// hepsini `ClientException`a sarıyor (`io_client.dart`: "ClientException
+  /// with $cause, uri=$uri"), tarayıcıda da öyle ("XMLHttpRequest error.").
+  /// Bu yüzden tip yerine SEBEP METNİ okunuyor. Eşleşme tutmazsa en genel
+  /// ve yine de doğru olan "Bağlanılamadı" kalır — asla ham istisna basılmaz.
+  static AgHatasi _agHatasi(Object e) {
+    final ham = e.toString();
+    // Zaman aşımı TİPTEN anlaşılır (`.timeout()` bunu fırlatır); metne bakmaya
+    // gerek yok ve `TimeoutException`ın mesajı boş olabilir.
+    if (e is TimeoutException) {
+      return AgHatasi(
+        'Sunucu yanıt vermedi'.c,
+        ham: ham,
+        makineKodu: 'AG_ZAMAN_ASIMI',
+      );
+    }
+    final m = ham.toLowerCase();
+    // TLS önce: sertifika hatasının metninde "connection" da geçebiliyor.
+    if (m.contains('handshake') || m.contains('certificate')) {
+      return AgHatasi(
+        'Güvenli bağlantı kurulamadı'.c,
+        ham: ham,
+        makineKodu: 'AG_TLS',
+      );
+    }
+    // Ad çözümlemesi/ağ arayüzü yok = cihazda internet yok. `xmlhttprequest
+    // error` tarayıcının çevrimdışı (ve CORS) karşılığıdır.
+    if (m.contains('failed host lookup') ||
+        m.contains('no address associated') ||
+        m.contains('nodename nor servname') ||
+        m.contains('network is unreachable') ||
+        m.contains('network is down') ||
+        m.contains('xmlhttprequest error')) {
+      return AgHatasi(
+        'İnternet bağlantısı yok'.c,
+        ham: ham,
+        makineKodu: 'AG_INTERNET',
+      );
+    }
+    // Bağlantı KURULDU ama yarıda düştü — hücresel ağda olağan.
+    if (m.contains('connection closed') ||
+        m.contains('connection reset') ||
+        m.contains('connection terminated') ||
+        m.contains('connection abort') ||
+        m.contains('broken pipe')) {
+      return AgHatasi('Bağlantı koptu'.c, ham: ham, makineKodu: 'AG_KOPTU');
+    }
+    return AgHatasi('Bağlanılamadı'.c, ham: ham, makineKodu: 'AG_ULASILAMADI');
+  }
+
+  /// İsteği çalıştırır, taşıma hatasını [AgHatasi]'ya çevirir, yanıtı
+  /// [_isle]'ye verir. TÜM uçlar buradan geçmeli — ham istisnanın ekrana
+  /// sızdığı tek bir yol bile kalırsa hata geri gelir.
+  static Future<dynamic> _yanit(Future<http.Response> Function() istek) async {
+    final http.Response cevap;
+    try {
+      cevap = await istek();
+    } on ApiHata {
+      rethrow;
+    } catch (e) {
+      throw _agHatasi(e);
+    }
     return _isle(cevap);
   }
 
-  static Future<dynamic> post(String yol, Map<String, dynamic> govde) async {
-    final cevap = await _istemci
+  static Future<dynamic> get(String yol, {Duration? zamanAsimi}) => _yanit(
+    () => _istemci
+        .get(Uri.parse('$apiTaban${_dilliYol(yol)}'), headers: _basliklar)
+        .timeout(zamanAsimi ?? zamanAsimiVarsayilan),
+  );
+
+  static Future<dynamic> post(String yol, Map<String, dynamic> govde) => _yanit(
+    () => _istemci
         .post(
           Uri.parse('$apiTaban$yol'),
           headers: _basliklar,
           body: jsonEncode(govde),
         )
-        .timeout(const Duration(seconds: 20));
-    return _isle(cevap);
-  }
+        .timeout(const Duration(seconds: 20)),
+  );
 
-  static Future<dynamic> delete(String yol) async {
-    final cevap = await _istemci
+  static Future<dynamic> delete(String yol) => _yanit(
+    () => _istemci
         .delete(Uri.parse('$apiTaban$yol'), headers: _basliklar)
-        .timeout(const Duration(seconds: 20));
-    return _isle(cevap);
-  }
+        .timeout(const Duration(seconds: 20)),
+  );
 
   /// PUT — kaynağın TAMAMINI değiştirir.
   ///
   /// Liste sıralaması için eklendi (19 Ağu 2026): sunucuya "şu öğeyi şuraya
   /// taşı" değil NİHAİ DİZİ gönderiliyor, yani gövde kaynağın yeni tam hâli.
   /// `patch` (kısmi değişiklik) bu anlamı taşımazdı.
-  static Future<dynamic> put(String yol, Map<String, dynamic> govde) async {
-    final cevap = await _istemci
+  static Future<dynamic> put(String yol, Map<String, dynamic> govde) => _yanit(
+    () => _istemci
         .put(
           Uri.parse('$apiTaban$yol'),
           headers: _basliklar,
           body: jsonEncode(govde),
         )
-        .timeout(const Duration(seconds: 20));
-    return _isle(cevap);
-  }
+        .timeout(const Duration(seconds: 20)),
+  );
 
-  static Future<dynamic> patch(String yol, Map<String, dynamic> govde) async {
-    final cevap = await _istemci
-        .patch(
-          Uri.parse('$apiTaban$yol'),
-          headers: _basliklar,
-          body: jsonEncode(govde),
-        )
-        .timeout(const Duration(seconds: 20));
-    return _isle(cevap);
-  }
+  static Future<dynamic> patch(String yol, Map<String, dynamic> govde) =>
+      _yanit(
+        () => _istemci
+            .patch(
+              Uri.parse('$apiTaban$yol'),
+              headers: _basliklar,
+              body: jsonEncode(govde),
+            )
+            .timeout(const Duration(seconds: 20)),
+      );
 
   static dynamic _isle(http.Response cevap) {
-    final govde = cevap.body.isEmpty ? {} : jsonDecode(cevap.body);
+    // GÖVDE JSON OLMAYABİLİR: Cloudflare/nginx arıza sayfası, otel-kafe
+    // giriş portalının araya girmesi ya da yarım kalan yanıt HTML döndürür.
+    // `jsonDecode` orada `FormatException: Unexpected character (at
+    // character 1)` fırlatıyor ve bu da ekranda ham kod olarak görünüyordu
+    // (1 Eyl 2026). HTTP kodu varsa onu söyle, yoksa dürüst tek cümle bas.
+    final dynamic govde;
+    try {
+      govde = cevap.body.isEmpty ? {} : jsonDecode(cevap.body);
+    } on FormatException catch (e) {
+      if (cevap.statusCode >= 400) {
+        throw ApiHata(
+          'Sunucu hatası ({})'.cf([cevap.statusCode]),
+          kod: cevap.statusCode,
+        );
+      }
+      throw AgHatasi(
+        'Sunucudan beklenmeyen bir yanıt geldi'.c,
+        ham: e.toString(),
+        makineKodu: 'AG_BOZUK_YANIT',
+      );
+    }
     if (cevap.statusCode >= 400) {
       // 401 = token yok/geçersiz/sürümü eski. `_token != null` koşulu şart:
       // token OLMADAN atılan istek de 401 alır, ama orada düşecek bir oturum
@@ -470,26 +595,27 @@ class Api {
   }
 
   /// FCM cihaz token'ını sunucudan siler.
-  static Future<void> cihazTokenSil(String token) async {
-    await _istemci
+  static Future<void> cihazTokenSil(String token) => _yanit(
+    () => _istemci
         .delete(
           Uri.parse('$apiTaban/cihaz-token'),
           headers: _basliklar,
           body: jsonEncode({'token': token}),
         )
-        .timeout(const Duration(seconds: 15));
-  }
+        .timeout(const Duration(seconds: 15)),
+  );
 
   /// Hesabı ve tüm veriyi kalıcı siler (şifreli hesapta şifre doğrulanır).
   static Future<void> hesabiSil(String sifre) async {
-    final cevap = await _istemci
-        .delete(
-          Uri.parse('$apiTaban/hesabim'),
-          headers: _basliklar,
-          body: jsonEncode({'sifre': sifre}),
-        )
-        .timeout(const Duration(seconds: 20));
-    _isle(cevap);
+    await _yanit(
+      () => _istemci
+          .delete(
+            Uri.parse('$apiTaban/hesabim'),
+            headers: _basliklar,
+            body: jsonEncode({'sifre': sifre}),
+          )
+          .timeout(const Duration(seconds: 20)),
+    );
     await _tokenKaydet(null);
   }
 
@@ -513,7 +639,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.106.0+171';
+  static const surum = '1.106.1+172';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.
@@ -524,7 +650,10 @@ class Api {
   }) async {
     try {
       await post('/hata-bildir', {
-        'mesaj': hata.toString(),
+        // Ağ hatasında ÇEVRİLMİŞ cümle değil HAM istisna gönderilir: günlüğün
+        // işi teşhistir, "İnternet bağlantısı yok" hangi soket hatası olduğunu
+        // söylemez ve kullanıcının diline göre değişerek gruplamayı bozardı.
+        'mesaj': hata is AgHatasi ? hata.ham : hata.toString(),
         'yigin': yigin?.toString(),
         'platform': kIsWeb ? 'web' : defaultTargetPlatform.name,
         'surum': surum,
@@ -583,33 +712,36 @@ class Api {
       _profilResmiYukle('kapak', veri);
 
   static Future<String> _profilResmiYukle(String alan, Uint8List veri) async {
-    final cevap = await _istemci
-        .post(
-          Uri.parse('$apiTaban/profilim/$alan'),
-          headers: {
-            'Content-Type': 'application/octet-stream',
-            if (_token != null) 'Authorization': 'Bearer $_token',
-          },
-          body: veri,
-        )
-        .timeout(const Duration(minutes: 2));
-    return (_isle(cevap) as Map<String, dynamic>)[alan] as String;
+    final d = await _yanit(
+      () => _istemci
+          .post(
+            Uri.parse('$apiTaban/profilim/$alan'),
+            headers: {
+              'Content-Type': 'application/octet-stream',
+              if (_token != null) 'Authorization': 'Bearer $_token',
+            },
+            body: veri,
+          )
+          .timeout(const Duration(minutes: 2)),
+    );
+    return (d as Map<String, dynamic>)[alan] as String;
   }
 
   /// Yorum eki (fotoğraf/video) yükler; sunucu yolunu döndürür.
-  static Future<Map<String, dynamic>> medyaYukle(Uint8List veri) async {
-    final cevap = await _istemci
-        .post(
-          Uri.parse('$apiTaban/medya'),
-          headers: {
-            'Content-Type': 'application/octet-stream',
-            if (_token != null) 'Authorization': 'Bearer $_token',
-          },
-          body: veri,
-        )
-        .timeout(const Duration(minutes: 5));
-    return _isle(cevap) as Map<String, dynamic>;
-  }
+  static Future<Map<String, dynamic>> medyaYukle(Uint8List veri) async =>
+      await _yanit(
+            () => _istemci
+                .post(
+                  Uri.parse('$apiTaban/medya'),
+                  headers: {
+                    'Content-Type': 'application/octet-stream',
+                    if (_token != null) 'Authorization': 'Bearer $_token',
+                  },
+                  body: veri,
+                )
+                .timeout(const Duration(minutes: 5)),
+          )
+          as Map<String, dynamic>;
 
   // ---- sosyal ----
   static Future<Map<String, dynamic>> acikProfil(String kullaniciAdi) async =>
@@ -663,18 +795,19 @@ class Api {
 
   /// ZIP verisini içe aktarır; içe aktarım özetini döndürür.
   static Future<Map<String, dynamic>> veriIceAktar(Uint8List zip) async {
-    final cevap = await _istemci
-        .post(
-          Uri.parse('$apiTaban/veri/ice-aktar'),
-          headers: {
-            'Content-Type': 'application/zip',
-            if (_token != null) 'Authorization': 'Bearer $_token',
-          },
-          body: zip,
-        )
-        .timeout(const Duration(minutes: 5));
-    return (_isle(cevap) as Map<String, dynamic>)['ozet']
-        as Map<String, dynamic>;
+    final d = await _yanit(
+      () => _istemci
+          .post(
+            Uri.parse('$apiTaban/veri/ice-aktar'),
+            headers: {
+              'Content-Type': 'application/zip',
+              if (_token != null) 'Authorization': 'Bearer $_token',
+            },
+            body: zip,
+          )
+          .timeout(const Duration(minutes: 5)),
+    );
+    return (d as Map<String, dynamic>)['ozet'] as Map<String, dynamic>;
   }
 }
 

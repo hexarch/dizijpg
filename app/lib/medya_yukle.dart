@@ -144,6 +144,14 @@ Future<MedyaYuklemeSonuc> medyalariYukle(
 Future<Map<String, dynamic>> _yukleDenemeli(Uint8List veri) async {
   try {
     return await Api.medyaYukle(veri);
+  } on AgHatasi {
+    // [ApiHata]'DAN ÖNCE gelmeli: `AgHatasi` onun alt sınıfıdır (1 Eyl 2026,
+    // ham `ClientException` metni ekrana sızmasın diye tüm taşıma hataları
+    // `ApiHata` çatısına alındı). Sıra ters olsaydı `on ApiHata` ağ hatasını
+    // da yakalar, buradaki tekrar SESSİZCE ÖLÜRDÜ — yani düzeltme, çözdüğü
+    // hatanın (23 Ağu, yarıda kalan videolu yorum) çaresini götürürdü.
+    await Future<void>.delayed(const Duration(seconds: 2));
+    return Api.medyaYukle(veri);
   } on ApiHata {
     rethrow;
   } catch (_) {

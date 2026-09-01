@@ -1457,4 +1457,8 @@ const Map<String, String> cevirilerEl = {
   'Pembe': 'Ροζ',
   'Turuncu': 'Πορτοκαλί',
   'Orijinal metin gösteriliyor': 'Εμφανίζεται το πρωτότυπο κείμενο',
+  'İnternet bağlantısı yok': 'Δεν υπάρχει σύνδεση στο διαδίκτυο',
+  'Sunucu yanıt vermedi': 'Ο διακομιστής δεν απάντησε',
+  'Güvenli bağlantı kurulamadı': 'Δεν ήταν δυνατή η ασφαλής σύνδεση',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Απροσδόκητη απάντηση από τον διακομιστή',
 };

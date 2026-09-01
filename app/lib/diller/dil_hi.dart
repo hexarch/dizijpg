@@ -1430,4 +1430,8 @@ const Map<String, String> cevirilerHi = {
   'Pembe': 'गुलाबी',
   'Turuncu': 'नारंगी',
   'Orijinal metin gösteriliyor': 'मूल पाठ दिखाया जा रहा है',
+  'İnternet bağlantısı yok': 'इंटरनेट कनेक्शन नहीं है',
+  'Sunucu yanıt vermedi': 'सर्वर ने जवाब नहीं दिया',
+  'Güvenli bağlantı kurulamadı': 'सुरक्षित कनेक्शन नहीं बन सका',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'सर्वर से अप्रत्याशित जवाब मिला',
 };

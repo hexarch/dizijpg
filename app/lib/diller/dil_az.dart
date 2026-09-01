@@ -1426,4 +1426,8 @@ const Map<String, String> cevirilerAz = {
   'Pembe': 'Çəhrayı',
   'Turuncu': 'Narıncı',
   'Orijinal metin gösteriliyor': 'Orijinal mətn göstərilir',
+  'İnternet bağlantısı yok': 'İnternet bağlantısı yoxdur',
+  'Sunucu yanıt vermedi': 'Server cavab vermədi',
+  'Güvenli bağlantı kurulamadı': 'Təhlükəsiz bağlantı qurulmadı',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Serverdən gözlənilməz cavab gəldi',
 };

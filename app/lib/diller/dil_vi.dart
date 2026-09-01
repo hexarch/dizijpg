@@ -1434,4 +1434,8 @@ const Map<String, String> cevirilerVi = {
   'Pembe': 'Hồng',
   'Turuncu': 'Cam',
   'Orijinal metin gösteriliyor': 'Đang hiển thị văn bản gốc',
+  'İnternet bağlantısı yok': 'Không có kết nối internet',
+  'Sunucu yanıt vermedi': 'Máy chủ không phản hồi',
+  'Güvenli bağlantı kurulamadı': 'Không thể thiết lập kết nối an toàn',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Phản hồi không mong đợi từ máy chủ',
 };

@@ -1381,4 +1381,8 @@ const Map<String, String> cevirilerAm = {
   'Pembe': 'ሮዝ',
   'Turuncu': 'ብርቱካናማ',
   'Orijinal metin gösteriliyor': 'ዋናው ጽሑፍ እየታየ ነው',
+  'İnternet bağlantısı yok': 'የበይነመረብ ግንኙነት የለም',
+  'Sunucu yanıt vermedi': 'አገልጋዩ ምላሽ አልሰጠም',
+  'Güvenli bağlantı kurulamadı': 'ደኅንነቱ የተጠበቀ ግንኙነት መመሥረት አልተቻለም',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'ከአገልጋዩ ያልተጠበቀ ምላሽ ደረሰ',
 };

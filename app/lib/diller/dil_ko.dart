@@ -1363,4 +1363,8 @@ const Map<String, String> cevirilerKo = {
   'Pembe': '분홍',
   'Turuncu': '주황',
   'Orijinal metin gösteriliyor': '원문을 표시합니다',
+  'İnternet bağlantısı yok': '인터넷에 연결되어 있지 않습니다',
+  'Sunucu yanıt vermedi': '서버가 응답하지 않았습니다',
+  'Güvenli bağlantı kurulamadı': '보안 연결을 설정할 수 없습니다',
+  'Sunucudan beklenmeyen bir yanıt geldi': '서버에서 예기치 않은 응답이 왔습니다',
 };

@@ -1438,4 +1438,8 @@ const Map<String, String> cevirilerSr = {
   'Pembe': 'Roze',
   'Turuncu': 'Narandžasta',
   'Orijinal metin gösteriliyor': 'Prikazan je originalni tekst',
+  'İnternet bağlantısı yok': 'Нема интернет везе',
+  'Sunucu yanıt vermedi': 'Сервер није одговорио',
+  'Güvenli bağlantı kurulamadı': 'Није могуће успоставити безбедну везу',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Неочекиван одговор сервера',
 };

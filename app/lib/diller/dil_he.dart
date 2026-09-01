@@ -1400,4 +1400,8 @@ const Map<String, String> cevirilerHe = {
   'Pembe': 'ורוד',
   'Turuncu': 'כתום',
   'Orijinal metin gösteriliyor': 'מוצג הטקסט המקורי',
+  'İnternet bağlantısı yok': 'אין חיבור לאינטרנט',
+  'Sunucu yanıt vermedi': 'השרת לא הגיב',
+  'Güvenli bağlantı kurulamadı': 'לא ניתן ליצור חיבור מאובטח',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'התקבלה תגובה בלתי צפויה מהשרת',
 };

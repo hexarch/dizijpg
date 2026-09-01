@@ -1456,4 +1456,8 @@ const Map<String, String> cevirilerRo = {
   'Pembe': 'Roz',
   'Turuncu': 'Portocaliu',
   'Orijinal metin gösteriliyor': 'Se afișează textul original',
+  'İnternet bağlantısı yok': 'Nu există conexiune la internet',
+  'Sunucu yanıt vermedi': 'Serverul nu a răspuns',
+  'Güvenli bağlantı kurulamadı': 'Nu s-a putut stabili o conexiune securizată',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Răspuns neașteptat de la server',
 };

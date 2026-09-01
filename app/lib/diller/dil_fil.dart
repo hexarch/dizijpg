@@ -1460,4 +1460,8 @@ const Map<String, String> cevirilerFil = {
   'Pembe': 'Pink',
   'Turuncu': 'Orange',
   'Orijinal metin gösteriliyor': 'Ipinapakita ang orihinal na teksto',
+  'İnternet bağlantısı yok': 'Walang koneksyon sa internet',
+  'Sunucu yanıt vermedi': 'Hindi tumugon ang server',
+  'Güvenli bağlantı kurulamadı': 'Hindi makapagtatag ng ligtas na koneksyon',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Hindi inaasahang tugon mula sa server',
 };

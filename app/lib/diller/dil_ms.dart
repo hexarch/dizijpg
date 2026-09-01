@@ -1440,4 +1440,8 @@ const Map<String, String> cevirilerMs = {
   'Pembe': 'Merah jambu',
   'Turuncu': 'Jingga',
   'Orijinal metin gösteriliyor': 'Memaparkan teks asal',
+  'İnternet bağlantısı yok': 'Tiada sambungan internet',
+  'Sunucu yanıt vermedi': 'Pelayan tidak memberi respons',
+  'Güvenli bağlantı kurulamadı': 'Tidak dapat mewujudkan sambungan selamat',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Respons tidak dijangka daripada pelayan',
 };

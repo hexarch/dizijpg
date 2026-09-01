@@ -1439,4 +1439,8 @@ const Map<String, String> cevirilerRu = {
   'Pembe': 'Розовый',
   'Turuncu': 'Оранжевый',
   'Orijinal metin gösteriliyor': 'Показан оригинальный текст',
+  'İnternet bağlantısı yok': 'Нет подключения к интернету',
+  'Sunucu yanıt vermedi': 'Сервер не ответил',
+  'Güvenli bağlantı kurulamadı': 'Не удалось установить защищённое соединение',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Неожиданный ответ сервера',
 };

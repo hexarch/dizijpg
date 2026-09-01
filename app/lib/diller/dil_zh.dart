@@ -1345,4 +1345,8 @@ const Map<String, String> cevirilerZh = {
   'Pembe': '粉色',
   'Turuncu': '橙色',
   'Orijinal metin gösteriliyor': '正在显示原文',
+  'İnternet bağlantısı yok': '无网络连接',
+  'Sunucu yanıt vermedi': '服务器未响应',
+  'Güvenli bağlantı kurulamadı': '无法建立安全连接',
+  'Sunucudan beklenmeyen bir yanıt geldi': '服务器返回了意外的响应',
 };

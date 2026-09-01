@@ -1429,4 +1429,8 @@ const Map<String, String> cevirilerKn = {
   'Pembe': 'ಗುಲಾಬಿ',
   'Turuncu': 'ಕಿತ್ತಳೆ',
   'Orijinal metin gösteriliyor': 'ಮೂಲ ಪಠ್ಯ ತೋರಿಸಲಾಗುತ್ತಿದೆ',
+  'İnternet bağlantısı yok': 'ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕವಿಲ್ಲ',
+  'Sunucu yanıt vermedi': 'ಸರ್ವರ್ ಪ್ರತಿಕ್ರಿಯಿಸಲಿಲ್ಲ',
+  'Güvenli bağlantı kurulamadı': 'ಸುರಕ್ಷಿತ ಸಂಪರ್ಕ ಸ್ಥಾಪಿಸಲಾಗಲಿಲ್ಲ',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'ಸರ್ವರ್‌ನಿಂದ ಅನಿರೀಕ್ಷಿತ ಪ್ರತಿಕ್ರಿಯೆ ಬಂದಿದೆ',
 };

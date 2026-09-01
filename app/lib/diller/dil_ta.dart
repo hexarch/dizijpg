@@ -1456,4 +1456,8 @@ const Map<String, String> cevirilerTa = {
   'Pembe': 'இளஞ்சிவப்பு',
   'Turuncu': 'ஆரஞ்சு',
   'Orijinal metin gösteriliyor': 'அசல் உரை காட்டப்படுகிறது',
+  'İnternet bağlantısı yok': 'இணைய இணைப்பு இல்லை',
+  'Sunucu yanıt vermedi': 'சேவையகம் பதிலளிக்கவில்லை',
+  'Güvenli bağlantı kurulamadı': 'பாதுகாப்பான இணைப்பை ஏற்படுத்த முடியவில்லை',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'சேவையகத்திலிருந்து எதிர்பாராத பதில் வந்தது',
 };

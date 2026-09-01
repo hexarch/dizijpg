@@ -1430,4 +1430,8 @@ const Map<String, String> cevirilerPa = {
   'Pembe': 'ਗੁਲਾਬੀ',
   'Turuncu': 'ਸੰਤਰੀ',
   'Orijinal metin gösteriliyor': 'ਅਸਲ ਲਿਖਤ ਦਿਖਾਈ ਜਾ ਰਹੀ ਹੈ',
+  'İnternet bağlantısı yok': 'ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਨਹੀਂ ਹੈ',
+  'Sunucu yanıt vermedi': 'ਸਰਵਰ ਨੇ ਜਵਾਬ ਨਹੀਂ ਦਿੱਤਾ',
+  'Güvenli bağlantı kurulamadı': 'ਸੁਰੱਖਿਅਤ ਕਨੈਕਸ਼ਨ ਨਹੀਂ ਬਣ ਸਕਿਆ',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'ਸਰਵਰ ਤੋਂ ਅਣਕਿਆਸਿਆ ਜਵਾਬ ਆਇਆ',
 };

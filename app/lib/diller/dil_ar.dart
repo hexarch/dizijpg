@@ -1403,4 +1403,8 @@ const Map<String, String> cevirilerAr = {
   'Pembe': 'وردي',
   'Turuncu': 'برتقالي',
   'Orijinal metin gösteriliyor': 'يتم عرض النص الأصلي',
+  'İnternet bağlantısı yok': 'لا يوجد اتصال بالإنترنت',
+  'Sunucu yanıt vermedi': 'لم يستجب الخادم',
+  'Güvenli bağlantı kurulamadı': 'تعذّر إنشاء اتصال آمن',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'ورد رد غير متوقع من الخادم',
 };

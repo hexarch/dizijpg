@@ -1424,4 +1424,8 @@ const Map<String, String> cevirilerBn = {
   'Pembe': 'গোলাপি',
   'Turuncu': 'কমলা',
   'Orijinal metin gösteriliyor': 'মূল লেখা দেখানো হচ্ছে',
+  'İnternet bağlantısı yok': 'ইন্টারনেট সংযোগ নেই',
+  'Sunucu yanıt vermedi': 'সার্ভার সাড়া দেয়নি',
+  'Güvenli bağlantı kurulamadı': 'নিরাপদ সংযোগ স্থাপন করা যায়নি',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'সার্ভার থেকে অপ্রত্যাশিত সাড়া এসেছে',
 };

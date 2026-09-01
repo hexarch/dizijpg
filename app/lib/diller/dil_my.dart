@@ -1448,4 +1448,8 @@ const Map<String, String> cevirilerMy = {
   'Pembe': 'ပန်းရောင်',
   'Turuncu': 'လိမ္မော်ရောင်',
   'Orijinal metin gösteriliyor': 'မူရင်းစာသားကို ပြသနေသည်',
+  'İnternet bağlantısı yok': 'အင်တာနက် ချိတ်ဆက်မှု မရှိပါ',
+  'Sunucu yanıt vermedi': 'ဆာဗာမှ တုံ့ပြန်မှု မရှိပါ',
+  'Güvenli bağlantı kurulamadı': 'လုံခြုံသော ချိတ်ဆက်မှု မတည်ဆောက်နိုင်ပါ',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'ဆာဗာမှ မမျှော်လင့်ထားသော တုံ့ပြန်မှု ရရှိသည်',
 };

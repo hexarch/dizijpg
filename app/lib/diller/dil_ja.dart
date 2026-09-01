@@ -1361,4 +1361,8 @@ const Map<String, String> cevirilerJa = {
   'Pembe': 'ピンク',
   'Turuncu': 'オレンジ',
   'Orijinal metin gösteriliyor': '原文を表示しています',
+  'İnternet bağlantısı yok': 'インターネットに接続されていません',
+  'Sunucu yanıt vermedi': 'サーバーが応答しませんでした',
+  'Güvenli bağlantı kurulamadı': '安全な接続を確立できませんでした',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'サーバーから予期しない応答がありました',
 };

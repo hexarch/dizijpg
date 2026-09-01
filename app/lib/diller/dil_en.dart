@@ -1432,4 +1432,8 @@ const Map<String, String> cevirilerEn = {
   'Pembe': 'Pink',
   'Turuncu': 'Orange',
   'Orijinal metin gösteriliyor': 'Showing original text',
+  'İnternet bağlantısı yok': 'No internet connection',
+  'Sunucu yanıt vermedi': 'The server did not respond',
+  'Güvenli bağlantı kurulamadı': 'Could not establish a secure connection',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Unexpected response from the server',
 };

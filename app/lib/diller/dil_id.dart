@@ -1435,4 +1435,8 @@ const Map<String, String> cevirilerId = {
   'Pembe': 'Merah muda',
   'Turuncu': 'Oranye',
   'Orijinal metin gösteriliyor': 'Menampilkan teks asli',
+  'İnternet bağlantısı yok': 'Tidak ada koneksi internet',
+  'Sunucu yanıt vermedi': 'Server tidak merespons',
+  'Güvenli bağlantı kurulamadı': 'Tidak dapat membuat koneksi aman',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Respons tak terduga dari server',
 };

@@ -1444,4 +1444,8 @@ const Map<String, String> cevirilerHu = {
   'Pembe': 'Rózsaszín',
   'Turuncu': 'Narancssárga',
   'Orijinal metin gösteriliyor': 'Eredeti szöveg megjelenítve',
+  'İnternet bağlantısı yok': 'Nincs internetkapcsolat',
+  'Sunucu yanıt vermedi': 'A szerver nem válaszolt',
+  'Güvenli bağlantı kurulamadı': 'Nem sikerült biztonságos kapcsolatot létesíteni',
+  'Sunucudan beklenmeyen bir yanıt geldi': 'Váratlan válasz érkezett a szervertől',
 };
