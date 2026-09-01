@@ -1,7 +1,16 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-01 — 🔨 Kitaplık listeleri: satır görünümü + başlık/ikon temizliği
+## 2026-09-01 — 🚀 Kitaplık listeleri: satır görünümü + başlık/ikon temizliği
+
+- 🚀 **CANLIDA (web + backend).** `server.js` kopyalandı, `dizijpg-api`
+  yeniden derlendi (`/saglik` → ok); web derlemesi `main.66e68e66ee02.dart.js`
+  (+ `main.dart.js_1.5ebc627aa08a.part.js`), SW sökücü yazıldı, eski hash'liler
+  silindi, brotli 108 dosya (%74). Uçtan uca: `testuser123` tokenıyla
+  `/puanlarim` puan+favori döndü, `/icerikler` → Breaking Bad `yil: "2008"`.
+- 📦 **APK: `cikti/dizijpg-1.108.0-174.apk`** (78 MB) — versionCode 174,
+  versionName 1.108.0, paket com.dizijpg.dizijpg, targetSdk 36, gerçek
+  yükleme anahtarıyla imzalı (SHA1 2E:38:AB:…:AB:58). AAB henüz üretilmedi.
 
 Kullanıcının dört isteği (hepsi 1 Eyl), tek turda:
 
