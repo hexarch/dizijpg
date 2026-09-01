@@ -1522,3 +1522,21 @@ ALTER TABLE puanlar
     REFERENCES yorumlar(id) ON DELETE SET NULL;
 CREATE INDEX IF NOT EXISTS puanlar_tasinan
   ON puanlar (tasinan_yorum_id) WHERE tasinan_yorum_id IS NOT NULL;
+
+-- 2026-09-01: KİŞİ SİTE HARİTASININ ÖLÇÜ TABLOSU.
+-- `SITEMAP_KISI_SORGU` 26.222 kişi belgesini her seferinde TOAST'tan açıyordu
+-- (>40 sn) ve `/sitemap-kisi-1.xml` Googlebot'a ARDI ARDINA 500 döndürüyordu.
+-- Ölçüm artık burada saklanır, harita sorgusu indeks okumasına indi.
+-- Tabloda EŞİK KARARI değil HAM SAYI durur: `SEO_KISI_BIYO_MIN` /
+-- `SEO_KISI_YAPIM_MIN` değişirse yeniden ölçüm gerekmez.
+-- Uzun gerekçe + ölçümler: migrasyon-2026-09-01.sql.
+CREATE TABLE IF NOT EXISTS seo_kisi_olcu (
+  tmdb_id      INT         PRIMARY KEY,
+  biyo_uzunluk INT         NOT NULL DEFAULT 0,
+  yapim_sayisi INT         NOT NULL DEFAULT 0,
+  kaynak_zaman TIMESTAMPTZ NOT NULL,
+  olculdu      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS seo_kisi_olcu_kaynak ON seo_kisi_olcu (kaynak_zaman);
+CREATE INDEX IF NOT EXISTS seo_kisi_olcu_esik
+  ON seo_kisi_olcu (biyo_uzunluk, yapim_sayisi);

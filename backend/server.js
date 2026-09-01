@@ -7468,27 +7468,86 @@ const ISITMA_BOLUM_SORGU = `
 // `lastmod` YOK (`son` NULL): kişi sayfasının içeriği TMDB biyografisi +
 // filmografi; bizde "son değişiklik" damgası yok. Uydurma tarih basmak
 // haritanın tamamının güvenilirliğini düşürür (bkz. `sitemapSatiri`).
+// ---------------------------------------------------------------------------
+// 1 EYLÜL 2026 — ÖLÇÜM ARTIK SAKLANIYOR (`seo_kisi_olcu`), HARİTA SORGUSU
+// TARAMA DEĞİL İNDEKS OKUMASI. Uzun gerekçe: migrasyon-2026-09-01.sql.
+// ---------------------------------------------------------------------------
+// CANLI ARIZA: yukarıdaki ölçüm 19.000 belge içindi; evren 26.222'ye çıkınca
+// sorgu 40 sn'lik `SITEMAP_SORGU_ZAMAN_ASIMI_MS` tavanını AŞTI ve Googlebot
+// `/sitemap-kisi-1.xml`den ARDI ARDINA 500 aldı (nginx kaydıyla doğrulandı,
+// pg_kod 57014). Kova bellekte olmadığı için `sitemapKovaOku`nun bayat-servis
+// dalı da kurtaramadı: konteyner yeniden başladıktan sonra HER istek düştü.
+//
+// Tavanı yükseltmek yalnız erteler (Ağustos'ta evren %38 büyüdü). Bunun yerine
+// belge açımı SORGUDAN ÇIKARILDI: iki ölçü `seo_kisi_olcu`da duruyor, harita
+// sorgusu artık `seo_kisi_olcu_esik` indeksinden okuyor (< 50 ms).
+//
+// EŞİK SABİTLERİ HÂLÂ BURADA: tabloda karar değil HAM SAYI saklanıyor, yani
+// `SEO_KISI_BIYO_MIN`/`SEO_KISI_YAPIM_MIN` değişirse harita yeniden ölçüm
+// GEREKTİRMEDEN yeni eşiğe uyar. Ölçünün TANIMI (aşağıdaki tazeleme sorgusu)
+// eski sorgunun ifadeleriyle BİREBİR aynıdır — kapsam değişmedi.
 const SITEMAP_KISI_SORGU = `
-  WITH aday AS (
-    SELECT (regexp_match(anahtar, '^/person/([0-9]+)'))[1]::int AS tmdb_id, veri
+  SELECT tmdb_id, NULL::date AS son
+    FROM seo_kisi_olcu
+   WHERE biyo_uzunluk >= ${SEO_KISI_BIYO_MIN}
+     AND yapim_sayisi >= ${SEO_KISI_YAPIM_MIN}
+   ORDER BY tmdb_id`;
+
+// Artımlı tazeleme. $1 = su seviyesi (`max(kaynak_zaman)`), $2 = öbek boyu.
+// `guncelleme >= $1` (`>` DEĞİL): sınırdaki satır bir kez daha ölçülür, upsert
+// fikirsel olduğu için zararsız — `>` olsaydı aynı mikrosaniyeyi paylaşan iki
+// satırdan biri öbek sınırında sonsuza kadar atlanabilirdi.
+// `ORDER BY guncelleme` + LIMIT = sürdürülebilir imleç: koşu bütçesi dolarsa
+// bir sonraki koşu KALDIĞI YERDEN devam eder.
+const SEO_KISI_OLCU_TAZELE = `
+  WITH src AS (
+    SELECT (regexp_match(anahtar, '^/person/([0-9]+)'))[1]::int AS tmdb_id,
+           guncelleme, veri
       FROM tmdb_onbellek
      WHERE anahtar ~ '^/person/[0-9]+\\?append_to_response=combined_credits,translations&language=tr-TR$'
-       AND greatest(
-             length(btrim(regexp_replace(coalesce(veri->>'biography', ''), '\\s+', ' ', 'g'))),
-             length(btrim(regexp_replace(coalesce(
-               jsonb_path_query_first(veri,
-                 '$.translations.translations[*] ? (@.iso_639_1 == "en").data.biography') #>> '{}', ''),
-               '\\s+', ' ', 'g')))
-           ) >= ${SEO_KISI_BIYO_MIN}
+       AND guncelleme >= $1
+     ORDER BY guncelleme
+     LIMIT $2
   )
-  SELECT tmdb_id, NULL::date AS son FROM (
-    SELECT tmdb_id, (
-      SELECT count(DISTINCT v) FROM jsonb_array_elements_text(
-        jsonb_path_query_array(veri, ('$.combined_credits.*[*] ? ((@.media_type == "tv"'
-          || ' || @.media_type == "movie") && @.poster_path != null && @.id > 0'
-          || ' && ((exists(@.name) && @.name != "") || (exists(@.title) && @.title != ""))).id')::jsonpath)) v) AS yapim
-      FROM aday
-  ) t WHERE yapim >= ${SEO_KISI_YAPIM_MIN} ORDER BY tmdb_id`;
+  INSERT INTO seo_kisi_olcu (tmdb_id, biyo_uzunluk, yapim_sayisi, kaynak_zaman, olculdu)
+  SELECT tmdb_id,
+         greatest(
+           length(btrim(regexp_replace(coalesce(veri->>'biography', ''), '\\s+', ' ', 'g'))),
+           length(btrim(regexp_replace(coalesce(
+             jsonb_path_query_first(veri,
+               '$.translations.translations[*] ? (@.iso_639_1 == "en").data.biography') #>> '{}', ''),
+             '\\s+', ' ', 'g')))
+         ),
+         (SELECT count(DISTINCT v) FROM jsonb_array_elements_text(
+            jsonb_path_query_array(veri, ('$.combined_credits.*[*] ? ((@.media_type == "tv"'
+              || ' || @.media_type == "movie") && @.poster_path != null && @.id > 0'
+              || ' && ((exists(@.name) && @.name != "") || (exists(@.title) && @.title != ""))).id')::jsonpath)) v),
+         guncelleme, now()
+    FROM src
+   WHERE tmdb_id IS NOT NULL
+      ON CONFLICT (tmdb_id) DO UPDATE
+         SET biyo_uzunluk = EXCLUDED.biyo_uzunluk,
+             yapim_sayisi = EXCLUDED.yapim_sayisi,
+             kaynak_zaman = EXCLUDED.kaynak_zaman,
+             olculdu      = EXCLUDED.olculdu`;
+
+// Artık satır toplama: önbellekten süresi dolup SİLİNEN kişinin ölçüsü de
+// gider. Bugünkü davranışın aynısı — eski sorgunun evreni de önbellekti.
+// `veri` OKUNMUYOR: anti-join yalnız anahtar üzerinden, TOAST açımı yok.
+const SEO_KISI_OLCU_TEMIZLE = `
+  DELETE FROM seo_kisi_olcu o
+   WHERE NOT EXISTS (
+     SELECT 1 FROM tmdb_onbellek t
+      WHERE t.anahtar = '/person/' || o.tmdb_id
+        || '?append_to_response=combined_credits,translations&language=tr-TR')`;
+
+// Bir tazeleme koşusunun süre bütçesi ve öbek boyu.
+// ÖLÇÜM (canlı, 1 Eyl 2026): 3.000 belge = 9,0 sn (belge başına ~3 ms).
+// Günlük değişim ~3.000 belge olduğu için OLAĞAN koşu TEK öbektir; bütçe
+// yalnız ilk doldurmada (26.222 belge ≈ 9 öbek) devreye girer ve koşuyu
+// haritanın 40 sn'lik sorgu tavanının ALTINDA tutar.
+const SEO_KISI_OLCU_OBEK = 3000;
+const SEO_KISI_OLCU_BUTCE_MS = 25000;
 
 // ---------------------------------------------------------------------------
 // FİRMA — `sirketIndekslenir` (yapimSayisi >= SEO_SIRKET_YAPIM_MIN)
@@ -7566,13 +7625,18 @@ const SITEMAP_TTL_MS = 6 * 3600 * 1000;
 // varsayılana döner (havuz paylaşımlı olduğu için `SET` DEĞİL `SET LOCAL`).
 const SITEMAP_SORGU_ZAMAN_ASIMI_MS = 40000;
 
-/** Site haritası sorgusu — son tarihli. Bkz. SITEMAP_SORGU_ZAMAN_ASIMI_MS. */
-async function sitemapSorgu(sql) {
+/**
+ * Site haritası sorgusu — son tarihli. Bkz. SITEMAP_SORGU_ZAMAN_ASIMI_MS.
+ * `degerler` parametreli sorgular içindir (`seo_kisi_olcu` tazelemesi).
+ * Havuzda genel bir `statement_timeout` YOK; bu sarmalayıcı olmadan uzun bir
+ * sorgu havuz bağlantısını süresiz tutar (1 Eyl 2026 arızasının komşu riski).
+ */
+async function sitemapSorgu(sql, degerler = []) {
   const istemci = await havuz.connect();
   try {
     await istemci.query('BEGIN');
     await istemci.query(`SET LOCAL statement_timeout = ${SITEMAP_SORGU_ZAMAN_ASIMI_MS}`);
-    const r = await istemci.query(sql);
+    const r = await istemci.query(sql, degerler);
     await istemci.query('COMMIT');
     return r;
   } catch (e) {
@@ -7761,7 +7825,42 @@ async function sitemapBolumVerisi(zorla) {
   return sitemapKovaOku(sitemapBolumKovasi, sitemapBolumUret, zorla);
 }
 
+/**
+ * `seo_kisi_olcu` tablosunu `tmdb_onbellek`ten ARTIMLI tazeler.
+ * Bkz. SEO_KISI_OLCU_TAZELE ve migrasyon-2026-09-01.sql.
+ *
+ * ATMAZ. Tazeleme haritanın ÖN ADIMIDIR, koşulu değil: ölçüm düşerse dünkü
+ * ölçüyle üretilmiş harita bugünkü hiç-harita'dan iyidir. 1 Eylül arızasının
+ * dersi tam olarak buydu — tek bir yavaş sorgu tüm kişi haritasını 500'e
+ * düşürmüştü. Hata kaydedilir, üretim devam eder.
+ *
+ * @returns {Promise<{obek:number, satir:number, silinen:number, sure:number}>}
+ */
+async function seoKisiOlcuTazele() {
+  const baslangic = Date.now();
+  let obek = 0; let satir = 0; let silinen = 0;
+  try {
+    for (;;) {
+      const { rows: [s] } = await sitemapSorgu(
+        `SELECT coalesce(max(kaynak_zaman), '-infinity'::timestamptz) AS su
+           FROM seo_kisi_olcu`);
+      const r = await sitemapSorgu(SEO_KISI_OLCU_TAZELE, [s.su, SEO_KISI_OLCU_OBEK]);
+      obek += 1; satir += r.rowCount;
+      // Öbek dolmadıysa değişen belge kalmadı; imleç su seviyesinde durur.
+      if (r.rowCount < SEO_KISI_OLCU_OBEK) break;
+      if (Date.now() - baslangic >= SEO_KISI_OLCU_BUTCE_MS) break;
+    }
+    silinen = (await sitemapSorgu(SEO_KISI_OLCU_TEMIZLE)).rowCount;
+  } catch (e) {
+    logYaz({ seviye: 'hata', olay: 'seo_kisi_olcu_tazeleme', hata: e, obek, satir });
+  }
+  const sure = Date.now() - baslangic;
+  logYaz({ seviye: 'bilgi', olay: 'seo_kisi_olcu', obek, satir, silinen, sure });
+  return { obek, satir, silinen, sure };
+}
+
 async function sitemapKisiUret() {
+  await seoKisiOlcuTazele();
   const { rows } = await sitemapSorgu(SITEMAP_KISI_SORGU);
   return sitemapSayfala(rows, (r) => `${SITE_KOK}/kisi/${r.tmdb_id}`);
 }

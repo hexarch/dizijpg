@@ -1,5 +1,10 @@
 # dizi.jpg — SEO yapılacaklar
 
+> Sürüm **5.6** · 1 Eylül 2026 — **KİŞİ SİTE HARİTASI 500 VERİYORDU**:
+> `SITEMAP_KISI_SORGU` 26.222 belgeyi tarayıp 57 sn sürüyordu ve 40 sn'lik
+> tavanı aşıyordu; ölçüm `seo_kisi_olcu`ya taşındı, sorgu 15 ms'ye indi,
+> kapsam birebir korundu (12.985 vs 12.982, sapma 0) — bkz. §16
+>
 > Sürüm **5.5** · 30 Ağustos 2026 — **SİTE HARİTASI HATASI ÖLÇÜLDÜ VE
 > KAPATILDI**: `sitemap-bolum-1.xml` 156 hata ("Geçersiz tarih", 1970 öncesi
 > `lastmod`) → 0; GSC'ye bildirilen harita 6 → 10 (`sitemap-bolum-2.xml`in
@@ -1390,3 +1395,132 @@ kurulmasın diye burada duruyor.
 3. **Ölçülmüş TEK darboğaz hâlâ dış bağlantı = 0** (§4.6). Bu turda hiçbir
    şey onu değiştirmedi: 15.1 bir hata onarımı, 15.2 bir görünürlük onarımı.
    İndeks sayısını asıl büyütecek iş orada duruyor.
+
+---
+
+## 16. 🚀 KİŞİ SİTE HARİTASI 500 VERİYORDU — KÖK NEDEN VE KALICI ÇÖZÜM (1 Eylül 2026)
+
+**Kullanıcı bildirimi:** "search console aç, bazı sayfalar dizine eklenmemiş
+bazıları hata dönmüş, sorunu çöz."
+
+### ÖLÇÜM — GSC "Getirilemedi" iki satırda, ikisi de KİŞİ
+
+Site Haritaları raporunda 10 haritadan **tam olarak ikisi** kırmızıydı:
+
+| Harita | Durum | Keşfedilen |
+|---|---|---|
+| `sitemap-kisi-1.xml` | **Getirilemedi** | 10.757 |
+| `sitemap-en-kisi-1.xml` | **Getirilemedi** | 10.690 |
+| diğer 8 (içerik/bölüm/firma/genel/dizin) | Başarılı | — |
+
+nginx erişim kaydı sebebi tarihlendirdi — **31 Ağustos'ta koptu**:
+
+```
+21–30 Ağu   kisi-1.xml   200 (29 Ağu 107 istek, 30 Ağu 137 istek)
+31 Ağu      kisi-1.xml   500 × 143      ← kopma
+ 1 Eyl      kisi-1.xml   500 × 6, sonra 200 × 7 (düzeltme)
+```
+
+API kaydı tek satırda söyledi:
+`uc_hatasi /sitemap-kisi-1.xml … "canceling statement due to statement
+timeout" pg_kod 57014` — yani `SITEMAP_KISI_SORGU`,
+`SITEMAP_SORGU_ZAMAN_ASIMI_MS` (40 sn) tavanını aşıyordu.
+
+### KÖK NEDEN — SORGU BOZULMADI, EVREN BÜYÜDÜ
+
+| tarih | kişi belgesi | sorgu süresi |
+|---|---|---|
+| 24 Ağu 2026 | ~19.000 | ~26 sn (tavan 40 sn — geçiyordu) |
+| 1 Eyl 2026 | **26.222** | **57,3 sn** (ölçüldü, `statement_timeout=0` ile) |
+
+Maliyet satır sayısından değil, her belgenin **TOAST açımından** geliyor
+(belge başına ~3 ms; `combined_credits` + ~40 çeviri). Ağustos'ta evren %38
+büyüdü; aynı hızla büyürse yükseltilen her tavan birkaç hafta içinde yeniden
+aşılır. Bu yüzden tavan kovalanmadı, SORGU KALDIRILDI.
+
+⚠ **ARIZA KENDİLİĞİNDEN GEÇMEZ VE KALICIDIR.** `sitemapKovaOku`nun
+bayat-servis dalı yalnız BELLEKTE kova varsa kurtarır. Konteyner yeniden
+başlayınca kova boşalır → ilk istek üretimi dener → 40 sn sonra düşer → o
+andan sonra HER istek 500 alır. 31 Ağustos'taki yeniden başlatma tam bunu
+yaptı.
+
+### ÇÖZÜM — ÖLÇÜMÜ SAKLA, HARİTAYI İNDEKS OKUMASINA İNDİR
+
+`seo_kisi_olcu` tablosu (migrasyon-2026-09-01.sql) kişi başına
+`kisiIndekslenir`in okuduğu **iki ham sayıyı** saklar: biyografi uzunluğu
+(tr, yoksa `en` çevirisi) ve iç bağlantılı yapım sayısı. **Karar değil sayı**
+saklanır — `SEO_KISI_BIYO_MIN`/`SEO_KISI_YAPIM_MIN` değişirse yeniden ölçüm
+gerekmez.
+
+Tazeleme **artımlı**: `tmdb_onbellek.guncelleme` su seviyesi olarak kullanılır
+(`idx_onbellek_zaman`), yani her koşuda yalnız o gün değişen belgeler açılır.
+
+| | önce | sonra |
+|---|---|---|
+| harita sorgusu | 57,3 sn (tavanı aşıyor) | **15 ms** (`seo_kisi_olcu_esik`) |
+| günlük tazeleme | — | ~3.000 belge ≈ 9 sn (canlı kayıt: 1–1,4 sn) |
+| ilk doldurma | — | 26.577 belge, 9 öbek, ~80 sn (bir kerelik) |
+
+**KAPSAM DEĞİŞMEDİ — KANIT.** Eski sorgu ile yeni tablo canlıda küme küme
+karşılaştırıldı:
+
+```
+eski_sayi 12.985 · yeni_sayi 12.982 · yalniz_eskide 3 · yalniz_yenide 0
+```
+
+Üç fark, doldurmadan SONRA önbelleğe giren kişiler (teşhis sorgusu
+`guncelleme > su_seviyesi` olduklarını gösterdi) — bir sonraki artımlı koşu
+onları alır. Mantık ayrışması **sıfır**.
+
+**İKİNCİ DERS KODA GİRDİ:** `seoKisiOlcuTazele` **ATMAZ**. Ölçüm haritanın ön
+adımıdır, koşulu değil; düşerse dünkü ölçüyle üretilmiş harita bugünkü
+hiç-harita'dan iyidir. Test bunu kilitliyor
+(`kişi ölçü tazelemesi haritayı DÜŞÜREMEZ`).
+
+### CANLI DOĞRULAMA (1 Eylül 2026)
+
+```
+/sitemap-kisi-1.xml       200  1,9 sn  1.451.163 b  13.004 <loc>
+/sitemap-en-kisi-1.xml    200  1,0 sn  1.490.175 b
+/sitemap-de-kisi-1.xml    200  1,9 sn
+/sitemap-kisi-2.xml       404  (doğru: 13.004 < 20.000 sayfa boyu)
+```
+
+Harita/sayfa kararı **iki yönde de** denetlendi: haritadaki `/kisi/10611`,
+`/kisi/155209`, `/kisi/1217025` → `robots` etiketi YOK (indekslenir);
+eşik altındaki `/kisi/80`, `/kisi/81`, `/kisi/130` → `noindex,follow`.
+Yani "gönderilen URL noindex" hatası üretilemez.
+
+GSC'de kapanış yapıldı: iki kişi haritası yeniden gönderildi
+(`sitemap-kisi-1.xml` **anında yeniden okundu → Başarılı, 13.004 sayfa**),
+5xx sorunu için **yeni doğrulama başlatıldı** (37 beklemede / 0 başarısız).
+
+### AYNI TURDA ELENEN, HATA OLMAYANLAR
+
+- **`noindex` 1.765** (559'dan büyüdü): tamamı eşik altı `/kisi/` + `/sirket/`
+  ince sayfa, BİLEREK. Evren 19k→26k büyüyünce bu kova da büyür — beklenen.
+  Doğrulaması hep "başarısız" der, görmezden gel.
+- **404 (4):** `/kisi/1926282` TMDB'den SİLİNMİŞ kişi (ölçü tablosunda yok,
+  haritada da yok — 404 doğru cevap), `/icerik/tyrant` + `/icerik/bust-down`
+  eski Next.js slug'ları, `/$` çöp URL.
+- **5xx listesindeki 3 GÜNCEL sayfa** (`/dizi/121078/sezon/1/bolum/10`,
+  `/dizi/111803/sezon/2/bolum/4`, `/icerik/movie/607`): nginx kaydı
+  **28 Ağu 07:22:53–56 arası ~3 saniyelik** bir pencerede TÜM uçların 502
+  verdiğini gösteriyor = **dağıtım sırasındaki konteyner yeniden yaratma**.
+  Kod hatası değil. ⬜ Açık madde: `docker-compose up -d --build api`
+  konteyneri örtüşmesiz değiştiriyor; her dağıtımda Googlebot'un o pencereye
+  denk gelme ihtimali var. Sıfır kesintili dağıtım ayrı bir iş.
+
+### DURUM TABLOSU (28 Ağu → 1 Eyl)
+
+| | 28 Ağu | 1 Eyl |
+|---|---|---|
+| Dizine eklenen | 998 | **8,4 B** |
+| Keşfedildi – eklenmedi | 21.394 | **13.383** |
+| Tarandı – eklenmedi | 619 | 245 |
+| noindex (bilinçli) | 559 | 1.765 |
+| 5xx | 34 | 37 |
+| 404 | 3 | 4 |
+
+⬜ **Sıradaki gerçek iş hâlâ aynı:** keşif kuyruğu 13.383 ve dış bağlantı 0
+(§4.6).

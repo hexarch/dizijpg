@@ -259,24 +259,54 @@ test('ısıtıcı kuyruğu tahmin ÜRETSE BİLE o tahmin URL\'e dönüşmüyor',
 // ===========================================================================
 // /kisi + /sirket — haritaya girdi, eşikler SAYFAYLA aynı
 // ===========================================================================
+// 1 Eyl 2026: ölçüm `seo_kisi_olcu`ya taşındı (harita sorgusu 26.222 belgeyi
+// TOAST'tan açarken 40 sn tavanını aştı ve `/sitemap-kisi-1.xml` Googlebot'a
+// ARDI ARDINA 500 döndü). Garanti DEĞİŞMEDİ, İKİYE BÖLÜNDÜ:
+//   · EŞİK  → SITEMAP_KISI_SORGU  (tabloda karar değil ham sayı durduğu için
+//              eşik hâlâ sorguda ve hâlâ sabitten gelmeli),
+//   · ÖLÇÜ  → SEO_KISI_OLCU_TAZELE (SSR'ın önbellek anahtarı, adsız kredi
+//              süzgeci, boşluk birleştirmesi).
+// Test ikisini birden kilitler: biri diğerinden ayrışırsa haritada noindex URL
+// doğar (bölüm haritasındaki B2 tuzağının aynısı).
 test('kişi haritası `kisiIndekslenir` eşiklerinin TA KENDİSİNİ kullanıyor', () => {
   const sorgu = bildirimCek('SITEMAP_KISI_SORGU');
   assert.match(sorgu, />= \$\{SEO_KISI_BIYO_MIN\}/,
     'biyografi eşiği sayfadan kopyalanmış sayı — ayrışırsa haritada noindex URL doğar');
   assert.match(sorgu, />= \$\{SEO_KISI_YAPIM_MIN\}/, 'yapım eşiği sabitten gelmiyor');
+  assert.match(sorgu, /FROM seo_kisi_olcu/,
+    'harita ölçü tablosundan okumuyor — ham tarama 40 sn tavanını aşar');
+
+  const olcu = bildirimCek('SEO_KISI_OLCU_TAZELE');
   // SSR'ın okuduğu ANAHTARIN TA KENDİSİ okunmalı; başka bir dil/append kümesi
   // okunursa harita sayfanın görmediği veriye dayanır.
-  assert.match(sorgu,
+  assert.match(olcu,
     /\^\/person\/\[0-9\]\+\\\\\?append_to_response=combined_credits,translations&language=tr-TR\$/,
-    'kişi haritası SSR\'ın önbellek anahtarından okumuyor');
+    'kişi ölçüsü SSR\'ın önbellek anahtarından okumuyor');
   const uc = bildirimCek('kisiIndekslenir');
   assert.match(uc, /SEO_KISI_BIYO_MIN/);
   assert.match(uc, /SEO_KISI_YAPIM_MIN/);
   // Sayfa ile harita AYNI evren: adsız kredi ve ham boşluk sayılmaz.
-  assert.match(sorgu, /exists\(@\.name\)/,
-    'kişi haritası adsız krediyi sayıyor — sayfa noindex, harita gönderir');
-  assert.match(sorgu, /regexp_replace/,
+  assert.match(olcu, /exists\(@\.name\)/,
+    'kişi ölçüsü adsız krediyi sayıyor — sayfa noindex, harita gönderir');
+  assert.match(olcu, /regexp_replace/,
     'biyografi uzunluğu seoMetin ile aynı boşluk birleştirmesini yapmıyor');
+  // Ölçü ARTIMLI olmalı: su seviyesiz tam tarama 78 sn sürer, arıza geri gelir.
+  assert.match(olcu, /guncelleme >= \$1/,
+    'ölçü tazelemesi su seviyesi kullanmıyor — her koşu tam tarama olur');
+  assert.match(olcu, /ON CONFLICT \(tmdb_id\) DO UPDATE/,
+    'tazeleme fikirsel değil — sınırdaki satır çiftlenir/atlanır');
+});
+
+// 1 Eyl 2026 arızasının ikinci dersi: ölçüm haritanın ÖN ADIMI, KOŞULU DEĞİL.
+// `sitemapKisiUret` tazelemede atarsa tüm kişi haritası yine 500'e düşerdi.
+test('kişi ölçü tazelemesi haritayı DÜŞÜREMEZ (atmaz)', () => {
+  const tazele = bildirimCek('seoKisiOlcuTazele');
+  assert.match(tazele, /catch \(e\)/,
+    'tazeleme hatayı yutmuyor — tek yavaş sorgu tüm kişi haritasını 500 yapar');
+  assert.ok(!/throw/.test(tazele), 'tazeleme atıyor — bayat ölçüyle üretmek daha iyidir');
+  const uret = bildirimCek('sitemapKisiUret');
+  assert.match(uret, /await seoKisiOlcuTazele\(\)/,
+    'harita üretimi ölçüyü tazelemiyor — yeni kişiler haritaya hiç girmez');
 });
 
 test('kişi uç filmografiyi DİLİMLEMEDEN sayar (GSC noindex sapması)', () => {
