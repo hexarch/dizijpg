@@ -1,0 +1,53 @@
+1.106.0 (171) — 1 Eylül 2026
+Notlar 1.103.0 (163) → 1.106.0 (171) arasını kapsıyor.
+
+YENİ
+- Letterboxd içe aktarımı: watched / diary / ratings / reviews / watchlist /
+  likes / films dosyaları okunuyor. Ad + Yıl ile TMDB eşlemesi, 0,5–5 yıldız
+  puanların 100'lük ölçeğe çevrilmesi, puansız incelemelerin yoruma dönmesi.
+  Günlükten gelen tarihler kesin, watched.csv'den gelenler "kesin değil"
+  işaretleniyor.
+- Kitaplık paylaşımı: izliyorum / izleyeceğim / bitirdim / bıraktım listeleri
+  paylaşılabiliyor; salt-okunur kitaplık sayfası. İzlenenleri gizli olan
+  hesaplarda liste kapalı kalıyor.
+- Liste paylaşımı: modalda ve tam sayfada paylaş düğmesi.
+- Listeler profilde poster şeridi olarak görünüyor; akışta ince "Takip Et" hapı.
+- Reels çeviri anahtarı üç kipli: sarı = kendi dilin, beyaz = orijinal dil,
+  gri = altyazı kapalı. Tercih kalıcı; gönderi metnini ve altyazıyı birlikte
+  yönetiyor.
+- Reels "devamı" → gönderi başlıklı yorum sayfası (avatar, ad, Takip Et, tam
+  metin, tarih; yorumlar altında).
+- Sohbet detay ekranı: tema özelleştirme (6 tema), sohbette arama, sessize alma,
+  medya arşivi.
+- Ayarlar > E-posta: hesabın e-posta adresi değiştirilebiliyor (şifre ya da
+  Google doğrulaması + yeni adrese kod).
+- GIF seçici (yorum, sohbet, gönderi, yanıt) ve bir yoruma birden fazla
+  dizi/film/oyuncu etiketi.
+- İzlem çarkı: ses efekti, parmakla çevirme, liste büyüdükçe küçülen yazı.
+
+DÜZELTME
+- Çeviri kapatıldığında sol altta kalmaya devam eden yazı aslında video
+  altyazısıydı; artık anahtarla birlikte kapanıyor / orijinaline dönüyor.
+- Profil kapağındaki kolaj, kitaplıkta elle verilen sırayı yansıtıyordu değil;
+  artık her iki uç da aynı sırayla diziyor.
+- Çarkta gösterilen dilim ile çıkan yapım aynı olmuyordu — düzeldi.
+- Sohbette yazarken GIF / içerik / mikrofon düğmeleri gizleniyor.
+- Kitaplık başlığında kırpılan "(sayı)" ikinci satıra indi.
+- Dar ekranda taşan tür çipleri, tepki emojileri ve paylaşım satırı.
+- Mesajlar sekmesi regresyonu; sekmeye ikinci basışta başa dönme.
+- Akışta "görüldü" işaretinin takılması.
+- Google ile giren hesaplar e-posta değiştirirken anlamsız "Şifre hatalı"
+  alıyordu; artık Google doğrulaması isteniyor.
+- Bozuk e-posta adresleri kayıtta eleniyor.
+- Masaüstünde bazı ikonların görünmemesi (bayat font önbelleği).
+- iPad gezinme adasında hiza düzeltmesi.
+
+--- PLAY CONSOLE "Bu sürümdeki yenilikler" (TR, <500 karakter) ---
+Letterboxd icin ice aktarim geldi: gunluk, puanlar, incelemeler ve izleme
+listesi tek dosyadan aktariliyor.
+Kitapligini ve listelerini paylasabiliyorsun.
+Reels ceviri anahtari uc kipli: kendi dilin, orijinal dil ya da altyazi kapali.
+Sohbet detayi: tema, sohbette arama, sessize alma, medya arsivi.
+Profilde liste poster seridi.
+Cok sayida duzeltme: takilan "goruldu" isareti, dar ekranda tasan ogeler,
+e-posta degistirme.

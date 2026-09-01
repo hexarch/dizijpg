@@ -1,6 +1,23 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-01 — ✅ Play paketi derlendi (1.106.0+171)
+
+- ✅ **AAB + APK 1.106.0+171 derlendi, Play'e yüklenmeyi bekliyor.**
+  `cikti/dizijpg-1.106.0+171.aab` (108,8 MB) ve
+  `cikti/dizijpg-1.106.0-171.apk` (81,2 MB). Doğrulandı: `versionCode=171`,
+  `versionName=1.106.0`, paket `com.dizijpg.dizijpg`, minSdk 24 / targetSdk 36.
+  İmza GERÇEK yükleme anahtarı — APK ve AAB'nin ikisinde de
+  SHA1 `2E:38:AB:5C:13:4B:25:AE:49:D2:65:4B:97:94:D3:2A:7B:B6:AB:58`
+  (`CN=dizi.jpg`), yani hata ayıklama anahtarına düşülmedi. Öncesinde
+  `dart format` + `flutter analyze` (0 error / 0 warning, 102 info) ve
+  `flutter test` (**2367 geçti**).
+- ⬜ **Yükleme KULLANICIDA:** dosya 108 MB, tarayıcı yükleme aracı 10 MB ile
+  sınırlı — Claude Play Console'a AAB yükleyemez.
+- Sürüm notu: `surum-notu-1.106.0.txt` (1.103.0+163 → 1.106.0+171 arası).
+  Dosyanın sonunda Play Console "Bu sürümdeki yenilikler" için 415 karakterlik
+  hazır TR metin var (sınır 500).
+
 ## 2026-09-01 — 🚀 Letterboxd içe aktarımı (1.106.0+171)
 
 - 🚀 **Ayarlar > Verilerim artık Letterboxd ZIP'ini de içe aktarıyor** (istek:
