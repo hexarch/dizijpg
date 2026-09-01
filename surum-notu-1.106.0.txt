@@ -51,3 +51,93 @@ Sohbet detayi: tema, sohbette arama, sessize alma, medya arsivi.
 Profilde liste poster seridi.
 Cok sayida duzeltme: takilan "goruldu" isareti, dar ekranda tasan ogeler,
 e-posta degistirme.
+
+---- Play surum notlari (11 dil) — her biri <500 karakter ----
+
+[en-US]
+• Letterboxd import: bring in your diary, ratings, reviews and watchlist from a single ZIP.
+• Share your library and your lists with a read-only page.
+• Reels translation toggle now has three modes: your language, the original language, or subtitles off.
+• Chat details: custom themes, search in chat, mute, media archive.
+• Your lists appear as a poster strip on your profile.
+• Fixes: stuck "seen" marker, cramped layouts on narrow screens, changing your email.
+
+[ar]
+• استيراد Letterboxd: انقل يومياتك وتقييماتك ومراجعاتك وقائمة مشاهدتك من ملف ZIP واحد.
+• شارك مكتبتك وقوائمك عبر صفحة للقراءة فقط.
+• مفتاح الترجمة في Reels بثلاثة أوضاع: لغتك، أو اللغة الأصلية، أو إيقاف الترجمة.
+• تفاصيل المحادثة: سمات مخصصة، بحث داخل المحادثة، كتم، وأرشيف الوسائط.
+• قوائمك تظهر كشريط ملصقات في ملفك الشخصي.
+• إصلاحات: علامة "شوهد" العالقة، والتخطيط على الشاشات الضيقة، وتغيير البريد.
+
+[de-DE]
+• Letterboxd-Import: Tagebuch, Bewertungen, Rezensionen und Watchlist aus einer ZIP-Datei.
+• Teile deine Bibliothek und deine Listen über eine schreibgeschützte Seite.
+• Der Übersetzungsschalter in Reels hat jetzt drei Modi: deine Sprache, Originalsprache oder Untertitel aus.
+• Chat-Details: eigene Designs, Suche im Chat, Stummschalten, Medienarchiv.
+• Listen erscheinen als Posterleiste im Profil.
+• Behoben: hängende "Gesehen"-Markierung, enge Bildschirme, E-Mail-Wechsel.
+
+[el-GR]
+• Εισαγωγή από Letterboxd: ημερολόγιο, βαθμολογίες, κριτικές και λίστα από ένα ZIP.
+• Μοιράσου τη βιβλιοθήκη και τις λίστες σου με σελίδα μόνο για ανάγνωση.
+• Ο διακόπτης μετάφρασης στα Reels έχει τρεις λειτουργίες: γλώσσα σου, πρωτότυπη γλώσσα ή υπότιτλοι κλειστοί.
+• Λεπτομέρειες συνομιλίας: θέματα, αναζήτηση, σίγαση, αρχείο πολυμέσων.
+• Οι λίστες σου εμφανίζονται ως λωρίδα αφισών στο προφίλ.
+• Διορθώσεις: σήμα "είδατε", στενές οθόνες, αλλαγή email.
+
+[es-ES]
+• Importación de Letterboxd: diario, valoraciones, reseñas y lista de pendientes en un ZIP.
+• Comparte tu biblioteca y tus listas con una página de solo lectura.
+• El interruptor de traducción en Reels tiene tres modos: tu idioma, el idioma original o subtítulos desactivados.
+• Detalles del chat: temas, búsqueda en el chat, silenciar y archivo multimedia.
+• Tus listas aparecen como una tira de pósteres en tu perfil.
+• Correcciones: marca de "visto", pantallas estrechas y cambio de correo.
+
+[fr-FR]
+• Import Letterboxd : journal, notes, critiques et liste à voir depuis une seule archive ZIP.
+• Partage ta bibliothèque et tes listes via une page en lecture seule.
+• Le bouton de traduction des Reels a trois modes : ta langue, la langue d'origine ou sous-titres masqués.
+• Détails de la discussion : thèmes, recherche, mode silencieux, archive des médias.
+• Tes listes s'affichent en bande d'affiches sur ton profil.
+• Corrections : marque « vu », écrans étroits, changement d'e-mail.
+
+[id]
+• Impor Letterboxd: bawa jurnal, rating, ulasan, dan watchlist-mu dari satu berkas ZIP.
+• Bagikan pustaka dan daftarmu lewat halaman baca-saja.
+• Tombol terjemahan di Reels kini punya tiga mode: bahasamu, bahasa asli, atau subtitel mati.
+• Detail obrolan: tema khusus, cari di obrolan, senyapkan, dan arsip media.
+• Daftarmu tampil sebagai deretan poster di profil.
+• Perbaikan: tanda "dilihat" yang macet, layar sempit, ganti email.
+
+[it-IT]
+• Importazione da Letterboxd: diario, voti, recensioni e watchlist da un unico file ZIP.
+• Condividi la tua libreria e le tue liste con una pagina di sola lettura.
+• L'interruttore di traduzione nei Reels ha tre modalità: la tua lingua, la lingua originale o sottotitoli spenti.
+• Dettagli chat: temi, ricerca nella chat, silenzia e archivio media.
+• Le tue liste compaiono come striscia di poster nel profilo.
+• Correzioni: segno "visto", schermi stretti, cambio email.
+
+[pt-BR]
+• Importação do Letterboxd: diário, notas, críticas e lista para ver a partir de um único ZIP.
+• Compartilhe sua biblioteca e suas listas com uma página somente leitura.
+• O botão de tradução dos Reels agora tem três modos: seu idioma, o idioma original ou legendas desligadas.
+• Detalhes da conversa: temas, busca na conversa, silenciar e arquivo de mídia.
+• Suas listas aparecem como faixa de pôsteres no perfil.
+• Correções: marca de "visto", telas estreitas e troca de e-mail.
+
+[ru-RU]
+• Импорт из Letterboxd: дневник, оценки, рецензии и список к просмотру из одного ZIP-архива.
+• Делитесь своей библиотекой и списками через страницу только для чтения.
+• У переключателя перевода в Reels теперь три режима: ваш язык, язык оригинала или субтитры выключены.
+• Детали чата: темы, поиск по чату, беззвучный режим, архив медиа.
+• Списки показываются полосой постеров в профиле.
+• Исправления: залипавшая отметка «просмотрено», узкие экраны, смена почты.
+
+[tr-TR]
+• Letterboxd içe aktarımı: günlüğün, puanların, incelemelerin ve izleme listen tek ZIP'ten geliyor.
+• Kitaplığını ve listelerini salt okunur bir sayfayla paylaş.
+• Reels çeviri anahtarı artık üç kipli: kendi dilin, orijinal dil ya da altyazı kapalı.
+• Sohbet detayı: tema özelleştirme, sohbette arama, sessize alma, medya arşivi.
+• Listelerin profilinde poster şeridi olarak görünüyor.
+• Düzeltmeler: takılan "görüldü" işareti, dar ekranlar, e-posta değiştirme.
