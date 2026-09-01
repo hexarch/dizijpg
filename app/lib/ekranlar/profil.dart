@@ -377,12 +377,13 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         ),
       ],
     ),
-    // Otomatik izlenenler listesi (silinemez, kapak kolajı arka planlı)
-    if (_izlenenler.isNotEmpty)
-      _IzlenenlerKarti(
-        ogeler: _izlenenler,
-        onTap: () => context.push('/izlediklerim'),
-      ),
+    // OTOMATİK "İZLEDİKLERİM" KARTI KALDIRILDI (1 Eyl 2026, kullanıcı isteği
+    // birebir: "listelerimdeki izlediklerim listesinde '400 içerik · otomatik'
+    // diyor, onu kaldır olmasın, zaten izlediklerim yukarıda var").
+    // Gerçekten çift kayıttı: aynı besleme YUKARIDA "İzlediğim Diziler (N)" /
+    // "İzlediğim Filmler (N)" şeritlerini çiziyor ve "Tümünü gör" aynı ekranı
+    // açıyor. "Listelerim" artık YALNIZ kullanıcının KENDİ kurduğu listeleri
+    // gösteriyor — bölümün adı da bunu söylüyordu.
     // Listeler poster ŞERİDİ olarak — İzliyorum/İzlediğim'le aynı görünüm
     // (31 Ağu 2026 isteği). Dokununca modal açılır (başkasının
     // profilindekiyle aynı).
@@ -2025,130 +2026,6 @@ class StatMadalyon extends StatelessWidget {
               style: TextStyle(fontSize: 11, color: DiziRenkler.metin),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// İzlediklerim kartı: son izlenen 5 içeriğin kapağı arka plan kolajı,
-/// üstünde başlık ve sayı. Tıklayınca tüm ızgara açılır.
-class _IzlenenlerKarti extends StatefulWidget {
-  final List<dynamic> ogeler;
-  final VoidCallback onTap;
-  const _IzlenenlerKarti({required this.ogeler, required this.onTap});
-
-  @override
-  State<_IzlenenlerKarti> createState() => _IzlenenlerKartiState();
-}
-
-class _IzlenenlerKartiState extends State<_IzlenenlerKarti> {
-  List<String> _kapaklar = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _kapaklariYukle();
-  }
-
-  Future<void> _kapaklariYukle() async {
-    final ilk5 = widget.ogeler.take(5).toList();
-    final sonuc = await Future.wait(
-      ilk5.map((o) async {
-        try {
-          final d = await Api.get('/tmdb/${o['tur']}/${o['tmdb_id']}');
-          final yol = (d['backdrop_path'] ?? d['poster_path']) as String?;
-          return posterUrl(yol, boyut: 'w500');
-        } catch (_) {
-          return null;
-        }
-      }),
-    );
-    if (mounted) {
-      setState(() => _kapaklar = sonuc.whereType<String>().toList());
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: widget.onTap,
-        child: SizedBox(
-          height: 116,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Kapak kolajı
-              if (_kapaklar.isNotEmpty)
-                Row(
-                  children: [
-                    for (final k in _kapaklar)
-                      Expanded(
-                        child: CachedNetworkImage(
-                          imageUrl: k,
-                          httpHeaders: gorselBasliklari(k),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                  ],
-                )
-              else
-                Container(color: DiziRenkler.kart),
-              // Karartma
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      // Sabit siyah (tema-bağımsız): üstteki beyaz metin açık
-                      // temada da okunsun — DiziRenkler.siyah açık temada beyaza
-                      // döner ve beyaz-üstü-beyaz olurdu.
-                      Colors.black.withValues(alpha: 0.85),
-                      Colors.black.withValues(alpha: 0.55),
-                    ],
-                  ),
-                ),
-              ),
-              // Başlık
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.visibility,
-                          color: DiziRenkler.sari,
-                          size: 22,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'İzlediklerim'.c,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const Spacer(),
-                        const Icon(Icons.chevron_right, color: Colors.white),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '{} içerik · otomatik'.cf([widget.ogeler.length]),
-                      style: const TextStyle(color: Colors.white, fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

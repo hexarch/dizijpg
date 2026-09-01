@@ -34,9 +34,11 @@ import 'tepki.dart';
 /// bar koy, izleme yüzdesine göre dolsun ve altında yüzdeyi göster; tabii
 /// filmlerde olmayacak ama dizilerde olacak"*). Filmde "izlenen/toplam" diye
 /// bir oran yok — tek bölümlük bir şeyin çubuğu ya boş ya dolu olurdu, bilgi
-/// taşımazdı. Afiş kartındaki ([MiniIcerik]) çubukla AYNI kaynak
-/// (`izlenenSayi` / `number_of_episodes`) ve AYNI renk kuralı: sarı = devam
-/// ediyor, turuncu = tamamlandı.
+/// taşımazdı. Kaynak afiş kartındakiyle ([MiniIcerik]) AYNI
+/// (`izlenenSayi` / `number_of_episodes`); RENK KURALI ise burada farklı —
+/// [DiziRenkler.ilerlemeRengi] rampası: az izlenen kırmızı, yarılanan sarı,
+/// biten yeşil (kullanıcı isteği: "kırmızıdan yeşile gitsin, yeşilden
+/// kırmızıya değil").
 ///
 /// YIL ESKİ SUNUCUDA YOK: `yil` alanı 1 Eyl 2026'da eklendi. Gelmezse satır
 /// yılsız çizilir; boş parantez ya da "(...)" BASILMAZ — kullanıcının
@@ -306,7 +308,11 @@ class _IcerikSatiriState extends State<IcerikSatiri> {
     // TMDB'nin bölüm sayısı geriden gelebiliyor (yeni sezon henüz işlenmemiş):
     // izlenen > toplam olduğunda oran 1'i aşmasın, yüzde 100'ü geçmesin.
     final oran = (izlenen / toplam).clamp(0.0, 1.0).toDouble();
-    final tamamlandi = izlenen >= toplam;
+    // Görünür taban: %1'lik ilerleme bile bir çizgi bıraksın, "hiç
+    // izlememişim" gibi durmasın. Yüzde YAZISI ham orandan gelir — çizgiyi
+    // büyütmek sayıyı da büyütseydi ekranda yalan olurdu.
+    final dolu = oran.clamp(0.03, 1.0);
+    final ucRengi = DiziRenkler.ilerlemeRengi(oran);
     return [
       const SizedBox(height: 6),
       ClipRRect(
@@ -319,12 +325,26 @@ class _IcerikSatiriState extends State<IcerikSatiri> {
             child: Align(
               alignment: AlignmentDirectional.centerStart,
               child: FractionallySizedBox(
-                // Görünür taban: %1'lik ilerleme bile bir çizgi bıraksın,
-                // "hiç izlememişim" gibi durmasın.
-                widthFactor: oran.clamp(0.03, 1.0),
+                widthFactor: dolu,
                 heightFactor: 1,
-                child: ColoredBox(
-                  color: tamamlandi ? Colors.deepOrange : DiziRenkler.sari,
+                child: DecoratedBox(
+                  // RAMPANIN [0, oran] DİLİMİ — geçişin TAMAMI dolu kısma
+                  // sıkıştırılmaz. Ayrım görünür: %20'lik bir çubuk baştan
+                  // sona kırmızı olmalı, kendi içinde kırmızıdan yeşile
+                  // geçmemeli. Ara durak (sarı) yalnız oran onu GEÇTİYSE
+                  // eklenir ve durağı orana göre normalize edilir.
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: AlignmentDirectional.centerStart,
+                      end: AlignmentDirectional.centerEnd,
+                      colors: [
+                        DiziRenkler.ilerlemeKirmizi,
+                        if (oran > 0.5) DiziRenkler.ilerlemeSari,
+                        ucRengi,
+                      ],
+                      stops: [0, if (oran > 0.5) 0.5 / oran, 1],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -339,7 +359,8 @@ class _IcerikSatiriState extends State<IcerikSatiri> {
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: tamamlandi ? Colors.deepOrange : DiziRenkler.metin38,
+          // Yazı çubuğun UCUYLA aynı renk: sayı ile çizgi aynı şeyi söyler.
+          color: ucRengi,
         ),
       ),
     ];

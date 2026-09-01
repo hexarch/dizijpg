@@ -88,6 +88,35 @@ class DiziRenkler {
   /// çevrilir: koyu/açık AVATAR fotoğrafı üstünde de sınırı görünür kalsın.
   static Color get cevrimiciYesil =>
       acik ? const Color(0xFF1B9E4B) : const Color(0xFF3DDC6B);
+
+  // --- İLERLEME RAMPASI: kırmızı → sarı → yeşil ---
+  //
+  // KULLANICI İSTEĞİ (1 Eyl 2026, birebir): *"kırmızıdan yeşile gitsin %
+  // dolu bar, yeşilden kırmızıya değil; kırmızı sarı yeşil olacak."*
+  // Yani AZ izlenen kırmızı, yarılanan sarı, biten yeşil.
+  //
+  // ÜÇ TON DA TEMA-DUYARLI ve ölçüldü. Çubuk bir GRAFİK NESNE (WCAG eşiği
+  // 3:1), altındaki yüzde ise METİN (4.5:1) — ikisi de aynı rampadan
+  // boyandığı için zayıf halka açık temanın sarısıdır: marka sarısı
+  // (#F5C518) kırık beyaz üstünde 1,5:1 ile KAYBOLUYOR, o yüzden orada
+  // [sariMetin]'in koyu hardalı kullanılıyor (aynı ayrım 39. satırda).
+  static Color get ilerlemeKirmizi =>
+      acik ? const Color(0xFFC62828) : const Color(0xFFFF5252);
+  static Color get ilerlemeSari => sariMetin;
+  static Color get ilerlemeYesil => cevrimiciYesil;
+
+  /// Rampanın [oran] (0..1) noktasındaki rengi.
+  ///
+  /// İKİ PARÇALI LERP, TEK LERP DEĞİL: kırmızıdan yeşile DOĞRUDAN geçmek ara
+  /// değerlerde çamurlu kahveden geçer (RGB'de kırmızı+yeşil ortası). Sarı
+  /// ORTA DURAK olarak zorunlu — kullanıcının "kırmızı sarı yeşil" demesinin
+  /// sebebi de bu.
+  static Color ilerlemeRengi(double oran) {
+    final t = oran.clamp(0.0, 1.0).toDouble();
+    return t <= 0.5
+        ? Color.lerp(ilerlemeKirmizi, ilerlemeSari, t / 0.5)!
+        : Color.lerp(ilerlemeSari, ilerlemeYesil, (t - 0.5) / 0.5)!;
+  }
 }
 
 /// ---------------------------------------------------------------------------

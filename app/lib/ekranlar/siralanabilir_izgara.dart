@@ -531,22 +531,11 @@ class _SiralanabilirPosterIzgarasiState
                 ),
               ),
             ),
-            // GÖRÜNÜM ANAHTARI — kullanıcı isteği birebir: "listede aramanın
-            // yanında liste ikonu olsun, tıklayınca satır satır görünüme
-            // geçsin". Puan/kalp verisi YALNIZ burada çekilir: ızgara
-            // görünümünde kullanılmıyor, açılışta boşuna istek atılmasın.
-            IconButton(
-              key: const Key('satir-kipi'),
-              tooltip: _satirKipi ? 'Afiş görünümü'.c : 'Satır görünümü'.c,
-              // Tercihi YAZAN tek yer; ekran kendini `_gorunumDegisti`
-              // dinleyicisiyle tazeler (setState burada gereksiz olurdu ve
-              // iki kaynak arasında ayrışma riski açardı).
-              onPressed: () => ListeGorunumu.ayarla(!_satirKipi),
-              icon: Icon(
-                _satirKipi ? Icons.grid_view : Icons.view_list,
-                color: DiziRenkler.sariMetin,
-              ),
-            ),
+            // GÖRÜNÜM ANAHTARI BURADA DEĞİL, AppBar'da (1 Eyl 2026 isteği:
+            // "görünüm değiştirmeyi ayarlar butonunun içine aldık ya, onu
+            // kaldır, ayarların yanına ikon olarak koy") — [ListeGorunumuDugmesi].
+            // Görünüm sıralamanın alt başlığı değil: buradayken görünümü
+            // değiştirmek için önce sıralama kipini açmak gerekiyordu.
             if (_elleSirali)
               IconButton(
                 key: const Key('sira-sifirla'),

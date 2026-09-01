@@ -1,5 +1,9 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'ceviri.dart';
+import 'puan_favori_deposu.dart';
+import 'tema.dart';
 
 /// Kitaplık listelerinin GÖRÜNÜM tercihi: afiş ızgarası mı, satır listesi mi.
 ///
@@ -58,4 +62,45 @@ class ListeGorunumu {
       // Yazılamazsa tercih bu oturumda geçerli olur.
     }
   }
+}
+
+/// AppBar'a konan GÖRÜNÜM ANAHTARI — afiş ızgarası ⇄ satır listesi.
+///
+/// NEDEN AYAR ÇARKININ İÇİNDE DEĞİL (kullanıcı isteği, 1 Eyl 2026 — birebir):
+/// *"görünüm değiştirmeyi ayarlar butonunun içine aldık ya, onu kaldır,
+/// ayarların yanına ikon olarak koy; afişteyken liste ikonu, listedeyken afiş
+/// ikonu olsun."*
+///
+/// İlk sürümde anahtar süzgeç şeridinin içindeydi (aramanın yanında), yani
+/// görünümü değiştirmek için önce SIRALAMA kipini açmak gerekiyordu. Görünüm
+/// sıralamanın alt başlığı değil; iki ayrı iş iki ayrı düğme.
+///
+/// İKON GİDİLECEK YERİ ANLATIR, BULUNULAN YERİ DEĞİL (kullanıcının kuralı):
+/// ızgaradayken liste ikonu ("listeye geç"), listedeyken ızgara ikonu.
+/// Aynı gelenek [SiraSecici]'nin tersidir ve bilinçli: orada tek düğme bir
+/// MENÜ açar (seçili modu göstermesi gerekir), burada düğme doğrudan
+/// KARŞI moda geçirir.
+class ListeGorunumuDugmesi extends StatelessWidget {
+  const ListeGorunumuDugmesi({super.key});
+
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<bool>(
+    valueListenable: ListeGorunumu.satir,
+    builder: (context, satirKipi, _) => IconButton(
+      key: const Key('satir-kipi'),
+      tooltip: satirKipi ? 'Afiş görünümü'.c : 'Satır görünümü'.c,
+      onPressed: () {
+        ListeGorunumu.ayarla(!satirKipi);
+        // Satıra geçerken puan/kalp/tarih/emoji verisi gerekir. Liste widget'ı
+        // da mount olurken çekiyor; burada da çağırmak, listenin HİÇ
+        // çizilmediği durumlarda (hata/boş ekran) düğmenin sessiz kalmasını
+        // önler. `yukle` kendini yeniden girişe karşı koruyor.
+        if (!satirKipi) PuanFavoriDeposu.yukle();
+      },
+      icon: Icon(
+        satirKipi ? Icons.grid_view : Icons.view_list,
+        color: DiziRenkler.sariMetin,
+      ),
+    ),
+  );
 }

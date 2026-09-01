@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../liste_gorunumu.dart';
 import '../tema.dart';
 import 'izlem_carki.dart';
 import 'ortak.dart';
@@ -165,11 +166,14 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
               ),
               icon: Icon(Icons.ios_share, color: DiziRenkler.sariMetin),
             ),
+          // GÖRÜNÜM ANAHTARI ayar çarkının SOLUNDA, ayrı bir ikon (1 Eyl 2026
+          // isteği). Tek öğelik listede de anlamlı: görünüm bir tercih,
+          // sıralama gibi "yeterince öğe olunca" açılan bir iş değil.
+          if (_ogeler?.isNotEmpty ?? false) const ListeGorunumuDugmesi(),
           // Tek öğelik listede sıralamanın anlamı yok.
           //
-          // İKON AYAR ÇARKI (1 Eyl 2026 isteği): açtığı şerit artık yalnız
-          // sıralama değil GÖRÜNÜM de sunuyor (satır/afiş anahtarı süzgecin
-          // yanında) — çift yönlü ok bunu eksik anlatıyordu. Davranış aynı.
+          // İKON AYAR ÇARKI (1 Eyl 2026 isteği): çift yönlü ok, şeridin
+          // yaptığı işi (süzgeç + sıfırlama) eksik anlatıyordu.
           if ((_ogeler?.length ?? 0) > 1)
             IconButton(
               key: const Key('kitaplik-sirala'),

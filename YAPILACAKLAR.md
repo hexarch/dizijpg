@@ -1,6 +1,46 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-01 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-01 — 🚀 Görünüm anahtarı AppBar'a · kırmızı→yeşil çubuk · profil temizliği
+
+- 🚀 **CANLIDA (web).** `main.77000f61e6a1.dart.js`
+  (+ `main.dart.js_1.529121641621.part.js`), SW sökücü yazıldı, eski
+  hash'liler silindi, brotli 108 dosya (%74). **Backend DEĞİŞMEDİ.**
+- 📦 **APK: `cikti/dizijpg-1.111.0-177.apk`** (78 MB) — versionCode 177,
+  gerçek yükleme anahtarıyla imzalı (SHA1 2E:38:AB:…:AB:58).
+
+Üç kullanıcı isteği (hepsi 1 Eyl), tek turda:
+
+- ✅ **Görünüm anahtarı ayar çarkının İÇİNDEN çıkıp YANINA taşındı**
+  ("görünüm değiştirmeyi ayarlar butonunun içine aldık ya, onu kaldır,
+  ayarların yanına ikon olarak koy; afişteyken liste ikonu, listedeyken afiş
+  ikonu olsun"). Görünüm sıralamanın alt başlığı değildi: eskiden görünümü
+  değiştirmek için önce sıralama kipini açmak gerekiyordu. Yeni
+  `ListeGorunumuDugmesi` (liste_gorunumu.dart) her iki liste ekranının
+  AppBar'ında, ayar çarkının solunda. İkon GİDİLECEK yeri anlatıyor.
+- ✅ **İlerleme çubuğu artık kırmızı → sarı → yeşil** ("kırmızıdan yeşile
+  gitsin, yeşilden kırmızıya değil; kırmızı sarı yeşil olacak"). Rampa
+  `DiziRenkler.ilerlemeRengi` — İKİ PARÇALI lerp, çünkü kırmızıdan yeşile
+  doğrudan geçmek ara değerlerde çamurlu kahveden geçerdi; sarı zorunlu orta
+  durak. Dolgu düz renk değil GRADYAN ve rampanın **[0, oran] dilimi**:
+  %20'lik çubuk baştan sona kırmızı olmalı, kendi içinde yeşile geçmemeli.
+  Üç ton da tema-duyarlı; açık temada marka sarısı 1,5:1 ile kaybolduğu için
+  orada `sariMetin` hardalı kullanılıyor. Yüzde yazısı çubuğun ucuyla aynı
+  renk. (Afiş kartındaki poster çubuğu DEĞİŞMEDİ — istek liste görünümüydü.)
+- ✅ **Profildeki otomatik "İzlediklerim" kartı kaldırıldı** ("listelerimdeki
+  izlediklerim listesinde '400 içerik · otomatik' diyor, onu kaldır olmasın,
+  zaten izlediklerim yukarıda var"). Gerçekten çift kayıttı: aynı besleme
+  yukarıda "İzlediğim Diziler/Filmler" şeritlerini çiziyor ve "Tümünü gör"
+  aynı ekranı açıyor. `_IzlenenlerKarti` sınıfı da silindi (ölü kod).
+  **NOT:** türsüz `/izlediklerim` ekranının (tümü bir arada) profilden tek
+  giriş yolu buydu; artık yalnız tür süzülmüş hâline (`?tur=tv|movie`)
+  girilebiliyor.
+- Kanıt: `test/kitaplik_satir_gorunumu_test.dart` 13 → **15 test** (anahtar
+  şeridin içinde DEĞİL, AppBar'da · ikon gidilecek yeri anlatıyor · gradyan
+  rampası ve yüzde yazısının rengi) + yeni
+  `test/profil_izlediklerim_karti_test.dart` (3 test); paket **2423 geçti**.
+  Yeni metin anahtarı AÇILMADI.
+
 ## 2026-09-01 — 🚀 Görünüm tercihi KALICI + dizide ilerleme çubuğu
 
 - 🚀 **CANLIDA (web).** `main.5a77d5260d20.dart.js`

@@ -12,7 +12,9 @@
 //   1) Başlık YALNIZ liste adı: "(215)" yok, `titleSpacing: 0` ile geri okuna
 //      yaslı.
 //   2) Sağdaki eylem AYAR ÇARKI (çift yönlü ok DEĞİL) ve aynı şeridi açıyor.
-//   3) Aramanın yanındaki liste ikonu ızgarayı SATIR listesine çeviriyor.
+//   3) GÖRÜNÜM ANAHTARI ayar çarkının YANINDA, ayrı bir AppBar ikonu
+//      (süzgeç şeridinin İÇİNDE DEĞİL) ve ızgarayı SATIR listesine çeviriyor;
+//      ikon gidilecek yeri anlatıyor (ızgarada liste, listede ızgara).
 //   4) Satırda ad + yıl + KULLANICININ puanı + favoriyse KIRMIZI kalp +
 //      SON İZLEME TARİHİ + o başlığa EN ÇOK verdiği emoji var.
 //   5) Hiçbir süsü olmayan satırda ikinci satır HİÇ çizilmiyor.
@@ -159,6 +161,7 @@ Future<void> _seridiAc(WidgetTester tester, String anahtar) async {
   await tester.pumpAndSettle();
 }
 
+/// Görünüm anahtarı ARTIK APPBAR'DA: şerit açmaya gerek yok.
 Future<void> _satirKipineGec(WidgetTester tester) async {
   await tester.tap(find.byKey(const Key('satir-kipi')));
   await _bekle(tester);
@@ -238,10 +241,56 @@ void main() {
     expect(find.byIcon(Icons.swap_vert), findsNothing);
     expect(find.byIcon(Icons.settings), findsOneWidget);
 
-    // Aynı şeridi açıyor: süzgeç + görünüm anahtarı belirmeli.
+    // Aynı şeridi açıyor: süzgeç belirmeli.
     await _seridiAc(tester, 'izlenen-sirala');
     expect(find.byKey(const Key('sira-suzgec')), findsOneWidget);
+  });
+
+  testWidgets('GÖRÜNÜM ANAHTARI şeridin İÇİNDE DEĞİL, AppBar\'da', (
+    tester,
+  ) async {
+    await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
+
+    // Şerit KAPALIYKEN de görünür (ayar çarkına basmadan ulaşılabilir).
     expect(find.byKey(const Key('satir-kipi')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AppBar),
+        matching: find.byKey(const Key('satir-kipi')),
+      ),
+      findsOneWidget,
+      reason: 'görünüm anahtarı AppBar\'da değil',
+    );
+
+    // Şerit açılınca İKİNCİ bir kopya çıkmamalı (şeritten kaldırıldı).
+    await _seridiAc(tester, 'kitaplik-sirala');
+    expect(find.byKey(const Key('satir-kipi')), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('sira-suzgec')),
+        matching: find.byKey(const Key('satir-kipi')),
+      ),
+      findsNothing,
+    );
+  });
+
+  testWidgets('İKON gidilecek yeri anlatır: ızgarada liste, listede ızgara', (
+    tester,
+  ) async {
+    await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
+
+    IconData ikon() => tester
+        .widget<Icon>(
+          find.descendant(
+            of: find.byKey(const Key('satir-kipi')),
+            matching: find.byType(Icon),
+          ),
+        )
+        .icon!;
+
+    expect(ikon(), Icons.view_list, reason: 'ızgaradayken liste ikonu olmalı');
+    await _satirKipineGec(tester);
+    expect(ikon(), Icons.grid_view, reason: 'listedeyken afiş ikonu olmalı');
   });
 
   testWidgets('kitaplık listesinde de ayar çarkı ve görünüm anahtarı var', (
@@ -251,14 +300,13 @@ void main() {
     expect(find.byIcon(Icons.swap_vert), findsNothing);
 
     await _seridiAc(tester, 'kitaplik-sirala');
-    expect(find.byKey(const Key('satir-kipi')), findsOneWidget);
+    expect(find.byKey(const Key('sira-suzgec')), findsOneWidget);
   });
 
   testWidgets('LİSTE İKONU ızgarayı satır satır görünüme çevirir', (
     tester,
   ) async {
     await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
-    await _seridiAc(tester, 'kitaplik-sirala');
 
     expect(find.byType(MiniIcerik), findsNWidgets(4));
     expect(find.byType(IcerikSatiri), findsNothing);
@@ -279,7 +327,6 @@ void main() {
     tester,
   ) async {
     await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
-    await _seridiAc(tester, 'kitaplik-sirala');
     await _satirKipineGec(tester);
 
     // Ad ve yıl AYNI satırda (yıl adın yanında).
@@ -303,7 +350,6 @@ void main() {
     tester,
   ) async {
     await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
-    await _seridiAc(tester, 'kitaplik-sirala');
     await _satirKipineGec(tester);
 
     Finder icinde(String anahtar, Finder ne) =>
@@ -334,7 +380,6 @@ void main() {
 
   testWidgets('hiçbir süsü olmayan satırda İKİNCİ SATIR YOK', (tester) async {
     await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
-    await _seridiAc(tester, 'kitaplik-sirala');
     await _satirKipineGec(tester);
 
     // 104 çıplak: yıldız ikonu yalnız puanlı iki satırda olmalı.
@@ -363,8 +408,10 @@ void main() {
     tester,
   ) async {
     await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
-    await _seridiAc(tester, 'kitaplik-sirala');
     await _satirKipineGec(tester);
+    // "En üste taşı" düğmeleri SIRALAMA kipine bağlı (görünüm anahtarına
+    // değil): görünüm AppBar'da, sıralama ayar çarkında.
+    await _seridiAc(tester, 'kitaplik-sirala');
 
     // En üstteki öğede düğme YOK (işlevsiz olurdu).
     expect(find.byKey(const Key('sira-uste-satir-tv-101')), findsNothing);
@@ -382,8 +429,8 @@ void main() {
 
   testWidgets('"Bitti"ye basınca SATIR görünümü KALIR', (tester) async {
     await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
-    await _seridiAc(tester, 'kitaplik-sirala');
     await _satirKipineGec(tester);
+    await _seridiAc(tester, 'kitaplik-sirala'); // sıralama kipi AÇ
 
     await _seridiAc(tester, 'kitaplik-sirala'); // Bitti
     expect(find.byKey(const Key('sira-suzgec')), findsNothing);
@@ -398,7 +445,6 @@ void main() {
     'TERCİH DİSKE YAZILIR: yeniden başlatınca satır görünümü açılır',
     (tester) async {
       await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
-      await _seridiAc(tester, 'kitaplik-sirala');
       await _satirKipineGec(tester);
 
       // Kullanıcının seçimi SharedPreferences'a yazıldı mı?
@@ -472,13 +518,36 @@ void main() {
     // 101 → 4/10, 102 → 10/10. Yüzde CLDR kalıbından ('%{}' anahtarı).
     expect(icinde('tv-101', find.text('%40')), findsOneWidget);
     expect(icinde('tv-102', find.text('%100')), findsOneWidget);
-    // Çubuk: tamamlanan turuncu, devam eden marka sarısı.
-    Color dolgu(String anahtar) => tester
-        .widgetList<ColoredBox>(icinde(anahtar, find.byType(ColoredBox)))
-        .last
-        .color;
-    expect(dolgu('tv-101'), DiziRenkler.sari);
-    expect(dolgu('tv-102'), Colors.deepOrange);
+    // ÇUBUK RAMPASI kırmızı → sarı → yeşil (kullanıcı isteği: "kırmızıdan
+    // yeşile gitsin, yeşilden kırmızıya değil"). Dolgu artık düz renk değil
+    // gradyan: rampanın [0, oran] DİLİMİ.
+    LinearGradient dolgu(String anahtar) =>
+        (tester
+                        .widget<DecoratedBox>(
+                          icinde(anahtar, find.byType(DecoratedBox)),
+                        )
+                        .decoration
+                    as BoxDecoration)
+                .gradient!
+            as LinearGradient;
+
+    // %40 → yarıyı geçmedi: ara durak YOK, uç rengi kırmızı-sarı arası.
+    final g40 = dolgu('tv-101');
+    expect(g40.colors.first, DiziRenkler.ilerlemeKirmizi);
+    expect(g40.colors, hasLength(2));
+    expect(g40.colors.last, DiziRenkler.ilerlemeRengi(0.4));
+    // %100 → sarı ara durak VAR ve uç YEŞİL.
+    final g100 = dolgu('tv-102');
+    expect(g100.colors.first, DiziRenkler.ilerlemeKirmizi);
+    expect(g100.colors[1], DiziRenkler.ilerlemeSari);
+    expect(g100.colors.last, DiziRenkler.ilerlemeYesil);
+    expect(g100.stops, [0.0, 0.5, 1.0]);
+
+    // Yüzde YAZISI çubuğun ucuyla aynı renk.
+    Color yaziRengi(String metin) =>
+        tester.widget<Text>(find.text(metin)).style!.color!;
+    expect(yaziRengi('%100'), DiziRenkler.ilerlemeYesil);
+    expect(yaziRengi('%40'), DiziRenkler.ilerlemeRengi(0.4));
 
     // 103/104: izleme kaydı yok → çubuk da yüzde de yok.
     expect(icinde('tv-104', find.textContaining('%')), findsNothing);
@@ -496,7 +565,6 @@ void main() {
     tester,
   ) async {
     await _kur(tester, const IzlenenlerEkrani(tur: 'tv'));
-    await _seridiAc(tester, 'izlenen-sirala');
     await _satirKipineGec(tester);
 
     expect(find.byType(IcerikSatiri), findsNWidgets(3));

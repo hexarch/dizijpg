@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../liste_gorunumu.dart';
 import '../tema.dart';
 import 'ortak.dart';
 import 'siralanabilir_izgara.dart';
@@ -122,13 +123,16 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
         titleSpacing: 0,
         title: Text(baslik.c, maxLines: 1, overflow: TextOverflow.ellipsis),
         actions: [
+          // GÖRÜNÜM ANAHTARI ayar çarkının SOLUNDA, ayrı bir ikon (1 Eyl 2026
+          // isteği). Yalnız satır görünümünü çizebilen ekranda, yani tür
+          // süzülmüş listede: türsüz "İzlediklerim" düz ızgaradır, düğme orada
+          // hiçbir şey yapmazdı.
+          if (widget.tur != null && (ogeler?.isNotEmpty ?? false))
+            const ListeGorunumuDugmesi(),
           // Yalnız tür süzülmüş (sıralanabilir) listede ve en az iki öğede.
           //
           // İKON AYAR ÇARKI (1 Eyl 2026 isteği: "sağ tarafta yukarı aşağı ok
-          // yerine setting ikonu koy, tıklayınca aynı ekran açılsın"). Davranış
-          // AYNI: şerit artık yalnız sıralama değil GÖRÜNÜM de barındırıyor
-          // (satır/afiş anahtarı süzgecin yanında), yani çift yönlü ok şeridin
-          // yaptığı işi eksik anlatıyordu.
+          // yerine setting ikonu koy, tıklayınca aynı ekran açılsın").
           if (widget.tur != null && (ogeler?.length ?? 0) > 1)
             IconButton(
               key: const Key('izlenen-sirala'),
