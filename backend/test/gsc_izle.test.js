@@ -862,9 +862,30 @@ test('kısırlaştırma çok uzun gövdeyi kırpar (posta/günlük şişmesin)',
   assert.ok(hatayiKisirlastir('x'.repeat(50000)).length <= 2000);
 });
 
+/**
+ * Kaynaktaki DİZGE SABİTLERİNİ siler, kalanı döner.
+ *
+ * NEDEN: aşağıdaki iddia "jeton bir DEĞER olarak basılıyor mu" diye sorar.
+ * Ham kaynağa bakınca dizge sabitinin İÇİNDE geçen `jeton` kelimesi de
+ * eşleşiyordu — yani `console.error('jeton tazelenemedi')` gibi hiçbir sır
+ * taşımayan bir mesaj testi düşürüyordu (2 Eyl 2026 jeton tazeleme
+ * düzeltmesinde oldu). Dizgeleri elemek iddiayı ZAYIFLATMAZ: `console.error(jeton)`
+ * ve `console.error('x' + jeton)` eledikten sonra da eşleşir.
+ */
+function dizgesizKaynak(k) {
+  return k
+    .replace(/`(?:[^`\\]|\\.)*`/g, '``')
+    .replace(/'(?:[^'\\\n]|\\.)*'/g, "''")
+    .replace(/"(?:[^"\\\n]|\\.)*"/g, '""');
+}
+
 test('KAYNAK İDDİASI: anahtar/jeton hiçbir yere BASILMIYOR', () => {
-  assert.ok(!/console\.(log|error)\([^)]*hesap\.anahtar/.test(KAYNAK));
-  assert.ok(!/console\.(log|error)\([^)]*jeton\b(?!Ucu)/.test(KAYNAK.replace(/«jeton»/g, '')));
+  const kod = dizgesizKaynak(KAYNAK);
+  assert.ok(!/console\.(log|error)\([^)]*hesap\.anahtar/.test(kod));
+  assert.ok(!/console\.(log|error)\([^)]*jeton\b(?!Ucu)/.test(kod));
+  // Şablon dizgesine gömülmüş `${jeton}` dizge elemesinden SONRA görünmez
+  // olurdu; ham kaynakta ayrıca aranır.
+  assert.ok(!/console\.(log|error)\([^)]*\$\{[^}]*jeton\b(?!Ucu)/.test(KAYNAK));
   // Durum dosyası da diske yazılıyor — oraya da gizli değer girmemeli.
   const bas = KAYNAK.indexOf('const bugun = {');
   const govde = KAYNAK.slice(bas, KAYNAK.indexOf('bugun.degisim =', bas));

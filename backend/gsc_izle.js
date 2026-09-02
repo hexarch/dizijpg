@@ -232,6 +232,11 @@ export const AYAR = {
   /// yanlışlıkla büyütülse bile kota bu satırla korunur.
   AZAMI_DENETIM: 900,
 
+  /// JETON TAZELEME ARALIĞI. Google erişim jetonu 3.600 sn yaşar; koşu
+  /// 2 Eyl 2026'da 3.710,7 sn sürdü ve son 244 denetim 401 yedi. 3.000 sn'de
+  /// tazelemek 600 sn'lik pay bırakır (bir denetim ~6,6 sn + saat kayması).
+  JETON_TAZELE_MS: 3000 * 1000,
+
   /// HTTP istek zaman aşımı (ms) ve yeniden deneme sayısı.
   ISTEK_ZAMAN_ASIMI_MS: 20000,
   DENEME: 3,
@@ -462,7 +467,16 @@ export function servisHesabiOku(yol) {
 
 /**
  * İki bacaklı (2LO) JWT akışı: imzalı iddia → erişim jetonu.
- * Jeton 1 saat yaşar; koşu birkaç dakika sürdüğü için yenileme gerekmiyor.
+ *
+ * ⚠ JETON 1 SAAT YAŞAR VE KOŞU BUNDAN UZUN SÜRER. Bu satırın eski yorumu
+ * "koşu birkaç dakika sürdüğü için yenileme gerekmiyor" diyordu; o varsayım
+ * 28 Ağu 2026'da panel 775'e çıkınca ÖLDÜ. Ölçüm (2 Eyl 2026 koşusu):
+ * süre 3.710,7 sn > 3.600 sn. Denetimlerin ilk 531'i geçti, kalan 244'ü
+ * (kisi 169 + sirket 50 + genel 25) 401 aldı — kisi/sirket/genel aileleri
+ * ÜÇ GÜNDÜR hiç ölçülmüyordu ve rapor bunu "yetki, kota ya da ağ sorunu"
+ * diye belirsiz bildiriyordu. Kota DEĞİLDİ: `kotaBitti` false, 775 istek
+ * 2.000'lik kotanın altında.
+ * Çözüm `jetonSaglayici`: jeton `JETON_TAZELE_MS` sonra yeniden basılır.
  */
 export function iddiaUret(hesap, simdiSn = Math.floor(Date.now() / 1000), kapsam = JETON_KAPSAMI) {
   return jwt.sign(
@@ -501,6 +515,38 @@ export async function erisimJetonu(hesap, getirici = fetch) {
   return j.access_token;
 }
 
+/**
+ * UZUN KOŞU İÇİN JETON SAĞLAYICI.
+ *
+ * Tek bir jetonu koşu boyunca taşımak yerine, `JETON_TAZELE_MS`ten eski
+ * olduğunda yenisini basar. Google jetonu 3.600 sn yaşatır; tazeleme eşiği
+ * bilerek 3.000 sn — aradaki 600 sn, tek bir denetimin (~6,6 sn) ve saat
+ * kaymasının payı.
+ *
+ * NEDEN AĞ MALİYETİ YOK SAYILABİLİR: 62 dakikalık koşuda jeton ucu en fazla
+ * 2 kez çağrılır; aynı koşuda 775 denetim isteği var.
+ *
+ * NEDEN ÇÖKMEZ: yenileme başarısız olursa ELDEKİ jeton döner. Süresi
+ * dolmuşsa çağrı 401 alır ve `paneliDenetle` bunu zaten sayar — yani en
+ * kötü durumda bugünkü davranışa DÖNERİZ, daha kötüsüne değil.
+ */
+export function jetonSaglayici(hesap, getirici = fetch, ayar = AYAR) {
+  let jeton = null;
+  let basim = 0;
+  return async function jetonAl() {
+    if (jeton && Date.now() - basim < ayar.JETON_TAZELE_MS) return jeton;
+    try {
+      jeton = await erisimJetonu(hesap, getirici);
+      basim = Date.now();
+    } catch (e) {
+      if (!jeton) throw e;
+      console.error('gsc_izle: jeton tazelenemedi, eskisiyle devam — '
+        + hatayiKisirlastir(e?.message || e));
+    }
+    return jeton;
+  };
+}
+
 // ===========================================================================
 // 2) API ÇAĞRISI
 // ===========================================================================
@@ -512,12 +558,21 @@ export async function apiCagir(url, secenek, jeton, ayar = AYAR, getirici = fetc
   let sonHata = 'bilinmiyor';
   for (let deneme = 0; deneme < ayar.DENEME; deneme++) {
     let cevap;
+    // JETON HER DENEMEDE YENİDEN ÇÖZÜLÜR. `jeton` bir fonksiyonsa
+    // (`jetonSaglayici`) süresi dolmuşsa yenisini basar; dizgeyse olduğu
+    // gibi kullanılır (testler ve eski çağrılar bozulmasın diye).
+    let taze;
+    try {
+      taze = typeof jeton === 'function' ? await jeton() : jeton;
+    } catch (e) {
+      return { tamam: false, kod: 0, hata: `jeton alınamadı: ${hatayiKisirlastir(e?.message || e)}` };
+    }
     try {
       cevap = await getirici(url, {
         ...secenek,
         headers: {
           ...(secenek.headers || {}),
-          Authorization: `Bearer ${jeton}`,
+          Authorization: `Bearer ${taze}`,
           'Content-Type': 'application/json',
         },
         signal: AbortSignal.timeout(ayar.ISTEK_ZAMAN_ASIMI_MS),
@@ -1105,8 +1160,10 @@ export function sinyalleriBul(bugun, dun, ayar = AYAR) {
     const h = bugun.denetimHatasi[aile];
     const n = bugun.panelN[aile] + h;
     if (n && h / n > ayar.ESIK.DENETIM_HATA_ORANI) {
+      const ornek = (bugun.denetimHataOrnek || [])[0];
       ekle(3, `İZLEME ARIZASI — ${aile} panelinde ${h}/${n} denetim başarısız. `
-        + 'Yetki, kota ya da ağ sorunu; bu koşunun sayıları güvenilmez.', `arıza/${aile}`);
+        + 'Bu koşunun sayıları güvenilmez.'
+        + (ornek ? ` İlk hata → ${ornek}` : ' (hata örneği yok)'), `arıza/${aile}`);
     }
   }
   if (bugun.kotaBitti) {
@@ -1475,6 +1532,10 @@ export function ozetSatiri(bugun, sinyaller, postaGitti) {
     `gösterim=${bugun.arama?.gosterim ?? '?'}`,
     `bölüm_sayfa=${bugun.arama?.sayfa?.bolum ?? '?'}`,
     `denetim=${bugun.denetimIstegi}`,
+    // BAŞARISIZ DENETİM SAYISI KALP ATIŞINA GİRER: 31 Ağu–2 Eyl 2026'da
+    // günde 244 denetim düşüyordu ve günlükteki tek satır bunu HİÇ
+    // söylemiyordu (yalnız `indeksli_panel`de sirket:0/0 olarak sızıyordu).
+    `denetim_hata=${Object.values(bugun.denetimHatasi || {}).reduce((t, n) => t + n, 0)}`,
     `indeksli_panel=${kova}`,
     `sinyal=${sinyaller.length}`,
     `posta=${postaGitti ? 'gitti' : 'yok'}`,
@@ -1514,9 +1575,12 @@ async function main(argv) {
     process.exit(dun ? 1 : 0);
   }
 
-  let jeton;
+  // Jeton DİZGE değil SAĞLAYICI: koşu jetonun ömründen uzun sürüyor
+  // (`jetonSaglayici` başlığındaki ölçüm). İlk basım burada yapılır ki
+  // kimlik hatası koşunun BAŞINDA yakalansın, 60 dakika sonra değil.
+  const jeton = jetonSaglayici(hesap);
   try {
-    jeton = await erisimJetonu(hesap);
+    await jeton();
   } catch (e) {
     console.error(`gsc_izle: kimlik doğrulanamadı — ${hatayiKisirlastir(e.message)}`);
     process.exit(dun ? 1 : 0);
@@ -1597,6 +1661,11 @@ async function main(argv) {
     indeksliHam: d.indeksliHam,
     hamEtiket: d.hamEtiket,
     denetimHatasi: d.hata,
+    // HATA ÖRNEĞİ RAPORA GİRER. Eskiden `paneliDenetle` bunu topluyor ama
+    // hiçbir yere yazmıyordu; 2 Eyl'de 244 denetim düştüğünde rapor sebebi
+    // "yetki, kota ya da ağ" diye ÜÇ İHTİMAL olarak bildirdi ve teşhis
+    // sunucuya girmeyi gerektirdi. `hatayiKisirlastir` zaten uygulanmış.
+    denetimHataOrnek: d.hataOrnek,
     denetimIstegi: d.istek,
     kotaBitti: d.kotaBitti,
     haritaHatasi,
