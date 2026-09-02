@@ -1444,4 +1444,18 @@ const Map<String, String> cevirilerAz = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Söndürüldükdə spoyler kimi işarələnmiş paylaşımlar pərdəsiz, birbaşa göstərilir.',
   'Etiketler': 'Etiketlər',
+  'Galeri': 'Qalereya',
+  'Kamera': 'Kamera',
+  'Dosya': 'Fayl',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Serial / Film',
+  'Sesli mesaj (basılı tut)': 'Səsli mesaj (basılı saxla)',
+  'Kaydetmek için basılı tut': 'Yazmaq üçün basılı saxla',
+  'Kaydırarak iptal': 'Ləğv etmək üçün sürüşdür',
+  'Kamera açılamadı': 'Kamera açıla bilmədi',
+  'Dosya seçilemedi': 'Fayl seçilə bilmədi',
+  'Dosya gönderilemedi': 'Fayl göndərilə bilmədi',
+  'En yeni mesaja in': 'Ən yeni mesaja keç',
+  'Gönderilemedi · tekrar dene': 'Göndərilmədi · yenidən cəhd et',
+  'Dosya açılamadı': 'Fayl açıla bilmədi',
 };

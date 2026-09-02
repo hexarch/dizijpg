@@ -1449,4 +1449,18 @@ const Map<String, String> cevirilerCs = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Když je vypnuto, příspěvky označené jako spoiler se zobrazují rovnou, bez clony.',
   'Etiketler': 'Označení',
+  'Galeri': 'Galerie',
+  'Kamera': 'Fotoaparát',
+  'Dosya': 'Soubor',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Seriál / Film',
+  'Sesli mesaj (basılı tut)': 'Hlasová zpráva (podržte)',
+  'Kaydetmek için basılı tut': 'Podržte pro nahrávání',
+  'Kaydırarak iptal': 'Přejeďte pro zrušení',
+  'Kamera açılamadı': 'Fotoaparát se nepodařilo otevřít',
+  'Dosya seçilemedi': 'Soubor se nepodařilo vybrat',
+  'Dosya gönderilemedi': 'Soubor se nepodařilo odeslat',
+  'En yeni mesaja in': 'Na nejnovější zprávu',
+  'Gönderilemedi · tekrar dene': 'Neodesláno · zkusit znovu',
+  'Dosya açılamadı': 'Soubor se nepodařilo otevřít',
 };

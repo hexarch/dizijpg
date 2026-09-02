@@ -1478,4 +1478,18 @@ const Map<String, String> cevirilerPt = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Quando desativado, publicações marcadas como spoiler são mostradas diretamente, sem cortina.',
   'Etiketler': 'Marcações',
+  'Galeri': 'Galeria',
+  'Kamera': 'Câmera',
+  'Dosya': 'Arquivo',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Série / Filme',
+  'Sesli mesaj (basılı tut)': 'Mensagem de voz (segure)',
+  'Kaydetmek için basılı tut': 'Segure para gravar',
+  'Kaydırarak iptal': 'Deslize para cancelar',
+  'Kamera açılamadı': 'Não foi possível abrir a câmera',
+  'Dosya seçilemedi': 'Não foi possível selecionar o arquivo',
+  'Dosya gönderilemedi': 'Não foi possível enviar o arquivo',
+  'En yeni mesaja in': 'Ir para a última mensagem',
+  'Gönderilemedi · tekrar dene': 'Não enviado · tentar de novo',
+  'Dosya açılamadı': 'Não foi possível abrir o arquivo',
 };

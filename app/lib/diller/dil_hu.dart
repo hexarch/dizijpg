@@ -1464,4 +1464,18 @@ const Map<String, String> cevirilerHu = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Kikapcsolva a spoilerként megjelölt bejegyzések azonnal, takarás nélkül jelennek meg.',
   'Etiketler': 'Megjelölések',
+  'Galeri': 'Galéria',
+  'Kamera': 'Kamera',
+  'Dosya': 'Fájl',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Sorozat / Film',
+  'Sesli mesaj (basılı tut)': 'Hangüzenet (tartsd lenyomva)',
+  'Kaydetmek için basılı tut': 'Tartsd lenyomva a felvételhez',
+  'Kaydırarak iptal': 'Húzd a megszakításhoz',
+  'Kamera açılamadı': 'A kamera nem nyitható meg',
+  'Dosya seçilemedi': 'A fájl nem választható ki',
+  'Dosya gönderilemedi': 'A fájl nem küldhető el',
+  'En yeni mesaja in': 'Ugrás a legújabb üzenetre',
+  'Gönderilemedi · tekrar dene': 'Nem sikerült · újra',
+  'Dosya açılamadı': 'A fájl nem nyitható meg',
 };

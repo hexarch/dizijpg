@@ -1480,4 +1480,18 @@ const Map<String, String> cevirilerFil = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Kapag naka-off, ang mga post na minarkahang spoiler ay direktang ipinapakita, walang takip.',
   'Etiketler': 'Mga tag',
+  'Galeri': 'Gallery',
+  'Kamera': 'Camera',
+  'Dosya': 'File',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Serye / Pelikula',
+  'Sesli mesaj (basılı tut)': 'Voice message (pindutin nang matagal)',
+  'Kaydetmek için basılı tut': 'Pindutin nang matagal para mag-record',
+  'Kaydırarak iptal': 'I-slide para kanselahin',
+  'Kamera açılamadı': 'Hindi mabuksan ang camera',
+  'Dosya seçilemedi': 'Hindi mapili ang file',
+  'Dosya gönderilemedi': 'Hindi maipadala ang file',
+  'En yeni mesaja in': 'Sa pinakabagong mensahe',
+  'Gönderilemedi · tekrar dene': 'Hindi naipadala · subukan muli',
+  'Dosya açılamadı': 'Hindi mabuksan ang file',
 };

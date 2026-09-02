@@ -1478,4 +1478,18 @@ const Map<String, String> cevirilerRu = {
       'Поле ввода и кнопки запросов больше не прячутся за системными кнопками телефона; нижнее меню скрывается внутри чата.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
       'Обнови приложение, чтобы увидеть заметки этой версии',
+  'Galeri': 'Галерея',
+  'Kamera': 'Камера',
+  'Dosya': 'Файл',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Сериал / Фильм',
+  'Sesli mesaj (basılı tut)': 'Голосовое сообщение (удерживайте)',
+  'Kaydetmek için basılı tut': 'Удерживайте для записи',
+  'Kaydırarak iptal': 'Проведите для отмены',
+  'Kamera açılamadı': 'Не удалось открыть камеру',
+  'Dosya seçilemedi': 'Не удалось выбрать файл',
+  'Dosya gönderilemedi': 'Не удалось отправить файл',
+  'En yeni mesaja in': 'К последнему сообщению',
+  'Gönderilemedi · tekrar dene': 'Не отправлено · повторить',
+  'Dosya açılamadı': 'Не удалось открыть файл',
 };

@@ -1379,4 +1379,18 @@ const Map<String, String> cevirilerJa = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'オフにすると、ネタバレとしてマークされた投稿はカバーなしでそのまま表示されます。',
   'Etiketler': 'タグ',
+  'Galeri': 'ギャラリー',
+  'Kamera': 'カメラ',
+  'Dosya': 'ファイル',
+  'GIF': 'GIF',
+  'Dizi / Film': 'ドラマ / 映画',
+  'Sesli mesaj (basılı tut)': '音声メッセージ（長押し）',
+  'Kaydetmek için basılı tut': '長押しで録音',
+  'Kaydırarak iptal': 'スワイプでキャンセル',
+  'Kamera açılamadı': 'カメラを開けませんでした',
+  'Dosya seçilemedi': 'ファイルを選択できませんでした',
+  'Dosya gönderilemedi': 'ファイルを送信できませんでした',
+  'En yeni mesaja in': '最新のメッセージへ',
+  'Gönderilemedi · tekrar dene': '未送信 · 再試行',
+  'Dosya açılamadı': 'ファイルを開けませんでした',
 };

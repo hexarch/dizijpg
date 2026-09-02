@@ -1471,4 +1471,18 @@ const Map<String, String> cevirilerEn = {
       'The message box and request buttons no longer hide behind your phone’s navigation buttons; the bottom menu now hides itself inside a chat.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
       'Update the app to see the notes for this version',
+  'Galeri': 'Gallery',
+  'Kamera': 'Camera',
+  'Dosya': 'File',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Show / Movie',
+  'Sesli mesaj (basılı tut)': 'Voice message (hold)',
+  'Kaydetmek için basılı tut': 'Hold to record',
+  'Kaydırarak iptal': 'Slide to cancel',
+  'Kamera açılamadı': 'Camera could not open',
+  'Dosya seçilemedi': 'File could not be selected',
+  'Dosya gönderilemedi': 'File could not be sent',
+  'En yeni mesaja in': 'Jump to latest message',
+  'Gönderilemedi · tekrar dene': 'Not sent · tap to retry',
+  'Dosya açılamadı': 'File could not be opened',
 };

@@ -1476,4 +1476,18 @@ const Map<String, String> cevirilerDe = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Wenn ausgeschaltet, werden als Spoiler markierte Beiträge direkt und ohne Abdeckung angezeigt.',
   'Etiketler': 'Markierungen',
+  'Galeri': 'Galerie',
+  'Kamera': 'Kamera',
+  'Dosya': 'Datei',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Serie / Film',
+  'Sesli mesaj (basılı tut)': 'Sprachnachricht (halten)',
+  'Kaydetmek için basılı tut': 'Zum Aufnehmen gedrückt halten',
+  'Kaydırarak iptal': 'Zum Abbrechen wischen',
+  'Kamera açılamadı': 'Kamera konnte nicht geöffnet werden',
+  'Dosya seçilemedi': 'Datei konnte nicht ausgewählt werden',
+  'Dosya gönderilemedi': 'Datei konnte nicht gesendet werden',
+  'En yeni mesaja in': 'Zur neuesten Nachricht',
+  'Gönderilemedi · tekrar dene': 'Nicht gesendet · erneut versuchen',
+  'Dosya açılamadı': 'Datei konnte nicht geöffnet werden',
 };

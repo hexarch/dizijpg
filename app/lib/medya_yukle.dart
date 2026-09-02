@@ -35,6 +35,15 @@ const medyaAzamiBayt = videoAzamiBayt;
 /// kullanıcıyı en çok yoran hata.
 const medyaToplamAzamiBayt = 100 * 1024 * 1024;
 
+/// Bir sohbet mesajında (albüm) en çok kaç medya. Telegram'ın tavanı da 10;
+/// sunucu `mesajlar.medyalar` için aynı tavanı doğrular (server.js /mesajlar).
+const albumAzami = 10;
+
+/// Belge (dosya) eki tek dosya tavanı — sunucudaki `/dosya` sınırıyla BİREBİR
+/// (`express.raw({limit:'50mb'})`). Görsel/videodan küçük tutuldu: belge
+/// sıkıştırılmadan gider, 100 MB'lık PDF'i mobil veriyle yüklemek gerçekçi değil.
+const dosyaAzamiBayt = 50 * 1024 * 1024;
+
 /// Bir yükleme turunun sonucu — KISMİ BAŞARI dâhil.
 class MedyaYuklemeSonuc {
   /// Sunucuya giren dosyalar, SEÇİM SIRASIYLA: `{yol, video}`.

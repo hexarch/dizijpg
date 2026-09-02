@@ -1451,4 +1451,18 @@ const Map<String, String> cevirilerUr = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'بند ہونے پر اسپائلر کے طور پر نشان زد پوسٹس بغیر پردے کے براہِ راست دکھائی جاتی ہیں۔',
   'Etiketler': 'ٹیگز',
+  'Galeri': 'گیلری',
+  'Kamera': 'کیمرا',
+  'Dosya': 'فائل',
+  'GIF': 'GIF',
+  'Dizi / Film': 'سیریز / فلم',
+  'Sesli mesaj (basılı tut)': 'صوتی پیغام (دبائے رکھیں)',
+  'Kaydetmek için basılı tut': 'ریکارڈ کرنے کے لیے دبائے رکھیں',
+  'Kaydırarak iptal': 'منسوخ کرنے کے لیے سلائیڈ کریں',
+  'Kamera açılamadı': 'کیمرا نہیں کھل سکا',
+  'Dosya seçilemedi': 'فائل منتخب نہیں ہو سکی',
+  'Dosya gönderilemedi': 'فائل نہیں بھیجی جا سکی',
+  'En yeni mesaja in': 'تازہ ترین پیغام پر جائیں',
+  'Gönderilemedi · tekrar dene': 'نہیں بھیجا گیا · دوبارہ کوشش کریں',
+  'Dosya açılamadı': 'فائل نہیں کھل سکی',
 };

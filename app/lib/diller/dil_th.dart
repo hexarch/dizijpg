@@ -1428,4 +1428,18 @@ const Map<String, String> cevirilerTh = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'เมื่อปิด โพสต์ที่ทำเครื่องหมายว่าสปอยล์จะแสดงทันทีโดยไม่มีม่านบัง',
   'Etiketler': 'แท็ก',
+  'Galeri': 'แกลเลอรี',
+  'Kamera': 'กล้อง',
+  'Dosya': 'ไฟล์',
+  'GIF': 'GIF',
+  'Dizi / Film': 'ซีรีส์ / ภาพยนตร์',
+  'Sesli mesaj (basılı tut)': 'ข้อความเสียง (กดค้าง)',
+  'Kaydetmek için basılı tut': 'กดค้างเพื่อบันทึก',
+  'Kaydırarak iptal': 'เลื่อนเพื่อยกเลิก',
+  'Kamera açılamadı': 'เปิดกล้องไม่ได้',
+  'Dosya seçilemedi': 'เลือกไฟล์ไม่ได้',
+  'Dosya gönderilemedi': 'ส่งไฟล์ไม่ได้',
+  'En yeni mesaja in': 'ไปที่ข้อความล่าสุด',
+  'Gönderilemedi · tekrar dene': 'ส่งไม่สำเร็จ · ลองอีกครั้ง',
+  'Dosya açılamadı': 'เปิดไฟล์ไม่ได้',
 };

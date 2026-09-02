@@ -744,6 +744,30 @@ class Api {
           )
           as Map<String, dynamic>;
 
+  /// Belge (dosya) yükleme — `/dosya` ucu. Görsel/videodan AYRI uç: sunucu
+  /// belgeyi diske `.bin` uzantısıyla, özgün adı/MIME'ı yalnız mesaj satırında
+  /// tutarak yazar; indirme `application/octet-stream` + `attachment`
+  /// başlığıyla gider (yüklenen HTML/SVG asla sayfa olarak açılmaz).
+  /// Özgün ad başlıkta yüzde-kodlu gider: HTTP başlığı ASCII dışını taşımaz.
+  static Future<Map<String, dynamic>> dosyaYukle(
+    Uint8List veri, {
+    required String ad,
+  }) async =>
+      await _yanit(
+            () => _istemci
+                .post(
+                  Uri.parse('$apiTaban/dosya'),
+                  headers: {
+                    'Content-Type': 'application/octet-stream',
+                    'X-Dosya-Ad': Uri.encodeComponent(ad),
+                    if (_token != null) 'Authorization': 'Bearer $_token',
+                  },
+                  body: veri,
+                )
+                .timeout(const Duration(minutes: 5)),
+          )
+          as Map<String, dynamic>;
+
   // ---- sosyal ----
   static Future<Map<String, dynamic>> acikProfil(String kullaniciAdi) async =>
       await get('/profil/$kullaniciAdi') as Map<String, dynamic>;

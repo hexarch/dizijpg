@@ -1455,4 +1455,18 @@ const Map<String, String> cevirilerDa = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Når den er slået fra, vises opslag markeret som spoiler direkte, uden tildækning.',
   'Etiketler': 'Tags',
+  'Galeri': 'Galleri',
+  'Kamera': 'Kamera',
+  'Dosya': 'Fil',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Serie / Film',
+  'Sesli mesaj (basılı tut)': 'Talebesked (hold)',
+  'Kaydetmek için basılı tut': 'Hold for at optage',
+  'Kaydırarak iptal': 'Stryg for at annullere',
+  'Kamera açılamadı': 'Kameraet kunne ikke åbnes',
+  'Dosya seçilemedi': 'Filen kunne ikke vælges',
+  'Dosya gönderilemedi': 'Filen kunne ikke sendes',
+  'En yeni mesaja in': 'Til seneste besked',
+  'Gönderilemedi · tekrar dene': 'Ikke sendt · prøv igen',
+  'Dosya açılamadı': 'Filen kunne ikke åbnes',
 };

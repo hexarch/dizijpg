@@ -75,6 +75,13 @@ import {
 // İmza/özel-medya kapısına DOKUNMAZ; kapıdan geçen isteğin yalnız dosya
 // gönderimini devralır. MEDYA_XACCEL=1 değilse tamamen saydamdır.
 import { xaccelKatman as medyaXaccelKatman } from './medya_xaccel.js';
+// Sohbet BELGE ekleri (2 Eyl 2026): ayrı hat, ayrı imza alanı, daima .bin +
+// attachment — gerekçe dosya_ek.js başında.
+import {
+  DOSYA_EK_KALIP, DOSYA_EK_AZAMI, dosyaAdiTemizle, mimeTemizle,
+  dosyaAnahtarTuret, dosyaImzali, dosyaEkAdi, dosyaImzaDogrula,
+  dosyaYoluNormalle, ekBasligi,
+} from './dosya_ek.js';
 // SSR DİL TABLOSU (29 Ağu 2026) — SSR 46 dil üretir. Metinler artık server.js'e
 // Türkçe dizgi olarak gömülü DEĞİL; tarih/sayı/ülke adı ICU'dan gelir.
 // KURAL: bir dil tabloda ya TAM vardır ya hiç yoktur — yarım çeviri yasak.
@@ -356,6 +363,10 @@ function videoKaresiCikar(dosyaYolu) {
 
 fs.mkdirSync(AVATAR_DIZIN, { recursive: true });
 fs.mkdirSync(MEDYA_DIZIN, { recursive: true });
+// Belge ekleri medyadan AYRI dizinde: nginx'in /medya statik/X-Accel kuralları
+// bu dizini HİÇ görmez, dosyalar yalnız Node'un imzalı ucundan çıkar.
+const DOSYA_EK_DIZIN = process.env.DOSYA_EK_DIZIN || path.join(MEDYA_DIZIN, '..', 'dosyalar');
+fs.mkdirSync(DOSYA_EK_DIZIN, { recursive: true });
 
 // ---------- AÇILIŞTA YAZILABİLİRLİK KONTROLÜ ----------
 // 17 Ağu 2026'da yaşandı: `cap_drop: ALL` (denetim §4.4 sertleştirmesi)
@@ -446,7 +457,11 @@ async function ozelMedyaYukle() {
     // yorum akışında 403 vermek görünür bir bozulma olurdu. (2026-08-08:
     // kesişim canlıda 0 satır; kural yine de ileriye dönük duruyor.)
     const { rows } = await havuz.query(
-      `SELECT DISTINCT medya FROM mesajlar WHERE medya IS NOT NULL
+      // ALBÜM (2 Eyl 2026): `medyalar` dizisindeki öğeler de özeldir.
+      `SELECT medya FROM (
+         SELECT medya FROM mesajlar WHERE medya IS NOT NULL
+         UNION SELECT unnest(medyalar) FROM mesajlar WHERE medyalar IS NOT NULL
+       ) o
        EXCEPT SELECT DISTINCT unnest(medya) FROM yorumlar WHERE medya IS NOT NULL`,
     );
     OZEL_MEDYA.clear();
@@ -462,6 +477,9 @@ async function ozelMedyaYukle() {
 // İmzalama anahtarı: ayrı bir sır yönetmemek için JWT sırrından alan ayrımıyla
 // türetilir (bkz. medya_imza.js). `MEDYA_IMZA_ANAHTARI` ile ezilebilir.
 const MEDYA_IMZA_ANAHTARI = medyaAnahtarTuret(
+  process.env.MEDYA_IMZA_ANAHTARI || JWT_SECRET);
+// Belge imzası aynı sırdan AYRI alanla türetilir (dosya_ek.js).
+const DOSYA_IMZA_ANAHTARI = dosyaAnahtarTuret(
   process.env.MEDYA_IMZA_ANAHTARI || JWT_SECRET);
 
 // GÖÇ ANAHTARI. Varsayılan KAPALI.
@@ -517,6 +535,34 @@ app.use('/avatarlar', avatarXaccel, yalnizGet(avatarStatik));
 
 // İmza kapısı: statik sunucudan ÖNCE. İmzalı yolu (`/i/<exp>/<imza>/<dosya>`)
 // çözer ve `req.url`i sade dosya adına indirger; statik katman imzayı hiç görmez.
+// ---------- BELGE İNDİRME: yalnız imzalı yol ----------
+// `/dosya/i/<exp36>/<imza>/<ad>`. İmzasız `/dosya/<ad>` her zaman 403:
+// belge DM ekidir, imzasız bağlantı diye bir şey yoktur (medyanın "göç
+// anahtarı" gevşekliği burada YOK — yeni hat, eski istemci yok).
+// Özgün ad DB'den okunur (Content-Disposition), tür DAİMA octet-stream.
+// `sarici` bu noktada henüz tanımlı değil (dosyada daha aşağıda) — try/catch elle.
+app.get('/dosya/*', async (req, res, next) => { try {
+  const sonuc = dosyaImzaDogrula(req.url.slice('/dosya'.length), DOSYA_IMZA_ANAHTARI);
+  res.setHeader('Cache-Control', 'private, no-store, max-age=0');
+  if (!sonuc.gecerli) {
+    return res.status(sonuc.sebep === 'suresi_doldu' ? 403 : 404)
+      .json({ hata: sonuc.sebep === 'suresi_doldu'
+        ? 'Dosya bağlantısının süresi dolmuş' : 'Dosya bulunamadı' });
+  }
+  const tam = path.join(DOSYA_EK_DIZIN, sonuc.ad);
+  let boyut;
+  try { boyut = fs.statSync(tam).size; } catch { return res.status(404).json({ hata: 'Dosya bulunamadı' }); }
+  const { rows } = await havuz.query(
+    'SELECT dosya_ad FROM mesajlar WHERE dosya=$1 LIMIT 1', [`/dosya/${sonuc.ad}`]);
+  const ad = rows[0]?.dosya_ad || sonuc.ad;
+  res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('Content-Disposition', ekBasligi(ad));
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Content-Length', String(boyut));
+  if (req.method === 'HEAD') return res.end();
+  fs.createReadStream(tam).on('error', () => res.destroy()).pipe(res);
+} catch (e) { next(e); } });
+
 app.use('/medya', (req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();
   const imzaVar = medyaImzaAyristir(req.url) != null;
@@ -1788,6 +1834,8 @@ const takvimLimiti = hizLimiti(60, (req) => `k:${req.kullanici.id}`);
 const kisiLimiti = hizLimiti(240, (req) => `ko:${req.kullanici.id}`);
 const akisLimiti = hizLimiti(240, (req) => `f:${req.kullanici.id}`);
 const mesajLimiti = hizLimiti(300, (req) => `m:${req.kullanici.id}`);
+// Bir sohbet mesajındaki (albüm) medya tavanı — istemci `albumAzami` ile aynı.
+const ALBUM_AZAMI = 10;
 // Yorum spam + @etiket bildirim seli koruması
 const yorumLimiti = hizLimiti(60, (req) => `c:${req.kullanici.id}`);
 // Kimliksiz arama (tam-tarama LIKE) DoS koruması: IP başına
@@ -13002,6 +13050,40 @@ app.post('/medya',
   }));
 
 
+// ---------- BELGE YÜKLEME ----------
+// Ham gövde, her tür. Tür DOĞRULANMAZ (belge her şey olabilir) ama SERVİS de
+// asla inline değildir (bkz. dosya_ek.js). Özgün ad `X-Dosya-Ad` başlığında
+// yüzde-kodlu gelir; MIME `X-Dosya-Tur`da (yalnız ikon için saklanır).
+// Kota, hız limiti, disk eşiği ve bayt bütçesi medyayla AYNI kapılardan geçer.
+app.post('/dosya',
+  girisZorunlu,
+  yuklemeLimiti,
+  diskKapi,
+  yuklemeBaytButcesi,
+  express.raw({ type: () => true, limit: `${DOSYA_EK_AZAMI}b` }),
+  sarici(async (req, res) => {
+    const veri = req.body;
+    if (!Buffer.isBuffer(veri) || veri.length < 1) {
+      return res.status(400).json({ hata: 'Dosya verisi gerekli' });
+    }
+    if (veri.length > DOSYA_EK_AZAMI) {
+      return res.status(413).json({ hata: `Dosya en fazla ${DOSYA_EK_AZAMI / 1024 / 1024} MB olabilir` });
+    }
+    const ad = dosyaAdiTemizle(req.headers['x-dosya-ad']);
+    const tur = mimeTemizle(req.headers['x-dosya-tur']);
+    const kota = await kotaAyir(req.kullanici.id, veri.length, req.misafir === true);
+    if (!kota.tamam) return kotaReddi(res, kota);
+    const disk = `d${req.kullanici.id}-${crypto.randomBytes(8).toString('hex')}.bin`;
+    try {
+      fs.writeFileSync(path.join(DOSYA_EK_DIZIN, disk), veri);
+    } catch (e) {
+      kotaIade(req.kullanici.id, veri.length);
+      throw e;
+    }
+    res.json({ yol: `/dosya/${disk}`, ad, boyut: veri.length, tur });
+  }));
+
+
 // ---------- KENDİ GIF ARŞİVİMİZ ----------
 //
 // NEDEN DIŞ SERVİS YOK (29 Ağu 2026, üçü de doğrulandı): Tenor 30 Haz 2026'da
@@ -14676,6 +14758,7 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
             -- icerik_tur yok) — kullanici "bir postu birine gonderince
             -- mesajlar kisminda bos gozukuyor" diye bildirdi (1 Eyl 2026).
             m.id, m.metin, m.medya, m.icerik_tur, m.yorum_id, m.tarih, m.gonderen_id,
+            m.dosya_ad,
             k.id AS partner_id, k.kullanici_adi AS partner, k.avatar AS partner_avatar,
             -- Çevrimiçi HESABI SUNUCUDA yapılır: gizleyen kullanıcının
             -- son_gorulme damgası istemciye HİÇ gitmez (gizlilik tercihi
@@ -15175,8 +15258,11 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   // Alıntılanan mesajın kısa önizlemesi de gelir (LEFT JOIN yanit).
   const secim = `SELECT m.id, m.gonderen_id, m.metin, m.medya, m.ses_dalga, m.icerik_tur, m.icerik_id,
             m.yorum_id, m.okundu, m.iletildi, m.duzenlendi, m.yanit_id, m.tarih,
+            -- ALBÜM + BELGE (2 Eyl 2026)
+            m.medyalar, m.dosya, m.dosya_ad, m.dosya_boyut, m.dosya_tur,
             y.metin AS yanit_metin, y.gonderen_id AS yanit_gonderen,
             y.medya AS yanit_medya, y.icerik_tur AS yanit_icerik_tur,
+            y.dosya_ad AS yanit_dosya_ad,
             -- Alıntılanan mesaj bir PAYLAŞILAN GÖNDERİ olabilir; alansız
             -- kalınca alıntı kutusu da bomboş çiziliyordu (aynı kök,
             -- bkz. /sohbetler'deki yorum_id notu).
@@ -15212,6 +15298,13 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     // `endsWith('.mp4')` / `endsWith('.ogg')` türü tür tespiti bozulmaz.
     r.medya = medyaImzali(r.medya, MEDYA_IMZA_ANAHTARI);
     r.yanit_medya = medyaImzali(r.yanit_medya, MEDYA_IMZA_ANAHTARI);
+    // Albümün her karesi ve belge yolu da imzalı çıkar; BIGINT pg'den string
+    // gelir, istemci sayı bekler (2 Eyl 2026).
+    if (Array.isArray(r.medyalar)) {
+      r.medyalar = r.medyalar.map((y) => medyaImzali(y, MEDYA_IMZA_ANAHTARI));
+    }
+    r.dosya = dosyaImzali(r.dosya, DOSYA_IMZA_ANAHTARI);
+    if (r.dosya_boyut != null) r.dosya_boyut = Number(r.dosya_boyut);
   }
   // Emoji tepkileri AYRI UÇTAN DEĞİL, mesajlarla birlikte gelir. `sonra`
   // yalnız YENİ id verdiği için karşı tarafın mevcut balona bıraktığı emoji
@@ -15339,6 +15432,11 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   const {
     kullanici_adi, metin, medya: medyaHam = null, ses_dalga = null,
     icerik_tur = null, icerik_id = null, yanit_id = null, yorum_id = null,
+    // ALBÜM + BELGE (2 Eyl 2026, migrasyon-2026-09-02b): `medyalar` tüm
+    // öğeler (≤ ALBUM_AZAMI), `medya` = ilki (eski istemci uyumu). Belge
+    // alanları medyadan ayrı kolonlarda.
+    medyalar: medyalarHam = null, dosya: dosyaHam = null,
+    dosya_ad = null, dosya_boyut = null, dosya_tur = null,
   } = req.body || {};
   // İmzalı yolu KANONİK hâle getir. Bugünün istemcisi yükleme ucundan aldığı
   // imzasız yolu gönderiyor, ama okuma uçları artık imzalı yol döndürdüğü için
@@ -15355,14 +15453,46 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
     return res.status(400).json({ hata: 'Geçersiz yanit_id' });
   }
   // Medya: yalnızca bu kullanıcının yüklediği, bizim ürettiğimiz adlar
-  if (medya != null &&
-      (typeof medya !== 'string' ||
-       !new RegExp(`^/medya/m${req.kullanici.id}-[0-9a-f]{16}\\.(gif|png|jpg|webp|mp4|webm|ogg|m4a|mp3|aac)$`).test(medya) ||
-       !fs.existsSync(path.join(MEDYA_DIZIN, path.basename(medya))))) {
+  const medyaKalip = new RegExp(`^/medya/m${req.kullanici.id}-[0-9a-f]{16}\\.(gif|png|jpg|webp|mp4|webm|ogg|m4a|mp3|aac)$`);
+  const medyaGecerli = (y) => typeof y === 'string' && medyaKalip.test(y)
+    && fs.existsSync(path.join(MEDYA_DIZIN, path.basename(y)));
+  if (medya != null && !medyaGecerli(medya)) {
     return res.status(400).json({ hata: 'Geçersiz medya' });
   }
+  // ALBÜM: her öğe aynı sahiplik kuralından geçer; tekrar eden yol atılır;
+  // ses albüme giremez (dalga tek mesaja bağlı). `medya` verilmediyse ilki.
+  let medyalar = null;
+  if (medyalarHam != null) {
+    if (!Array.isArray(medyalarHam) || medyalarHam.length === 0
+        || medyalarHam.length > ALBUM_AZAMI) {
+      return res.status(400).json({ hata: `Bir mesajda en fazla ${ALBUM_AZAMI} medya olabilir` });
+    }
+    medyalar = [...new Set(medyalarHam.map(medyaYoluNormalle))];
+    if (!medyalar.every(medyaGecerli) || medyalar.some((y) => /\.(ogg|m4a|mp3|aac)$/.test(y))) {
+      return res.status(400).json({ hata: 'Geçersiz medya' });
+    }
+  }
+  const ilkMedya = medya ?? (medyalar ? medyalar[0] : null);
+  if (medyalar && medya != null && medyalar[0] !== medya) {
+    return res.status(400).json({ hata: 'medya, medyalar[0] ile aynı olmalı' });
+  }
+  if (medyalar && medyalar.length === 1) medyalar = null; // tek öğe = eski yol
+  // BELGE: yalnız bu kullanıcının yüklediği ad, diskte var, ad/boyut/tür temiz.
+  const dosya = dosyaYoluNormalle(dosyaHam);
+  let dosyaAd = null; let dosyaBoyut = null; let dosyaTur = null;
+  if (dosya != null) {
+    const disk = dosyaEkAdi(dosya);
+    if (disk == null || !disk.startsWith(`d${req.kullanici.id}-`)
+        || !fs.existsSync(path.join(DOSYA_EK_DIZIN, disk))) {
+      return res.status(400).json({ hata: 'Geçersiz dosya' });
+    }
+    dosyaAd = dosyaAdiTemizle(dosya_ad);
+    dosyaBoyut = Number.isInteger(dosya_boyut) && dosya_boyut > 0
+      ? dosya_boyut : fs.statSync(path.join(DOSYA_EK_DIZIN, disk)).size;
+    dosyaTur = mimeTemizle(dosya_tur);
+  }
   // Ses dalgası: yalnız ses medyasında, "<saniye>:<en çok 64 örnek>" biçiminde
-  const sesMi = medya != null && /\.(ogg|m4a|mp3|aac)$/.test(medya);
+  const sesMi = ilkMedya != null && /\.(ogg|m4a|mp3|aac)$/.test(ilkMedya);
   if (ses_dalga != null &&
       (typeof ses_dalga !== 'string' || !sesMi ||
        !/^\d{1,3}:[0-9a-v]{1,64}$/.test(ses_dalga))) {
@@ -15382,7 +15512,7 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
     const v = await havuz.query('SELECT 1 FROM yorumlar WHERE id=$1', [yorum_id]);
     if (!v.rows.length) return res.status(404).json({ hata: 'Gönderi bulunamadı' });
   }
-  if (!temiz && !medya && !icerikVar && yorum_id == null) {
+  if (!temiz && !ilkMedya && !dosya && !icerikVar && yorum_id == null) {
     return res.status(400).json({ hata: 'Boş mesaj gönderilemez' });
   }
   const k = await havuz.query(
@@ -15410,20 +15540,23 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   }
   const { rows } = await havuz.query(
     `INSERT INTO mesajlar (gonderen_id, alici_id, metin, medya, ses_dalga,
-                           icerik_tur, icerik_id, yanit_id, yorum_id)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id, tarih`,
+                           icerik_tur, icerik_id, yanit_id, yorum_id,
+                           medyalar, dosya, dosya_ad, dosya_boyut, dosya_tur)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING id, tarih`,
     // temiz.length > 2000 doğrulaması YUKARIDA, şifrelemeden ÖNCE yapılır:
     // DB'deki CHECK kısıtı zarf uzunluğu yüzünden kalktı, tek savunma o.
-    [req.kullanici.id, aliciId, sifrele(temiz || null), medya, sesMi ? ses_dalga : null,
+    [req.kullanici.id, aliciId, sifrele(temiz || null), ilkMedya, sesMi ? ses_dalga : null,
      icerikVar ? icerik_tur : null, icerikVar ? icerik_id : null, gecerliYanit,
-     yorum_id ?? null],
+     yorum_id ?? null, medyalar, dosya, dosyaAd, dosyaBoyut, dosyaTur],
   );
   // Dosya bu andan itibaren ÖZEL: bir sonraki isteğinde public önbelleğe
   // girmesin. Kümeye eklemek yalnız bellek işidir; açılışta DB'den yeniden
-  // kurulur, yani kalıcılığı `mesajlar.medya` kolonu sağlar.
+  // kurulur, yani kalıcılığı `mesajlar.medya`/`medyalar` kolonları sağlar.
   // Kardeş işçilere de duyurulur (gizlilik gerekçesi abone bloğunda).
-  ozelMedyaEkle(medya);
-  yayinla('ozel_medya_ekle', medya);
+  for (const y of medyalar ?? (ilkMedya ? [ilkMedya] : [])) {
+    ozelMedyaEkle(y);
+    yayinla('ozel_medya_ekle', y);
+  }
   // CEVAP VERMEK KABULDÜR: göndereni daha önce reddettiğim birine şimdi BEN
   // yazıyorsam red kalkar (kabule yükselir) — yoksa sohbet ana listeye döndüğü
   // halde karşı tarafın mesajları sessiz kalmaya devam ederdi.
@@ -15588,12 +15721,14 @@ app.delete('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id)) return res.status(400).json({ hata: 'Geçersiz id' });
   const { rows } = await havuz.query(
-    'DELETE FROM mesajlar WHERE id=$1 AND gonderen_id=$2 RETURNING medya',
+    'DELETE FROM mesajlar WHERE id=$1 AND gonderen_id=$2 RETURNING medya, medyalar, dosya',
     [id, req.kullanici.id],
   );
   if (!rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı' });
-  if (rows[0].medya) {
-    const ad = path.basename(rows[0].medya);
+  // ALBÜM (2 Eyl 2026): dizideki her kare silinir; `medya` = medyalar[1].
+  const yollar = new Set([rows[0].medya, ...(rows[0].medyalar || [])].filter(Boolean));
+  for (const yol of yollar) {
+    const ad = path.basename(yol);
     fs.unlink(path.join(MEDYA_DIZIN, ad), () => {});
     // Dosya gittiği için kümede kalması zararsız olurdu (404 döner) ama küme
     // sonsuza dek büyümesin: kaydı da düş. Video kapağı da aynı anda gider.
@@ -15601,6 +15736,10 @@ app.delete('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
     OZEL_MEDYA.delete(`${ad}.jpg`);
     yayinla('ozel_medya_sil', ad);
   }
+  // BELGE: ayrı dizinden silinir. Kota iadesi medya silmede de yapılmıyor;
+  // aynı davranış korundu (ayrı karar).
+  const belge = dosyaEkAdi(rows[0].dosya);
+  if (belge) fs.unlink(path.join(DOSYA_EK_DIZIN, belge), () => {});
   res.json({ tamam: true });
 }));
 
@@ -19440,13 +19579,16 @@ const YEDEK_GUNLUK = process.env.YEDEK_GUNLUK || '/yedekler/yedek.log';
 // silerdi — arşiv sessizce kırık yollara dönerdi. Arşive yeni bir yol sütunu
 // ekleyen herkes buraya da dal eklemek ZORUNDA.
 async function medyaReferanslari() {
-  const [y, m, g] = await Promise.all([
+  const [y, m, ma, g] = await Promise.all([
     havuz.query('SELECT unnest(medya) AS yol FROM yorumlar WHERE cardinality(medya) > 0'),
     havuz.query('SELECT medya AS yol FROM mesajlar WHERE medya IS NOT NULL'),
+    // ALBÜM (2 Eyl 2026): dizideki 2..n öğeler `medya`da YOK — buraya
+    // eklenmeseydi öksüz taraması albümün kalanını silerdi.
+    havuz.query('SELECT unnest(medyalar) AS yol FROM mesajlar WHERE medyalar IS NOT NULL'),
     havuz.query('SELECT yol FROM gifler'),
   ]);
   const kume = new Set();
-  for (const r of [...y.rows, ...m.rows, ...g.rows]) {
+  for (const r of [...y.rows, ...m.rows, ...ma.rows, ...g.rows]) {
     if (!r.yol) continue;
     const ad = path.basename(String(r.yol));
     kume.add(ad);

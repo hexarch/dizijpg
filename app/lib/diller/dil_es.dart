@@ -1493,4 +1493,18 @@ const Map<String, String> cevirilerEs = {
       'El cuadro de mensaje y los botones de solicitud ya no quedan detrás de los botones de navegación del teléfono; el menú inferior se oculta dentro del chat.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
       'Actualiza la app para ver las notas de esta versión',
+  'Galeri': 'Galería',
+  'Kamera': 'Cámara',
+  'Dosya': 'Archivo',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Serie / Película',
+  'Sesli mesaj (basılı tut)': 'Mensaje de voz (mantener)',
+  'Kaydetmek için basılı tut': 'Mantén pulsado para grabar',
+  'Kaydırarak iptal': 'Desliza para cancelar',
+  'Kamera açılamadı': 'No se pudo abrir la cámara',
+  'Dosya seçilemedi': 'No se pudo seleccionar el archivo',
+  'Dosya gönderilemedi': 'No se pudo enviar el archivo',
+  'En yeni mesaja in': 'Ir al último mensaje',
+  'Gönderilemedi · tekrar dene': 'No enviado · reintentar',
+  'Dosya açılamadı': 'No se pudo abrir el archivo',
 };

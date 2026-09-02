@@ -1457,4 +1457,18 @@ const Map<String, String> cevirilerUk = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Якщо вимкнено, дописи з позначкою «спойлер» показуються одразу, без завіси.',
   'Etiketler': 'Позначки',
+  'Galeri': 'Галерея',
+  'Kamera': 'Камера',
+  'Dosya': 'Файл',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Серіал / Фільм',
+  'Sesli mesaj (basılı tut)': 'Голосове повідомлення (утримуйте)',
+  'Kaydetmek için basılı tut': 'Утримуйте для запису',
+  'Kaydırarak iptal': 'Проведіть, щоб скасувати',
+  'Kamera açılamadı': 'Не вдалося відкрити камеру',
+  'Dosya seçilemedi': 'Не вдалося вибрати файл',
+  'Dosya gönderilemedi': 'Не вдалося надіслати файл',
+  'En yeni mesaja in': 'До останнього повідомлення',
+  'Gönderilemedi · tekrar dene': 'Не надіслано · повторити',
+  'Dosya açılamadı': 'Не вдалося відкрити файл',
 };

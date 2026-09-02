@@ -1449,4 +1449,18 @@ const Map<String, String> cevirilerKn = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'ಆಫ್ ಆಗಿದ್ದಾಗ ಸ್ಪಾಯ್ಲರ್ ಎಂದು ಗುರುತಿಸಲಾದ ಪೋಸ್ಟ್‌ಗಳು ಪರದೆ ಇಲ್ಲದೆ ನೇರವಾಗಿ ತೋರಿಸಲ್ಪಡುತ್ತವೆ.',
   'Etiketler': 'ಟ್ಯಾಗ್‌ಗಳು',
+  'Galeri': 'ಗ್ಯಾಲರಿ',
+  'Kamera': 'ಕ್ಯಾಮೆರಾ',
+  'Dosya': 'ಫೈಲ್',
+  'GIF': 'GIF',
+  'Dizi / Film': 'ಸರಣಿ / ಚಲನಚಿತ್ರ',
+  'Sesli mesaj (basılı tut)': 'ಧ್ವನಿ ಸಂದೇಶ (ಒತ್ತಿ ಹಿಡಿಯಿರಿ)',
+  'Kaydetmek için basılı tut': 'ರೆಕಾರ್ಡ್ ಮಾಡಲು ಒತ್ತಿ ಹಿಡಿಯಿರಿ',
+  'Kaydırarak iptal': 'ರದ್ದುಗೊಳಿಸಲು ಸ್ಲೈಡ್ ಮಾಡಿ',
+  'Kamera açılamadı': 'ಕ್ಯಾಮೆರಾ ತೆರೆಯಲಾಗಲಿಲ್ಲ',
+  'Dosya seçilemedi': 'ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡಲಾಗಲಿಲ್ಲ',
+  'Dosya gönderilemedi': 'ಫೈಲ್ ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ',
+  'En yeni mesaja in': 'ಇತ್ತೀಚಿನ ಸಂದೇಶಕ್ಕೆ ಹೋಗಿ',
+  'Gönderilemedi · tekrar dene': 'ಕಳುಹಿಸಲಾಗಿಲ್ಲ · ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ',
+  'Dosya açılamadı': 'ಫೈಲ್ ತೆರೆಯಲಾಗಲಿಲ್ಲ',
 };

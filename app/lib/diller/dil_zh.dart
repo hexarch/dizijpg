@@ -1382,4 +1382,18 @@ const Map<String, String> cevirilerZh = {
   'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
       '消息输入框和请求按钮不再被手机导航键遮挡；进入聊天时底部菜单会自动隐藏。',
   'Bu sürümün notlarını görmek için uygulamayı güncelle': '更新应用以查看此版本的说明',
+  'Galeri': '图库',
+  'Kamera': '相机',
+  'Dosya': '文件',
+  'GIF': 'GIF',
+  'Dizi / Film': '剧集 / 电影',
+  'Sesli mesaj (basılı tut)': '语音消息（长按）',
+  'Kaydetmek için basılı tut': '长按录音',
+  'Kaydırarak iptal': '滑动取消',
+  'Kamera açılamadı': '无法打开相机',
+  'Dosya seçilemedi': '无法选择文件',
+  'Dosya gönderilemedi': '无法发送文件',
+  'En yeni mesaja in': '跳到最新消息',
+  'Gönderilemedi · tekrar dene': '未发送 · 点击重试',
+  'Dosya açılamadı': '无法打开文件',
 };

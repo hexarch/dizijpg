@@ -1444,4 +1444,18 @@ const Map<String, String> cevirilerBn = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'বন্ধ থাকলে স্পয়লার হিসেবে চিহ্নিত পোস্টগুলি পর্দা ছাড়াই সরাসরি দেখানো হয়।',
   'Etiketler': 'ট্যাগ',
+  'Galeri': 'গ্যালারি',
+  'Kamera': 'ক্যামেরা',
+  'Dosya': 'ফাইল',
+  'GIF': 'GIF',
+  'Dizi / Film': 'সিরিজ / সিনেমা',
+  'Sesli mesaj (basılı tut)': 'ভয়েস মেসেজ (ধরে রাখুন)',
+  'Kaydetmek için basılı tut': 'রেকর্ড করতে ধরে রাখুন',
+  'Kaydırarak iptal': 'বাতিল করতে স্লাইড করুন',
+  'Kamera açılamadı': 'ক্যামেরা খোলা যায়নি',
+  'Dosya seçilemedi': 'ফাইল নির্বাচন করা যায়নি',
+  'Dosya gönderilemedi': 'ফাইল পাঠানো যায়নি',
+  'En yeni mesaja in': 'সর্বশেষ বার্তায় যান',
+  'Gönderilemedi · tekrar dene': 'পাঠানো হয়নি · আবার চেষ্টা করুন',
+  'Dosya açılamadı': 'ফাইল খোলা যায়নি',
 };

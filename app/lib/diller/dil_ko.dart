@@ -1381,4 +1381,18 @@ const Map<String, String> cevirilerKo = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       '끄면 스포일러로 표시된 게시물이 가림막 없이 바로 표시됩니다.',
   'Etiketler': '태그',
+  'Galeri': '갤러리',
+  'Kamera': '카메라',
+  'Dosya': '파일',
+  'GIF': 'GIF',
+  'Dizi / Film': '시리즈 / 영화',
+  'Sesli mesaj (basılı tut)': '음성 메시지 (길게 누르기)',
+  'Kaydetmek için basılı tut': '길게 눌러 녹음',
+  'Kaydırarak iptal': '밀어서 취소',
+  'Kamera açılamadı': '카메라를 열 수 없습니다',
+  'Dosya seçilemedi': '파일을 선택할 수 없습니다',
+  'Dosya gönderilemedi': '파일을 보낼 수 없습니다',
+  'En yeni mesaja in': '최신 메시지로 이동',
+  'Gönderilemedi · tekrar dene': '전송 안 됨 · 다시 시도',
+  'Dosya açılamadı': '파일을 열 수 없습니다',
 };

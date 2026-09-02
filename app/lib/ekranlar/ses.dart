@@ -314,17 +314,22 @@ class _SesOynaticiState extends State<SesOynatici> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                LayoutBuilder(
-                  builder: (_, sinir) => GestureDetector(
+                // LayoutBuilder DEĞİL, Builder (2 Eyl 2026): sohbet balonu
+                // `IntrinsicWidth` içinde ve LayoutBuilder intrinsic ölçüm
+                // veremez — debug'da assert atıp TÜM mesaj listesini boş
+                // bırakıyordu. Genişlik yalnız dokunma anında gerekiyor:
+                // yerleşmiş kutunun `context.size`ından okunur.
+                Builder(
+                  builder: (ctx) => GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTapDown: (d) => _sar(
-                      d.localPosition.dx / sinir.maxWidth,
-                      sinir.maxWidth,
-                    ),
-                    onHorizontalDragUpdate: (d) => _sar(
-                      d.localPosition.dx / sinir.maxWidth,
-                      sinir.maxWidth,
-                    ),
+                    onTapDown: (d) {
+                      final en = ctx.size?.width ?? 0;
+                      if (en > 0) _sar(d.localPosition.dx / en, en);
+                    },
+                    onHorizontalDragUpdate: (d) {
+                      final en = ctx.size?.width ?? 0;
+                      if (en > 0) _sar(d.localPosition.dx / en, en);
+                    },
                     child: Padding(
                       // dokunma hedefi: 26 çizim + 2×7 boşluk = 40
                       padding: const EdgeInsets.symmetric(vertical: 7),

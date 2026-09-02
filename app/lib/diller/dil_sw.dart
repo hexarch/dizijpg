@@ -1459,4 +1459,18 @@ const Map<String, String> cevirilerSw = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Ikizimwa, machapisho yaliyowekwa alama ya spoila huonyeshwa moja kwa moja bila pazia.',
   'Etiketler': 'Lebo',
+  'Galeri': 'Ghala',
+  'Kamera': 'Kamera',
+  'Dosya': 'Faili',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Kipindi / Filamu',
+  'Sesli mesaj (basılı tut)': 'Ujumbe wa sauti (shikilia)',
+  'Kaydetmek için basılı tut': 'Shikilia ili kurekodi',
+  'Kaydırarak iptal': 'Telezesha ili kughairi',
+  'Kamera açılamadı': 'Kamera haikuweza kufunguka',
+  'Dosya seçilemedi': 'Faili haikuweza kuchaguliwa',
+  'Dosya gönderilemedi': 'Faili haikuweza kutumwa',
+  'En yeni mesaja in': 'Nenda kwenye ujumbe mpya zaidi',
+  'Gönderilemedi · tekrar dene': 'Haijatumwa · jaribu tena',
+  'Dosya açılamadı': 'Faili haikuweza kufunguka',
 };

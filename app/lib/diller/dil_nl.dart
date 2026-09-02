@@ -1461,4 +1461,18 @@ const Map<String, String> cevirilerNl = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Indien uitgeschakeld worden als spoiler gemarkeerde berichten direct getoond, zonder afdekking.',
   'Etiketler': 'Tags',
+  'Galeri': 'Galerij',
+  'Kamera': 'Camera',
+  'Dosya': 'Bestand',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Serie / Film',
+  'Sesli mesaj (basılı tut)': 'Spraakbericht (vasthouden)',
+  'Kaydetmek için basılı tut': 'Houd vast om op te nemen',
+  'Kaydırarak iptal': 'Veeg om te annuleren',
+  'Kamera açılamadı': 'Camera kon niet worden geopend',
+  'Dosya seçilemedi': 'Bestand kon niet worden gekozen',
+  'Dosya gönderilemedi': 'Bestand kon niet worden verzonden',
+  'En yeni mesaja in': 'Naar nieuwste bericht',
+  'Gönderilemedi · tekrar dene': 'Niet verzonden · opnieuw proberen',
+  'Dosya açılamadı': 'Bestand kon niet worden geopend',
 };

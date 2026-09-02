@@ -1451,4 +1451,18 @@ const Map<String, String> cevirilerTe = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'ఆఫ్‌లో ఉన్నప్పుడు స్పాయిలర్‌గా గుర్తించిన పోస్టులు తెర లేకుండా నేరుగా చూపబడతాయి.',
   'Etiketler': 'ట్యాగ్‌లు',
+  'Galeri': 'గ్యాలరీ',
+  'Kamera': 'కెమెరా',
+  'Dosya': 'ఫైల్',
+  'GIF': 'GIF',
+  'Dizi / Film': 'సిరీస్ / సినిమా',
+  'Sesli mesaj (basılı tut)': 'వాయిస్ సందేశం (నొక్కి పట్టుకోండి)',
+  'Kaydetmek için basılı tut': 'రికార్డ్ చేయడానికి నొక్కి పట్టుకోండి',
+  'Kaydırarak iptal': 'రద్దు చేయడానికి స్లైడ్ చేయండి',
+  'Kamera açılamadı': 'కెమెరా తెరవలేకపోయాం',
+  'Dosya seçilemedi': 'ఫైల్ ఎంచుకోలేకపోయాం',
+  'Dosya gönderilemedi': 'ఫైల్ పంపలేకపోయాం',
+  'En yeni mesaja in': 'తాజా సందేశానికి వెళ్లండి',
+  'Gönderilemedi · tekrar dene': 'పంపబడలేదు · మళ్లీ ప్రయత్నించండి',
+  'Dosya açılamadı': 'ఫైల్ తెరవలేకపోయాం',
 };

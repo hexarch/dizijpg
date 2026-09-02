@@ -1459,4 +1459,18 @@ const Map<String, String> cevirilerFi = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Kun tämä on pois päältä, spoileriksi merkityt julkaisut näytetään suoraan ilman verhoa.',
   'Etiketler': 'Tunnisteet',
+  'Galeri': 'Galleria',
+  'Kamera': 'Kamera',
+  'Dosya': 'Tiedosto',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Sarja / Elokuva',
+  'Sesli mesaj (basılı tut)': 'Ääniviesti (pidä painettuna)',
+  'Kaydetmek için basılı tut': 'Pidä painettuna tallentaaksesi',
+  'Kaydırarak iptal': 'Pyyhkäise peruuttaaksesi',
+  'Kamera açılamadı': 'Kameraa ei voitu avata',
+  'Dosya seçilemedi': 'Tiedostoa ei voitu valita',
+  'Dosya gönderilemedi': 'Tiedostoa ei voitu lähettää',
+  'En yeni mesaja in': 'Uusimpaan viestiin',
+  'Gönderilemedi · tekrar dene': 'Ei lähetetty · yritä uudelleen',
+  'Dosya açılamadı': 'Tiedostoa ei voitu avata',
 };

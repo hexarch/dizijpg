@@ -1418,4 +1418,18 @@ const Map<String, String> cevirilerHe = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'כשכבוי, פוסטים המסומנים כספוילר מוצגים ישירות, ללא מסך.',
   'Etiketler': 'תיוגים',
+  'Galeri': 'גלריה',
+  'Kamera': 'מצלמה',
+  'Dosya': 'קובץ',
+  'GIF': 'GIF',
+  'Dizi / Film': 'סדרה / סרט',
+  'Sesli mesaj (basılı tut)': 'הודעה קולית (לחיצה ארוכה)',
+  'Kaydetmek için basılı tut': 'לחצו לחיצה ארוכה להקלטה',
+  'Kaydırarak iptal': 'החליקו לביטול',
+  'Kamera açılamadı': 'לא ניתן לפתוח את המצלמה',
+  'Dosya seçilemedi': 'לא ניתן לבחור את הקובץ',
+  'Dosya gönderilemedi': 'לא ניתן לשלוח את הקובץ',
+  'En yeni mesaja in': 'להודעה האחרונה',
+  'Gönderilemedi · tekrar dene': 'לא נשלח · נסו שוב',
+  'Dosya açılamadı': 'לא ניתן לפתוח את הקובץ',
 };

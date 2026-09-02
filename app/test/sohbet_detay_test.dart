@@ -166,32 +166,46 @@ void main() {
     await _kapat(tester);
   });
 
-  testWidgets('yazarken GIF/içerik/mikrofon gizlenir, silinince geri gelir', (
-    tester,
-  ) async {
-    await _kur(tester, '/sohbet/ayse');
-    // Başlangıç: foto + gif + içerik ikonları görünür.
-    expect(find.byIcon(Icons.add_photo_alternate_outlined), findsOneWidget);
-    expect(find.byIcon(Icons.gif_box_outlined), findsOneWidget);
-    expect(find.byIcon(Icons.local_movies_outlined), findsOneWidget);
+  testWidgets(
+    'Telegram kompozeri: boşken mikrofon, yazınca gönder; ataç hep durur',
+    (tester) async {
+      // 2 Eyl 2026: GIF/içerik ikonları ataç PANELİNE taşındı (Telegram '+').
+      // Kutuda yalnız ataç var; sağdaki yuvarlak düğme boşken mikrofon, yazı
+      // varken gönder. Ataç KALIR: "medya + altyazı" akışı kutudaki yazıyla
+      // gidiyor (dm_reels_medya_test 'kutudaki YAZI medyayla birlikte gider').
+      await _kur(tester, '/sohbet/ayse');
+      expect(find.byIcon(Icons.attach_file), findsOneWidget);
+      expect(find.byIcon(Icons.mic_none), findsOneWidget);
+      expect(find.byIcon(Icons.send_rounded), findsNothing);
+      expect(find.byIcon(Icons.gif_box_outlined), findsNothing);
+      expect(find.byIcon(Icons.local_movies_outlined), findsNothing);
 
-    await tester.enterText(find.byType(TextField), 'selam');
-    await tester.pump();
-    expect(find.byIcon(Icons.gif_box_outlined), findsNothing);
-    expect(find.byIcon(Icons.local_movies_outlined), findsNothing);
-    expect(find.byIcon(Icons.mic_none), findsNothing);
-    // Ataç KALIR: "fotoğraf + altyazı" akışı kutudaki yazıyla gidiyor
-    // (dm_reels_medya_test 'kutudaki YAZI medyayla birlikte gider') —
-    // gizlense o akış tamamen kopardı. Gönder de her zaman durur.
-    expect(find.byIcon(Icons.add_photo_alternate_outlined), findsOneWidget);
-    expect(find.byIcon(Icons.send), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'selam');
+      await tester.pump();
+      expect(find.byIcon(Icons.send_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.mic_none), findsNothing);
+      expect(find.byIcon(Icons.attach_file), findsOneWidget);
 
-    await tester.enterText(find.byType(TextField), '');
-    await tester.pump();
-    expect(find.byIcon(Icons.gif_box_outlined), findsOneWidget);
-    expect(find.byIcon(Icons.local_movies_outlined), findsOneWidget);
-    await _kapat(tester);
-  });
+      await tester.enterText(find.byType(TextField), '');
+      await tester.pump();
+      expect(find.byIcon(Icons.mic_none), findsOneWidget);
+      expect(find.byIcon(Icons.send_rounded), findsNothing);
+
+      // Ataç paneli: Galeri / Kamera / Dosya / GIF / Dizi-Film kutucukları.
+      await tester.tap(find.byIcon(Icons.attach_file));
+      await tester.pumpAndSettle();
+      for (final ad in ['Galeri', 'Kamera', 'Dosya', 'GIF', 'Dizi / Film']) {
+        expect(find.text(ad), findsOneWidget, reason: ad);
+      }
+      // Mikrofona tek dokunuş kaydetmez, ipucu basar (Telegram davranışı).
+      await tester.tapAt(const Offset(10, 10)); // paneli kapat
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.mic_none));
+      await tester.pump();
+      expect(find.text('Kaydetmek için basılı tut'), findsOneWidget);
+      await _kapat(tester);
+    },
+  );
 
   testWidgets('sohbet başlığına dokunmak detay ekranını açar', (tester) async {
     await _kur(tester, '/sohbet/ayse');

@@ -153,8 +153,13 @@ Future<void> _kapat(WidgetTester tester) async {
   await tester.pump(const Duration(seconds: 1));
 }
 
-/// DM'deki ataç (fotoğraf/video ekle) düğmesi.
-Finder _dmAtac() => find.byIcon(Icons.add_photo_alternate_outlined);
+/// DM'deki ataç (2 Eyl 2026, Telegram düzeni): ataç → alt panel → Galeri.
+/// Panel `_EkPaneli` (sohbet.dart), Galeri kutucuğu sistem seçicisini açar.
+Future<void> _dmAtacAc(WidgetTester tester) async {
+  await tester.tap(find.byIcon(Icons.attach_file));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('Galeri'));
+}
 
 // ---------------------------------------------------------------------------
 // Reels yanıtı kurulumu
@@ -240,15 +245,14 @@ void main() {
       return [_dosya(_png, 'a.png')];
     };
 
-    await tester.tap(_dmAtac());
+    await _dmAtacAc(tester);
     await tester.pumpAndSettle();
 
-    // TEK DOSYA: `mesajlar.medya` TEXT (dizi değil) — POST /mesajlar tek
-    // string kabul ediyor. 1'den büyük bir sayı burada görülürse kullanıcı
-    // seçtiği dosyaların çoğunu sessizce kaybederdi.
-    expect(istenenTavan, 1, reason: 'mesajlar.medya TEXT — çoklu seçim YOK');
+    // ALBÜM (2 Eyl 2026): `mesajlar.medyalar TEXT[]` geldi, DM de çoklu
+    // seçim açar; tavan Telegram'la aynı (albumAzami = 10).
+    expect(istenenTavan, albumAzami, reason: 'DM albüm: çoklu seçim, tavan 10');
     expect(find.byType(MedyaIncelemeEkrani), findsOneWidget);
-    expect(find.text('1/1'), findsOneWidget);
+    expect(find.text('1/$albumAzami'), findsOneWidget);
     await _kapat(tester);
   });
 
@@ -258,7 +262,7 @@ void main() {
     final defter = await _sohbetKur(tester);
     sistemSeciciSahte = (_) async => [_dosya(_png, 'a.png')];
 
-    await tester.tap(_dmAtac());
+    await _dmAtacAc(tester);
     await tester.pumpAndSettle();
     await tester.tap(find.text('İleri'));
     await tester.pumpAndSettle();
@@ -280,7 +284,7 @@ void main() {
 
     await tester.enterText(find.byType(TextField).first, 'şuna bak');
     await tester.pump();
-    await tester.tap(_dmAtac());
+    await _dmAtacAc(tester);
     await tester.pumpAndSettle();
     await tester.tap(find.text('İleri'));
     await tester.pumpAndSettle();
@@ -296,7 +300,7 @@ void main() {
     final defter = await _sohbetKur(tester);
     sistemSeciciSahte = (_) async => const <XFile>[];
 
-    await tester.tap(_dmAtac());
+    await _dmAtacAc(tester);
     await tester.pumpAndSettle();
 
     expect(find.byType(MedyaIncelemeEkrani), findsNothing);
@@ -311,7 +315,7 @@ void main() {
     final defter = await _sohbetKur(tester);
     sistemSeciciSahte = (_) async => [_dosya(_png, 'a.png')];
 
-    await tester.tap(_dmAtac());
+    await _dmAtacAc(tester);
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Kapat'));
     await tester.pumpAndSettle();
@@ -328,7 +332,7 @@ void main() {
     videoIsleyiciSahte = () => _SahteMotor();
     sistemSeciciSahte = (_) async => [_dosya(_gif, 'a.gif')];
 
-    await tester.tap(_dmAtac());
+    await _dmAtacAc(tester);
     await tester.pumpAndSettle();
 
     // Ne kalem ne makas: editör tuvali tek kare üretir, animasyon ölürdü.
@@ -347,7 +351,7 @@ void main() {
     videoIsleyiciSahte = () => _SahteMotor();
     sistemSeciciSahte = (_) async => [_dosya(_mp4, 'a.mp4')];
 
-    await tester.tap(_dmAtac());
+    await _dmAtacAc(tester);
     await tester.pumpAndSettle();
 
     expect(_makas(), findsOneWidget, reason: 'DM videoyu destekliyor');
@@ -360,7 +364,7 @@ void main() {
     videoIsleyiciSahte = () => _SahteMotor();
     sistemSeciciSahte = (_) async => [_dosya(_png, 'a.png')];
 
-    await tester.tap(_dmAtac());
+    await _dmAtacAc(tester);
     await tester.pumpAndSettle();
 
     expect(_kalem(), findsOneWidget);
@@ -375,7 +379,7 @@ void main() {
     defter.patlayan = 1; // ilk /medya isteği 500 döner
     sistemSeciciSahte = (_) async => [_dosya(_png, 'a.png')];
 
-    await tester.tap(_dmAtac());
+    await _dmAtacAc(tester);
     await tester.pumpAndSettle();
     await tester.tap(find.text('İleri'));
     await tester.pumpAndSettle();
@@ -651,7 +655,7 @@ void main() {
 
     await tester.enterText(find.byType(TextField), 'şunu izlemelisin');
     await tester.pump();
-    await tester.tap(find.byIcon(Icons.send));
+    await tester.tap(find.byIcon(Icons.send_rounded));
     await tester.pumpAndSettle();
 
     expect(defter.mesajlar, hasLength(1));
@@ -672,7 +676,9 @@ void main() {
     final defter = await _sohbetKur(tester);
     await _icerikSec(tester, ad: 'Silo', id: 125988, tur: 'tv');
 
-    await tester.tap(find.byIcon(Icons.send));
+    // Yazı yokken de GÖNDER görünür: bekleyen kart var (Telegram'da ek
+    // önizlemesi varken mikrofon yerine gönder durur).
+    await tester.tap(find.byIcon(Icons.send_rounded));
     await tester.pumpAndSettle();
 
     expect(defter.mesajlar, hasLength(1));
@@ -728,7 +734,10 @@ Future<void> _icerikSec(
     'poster_path': '/poster.jpg',
     'first_air_date': '2008-01-20',
   };
-  await tester.tap(find.byIcon(Icons.local_movies_outlined));
+  // 2 Eyl 2026: Dizi/Film kutucuğu ataç panelinde.
+  await tester.tap(find.byIcon(Icons.attach_file));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('Dizi / Film'));
   await tester.pumpAndSettle();
   await tester.enterText(find.byType(TextField).last, ad);
   await tester.pump(const Duration(milliseconds: 600));

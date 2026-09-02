@@ -195,16 +195,26 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
               ),
             )
           : (sorgu.isNotEmpty
-                ? IconButton(
-                    tooltip: 'Kapat'.c,
-                    icon: Icon(Icons.close, color: DiziRenkler.metin54),
-                    onPressed: () {
-                      aramaKutu.clear();
-                      setState(() {
-                        sorgu = '';
-                        aramaHatasi = null;
-                      });
-                    },
+                // SEMANTICS SINIRI (2 Eyl 2026): suffix'teki düğme TextField'ın
+                // semantics düğümüyle "kardeş grubu"na girmesin — spinner ↔
+                // düğme geçişinde Flutter'ın yeni semantics hattı düğümü kendi
+                // çocuğu yapıp sonsuz döngüye giriyor (sohbet ANR'sinin kök
+                // sebebi, bkz. sohbet.dart `_yaziCubugu`). `container +
+                // explicitChildNodes` düğmeyi AÇIK çocuk yapar, birleşme olmaz.
+                ? Semantics(
+                    container: true,
+                    explicitChildNodes: true,
+                    child: IconButton(
+                      tooltip: 'Kapat'.c,
+                      icon: Icon(Icons.close, color: DiziRenkler.metin54),
+                      onPressed: () {
+                        aramaKutu.clear();
+                        setState(() {
+                          sorgu = '';
+                          aramaHatasi = null;
+                        });
+                      },
+                    ),
                   )
                 : null),
     ),

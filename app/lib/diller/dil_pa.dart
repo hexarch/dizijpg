@@ -1448,4 +1448,18 @@ const Map<String, String> cevirilerPa = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'ਬੰਦ ਹੋਣ \'ਤੇ ਸਪੌਇਲਰ ਵਜੋਂ ਨਿਸ਼ਾਨਬੱਧ ਪੋਸਟਾਂ ਪਰਦੇ ਤੋਂ ਬਿਨਾਂ ਸਿੱਧੀਆਂ ਦਿਖਾਈਆਂ ਜਾਂਦੀਆਂ ਹਨ।',
   'Etiketler': 'ਟੈਗ',
+  'Galeri': 'ਗੈਲਰੀ',
+  'Kamera': 'ਕੈਮਰਾ',
+  'Dosya': 'ਫ਼ਾਈਲ',
+  'GIF': 'GIF',
+  'Dizi / Film': 'ਸੀਰੀਜ਼ / ਫ਼ਿਲਮ',
+  'Sesli mesaj (basılı tut)': 'ਵੌਇਸ ਸੁਨੇਹਾ (ਦਬਾ ਕੇ ਰੱਖੋ)',
+  'Kaydetmek için basılı tut': 'ਰਿਕਾਰਡ ਕਰਨ ਲਈ ਦਬਾ ਕੇ ਰੱਖੋ',
+  'Kaydırarak iptal': 'ਰੱਦ ਕਰਨ ਲਈ ਸਲਾਈਡ ਕਰੋ',
+  'Kamera açılamadı': 'ਕੈਮਰਾ ਨਹੀਂ ਖੁੱਲ੍ਹ ਸਕਿਆ',
+  'Dosya seçilemedi': 'ਫ਼ਾਈਲ ਨਹੀਂ ਚੁਣੀ ਜਾ ਸਕੀ',
+  'Dosya gönderilemedi': 'ਫ਼ਾਈਲ ਨਹੀਂ ਭੇਜੀ ਜਾ ਸਕੀ',
+  'En yeni mesaja in': 'ਨਵੇਂ ਸੁਨੇਹੇ ਤੇ ਜਾਓ',
+  'Gönderilemedi · tekrar dene': 'ਭੇਜਿਆ ਨਹੀਂ ਗਿਆ · ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
+  'Dosya açılamadı': 'ਫ਼ਾਈਲ ਨਹੀਂ ਖੁੱਲ੍ਹ ਸਕੀ',
 };

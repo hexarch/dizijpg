@@ -1464,4 +1464,18 @@ const Map<String, String> cevirilerSv = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'När den är avstängd visas inlägg markerade som spoiler direkt, utan skynke.',
   'Etiketler': 'Taggar',
+  'Galeri': 'Galleri',
+  'Kamera': 'Kamera',
+  'Dosya': 'Fil',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Serie / Film',
+  'Sesli mesaj (basılı tut)': 'Röstmeddelande (håll)',
+  'Kaydetmek için basılı tut': 'Håll för att spela in',
+  'Kaydırarak iptal': 'Svep för att avbryta',
+  'Kamera açılamadı': 'Kameran kunde inte öppnas',
+  'Dosya seçilemedi': 'Filen kunde inte väljas',
+  'Dosya gönderilemedi': 'Filen kunde inte skickas',
+  'En yeni mesaja in': 'Till senaste meddelandet',
+  'Gönderilemedi · tekrar dene': 'Inte skickat · försök igen',
+  'Dosya açılamadı': 'Filen kunde inte öppnas',
 };

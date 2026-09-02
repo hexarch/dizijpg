@@ -1436,4 +1436,18 @@ const Map<String, String> cevirilerFa = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'وقتی خاموش باشد، پست‌های دارای برچسب اسپویل مستقیم و بدون پرده نمایش داده می‌شوند.',
   'Etiketler': 'برچسب‌ها',
+  'Galeri': 'گالری',
+  'Kamera': 'دوربین',
+  'Dosya': 'فایل',
+  'GIF': 'GIF',
+  'Dizi / Film': 'سریال / فیلم',
+  'Sesli mesaj (basılı tut)': 'پیام صوتی (نگه دارید)',
+  'Kaydetmek için basılı tut': 'برای ضبط نگه دارید',
+  'Kaydırarak iptal': 'برای لغو بکشید',
+  'Kamera açılamadı': 'دوربین باز نشد',
+  'Dosya seçilemedi': 'فایل انتخاب نشد',
+  'Dosya gönderilemedi': 'فایل ارسال نشد',
+  'En yeni mesaja in': 'به آخرین پیام',
+  'Gönderilemedi · tekrar dene': 'ارسال نشد · تلاش دوباره',
+  'Dosya açılamadı': 'فایل باز نشد',
 };

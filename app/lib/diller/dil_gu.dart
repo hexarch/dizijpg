@@ -1439,4 +1439,18 @@ const Map<String, String> cevirilerGu = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'બંધ હોય ત્યારે સ્પોઇલર તરીકે ચિહ્નિત પોસ્ટ પડદા વિના સીધી બતાવવામાં આવે છે.',
   'Etiketler': 'ટૅગ',
+  'Galeri': 'ગેલેરી',
+  'Kamera': 'કૅમેરા',
+  'Dosya': 'ફાઇલ',
+  'GIF': 'GIF',
+  'Dizi / Film': 'સિરીઝ / ફિલ્મ',
+  'Sesli mesaj (basılı tut)': 'વૉઇસ મેસેજ (દબાવી રાખો)',
+  'Kaydetmek için basılı tut': 'રેકોર્ડ કરવા દબાવી રાખો',
+  'Kaydırarak iptal': 'રદ કરવા સ્લાઇડ કરો',
+  'Kamera açılamadı': 'કૅમેરા ખોલી શકાયો નહીં',
+  'Dosya seçilemedi': 'ફાઇલ પસંદ કરી શકાઈ નહીં',
+  'Dosya gönderilemedi': 'ફાઇલ મોકલી શકાઈ નહીં',
+  'En yeni mesaja in': 'નવીનતમ સંદેશ પર જાઓ',
+  'Gönderilemedi · tekrar dene': 'મોકલાયું નથી · ફરી પ્રયાસ કરો',
+  'Dosya açılamadı': 'ફાઇલ ખોલી શકાઈ નહીં',
 };

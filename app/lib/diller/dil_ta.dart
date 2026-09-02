@@ -1476,4 +1476,18 @@ const Map<String, String> cevirilerTa = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'அணைக்கப்பட்டிருந்தால், ஸ்பாய்லர் எனக் குறிக்கப்பட்ட இடுகைகள் திரையின்றி நேரடியாகக் காட்டப்படும்.',
   'Etiketler': 'குறியீடுகள்',
+  'Galeri': 'கேலரி',
+  'Kamera': 'கேமரா',
+  'Dosya': 'கோப்பு',
+  'GIF': 'GIF',
+  'Dizi / Film': 'தொடர் / திரைப்படம்',
+  'Sesli mesaj (basılı tut)': 'குரல் செய்தி (அழுத்திப் பிடிக்கவும்)',
+  'Kaydetmek için basılı tut': 'பதிவு செய்ய அழுத்திப் பிடிக்கவும்',
+  'Kaydırarak iptal': 'ரத்து செய்ய ஸ்லைடு செய்யவும்',
+  'Kamera açılamadı': 'கேமராவைத் திறக்க முடியவில்லை',
+  'Dosya seçilemedi': 'கோப்பைத் தேர்வு செய்ய முடியவில்லை',
+  'Dosya gönderilemedi': 'கோப்பை அனுப்ப முடியவில்லை',
+  'En yeni mesaja in': 'சமீபத்திய செய்திக்குச் செல்',
+  'Gönderilemedi · tekrar dene': 'அனுப்பப்படவில்லை · மீண்டும் முயற்சிக்கவும்',
+  'Dosya açılamadı': 'கோப்பைத் திறக்க முடியவில்லை',
 };

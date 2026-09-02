@@ -1,5 +1,62 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-02 (3. tur) · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-02 (3. tur) — 🔨 SOHBET: "video gönderince çöküyor" = ANR (semantics) · Telegram düzeni (1.115.0+182)
+
+- ✅ **KÖK SEBEP — "sohbette video seçince uygulama çöküyor" (Galaxy S24, Play 1.114.0):**
+  çökme değil **ANR**. Ana iş parçacığı Flutter'ın semantics ağacında sonsuz
+  döngüde (`SemanticsNode.attach`, %98 CPU, sıfır syscall, RSS düz, 6+ dk).
+  Tetikleyici: `TextField.suffixIcon` içindeki düğmeler (ataç/GIF/film/mikrofon/
+  gönder) yükleme sırasında değişince Flutter'ın yeni semantics hattı
+  (`_mergeSiblingGroup`) düğümü kendi çocuğu yapıyor — debug assert
+  `semantics.dart:2967 '!newChildren.any((child) => child == this)'`,
+  yaratıcı `Semantics ← … ← TextField`. YALNIZ erişilebilirlik servisi açıkken
+  (telefonda Auto Clicker; TalkBack kullanan herkes) — emülatörde asla çıkmadı,
+  Erişilebilirlik Menüsü servisi açılınca emülatörde de tekrarlandı.
+  Teşhis: `dumpsys dropbox data_app_anr` + `simpleperf --app` + strip
+  öncesi `libapp.so` sembolleri + framework'e geçici debugPrint.
+  **DÜZELTME:** düğmeler `suffixIcon`'dan çıkıp satır kardeşi oldu (sohbet +
+  Reels yanıt kutusu `kesfet_akis.dart`; arama çubuğuna `Semantics(container)`
+  sınırı). Kanıt: emülatörde servis açıkken video gönderildi, CPU %1.
+  **KURAL: `TextField.suffixIcon/prefixIcon` içine DÜĞME KOYMA.**
+- ✅ **Telegram kompozeri:** hap (yazı + ataç) + sağda yuvarlak düğme (boşken
+  mikrofon, yazı/bekleyen kart varken gönder). GIF/Dizi-Film/Kamera/Dosya/Galeri
+  **ataç paneline** (`_EkPaneli`, Telegram '+'). Panel içi foto ızgarası
+  bilerek YOK (Play 7 Ağu medya izni reddi) — Galeri sistem seçiciyi açar.
+  Konum/Kişi bilerek yok (izin + yeni mesaj türü).
+- ✅ **Basılı-tut sesli mesaj:** sola kaydır iptal, yukarı kaydır kilit, tek
+  dokunuş "Kaydetmek için basılı tut" ipucu. Mikrofon widget'ı kayıt boyunca
+  aynı ağaç konumunda (jest kopmasın).
+- ✅ **Albüm (çoklu medya):** `mesajlar.medyalar TEXT[]` (migrasyon-2026-09-02b,
+  CANLIYA UYGULANDI); `medya` = ilki (eski istemci uyumu). DM seçici tavanı 10.
+  Izgara: 2 yan yana / 3 üst geniş+2 / 4+ iki sütun; dokununca görüntüleyici.
+  Sunucu: özel-medya kümesi + öksüz taraması `medyalar`ı da kapsıyor, silmede
+  hepsi gider.
+- ✅ **Belge (dosya) gönderimi:** `POST /dosya` (50 MB, her tür, `X-Dosya-Ad`),
+  diske DAİMA `.bin` (`dosya_ek.js`), indirme `GET /dosya/i/<imza>/<ad>` →
+  `octet-stream + attachment + nosniff` (HTML/SVG asla inline). Kolonlar
+  `dosya, dosya_ad, dosya_boyut, dosya_tur`. Baloncuk: tür karosu (PDF/DOC/ZIP…)
+  + ad + boyut, dokununca indirme. curl testi: html yükle→imzasız 404→
+  mesaj→imzalı 200 attachment; 11 öğe 400; başkasının belgesi 400; sahte imza 404.
+- ✅ **İyimser gönderim:** metin/medya/belge/ses satırı anında listede
+  (saat ikonu, medyada yerel önizleme + yükleme halkası, "2/5" sayacı);
+  hata → kırmızı "Gönderilemedi · tekrar dene", dokununca yeniden.
+- ✅ **Balon içi saat** (Telegram; 5 Ağu'daki gizli saat sütunu kalktı),
+  "düzenlendi"/"Görüldü" aynı satırda, tik yok (1 Eyl kararı korundu).
+  **Kaydırarak yanıtla** (satır sola, 64 dp eşik, titreşim). **Yüzen tarih
+  rozeti** kaydırırken üstte. **"Aşağı in" düğmesi** + yukarıdayken gelen
+  mesaj rozeti.
+- ✅ **Yan düzeltmeler:** ses balonundaki `LayoutBuilder` `IntrinsicWidth`
+  altında assert atıp listeyi BOŞ bırakıyordu (ses.dart → Builder + context.size);
+  `_KaydirYanitla` denetleyicisi initState'te (7 Ağu tuzağı); kaydırma
+  ölçümü kare sonrasına ertelendi (`RenderBox was not laid out`).
+- ✅ Testler: `sohbet_kaydir_yanitla_test` (6), `sohbet_telegram_test` (6),
+  `sohbet_detay_test` kompozer testi yenilendi, `dm_reels_medya_test` panel
+  akışına uyarlandı; eski `sohbet_saat_sutunu_test` kaldırıldı. 45 dilde 14
+  yeni anahtar. Tüm paket: 2455+ geçiyor.
+- ⬜ Play: 182 AAB yüklenecek (ANR düzeltmesi TalkBack kullanıcıları için).
+- ⬜ Emülatör testi @alcelik sohbetine (testuser123→miles.watches değil,
+  ilk turdaki emülatör hesabından) 4-5 test videosu bıraktı — istenirse silinir.
 
 ## 2026-09-02 (2. tur) — 🚀 Sürüm duyurusu sistemi · Reels %60 yorum modalı · tek renk çubuk (1.114.0+181)
 

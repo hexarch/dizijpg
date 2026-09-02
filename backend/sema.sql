@@ -1553,3 +1553,10 @@ ALTER TABLE bildirimler ADD COLUMN IF NOT EXISTS surum TEXT;
 CREATE UNIQUE INDEX IF NOT EXISTS bildirimler_surum_tekil
   ON bildirimler (kullanici_id, surum)
   WHERE tur = 'surum';
+
+-- 2026-09-02b: sohbette albüm (çoklu medya) + belge eki (bkz. migrasyon-2026-09-02b.sql)
+ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS medyalar TEXT[];
+ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS dosya TEXT;
+ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS dosya_ad TEXT;
+ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS dosya_boyut BIGINT;
+ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS dosya_tur TEXT;

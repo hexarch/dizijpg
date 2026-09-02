@@ -3387,7 +3387,16 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
 
   /// Yazma satırı: SOLDA profil fotoğrafı, ortada metin alanı, SAĞDA
   /// (dosya + GIF) ya da yazı yazılmışsa (gönder).
+  ///
+  /// DÜĞMELER `suffixIcon`'DA DEĞİL, SATIRDA KARDEŞ (2 Eyl 2026): sohbetteki
+  /// ANR'nin kök sebebi tam bu desendi — TextField kendi semantics düğümünü
+  /// suffix'teki düğmelerle "kardeş grubu" olarak birleştiriyor, ikonlar
+  /// değişince (`_yaziVar` / yükleme) düğüm kendi çocuğu oluyor ve erişilebilirlik
+  /// servisi açıkken `SemanticsNode.attach` sonsuza kadar dönüyor. Ayrıntı ve
+  /// kanıt: sohbet.dart `_yaziCubugu`. Burası aynı deseni taşıyordu; önlem
+  /// olarak aynı biçimde çözüldü. Görünüm aynı: alan + ikonlar tek hapta.
   Widget _girisSatiri(Map<String, dynamic>? ben) {
+    final ekKapali = _ekYukleniyor || _ekler.length >= enCokYanitEk;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -3404,55 +3413,69 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: EtiketliGirdi(
-            controller: _kutu,
-            maxLength: 1000,
-            maxLines: 4,
-            minLines: 1,
-            decoration: InputDecoration(
-              // KULLANICI İSTEĞİ (7 Ağu): "(@ ile etiketle)" ipucundan çıktı.
-              hintText: 'Yorum yaz...'.c,
-              isDense: true,
-              contentPadding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
-              suffixIconConstraints: const BoxConstraints(
-                minWidth: 0,
-                minHeight: 0,
-              ),
-              suffixIcon: Padding(
-                padding: const EdgeInsets.only(right: 2),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: _yaziVar
-                      // Yazı yazılınca yalnız GÖNDER kalır
-                      ? [
-                          _kutuIkonu(
-                            ipucu: 'Gönder'.c,
-                            ikon: Icons.send,
-                            kapali: _gonderiliyor || _gonderBekliyor,
-                            yukleniyor: _gonderiliyor || _gonderBekliyor,
-                            onTap: _gonder,
-                          ),
-                        ]
-                      // Boşken dosya ve GIF ekleme
-                      : [
-                          _kutuIkonu(
-                            ipucu: 'Fotoğraf / video ekle'.c,
-                            ikon: Icons.attach_file,
-                            kapali:
-                                _ekYukleniyor || _ekler.length >= enCokYanitEk,
-                            yukleniyor: _ekYukleniyor,
-                            onTap: _ekSec,
-                          ),
-                          _kutuIkonu(
-                            ipucu: 'GIF ekle'.c,
-                            ikon: Icons.gif_box_outlined,
-                            kapali:
-                                _ekYukleniyor || _ekler.length >= enCokYanitEk,
-                            onTap: _gifSec,
-                          ),
-                        ],
+          child: Container(
+            decoration: BoxDecoration(
+              color: DiziRenkler.kart,
+              borderRadius: BorderRadius.circular(12),
+              border: DiziRenkler.acik
+                  ? Border.all(color: const Color(0xFFDADAE0))
+                  : null,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: EtiketliGirdi(
+                    controller: _kutu,
+                    maxLength: 1000,
+                    maxLines: 4,
+                    minLines: 1,
+                    decoration: InputDecoration(
+                      // KULLANICI İSTEĞİ (7 Ağu): "(@ ile etiketle)" ipucundan çıktı.
+                      hintText: 'Yorum yaz...'.c,
+                      isDense: true,
+                      filled: false,
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      contentPadding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
+                    ),
+                  ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 2),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: _yaziVar
+                        // Yazı yazılınca yalnız GÖNDER kalır
+                        ? [
+                            _kutuIkonu(
+                              ipucu: 'Gönder'.c,
+                              ikon: Icons.send,
+                              kapali: _gonderiliyor || _gonderBekliyor,
+                              yukleniyor: _gonderiliyor || _gonderBekliyor,
+                              onTap: _gonder,
+                            ),
+                          ]
+                        // Boşken dosya ve GIF ekleme
+                        : [
+                            _kutuIkonu(
+                              ipucu: 'Fotoğraf / video ekle'.c,
+                              ikon: Icons.attach_file,
+                              kapali: ekKapali,
+                              yukleniyor: _ekYukleniyor,
+                              onTap: _ekSec,
+                            ),
+                            _kutuIkonu(
+                              ipucu: 'GIF ekle'.c,
+                              ikon: Icons.gif_box_outlined,
+                              kapali: ekKapali,
+                              onTap: _gifSec,
+                            ),
+                          ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),

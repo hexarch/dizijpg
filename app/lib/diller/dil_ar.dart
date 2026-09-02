@@ -1441,4 +1441,18 @@ const Map<String, String> cevirilerAr = {
       'لم يعد صندوق الكتابة وأزرار الطلبات يختبئان خلف أزرار التنقل في الهاتف؛ وتختفي القائمة السفلية تلقائياً داخل الدردشة.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
       'حدّث التطبيق لرؤية ملاحظات هذا الإصدار',
+  'Galeri': 'المعرض',
+  'Kamera': 'الكاميرا',
+  'Dosya': 'ملف',
+  'GIF': 'GIF',
+  'Dizi / Film': 'مسلسل / فيلم',
+  'Sesli mesaj (basılı tut)': 'رسالة صوتية (اضغط مطولاً)',
+  'Kaydetmek için basılı tut': 'اضغط مطولاً للتسجيل',
+  'Kaydırarak iptal': 'اسحب للإلغاء',
+  'Kamera açılamadı': 'تعذر فتح الكاميرا',
+  'Dosya seçilemedi': 'تعذر اختيار الملف',
+  'Dosya gönderilemedi': 'تعذر إرسال الملف',
+  'En yeni mesaja in': 'إلى أحدث رسالة',
+  'Gönderilemedi · tekrar dene': 'لم يُرسل · حاول مجدداً',
+  'Dosya açılamadı': 'تعذر فتح الملف',
 };

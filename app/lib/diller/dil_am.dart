@@ -1399,4 +1399,18 @@ const Map<String, String> cevirilerAm = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'ሲጠፋ እንደ ስፖይለር የተመለከቱ ልጥፎች ያለ መጋረጃ በቀጥታ ይታያሉ።',
   'Etiketler': 'መለያዎች',
+  'Galeri': 'ጋለሪ',
+  'Kamera': 'ካሜራ',
+  'Dosya': 'ፋይል',
+  'GIF': 'GIF',
+  'Dizi / Film': 'ተከታታይ / ፊልም',
+  'Sesli mesaj (basılı tut)': 'የድምፅ መልዕክት (ተጭነው ይያዙ)',
+  'Kaydetmek için basılı tut': 'ለመቅዳት ተጭነው ይያዙ',
+  'Kaydırarak iptal': 'ለመሰረዝ ያንሸራትቱ',
+  'Kamera açılamadı': 'ካሜራውን መክፈት አልተቻለም',
+  'Dosya seçilemedi': 'ፋይሉን መምረጥ አልተቻለም',
+  'Dosya gönderilemedi': 'ፋይሉን መላክ አልተቻለም',
+  'En yeni mesaja in': 'ወደ አዲሱ መልዕክት',
+  'Gönderilemedi · tekrar dene': 'አልተላከም · እንደገና ይሞክሩ',
+  'Dosya açılamadı': 'ፋይሉን መክፈት አልተቻለም',
 };

@@ -1468,4 +1468,18 @@ const Map<String, String> cevirilerMy = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'ပိတ်ထားပါက ဇာတ်လမ်းပေါက်ကြားချက်အဖြစ် မှတ်သားထားသော ပို့စ်များကို ကာရံမှုမရှိဘဲ တိုက်ရိုက်ပြသသည်။',
   'Etiketler': 'တဂ်များ',
+  'Galeri': 'ပြခန်း',
+  'Kamera': 'ကင်မရာ',
+  'Dosya': 'ဖိုင်',
+  'GIF': 'GIF',
+  'Dizi / Film': 'ဇာတ်လမ်းတွဲ / ရုပ်ရှင်',
+  'Sesli mesaj (basılı tut)': 'အသံမက်ဆေ့ချ် (ဖိထားပါ)',
+  'Kaydetmek için basılı tut': 'မှတ်တမ်းတင်ရန် ဖိထားပါ',
+  'Kaydırarak iptal': 'ပယ်ဖျက်ရန် ဆွဲပါ',
+  'Kamera açılamadı': 'ကင်မရာ ဖွင့်၍မရပါ',
+  'Dosya seçilemedi': 'ဖိုင် ရွေး၍မရပါ',
+  'Dosya gönderilemedi': 'ဖိုင် ပို့၍မရပါ',
+  'En yeni mesaja in': 'နောက်ဆုံးမက်ဆေ့ချ်သို့',
+  'Gönderilemedi · tekrar dene': 'မပို့နိုင်ပါ · ထပ်ကြိုးစားပါ',
+  'Dosya açılamadı': 'ဖိုင် ဖွင့်၍မရပါ',
 };

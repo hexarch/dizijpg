@@ -1459,4 +1459,18 @@ const Map<String, String> cevirilerMs = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Apabila dimatikan, hantaran yang ditanda sebagai spoiler dipaparkan terus tanpa tirai.',
   'Etiketler': 'Tag',
+  'Galeri': 'Galeri',
+  'Kamera': 'Kamera',
+  'Dosya': 'Fail',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Siri / Filem',
+  'Sesli mesaj (basılı tut)': 'Mesej suara (tahan)',
+  'Kaydetmek için basılı tut': 'Tahan untuk merakam',
+  'Kaydırarak iptal': 'Leret untuk batal',
+  'Kamera açılamadı': 'Kamera tidak dapat dibuka',
+  'Dosya seçilemedi': 'Fail tidak dapat dipilih',
+  'Dosya gönderilemedi': 'Fail tidak dapat dihantar',
+  'En yeni mesaja in': 'Ke mesej terkini',
+  'Gönderilemedi · tekrar dene': 'Tidak dihantar · cuba lagi',
+  'Dosya açılamadı': 'Fail tidak dapat dibuka',
 };

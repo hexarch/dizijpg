@@ -1453,4 +1453,18 @@ const Map<String, String> cevirilerId = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Saat dimatikan, kiriman yang ditandai spoiler ditampilkan langsung tanpa tirai.',
   'Etiketler': 'Tag',
+  'Galeri': 'Galeri',
+  'Kamera': 'Kamera',
+  'Dosya': 'Berkas',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Serial / Film',
+  'Sesli mesaj (basılı tut)': 'Pesan suara (tahan)',
+  'Kaydetmek için basılı tut': 'Tahan untuk merekam',
+  'Kaydırarak iptal': 'Geser untuk membatalkan',
+  'Kamera açılamadı': 'Kamera tidak dapat dibuka',
+  'Dosya seçilemedi': 'Berkas tidak dapat dipilih',
+  'Dosya gönderilemedi': 'Berkas tidak dapat dikirim',
+  'En yeni mesaja in': 'Ke pesan terbaru',
+  'Gönderilemedi · tekrar dene': 'Gagal terkirim · coba lagi',
+  'Dosya açılamadı': 'Berkas tidak dapat dibuka',
 };

@@ -1449,4 +1449,18 @@ const Map<String, String> cevirilerHi = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'बंद होने पर स्पॉइलर के रूप में चिह्नित पोस्ट बिना पर्दे के सीधे दिखाई जाती हैं।',
   'Etiketler': 'टैग',
+  'Galeri': 'गैलरी',
+  'Kamera': 'कैमरा',
+  'Dosya': 'फ़ाइल',
+  'GIF': 'GIF',
+  'Dizi / Film': 'सीरीज़ / फ़िल्म',
+  'Sesli mesaj (basılı tut)': 'वॉइस मैसेज (दबाए रखें)',
+  'Kaydetmek için basılı tut': 'रिकॉर्ड करने के लिए दबाए रखें',
+  'Kaydırarak iptal': 'रद्द करने के लिए स्लाइड करें',
+  'Kamera açılamadı': 'कैमरा नहीं खुल सका',
+  'Dosya seçilemedi': 'फ़ाइल नहीं चुनी जा सकी',
+  'Dosya gönderilemedi': 'फ़ाइल नहीं भेजी जा सकी',
+  'En yeni mesaja in': 'नवीनतम संदेश पर जाएँ',
+  'Gönderilemedi · tekrar dene': 'भेजा नहीं गया · फिर कोशिश करें',
+  'Dosya açılamadı': 'फ़ाइल नहीं खुल सकी',
 };

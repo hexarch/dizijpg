@@ -1453,4 +1453,18 @@ const Map<String, String> cevirilerVi = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Khi tắt, các bài viết được đánh dấu tiết lộ nội dung sẽ hiển thị trực tiếp, không có màn che.',
   'Etiketler': 'Gắn thẻ',
+  'Galeri': 'Thư viện',
+  'Kamera': 'Máy ảnh',
+  'Dosya': 'Tệp',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Phim bộ / Phim lẻ',
+  'Sesli mesaj (basılı tut)': 'Tin nhắn thoại (giữ)',
+  'Kaydetmek için basılı tut': 'Giữ để ghi âm',
+  'Kaydırarak iptal': 'Vuốt để hủy',
+  'Kamera açılamadı': 'Không mở được máy ảnh',
+  'Dosya seçilemedi': 'Không chọn được tệp',
+  'Dosya gönderilemedi': 'Không gửi được tệp',
+  'En yeni mesaja in': 'Đến tin nhắn mới nhất',
+  'Gönderilemedi · tekrar dene': 'Chưa gửi · thử lại',
+  'Dosya açılamadı': 'Không mở được tệp',
 };

@@ -1456,4 +1456,18 @@ const Map<String, String> cevirilerSr = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Када је искључено, објаве означене као спојлер приказују се одмах, без завесе.',
   'Etiketler': 'Ознаке',
+  'Galeri': 'Galerija',
+  'Kamera': 'Kamera',
+  'Dosya': 'Fajl',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Serija / Film',
+  'Sesli mesaj (basılı tut)': 'Glasovna poruka (zadrži)',
+  'Kaydetmek için basılı tut': 'Zadrži za snimanje',
+  'Kaydırarak iptal': 'Prevuci za otkazivanje',
+  'Kamera açılamadı': 'Kamera nije mogla da se otvori',
+  'Dosya seçilemedi': 'Fajl nije mogao da se izabere',
+  'Dosya gönderilemedi': 'Fajl nije mogao da se pošalje',
+  'En yeni mesaja in': 'Na najnoviju poruku',
+  'Gönderilemedi · tekrar dene': 'Nije poslato · pokušaj ponovo',
+  'Dosya açılamadı': 'Fajl nije mogao da se otvori',
 };

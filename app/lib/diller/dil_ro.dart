@@ -1496,4 +1496,18 @@ const Map<String, String> cevirilerRo = {
       'Caseta de mesaj și butoanele de cerere nu mai rămân sub butoanele de navigare ale telefonului; meniul de jos se ascunde singur în conversație.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
       'Actualizează aplicația ca să vezi notele acestei versiuni',
+  'Galeri': 'Galerie',
+  'Kamera': 'Cameră',
+  'Dosya': 'Fișier',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Serial / Film',
+  'Sesli mesaj (basılı tut)': 'Mesaj vocal (ține apăsat)',
+  'Kaydetmek için basılı tut': 'Ține apăsat pentru a înregistra',
+  'Kaydırarak iptal': 'Glisează pentru a anula',
+  'Kamera açılamadı': 'Camera nu a putut fi deschisă',
+  'Dosya seçilemedi': 'Fișierul nu a putut fi selectat',
+  'Dosya gönderilemedi': 'Fișierul nu a putut fi trimis',
+  'En yeni mesaja in': 'La ultimul mesaj',
+  'Gönderilemedi · tekrar dene': 'Netrimis · reîncearcă',
+  'Dosya açılamadı': 'Fișierul nu a putut fi deschis',
 };

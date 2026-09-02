@@ -1477,4 +1477,18 @@ const Map<String, String> cevirilerEl = {
   'Kapalıyken spoiler işaretli gönderiler perdesiz, doğrudan gösterilir.':
       'Όταν είναι απενεργοποιημένο, οι αναρτήσεις με σήμανση σπόιλερ εμφανίζονται απευθείας, χωρίς κάλυμμα.',
   'Etiketler': 'Επισημάνσεις',
+  'Galeri': 'Συλλογή',
+  'Kamera': 'Κάμερα',
+  'Dosya': 'Αρχείο',
+  'GIF': 'GIF',
+  'Dizi / Film': 'Σειρά / Ταινία',
+  'Sesli mesaj (basılı tut)': 'Φωνητικό μήνυμα (κρατήστε)',
+  'Kaydetmek için basılı tut': 'Κρατήστε για εγγραφή',
+  'Kaydırarak iptal': 'Σύρετε για ακύρωση',
+  'Kamera açılamadı': 'Η κάμερα δεν άνοιξε',
+  'Dosya seçilemedi': 'Το αρχείο δεν επιλέχθηκε',
+  'Dosya gönderilemedi': 'Το αρχείο δεν στάλθηκε',
+  'En yeni mesaja in': 'Στο πιο πρόσφατο μήνυμα',
+  'Gönderilemedi · tekrar dene': 'Δεν στάλθηκε · δοκιμάστε ξανά',
+  'Dosya açılamadı': 'Το αρχείο δεν άνοιξε',
 };

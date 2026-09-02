@@ -2,16 +2,18 @@ import 'dart:async';
 import 'dart:ui' show FontFeature;
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart'
-    show HardwareKeyboard, KeyDownEvent, LogicalKeyboardKey;
-import 'package:flutter/gestures.dart'
-    show DragStartBehavior, HorizontalDragGestureRecognizer, PointerEvent;
+    show HapticFeedback, HardwareKeyboard, KeyDownEvent, LogicalKeyboardKey;
+import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
@@ -20,6 +22,7 @@ import '../gorsel_basliklari.dart';
 import '../gorusme/arama_dugmeleri.dart';
 import '../medya_yukle.dart';
 import '../yalniz_emoji.dart';
+import '../yerel_gorsel.dart';
 import '../push.dart';
 import '../sohbet_olay.dart';
 import '../sohbet_tema.dart';
@@ -112,97 +115,124 @@ bool _sohbetSatirlariAyni(List<dynamic>? a, List<dynamic> b) {
 const double _avatarCap = 44;
 const double _satirDikeyDolgu = 8;
 
-/// Gizli saat sütununun genişliği (dp) = SÜRÜKLEME TAVANI.
+/// Kaydırarak yanıtla (2 Eyl 2026, Telegram düzeni).
 ///
-/// KULLANICI İSTEĞİ (5 Ağu 2026): "mesajın dakikası saati mesajın altında
-/// yazmasın. ekranı sağa kaydırınca sağ tarafta göster. ama kullanıcı sağa
-/// kaydırarak tutmak zorunda olsun, mesaj başına kaydırmayacak."
+/// TARİHÇE: 5 Ağu 2026'da kullanıcı saatin balonun altında YAZMAMASINI, tüm
+/// sohbetin sola sürüklenince sağda belirmesini istemişti (WhatsApp jesti,
+/// `_ZamanliSatir`). 2 Eyl'de "sohbeti Telegram gibi yap" isteğiyle saat
+/// balonun İÇİNE (sağ alt köşe, Telegram yerleşimi) taşındı ve yatay
+/// sürükleme Telegram'daki gibi YANITLA oldu. Eski jest kalktı.
 ///
-/// Yani WhatsApp/Telegram jesti: SOHBETİN TAMAMI sola ötelenir (görüş alanı
-/// sağa kayar), sağ kenarda o mesajın saati belirir; parmak kalkınca yaylanıp
-/// geri döner. 64 dp "14:32" (~30 dp) + nefes payı için yeter ve balonun
-/// kırpılan sol kenarını en aza indirir.
-const double saatSutunuGenisligi = 64;
+/// Satır sola sürüklenince yanıt oku belirir; [esik] geçilince titreşim +
+/// bırakınca [onYanitla]. Dikey kaydırmayı yutmaz: yalnız yatay eşiği aşan
+/// parmakta arenayı kazanır. Kenardan başlayan sürüklemeye karışmaz
+/// (Android geri jesti için 24 dp pay).
+class _KaydirYanitla extends StatefulWidget {
+  final Widget child;
+  final bool etkin;
+  final VoidCallback onYanitla;
 
-/// Sol kenarın bu şeridinde BAŞLAYAN sürüklemeler yok sayılır.
-///
-/// iOS'ta "geri" kenar jesti (CupertinoPageRoute) tam orada yaşıyor ve aynı
-/// parmağı iki tanıcı paylaşamaz: kenardan başlayan sürüklemeye hiç girmezsek
-/// jest arenasına da katılmayız, geri gitme bozulmaz. Android'de kenar
-/// jestini zaten sistem yutar; bu pay orada da zararsız.
-const double saatJestKenarPayi = 24;
+  const _KaydirYanitla({
+    super.key,
+    required this.child,
+    required this.etkin,
+    required this.onYanitla,
+  });
 
-/// Yalnız EKRANIN İÇİNDEN başlayan yatay sürüklemeleri dinleyen tanıcı.
-///
-/// [isPointerAllowed] false dönerse tanıcı o parmak için jest arenasına HİÇ
-/// katılmaz — kenar jesti (geri) rakipsiz kalır.
-class _SaatSuruklemeTanicisi extends HorizontalDragGestureRecognizer {
-  _SaatSuruklemeTanicisi({super.debugOwner});
+  static const esik = 64.0;
+  static const tavan = 88.0;
 
   @override
-  bool isPointerAllowed(PointerEvent event) =>
-      event.position.dx > saatJestKenarPayi && super.isPointerAllowed(event);
+  State<_KaydirYanitla> createState() => _KaydirYanitlaState();
 }
 
-/// Mesaj satırı + sağında normalde GÖRÜNMEYEN saat sütunu.
-///
-/// [kaydirma] 0..[saatSutunuGenisligi]: 0'da saat kırpma dikdörtgeninin
-/// DIŞINDA kalır (ağaca hiç eklenmez), tavanda sağ kenara oturur.
-///
-/// Balon yeniden ÖLÇÜLMEZ, yalnız `Transform` ile ötelenir: saat sütunu
-/// yüzünden balonun genişliği/satır kırılımı değişmez, sürükleme boyunca
-/// metin yeniden akmaz.
-class _ZamanliSatir extends StatelessWidget {
-  final Animation<double> kaydirma;
-  final String? saat;
-  final String? saatAnahtari;
-  final Widget child;
+class _KaydirYanitlaState extends State<_KaydirYanitla>
+    with SingleTickerProviderStateMixin {
+  // initState'te KURULUR, alan başlatıcısında DEĞİL: `late final` tembeldir;
+  // `etkin: false` satırda (id'siz iyimser satır) build ona hiç dokunmaz,
+  // dispose ilk kez kurmaya kalkar → "Looking up a deactivated widget's
+  // ancestor is unsafe" (aynı tuzak 7 Ağu 2026'da saat sütununda yaşandı).
+  late final AnimationController _c;
+  bool _titredi = false;
 
-  const _ZamanliSatir({
-    required this.kaydirma,
-    required this.child,
-    this.saat,
-    this.saatAnahtari,
-  });
+  @override
+  void initState() {
+    super.initState();
+    _c = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+      lowerBound: 0,
+      upperBound: _KaydirYanitla.tavan,
+    );
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  void _guncelle(DragUpdateDetails d) {
+    final yeni = (_c.value - d.delta.dx).clamp(0.0, _KaydirYanitla.tavan);
+    _c.value = yeni;
+    if (yeni >= _KaydirYanitla.esik && !_titredi) {
+      _titredi = true;
+      HapticFeedback.mediumImpact();
+    } else if (yeni < _KaydirYanitla.esik) {
+      _titredi = false;
+    }
+  }
+
+  void _birak([DragEndDetails? _]) {
+    final yanitla = _c.value >= _KaydirYanitla.esik;
+    _titredi = false;
+    _c.animateBack(0, curve: Curves.easeOutCubic);
+    if (yanitla) widget.onYanitla();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ClipRect(
+    if (!widget.etkin) return widget.child;
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      dragStartBehavior: DragStartBehavior.down,
+      onHorizontalDragStart: (d) {
+        // Kenar payı: sistem geri jesti (sol 24 dp) rakipsiz kalsın.
+        if (d.globalPosition.dx < 24) return;
+        _c.stop();
+      },
+      onHorizontalDragUpdate: _guncelle,
+      onHorizontalDragEnd: _birak,
+      onHorizontalDragCancel: _birak,
       child: AnimatedBuilder(
-        animation: kaydirma,
-        child: child,
-        builder: (context, cocuk) {
-          final k = kaydirma.value;
+        animation: _c,
+        builder: (context, child) {
+          final k = _c.value;
+          final oran = (k / _KaydirYanitla.esik).clamp(0.0, 1.0);
           return Stack(
+            alignment: Alignment.centerRight,
             children: [
-              // Ölçüyü bu çocuk belirler: Stack satır boyu kadar olur.
-              Transform.translate(offset: Offset(-k, 0), child: cocuk),
-              if (saat != null && saat!.isNotEmpty && k > 0)
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Transform.translate(
-                        // k=0'da sütun genişliği kadar sağda (kırpılır),
-                        // tavanda tam sağ kenarda.
-                        offset: Offset(saatSutunuGenisligi - k, 0),
-                        child: Opacity(
-                          opacity: (k / saatSutunuGenisligi).clamp(0.0, 1.0),
-                          child: Text(
-                            saat!,
-                            key: saatAnahtari == null
-                                ? null
-                                : Key(saatAnahtari!),
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              // Sabit beyaz/siyah DEĞİL: iki temada da okunur.
-                              color: DiziRenkler.metin70,
-                              fontFeatures: const [
-                                FontFeature.tabularFigures(),
-                              ],
-                            ),
-                          ),
+              Transform.translate(offset: Offset(-k, 0), child: child),
+              if (k > 0)
+                Positioned(
+                  right: 8,
+                  child: Opacity(
+                    opacity: oran,
+                    child: Transform.scale(
+                      scale: 0.6 + 0.4 * oran,
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: oran >= 1
+                              ? DiziRenkler.sari
+                              : DiziRenkler.kart,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.reply,
+                          size: 18,
+                          color: oran >= 1 ? Colors.black : DiziRenkler.metin54,
                         ),
                       ),
                     ),
@@ -211,6 +241,39 @@ class _ZamanliSatir extends StatelessWidget {
             ],
           );
         },
+        child: widget.child,
+      ),
+    );
+  }
+}
+
+/// Tarih rozeti: listedeki gün ayracı ve üstte yüzen kopyası aynı görünüm.
+class _TarihRozeti extends StatelessWidget {
+  final String etiket;
+  final bool golge;
+  const _TarihRozeti(this.etiket, {this.golge = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: DiziRenkler.koyuGri,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: golge
+            ? [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
+      ),
+      child: Text(
+        etiket,
+        style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
       ),
     );
   }
@@ -799,6 +862,10 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   bool _yuklendi = false;
   bool _gonderiliyor = false;
   bool _ekYukleniyor = false;
+
+  /// Albüm yüklemesinde "3/5" göstergesi (sıralı yükleme, medya_yukle.dart).
+  int _ekIlerleme = 0;
+  int _ekToplam = 0;
   String? _karsiDurum; // karşı taraf: yaziyor | kayit
   String? _hata; // ilk yükleme hatası
   Map<String, dynamic>? _partner; // avatar + son_gorulme
@@ -896,12 +963,37 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   ///    TickerMode.getValuesNotifier(context))
   /// Yani "yeni açılan boş sohbetten geri çık" = hata ayıklama kipinde
   /// assertion. Erken kurulum hem onu bitirir hem de dispose'u dürüst yapar.
-  late final AnimationController _saatKaydirici;
+  // ---- Kaydırma durumu (2 Eyl 2026, Telegram düzeni) ----
+  /// Yüzen tarih rozeti: görüş alanının üstündeki satırın günü. Yalnız
+  /// kaydırma sırasında görünür, durunca 900 ms sonra söner.
+  String? _yuzenGun;
+  bool _yuzenGorunur = false;
+  Timer? _yuzenZamanlayici;
+
+  /// Kullanıcı dipten (en yeni mesajdan) uzak mı — "aşağı in" düğmesi.
+  bool _dipten_uzak = false;
+
+  /// Yukarıdayken gelen karşı taraf mesajı sayısı (düğme rozeti).
+  int _asagidaYeni = 0;
+
+  /// Satır anahtarları: yüzen tarih için satırların yerini ölçmekte kullanılır.
+  /// Anahtar mesaj id'sine (yerel satırda `_yerel` anahtarına) bağlı.
+  final Map<Object, GlobalKey> _satirAnahtarlari = {};
+
+  GlobalKey _satirAnahtari(Map<String, dynamic> m, int i) {
+    final k = m['id'] ?? m['_yerel'] ?? 'i$i';
+    return _satirAnahtarlari.putIfAbsent(k, GlobalKey.new);
+  }
+
   // Sesli mesaj kaydı
   // Web'de mikrofon gizli; kaydediciyi hiç kurma ki eklenti kanalı
   // MissingPluginException gürültüsü üretmesin (hata günlüğü #8-16).
   final AudioRecorder? _kaydedici = kIsWeb ? null : AudioRecorder();
   bool _kaydediyor = false;
+
+  /// Basılı-tut kaydı yukarı kaydırarak KİLİTLENDİ: parmak çekilse de kayıt
+  /// sürer, çubukta iptal/gönder düğmeleri çıkar (Telegram'ın kilidi).
+  bool _kayitKilitli = false;
   int _kayitSn = 0;
   Timer? _kayitSayaci;
   String? _kayitYolu;
@@ -990,12 +1082,6 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   @override
   void initState() {
     super.initState();
-    _saatKaydirici = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 220),
-      lowerBound: 0,
-      upperBound: saatSutunuGenisligi,
-    );
     _yukle(ilk: true);
     _metin.addListener(_yaziyorBildir);
     _metin.addListener(_yaziVarGuncelle);
@@ -1092,7 +1178,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     _metin.dispose();
     _metinOdak.dispose();
     _kaydirma.dispose();
-    _saatKaydirici.dispose();
+    _yuzenZamanlayici?.cancel();
     super.dispose();
   }
 
@@ -1112,29 +1198,163 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     _yukle();
   }
 
-  // ---- Saat sütunu jesti ----
-  // Yatay tanıcı DİKEY kaydırmayı yutmaz: `HorizontalDragGestureRecognizer`
-  // yalnız yatay eşiği aşan parmakta arenayı kazanır, dikey harekette
-  // ListView'in dikey tanıcısı kazanır (jest arenası ekseni ayırır).
+  // ---- Kaydırma bildirimi: yüzen tarih + aşağı-in düğmesi ----
+  /// Kaydırma bildirimi DÜZEN SIRASINDA gelebilir (viewport `setPixels`);
+  /// o anda satırların bir kısmı henüz yerleşmemiştir. Burada ne `setState`
+  /// ne ölçüm yapılır — iş kare sonrasına ertelenir. Ertelemeden ölçmek
+  /// debug'da `RenderBox was not laid out` assert'i ile listeyi BOŞ
+  /// bıraktı (2 Eyl 2026, emülatörde yakalandı, sunucu hata kaydı #3).
+  bool _kareSonrasiBekliyor = false;
 
-  void _saatSuruklemeBasla(DragStartDetails _) => _saatKaydirici.stop();
-
-  void _saatSurukle(DragUpdateDetails d) {
-    // Parmak SOLA gidince (dx < 0) görüş alanı SAĞA kayar ve saat sütunu
-    // açılır. clamp: kullanıcı ekranı sütun genişliğinden fazla çekemez.
-    final yeni = (_saatKaydirici.value - d.delta.dx).clamp(
-      0.0,
-      saatSutunuGenisligi,
-    );
-    if (yeni != _saatKaydirici.value) _saatKaydirici.value = yeni;
+  bool _kaydirmaBildirimi(ScrollNotification n) {
+    if (n.metrics.axis != Axis.vertical) return false;
+    final bitis = n is ScrollEndNotification;
+    if (_kareSonrasiBekliyor && !bitis) return false;
+    _kareSonrasiBekliyor = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _kareSonrasiBekliyor = false;
+      if (!mounted || !_kaydirma.hasClients) return;
+      // TERS listede pixels = dibe uzaklık.
+      final uzak = _kaydirma.position.pixels > 300;
+      if (uzak != _dipten_uzak) {
+        setState(() {
+          _dipten_uzak = uzak;
+          if (!uzak) _asagidaYeni = 0;
+        });
+      }
+      if (bitis) {
+        _yuzenZamanlayici?.cancel();
+        _yuzenZamanlayici = Timer(const Duration(milliseconds: 900), () {
+          if (mounted && _yuzenGorunur) setState(() => _yuzenGorunur = false);
+        });
+      } else {
+        _yuzenTarihiGuncelle();
+      }
+    });
+    return false;
   }
 
-  void _saatBirak([DragEndDetails? _]) {
-    if (_saatKaydirici.value == 0) return;
-    _saatKaydirici.animateBack(
-      0,
-      duration: const Duration(milliseconds: 220),
-      curve: Curves.easeOutCubic,
+  /// Görüş alanının ÜST kenarına en yakın satırın gününü bulur. Yalnız
+  /// kurulu (ekrandaki/önbellekteki) satırlar ölçülür — üst kenar zaten
+  /// kurulu bir satırın içindedir.
+  void _yuzenTarihiGuncelle() {
+    final listeKutu = context.findRenderObject();
+    if (listeKutu is! RenderBox || !listeKutu.hasSize) return;
+    final ust = listeKutu.localToGlobal(Offset.zero).dy + kToolbarHeight;
+    double? enYakin;
+    String? gun;
+    for (final m in _mesajlar) {
+      if (m is! Map<String, dynamic>) continue;
+      final k = _satirAnahtarlari[m['id'] ?? m['_yerel']];
+      final rb = k?.currentContext?.findRenderObject();
+      if (rb is! RenderBox || !rb.attached || !rb.hasSize) continue;
+      final double alt;
+      try {
+        alt = rb.localToGlobal(Offset(0, rb.size.height)).dy;
+      } catch (_) {
+        continue; // bir ata henüz yerleşmemiş: bu kareyi atla
+      }
+      if (alt < ust) continue; // tamamen üstte kalmış
+      if (enYakin == null || alt < enYakin) {
+        enYakin = alt;
+        gun = (m['tarih'] as String? ?? '').split('T').first;
+      }
+    }
+    if (gun == null || gun.isEmpty) return;
+    if (gun != _yuzenGun || !_yuzenGorunur) {
+      _yuzenZamanlayici?.cancel();
+      setState(() {
+        _yuzenGun = gun;
+        _yuzenGorunur = true;
+      });
+    }
+  }
+
+  /// Üstte yüzen tarih rozeti (Telegram). Listedeki ayraçla aynı görünüm.
+  Widget _yuzenTarih() {
+    final g = _yuzenGun;
+    final p = g?.split('-') ?? const [];
+    final etiket = p.length == 3 ? '${p[2]}.${p[1]}.${p[0]}' : (g ?? '');
+    return Positioned(
+      top: 8,
+      left: 0,
+      right: 0,
+      child: IgnorePointer(
+        child: AnimatedOpacity(
+          opacity: _yuzenGorunur && g != null ? 1 : 0,
+          duration: const Duration(milliseconds: 180),
+          child: Center(child: _TarihRozeti(etiket, golge: true)),
+        ),
+      ),
+    );
+  }
+
+  /// Sağ altta "aşağı in" (Telegram): dipten uzaktayken görünür; yukarıdayken
+  /// gelen mesaj sayısı rozet olarak biner.
+  Widget _asagiInDugmesi() {
+    return Positioned(
+      right: 12,
+      bottom: 12,
+      child: AnimatedScale(
+        scale: _dipten_uzak ? 1 : 0,
+        duration: const Duration(milliseconds: 160),
+        child: Semantics(
+          button: true,
+          label: 'En yeni mesaja in'.c,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Material(
+                color: DiziRenkler.kart,
+                shape: const CircleBorder(),
+                elevation: 3,
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: () {
+                    _kaydirma.animateTo(
+                      0,
+                      duration: const Duration(milliseconds: 260),
+                      curve: Curves.easeOutCubic,
+                    );
+                    setState(() => _asagidaYeni = 0);
+                  },
+                  child: SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      color: DiziRenkler.metin,
+                    ),
+                  ),
+                ),
+              ),
+              if (_asagidaYeni > 0)
+                Positioned(
+                  top: -6,
+                  right: -2,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: DiziRenkler.sari,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '$_asagidaYeni',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -1196,6 +1416,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     if (mounted) {
       setState(() {
         _kaydediyor = false;
+        _kayitKilitli = false;
         _kayitSn = 0;
       });
       if (_metin.text.trim().isNotEmpty) _yaziyorBildir();
@@ -1216,6 +1437,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     if (mounted) {
       setState(() {
         _kaydediyor = false;
+        _kayitKilitli = false;
         _kayitSn = 0;
       });
     }
@@ -1382,7 +1604,13 @@ class _SohbetEkraniState extends State<SohbetEkrani>
           birlesik = _pencereyiUygula(birlesik, guncellemeler);
         }
       } else {
-        birlesik = gelen;
+        // İyimser (yerel) satırlar TAM yüklemede kaybolmasın: sunucudan
+        // gelmezler, bekleyen/hatalı gönderim ekranda kalmalı (2 Eyl 2026).
+        birlesik = [
+          ...gelen,
+          for (final m in _mesajlar)
+            if (m is Map<String, dynamic> && m['_yerel'] != null) m,
+        ];
         yeniGeldi = gelen.length != _mesajlar.length;
       }
 
@@ -1405,7 +1633,18 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         _yuklendi = true;
         _hata = null;
       });
-      if (ilk || (yeniGeldi && altaYakinDi)) _sonaKaydir();
+      if (ilk || (yeniGeldi && altaYakinDi)) {
+        _sonaKaydir();
+      } else if (yeniGeldi && artimli) {
+        // Kullanıcı geçmişi okuyor: gelen karşı taraf mesajlarını "aşağı in"
+        // rozetinde say (Telegram).
+        final benimId = context.read<Oturum>().kullanici?['id'];
+        final yeniKarsi = birlesik
+            .skip(_mesajlar.length)
+            .where((m) => (m as Map)['gonderen_id'] != benimId)
+            .length;
+        if (yeniKarsi > 0) setState(() => _asagidaYeni += yeniKarsi);
+      }
     } catch (e) {
       // İlk yüklemede hata → boş sohbet yerine hata + tekrar dene göster
       if (mounted && ilk) {
@@ -1608,12 +1847,85 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     );
   }
 
+  // ---- İYİMSER GÖNDERİM (2 Eyl 2026, Telegram düzeni) ----
+  //
+  // Mesaj dokunur dokunmaz listenin dibinde belirir (`_bekliyor` + saat
+  // ikonu; medyada yerel önizleme + yükleme halkası). Sunucu onaylayınca
+  // yerel satır düşer, yoklama gerçek satırı getirir. Hata olursa satır
+  // KALIR, kırmızı "Gönderilemedi · tekrar dene" yazar; dokununca aynı
+  // parametrelerle yeniden denenir. Üç hâl kuralı: yükleniyor/başarı/hata.
+  int _yerelSayac = 0;
+
+  /// Bekleyen satırın "tekrar dene" eylemi (anahtar → yeniden gönderim).
+  final Map<String, Future<void> Function()?> _yerelTekrar = {};
+
+  /// Listeye bekleyen satır ekler, anahtarını döner.
+  String _yerelEkle(
+    Map<String, dynamic> alanlar, {
+    Future<void> Function()? tekrar,
+  }) {
+    final benimId = context.read<Oturum>().kullanici?['id'];
+    final anahtar =
+        'y${DateTime.now().microsecondsSinceEpoch}-${_yerelSayac++}';
+    final satir = <String, dynamic>{
+      ...alanlar,
+      '_yerel': anahtar,
+      '_bekliyor': true,
+      '_ilerleme': 0.0,
+      'gonderen_id': benimId,
+      'tarih': DateTime.now().toUtc().toIso8601String(),
+      'tepkiler': const [],
+    };
+    _yerelTekrar[anahtar] = tekrar;
+    setState(() => _mesajlar = [..._mesajlar, satir]);
+    _sonaKaydir();
+    return anahtar;
+  }
+
+  void _yerelGuncelle(String anahtar, Map<String, dynamic> yama) {
+    if (!mounted) return;
+    setState(() {
+      _mesajlar = [
+        for (final m in _mesajlar)
+          if (m is Map<String, dynamic> && m['_yerel'] == anahtar)
+            {...m, ...yama}
+          else
+            m,
+      ];
+    });
+  }
+
+  void _yerelKaldir(String anahtar) {
+    _yerelTekrar.remove(anahtar);
+    if (!mounted) return;
+    setState(() {
+      _mesajlar = [
+        for (final m in _mesajlar)
+          if (!(m is Map<String, dynamic> && m['_yerel'] == anahtar)) m,
+      ];
+    });
+  }
+
+  Future<void> _yerelTekrarDene(Map<String, dynamic> m) async {
+    final anahtar = m['_yerel'] as String?;
+    if (anahtar == null) return;
+    final tekrar = _yerelTekrar[anahtar];
+    _yerelKaldir(anahtar);
+    if (tekrar != null) await tekrar();
+  }
+
   Future<void> _gonder({
     String? metin,
     String? medya,
+    List<String>? medyalar,
     String? sesDalga,
     String? icerikTur,
     int? icerikId,
+    String? dosya,
+    String? dosyaAd,
+    int? dosyaBoyut,
+    String? dosyaTur,
+    String? yerelAnahtar,
   }) async {
     if (_gonderiliyor) return;
     // Düzenleme modunda: metni PATCH ile güncelle, yeni mesaj atma
@@ -1627,29 +1939,78 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     final tur = icerikTur ?? (bekleyen?['media_type'] as String?) ?? 'tv';
     final kimlik = icerikId ?? (bekleyen?['id'] as num?)?.toInt();
     final icerikVar = icerikId != null || bekleyen != null;
-    setState(() => _gonderiliyor = true);
+    // ALBÜM: `medya` = ilk öğe (eski istemci/eski sunucu uyumu), `medyalar` =
+    // hepsi. Tek dosyalık gönderimde de aynı yol: sunucu ikisini kabul ediyor.
+    final ilkMedya =
+        medya ??
+        (medyalar != null && medyalar.isNotEmpty ? medyalar.first : null);
+    // İYİMSER SATIR: çağıran (medya/belge akışı) kendi satırını verdiyse o
+    // kullanılır; yoksa burada kurulur (metin, GIF, içerik kartı, ses).
+    final yanitKopya = _yanitlanan;
+    final anahtar =
+        yerelAnahtar ??
+        _yerelEkle(
+          {
+            if (metin != null && metin.isNotEmpty) 'metin': metin,
+            if (ilkMedya != null) 'medya': ilkMedya,
+            if (medyalar != null && medyalar.length > 1) 'medyalar': medyalar,
+            if (dosyaAd != null) 'dosya_ad': dosyaAd,
+            if (dosyaBoyut != null) 'dosya_boyut': dosyaBoyut,
+            if (dosyaTur != null) 'dosya_tur': dosyaTur,
+            if (sesDalga != null) 'ses_dalga': sesDalga,
+            if (icerikVar) 'icerik_tur': tur,
+            if (icerikVar && kimlik != null) 'icerik_id': kimlik,
+            if (yanitKopya != null) ...{
+              'yanit_id': yanitKopya['id'],
+              'yanit_metin': yanitKopya['metin'],
+              'yanit_medya': yanitKopya['medya'],
+              'yanit_dosya_ad': yanitKopya['dosya_ad'],
+            },
+          },
+          tekrar: () => _gonder(
+            metin: metin,
+            medya: medya,
+            medyalar: medyalar,
+            sesDalga: sesDalga,
+            icerikTur: icerikTur,
+            icerikId: icerikId,
+            dosya: dosya,
+            dosyaAd: dosyaAd,
+            dosyaBoyut: dosyaBoyut,
+            dosyaTur: dosyaTur,
+          ),
+        );
+    // Kutu hemen boşalır (Telegram): yazı balonda görünüyor zaten.
+    _metin.clear();
+    setState(() {
+      _gonderiliyor = true;
+      _yanitlanan = null;
+      _bekleyenIcerik = null;
+    });
     try {
       await Api.post('/mesajlar', {
         'kullanici_adi': widget.kullaniciAdi,
         if (metin != null && metin.isNotEmpty) 'metin': metin,
-        if (medya != null) 'medya': medya,
+        if (ilkMedya != null) 'medya': ilkMedya,
+        if (medyalar != null && medyalar.length > 1) 'medyalar': medyalar,
+        if (dosya != null) 'dosya': dosya,
+        if (dosyaAd != null) 'dosya_ad': dosyaAd,
+        if (dosyaBoyut != null) 'dosya_boyut': dosyaBoyut,
+        if (dosyaTur != null) 'dosya_tur': dosyaTur,
         if (sesDalga != null) 'ses_dalga': sesDalga,
         if (icerikVar) 'icerik_tur': tur,
         if (icerikVar && kimlik != null) 'icerik_id': kimlik,
-        if (_yanitlanan != null)
-          'yanit_id': (_yanitlanan!['id'] as num).toInt(),
+        if (yanitKopya != null) 'yanit_id': (yanitKopya['id'] as num).toInt(),
       });
-      _metin.clear();
       _durumDurdur();
-      setState(() {
-        _yanitlanan = null;
-        _bekleyenIcerik = null;
-      });
       SohbetOlaylari.mesajGeldi(widget.kullaniciAdi);
+      _yerelKaldir(anahtar);
       await _yukle();
       _sonaKaydir();
     } catch (e) {
       if (!mounted) return;
+      // Satır kalır, kırmızı hata + dokununca tekrar (üç hâl kuralı).
+      _yerelGuncelle(anahtar, {'_bekliyor': false, '_hata': true});
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -1707,45 +2068,69 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   }
 
   /// Galeriden fotoğraf/GIF/video seç → **inceleme/düzenleme ekranı** →
-  /// yükle → mesaj olarak gönder.
+  /// yükle → TEK mesaj olarak gönder (albüm).
   ///
-  /// TEK DOSYA (`azami: 1`) — KEYFİ DEĞİL, VERİ MODELİ BÖYLE: `mesajlar.medya`
-  /// kolonu **TEXT**'tir (`backend/sema.sql:209`), `yorumlar.medya` gibi
-  /// `TEXT[]` değil; `POST /mesajlar` gövdesinde `medya` tek bir string bekler
-  /// ve tek satır INSERT eder (`server.js:4528, 4539, 4596`). Çoklu seçim
-  /// açmak kullanıcıya 5 fotoğraf seçtirip 4'ünü sessizce çöpe atmak olurdu.
-  /// (Sunucuyu diziye çevirmek ayrı bir iş: kolon + okuma uçları + baloncuk
-  /// çizimi + eski mesajların göçü.)
+  /// ÇOKLU SEÇİM (2 Eyl 2026, Telegram düzeni): eskiden `azami: 1` idi çünkü
+  /// `mesajlar.medya` TEXT'ti. Artık sunucuda `mesajlar.medyalar TEXT[]` var
+  /// (migrasyon-2026-09-02b.sql): `medya` = ilk öğe (ESKİ istemciler onu
+  /// okumaya devam eder), `medyalar` = hepsi (yeni istemci albüm çizer).
+  /// Tavan [albumAzami] — Telegram'ın da tavanı 10.
   ///
   /// Seçim sisteme (Android Fotoğraf Seçici) devredildiği için geniş galeri
   /// izni İSTENMEZ — `medya_inceleme.dart` başındaki Play reddi notu.
   Future<void> _fotoGonder() async {
-    final secim = await medyaSec(context, azami: 1);
+    final secim = await medyaSec(context, azami: albumAzami);
     if (secim.isEmpty || !mounted) return;
-    setState(() => _ekYukleniyor = true);
+    await _medyalariGonder(secim);
+  }
+
+  /// Seçilmiş dosyaları sırayla yükler ve tek mesaj (albüm) olarak gönderir.
+  /// Kısmi başarıda yüklenenler gider, düşenler SnackBar ile söylenir —
+  /// kullanıcı 5 seçip 3'ünü bulursa nedenini bilir.
+  Future<void> _medyalariGonder(List<XFile> secim) async {
+    // Yazılmış metin de gitsin: eskiden fotoğraf/video eklenince kutudaki
+    // yazı sessizce kayboluyordu.
+    final metin = _metin.text.trim();
+    // İyimser satır: cihaz yolları önizlenir, yükleme halkası biner. Web'de
+    // yol boş olabilir (bellek içi XFile) — o zaman halka tek başına durur.
+    final anahtar = _yerelEkle({
+      'medya_yerel': [for (final d in secim) d.path],
+      if (metin.isNotEmpty) 'metin': metin,
+    }, tekrar: () => _medyalariGonder(secim));
+    _metin.clear();
+    setState(() {
+      _ekYukleniyor = true;
+      _ekIlerleme = 0;
+      _ekToplam = secim.length;
+    });
     MedyaYuklemeSonuc sonuc;
     try {
-      // Sınır ARTIK ORTAK sabitten (100 MB = sunucunun `/medya` sınırı).
-      // Buradaki eski 30 MB, sunucu kabul edecekken 40-70 MB'lık videoları
-      // istemcide sebepsiz reddediyordu; 20 MB üstü video zaten inceleme
-      // ekranında cihazda sıkıştırılıyor (`videoHazirla`).
-      sonuc = await medyalariYukle(secim, toplamAzamiBayt: null);
+      // Sınır ORTAK sabitten (100 MB = sunucunun `/medya` sınırı); 20 MB üstü
+      // video inceleme ekranında cihazda zaten sıkıştırıldı (`videoHazirla`).
+      sonuc = await medyalariYukle(
+        secim,
+        toplamAzamiBayt: null,
+        adim: (biten) {
+          if (!mounted) return;
+          setState(() => _ekIlerleme = biten);
+          _yerelGuncelle(anahtar, {'_ilerleme': biten / secim.length});
+        },
+      );
     } finally {
       if (mounted) setState(() => _ekYukleniyor = false);
     }
     if (!mounted) return;
     final bildirim = sonuc.bildirim;
-    if (bildirim != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(bildirim)));
-      return; // yüklenmeyen medyayla mesaj göndermeyiz
+    if (sonuc.yuklenen.isEmpty) {
+      _yerelGuncelle(anahtar, {'_bekliyor': false, '_hata': true});
+      _uyar(bildirim ?? 'Hiçbir medya yüklenemedi'.c);
+      return;
     }
-    // Yazılmış metin de gitsin: eskiden fotoğraf/video eklenince
-    // kutudaki yazı sessizce kayboluyordu.
+    if (bildirim != null) _uyar(bildirim);
     await _gonder(
-      medya: sonuc.yuklenen.first['yol'] as String,
-      metin: _metin.text.trim(),
+      medyalar: [for (final y in sonuc.yuklenen) y['yol'] as String],
+      metin: metin,
+      yerelAnahtar: anahtar,
     );
   }
 
@@ -1935,160 +2320,132 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                         mesaj: _hata!,
                         tekrar: () => _yukle(ilk: true),
                       )
-                    : RawGestureDetector(
-                        // Saat sütunu jesti: LİSTENİN TAMAMI kayar (mesaj
-                        // başına ayrı sürükleme YOK). Kenar payı geri
-                        // jestini korur, dikey kaydırma arenada kazanır.
-                        gestures: {
-                          _SaatSuruklemeTanicisi:
-                              GestureRecognizerFactoryWithHandlers<
-                                _SaatSuruklemeTanicisi
-                              >(
-                                () => _SaatSuruklemeTanicisi(debugOwner: this),
-                                (t) => t
-                                  // .down: jesti kazandiran ilk hareket de
-                                  // rapor edilir. Varsayilan .start'ta o
-                                  // hareket YUTULUYOR ve balonun ustunde
-                                  // baslayan surukleme hic acilmiyordu.
-                                  ..dragStartBehavior = DragStartBehavior.down
-                                  ..onStart = _saatSuruklemeBasla
-                                  ..onUpdate = _saatSurukle
-                                  ..onEnd = _saatBirak
-                                  ..onCancel = _saatBirak,
-                              ),
-                        },
-                        child: ListView.builder(
-                          controller: _kaydirma,
-                          // TERS LİSTE = ÇAPA DİPTE (28 Ağu 2026).
-                          // Kullanıcı: "sohbet ekranı sürekli yukarı kayıyor,
-                          // klavye aç/kapa yapıyorum, mesaj geliyor, mesaj
-                          // atıyorum — sürekli kayıyor."
-                          // SEBEP: liste düz çiziliyordu, dip ise `jumpTo(
-                          // maxScrollExtent)` ile TAKLİT ediliyordu. Kaydırma
-                          // uzaklığı listenin BAŞINDAN ölçülür; klavye açılıp
-                          // viewport küçülünce, yeni mesaj eklenince ya da bir
-                          // görsel geç yüklenip yüksekliği büyütünce
-                          // `maxScrollExtent` değişiyor ama `pixels` sabit
-                          // kalıyordu — görüntü dibe göre YUKARI kayıyordu.
-                          // Zamanlayıcılı jumpTo'lar bunu kovalıyor, arada bir
-                          // yetişemiyordu.
-                          // `reverse: true` ile offset 0 = EN YENİ mesaj ve
-                          // ölçüm dipten yapılır: içerik yukarıda büyüse de
-                          // çapa oynamaz. Kullanıcı kaydırmadıkça ekran
-                          // kıpırdamaz — istenen davranış BU.
-                          reverse: true,
-                          padding: const EdgeInsets.all(12),
-                          itemCount: _mesajlar.length,
-                          itemBuilder: (context, tersIndeks) {
-                            // `_mesajlar` KRONOLOJİK kalır (eski→yeni); yalnız
-                            // çizim sırası ters. Böylece "önceki gün" karşı-
-                            // laştırması ve tarih ayracı aynen çalışır.
-                            final i = _mesajlar.length - 1 - tersIndeks;
-                            final m = _mesajlar[i] as Map<String, dynamic>;
-                            final gun = (m['tarih'] as String? ?? '')
-                                .split('T')
-                                .first;
-                            final oncekiGun = i > 0
-                                ? ((_mesajlar[i - 1]
-                                                  as Map<
-                                                    String,
-                                                    dynamic
-                                                  >)['tarih']
-                                              as String? ??
-                                          '')
-                                      .split('T')
-                                      .first
-                                : null;
-                            final benimMi = m['gonderen_id'] == benimId;
-                            final metinMi =
-                                (m['metin'] as String?)?.isNotEmpty == true &&
-                                m['medya'] == null &&
-                                m['icerik_tur'] == null;
-                            final baloncuk = _MesajBaloncugu(
-                              // Yoklama listeyi yenilerken baloncuk id ile
-                              // eşleşsin: medya yeniden yüklenip kaymasın.
-                              key: ValueKey(m['id'] ?? 'm$i'),
-                              mesaj: m,
-                              benim: benimMi,
-                              icerikler: _icerikler,
-                              gonderiler: _gonderiler,
-                              // "Görüldü" YALNIZ son okunan kendi mesajımda.
-                              gorulduGoster: i == gorulduIndeksi,
-                              yanitla: m['id'] != null
-                                  ? () => _yanitBaslat(m)
-                                  : null,
-                              sil: benimMi && m['id'] != null
-                                  ? () => _mesajSil((m['id'] as num).toInt())
-                                  : null,
-                              duzenle: benimMi && metinMi
-                                  ? () => _duzenlemeBaslat(m)
-                                  : null,
-                              sikayet: !benimMi && m['id'] != null
-                                  ? () => sikayetEtSheet(
-                                      context,
-                                      'mesaj',
-                                      (m['id'] as num).toInt(),
-                                    )
-                                  : null,
-                              // Henüz gönderilmemiş (id'siz) iyimser satıra
-                              // tepki verilemez: sunucuda karşılığı yok.
-                              tepkiVer: m['id'] == null
-                                  ? null
-                                  : (emoji) => _tepkiVer(
-                                      (m['id'] as num).toInt(),
-                                      emoji,
-                                    ),
-                              balonRenk: _sohbetTema.balon,
-                              balonYazi: _sohbetTema.yazi,
-                            );
-                            // Saat balonun ALTINDA değil, satırın SAĞINDAKİ
-                            // gizli sütunda; sürükleme boyunca açılır.
-                            final satir = _ZamanliSatir(
-                              kaydirma: _saatKaydirici,
-                              saat: mesajSaati(m),
-                              saatAnahtari: 'mesaj-saat-${m['id'] ?? i}',
-                              child: baloncuk,
-                            );
-                            if (gun == oncekiGun || gun.isEmpty) return satir;
-                            // Tarih ayracı: gün değişince ortada küçük rozet
-                            final p = gun.split('-');
-                            final etiket = p.length == 3
-                                ? '${p[2]}.${p[1]}.${p[0]}'
-                                : gun;
-                            return Column(
-                              children: [
-                                // Ayraç da SATIRLARLA BİRLİKTE kayar (saatsiz),
-                                // yoksa sürüklemede yerinde çakılı kalırdı.
-                                _ZamanliSatir(
-                                  kaydirma: _saatKaydirici,
-                                  child: Center(
-                                    child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                        vertical: 10,
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: DiziRenkler.koyuGri,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Text(
-                                        etiket,
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: DiziRenkler.metin54,
-                                        ),
-                                      ),
-                                    ),
+                    // Stack (2 Eyl 2026, Telegram düzeni): liste + üstte yüzen
+                    // tarih rozeti + sağ altta "aşağı in" düğmesi. Eski saat-
+                    // sürükleme jesti (RawGestureDetector) kalktı: saat artık
+                    // balonun içinde, yatay sürükleme "kaydırarak yanıtla".
+                    : Stack(
+                        children: [
+                          NotificationListener<ScrollNotification>(
+                            onNotification: _kaydirmaBildirimi,
+                            child: ListView.builder(
+                              controller: _kaydirma,
+                              // TERS LİSTE = ÇAPA DİPTE (28 Ağu 2026).
+                              // Kullanıcı: "sohbet ekranı sürekli yukarı kayıyor,
+                              // klavye aç/kapa yapıyorum, mesaj geliyor, mesaj
+                              // atıyorum — sürekli kayıyor."
+                              // SEBEP: liste düz çiziliyordu, dip ise `jumpTo(
+                              // maxScrollExtent)` ile TAKLİT ediliyordu. Kaydırma
+                              // uzaklığı listenin BAŞINDAN ölçülür; klavye açılıp
+                              // viewport küçülünce, yeni mesaj eklenince ya da bir
+                              // görsel geç yüklenip yüksekliği büyütünce
+                              // `maxScrollExtent` değişiyor ama `pixels` sabit
+                              // kalıyordu — görüntü dibe göre YUKARI kayıyordu.
+                              // Zamanlayıcılı jumpTo'lar bunu kovalıyor, arada bir
+                              // yetişemiyordu.
+                              // `reverse: true` ile offset 0 = EN YENİ mesaj ve
+                              // ölçüm dipten yapılır: içerik yukarıda büyüse de
+                              // çapa oynamaz. Kullanıcı kaydırmadıkça ekran
+                              // kıpırdamaz — istenen davranış BU.
+                              reverse: true,
+                              padding: const EdgeInsets.all(12),
+                              itemCount: _mesajlar.length,
+                              itemBuilder: (context, tersIndeks) {
+                                // `_mesajlar` KRONOLOJİK kalır (eski→yeni); yalnız
+                                // çizim sırası ters. Böylece "önceki gün" karşı-
+                                // laştırması ve tarih ayracı aynen çalışır.
+                                final i = _mesajlar.length - 1 - tersIndeks;
+                                final m = _mesajlar[i] as Map<String, dynamic>;
+                                final gun = (m['tarih'] as String? ?? '')
+                                    .split('T')
+                                    .first;
+                                final oncekiGun = i > 0
+                                    ? ((_mesajlar[i - 1]
+                                                      as Map<
+                                                        String,
+                                                        dynamic
+                                                      >)['tarih']
+                                                  as String? ??
+                                              '')
+                                          .split('T')
+                                          .first
+                                    : null;
+                                final benimMi = m['gonderen_id'] == benimId;
+                                final metinMi =
+                                    (m['metin'] as String?)?.isNotEmpty ==
+                                        true &&
+                                    m['medya'] == null &&
+                                    m['icerik_tur'] == null;
+                                final baloncuk = _MesajBaloncugu(
+                                  // Yoklama listeyi yenilerken baloncuk id ile
+                                  // eşleşsin: medya yeniden yüklenip kaymasın.
+                                  key: ValueKey(
+                                    m['id'] ?? m['_yerel'] ?? 'm$i',
                                   ),
-                                ),
-                                satir,
-                              ],
-                            );
-                          },
-                        ),
+                                  mesaj: m,
+                                  benim: benimMi,
+                                  icerikler: _icerikler,
+                                  gonderiler: _gonderiler,
+                                  // "Görüldü" YALNIZ son okunan kendi mesajımda.
+                                  gorulduGoster: i == gorulduIndeksi,
+                                  yanitla: m['id'] != null
+                                      ? () => _yanitBaslat(m)
+                                      : null,
+                                  sil: benimMi && m['id'] != null
+                                      ? () =>
+                                            _mesajSil((m['id'] as num).toInt())
+                                      : null,
+                                  duzenle: benimMi && metinMi
+                                      ? () => _duzenlemeBaslat(m)
+                                      : null,
+                                  sikayet: !benimMi && m['id'] != null
+                                      ? () => sikayetEtSheet(
+                                          context,
+                                          'mesaj',
+                                          (m['id'] as num).toInt(),
+                                        )
+                                      : null,
+                                  // Henüz gönderilmemiş (id'siz) iyimser satıra
+                                  // tepki verilemez: sunucuda karşılığı yok.
+                                  tepkiVer: m['id'] == null
+                                      ? null
+                                      : (emoji) => _tepkiVer(
+                                          (m['id'] as num).toInt(),
+                                          emoji,
+                                        ),
+                                  balonRenk: _sohbetTema.balon,
+                                  balonYazi: _sohbetTema.yazi,
+                                  tekrarDene: m['_hata'] == true
+                                      ? () => _yerelTekrarDene(m)
+                                      : null,
+                                );
+                                // Kaydırarak yanıtla (Telegram): satır sola
+                                // sürüklenince ok belirir, eşik geçilince yanıt.
+                                final satir = _KaydirYanitla(
+                                  key: _satirAnahtari(m, i),
+                                  etkin: m['id'] != null && _istek == null,
+                                  onYanitla: () => _yanitBaslat(m),
+                                  child: baloncuk,
+                                );
+                                if (gun == oncekiGun || gun.isEmpty)
+                                  return satir;
+                                // Tarih ayracı: gün değişince ortada küçük rozet
+                                final p = gun.split('-');
+                                final etiket = p.length == 3
+                                    ? '${p[2]}.${p[1]}.${p[0]}'
+                                    : gun;
+                                return Column(
+                                  children: [
+                                    Center(child: _TarihRozeti(etiket)),
+                                    satir,
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                          _yuzenTarih(),
+                          _asagiInDugmesi(),
+                        ],
                       ),
               ),
               // Başlıkta kaçarsa (kırpma / bakış) kutunun üstünde de dursun.
@@ -2166,114 +2523,14 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                   padding: const EdgeInsets.fromLTRB(8, 6, 8, 10),
                   // Bekleyen mesaj isteğinde yanıt kutusu HİÇ çizilmez:
                   // kabul edilmeden yanıt verilemez (24 Ağu 2026).
+                  // Basılı-tut kaydı sürerken de [_yaziCubugu] çizilir: mikrofon
+                  // düğmesi AYNI ağaç konumunda kalmalı, yoksa uzun basma jesti
+                  // kopar. Tam çubuk yalnız kayıt KİLİTLENİNCE gelir.
                   child: _istek != null
                       ? _istekCubugu()
-                      : _kaydediyor
+                      : (_kaydediyor && _kayitKilitli)
                       ? _kayitCubugu()
-                      : Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            // Dört eylem de kutunun İÇİNDE (suffixIcon):
-                            // metin alanı boydan boya, ikonlar küçük.
-                            Expanded(
-                              child: TextField(
-                                controller: _metin,
-                                focusNode: _metinOdak,
-                                minLines: 1,
-                                maxLines: 4,
-                                maxLength: 2000,
-                                buildCounter:
-                                    (
-                                      _, {
-                                      required currentLength,
-                                      maxLength,
-                                      required isFocused,
-                                    }) => null,
-                                onChanged: (_) => _yaziyorBildir(),
-                                onSubmitted: (_) =>
-                                    _gonder(metin: _metin.text.trim()),
-                                decoration: InputDecoration(
-                                  hintText: 'Mesajını yaz...'.c,
-                                  isDense: true,
-                                  contentPadding: const EdgeInsets.fromLTRB(
-                                    14,
-                                    10,
-                                    4,
-                                    10,
-                                  ),
-                                  suffixIconConstraints: const BoxConstraints(
-                                    minWidth: 0,
-                                    minHeight: 0,
-                                  ),
-                                  suffixIcon: Padding(
-                                    padding: const EdgeInsets.only(right: 6),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        // Ataç yazarken de KALIR: "fotoğraf +
-                                        // altyazı" akışı kutudaki yazıyla
-                                        // gider (_fotoGonder) ve inceleme
-                                        // ekranında ayrı yazı alanı yok —
-                                        // gizlense akış tamamen kopardı.
-                                        // WhatsApp da yazarken ataçı tutar.
-                                        _kutuIkonu(
-                                          ipucu: 'Fotoğraf / video ekle'.c,
-                                          ikon: Icons
-                                              .add_photo_alternate_outlined,
-                                          kapali:
-                                              _ekYukleniyor ||
-                                              _duzenlenenId != null,
-                                          yukleniyor: _ekYukleniyor,
-                                          onTap: _fotoGonder,
-                                        ),
-                                        // Yazı VARKEN kalan ek ikonlar
-                                        // gizlenir, kutu genişler (31 Ağu
-                                        // 2026 isteği: "çok dar alana yazı
-                                        // yazılıyor"); metin silinince ya da
-                                        // gönderilince geri gelirler.
-                                        if (!_yaziVar) ...[
-                                          _kutuIkonu(
-                                            ipucu: 'GIF ekle'.c,
-                                            ikon: Icons.gif_box_outlined,
-                                            kapali:
-                                                _ekYukleniyor ||
-                                                _duzenlenenId != null,
-                                            onTap: _gifGonder,
-                                          ),
-                                          _kutuIkonu(
-                                            ipucu: 'İçerik paylaş'.c,
-                                            ikon: Icons.local_movies_outlined,
-                                            kapali: _duzenlenenId != null,
-                                            onTap: _icerikPaylas,
-                                          ),
-                                          if (!kIsWeb)
-                                            _kutuIkonu(
-                                              ipucu: 'Sesli mesaj'.c,
-                                              ikon: Icons.mic_none,
-                                              kapali:
-                                                  _ekYukleniyor ||
-                                                  _duzenlenenId != null,
-                                              onTap: _kayitBasla,
-                                            ),
-                                        ],
-                                        _kutuIkonu(
-                                          ipucu: 'Gönder'.c,
-                                          ikon: Icons.send,
-                                          kapali:
-                                              _gonderiliyor || _ekYukleniyor,
-                                          vurgulu: true,
-                                          onTap: () => _gonder(
-                                            metin: _metin.text.trim(),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      : _yaziCubugu(),
                 ),
               ),
             ],
@@ -2281,6 +2538,319 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         ),
       ),
     );
+  }
+
+  /// Yazı çubuğu — Telegram düzeni (2 Eyl 2026): solda yuvarlak HAP (yazı
+  /// alanı + ataç), sağda TEK yuvarlak eylem düğmesi (boşken mikrofon, yazı
+  /// varken gönder). GIF / dizi-film / dosya / kamera ataç PANELİNE taşındı.
+  ///
+  /// NEDEN DÜĞMELER ARTIK `TextField.suffixIcon`'DA DEĞİL — ANR KÖK SEBEBİ:
+  /// TextField kendi semantics düğümünü suffix'teki düğmelerin düğümleriyle
+  /// "kardeş grubu" olarak birleştiriyor. Yükleme sırasında ikonlar değişince
+  /// (ataç → spinner, yazı varken GIF/film/mikrofon gizlenince) Flutter'ın yeni
+  /// semantics hattı (`_RenderObjectSemantics._mergeSiblingGroup`) önbellekteki
+  /// düğümü hem GRUP hem ÇOCUK olarak kullanıyor → düğüm kendi çocuğu oluyor →
+  /// `SemanticsNode.attach` sonsuz özyineleme. Sürüm derlemesinde `assert` yok,
+  /// bu yüzden istisna değil %100 CPU + ANR; debug'da assert konuşuyor:
+  /// `semantics.dart:2967 '!newChildren.any((child) => child == this)'`,
+  /// yaratıcı `Semantics ← … ← TextField ← Expanded ← Row`. Semantics ağacı
+  /// YALNIZ bir erişilebilirlik servisi açıkken kurulduğu için emülatörde hiç
+  /// çıkmadı; Galaxy S24'te (Auto Clicker servisi açık) her video gönderiminde
+  /// çıktı (Play 1.114.0, `dumpsys dropbox data_app_anr` + simpleperf ile
+  /// sembollü libapp.so: `SemanticsNode.attach` + `_LinkedHashMapMixin`).
+  /// Düğmeler TextField'ın DIŞINDA kardeş olunca grup birleşmesi hiç kurulmuyor.
+  /// KURAL: `TextField.suffixIcon`/`prefixIcon` içine bir daha DÜĞME KOYMA
+  /// (aynı desen Reels yanıt kutusundaydı, oraya da uygulandı: kesfet_akis).
+  Widget _yaziCubugu() {
+    final duzenleme = _duzenlenenId != null;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Expanded(
+          child: _kaydediyor
+              ? _kayitHapi()
+              : Container(
+                  decoration: BoxDecoration(
+                    color: DiziRenkler.kart,
+                    borderRadius: BorderRadius.circular(24),
+                    border: DiziRenkler.acik
+                        ? Border.all(color: const Color(0xFFDADAE0))
+                        : null,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _metin,
+                          focusNode: _metinOdak,
+                          minLines: 1,
+                          maxLines: 5,
+                          maxLength: 2000,
+                          buildCounter:
+                              (
+                                _, {
+                                required currentLength,
+                                maxLength,
+                                required isFocused,
+                              }) => null,
+                          onChanged: (_) => _yaziyorBildir(),
+                          onSubmitted: (_) =>
+                              _gonder(metin: _metin.text.trim()),
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: InputDecoration(
+                            hintText: 'Mesaj'.c,
+                            isDense: true,
+                            filled: false,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            contentPadding: const EdgeInsets.fromLTRB(
+                              18,
+                              12,
+                              4,
+                              12,
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Ataç yazarken de KALIR: "medya + altyazı" akışı kutudaki
+                      // yazıyla gider. Düzenleme kipinde kapalı: düzenlenen mesaja
+                      // yeni ek bağlanamaz.
+                      // Albüm yüklenirken "2/5": sıralı yükleme dakikalar sürebilir,
+                      // dönen tek spinner "takıldı" dedirtir (üç hâl kuralı).
+                      if (_ekYukleniyor && _ekToplam > 1)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 14),
+                          child: Text(
+                            '$_ekIlerleme/$_ekToplam',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: DiziRenkler.sariMetin,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4, bottom: 2),
+                        child: _kutuIkonu(
+                          ipucu: 'Ekle'.c,
+                          ikon: Icons.attach_file,
+                          kapali: _ekYukleniyor || duzenleme,
+                          yukleniyor: _ekYukleniyor,
+                          onTap: _ekPaneliAc,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+        ),
+        const SizedBox(width: 6),
+        _eylemDugmesi(),
+      ],
+    );
+  }
+
+  /// Sağdaki yuvarlak düğme: yazı varsa GÖNDER, yoksa MİKROFON (basılı tut).
+  ///
+  /// Web'de mikrofon çizilmez (kayıt native), yerine gönder durur; düzenleme
+  /// kipinde de gönder (kaydet) durur. Mikrofon jesti [_MikrofonDugmesi]'nde.
+  Widget _eylemDugmesi() {
+    // Bekleyen dizi/film kartı varken de GÖNDER: kartı yazısız yollamak
+    // meşru (sunucu içerik varsa metin istemiyor), mikrofon orada anlamsız.
+    final gonder =
+        !_kaydediyor &&
+        (_yaziVar ||
+            _duzenlenenId != null ||
+            _bekleyenIcerik != null ||
+            kIsWeb);
+    final kapali = _gonderiliyor || _ekYukleniyor;
+    if (gonder) {
+      return Semantics(
+        button: true,
+        enabled: !kapali,
+        label: 'Gönder'.c,
+        child: Tooltip(
+          message: 'Gönder'.c,
+          child: Material(
+            color: kapali ? DiziRenkler.metin38 : DiziRenkler.sari,
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: kapali ? null : () => _gonder(metin: _metin.text.trim()),
+              child: const SizedBox(
+                width: 46,
+                height: 46,
+                child: Icon(Icons.send_rounded, color: Colors.black, size: 22),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    return _MikrofonDugmesi(
+      kapali: kapali,
+      onBasla: _kayitBasla,
+      onBirak: ({required bool iptal, required bool kilitli}) {
+        if (iptal) {
+          _kayitIptal();
+        } else if (!kilitli) {
+          _kayitGonder();
+        } else {
+          // Kilitlendi: kayıt sürer, [_kayitCubugu] iptal/gönder sunar.
+          if (mounted) setState(() => _kayitKilitli = true);
+        }
+      },
+    );
+  }
+
+  /// Ataç paneli — Telegram'ın "+" alt sayfası.
+  ///
+  /// Kutucuklar: Galeri (sistem Fotoğraf Seçici — panel içi ızgara YOK, Play
+  /// 7 Ağu'da medya iznini reddetti, bkz. medya_inceleme.dart), Kamera, Dosya,
+  /// GIF, Dizi/Film. Konum ve Kişi BİLEREK yok: konum izni Play incelemesi
+  /// açar, kişi paylaşımı yeni bir mesaj türü ister — ayrı iş.
+  Future<void> _ekPaneliAc() async {
+    _metinOdak.unfocus();
+    final secim = await showModalBottomSheet<_EkTuru>(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => const _EkPaneli(),
+    );
+    if (secim == null || !mounted) return;
+    switch (secim) {
+      case _EkTuru.galeri:
+        await _fotoGonder();
+      case _EkTuru.kamera:
+        await _kameraGonder();
+      case _EkTuru.dosya:
+        await _dosyaGonder();
+      case _EkTuru.gif:
+        await _gifGonder();
+      case _EkTuru.icerik:
+        await _icerikPaylas();
+    }
+  }
+
+  /// Basılı-tut kaydı sürerken hapın yerine geçen şerit: nabız + süre +
+  /// "kaydırarak iptal" ipucu + kilit ipucu. Parmak hâlâ mikrofonda.
+  Widget _kayitHapi() {
+    final dk = _kayitSn ~/ 60;
+    final sn = (_kayitSn % 60).toString().padLeft(2, '0');
+    return Container(
+      height: 46,
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      decoration: BoxDecoration(
+        color: DiziRenkler.kart,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        children: [
+          const _KayitNabzi(),
+          const SizedBox(width: 10),
+          Text(
+            '$dk:$sn',
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontFeatures: [FontFeature.tabularFigures()],
+            ),
+          ),
+          const Spacer(),
+          Icon(Icons.chevron_left, size: 18, color: DiziRenkler.metin54),
+          Text(
+            'Kaydırarak iptal'.c,
+            style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
+          ),
+          const SizedBox(width: 8),
+          Icon(Icons.lock_open, size: 16, color: DiziRenkler.metin38),
+        ],
+      ),
+    );
+  }
+
+  /// Kamera: fotoğraf çekip AYNI yükleme hattına verir. Video çekimi bilerek
+  /// yok — galeri yolu videoyu kapsıyor, ikinci bir kamera kipi paneli
+  /// kalabalıklaştırırdı.
+  Future<void> _kameraGonder() async {
+    final XFile? foto;
+    try {
+      foto = await ImagePicker().pickImage(
+        source: ImageSource.camera,
+        imageQuality: 92,
+        maxWidth: 2560,
+      );
+    } catch (_) {
+      if (mounted) _uyar('Kamera açılamadı'.c);
+      return;
+    }
+    if (foto == null || !mounted) return;
+    await _medyalariGonder([foto]);
+  }
+
+  /// Dosya (belge): sistem dosya seçici → `/dosya` yüklemesi → belge mesajı.
+  /// Sunucu belgeyi `application/octet-stream` + `attachment` ile servis
+  /// eder (yüklenen HTML/SVG asla sayfa olarak açılmaz); mesaj satırı adı,
+  /// boyutu ve MIME'ı taşır.
+  Future<void> _dosyaGonder() async {
+    FilePickerResult? secim;
+    try {
+      secim = await FilePicker.platform.pickFiles(
+        withData: kIsWeb,
+        withReadStream: false,
+      );
+    } catch (_) {
+      if (mounted) _uyar('Dosya seçilemedi'.c);
+      return;
+    }
+    final d = secim?.files.single;
+    if (d == null || !mounted) return;
+    if (d.size > dosyaAzamiBayt) {
+      _uyar(
+        'Dosya en fazla {} MB olabilir'.cf([dosyaAzamiBayt ~/ (1024 * 1024)]),
+      );
+      return;
+    }
+    final metin = _metin.text.trim();
+    final anahtar = _yerelEkle({
+      'dosya_ad': d.name,
+      'dosya_boyut': d.size,
+      if (metin.isNotEmpty) 'metin': metin,
+    }, tekrar: _dosyaGonder);
+    _metin.clear();
+    setState(() => _ekYukleniyor = true);
+    try {
+      final bayt = d.bytes ?? await dosyaOku(d.path!);
+      final sonuc = await Api.dosyaYukle(bayt, ad: d.name);
+      await _gonder(
+        dosya: sonuc['yol'] as String,
+        dosyaAd: d.name,
+        dosyaBoyut: d.size,
+        dosyaTur: sonuc['tur'] as String?,
+        metin: metin,
+        yerelAnahtar: anahtar,
+      );
+    } on ApiHata catch (e) {
+      _yerelGuncelle(anahtar, {'_bekliyor': false, '_hata': true});
+      if (mounted) _uyar(e.mesaj.c);
+    } catch (_) {
+      _yerelGuncelle(anahtar, {'_bekliyor': false, '_hata': true});
+      if (mounted) _uyar('Dosya gönderilemedi'.c);
+    } finally {
+      if (mounted) setState(() => _ekYukleniyor = false);
+    }
+  }
+
+  void _uyar(String mesaj) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(SnackBar(content: Text(mesaj)));
   }
 
   /// Kayıt sırasında giriş çubuğu: iptal + nabız + canlı dalga + süre + gönder.
@@ -2367,6 +2937,251 @@ class _KayitNabziState extends State<_KayitNabzi>
   );
 }
 
+/// Basılı-tut mikrofon düğmesi (Telegram jesti).
+///
+/// * Basılı tut → kayıt başlar, düğme büyür.
+/// * Sola kaydır (> [iptalEsigi] px) → bırakınca İPTAL.
+/// * Yukarı kaydır (> [kilitEsigi] px) → KİLİT: parmak çekilse de kayıt sürer.
+/// * Bırak → gönder (1 sn altı kayıtlar [_kayitGonder] içinde zaten iptal).
+/// * Tek dokunuş → "basılı tut" ipucu (Telegram da öyle yapar; sessizce hiçbir
+///   şey olmaması kullanıcıya düğme bozuk dedirtir).
+///
+/// Jest kesintisiz olsun diye bu widget kayıt boyunca AĞAÇTA AYNI YERDE kalır
+/// (`_yaziCubugu` → `_eylemDugmesi`); üst çubuk yalnız kilitte değişir.
+class _MikrofonDugmesi extends StatefulWidget {
+  final bool kapali;
+  final VoidCallback onBasla;
+  final void Function({required bool iptal, required bool kilitli}) onBirak;
+
+  const _MikrofonDugmesi({
+    required this.kapali,
+    required this.onBasla,
+    required this.onBirak,
+  });
+
+  static const iptalEsigi = 90.0;
+  static const kilitEsigi = 70.0;
+
+  @override
+  State<_MikrofonDugmesi> createState() => _MikrofonDugmesiState();
+}
+
+class _MikrofonDugmesiState extends State<_MikrofonDugmesi> {
+  bool _basili = false;
+  Offset _kayma = Offset.zero;
+
+  bool get _iptalde => _kayma.dx < -_MikrofonDugmesi.iptalEsigi;
+  bool get _kilitte => _kayma.dy < -_MikrofonDugmesi.kilitEsigi;
+
+  @override
+  Widget build(BuildContext context) {
+    final etiket = 'Sesli mesaj (basılı tut)'.c;
+    return Semantics(
+      button: true,
+      enabled: !widget.kapali,
+      label: etiket,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.kapali
+            ? null
+            : () => ScaffoldMessenger.of(context)
+                ..clearSnackBars()
+                ..showSnackBar(
+                  SnackBar(content: Text('Kaydetmek için basılı tut'.c)),
+                ),
+        onLongPressStart: widget.kapali
+            ? null
+            : (_) {
+                setState(() {
+                  _basili = true;
+                  _kayma = Offset.zero;
+                });
+                widget.onBasla();
+              },
+        onLongPressMoveUpdate: (d) {
+          if (!_basili) return;
+          setState(() => _kayma = d.offsetFromOrigin);
+        },
+        onLongPressEnd: (_) {
+          if (!_basili) return;
+          final iptal = _iptalde;
+          final kilit = !iptal && _kilitte;
+          setState(() {
+            _basili = false;
+            _kayma = Offset.zero;
+          });
+          widget.onBirak(iptal: iptal, kilitli: kilit);
+        },
+        onLongPressCancel: () {
+          if (!_basili) return;
+          setState(() {
+            _basili = false;
+            _kayma = Offset.zero;
+          });
+          widget.onBirak(iptal: true, kilitli: false);
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          width: _basili ? 64 : 46,
+          height: _basili ? 64 : 46,
+          // Kayıt basılıyken düğme büyür ve sarıya döner; iptal eşiği
+          // geçilince KIRMIZI (renk tek gösterge değil: ikon da değişir).
+          decoration: BoxDecoration(
+            color: widget.kapali
+                ? DiziRenkler.metin38
+                : (_basili
+                      ? (_iptalde ? Colors.redAccent : DiziRenkler.sari)
+                      : DiziRenkler.kart),
+            shape: BoxShape.circle,
+            border: DiziRenkler.acik && !_basili
+                ? Border.all(color: const Color(0xFFDADAE0))
+                : null,
+          ),
+          child: Icon(
+            _basili
+                ? (_iptalde
+                      ? Icons.delete_outline
+                      : (_kilitte ? Icons.lock : Icons.mic))
+                : Icons.mic_none,
+            size: _basili ? 28 : 22,
+            color: _basili ? Colors.black : DiziRenkler.sariMetin,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Ataç panelindeki seçenekler.
+enum _EkTuru { galeri, kamera, dosya, gif, icerik }
+
+/// Ataç paneli — Telegram'ın "+" alt sayfası: renkli daire ikonlu kutucuklar.
+///
+/// Panel içi fotoğraf ızgarası BİLEREK yok (Play, 7 Ağu 2026: geniş medya
+/// izni reddi). Galeri kutucuğu sistem seçicisini açar.
+class _EkPaneli extends StatelessWidget {
+  const _EkPaneli();
+
+  @override
+  Widget build(BuildContext context) {
+    final secenekler = <({_EkTuru tur, IconData ikon, Color renk, String ad})>[
+      (
+        tur: _EkTuru.galeri,
+        ikon: Icons.photo_library_outlined,
+        renk: const Color(0xFF6C5CE7),
+        ad: 'Galeri'.c,
+      ),
+      if (!kIsWeb)
+        (
+          tur: _EkTuru.kamera,
+          ikon: Icons.photo_camera_outlined,
+          renk: const Color(0xFFE17055),
+          ad: 'Kamera'.c,
+        ),
+      (
+        tur: _EkTuru.dosya,
+        ikon: Icons.insert_drive_file_outlined,
+        renk: const Color(0xFF0984E3),
+        ad: 'Dosya'.c,
+      ),
+      (
+        tur: _EkTuru.gif,
+        ikon: Icons.gif_box_outlined,
+        renk: const Color(0xFF00B894),
+        ad: 'GIF'.c,
+      ),
+      (
+        tur: _EkTuru.icerik,
+        ikon: Icons.local_movies_outlined,
+        renk: DiziRenkler.sari,
+        ad: 'Dizi / Film'.c,
+      ),
+    ];
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 18),
+              decoration: BoxDecoration(
+                color: DiziRenkler.metin38,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 8,
+              runSpacing: 16,
+              children: [
+                for (final s in secenekler)
+                  _EkKutucugu(
+                    ikon: s.ikon,
+                    renk: s.renk,
+                    ad: s.ad,
+                    onTap: () => Navigator.of(context).pop(s.tur),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Panel kutucuğu: 56 dp renkli daire + altında ad. Dokunma hedefi 84×84.
+class _EkKutucugu extends StatelessWidget {
+  final IconData ikon;
+  final Color renk;
+  final String ad;
+  final VoidCallback onTap;
+
+  const _EkKutucugu({
+    required this.ikon,
+    required this.renk,
+    required this.ad,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: ad,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: SizedBox(
+          width: 84,
+          height: 92,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(color: renk, shape: BoxShape.circle),
+                child: Icon(ikon, color: Colors.white, size: 26),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                ad,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 12, color: DiziRenkler.metin),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Başlıktaki durum satırı: son [cevrimiciEsikSn] sn içinde aktifse
 /// "çevrimiçi", değilse "son görülme ...". son_gorulme ISO zaman damgası
 /// (UTC) beklenir; kullanıcı çevrimiçi durumunu gizliyorsa sunucu bu alanı
@@ -2438,6 +3253,11 @@ int sonGorulenIndeks(List<dynamic> mesajlar, Object? benimId) {
 ({IconData? ikon, String metin}) mesajOzeti(Map<String, dynamic> m) {
   final metin = (m['metin'] as String?)?.trim();
   if (metin != null && metin.isNotEmpty) return (ikon: null, metin: metin);
+  // BELGE (2 Eyl 2026): sohbet listesi/alıntı "Dosya: ad" der.
+  final dosyaAd = m['dosya_ad'] as String? ?? m['yanit_dosya_ad'] as String?;
+  if (dosyaAd != null && dosyaAd.isNotEmpty) {
+    return (ikon: Icons.insert_drive_file_outlined, metin: dosyaAd);
+  }
   final medya = m['medya'] as String? ?? m['yanit_medya'] as String?;
   if (medya != null) {
     if (sesDosyasi(medya)) {
@@ -2496,6 +3316,10 @@ class _MesajBaloncugu extends StatelessWidget {
   final Color balonRenk;
   final Color balonYazi;
 
+  /// Gönderilemeyen iyimser satırda "tekrar dene" (2 Eyl 2026, Telegram
+  /// düzeni). Yalnız `_hata` bayraklı yerel satırda dolu.
+  final VoidCallback? tekrarDene;
+
   const _MesajBaloncugu({
     super.key,
     required this.mesaj,
@@ -2506,6 +3330,7 @@ class _MesajBaloncugu extends StatelessWidget {
     this.duzenle,
     this.sikayet,
     this.tepkiVer,
+    this.tekrarDene,
     this.gorulduGoster = false,
     this.gonderiler = const {},
     this.balonRenk = DiziRenkler.sari,
@@ -2642,6 +3467,22 @@ class _MesajBaloncugu extends StatelessWidget {
     final video =
         medya != null && (medya.endsWith('.mp4') || medya.endsWith('.webm'));
     final ses = medya != null && sesDosyasi(medya);
+    // ALBÜM (2 Eyl 2026): sunucudan `medyalar` (≥2 öğe) ya da iyimser satırda
+    // `medya_yerel` (cihaz yolları). Tek öğe eski tek-medya yolundan çizilir.
+    final album = <String>[
+      for (final y in (m['medyalar'] as List<dynamic>? ?? const []))
+        if (y is String) y,
+    ];
+    final yerel = <String>[
+      for (final y in (m['medya_yerel'] as List<dynamic>? ?? const []))
+        if (y is String) y,
+    ];
+    final bekliyor = m['_bekliyor'] == true;
+    final gonderimHatasi = m['_hata'] == true;
+    final ilerleme = (m['_ilerleme'] as num?)?.toDouble();
+    // BELGE (2 Eyl 2026): ayrı kolonlar; medya ile aynı mesajda olmaz.
+    final dosya = m['dosya'] as String?;
+    final dosyaAd = m['dosya_ad'] as String?;
     final icerikTur = m['icerik_tur'] as String?;
     final icerikId = (m['icerik_id'] as num?)?.toInt();
     final icerik = icerikTur != null
@@ -2670,10 +3511,13 @@ class _MesajBaloncugu extends StatelessWidget {
         gonderiId != null &&
         (metin == null || metin.isEmpty) &&
         medya == null &&
+        dosya == null &&
+        yerel.isEmpty &&
         icerikTur == null &&
         yanitId == null;
-    // Balonun altında yalnız "düzenlendi" + "Görüldü" kalır; saat gitti.
-    final altBilgi = duzenlendi || (benim && gorulduGoster);
+    // Alt satır (2 Eyl 2026, Telegram düzeni): SAAT balonun içinde sağ altta,
+    // yanında "düzenlendi" / "Görüldü" / bekleme saati / hata. Sürükleyerek
+    // açılan saat sütunu kalktı; o jest artık "kaydırarak yanıtla".
     // Alt satırın ("düzenlendi" / "Görüldü") rengi: çıplak mesajda balon
     // yok, yani balonun yazı rengi (sarı üstü siyah) sohbet zemininde
     // kaybolurdu — orada tema metni kullanılır.
@@ -2700,6 +3544,8 @@ class _MesajBaloncugu extends StatelessWidget {
         // zaten tıklanabilir öğeler var (içerik kartı, medya, paylaşılan
         // gönderi) ve tek tıkı yakalamak onları çalışmaz hâle getirirdi.
         onDoubleTap: tepkiVer == null ? null : _kalpDegistir,
+        // Gönderilemeyen satıra tek dokunuş = tekrar dene (Telegram).
+        onTap: gonderimHatasi ? tekrarDene : null,
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 3),
           // Alt bilgi satırı (düzenlendi/Görüldü) yoksa saatin bıraktığı
@@ -2708,7 +3554,7 @@ class _MesajBaloncugu extends StatelessWidget {
           // ortasından kaydırmaktan başka bir şey yapmaz.
           padding: ciplak
               ? EdgeInsets.zero
-              : EdgeInsets.fromLTRB(12, 8, 12, altBilgi ? 6 : 8),
+              : const EdgeInsets.fromLTRB(12, 8, 12, 6),
           constraints: BoxConstraints(
             // PC'de dev baloncuk olmasın: dar ekranda %75, genişte 420px tavan
             maxWidth: MediaQuery.of(context).size.width > 560
@@ -2758,6 +3604,7 @@ class _MesajBaloncugu extends StatelessWidget {
                       _yanitOnizleme({
                         'metin': m['yanit_metin'],
                         'yanit_medya': m['yanit_medya'],
+                        'yanit_dosya_ad': m['yanit_dosya_ad'],
                         'yanit_icerik_tur': m['yanit_icerik_tur'],
                         'yanit_yorum_id': m['yanit_yorum_id'],
                       }),
@@ -2770,15 +3617,51 @@ class _MesajBaloncugu extends StatelessWidget {
                 if (ses)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4),
-                    child: SesOynatici(
-                      key: ValueKey('ses-$medya'), // poll'da state korunsun
-                      url: dosyaUrl(medya)!,
-                      renk: yaziRengi,
-                      dalga: m['ses_dalga'] as String?,
+                    // SABİT GENİŞLİK (2 Eyl 2026): ses balonu Telegram'daki gibi
+                    // hep aynı ende; dalga da sabit genişlikte çizilir.
+                    // (LayoutBuilder tuzağı ses.dart'ta çözüldü.)
+                    child: SizedBox(
+                      width: 240,
+                      child: SesOynatici(
+                        key: ValueKey('ses-$medya'), // poll'da state korunsun
+                        url: dosyaUrl(medya)!,
+                        renk: yaziRengi,
+                        dalga: m['ses_dalga'] as String?,
+                      ),
                     ),
                   ),
-                // Fotoğraf / GIF / video
-                if (medya != null && !ses)
+                // ALBÜM (≥2) ya da iyimser yerel önizleme
+                if (album.length > 1 || yerel.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: _AlbumIzgarasi(
+                      // Sunucu yolları HAM verilir; ızgara adresi kendisi kurar.
+                      urller: yerel.isNotEmpty ? yerel : album,
+                      yerel: yerel.isNotEmpty,
+                      ilerleme: bekliyor ? ilerleme : null,
+                      onTap: yerel.isNotEmpty
+                          ? null
+                          : (i) => medyaGoster(context, [
+                              for (final y in album) dosyaUrl(y)!,
+                            ], baslangic: i),
+                    ),
+                  ),
+                // BELGE
+                if (dosya != null || m['dosya_ad'] != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: _BelgeKutusu(
+                      ad: dosyaAd ?? 'Dosya'.c,
+                      boyut: (m['dosya_boyut'] as num?)?.toInt(),
+                      tur: m['dosya_tur'] as String?,
+                      url: dosya == null ? null : dosyaUrl(dosya),
+                      yaziRengi: yaziRengi,
+                      benim: benim,
+                      ilerleme: bekliyor ? ilerleme : null,
+                    ),
+                  ),
+                // Fotoğraf / GIF / video (tek)
+                if (medya != null && !ses && album.length <= 1)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4),
                     // Foto/GIF ve video: dokununca tam ekran görüntüleyici
@@ -2912,7 +3795,6 @@ class _MesajBaloncugu extends StatelessWidget {
                 // Ekran okuyucu kullanan biri sürükleme yapamaz, o yüzden
                 // balonun erişilebilirlik etiketinin SONUNA eklenir:
                 // görsel kayıp var, BİLGİ kaybı yok.
-                Semantics(label: saatKisa, child: const SizedBox.shrink()),
                 // Md. 43 — tepki rozetleri mesajın ALTINDA. Baloncuklu
                 // mesajda baloncuğun içinde, çıplak gönderide kapağın hemen
                 // altında kalır (1 Eyl 2026 isteği: "emoji bırakınca altında
@@ -2959,14 +3841,35 @@ class _MesajBaloncugu extends StatelessWidget {
                 // balonun altına "Görüldü" basmak, uzun bir sohbette aynı
                 // kelimeyi onlarca kez tekrarlamak olurdu. Instagram DM de
                 // yalnız sondakinde gösterir.
-                if (altBilgi)
-                  Padding(
-                    padding: EdgeInsets.only(top: ciplak ? 3 : 0),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
+                Padding(
+                  padding: EdgeInsets.only(top: ciplak ? 3 : 2),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (gonderimHatasi) ...[
+                          Icon(
+                            Icons.error_outline,
+                            size: 13,
+                            color: Colors.redAccent,
+                          ),
+                          const SizedBox(width: 3),
+                          // Flexible: dar balonda (kısa metin) satır
+                          // taşmasın — widget testi 24 px taşma yakaladı.
+                          Flexible(
+                            child: Text(
+                              'Gönderilemedi · tekrar dene'.c,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.redAccent,
+                              ),
+                            ),
+                          ),
+                        ] else ...[
                           if (duzenlendi) ...[
                             Text(
                               'düzenlendi'.c,
@@ -2976,10 +3879,9 @@ class _MesajBaloncugu extends StatelessWidget {
                                 color: altYaziRengi.withValues(alpha: 0.5),
                               ),
                             ),
-                            if (benim && gorulduGoster)
-                              const SizedBox(width: 5),
+                            const SizedBox(width: 5),
                           ],
-                          if (benim && gorulduGoster)
+                          if (benim && gorulduGoster) ...[
                             Text(
                               'Görüldü'.c,
                               style: TextStyle(
@@ -2988,12 +3890,347 @@ class _MesajBaloncugu extends StatelessWidget {
                                 color: altYaziRengi.withValues(alpha: 0.6),
                               ),
                             ),
+                            const SizedBox(width: 5),
+                          ],
+                          // Saat balonun İÇİNDE (Telegram). Bekleyen
+                          // satırda saat yerine küçük saat ikonu.
+                          if (bekliyor)
+                            Icon(
+                              Icons.schedule,
+                              size: 11,
+                              color: altYaziRengi.withValues(alpha: 0.55),
+                            )
+                          else
+                            Text(
+                              saatKisa,
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: altYaziRengi.withValues(alpha: 0.55),
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
+                              ),
+                            ),
                         ],
-                      ),
+                      ],
                     ),
                   ),
+                ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Albüm ızgarası (2 Eyl 2026, Telegram düzeni): 2 → yan yana, 3 → üstte
+/// geniş + altta iki, 4+ → 2 sütun. Genişlik SABİT 240 dp: balon
+/// `IntrinsicWidth` içinde, `LayoutBuilder` orada 0 döner; 240, %75 ekran
+/// tavanının altında kalır (≥ 320 dp ekran).
+///
+/// [yerel] true ise [urller] cihaz yollarıdır (iyimser gönderim önizlemesi),
+/// değilse sunucu yollarıdır (`/medya/…`, adres ızgarada `dosyaUrl` ile kurulur);
+/// [ilerleme] doluysa üstüne yükleme halkası biner. Dokunma yalnız sunucu
+/// medyasında (tam ekran görüntüleyici); yerel önizlemede yok.
+class _AlbumIzgarasi extends StatelessWidget {
+  final List<String> urller;
+  final bool yerel;
+  final double? ilerleme;
+  final void Function(int)? onTap;
+
+  const _AlbumIzgarasi({
+    required this.urller,
+    required this.yerel,
+    this.ilerleme,
+    this.onTap,
+  });
+
+  static const _genislik = 240.0;
+  static const _bosluk = 3.0;
+
+  bool _videoMu(String y) {
+    final k = y.split('?').first.toLowerCase();
+    return k.endsWith('.mp4') || k.endsWith('.webm') || k.endsWith('.mov');
+  }
+
+  Widget _kare(BuildContext context, int i, double en, double boy) {
+    final y = urller[i];
+    final video = _videoMu(y);
+    Widget govde;
+    if (video) {
+      govde = Container(
+        color: Colors.black54,
+        child: const Center(
+          child: Icon(Icons.play_circle_outline, size: 36, color: Colors.white),
+        ),
+      );
+    } else if (yerel) {
+      govde = Image(
+        image: yerelGorsel(y, genislik: 480),
+        fit: BoxFit.cover,
+        gaplessPlayback: true,
+        errorBuilder: (_, _, _) => Container(color: Colors.black54),
+      );
+    } else {
+      // Adres BURADA `dosyaUrl` ile kurulur (kendi sunucumuz) — WebP başlık
+      // gerileme koruması (gorsel_webp_test) çağrı noktasında bunu arar.
+      govde = CachedNetworkImage(
+        imageUrl: dosyaUrl(y)!,
+        fit: BoxFit.cover,
+        placeholder: (_, _) => Container(color: Colors.black54),
+        errorWidget: (_, _, _) => Container(
+          color: Colors.black54,
+          child: const Icon(Icons.broken_image_outlined, color: Colors.white),
+        ),
+      );
+    }
+    return SizedBox(
+      width: en,
+      height: boy,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: InkWell(
+          onTap: onTap == null ? null : () => onTap!(i),
+          child: govde,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final n = urller.length.clamp(0, albumAzami);
+    final yarim = (_genislik - _bosluk) / 2;
+    final satirlar = <Widget>[];
+    var i = 0;
+    if (n == 3) {
+      satirlar.add(_kare(context, 0, _genislik, 150));
+      i = 1;
+    }
+    while (i < n) {
+      final sonTek = i == n - 1;
+      satirlar.add(
+        Row(
+          children: [
+            _kare(context, i, sonTek ? _genislik : yarim, sonTek ? 150 : yarim),
+            if (!sonTek) ...[
+              const SizedBox(width: _bosluk),
+              _kare(context, i + 1, yarim, yarim),
+            ],
+          ],
+        ),
+      );
+      i += 2;
+    }
+    final izgara = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var k = 0; k < satirlar.length; k++) ...[
+          if (k > 0) const SizedBox(height: _bosluk),
+          satirlar[k],
+        ],
+      ],
+    );
+    if (ilerleme == null) return izgara;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        izgara,
+        Positioned.fill(
+          child: ColoredBox(color: Colors.black.withValues(alpha: 0.35)),
+        ),
+        SizedBox(
+          width: 40,
+          height: 40,
+          child: CircularProgressIndicator(
+            value: ilerleme! <= 0 ? null : ilerleme,
+            strokeWidth: 3,
+            color: Colors.white,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Belge baloncuğu (2 Eyl 2026): renkli tür karosu + ad + boyut. Dokununca
+/// imzalı bağlantı tarayıcıda/sistemde açılır — sunucu `attachment` verdiği
+/// için indirme olarak gelir; uygulama içinde görüntüleme yok (her tür
+/// olabilir, PDF görüntüleyici ayrı iş).
+class _BelgeKutusu extends StatelessWidget {
+  final String ad;
+  final int? boyut;
+  final String? tur;
+  final String? url;
+  final Color yaziRengi;
+  final bool benim;
+  final double? ilerleme;
+
+  const _BelgeKutusu({
+    required this.ad,
+    required this.boyut,
+    required this.tur,
+    required this.url,
+    required this.yaziRengi,
+    required this.benim,
+    this.ilerleme,
+  });
+
+  /// Uzantıdan kısa etiket + renk (Telegram'ın karosu). Bilinmeyen → 'DOSYA'.
+  static ({String etiket, Color renk}) _karo(String ad) {
+    final u = ad.contains('.') ? ad.split('.').last.toLowerCase() : '';
+    return switch (u) {
+      'pdf' => (etiket: 'PDF', renk: const Color(0xFFE53935)),
+      'doc' ||
+      'docx' ||
+      'odt' ||
+      'rtf' => (etiket: 'DOC', renk: const Color(0xFF1E88E5)),
+      'xls' ||
+      'xlsx' ||
+      'csv' ||
+      'ods' => (etiket: 'XLS', renk: const Color(0xFF43A047)),
+      'ppt' ||
+      'pptx' ||
+      'odp' => (etiket: 'PPT', renk: const Color(0xFFFB8C00)),
+      'zip' ||
+      'rar' ||
+      '7z' ||
+      'gz' ||
+      'tar' => (etiket: 'ZIP', renk: const Color(0xFF8E24AA)),
+      'txt' ||
+      'md' ||
+      'srt' ||
+      'json' => (etiket: 'TXT', renk: const Color(0xFF546E7A)),
+      'apk' => (etiket: 'APK', renk: const Color(0xFF00897B)),
+      'mp3' ||
+      'wav' ||
+      'flac' ||
+      'm4a' ||
+      'ogg' => (etiket: 'SES', renk: const Color(0xFF6D4C41)),
+      _ => (
+        etiket: u.isEmpty
+            ? 'DOSYA'
+            : u.toUpperCase().substring(0, u.length > 4 ? 4 : u.length),
+        renk: const Color(0xFF5E6AD2),
+      ),
+    };
+  }
+
+  static String boyutMetni(int b) {
+    if (b < 1024) return '$b B';
+    if (b < 1024 * 1024)
+      return '${(b / 1024).toStringAsFixed(b < 10240 ? 1 : 0)} KB';
+    if (b < 1024 * 1024 * 1024)
+      return '${(b / 1024 / 1024).toStringAsFixed(1)} MB';
+    return '${(b / 1024 / 1024 / 1024).toStringAsFixed(2)} GB';
+  }
+
+  Future<void> _ac(BuildContext context) async {
+    final u = url;
+    if (u == null) return;
+    final ok = await launchUrl(
+      Uri.parse(u),
+      mode: LaunchMode.externalApplication,
+    );
+    if (!ok && context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Dosya açılamadı'.c)));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final k = _karo(ad);
+    return Semantics(
+      button: url != null,
+      label: '${'Dosya'.c}: $ad',
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: url == null || ilerleme != null ? null : () => _ac(context),
+        child: Container(
+          width: 240,
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: (benim ? yaziRengi : DiziRenkler.metin).withValues(
+              alpha: 0.08,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 44,
+                height: 44,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: k.renk,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      alignment: Alignment.center,
+                      child: ilerleme != null
+                          ? const SizedBox.shrink()
+                          : Text(
+                              k.etiket,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                    ),
+                    if (ilerleme != null)
+                      SizedBox(
+                        width: 26,
+                        height: 26,
+                        child: CircularProgressIndicator(
+                          value: ilerleme! <= 0 ? null : ilerleme,
+                          strokeWidth: 2.5,
+                          color: Colors.white,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      ad,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: yaziRengi,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      boyut == null ? '' : boyutMetni(boyut!),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: yaziRengi.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (url != null && ilerleme == null)
+                Icon(
+                  Icons.download_outlined,
+                  size: 18,
+                  color: yaziRengi.withValues(alpha: 0.6),
+                ),
+            ],
           ),
         ),
       ),
