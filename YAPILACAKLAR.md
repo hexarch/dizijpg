@@ -18,6 +18,22 @@
      404 verirse eski davranış. Keşfet ızgarası zaten kapağı gösteriyordu.
   Kanıt: backend `video_kare.test.js` 15/15 (fade-in kapak parlaklığı dâhil),
   `test/akis_video_kapak_test.dart` 5/5 (sahte VideoPlayerPlatform).
+- ✅ **"Akışta öncelik izlediğim yapımlar olmalı; TWD izleyene Breaking Bad
+  geliyor."** Ölçüm (kullanıcı 481, kitaplığı TWD+Squid Game+Peaky Blinders+
+  Titanic): ilk 3 kart kitaplık DIŞI taze film (tazelik 0,98), TWD 4./10./24.
+  sırada (tazelik 0,15). Kitaplık ağırlığı panelde zaten %100'dü — kök sebep
+  tazelik çürümesi (36 sa yarı ömür, taban %15): ilgi ≤ 1 iken taze/eski
+  farkı 6,5×, ağırlık kolu bunu çözemez. Veri sorunu değil: 2.157 izlenen
+  dizinin yalnız 5'i durumsuz. **Çözüm:** `siralama.js` yeni kol
+  `kitaplik_oncelik` (%0–100, akış varsayılanı 100, Keşfet 0; panel
+  Algoritma sekmesinde). Skora KADEME eklenir (2 × öncelik × kitaplık
+  sinyali): kitaplıktaki yapımın gönderisi tazeliğe bakılmaksızın yabancı
+  her gönderinin üstüne çıkar; izliyorum > bitirdim > izleyeceğim; aynı
+  yapım cezası kademeyi de çarptığı için ~5 karttan sonra yabancı kart
+  araya girebilir. Sonuç (aynı kullanıcı, canlı): ilk 15 kartın 15'i
+  kitaplığından. Kanıt: siralama.test.js 61/61 (5 yeni), backend 2166/0,
+  test hesabıyla /akis uçtan uca `onerilen` 30 kart. CANLI (backend).
+
 - ✅ **"Favori ve yıldız vermeyi dizi ve filmlerde yapım yılı ve maliyetin
   altına al"** — `detay.dart`: iki düğme afişin sağındaki sütuna, yıl +
   bütçe/durum rozetinin altına taşındı (44 px hedef, sola yaslı ikon).

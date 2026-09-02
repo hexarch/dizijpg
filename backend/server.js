@@ -13953,7 +13953,9 @@ async function yazarKaliteleri() {
 // DEĞİŞMEDEN uygulanır — engelleme/yasak/bölüm uygunluğu skora GİRMEZ (§7.3).
 // Susmuş sinyallerin alt sorguları SORGUYA HİÇ KONMAZ: hacim eşiği aynı
 // zamanda bir performans korumasıdır.
-async function adaylariGetir({ benId, dil, kadro, hacim, gorulenHaric, kat, kesfet }) {
+async function adaylariGetir({
+  benId, dil, kadro, hacim, gorulenHaric, kat, kesfet, kitaplikGerek = false,
+}) {
   const p = hacim.pay;
   const alan = [
     'y.id', 'y.kullanici_id', 'y.tur', 'y.tmdb_id',
@@ -13982,7 +13984,9 @@ async function adaylariGetir({ benId, dil, kadro, hacim, gorulenHaric, kat, kesf
     alan.push(`(SELECT ic.populerlik FROM icerik_dizini ic
        WHERE ic.tur=y.tur AND ic.tmdb_id=y.tmdb_id) AS populerlik`);
   }
-  if (p.kitaplik > 0) {
+  // `kitaplikGerek`: kitaplık ÖNCELİĞİ açıkken durum merdiveni ağırlık 0
+  // olsa da lazım (siralama.js `kademe`), yoksa öncelik 'guvenli'ye düşer.
+  if (p.kitaplik > 0 || kitaplikGerek) {
     alan.push(`(SELECT d.durum FROM durumlar d WHERE d.kullanici_id=$1
        AND d.tur=y.tur AND d.tmdb_id=y.tmdb_id) AS durum`);
   }
@@ -14049,6 +14053,7 @@ async function turListesi({ benId, yuzey, dil, kadro, ayar, olcum, tohum, gorule
     // hiçbir adayı video olarak tanıyamaz ve taban sessizce çalışmaz.
     kat: hacim.pay.medya > 0 || ayar.video_tabani > 0,
     kesfet: yuzey === 'kesfet', // sert filtre: Keşfet havuzunda medyasız yok
+    kitaplikGerek: ayar.kitaplik_oncelik > 0,
   });
   const { idler } = siralaVeKotala(adaylar, ayar, olcum);
   tohumDeposu.yaz(anahtar, idler);
@@ -20263,6 +20268,7 @@ app.get('/admin/algoritma-onizleme', adminKisit, sarici(async (req, res) => {
     gorulenHaric: false, kat: hacim.pay.medya > 0 || ayar.video_tabani > 0,
     // Panel YALAN SÖYLEMEMELİ: kullanıcı yolundaki sert filtre burada da var.
     kesfet: yuzey === 'kesfet',
+    kitaplikGerek: ayar.kitaplik_oncelik > 0,
   });
   const sqlMs = Date.now() - t0;
   const t1 = Date.now();

@@ -242,8 +242,10 @@ test('ceza: yazar doygunluğu 1,00 iken çeşitlilik ZORLAMASI olmaz', () => {
 });
 
 test('ceza: içerik doygunluğu aynı yapımın art arda gönderilerini iter', () => {
+  // kitaplik_oncelik 0: bu test doygunluğu TEK BAŞINA ölçer (öncelik açıkken
+  // kitaplık kademesi yabancı gönderiyi haklı olarak 3. sıraya iter).
   const a = ayarBirlestir({ icerik_doygunluk: 0.3, yazar_doygunluk: 1, tazelik_gucu: 0,
-    ai_payi: 100, arsiv_payi: 100 }, 'akis');
+    ai_payi: 100, arsiv_payi: 100, kitaplik_oncelik: 0 }, 'akis');
   const adaylar = [
     ...Array.from({ length: 5 }, (_, i) => gonderi({
       id: 100 + i, kullanici_id: 10 + i, tmdb_id: 900, guvenli: true })),
@@ -624,4 +626,81 @@ test('ayarBirlestir: video_tabani 0-50 aralığına kırpılır', () => {
   assert.equal(a.video_tabani, 50);
   assert.equal(ayarBirlestir({}, 'akis').video_tabani, 10, 'akış varsayılanı %10');
   assert.equal(ayarBirlestir({}, 'kesfet').video_tabani, 0, 'Keşfet varsayılanı kapalı');
+});
+
+// ---------------------------------------------------------------------------
+// KİTAPLIK ÖNCELİĞİ (3 Eyl 2026) — "akışta öncelik izlediğim yapımlar olmalı"
+// Canlı ölçüm (kullanıcı 481, kitaplığında TWD): taze yabancı gönderiler
+// (tazelik 0,98) kitaplıktaki TWD gönderilerini (tazelik 0,15) 3'e 0 geçiyordu.
+// Kitaplık ağırlığı %100'de bile — ağırlık kolu bunu çözemez.
+const CANLI_AKIS = {
+  kitaplik: 100, takip_ettigim: 30, icerik_pop: 15, medya: 33,
+  yazar_kalite: 10, dil: 10, yari_omur_saat: 36, tazelik_gucu: 85,
+  yazar_doygunluk: 1, icerik_doygunluk: 1, ai_payi: 100, arsiv_payi: 100,
+  video_tabani: 0,
+};
+
+test('kitaplık önceliği: ESKİ kitaplık gönderisi TAZE yabancı gönderiyi geçer', () => {
+  const a = ayarBirlestir({ ...CANLI_AKIS, kitaplik_oncelik: 100 }, 'akis');
+  const adaylar = [
+    // Taze, popüler, medyalı, dilinde — kitaplık dışı (canlıdaki 1. kart)
+    gonderi({ id: 1, tmdb_id: 12877, yas_saat: 0.5, populerlik: 76, kat: 0,
+      dil_uygun: true, yazar_kalite: 1 }),
+    // 3 günlük TWD gönderisi, bitirdim
+    gonderi({ id: 2, tmdb_id: 1402, yas_saat: 72, guvenli: true, durum: 'bitirdim' }),
+    // 2 haftalık, izleyeceğim
+    gonderi({ id: 3, tmdb_id: 93405, yas_saat: 336, guvenli: true, durum: 'izleyecegim' }),
+  ];
+  const { idler, kirilim } = siralaVeKotala(adaylar, a, OLCUM_CANLI, { kirilimAdet: 3 });
+  assert.deepEqual(idler, [2, 3, 1]);
+  // Yabancı gönderi 1'den düşük skorda kalmalı (kademe bunu garanti eder)
+  const skor = Object.fromEntries(kirilim.map((k) => [k.id, k.skor]));
+  assert.ok(skor[1] < 1 && skor[3] >= 1 && skor[2] > skor[3]);
+});
+
+test('kitaplık önceliği: merdiven — izliyorum > bitirdim > izleyeceğim, bıraktım kademe almaz', () => {
+  const a = ayarBirlestir({ ...CANLI_AKIS, kitaplik_oncelik: 100 }, 'akis');
+  const adaylar = [
+    // izleyeceğim: dizi-geneli gönderide `guvenli` FALSE gelir (AKIS_GOVDE
+    // yalnız izliyorum/bitirdim'i güvenli sayar) — canlıdaki gibi kuruldu.
+    gonderi({ id: 1, tmdb_id: 1, yas_saat: 0, guvenli: false, durum: 'izleyecegim' }),
+    gonderi({ id: 2, tmdb_id: 2, yas_saat: 200, guvenli: true, durum: 'izliyorum' }),
+    gonderi({ id: 3, tmdb_id: 3, yas_saat: 100, guvenli: true, durum: 'bitirdim' }),
+    gonderi({ id: 4, tmdb_id: 4, yas_saat: 0, guvenli: false, durum: 'biraktim',
+      populerlik: 76, kat: 0, dil_uygun: true }),
+  ];
+  const { idler } = siralaVeKotala(adaylar, a, OLCUM_CANLI);
+  assert.deepEqual(idler, [2, 3, 1, 4]);
+});
+
+test('kitaplık önceliği 0: dünkü davranış birebir (tazelik kazanır)', () => {
+  const a = ayarBirlestir({ ...CANLI_AKIS, kitaplik_oncelik: 0 }, 'akis');
+  const adaylar = [
+    gonderi({ id: 1, tmdb_id: 12877, yas_saat: 0.5, populerlik: 76, kat: 0,
+      dil_uygun: true, yazar_kalite: 1 }),
+    gonderi({ id: 2, tmdb_id: 1402, yas_saat: 72, guvenli: true, durum: 'bitirdim' }),
+  ];
+  const { idler } = siralaVeKotala(adaylar, a, OLCUM_CANLI);
+  assert.deepEqual(idler, [1, 2]);
+});
+
+test('kitaplık önceliği: aynı yapım cezası kademeyi de çarpar — akış tek diziye kilitlenmez', () => {
+  const a = ayarBirlestir({ ...CANLI_AKIS, kitaplik_oncelik: 100, icerik_doygunluk: 0.5 }, 'akis');
+  const adaylar = [
+    ...Array.from({ length: 6 }, (_, i) => gonderi({
+      id: 10 + i, kullanici_id: 20 + i, tmdb_id: 1402, yas_saat: 100,
+      guvenli: true, durum: 'bitirdim' })),
+    gonderi({ id: 1, kullanici_id: 1, tmdb_id: 9, yas_saat: 0, populerlik: 76,
+      kat: 0, dil_uygun: true, yazar_kalite: 1 }),
+  ];
+  const { idler } = siralaVeKotala(adaylar, a, OLCUM_CANLI);
+  const yabanci = idler.indexOf(1);
+  assert.ok(yabanci >= 2 && yabanci < 6,
+    `yabancı kart 3.–6. arasında beklenirdi, ${yabanci + 1}. sırada`);
+});
+
+test('ayarBirlestir: kitaplik_oncelik 0-100 kırpılır; akış %100, Keşfet kapalı', () => {
+  assert.equal(ayarBirlestir({ kitaplik_oncelik: 500 }, 'akis').kitaplik_oncelik, 100);
+  assert.equal(ayarBirlestir({}, 'akis').kitaplik_oncelik, 100, 'akış varsayılanı %100');
+  assert.equal(ayarBirlestir({}, 'kesfet').kitaplik_oncelik, 0, 'Keşfet varsayılanı kapalı');
 });

@@ -40,6 +40,19 @@ export const SAYI_ALANLARI = {
   // Üst sınır 50 — yarıdan fazlası zorla video olan bir akış artık Keşfet'tir.
   video_tabani: { alt: 0, ust: 50 }, // % — 0: kapalı (bugünkü davranış)
   hacim_esigi: { alt: 0, ust: 1000 },
+  // KİTAPLIK ÖNCELİĞİ (3 Eyl 2026, kullanıcı): "akışta öncelik izlediğim
+  // yapımlar olmalı; TWD izlediysem TWD gönderileri gelmeli, kitaplığımı
+  // doldurmama rağmen hâlâ Breaking Bad önerisi geliyor." Ölçüldü (canlı,
+  // kullanıcı 481: kitaplığı TWD + Squid Game + Peaky Blinders + Titanic):
+  // ilk 3 kart kitaplık DIŞI taze gönderiydi (tazelik 0,98 × ilgi 0,22),
+  // TWD gönderileri 4., 10. ve 24. sıradaydı (tazelik 0,15 × ilgi 0,6).
+  // Kitaplık ağırlığı %100'e çekilmişken bile tazelik çürümesi (36 sa yarı
+  // ömür, taban %15) kitaplığı eziyordu; ağırlık kolu bunu ÇÖZEMEZ çünkü
+  // ilgi ≤ 1 iken taze/eski çarpanı 6,5×. Bu kol skora KADEME ekler: kitaplık
+  // eşleşmesi olan gönderi, tazeliği ne olursa olsun eşleşmeyenlerin ÜSTÜNE
+  // çıkar (bkz. `skorla`). %0: kapalı (dünkü davranış). Keşfet'te kapalı:
+  // Reels "ne varmış" yüzeyi, kitaplığa kilitlenmemeli.
+  kitaplik_oncelik: { alt: 0, ust: 100 },
 };
 
 // Arşiv sayılma sınırı: bundan eski gönderi "arşiv" kotasına girer.
@@ -62,6 +75,7 @@ export const VARSAYILAN_AKIS = Object.freeze({
   // medya ağırlığı 0 + 36 saatlik yarı ömür, arşiv videolarını (460'ın %91,5'i
   // 2017-2021 Instagram aktarımı) hiçbir sayfada sıraya sokmuyordu.
   ai_payi: 50, arsiv_payi: 45, video_tabani: 10, hacim_esigi: 3,
+  kitaplik_oncelik: 100,
 });
 
 // Keşfet ayrı set (plan §4.4): sosyal graf 20 kenarla Keşfet'i besleyemez,
@@ -73,6 +87,7 @@ export const VARSAYILAN_KESFET = Object.freeze({
   yari_omur_saat: 168, tazelik_gucu: 85,
   yazar_doygunluk: 0.5, icerik_doygunluk: 0.8, spoiler_ceza: 0.85,
   ai_payi: 50, arsiv_payi: 45, video_tabani: 0, hacim_esigi: 3,
+  kitaplik_oncelik: 0,
 });
 
 export const varsayilan = (yuzey) => (yuzey === 'kesfet' ? VARSAYILAN_KESFET : VARSAYILAN_AKIS);
@@ -178,9 +193,20 @@ export function skorla(g, ayar, olcum, hacim, sinyalGerek = true) {
   // Spoiler PERDESİ ayrı bir şeydir (yanıt alanı, istemci bulanıklaştırır);
   // bu yalnız sıralama cezası. İşaretli VE kitaplıkta değilse geri düşer.
   const cezaSpoiler = (g.spoiler_isaret && !g.guvenli) ? ayar.spoiler_ceza : 1;
+  // KİTAPLIK KADEMESİ (gerekçe SAYI_ALANLARI.kitaplik_oncelik'te). Toplama
+  // olarak eklenir, çarpan olarak DEĞİL: çarpan tazelik tabanıyla (0,15)
+  // çarpılıp yine taze yabancı gönderinin altında kalırdı. Katsayı 2 şart:
+  // ilgi × tazelik en fazla 1; en zayıf eşleşme (izleyeceğim, 0,5) bile
+  // %100 öncelikte +1 alır ve kitaplık dışı HER gönderiyi geçer. Merdiven
+  // korunur: izliyorum (+2) > bitirdim (+1,4) > izleyeceğim (+1) — kademe
+  // içinde sıra yine ilgi × tazelik. Doygunluk cezası (siralaVeKotala) bu
+  // skoru da çarpar: aynı dizinin 5. kartından sonra yabancı kart araya
+  // girebilir — akış tek diziye kilitlenmez.
+  const oncelik = kis(Number(ayar.kitaplik_oncelik) || 0, 0, 100) / 100;
+  const kademe = 2 * oncelik * n.kitaplik;
   return {
     id: g.id,
-    skor: ilgi * t * cezaSpoiler,
+    skor: ilgi * t * cezaSpoiler + kademe,
     ilgi,
     tazelik: t,
     ceza_spoiler: cezaSpoiler,
