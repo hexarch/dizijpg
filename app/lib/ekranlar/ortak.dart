@@ -608,6 +608,19 @@ class _AkisVideoState extends State<AkisVideo> {
     _d?.setVolume(_sesli ? 1 : 0);
   }
 
+  /// Sunucunun ürettiği kapak karesi (`<video>.jpg`, ilk renkli kare).
+  /// `contain` + siyah zemin: oynatıcı da aynı kutuda `Center`+`AspectRatio`
+  /// ile çizildiği için kapak ve ilk kare BİREBİR aynı yere oturur.
+  Widget _kapak() => CachedNetworkImage(
+    imageUrl: '${widget.url}.jpg',
+    httpHeaders: gorselBasliklari('${widget.url}.jpg'),
+    filterQuality: kullaniciGorselKalitesi,
+    fit: BoxFit.contain,
+    fadeInDuration: Duration.zero,
+    placeholder: (_, _) => const SizedBox.shrink(),
+    errorWidget: (_, _, _) => const SizedBox.shrink(),
+  );
+
   @override
   void dispose() {
     _adaylar.remove(this);
@@ -635,9 +648,19 @@ class _AkisVideoState extends State<AkisVideo> {
         ),
       );
     } else if (d == null) {
-      // Henüz kurulmadı: siyah duraklatılmış kapak
-      govde = const Center(
-        child: Icon(Icons.play_circle_outline, size: 52, color: Colors.white),
+      // Henüz kurulmadı: kapak karesi + oynat simgesi (kapak yoksa siyah)
+      govde = Stack(
+        fit: StackFit.expand,
+        children: [
+          _kapak(),
+          const Center(
+            child: Icon(
+              Icons.play_circle_outline,
+              size: 52,
+              color: Colors.white,
+            ),
+          ),
+        ],
       );
     } else {
       govde = ValueListenableBuilder<VideoPlayerValue>(
@@ -651,6 +674,16 @@ class _AkisVideoState extends State<AkisVideo> {
                 child: VideoPlayer(d),
               ),
             ),
+            // KAPAK KATMANI (3 Eyl 2026, kullanıcı: "akışta videolarda siyah
+            // duruyor, oraya kaydırınca oynuyor"): oynatıcı kurulu ama video
+            // HİÇ oynamadıysa (konum 0) ekranda ya siyah ya videonun ilk
+            // karesi durur — çoğu klip siyahtan açılır. Sunucunun ürettiği
+            // kapak (ilk RENKLİ kare, video_kare.js) o ana dek üstte kalır.
+            // İlerlemiş konumda kaldırılır: duraklatılmış gerçek kare görünsün
+            // (Reels'ten dönüşte kalınan yer). Oynarken de KALDIRILIR: döngü
+            // başa sarınca konum bir anlığına 0 okunur, kapak yanıp sönmesin.
+            // Kapak 404 verirse hiçbir şey çizilmez, oynatıcı eskisi gibi.
+            if (!v.isPlaying && v.position <= Duration.zero) _kapak(),
             if (!v.isPlaying)
               const Center(
                 child: Icon(

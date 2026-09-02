@@ -7,6 +7,8 @@
 // Neden ayrı iş: yükleme anındaki `videoKareCikar` yalnız YENİ dosyayı işler.
 // Eski 480 px kapaklar Keşfet ızgarasında 2× büyütülünce bulanık kalır.
 // Bu betik aynı ffmpeg komutunu (`video_kare.js`) her mp4/webm için koşar.
+// 3 Eyl 2026: kapak artık ilk RENKLİ kare (siyah açılış atlanır); eski
+// siyah kapakları düzeltmek için de bu betik koşulur.
 //
 // Güvenlik: çıktı daima `<video>.jpg`. Kaynak video ezilmez. Hata olursa
 // o dosya atlanır, diğerleri devam eder. Eşzaman = 2 (altyazı işçisiyle paylaşır).

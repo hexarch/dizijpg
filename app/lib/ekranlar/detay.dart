@@ -1233,6 +1233,73 @@ class _DetayEkraniState extends State<DetayEkrani>
                                     DiziDurumRozeti(durum: durum),
                                 ],
                               ),
+                              // FAVORİ + PUANLA YIL SATIRININ ALTINDA (3 Eyl
+                              // 2026, kullanıcı: "favori ve yıldız vermeyi
+                              // dizi ve filmlerde yapım yılı ve maliyetin
+                              // altına al"). Eskiden aşağıdaki aksiyon
+                              // satırındaydı (İzledim / Listeye ekle'nin
+                              // yanında); afişin sağındaki boşluk boş
+                              // kalıyordu ve kişisel iki eylem sayfanın
+                              // ortasına gömülüydü.
+                              //
+                              // Dokunma hedefi 44 px korunur; ikon kutunun
+                              // SOL kenarına yaslı ki başlık ve yılla aynı
+                              // hizada dursun (varsayılan ortalama 10 px
+                              // içeri iterdi).
+                              const SizedBox(height: 2),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    key: const Key('favori-dugmesi'),
+                                    onPressed: _favoriToggle,
+                                    tooltip: 'Favori'.c,
+                                    padding: EdgeInsets.zero,
+                                    alignment: Alignment.centerLeft,
+                                    constraints: const BoxConstraints(
+                                      minWidth: 44,
+                                      minHeight: 44,
+                                    ),
+                                    icon: Icon(
+                                      favori
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: favori
+                                          ? Colors.redAccent
+                                          : DiziRenkler.metin,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    key: const Key('puanla-dugmesi'),
+                                    onPressed: _puanla,
+                                    tooltip: 'Puanla'.c,
+                                    padding: EdgeInsets.zero,
+                                    alignment: Alignment.centerLeft,
+                                    constraints: const BoxConstraints(
+                                      minWidth: 44,
+                                      minHeight: 44,
+                                    ),
+                                    icon: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          benimPuan != null
+                                              ? Icons.star
+                                              : Icons.star_border,
+                                          color: DiziRenkler.sari,
+                                        ),
+                                        if (benimPuan != null)
+                                          Text(
+                                            ' ${yildiza(benimPuan)}',
+                                            style: TextStyle(
+                                              color: DiziRenkler.sariMetin,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
@@ -1599,47 +1666,29 @@ class _DetayEkraniState extends State<DetayEkrani>
                             ),
                           ),
                         if (!tv) const SizedBox(width: 8),
-                        IconButton(
-                          onPressed: _favoriToggle,
-                          tooltip: 'Favori'.c,
-                          icon: Icon(
-                            favori ? Icons.favorite : Icons.favorite_border,
-                            color: favori
-                                ? Colors.redAccent
-                                : DiziRenkler.metin,
+                        // Favori ve Puanla artık yıl satırının altında
+                        // (yukarıda). Dizide bu satırda yalnız "Listeye
+                        // ekle" kalıyor; tek başına duran 24 px'lik ikon
+                        // satırı yarım bırakılmış görünürdü → dizide
+                        // etiketli, tam genişlikte düğme; filmde İzledim'in
+                        // yanında ikon olarak kalır.
+                        if (tv)
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _listeyeEkle,
+                              icon: const Icon(Icons.playlist_add),
+                              label: Text('Listeye ekle'.c),
+                            ),
+                          )
+                        else
+                          IconButton(
+                            onPressed: _listeyeEkle,
+                            tooltip: 'Listeye ekle'.c,
+                            icon: Icon(
+                              Icons.playlist_add,
+                              color: DiziRenkler.metin,
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          onPressed: _puanla,
-                          tooltip: 'Puanla'.c,
-                          icon: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                benimPuan != null
-                                    ? Icons.star
-                                    : Icons.star_border,
-                                color: DiziRenkler.sari,
-                              ),
-                              if (benimPuan != null)
-                                Text(
-                                  ' ${yildiza(benimPuan)}',
-                                  style: TextStyle(
-                                    color: DiziRenkler.sariMetin,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: _listeyeEkle,
-                          tooltip: 'Listeye ekle'.c,
-                          icon: Icon(
-                            Icons.playlist_add,
-                            color: DiziRenkler.metin,
-                          ),
-                        ),
                       ],
                     ),
                     const SizedBox(height: 12),

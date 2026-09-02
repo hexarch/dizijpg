@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # DİKKAT: sürümü artırınca lib/api.dart'taki Api.surum'u da güncelle.
-version: 1.115.0+182
+version: 1.116.0+183
 
 environment:
   sdk: ^3.12.2
@@ -130,6 +130,10 @@ dev_dependencies:
   # Geçişli bağımlılık olarak zaten geliyordu ama TEST doğrudan import ediyor;
   # bildirilmemiş import bir gün üst paket onu bırakınca sessizce kırılırdı.
   crypto: ^3.0.0
+  # Sahte video platformu (test/akis_video_kapak_test.dart): AkisVideo'nun
+  # kapak katmanı gerçek çözücü olmadan denenir. Aynı gerekçe: geçişli
+  # bağımlılığı doğrudan import ediyoruz, bildirilmeli.
+  video_player_platform_interface: ^6.9.0
   flutter_launcher_icons: ^0.14.1
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices.

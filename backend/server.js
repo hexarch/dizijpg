@@ -352,8 +352,8 @@ app.use(express.json({ limit: '1mb' }));
 const AVATAR_DIZIN = process.env.AVATAR_DIZIN || './avatarlar';
 const MEDYA_DIZIN = process.env.MEDYA_DIZIN || './medya';
 
-// Video için küçük resim: ilk saniyeden bir kare alınıp <dosya>.jpg olarak
-// yazılır. Keşfet ızgarası bunu gösterir — video yerine resim koymak, aynı
+// Video için küçük resim: ilk 10 sn'deki İLK RENKLİ kare (siyah açılış
+// atlanır; video_kare.js parlaklık taraması) <dosya>.jpg olarak yazılır. Keşfet ızgarası bunu gösterir — video yerine resim koymak, aynı
 // anda onlarca çözücü açılmasını (ve telefonun ısınmasını) engeller.
 // Komut `video_kare.js`'te: 720 tavan, büyütme yok, lanczos. Başarısız
 // olursa sessiz geçilir; istemci kapak yoksa postere düşer.
@@ -13017,7 +13017,8 @@ app.post('/medya',
       throw e;
     }
     const videoMu = VIDEO_TURLERI.includes(tur);
-    // Kare çıkarma yüklemeyi ~1 sn uzatır ama ızgarayı çok hafifletir.
+    // Kare çıkarma yüklemeyi birkaç sn uzatır (parlaklık taraması + kare)
+    // ama ızgarayı çok hafifletir ve kapak siyah çıkmaz.
     const kapakVar = videoMu ? await videoKaresiCikar(tamYol) : false;
     // Oran kaydı (zıplama düzeltmesi, 26 Ağu 2026): akış kartı kutuyu ilk
     // kareden doğru boyda kurabilsin diye en/boy ölçülüp yazılır. ATEŞLE-UNUT

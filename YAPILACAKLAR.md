@@ -1,5 +1,31 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-02 (3. tur) · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-03 — VİDEO KAPAĞI SİYAH DEĞİL · Favori + Puanla yıl satırının altında (1.116.0+183)
+
+- ✅ **"Akışta gezerken videolarda siyah duruyor, oraya kaydırınca oynuyor; ilk
+  sahnesi siyahsa sonraki ilk renkli sahneyi göstermeli."** İki katman:
+  1. **Sunucu (`backend/video_kare.js`):** kapak artık sabit 0,5 sn'den değil,
+     ilk 10 sn'nin parlaklık taramasından seçiliyor (`-skip_frame noref`,
+     64 px `signalstats` YAVG). Kural: eşik = max(40, 0,6 × penceredeki en
+     parlak kare); eşiği geçen İLK kare kapak. Baştan sona karanlık videoda en
+     parlak kare; tarama başarısızsa eski 0,5 sn. Fade-in testinde kapak
+     1,2 sn'den alındı, YAVG 76 (eskisi ~16). `araclar/video_kare_yenile.js`
+     aynı komutu kullanır → eski siyah kapaklar canlıda yeniden üretilecek.
+  2. **İstemci (`AkisVideo`, ortak.dart):** oynatıcı kurulmadan ve kurulup
+     hiç oynamamışken (duraklatılmış, konum 0) `<video>.jpg` kapağı ÜSTTE
+     durur; oynayınca ya da konum ilerlemişse (Reels'ten dönüş) kalkar; kapak
+     404 verirse eski davranış. Keşfet ızgarası zaten kapağı gösteriyordu.
+  Kanıt: backend `video_kare.test.js` 15/15 (fade-in kapak parlaklığı dâhil),
+  `test/akis_video_kapak_test.dart` 5/5 (sahte VideoPlayerPlatform).
+- ✅ **"Favori ve yıldız vermeyi dizi ve filmlerde yapım yılı ve maliyetin
+  altına al"** — `detay.dart`: iki düğme afişin sağındaki sütuna, yıl +
+  bütçe/durum rozetinin altına taşındı (44 px hedef, sola yaslı ikon).
+  Aksiyon satırında film: İzledim + Listeye ekle; dizi: tam genişlik
+  "Listeye ekle" (tek başına kalan ikon yarım görünürdü).
+  Kanıt: `test/detay_favori_puan_yeri_test.dart` 5/5 (yer ölçümü film+dizi,
+  tek kopya, /favori/toggle isteği, puan sheet'i). flutter test 2467/2467,
+  backend 2161/0.
 
 ## 2026-09-02 (3. tur) — 🔨 SOHBET: "video gönderince çöküyor" = ANR (semantics) · Telegram düzeni (1.115.0+182)
 
