@@ -29,7 +29,7 @@ dizi.jpg — PLAY STORE MAĞAZA GÖRSELLERİ YENİLEME — DURUM RAPORU (2 Eyl 2
   adları "yeni-<locale>-..." (ör. yeni-tr-TR-1-ana-sayfa.png, yeni-tr-TR-tablet-1.png,
   yeni-tr-TR-ozellik.png).
 
-2) PLAY CONSOLE'DA DURUM (hepsi KAYDEDİLDİ ama İNCELEMEYE GÖNDERİLMEDİ)
+2) PLAY CONSOLE'DA DURUM — 2 Eyl akşamı 39 DEĞİŞİKLİK İNCELEMEYE GÖNDERİLDİ (başlık: İncelenmekte olan değişiklikler)
 ------------------------------------------------------------------------
   Dil     | Ad + kısa açıklama | Telefon 8 | Özellik gr. | 7"+10" tablet
   en-US   |  ✅                |  ✅       |  ✅         |  ✅ (4+4)
@@ -69,7 +69,7 @@ dizi.jpg — PLAY STORE MAĞAZA GÖRSELLERİ YENİLEME — DURUM RAPORU (2 Eyl 2
     5. Panel AÇIKKEN 7" / 10" / Özellik grafiği: label'a scrollIntoView + 2 tık yukarı
        → "Öğe ekle" (839,438) / özellik (1040,520) → dj.coklu(tablet 1-4) / dj.ekle(ozellik).
     6. Kaydet → "Şimdi değil".
- c) Yayın özeti → "N değişikliği incelemeye gönder" (11 dilin görsel + metin değişikliği).
+ c) Kalan diller bitince Yayın özeti → "N değişikliği incelemeye gönder" (ikinci tur).
  d) Play Console'da 5+ sürüm sonra: tanıtım videosu (YouTube) hâlâ yok — ASO için
     sıradaki en büyük kazanım.
 
