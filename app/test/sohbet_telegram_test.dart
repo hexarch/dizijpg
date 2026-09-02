@@ -33,6 +33,7 @@ Map<String, dynamic> _mesaj(
   String saat = '10:14',
   String gun = '2026-08-05',
   String? medya,
+  String? medyaKapak,
   List<String>? medyalar,
   String? dosya,
   String? dosyaAd,
@@ -47,6 +48,7 @@ Map<String, dynamic> _mesaj(
   'id': id,
   'metin': metin,
   'medya': medya,
+  'medya_kapak': medyaKapak,
   'medyalar': medyalar,
   'dosya': dosya,
   'dosya_ad': dosyaAd,
@@ -169,7 +171,7 @@ void main() {
     ]);
     // 3 kare: üstte geniş 1 + altta 2; video karesinde oynat ikonu.
     expect(find.byType(CachedNetworkImage), findsNWidgets(2));
-    expect(find.byIcon(Icons.play_circle_outline), findsOneWidget);
+    expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
     // Tek-medya yolu ÇİZİLMEZ (aynı görsel iki kez basılmasın).
     expect(find.text('10:14'), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -192,6 +194,22 @@ void main() {
       await _kapat(tester);
     },
   );
+
+  testWidgets('VİDEO balonu ilk kare kapağını (medya_kapak) çizer', (
+    tester,
+  ) async {
+    // 2 Eyl 2026 isteği: "gönderdiğim videonun ilk sahnesi gözüksün".
+    // Sunucu `<video>.jpg` kapağını imzalı `medya_kapak` olarak veriyor.
+    await _kur(tester, [
+      _mesaj(1, medya: '/medya/m1-a.mp4', medyaKapak: '/medya/m1-a.mp4.jpg'),
+      _mesaj(2, medya: '/medya/m1-b.mp4', saat: '10:15'), // kapaksız
+    ]);
+    // Kapaklı videoda görsel + oynat; kapaksızda yalnız koyu kutu + oynat.
+    expect(find.byType(CachedNetworkImage), findsOneWidget);
+    expect(find.byIcon(Icons.play_arrow_rounded), findsNWidgets(2));
+    expect(tester.takeException(), isNull);
+    await _kapat(tester);
+  });
 
   testWidgets('BELGE: ad + boyut + tür karosu; dokunma hedefi var', (
     tester,

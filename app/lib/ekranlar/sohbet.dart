@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:ui' show FontFeature;
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -2715,8 +2716,13 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// açar, kişi paylaşımı yeni bir mesaj türü ister — ayrı iş.
   Future<void> _ekPaneliAc() async {
     _metinOdak.unfocus();
+    // KENARDAN KENARA (2 Eyl 2026 isteği): M3 modal varsayılanı iki yanda
+    // 7 dp boşluk bırakıyor; genişlik ekran genişliğine (masaüstünde sohbet
+    // kolonu tavanı 800) sabitlenir.
+    final en = math.min(MediaQuery.sizeOf(context).width, 800.0);
     final secim = await showModalBottomSheet<_EkTuru>(
       context: context,
+      constraints: BoxConstraints(minWidth: en, maxWidth: en),
       backgroundColor: DiziRenkler.koyuGri,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -3637,6 +3643,12 @@ class _MesajBaloncugu extends StatelessWidget {
                     child: _AlbumIzgarasi(
                       // Sunucu yolları HAM verilir; ızgara adresi kendisi kurar.
                       urller: yerel.isNotEmpty ? yerel : album,
+                      kapaklar: [
+                        for (final k
+                            in (m['medyalar_kapak'] as List<dynamic>? ??
+                                const []))
+                          k as String?,
+                      ],
                       yerel: yerel.isNotEmpty,
                       ilerleme: bekliyor ? ilerleme : null,
                       onTap: yerel.isNotEmpty
@@ -3676,15 +3688,10 @@ class _MesajBaloncugu extends StatelessWidget {
                         // her iki temada ve her iki baloncuk renginde okunur
                         // (beyaz kart üstünde ~4.6:1, sarı üstünde ~6.5:1).
                         child: video
-                            ? Container(
-                                width: 180,
-                                height: 120,
-                                color: Colors.black54,
-                                child: const Icon(
-                                  Icons.play_circle_outline,
-                                  size: 40,
-                                  color: Colors.white,
-                                ),
+                            ? _VideoKapak(
+                                kapak: m['medya_kapak'] as String?,
+                                genislik: 240,
+                                yukseklik: 160,
                               )
                             : CachedNetworkImage(
                                 imageUrl: dosyaUrl(medya)!,
@@ -3936,6 +3943,10 @@ class _MesajBaloncugu extends StatelessWidget {
 /// medyasında (tam ekran görüntüleyici); yerel önizlemede yok.
 class _AlbumIzgarasi extends StatelessWidget {
   final List<String> urller;
+
+  /// Video karelerinin ilk-kare kapakları (`medyalar_kapak`, imzalı yol);
+  /// indeks [urller] ile hizalı, kapağı olmayanda null.
+  final List<String?> kapaklar;
   final bool yerel;
   final double? ilerleme;
   final void Function(int)? onTap;
@@ -3943,6 +3954,7 @@ class _AlbumIzgarasi extends StatelessWidget {
   const _AlbumIzgarasi({
     required this.urller,
     required this.yerel,
+    this.kapaklar = const [],
     this.ilerleme,
     this.onTap,
   });
@@ -3960,11 +3972,10 @@ class _AlbumIzgarasi extends StatelessWidget {
     final video = _videoMu(y);
     Widget govde;
     if (video) {
-      govde = Container(
-        color: Colors.black54,
-        child: const Center(
-          child: Icon(Icons.play_circle_outline, size: 36, color: Colors.white),
-        ),
+      govde = _VideoKapak(
+        kapak: i < kapaklar.length ? kapaklar[i] : null,
+        genislik: en,
+        yukseklik: boy,
       );
     } else if (yerel) {
       govde = Image(
@@ -4051,6 +4062,62 @@ class _AlbumIzgarasi extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Video karesi: sunucunun ürettiği İLK KARE kapağı (`<video>.jpg`, imzalı)
+/// + ortada oynat ikonu. Kapak yoksa/yüklenemezse koyu kutu (2 Eyl 2026
+/// isteği: "gönderdiğim videonun ilk sahnesi gözüksün").
+class _VideoKapak extends StatelessWidget {
+  final String? kapak;
+  final double genislik;
+  final double yukseklik;
+
+  const _VideoKapak({
+    required this.kapak,
+    required this.genislik,
+    required this.yukseklik,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final k = kapak;
+    return SizedBox(
+      width: genislik,
+      height: yukseklik,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          if (k != null)
+            // Adres BURADA `dosyaUrl` ile kurulur (kendi sunucumuz) — WebP
+            // başlık gerileme koruması çağrı noktasında bunu arar.
+            CachedNetworkImage(
+              imageUrl: dosyaUrl(k)!,
+              fit: BoxFit.cover,
+              placeholder: (_, _) => const ColoredBox(color: Colors.black54),
+              errorWidget: (_, _, _) => const ColoredBox(color: Colors.black54),
+            )
+          else
+            const ColoredBox(color: Colors.black54),
+          // Oynat ikonu kapağın üstünde okunsun: yarı saydam koyu daire.
+          Center(
+            child: Container(
+              width: 44,
+              height: 44,
+              decoration: const BoxDecoration(
+                color: Colors.black45,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.play_arrow_rounded,
+                size: 30,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

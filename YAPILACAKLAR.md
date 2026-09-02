@@ -54,6 +54,10 @@
   `sohbet_detay_test` kompozer testi yenilendi, `dm_reels_medya_test` panel
   akışına uyarlandı; eski `sohbet_saat_sutunu_test` kaldırıldı. 45 dilde 14
   yeni anahtar. Tüm paket: 2455+ geçiyor.
+- ✅ **İstek (aynı gün):** ataç paneli kenardan kenara (`constraints` ile M3'ün
+  7 dp yan boşluğu kapatıldı); video balonunda İLK KARE — sunucu `<video>.jpg`
+  kapağını imzalı `medya_kapak` / `medyalar_kapak` olarak veriyor, `_VideoKapak`
+  çiziyor (kapak yoksa koyu kutu). `Api.surum` 1.115.0+182'ye eşitlendi.
 - ⬜ Play: 182 AAB yüklenecek (ANR düzeltmesi TalkBack kullanıcıları için).
 - ⬜ Emülatör testi @alcelik sohbetine (testuser123→miles.watches değil,
   ilk turdaki emülatör hesabından) 4-5 test videosu bıraktı — istenirse silinir.

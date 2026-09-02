@@ -15300,7 +15300,19 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     r.yanit_medya = medyaImzali(r.yanit_medya, MEDYA_IMZA_ANAHTARI);
     // Albümün her karesi ve belge yolu da imzalı çıkar; BIGINT pg'den string
     // gelir, istemci sayı bekler (2 Eyl 2026).
+    // VİDEO KAPAĞI (2 Eyl 2026): `<video>.jpg` yüklemede üretiliyor ama DM'de
+    // yol imzalı olduğu için istemci `.jpg` ekleyerek türetemez (imza dosya
+    // adını kapsar). Kapağı ayrı imzalayıp `medya_kapak` / `medyalar_kapak`
+    // olarak veriyoruz; diskte yoksa null (istemci koyu kutuya düşer).
+    const kapakYolu = (y) => {
+      if (typeof y !== 'string' || !/\.(mp4|webm)$/.test(y)) return null;
+      const ad = `${path.basename(y)}.jpg`;
+      return fs.existsSync(path.join(MEDYA_DIZIN, ad))
+        ? medyaImzali(`/medya/${ad}`, MEDYA_IMZA_ANAHTARI) : null;
+    };
+    r.medya_kapak = kapakYolu(r.medya);
     if (Array.isArray(r.medyalar)) {
+      r.medyalar_kapak = r.medyalar.map(kapakYolu);
       r.medyalar = r.medyalar.map((y) => medyaImzali(y, MEDYA_IMZA_ANAHTARI));
     }
     r.dosya = dosyaImzali(r.dosya, DOSYA_IMZA_ANAHTARI);
