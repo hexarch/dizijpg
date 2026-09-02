@@ -38,23 +38,23 @@ dizi.jpg — PLAY STORE MAĞAZA GÖRSELLERİ YENİLEME — DURUM RAPORU (2 Eyl 2
   ar      |  ✅                |  ✅       |  ✅         |  ✅
   id      |  ✅                |  ✅       |  ✅         |  ✅
   fr-FR   |  ✅                |  ✅       |  ✅         |  ✅
-  pt-BR   |  ✅                |  ✅       |  ❌ (en-US devralıyor) | ❌ (en-US devralıyor)
-  ru-RU   |  ❌                |  ❌ eski  |  ❌         |  ❌
-  el-GR   |  ❌                |  ❌ eski  |  ❌         |  ❌
-  es-ES   |  ❌                |  ❌ eski  |  ❌         |  ❌
-  it-IT   |  ❌                |  ❌ eski  |  ❌         |  ❌
-  Not: devralan diller en-US'nin YENİ görsellerini gösterir, yani pt-BR tablet/özellik
-  grafiği İngilizce metinle görünür (kırık değil, sadece yerelleştirilmemiş).
+  pt-BR   |  ✅                |  ✅       |  ✅ (3 Eyl) |  ✅ (3 Eyl)
+  ru-RU   |  ✅ (3 Eyl)        |  ✅       |  ✅         |  ✅
+  el-GR   |  ✅ (3 Eyl)        |  ✅       |  ✅         |  ✅
+  es-ES   |  ✅ (3 Eyl)        |  ✅       |  ✅         |  ✅
+  it-IT   |  ✅ (3 Eyl)        |  ✅       |  ✅         |  ✅
+  3 Eyl 2026: ilk tur (39 değişiklik) ONAYLANDI ve YAYINDA; kalan 4 dil + pt-BR
+  tablet/özellik grafiği 3 Eyl'de tamamlanıp ikinci tur olarak incelemeye gönderildi.
 
   Yeni uygulama adları (ASO): en "Dizi JPG: TV & Movie Tracker", tr "Dizi JPG: Dizi &
   Film Takip", de "Dizi JPG: Serien & Filme", ar "Dizi JPG: مسلسلات وأفلام",
   id "Dizi JPG: Serial & Film", fr "Dizi JPG: Séries & Films", pt "Dizi JPG: Séries e
   Filmes". Kalanlar aso.json'da (ru/el/es/it). Kısa açıklamalar da aso.json'da.
 
-3) KALAN İŞ (sırayla)
+3) KALAN İŞ — GÖRSEL İŞİ BİTTİ (11/11). Aşağısı yeniden yapılacaksa tarif:
 ---------------------
- a) pt-BR: özellik grafiği + 7"/10" tablet (4+4) ekle → Kaydet.
- b) ru-RU, el-GR, es-ES, it-IT: her biri için
+ a) (bitti) pt-BR tablet/özellik.
+ b) (bitti) ru-RU, el-GR, es-ES, it-IT — tarif:
     1. Sayfayı yenile → dil menüsü (ilk tık genelde yutuluyor, ikinci tıkta açılır;
        liste animasyonu bitmeden tıklama — 3 sn bekle, ekran görüntüsüyle doğrula).
     2. Uygulama adı + kısa açıklama yaz (aso.json). Alanlara triple_click + cmd+a +
