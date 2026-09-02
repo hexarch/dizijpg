@@ -1393,4 +1393,6 @@ const Map<String, String> cevirilerJa = {
   'En yeni mesaja in': '最新のメッセージへ',
   'Gönderilemedi · tekrar dene': '未送信 · 再試行',
   'Dosya açılamadı': 'ファイルを開けませんでした',
+  'Temizle': 'クリア',
+  'Oyuncu': '俳優',
 };

@@ -1490,4 +1490,6 @@ const Map<String, String> cevirilerTa = {
   'En yeni mesaja in': 'சமீபத்திய செய்திக்குச் செல்',
   'Gönderilemedi · tekrar dene': 'அனுப்பப்படவில்லை · மீண்டும் முயற்சிக்கவும்',
   'Dosya açılamadı': 'கோப்பைத் திறக்க முடியவில்லை',
+  'Temizle': 'அழி',
+  'Oyuncu': 'நடிகர்',
 };

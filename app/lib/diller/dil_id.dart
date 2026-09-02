@@ -1467,4 +1467,6 @@ const Map<String, String> cevirilerId = {
   'En yeni mesaja in': 'Ke pesan terbaru',
   'Gönderilemedi · tekrar dene': 'Gagal terkirim · coba lagi',
   'Dosya açılamadı': 'Berkas tidak dapat dibuka',
+  'Temizle': 'Hapus',
+  'Oyuncu': 'Aktor',
 };

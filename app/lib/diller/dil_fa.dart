@@ -1450,4 +1450,6 @@ const Map<String, String> cevirilerFa = {
   'En yeni mesaja in': 'به آخرین پیام',
   'Gönderilemedi · tekrar dene': 'ارسال نشد · تلاش دوباره',
   'Dosya açılamadı': 'فایل باز نشد',
+  'Temizle': 'پاک کردن',
+  'Oyuncu': 'بازیگر',
 };

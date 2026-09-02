@@ -1396,4 +1396,6 @@ const Map<String, String> cevirilerZh = {
   'En yeni mesaja in': '跳到最新消息',
   'Gönderilemedi · tekrar dene': '未发送 · 点击重试',
   'Dosya açılamadı': '无法打开文件',
+  'Temizle': '清除',
+  'Oyuncu': '演员',
 };

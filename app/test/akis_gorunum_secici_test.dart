@@ -112,11 +112,15 @@ Finder _cubukMesaj() => find.descendant(
   matching: find.byIcon(Icons.near_me_outlined),
 );
 
-/// Açılan menüdeki seçenek. Kapsam ŞART: "Akış" yazısı aynı anda başlıkta ve
-/// (etiketleri gizli olsa da ağaçta duran) alt çubuk hedefinde de var.
-Finder _menuOgesi(String yazi) => find.descendant(
-  of: find.byWidgetPredicate((w) => w is PopupMenuItem<AkisGorunumu>),
-  matching: find.text(yazi),
+/// Başlıktaki etiket (3 Eyl 2026'dan beri iki etiket YAN YANA, menü yok).
+/// Anahtarla bulunur: "Akış" yazısı aynı anda (etiketleri gizli olsa da
+/// ağaçta duran) alt çubuk hedefinde de var.
+Finder _etiket(AkisGorunumu g) => find.byKey(AkisGorunumSecici.anahtar(g));
+
+/// Seçili etiketin altındaki çizgi — hangi etiketin İÇİNDE olduğu ölçülür.
+Finder _cizgi(AkisGorunumu g) => find.descendant(
+  of: _etiket(g),
+  matching: find.byKey(const Key('akis-gorunum-cizgi')),
 );
 
 /// Yığının EN ÜSTÜNDEKİ konum (`push` taban `uri`yi değiştirmez).
@@ -174,26 +178,29 @@ void main() {
   // 2) BAŞLIK SEÇİCİSİ: akış ⇄ keşfet
   // -------------------------------------------------------------------------
   group('akış başlığı seçici', () {
-    testWidgets('başlık dokunulabilir; menüde iki seçenek var', (tester) async {
+    testWidgets('iki etiket YAN YANA; çizgi seçili olanın altında', (
+      tester,
+    ) async {
       _ekran(tester);
       await _uygulama(tester, '/akis');
 
       expect(_secici(), findsOneWidget);
+      expect(_etiket(AkisGorunumu.akis), findsOneWidget);
+      expect(_etiket(AkisGorunumu.kesfet), findsOneWidget);
       // Dokunma hedefi ≥44 dp (ui-ux-pro-max Touch Target Size).
-      expect(tester.getSize(_secici()).height, greaterThanOrEqualTo(44));
-      // Tıklanabilir olduğunun görsel ipucu.
-      expect(find.byIcon(Icons.arrow_drop_down), findsOneWidget);
-
-      await tester.tap(_secici());
-      await tester.pumpAndSettle();
-
-      // Menüde TAM İKİ seçenek: Akış ve Keşfet.
-      expect(
-        find.byWidgetPredicate((w) => w is PopupMenuItem<AkisGorunumu>),
-        findsNWidgets(2),
-      );
-      expect(_menuOgesi('Akış'), findsOneWidget);
-      expect(_menuOgesi('Keşfet'), findsOneWidget);
+      for (final g in AkisGorunumu.values) {
+        expect(tester.getSize(_etiket(g)).height, greaterThanOrEqualTo(44));
+      }
+      // YAN YANA: Keşfet, Akış'ın sağında ve aynı hizada.
+      final akisKutu = tester.getRect(_etiket(AkisGorunumu.akis));
+      final kesfetKutu = tester.getRect(_etiket(AkisGorunumu.kesfet));
+      expect(kesfetKutu.left, greaterThanOrEqualTo(akisKutu.right));
+      expect(kesfetKutu.top, akisKutu.top);
+      // Çizgi ("-") YALNIZ seçili olanın (Akış) altında.
+      expect(_cizgi(AkisGorunumu.akis), findsOneWidget);
+      expect(_cizgi(AkisGorunumu.kesfet), findsNothing);
+      // Eski açılır menü GERİ SIZMASIN.
+      expect(find.byIcon(Icons.arrow_drop_down), findsNothing);
     });
 
     testWidgets('KEŞFET seçilince keşfet şeklinde gözükür', (tester) async {
@@ -201,9 +208,7 @@ void main() {
       final r = await _uygulama(tester, '/akis');
       expect(find.byType(AkisEkrani), findsOneWidget);
 
-      await tester.tap(_secici());
-      await tester.pumpAndSettle();
-      await tester.tap(_menuOgesi('Keşfet'));
+      await tester.tap(_etiket(AkisGorunumu.kesfet));
       await _bekle(tester);
 
       expect(
@@ -211,6 +216,9 @@ void main() {
         findsOneWidget,
         reason: 'Keşfet seçildi ama Keşfet ekranı çizilmedi',
       );
+      // Çizgi artık Keşfet'in altında.
+      expect(_cizgi(AkisGorunumu.kesfet), findsOneWidget);
+      expect(_cizgi(AkisGorunumu.akis), findsNothing);
       // IndexedStack'te akış dalı Offstage'e düşer; varsayılan finder onu
       // atlar — yani gerçekten GÖRÜNEN ekran değişmiş olur.
       expect(find.byType(AkisEkrani), findsNothing);
@@ -230,14 +238,13 @@ void main() {
       // Aynı seçici Keşfet başlığında da var: alt çubuktan çıkan Keşfet'ten
       // geri dönmenin görünür yolu bu.
       expect(_secici(), findsOneWidget);
-      await tester.tap(_secici());
-      await tester.pumpAndSettle();
-      await tester.tap(_menuOgesi('Akış'));
+      await tester.tap(_etiket(AkisGorunumu.akis));
       await _bekle(tester);
 
       expect(find.byType(AkisEkrani), findsOneWidget);
       expect(find.byType(KesfetAkisEkrani), findsNothing);
       expect(r.routerDelegate.currentConfiguration.uri.path, '/akis');
+      expect(_cizgi(AkisGorunumu.akis), findsOneWidget);
       expect(_seciliHedef(tester), akisHedefi);
     });
   });
@@ -259,9 +266,7 @@ void main() {
       _ekran(tester);
       // Önce Keşfet seçilir…
       await _uygulama(tester, '/akis');
-      await tester.tap(_secici());
-      await tester.pumpAndSettle();
-      await tester.tap(_menuOgesi('Keşfet'));
+      await tester.tap(_etiket(AkisGorunumu.kesfet));
       await _bekle(tester);
       expect(find.byType(KesfetAkisEkrani), findsOneWidget);
 

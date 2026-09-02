@@ -1462,4 +1462,6 @@ const Map<String, String> cevirilerPa = {
   'En yeni mesaja in': 'ਨਵੇਂ ਸੁਨੇਹੇ ਤੇ ਜਾਓ',
   'Gönderilemedi · tekrar dene': 'ਭੇਜਿਆ ਨਹੀਂ ਗਿਆ · ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
   'Dosya açılamadı': 'ਫ਼ਾਈਲ ਨਹੀਂ ਖੁੱਲ੍ਹ ਸਕੀ',
+  'Temizle': 'ਸਾਫ਼ ਕਰੋ',
+  'Oyuncu': 'ਅਦਾਕਾਰ',
 };

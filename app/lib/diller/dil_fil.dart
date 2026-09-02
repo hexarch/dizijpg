@@ -1494,4 +1494,6 @@ const Map<String, String> cevirilerFil = {
   'En yeni mesaja in': 'Sa pinakabagong mensahe',
   'Gönderilemedi · tekrar dene': 'Hindi naipadala · subukan muli',
   'Dosya açılamadı': 'Hindi mabuksan ang file',
+  'Temizle': 'I-clear',
+  'Oyuncu': 'Aktor',
 };

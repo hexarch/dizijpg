@@ -1395,4 +1395,6 @@ const Map<String, String> cevirilerKo = {
   'En yeni mesaja in': '최신 메시지로 이동',
   'Gönderilemedi · tekrar dene': '전송 안 됨 · 다시 시도',
   'Dosya açılamadı': '파일을 열 수 없습니다',
+  'Temizle': '지우기',
+  'Oyuncu': '배우',
 };

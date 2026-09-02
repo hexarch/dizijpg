@@ -1492,4 +1492,6 @@ const Map<String, String> cevirilerRu = {
   'En yeni mesaja in': 'К последнему сообщению',
   'Gönderilemedi · tekrar dene': 'Не отправлено · повторить',
   'Dosya açılamadı': 'Не удалось открыть файл',
+  'Temizle': 'Очистить',
+  'Oyuncu': 'Актёр',
 };

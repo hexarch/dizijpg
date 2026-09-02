@@ -1482,4 +1482,6 @@ const Map<String, String> cevirilerPl = {
   'En yeni mesaja in': 'Do najnowszej wiadomości',
   'Gönderilemedi · tekrar dene': 'Nie wysłano · ponów',
   'Dosya açılamadı': 'Nie udało się otworzyć pliku',
+  'Temizle': 'Wyczyść',
+  'Oyuncu': 'Aktor',
 };

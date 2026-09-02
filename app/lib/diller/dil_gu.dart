@@ -1453,4 +1453,6 @@ const Map<String, String> cevirilerGu = {
   'En yeni mesaja in': 'નવીનતમ સંદેશ પર જાઓ',
   'Gönderilemedi · tekrar dene': 'મોકલાયું નથી · ફરી પ્રયાસ કરો',
   'Dosya açılamadı': 'ફાઇલ ખોલી શકાઈ નહીં',
+  'Temizle': 'સાફ કરો',
+  'Oyuncu': 'અભિનેતા',
 };

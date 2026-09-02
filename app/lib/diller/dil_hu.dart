@@ -1478,4 +1478,6 @@ const Map<String, String> cevirilerHu = {
   'En yeni mesaja in': 'Ugrás a legújabb üzenetre',
   'Gönderilemedi · tekrar dene': 'Nem sikerült · újra',
   'Dosya açılamadı': 'A fájl nem nyitható meg',
+  'Temizle': 'Törlés',
+  'Oyuncu': 'Színész',
 };

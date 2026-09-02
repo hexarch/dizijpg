@@ -1473,4 +1473,6 @@ const Map<String, String> cevirilerFi = {
   'En yeni mesaja in': 'Uusimpaan viestiin',
   'Gönderilemedi · tekrar dene': 'Ei lähetetty · yritä uudelleen',
   'Dosya açılamadı': 'Tiedostoa ei voitu avata',
+  'Temizle': 'Tyhjennä',
+  'Oyuncu': 'Näyttelijä',
 };

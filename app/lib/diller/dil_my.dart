@@ -1482,4 +1482,6 @@ const Map<String, String> cevirilerMy = {
   'En yeni mesaja in': 'နောက်ဆုံးမက်ဆေ့ချ်သို့',
   'Gönderilemedi · tekrar dene': 'မပို့နိုင်ပါ · ထပ်ကြိုးစားပါ',
   'Dosya açılamadı': 'ဖိုင် ဖွင့်၍မရပါ',
+  'Temizle': 'ရှင်းလင်းရန်',
+  'Oyuncu': 'သရုပ်ဆောင်',
 };

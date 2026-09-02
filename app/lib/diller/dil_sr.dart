@@ -1470,4 +1470,6 @@ const Map<String, String> cevirilerSr = {
   'En yeni mesaja in': 'Na najnoviju poruku',
   'Gönderilemedi · tekrar dene': 'Nije poslato · pokušaj ponovo',
   'Dosya açılamadı': 'Fajl nije mogao da se otvori',
+  'Temizle': 'Обриши',
+  'Oyuncu': 'Глумац',
 };

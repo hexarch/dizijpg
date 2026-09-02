@@ -1467,4 +1467,6 @@ const Map<String, String> cevirilerVi = {
   'En yeni mesaja in': 'Đến tin nhắn mới nhất',
   'Gönderilemedi · tekrar dene': 'Chưa gửi · thử lại',
   'Dosya açılamadı': 'Không mở được tệp',
+  'Temizle': 'Xóa',
+  'Oyuncu': 'Diễn viên',
 };

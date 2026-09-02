@@ -1475,4 +1475,6 @@ const Map<String, String> cevirilerNl = {
   'En yeni mesaja in': 'Naar nieuwste bericht',
   'Gönderilemedi · tekrar dene': 'Niet verzonden · opnieuw proberen',
   'Dosya açılamadı': 'Bestand kon niet worden geopend',
+  'Temizle': 'Wissen',
+  'Oyuncu': 'Acteur',
 };

@@ -1463,4 +1463,6 @@ const Map<String, String> cevirilerCs = {
   'En yeni mesaja in': 'Na nejnovější zprávu',
   'Gönderilemedi · tekrar dene': 'Neodesláno · zkusit znovu',
   'Dosya açılamadı': 'Soubor se nepodařilo otevřít',
+  'Temizle': 'Vymazat',
+  'Oyuncu': 'Herec',
 };

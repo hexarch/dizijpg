@@ -1491,4 +1491,6 @@ const Map<String, String> cevirilerEl = {
   'En yeni mesaja in': 'Στο πιο πρόσφατο μήνυμα',
   'Gönderilemedi · tekrar dene': 'Δεν στάλθηκε · δοκιμάστε ξανά',
   'Dosya açılamadı': 'Το αρχείο δεν άνοιξε',
+  'Temizle': 'Εκκαθάριση',
+  'Oyuncu': 'Ηθοποιός',
 };

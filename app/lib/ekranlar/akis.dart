@@ -61,16 +61,21 @@ const Map<AkisGorunumu, String> akisGorunumYollari = {
   AkisGorunumu.kesfet: '/arama',
 };
 
-/// AppBar başlığı olarak kullanılan görünüm seçicisi (Akış ⇄ Keşfet).
+/// AppBar başlığı olarak kullanılan görünüm seçicisi (Akış | Keşfet).
 ///
-/// DOKUNMA HEDEFİ: metin + ok, [_seciciAsgariYukseklik] dp'lik bir kutuya
-/// oturur (ui-ux-pro-max "Touch Target Size", severity High). Ok İŞARETİ
-/// ŞART: tıklanabilir olduğunu gösteren tek görsel ipucu odur — düz bir
-/// başlık kimseye "bana dokun" demez.
+/// BİÇİM (kullanıcı isteği, 3 Eyl 2026: *"akış ve keşfeti yan yana yaz,
+/// seçili olanın altında - olsun"*): iki etiket YAN YANA, açılır menü YOK.
+/// Seçili olan tam metin renginde ve altında sarı bir çizgi; öteki soluk
+/// ve çizgisiz. Eski hâli (21 Ağu) tek başlık + ok + PopupMenu idi — iki
+/// dokunuş gerektiriyordu, şimdi tek dokunuş.
 ///
-/// DAR EKRAN: satır [MainAxisSize.min] ve metin [Flexible]+ellipsis. Uzun
-/// çevirilerde (ör. Endonezce "Jelajahi") başlık taşmak yerine kırpılır;
-/// ok her zaman görünür kalır.
+/// DOKUNMA HEDEFİ: her etiket [_seciciAsgariYukseklik] dp'lik bir kutuya
+/// oturur (ui-ux-pro-max "Touch Target Size", severity High). Çizgi, seçili
+/// olmayanda da ÇİZİLİR ama saydamdır: iki etiketin yüksekliği eşit kalır,
+/// seçim değişince başlık zıplamaz.
+///
+/// DAR EKRAN: satır [MainAxisSize.min] ve her metin [Flexible]+ellipsis.
+/// Uzun çevirilerde (ör. Endonezce "Jelajahi") taşmak yerine kırpılır.
 class AkisGorunumSecici extends StatelessWidget {
   /// Şu an çizilen görünüm — ekranın kendisi bildirir.
   final AkisGorunumu secili;
@@ -80,68 +85,74 @@ class AkisGorunumSecici extends StatelessWidget {
   static String etiket(AkisGorunumu g) =>
       g == AkisGorunumu.kesfet ? 'Keşfet'.c : 'Akış'.c;
 
-  static IconData _ikon(AkisGorunumu g) =>
-      g == AkisGorunumu.kesfet ? Icons.explore_outlined : Icons.dynamic_feed;
+  /// Her etiketin kendi anahtarı: testler ve erişilebilirlik için.
+  static Key anahtar(AkisGorunumu g) => Key('akis-gorunum-${g.name}');
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<AkisGorunumu>(
+    return Row(
       key: const Key('akis-gorunum-secici'),
-      tooltip: 'Görünüm'.c,
-      position: PopupMenuPosition.under,
-      initialValue: secili,
-      onSelected: (g) {
-        if (g == secili) return;
-        // Rota tablosundan geçen gezinme (Navigator.push DEĞİL): adres
-        // çubuğu görünümü yansıtır, F5 kullanıcıyı başka sayfaya atmaz.
-        context.go(akisGorunumYollari[g]!);
-      },
-      itemBuilder: (context) => [for (final g in AkisGorunumu.values) _oge(g)],
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: _seciciAsgariYukseklik),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Text(
-                etiket(secili),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            // Renk AÇIKÇA veriliyor: AppBar başlık alanındaki ikon tema
-            // ikon rengini devralmayabiliyor, varsayılan siyah koyu temada
-            // kaybolurdu (dizijpg-ux-kontrol md. 2).
-            Icon(Icons.arrow_drop_down, color: DiziRenkler.metin70),
-          ],
-        ),
-      ),
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final g in AkisGorunumu.values) ...[
+          if (g != AkisGorunumu.values.first)
+            const SizedBox(width: _etiketArasi),
+          Flexible(child: _etiket(context, g)),
+        ],
+      ],
     );
   }
 
-  PopupMenuItem<AkisGorunumu> _oge(AkisGorunumu g) {
+  Widget _etiket(BuildContext context, AkisGorunumu g) {
     final aktif = g == secili;
-    return PopupMenuItem<AkisGorunumu>(
-      value: g,
-      child: Row(
-        children: [
-          Icon(
-            _ikon(g),
-            size: 20,
-            color: aktif ? DiziRenkler.sariMetin : DiziRenkler.metin54,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              etiket(g),
-              style: TextStyle(
-                color: aktif ? DiziRenkler.sariMetin : DiziRenkler.metin,
-                fontWeight: aktif ? FontWeight.w700 : FontWeight.w400,
-              ),
+    // Renk AÇIKÇA veriliyor: AppBar başlık alanı tema rengini devralmayabiliyor,
+    // varsayılan siyah koyu temada kaybolurdu (dizijpg-ux-kontrol md. 2).
+    final renk = aktif ? DiziRenkler.metin : DiziRenkler.metin38;
+    return Semantics(
+      button: true,
+      selected: aktif,
+      label: etiket(g),
+      child: InkWell(
+        key: anahtar(g),
+        borderRadius: BorderRadius.circular(8),
+        onTap: aktif
+            ? null
+            // Rota tablosundan geçen gezinme (Navigator.push DEĞİL): adres
+            // çubuğu görünümü yansıtır, F5 kullanıcıyı başka sayfaya atmaz.
+            : () => context.go(akisGorunumYollari[g]!),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: _seciciAsgariYukseklik),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  etiket(g),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: renk,
+                    fontWeight: aktif ? FontWeight.w700 : FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                // Seçili olanın altındaki çizgi ("-"). Seçili olmayanda
+                // SAYDAM: yükseklik eşit kalsın, başlık zıplamasın.
+                Container(
+                  key: aktif ? const Key('akis-gorunum-cizgi') : null,
+                  height: _cizgiKalinligi,
+                  width: _cizgiGenisligi,
+                  decoration: BoxDecoration(
+                    color: aktif ? DiziRenkler.sariMetin : Colors.transparent,
+                    borderRadius: BorderRadius.circular(_cizgiKalinligi),
+                  ),
+                ),
+              ],
             ),
           ),
-          if (aktif) Icon(Icons.check, size: 18, color: DiziRenkler.sariMetin),
-        ],
+        ),
       ),
     );
   }
@@ -149,6 +160,13 @@ class AkisGorunumSecici extends StatelessWidget {
 
 /// Görünüm seçicisinin asgari dokunma yüksekliği.
 const double _seciciAsgariYukseklik = 44;
+
+/// İki etiket arasındaki boşluk.
+const double _etiketArasi = 14;
+
+/// Seçili etiketin altındaki çizgi: kalınlık ve genişlik.
+const double _cizgiKalinligi = 2.5;
+const double _cizgiGenisligi = 22;
 
 /// Sosyal akış: kitaplığındaki içeriklere başkalarının yorumları.
 /// Bir akış kartı "görüldü" sayılır mı?
@@ -552,8 +570,8 @@ class _AkisEkraniState extends State<AkisEkrani>
     return Scaffold(
       appBar: AppBar(
         // Başlık artık DÜZ YAZI DEĞİL, görünüm seçicisi: logo yerinde kalır,
-        // "Akış" yazısına dokununca Akış ⇄ Keşfet menüsü açılır (kullanıcı
-        // isteği, 21 Ağu 2026 — bkz. [AkisGorunumSecici]).
+        // yanında "Akış | Keşfet" yan yana, çizgi seçili olanın altında
+        // (21 Ağu / 3 Eyl 2026 — bkz. [AkisGorunumSecici]).
         title: Row(
           children: [
             Image.asset('assets/logo.png', height: 34),

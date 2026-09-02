@@ -1442,4 +1442,6 @@ const Map<String, String> cevirilerTh = {
   'En yeni mesaja in': 'ไปที่ข้อความล่าสุด',
   'Gönderilemedi · tekrar dene': 'ส่งไม่สำเร็จ · ลองอีกครั้ง',
   'Dosya açılamadı': 'เปิดไฟล์ไม่ได้',
+  'Temizle': 'ล้าง',
+  'Oyuncu': 'นักแสดง',
 };

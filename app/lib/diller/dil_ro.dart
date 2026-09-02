@@ -1510,4 +1510,6 @@ const Map<String, String> cevirilerRo = {
   'En yeni mesaja in': 'La ultimul mesaj',
   'Gönderilemedi · tekrar dene': 'Netrimis · reîncearcă',
   'Dosya açılamadı': 'Fișierul nu a putut fi deschis',
+  'Temizle': 'Șterge',
+  'Oyuncu': 'Actor',
 };

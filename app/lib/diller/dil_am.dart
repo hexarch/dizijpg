@@ -1413,4 +1413,6 @@ const Map<String, String> cevirilerAm = {
   'En yeni mesaja in': 'ወደ አዲሱ መልዕክት',
   'Gönderilemedi · tekrar dene': 'አልተላከም · እንደገና ይሞክሩ',
   'Dosya açılamadı': 'ፋይሉን መክፈት አልተቻለም',
+  'Temizle': 'አጽዳ',
+  'Oyuncu': 'ተዋናይ',
 };

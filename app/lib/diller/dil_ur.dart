@@ -1465,4 +1465,6 @@ const Map<String, String> cevirilerUr = {
   'En yeni mesaja in': 'تازہ ترین پیغام پر جائیں',
   'Gönderilemedi · tekrar dene': 'نہیں بھیجا گیا · دوبارہ کوشش کریں',
   'Dosya açılamadı': 'فائل نہیں کھل سکی',
+  'Temizle': 'صاف کریں',
+  'Oyuncu': 'اداکار',
 };

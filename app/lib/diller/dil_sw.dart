@@ -1473,4 +1473,6 @@ const Map<String, String> cevirilerSw = {
   'En yeni mesaja in': 'Nenda kwenye ujumbe mpya zaidi',
   'Gönderilemedi · tekrar dene': 'Haijatumwa · jaribu tena',
   'Dosya açılamadı': 'Faili haikuweza kufunguka',
+  'Temizle': 'Futa',
+  'Oyuncu': 'Mwigizaji',
 };

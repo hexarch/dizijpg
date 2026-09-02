@@ -1458,4 +1458,6 @@ const Map<String, String> cevirilerBn = {
   'En yeni mesaja in': 'সর্বশেষ বার্তায় যান',
   'Gönderilemedi · tekrar dene': 'পাঠানো হয়নি · আবার চেষ্টা করুন',
   'Dosya açılamadı': 'ফাইল খোলা যায়নি',
+  'Temizle': 'মুছুন',
+  'Oyuncu': 'অভিনেতা',
 };

@@ -1458,4 +1458,6 @@ const Map<String, String> cevirilerAz = {
   'En yeni mesaja in': 'Ən yeni mesaja keç',
   'Gönderilemedi · tekrar dene': 'Göndərilmədi · yenidən cəhd et',
   'Dosya açılamadı': 'Fayl açıla bilmədi',
+  'Temizle': 'Təmizlə',
+  'Oyuncu': 'Aktyor',
 };

@@ -1432,4 +1432,6 @@ const Map<String, String> cevirilerHe = {
   'En yeni mesaja in': 'להודעה האחרונה',
   'Gönderilemedi · tekrar dene': 'לא נשלח · נסו שוב',
   'Dosya açılamadı': 'לא ניתן לפתוח את הקובץ',
+  'Temizle': 'נקה',
+  'Oyuncu': 'שחקן',
 };

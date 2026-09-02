@@ -1473,4 +1473,6 @@ const Map<String, String> cevirilerMs = {
   'En yeni mesaja in': 'Ke mesej terkini',
   'Gönderilemedi · tekrar dene': 'Tidak dihantar · cuba lagi',
   'Dosya açılamadı': 'Fail tidak dapat dibuka',
+  'Temizle': 'Kosongkan',
+  'Oyuncu': 'Pelakon',
 };

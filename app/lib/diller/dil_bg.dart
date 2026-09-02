@@ -1474,4 +1474,6 @@ const Map<String, String> cevirilerBg = {
   'En yeni mesaja in': 'Към последното съобщение',
   'Gönderilemedi · tekrar dene': 'Не е изпратено · опитайте пак',
   'Dosya açılamadı': 'Файлът не можа да се отвори',
+  'Temizle': 'Изчисти',
+  'Oyuncu': 'Актьор',
 };

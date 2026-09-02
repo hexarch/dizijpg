@@ -1490,4 +1490,6 @@ const Map<String, String> cevirilerFr = {
   'En yeni mesaja in': 'Aller au dernier message',
   'Gönderilemedi · tekrar dene': 'Non envoyé · réessayer',
   'Dosya açılamadı': 'Impossible d’ouvrir le fichier',
+  'Temizle': 'Effacer',
+  'Oyuncu': 'Acteur',
 };

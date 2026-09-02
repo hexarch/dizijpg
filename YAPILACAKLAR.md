@@ -1,6 +1,33 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-03 (2. tur) — 🚀 Akış | Keşfet yan yana · etiket seçici geçmişi + klavye yüksekliği (1.117.0+184)
+
+- ✅ **"Akış ve Keşfet'i yan yana yaz, seçili olanın altında - olsun."**
+  `AkisGorunumSecici` (akis.dart) açılır menüden çıktı: iki etiket yan
+  yana, seçili olan kalın + altında 2,5 dp sarı çizgi, öteki soluk; tek
+  dokunuşla `context.go` (adres tek kaynak, F5 korunur). Seçili olmayanda
+  çizgi SAYDAM çizilir ki yükseklik eşit kalsın. Keşfet ekranı aynı widget'ı
+  kullandığı için kendiliğinden aynı. Kanıt: `akis_gorunum_secici_test` 7/7
+  (yan yana hiza, çizgi yalnız seçilide, eski ok geri sızmıyor).
+- ✅ **"Etiket ekle → Yapım ara çok yukarı çıkıyor, telefonun üst çubuğunun
+  içine giriyor."** `IcerikSecSheet` yüksekliği düz `0,75 × ekran` idi;
+  kutu autofocus olduğu için klavye payı eklenince toplam ekranı aşıyordu.
+  Şimdi: `min(0,75 × ekran, ekran − durum çubuğu − klavye − 12)` + alt pay
+  klavye kadar + `useSafeArea`. Kanıt: `etiket_gecmisi_test` (390×844, üst
+  47, klavye 336 → gövde üstü ≥ 47, altı klavyenin üstünde).
+- ✅ **"En son aradığım yapımlar arama yapmadan listelensin; Breaking Bad
+  seçince tekrar açtığımda firması, yönetmeni, oyuncuları da olsun."**
+  Yeni `lib/etiket_gecmisi.dart`: seçim anında SharedPreferences'a yazılır
+  (`etiket_gecmisi`, en çok 40), dizi/filmse arka planda `/tmdb/tv|movie/:id`
+  (credits zaten ekli) çekilip yapım firmaları → yaratıcı (tv) → yönetmen
+  (movie/crew) → ilk 5 oyuncu onun ardına eklenir; satır alt yazısı
+  "Breaking Bad · Oyuncu". Kutu boşken "Son aramalar" + Temizle; yazınca
+  sonuçlar, silince geçmiş geri. Sohbet seçicisi (kisiVeFirma:false)
+  geçmişte de kişi/firma göstermez. Aynı yapım yeniden seçilince çoğalmaz,
+  başa taşınır; detay isteği düşerse seçim yine kayıtlı. Yeni metinler
+  (Temizle, Oyuncu) 45 dile eklendi. Kanıt: `etiket_gecmisi_test` 11/11.
+
 ## 2026-09-03 — VİDEO KAPAĞI SİYAH DEĞİL · Favori + Puanla yıl satırının altında (1.116.0+183)
 
 - ✅ **"Akışta gezerken videolarda siyah duruyor, oraya kaydırınca oynuyor; ilk

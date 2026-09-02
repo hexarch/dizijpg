@@ -1469,4 +1469,6 @@ const Map<String, String> cevirilerDa = {
   'En yeni mesaja in': 'Til seneste besked',
   'Gönderilemedi · tekrar dene': 'Ikke sendt · prøv igen',
   'Dosya açılamadı': 'Filen kunne ikke åbnes',
+  'Temizle': 'Ryd',
+  'Oyuncu': 'Skuespiller',
 };
