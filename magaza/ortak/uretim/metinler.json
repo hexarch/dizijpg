@@ -1,0 +1,145 @@
+{
+  "tr-TR": {
+    "ozellik": {"baslik": "Dizi ve film günlüğün,\n**tek yerde**", "alt": "Bölümleri işaretle, takvimle yetiş,\nspoiler'sız toplulukla keşfet."},
+    "kareler": [
+      {"baslik": "Dizi ve film\ngünlüğün **tek yerde**", "alt": "İzlediklerini takip et, sıradakini keşfet"},
+      {"baslik": "Her yapımın\n**tam profili**", "alt": "Fragman, puan, oyuncular ve nerede izlenir"},
+      {"baslik": "**Tek dokunuşla**\nişaretle", "alt": "Nerede kaldığını bir daha unutma"},
+      {"baslik": "Yeni bölümü\n**kaçırma**", "alt": "Yaklaşan bölümler ve bildirimler tek takvimde"},
+      {"baslik": "En iyi bölümü\n**bul**", "alt": "Sezon sezon, bölüm bölüm TMDB puan haritası"},
+      {"baslik": "İzleme\n**istatistiklerin**", "alt": "Toplam süre, kütüphane ve rozetler"},
+      {"baslik": "**Spoiler'sız**\ntopluluk", "alt": "İzlemediğin bölümün yorumunu asla görmezsin"},
+      {"baslik": "Zevkine göre\n**keşfet**", "alt": "Türe göre gözat, sana özel öneriler al"}
+    ]
+  },
+  "en-US": {
+    "ozellik": {"baslik": "Your TV & movie diary,\n**all in one place**", "alt": "Mark episodes, catch up with the calendar,\ndiscover with a spoiler-free community."},
+    "kareler": [
+      {"baslik": "Your TV & movie\ndiary, **in one place**", "alt": "Track what you watch, discover what's next"},
+      {"baslik": "Every title,\n**in full**", "alt": "Trailers, ratings, cast and where to watch"},
+      {"baslik": "Mark episodes\n**in one tap**", "alt": "Never lose your place again"},
+      {"baslik": "Never **miss**\nan episode", "alt": "Upcoming episodes and alerts in one calendar"},
+      {"baslik": "Find the\n**best episode**", "alt": "Season by season TMDB rating heatmap"},
+      {"baslik": "Your watching\n**stats**", "alt": "Total time, library and badges"},
+      {"baslik": "**Spoiler-free**\ncommunity", "alt": "You never see reviews for episodes you haven't seen"},
+      {"baslik": "Discover by\n**your taste**", "alt": "Browse by genre, get personal picks"}
+    ]
+  },
+  "de-DE": {
+    "ozellik": {"baslik": "Dein Serien- & Filmtagebuch,\n**an einem Ort**", "alt": "Folgen abhaken, mit dem Kalender aufholen,\nspoilerfrei mit der Community entdecken."},
+    "kareler": [
+      {"baslik": "Dein Serien- &\nFilmtagebuch, **vereint**", "alt": "Behalte den Überblick, entdecke Neues"},
+      {"baslik": "Jeder Titel\n**im Detail**", "alt": "Trailer, Bewertungen, Cast und wo es läuft"},
+      {"baslik": "Folgen mit\n**einem Tipp** abhaken", "alt": "Verliere nie wieder den Faden"},
+      {"baslik": "Keine Folge\n**verpassen**", "alt": "Neue Folgen und Erinnerungen in einem Kalender"},
+      {"baslik": "Die **beste Folge**\nfinden", "alt": "TMDB-Wertungen Staffel für Staffel, Folge für Folge"},
+      {"baslik": "Deine\n**Statistiken**", "alt": "Gesamtzeit, Bibliothek und Abzeichen"},
+      {"baslik": "**Spoilerfreie**\nCommunity", "alt": "Kommentare zu ungesehenen Folgen bleiben verborgen"},
+      {"baslik": "Nach deinem\n**Geschmack**", "alt": "Nach Genre stöbern, persönliche Tipps erhalten"}
+    ]
+  },
+  "es-ES": {
+    "ozellik": {"baslik": "Tu diario de series y películas,\n**en un solo lugar**", "alt": "Marca episodios, ponte al día con el calendario,\ndescubre con una comunidad sin spoilers."},
+    "kareler": [
+      {"baslik": "Tu diario de series\ny pelis, **en un lugar**", "alt": "Sigue lo que ves, descubre lo siguiente"},
+      {"baslik": "Cada título,\n**al completo**", "alt": "Tráileres, notas, reparto y dónde verlo"},
+      {"baslik": "Marca episodios\n**con un toque**", "alt": "No vuelvas a perder el hilo"},
+      {"baslik": "No te **pierdas**\nningún episodio", "alt": "Próximos episodios y avisos en un calendario"},
+      {"baslik": "Encuentra el\n**mejor episodio**", "alt": "Mapa de notas TMDB temporada a temporada"},
+      {"baslik": "Tus\n**estadísticas**", "alt": "Tiempo total, biblioteca e insignias"},
+      {"baslik": "Comunidad\n**sin spoilers**", "alt": "Nunca verás reseñas de episodios que no has visto"},
+      {"baslik": "Descubre según\n**tu gusto**", "alt": "Explora por género, recibe sugerencias personales"}
+    ]
+  },
+  "fr-FR": {
+    "ozellik": {"baslik": "Ton journal séries & films,\n**au même endroit**", "alt": "Coche les épisodes, rattrape avec le calendrier,\ndécouvre avec une communauté sans spoiler."},
+    "kareler": [
+      {"baslik": "Ton journal séries\n& films, **réuni**", "alt": "Suis ce que tu regardes, découvre la suite"},
+      {"baslik": "Chaque titre,\n**en détail**", "alt": "Bandes-annonces, notes, casting et où regarder"},
+      {"baslik": "Coche un épisode\n**en un geste**", "alt": "Ne perds plus jamais le fil"},
+      {"baslik": "Ne **rate** plus\naucun épisode", "alt": "Épisodes à venir et rappels dans un calendrier"},
+      {"baslik": "Trouve le\n**meilleur épisode**", "alt": "Carte des notes TMDB saison par saison"},
+      {"baslik": "Tes\n**statistiques**", "alt": "Temps total, bibliothèque et badges"},
+      {"baslik": "Communauté\n**sans spoiler**", "alt": "Aucun avis sur un épisode que tu n'as pas vu"},
+      {"baslik": "Découvre selon\n**tes goûts**", "alt": "Explore par genre, reçois des suggestions"}
+    ]
+  },
+  "it-IT": {
+    "ozellik": {"baslik": "Il tuo diario di serie e film,\n**in un unico posto**", "alt": "Segna gli episodi, recupera col calendario,\nscopri con una community senza spoiler."},
+    "kareler": [
+      {"baslik": "Il tuo diario di serie\ne film, **in un posto**", "alt": "Segui ciò che guardi, scopri cosa vedere dopo"},
+      {"baslik": "Ogni titolo,\n**per intero**", "alt": "Trailer, voti, cast e dove guardarlo"},
+      {"baslik": "Segna gli episodi\n**con un tocco**", "alt": "Non perdere mai più il filo"},
+      {"baslik": "Non **perdere**\nnessun episodio", "alt": "Prossimi episodi e promemoria in un calendario"},
+      {"baslik": "Trova l'episodio\n**migliore**", "alt": "Mappa dei voti TMDB stagione per stagione"},
+      {"baslik": "Le tue\n**statistiche**", "alt": "Tempo totale, libreria e badge"},
+      {"baslik": "Community\n**senza spoiler**", "alt": "Nessuna recensione di episodi che non hai visto"},
+      {"baslik": "Scopri secondo\n**i tuoi gusti**", "alt": "Sfoglia per genere, ricevi consigli personali"}
+    ]
+  },
+  "pt-BR": {
+    "ozellik": {"baslik": "Seu diário de séries e filmes,\n**em um só lugar**", "alt": "Marque episódios, acompanhe pelo calendário,\ndescubra com uma comunidade sem spoiler."},
+    "kareler": [
+      {"baslik": "Seu diário de séries\ne filmes, **em um lugar**", "alt": "Acompanhe o que assiste, descubra o próximo"},
+      {"baslik": "Cada título,\n**por completo**", "alt": "Trailers, notas, elenco e onde assistir"},
+      {"baslik": "Marque episódios\n**com um toque**", "alt": "Nunca mais perca onde parou"},
+      {"baslik": "Não **perca**\nnenhum episódio", "alt": "Próximos episódios e alertas em um calendário"},
+      {"baslik": "Encontre o\n**melhor episódio**", "alt": "Mapa de notas TMDB temporada por temporada"},
+      {"baslik": "Suas\n**estatísticas**", "alt": "Tempo total, biblioteca e conquistas"},
+      {"baslik": "Comunidade\n**sem spoiler**", "alt": "Você nunca vê críticas de episódios não assistidos"},
+      {"baslik": "Descubra pelo\n**seu gosto**", "alt": "Navegue por gênero, receba dicas pessoais"}
+    ]
+  },
+  "id": {
+    "ozellik": {"baslik": "Catatan serial & filmmu,\n**di satu tempat**", "alt": "Tandai episode, kejar lewat kalender,\ntemukan bersama komunitas bebas spoiler."},
+    "kareler": [
+      {"baslik": "Catatan serial &\nfilmmu, **di satu tempat**", "alt": "Lacak tontonanmu, temukan yang berikutnya"},
+      {"baslik": "Setiap judul,\n**selengkapnya**", "alt": "Trailer, rating, pemeran, dan tempat menonton"},
+      {"baslik": "Tandai episode\n**sekali ketuk**", "alt": "Tak pernah lupa sampai di mana"},
+      {"baslik": "Jangan **lewatkan**\nepisode baru", "alt": "Episode mendatang dan pengingat dalam satu kalender"},
+      {"baslik": "Temukan\n**episode terbaik**", "alt": "Peta rating TMDB musim demi musim"},
+      {"baslik": "**Statistik**\nmenontonmu", "alt": "Total waktu, koleksi, dan lencana"},
+      {"baslik": "Komunitas\n**bebas spoiler**", "alt": "Ulasan episode yang belum kamu tonton tak terlihat"},
+      {"baslik": "Temukan sesuai\n**seleramu**", "alt": "Jelajahi per genre, dapatkan rekomendasi pribadi"}
+    ]
+  },
+  "ru-RU": {
+    "ozellik": {"baslik": "Дневник сериалов и фильмов\n**в одном месте**", "alt": "Отмечай серии, догоняй по календарю,\nоткрывай новое без спойлеров."},
+    "kareler": [
+      {"baslik": "Сериалы и фильмы\n**в одном месте**", "alt": "Следи за просмотрами, находи новое"},
+      {"baslik": "Каждый тайтл\n**целиком**", "alt": "Трейлеры, оценки, актёры и где смотреть"},
+      {"baslik": "Отмечай серии\n**одним касанием**", "alt": "Больше не теряй, на чём остановился"},
+      {"baslik": "Не **пропусти**\nновую серию", "alt": "Ближайшие серии и напоминания в одном календаре"},
+      {"baslik": "Найди\n**лучшую серию**", "alt": "Карта оценок TMDB сезон за сезоном"},
+      {"baslik": "Твоя\n**статистика**", "alt": "Общее время, библиотека и значки"},
+      {"baslik": "Сообщество\n**без спойлеров**", "alt": "Отзывы о непросмотренных сериях скрыты"},
+      {"baslik": "Открывай\n**по вкусу**", "alt": "Жанры и персональные подборки"}
+    ]
+  },
+  "el-GR": {
+    "ozellik": {"baslik": "Το ημερολόγιο σειρών & ταινιών,\n**σε ένα μέρος**", "alt": "Σημείωσε επεισόδια, πρόλαβε με το ημερολόγιο,\nανακάλυψε χωρίς spoiler."},
+    "kareler": [
+      {"baslik": "Σειρές & ταινίες\n**σε ένα μέρος**", "alt": "Παρακολούθησε τι βλέπεις, βρες το επόμενο"},
+      {"baslik": "Κάθε τίτλος\n**αναλυτικά**", "alt": "Τρέιλερ, βαθμολογίες, ηθοποιοί και πού παίζει"},
+      {"baslik": "Σημείωσε επεισόδια\n**με ένα άγγιγμα**", "alt": "Μην ξαναχάσεις πού έμεινες"},
+      {"baslik": "Μη **χάσεις**\nκανένα επεισόδιο", "alt": "Επόμενα επεισόδια και ειδοποιήσεις σε ένα ημερολόγιο"},
+      {"baslik": "Βρες το\n**καλύτερο επεισόδιο**", "alt": "Χάρτης βαθμολογιών TMDB ανά σεζόν"},
+      {"baslik": "Τα\n**στατιστικά** σου", "alt": "Συνολικός χρόνος, βιβλιοθήκη και κονκάρδες"},
+      {"baslik": "Κοινότητα\n**χωρίς spoiler**", "alt": "Δεν βλέπεις ποτέ κριτικές για επεισόδια που δεν είδες"},
+      {"baslik": "Ανακάλυψε κατά\n**το γούστο σου**", "alt": "Περιήγηση ανά είδος, προσωπικές προτάσεις"}
+    ]
+  },
+  "ar": {
+    "ozellik": {"baslik": "يومياتك للمسلسلات والأفلام\n**في مكان واحد**", "alt": "علّم الحلقات، تابع بالتقويم،\nواكتشف مع مجتمع بلا حرق."},
+    "kareler": [
+      {"baslik": "مسلسلاتك وأفلامك\n**في مكان واحد**", "alt": "تابع ما تشاهده واكتشف ما بعده"},
+      {"baslik": "كل عمل\n**بالتفصيل**", "alt": "مقاطع دعائية وتقييمات وممثلون وأين تشاهد"},
+      {"baslik": "علّم الحلقات\n**بلمسة واحدة**", "alt": "لن تنسى أين توقفت بعد الآن"},
+      {"baslik": "لا **تفوّت**\nأي حلقة", "alt": "الحلقات القادمة والتنبيهات في تقويم واحد"},
+      {"baslik": "اعثر على\n**أفضل حلقة**", "alt": "خريطة تقييمات TMDB موسمًا بموسم"},
+      {"baslik": "**إحصائيات**\nمشاهدتك", "alt": "إجمالي الوقت والمكتبة والشارات"},
+      {"baslik": "مجتمع\n**بلا حرق**", "alt": "لن ترى مراجعات لحلقات لم تشاهدها"},
+      {"baslik": "اكتشف حسب\n**ذوقك**", "alt": "تصفح حسب النوع واحصل على اقتراحات شخصية"}
+    ]
+  }
+}

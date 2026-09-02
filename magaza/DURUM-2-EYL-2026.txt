@@ -1,0 +1,92 @@
+dizi.jpg — PLAY STORE MAĞAZA GÖRSELLERİ YENİLEME — DURUM RAPORU (2 Eyl 2026)
+=============================================================================
+
+1) NE YAPILDI
+-------------
+- Rakip inceleme (Play sayfalarından çekildi): TV Time (sarı zemin + siyah başlık,
+  alttan taşan telefon), Letterboxd (füme zemin, ortalı beyaz başlık), Trakt (siyah
+  zemin, mor vurgu), Showly (kırmızı zemin), JustWatch (koyu gradyan, sarı vurgulu
+  anahtar kelime). Ortak kalıp: kısa fayda cümlesi + çerçeveli telefon, ham kare yok.
+- Bizim şablon: siyah zemin (#0B0B0D) + sarı ışık + beyaz başlık, anahtar kelime
+  sarı (#F5C518), Poppins Bold; çerçeveli telefon alttan taşıyor (TV Time tarzı).
+  Arapça: Cairo fontu + CoreText (metin_ciz.swift), sağa hizalı, tablet/özellik
+  grafiği aynalı. Yunanca/Rusça: Noto Sans. Satır taşarsa punto otomatik küçülür.
+- Emülatörden (1.114.0+181, @melis.izler) TR ve EN 8'er kare YENİDEN çekildi.
+  Diğer 9 dil için 1.100.2 ham kareleri kullanıldı, ana sayfadaki "v1.100.2 BETA"
+  etiketi "v1.114.0" ile yamalandı (ar'da sağ üst).
+- Üretilen dosyalar (11 dil × [8 telefon 1080×1920 + 4 tablet 1920×1080 +
+  1 özellik grafiği 1024×500]):
+    magaza/<locale>/ekran-goruntuleri/   çerçeveli telefon kareleri (Play'e giden)
+    magaza/<locale>/ham/                 ham emülatör kareleri
+    magaza/<locale>/tablet/              yatay tablet kareleri
+    magaza/<locale>/ozellik-grafigi.png
+    magaza/ortak/uretim/                 cerceve.py, metinler.json (başlıklar),
+                                         aso.json (ad+kısa açıklama), metin_ciz.swift,
+                                         kare.sh, fonts/
+  Yeniden üretmek için: python3 magaza/ortak/uretim/cerceve.py <locale> <ham> <cikti> --tablet --feature
+  (Swift çizici: swiftc -O metin_ciz.swift -o metin_ciz; fonts/ klasörü yanında olmalı)
+- Kütüphaneye (Play Console varlık kitaplığı) 11 dilin TÜM dosyaları yüklendi,
+  adları "yeni-<locale>-..." (ör. yeni-tr-TR-1-ana-sayfa.png, yeni-tr-TR-tablet-1.png,
+  yeni-tr-TR-ozellik.png).
+
+2) PLAY CONSOLE'DA DURUM (hepsi KAYDEDİLDİ ama İNCELEMEYE GÖNDERİLMEDİ)
+------------------------------------------------------------------------
+  Dil     | Ad + kısa açıklama | Telefon 8 | Özellik gr. | 7"+10" tablet
+  en-US   |  ✅                |  ✅       |  ✅         |  ✅ (4+4)
+  tr-TR   |  ✅                |  ✅       |  ✅         |  ✅
+  de-DE   |  ✅                |  ✅       |  ✅         |  ✅
+  ar      |  ✅                |  ✅       |  ✅         |  ✅
+  id      |  ✅                |  ✅       |  ✅         |  ✅
+  fr-FR   |  ✅                |  ✅       |  ✅         |  ✅
+  pt-BR   |  ✅                |  ✅       |  ❌ (en-US devralıyor) | ❌ (en-US devralıyor)
+  ru-RU   |  ❌                |  ❌ eski  |  ❌         |  ❌
+  el-GR   |  ❌                |  ❌ eski  |  ❌         |  ❌
+  es-ES   |  ❌                |  ❌ eski  |  ❌         |  ❌
+  it-IT   |  ❌                |  ❌ eski  |  ❌         |  ❌
+  Not: devralan diller en-US'nin YENİ görsellerini gösterir, yani pt-BR tablet/özellik
+  grafiği İngilizce metinle görünür (kırık değil, sadece yerelleştirilmemiş).
+
+  Yeni uygulama adları (ASO): en "Dizi JPG: TV & Movie Tracker", tr "Dizi JPG: Dizi &
+  Film Takip", de "Dizi JPG: Serien & Filme", ar "Dizi JPG: مسلسلات وأفلام",
+  id "Dizi JPG: Serial & Film", fr "Dizi JPG: Séries & Films", pt "Dizi JPG: Séries e
+  Filmes". Kalanlar aso.json'da (ru/el/es/it). Kısa açıklamalar da aso.json'da.
+
+3) KALAN İŞ (sırayla)
+---------------------
+ a) pt-BR: özellik grafiği + 7"/10" tablet (4+4) ekle → Kaydet.
+ b) ru-RU, el-GR, es-ES, it-IT: her biri için
+    1. Sayfayı yenile → dil menüsü (ilk tık genelde yutuluyor, ikinci tıkta açılır;
+       liste animasyonu bitmeden tıklama — 3 sn bekle, ekran görüntüsüyle doğrula).
+    2. Uygulama adı + kısa açıklama yaz (aso.json). Alanlara triple_click + cmd+a +
+       type; sayfa en üstte olmalı, yoksa cmd+a tüm sayfayı seçer.
+    3. Telefon: 8 eski kareyi gerçek fare tıklamasıyla sil (JS click çalışmaz):
+       ızgara sol üst (652,274) iken çöp (674,327) hover (695,385) ×3, sonra tek sıra:
+       çöp x=695,751,806,862,917 y=337 (hover y=394). Kalan görüntüler soluk = en-US
+       devralması, silmeye gerek yok.
+    4. "Öğe ekle" → panelde JS: eval(localStorage.dj_src); await dj.coklu([...8 ad])
+       (4'erli iki çağrı; tek çağrıda >40 sn zaman aşımı → mükerrer ekleme riski,
+       id'de 10/8 oldu, fazlalar silindi).
+    5. Panel AÇIKKEN 7" / 10" / Özellik grafiği: label'a scrollIntoView + 2 tık yukarı
+       → "Öğe ekle" (839,438) / özellik (1040,520) → dj.coklu(tablet 1-4) / dj.ekle(ozellik).
+    6. Kaydet → "Şimdi değil".
+ c) Yayın özeti → "N değişikliği incelemeye gönder" (11 dilin görsel + metin değişikliği).
+ d) Play Console'da 5+ sürüm sonra: tanıtım videosu (YouTube) hâlâ yok — ASO için
+    sıradaki en büyük kazanım.
+
+4) ASO NOTLARI (yukarılarda görünmek için)
+------------------------------------------
+- Başlık artık anahtar kelimeli ("Dizi & Film Takip" / "TV & Movie Tracker") — Play
+  arama sıralamasında en ağır sinyal başlık, sonra kısa açıklama, sonra tam açıklama.
+- Kısa açıklamalar "dizi takip / film günlüğü / bölüm işaretle / takvim / spoiler'sız"
+  anahtarlarını taşıyor.
+- Sonraki adımlar: (1) tanıtım videosu, (2) Play Console → Mağaza performansı →
+  "Arama terimleri" raporundan gerçek sorguları alıp tam açıklamanın ilk 2 satırına
+  yerleştir, (3) yorum yanıtları + puan isteme (in-app review) — dönüşüm oranı
+  sıralamayı etkiler, (4) A/B denemesi: özellik grafiği/ilk 3 kare.
+
+5) TELİF NOTU
+-------------
+Superman/Batman/Iron Man karakterleri veya Marvel afişleri kendi mağaza görselimize
+konamaz (Play Fikri Mülkiyet politikası, ret/uyarı riski). Uygulamanın kendi ekranında
+TMDB'den gelen afişler atıfla görünüyor; bu tolere edilir, büyütüp arka plan yapmak
+edilmez.
