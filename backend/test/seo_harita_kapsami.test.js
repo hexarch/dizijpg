@@ -268,11 +268,23 @@ test('ısıtıcı kuyruğu tahmin ÜRETSE BİLE o tahmin URL\'e dönüşmüyor',
 //              süzgeci, boşluk birleştirmesi).
 // Test ikisini birden kilitler: biri diğerinden ayrışırsa haritada noindex URL
 // doğar (bölüm haritasındaki B2 tuzağının aynısı).
-test('kişi haritası `kisiIndekslenir` eşiklerinin TA KENDİSİNİ kullanıyor', () => {
+// 3 EYL 2026 — GARANTİ "AYNI"DAN "SIKI"YA ÇEVRİLDİ.
+// Harita eşiği sayfa eşiğinden AYRILDI (`SEO_HARITA_KISI_BIYO_MIN` = 1.500 vs
+// `SEO_KISI_BIYO_MIN` = 200): kişi ailesi 6.203 gösterime karşılık 4 tıklama
+// üretirken tarama bütçesini yiyordu. Korunması gereken değişmez "eşitlik"
+// DEĞİL, "harita ⊆ indekslenebilir"dir — yani harita eşiği sayfanınkinden
+// GEVŞEK olamaz. Gevşek olursa haritada noindex URL doğar (B2 tuzağı).
+// Sayı yerine SABİT adı aranmaya devam ediyor: kopyalanmış bir sayı iki tarafı
+// sessizce ayırabilir.
+test('kişi haritası eşiği sabitten geliyor ve sayfadan GEVŞEK değil', () => {
   const sorgu = bildirimCek('SITEMAP_KISI_SORGU');
-  assert.match(sorgu, />= \$\{SEO_KISI_BIYO_MIN\}/,
-    'biyografi eşiği sayfadan kopyalanmış sayı — ayrışırsa haritada noindex URL doğar');
+  assert.match(sorgu, />= \$\{SEO_HARITA_KISI_BIYO_MIN\}/,
+    'biyografi eşiği sabitten gelmiyor — kopyalanmış sayı iki eşiği sessizce ayırır');
   assert.match(sorgu, />= \$\{SEO_KISI_YAPIM_MIN\}/, 'yapım eşiği sabitten gelmiyor');
+  // ASIL DEĞİŞMEZ: harita ⊆ indekslenebilir.
+  const sabit = (ad) => Number(new RegExp(`const ${ad} = (\\d+);`).exec(KAYNAK)[1]);
+  assert.ok(sabit('SEO_HARITA_KISI_BIYO_MIN') >= sabit('SEO_KISI_BIYO_MIN'),
+    'harita eşiği sayfa eşiğinden GEVŞEK — haritada noindex URL doğar');
   assert.match(sorgu, /FROM seo_kisi_olcu/,
     'harita ölçü tablosundan okumuyor — ham tarama 40 sn tavanını aşar');
 
@@ -460,12 +472,16 @@ test('dil başına site haritası AYNI kovadan üretilir (ek SQL YOK)', () => {
 // açılınca 26.178'e çıktı ve aynı çarpan 1,2 MİLYON URL demeye başladı —
 // 25 Ağu'da yangına yol açan 79.463'ün 15 katı. Bu test o çarpanı kilitliyor.
 test('bölüm haritası DİL VARYANTI ALMIYOR (tr dışı yok)', () => {
+  // 3 Eyl 2026: `SEO_HARITA_DIL_BEYAZ` de çekiliyor — `SEO_HARITA_DILLERI`
+  // artık ona bakıyor, listeden düşerse fonksiyon eval'de tanımsız referans verir.
   const diller = alan(
-    ['SEO_HARITA_DILSIZ_AILE', 'SEO_HARITA_DILLERI'], 'SEO_HARITA_DILLERI');
+    ['SEO_HARITA_DILSIZ_AILE', 'SEO_HARITA_DIL_BEYAZ', 'SEO_HARITA_DILLERI'],
+    'SEO_HARITA_DILLERI');
   assert.deepEqual(diller('bolum'), ['tr'],
     'bölüm ailesi dil varyantı alıyor — 26 bin URL × 46 dil = 1,2 milyon');
-  // Diğer üç aile dil varyantını KORUYOR (hacimleri taşınabilir ve bugün de
-  // öyle çalışıyorlar): daraltma yalnız bölüme özel olmalı.
+  // Diğer üç aile dil varyantını KORUYOR — ama 3 Eyl 2026'dan beri yalnız
+  // `tr+en` (bkz. bir sonraki test). Buradaki iddia "birden çok dil" olarak
+  // KALIYOR: bu testin konusu bölümün SIFIRLANMASI, dil sayısı değil.
   for (const aile of ['icerik', 'kisi', 'sirket']) {
     assert.ok(diller(aile).length > 1, `${aile} ailesi dil varyantını kaybetti`);
     assert.ok(diller(aile).includes('tr'));
@@ -483,4 +499,28 @@ test('bölüm haritası DİL VARYANTI ALMIYOR (tr dışı yok)', () => {
   assert.match(KAYNAK,
     /sitemapAltHarita\(sitemapBolumVerisi, 'monthly', '0\.6', 'bolum'\)/,
     'bölüm rotası aile adını geçirmiyor — süzgeç etkisiz kalır');
+});
+
+// ===========================================================================
+// HARİTADA BİLDİRİLEN DİLLER: 46 → 2 (3 Eyl 2026) — TARAMA BÜTÇESİ
+// ===========================================================================
+// Yukarıdaki bölüm kararının aynısı, kalan üç aile için ve GSC ölçümüyle.
+// 28 günlük pencerede (1 Eyl'de biter) 44 dilin 132 alt haritası ~60 gösterim
+// ve SIFIR tıklama üretti; aynı dönemde tıklamaların %87'sini getiren bölüm
+// ailesi panel denetiminde %4 indeksliydi (11/250). Dizin 141 alt harita ilan
+// ettiği için Google 830.522 URL biliyordu. Bu test o çarpanı kilitler.
+test('harita yalnız tr+en bildiriyor (44 dil dizinden çıktı)', () => {
+  const diller = alan(
+    ['SEO_HARITA_DILSIZ_AILE', 'SEO_HARITA_DIL_BEYAZ', 'SEO_HARITA_DILLERI'],
+    'SEO_HARITA_DILLERI');
+  for (const aile of ['icerik', 'kisi', 'sirket']) {
+    assert.deepEqual(diller(aile), ['tr', 'en'],
+      `${aile} ailesi tr+en dışında dil bildiriyor — tarama bütçesi bölünüyor`);
+  }
+  assert.deepEqual(diller('bolum'), ['tr'], '29 Ağu bölüm kararı bozuldu');
+  // Sıra ÖNEMSİZ değil: `SEO_DILLER.filter` kullanıldığı için liste kaynağın
+  // sırasını korur. Beyaz listeyi `Set` olarak yazıp `[...set]` döndürmek
+  // sırayı beyaz listeye bağlardı — kaynağı tek doğru yapan filtre budur.
+  assert.match(KAYNAK, /SEO_DILLER\.filter\(\(k\) => SEO_HARITA_DIL_BEYAZ\.has\(k\)\)/,
+    'beyaz liste SEO_DILLER üzerinden süzülmüyor — dil listesi ikiye ayrıldı');
 });

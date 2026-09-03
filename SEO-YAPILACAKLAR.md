@@ -1,5 +1,12 @@
 # dizi.jpg — SEO yapılacaklar
 
+> Sürüm **6.0** · 3 Eylül 2026 — **TARAMA BÜTÇESİ YENİDEN DAĞITILDI**:
+> izleme 3 gündür ölüydü, kök sebep bulundu (`docker exec` + admin-IP'nin
+> konteyner yeniden yaratması → kardeş konteyner); harita dizini 141 → 9 alt
+> harita (44 dil çıktı); kişi haritası 16.778 → 2.915 (harita eşiği sayfa
+> eşiğinden AYRILDI, noindex'e dokunulmadı); kazanan bölüme 5 gösterim dalı
+> — bkz. §17
+>
 > Sürüm **5.6** · 1 Eylül 2026 — **KİŞİ SİTE HARİTASI 500 VERİYORDU**:
 > `SITEMAP_KISI_SORGU` 26.222 belgeyi tarayıp 57 sn sürüyordu ve 40 sn'lik
 > tavanı aşıyordu; ölçüm `seo_kisi_olcu`ya taşındı, sorgu 15 ms'ye indi,
@@ -1524,3 +1531,170 @@ GSC'de kapanış yapıldı: iki kişi haritası yeniden gönderildi
 
 ⬜ **Sıradaki gerçek iş hâlâ aynı:** keşif kuyruğu 13.383 ve dış bağlantı 0
 (§4.6).
+
+---
+
+## 17. 🚀 TARAMA BÜTÇESİ YENİDEN DAĞITILDI (3 Eylül 2026)
+
+> Bu turun tek tezi: **URL üretmeyi bırak, üretilmiş URL'lerden tıklama
+> getireni taratmaya bak.** Kod tarafında hiçbir yeni özellik yok; üç kesme
+> ve bir ölçüm onarımı var.
+
+### 17.0 ÖLÇÜM — GSC API, 28 günlük pencere (1 Eyl'de biter)
+
+| | gösterim | tıklama | TO | ort. konum | indeks (panel) |
+|---|---|---|---|---|---|
+| **bolum** | 1.058 | **69** | %6,5 | 25,0 | **11/250 (%4)** |
+| **kisi** | 6.203 | **4** | %0,06 | 31,0 | 5/31 |
+| en:kisi | 953 | 0 | %0 | 20,2 | — |
+| **icerik** | 580 | **0** | %0 | 52,1 | 80/250 (%32) |
+| sirket | 166 | 3 | — | 35,8 | 0/0 |
+| diğer 44 dil | ~60 | 0 | — | — | — |
+
+Toplam **79 tıklama / 8.363 gösterim / TO %0,9 / ort. konum 29,4**
+(önceki 28 gün: 0/0). Gösterim eğrisi dikey: 30 Ağu 1.188 → 31 Ağu 1.760 →
+1 Eyl 1.933; ortalama konum 41 → 18,7.
+
+**Tek cümlelik teşhis:** tıklamanın %87'sini getiren aile panel denetiminde
+%4 indeksli; en çok URL üreten aile (kişi + 46 dil çarpanı) sıfıra yakın
+tıklama getiriyor. Tarama bütçesi yanlış aileye akıyor.
+
+⚠ **28 Ağu'daki "kişi sayfasında 0 tıklama NİYET meselesidir" kararı
+GÜNCELLENDİ.** O karar 32 gösterimlik tek bir sorguya (`josh dallas`)
+dayanıyordu. Şimdi ~1.500 gösterim **8–13. konumda** ve tıklama 4. Sayfa
+başlığı/açıklaması canlıda denetlendi ve KUSURSUZ ("Michael Johnston kimdir?
+Dizileri ve filmleri — dizi.jpg" + doğum yeri/yılı + öne çıkan 4 yapım).
+Yani sonuç aynı (bu aileden tıklama beklenmez) ama gerekçe artık ölçülü:
+çıplak isim sorgusunda 1. sayfanın dibindeyiz, üstte IMDb + Vikipedi +
+Bilgi Paneli var. **Karar: kişi ailesinden tıklama BEKLEME — ama sayfaları
+da indeksten atma (aşağıya bak).**
+
+### 17.1 🚀 İZLEME 3 GÜNDÜR ÖLÜYDÜ — KÖK SEBEP BULUNDU
+
+`gsc_izle` koşuları 31 Ağu, 1 Eyl ve 3 Eyl'de çıktı bırakmadan öldü.
+2 Eyl'deki notta "en olası sebep: docker exec konteyner yeniden yaratılınca
+sessizce ölüyor, kesin kanıtlanamadı" yazıyordu. **3 Eyl'de kanıtlandı ve
+sebep dağıtım DEĞİL:**
+
+`/opt/dizijpg/.env.yedek-*` damgaları — `dizijpg-admin-ip.sh` yönetici IP'si
+her değiştiğinde `.env`i yeniden yazıp **`docker-compose up -d api`** çağırıyor
+(betiğin son bloğu). 3 Eyl'de bu altı kez oldu: 05:09, 05:15, 05:54, **06:51**,
+08:44, 11:14. 06:30'da başlayan ve 62 dakika süren koşu, 06:51'deki yeniden
+yaratmada öldü.
+
+⚠⚠ **DERS: `docker exec` UZUN İŞ İÇİN GÜVENLİ DEĞİL.** Konteyner yeniden
+yaratıldığında içindeki her exec süreci sessizce ölür — çıkış kodu bile
+loglanmaz. Cron saatini kaydırmak ÇÖZMEZ: IP değişimi gün içinde herhangi bir
+saatte olur.
+
+**ÇÖZÜM — kardeş konteyner.** `/usr/local/bin/dizijpg-gsc-kos.sh`:
+`docker-compose run --rm --no-deps -T api node gsc_izle.js`. Compose bu
+konteynere `com.docker.compose.oneoff=True` etiketini basar ve `up` bu etiketli
+konteynerleri YÖNETMEZ. Aynı imaj, aynı `.env`, aynı volume'ler. Betikte ayrıca
+`flock` var (elle tetikleme cron'la çakışmasın).
+
+**CANLI KANIT:** bu turda api konteyneri ÜÇ KEZ yeniden yaratıldı (madde 2, 3
+ve 4'ün dağıtımları) ve kardeş konteynerdeki koşu üçünde de hayatta kaldı.
+
+⬜ **Aynı tuzak `isitici.js`te de var** (`*/10 * * * * docker exec …`).
+Isıtıcı koşusu daha kısa ve 10 dakikada bir tekrarlıyor, yani zararı sınırlı —
+ama aynı düzeltme oraya da uygulanmalı.
+
+### 17.2 🚀 HARİTADA BİLDİRİLEN DİLLER 46 → 2
+
+**Ölçüm:** dizin `sitemap.xml` **141 alt harita** ilan ediyordu ve GSC
+"830.522 sayfa" biliyordu. GSC'ye TEK TEK bildirilen 10 harita zaten yalnız
+tr+en'di — ama **dizin katmanı 44 dili yine de keşfe açıyordu**. 28 günlük
+karşılığı: ~60 gösterim, **0 tıklama**.
+
+Kural zaten koddaydı (29 Ağu, `bolum` ailesi için): `SEO_HARITA_DILLERI`.
+Yapılan, aynı kuralı kalan üç aileye uygulamak: `SEO_HARITA_DIL_BEYAZ =
+{tr, en}`.
+
+- **`en` neden kaldı:** tek tek bildirilmiş, Google günlük okuyor, 953 ölçülü
+  gösterim üretiyor. Sıfır olan 44 dille aynı kovaya konamaz.
+- **Ne DEĞİŞMEDİ:** SSR, hreflang halkası ve `/de/kisi/123` sayfalarının
+  kendisi aynen duruyor. `/sitemap-de-kisi-1.xml` hâlâ **200** dönüyor —
+  bilerek: Google'ın bildiği 132 haritayı birden 404'lemek GSC'de tam da
+  temizlemek için uğraştığımız hata satırlarını üretirdi.
+- **Sonuç (canlı):** dizin 141 → **9** alt harita. `sitemap.xml` yeniden
+  bildirildi 15:23:34Z, Google 15:23:36Z'de okudu, **0 hata**.
+
+### 17.3 🚀 KİŞİ HARİTA EŞİĞİ SAYFA EŞİĞİNDEN AYRILDI (16.778 → 2.915)
+
+⚠ **ÖNEMLİ AYRIM — eşik yükseltilmedi, İKİYE BÖLÜNDÜ.** `SEO_KISI_BIYO_MIN`
+(200) sayfanın `noindex` kararını verir ve **AYNEN KALDI**. Onu yükseltmek
+bugün indekste olan ~13 bin sayfayı noindex'e iter ve 6.203 gösterimi yok
+ederdi. İstenen şey indeksten çıkarmak değil, **tarama sırasında öne
+koymamak**. Haritadan düşen URL indeksten düşmez.
+
+Yeni sabit: `SEO_HARITA_KISI_BIYO_MIN = 1500`, yalnız `SITEMAP_KISI_SORGU`da.
+
+**NEDEN BİYOGRAFİ, NEDEN YAPIM SAYISI DEĞİL** (canlı ölçüm, 46.771 kişi):
+
+| yapım eşiği | kişi | | biyografi eşiği | kişi |
+|---|---|---|---|---|
+| 6 | 17.187 | | 200 | 17.187 |
+| 20 | 14.181 | | 600 | 8.030 |
+| 40 | 9.702 | | 1.000 | 4.771 |
+| | | | **1.500** | **2.915** |
+
+`yapim_sayisi` ayırıcı DEĞİL — TMDB `combined_credits` her figüranlığı sayıyor
+(ortalama 39, azami 1.122). Biyografi uzunluğu keskin.
+
+**`ozgunVar` dalı yine haritada YOK.** Gerekçe iki katlı: (1) kodun mevcut
+"dar kalmak" kuralı, (2) `ozgunVar` yorum/inceleme sayar, **puan saymaz** —
+puanlı ama biyografisi kısa kişiyi haritaya almak "haritada ama noindex"
+hatası üretirdi (yorumlu 6 kişiden 3'ü eşiğin altında, ama 42 "özgün" kişinin
+36'sı yalnız puanlı).
+
+**Değişmez testte kilitlendi:** garanti "harita eşiği = sayfa eşiği"nden
+**"harita eşiği ≥ sayfa eşiği"**ne çevrildi (`harita ⊆ indekslenebilir`).
+
+**CANLI DOĞRULAMA:** `sitemap-kisi-1.xml` 200, 1,6 sn, **2.915 loc** ·
+`sitemap-kisi-2.xml` 404 (doğru) · haritadan 8 rastgele URL → 8/8
+indekslenebilir · haritadan DÜŞEN `/kisi/1173984` ve `/kisi/1216133` →
+**hâlâ indekslenebilir** (sayfa eşiği değişmedi, kanıt). `kisi-1` ve
+`en-kisi-1` GSC'ye yeniden bildirildi.
+
+### 17.4 🚀 KAZANAN BÖLÜM: İKİNCİ DAL = 5 GÖSTERİM
+
+Eski not "gösterim yetmez (32 gösterim/0 tıklama alan sayfalar var)" diyordu.
+⚠ **O örnek bir KİŞİ sayfasıydı** (`/kisi/77880`) — `KAZANAN_YOL`dan zaten
+geçmez, yani eşiği hiç sınamıyordu. Bölüm ailesinde ölçüm başka:
+
+```
+gösterim alan 449 bölüm sayfası
+  tıklamalı (eski kural)        42
+  0 tık & gösterim >= 5         22   ← ort. konumları 5–18
+  0 tık & gösterim >= 3         64   (gevşek: kuyruk gürültüsü)
+```
+
+Tıklamayı BEKLEMEK burada döngüsel: sayfa haritada değilse taranma önceliği
+düşük kalır, tazeliği düşer, tıklama gelmez. 27 Ağu'daki "kazananı öksüz
+bırakma" arızasının bir adım erkeni.
+
+**`KAZANAN_MIN_GOSTERIM = 5`** (3 çok gevşek: tabloyu 42 → 106 yapıyor).
+Sıralama tıklama birincil, gösterim ikincil.
+
+⚠ **BÜYÜKLÜĞÜ ABARTMA:** bu dal tabloya ~22 satır ekler, bölüm haritası
+26.184 URL'dir. Tarama tablosunu kendi başına DEĞİŞTİRMEZ. Değeri, kanıtlanmış
+talebi olan sayfanın haritadan düşmesini ÖNLEMEKtir.
+
+### 17.5 ⬜ AÇIK KALANLAR (değişmedi)
+
+1. **Dış bağlantı hâlâ 0** (§4.6). Ortalama konum 29,4'ten 1. sayfaya taşıyan
+   şey budur; harita, şema, dil sayısı değil. **Ölçülmüş TEK yapısal tavan.**
+   Bu turda hiçbir şey ona dokunmadı.
+2. **`icerik` ailesi: 580 gösterim, 0 tıklama, ort. konum 52.** İndeks oranı
+   en iyi aile (%32) ama sıralamıyor. Kazanan sorgu tipi hâlâ "X oyuncuları":
+   `the americans oyuncuları` 13,6 · `zaman yolcusunun karısı oyuncuları` 9,6 ·
+   `supernatural oyuncuları` **40,5** · `lost oyuncuları` **56,8**. Ayrı teşhis
+   gerekiyor: rekabet mi (bu sorgular Türkçe dizi sitelerinin çekirdek
+   yüzeyi), yoksa sayfa derinliği mi.
+3. **`isitici.js` aynı `docker exec` tuzağında** (§17.1).
+4. **Ölçüm penceresi:** madde 2 ve 3'ün etkisi Google'ın yeniden taramasına
+   bağlı. **10 Eylül civarı bak:** keşfedildi–eklenmedi kuyruğu (1 Eyl'de
+   13.383) ve `bolum` panel indeks oranı (%4). Kuyruk düşüp bölüm oranı
+   artmıyorsa tez yanlıştı, geri al (her iki değişikliğin de geri alma satırı
+   kodda yazılı).

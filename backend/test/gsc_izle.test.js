@@ -50,7 +50,7 @@ import {
   raporMetni, konuSatiri, ozetSatiri, bayraklariCoz, pencereHesapla,
   durumOku, durumYaz, paneliDenetle, apiCagir, mulkYolu,
   siteHaritalari, aramaAnalitigi, raporGonder,
-  kazananlariCoz, kazananlariYaz, KAZANAN_MIN_TIKLAMA,
+  kazananlariCoz, kazananlariYaz, KAZANAN_MIN_TIKLAMA, KAZANAN_MIN_GOSTERIM,
 } from '../gsc_izle.js';
 
 const KOK = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -1145,13 +1145,19 @@ const satir = (yol, clicks, impressions = clicks) => ({
   keys: [`https://dizijpg.com${yol}`], clicks, impressions,
 });
 
-test('kazananlariCoz: yalnız TIKLAMA almış BÖLÜM yolları', () => {
+test('kazananlariCoz: TIKLAMA ya da YÜKSEK GÖSTERİM almış BÖLÜM yolları', () => {
   const k = kazananlariCoz([
     satir('/dizi/30984/sezon/2/bolum/45', 9, 24),
     satir('/dizi/61175/sezon/3/bolum/19', 2, 5),
-    // Gösterim var, tıklama YOK -> kazanan değil (32/0 alan sayfalar var).
-    satir('/kisi/77880', 0, 32),
+    // 3 Eyl 2026: tıklama yok ama gösterim eşiği (5) aşıldı -> KAZANAN.
+    // Ölçüm: 28 günde konumu 5–18 arasında olan 22 bölüm sayfası yalnız
+    // "henüz tıklanmadı" diye haritanın dışında kalıyordu.
     satir('/dizi/1/sezon/1/bolum/1', 0, 99),
+    // Kişi sayfası gösterimi ne olursa olsun girmez — yol süzgeci eler.
+    // (Eski notun "32 gösterim/0 tıklama" örneği buydu: eşiği hiç sınamıyordu.)
+    satir('/kisi/77880', 0, 32),
+    // Eşiğin ALTINDA gösterim, tıklama yok -> kuyruk gürültüsü, girmez.
+    satir('/dizi/7/sezon/1/bolum/3', 0, 4),
     // Bölüm olmayan yollar hiç girmez.
     satir('/icerik/tv/1396', 5, 5),
     satir('/', 2, 5),
@@ -1159,8 +1165,19 @@ test('kazananlariCoz: yalnız TIKLAMA almış BÖLÜM yolları', () => {
   assert.deepEqual(k.map((x) => [x.tmdbId, x.sezon, x.bolum, x.tiklama]), [
     [30984, 2, 45, 9],
     [61175, 3, 19, 2],
+    [1, 1, 1, 0],
   ]);
   assert.equal(k[0].gosterim, 24);
+});
+
+test('kazananlariCoz: gösterim dalı tıklamalıların ARDINDA sıralanır', () => {
+  const k = kazananlariCoz([
+    satir('/dizi/5/sezon/1/bolum/1', 0, 90),   // yüksek gösterim, 0 tıklama
+    satir('/dizi/6/sezon/1/bolum/1', 1, 2),    // tek tıklama
+    satir('/dizi/7/sezon/1/bolum/1', 0, 40),
+  ]);
+  assert.deepEqual(k.map((x) => x.tmdbId), [6, 5, 7],
+    'tıklama birincil, gösterim ikincil ölçü olmalı');
 });
 
 test('kazananlariCoz: tıklamaya göre AZALAN sıralı', () => {
@@ -1192,8 +1209,11 @@ test('kazananlariCoz: bozuk/negatif kimlikler elenir', () => {
   ]), []);
 });
 
-test('eşik SABİT 1: gösterim değil TIKLAMA kanıt sayılır', () => {
+test('eşikler SABİT: 1 tıklama VEYA 5 gösterim', () => {
   assert.equal(KAZANAN_MIN_TIKLAMA, 1);
+  // 5, ölçülen dağılımda gürültünün kesildiği yer: 3'e inmek tabloyu
+  // 42 → 106 yapıyor ve eklenenlerin çoğu tek haneli konum almıyor.
+  assert.equal(KAZANAN_MIN_GOSTERIM, 5);
 });
 
 test('kazananlariYaz: upsert eder, SİLMEZ ve yeni sayısını döndürür', async () => {

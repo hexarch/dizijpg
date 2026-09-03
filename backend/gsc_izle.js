@@ -711,18 +711,50 @@ export async function aramaAnalitigi(mulk, jeton, pencere, ayar = AYAR, getirici
 // API çağrısı yok — `aramaAnalitigi` zaten TÜM sayfaları tıklama/gösterimle
 // çekiyordu ve satırları atıyordu.
 //
-// EŞİK 1 TIKLAMA: "ölçülmüş performans" tanımı bu. Gösterim yetmez (32
-// gösterim/0 tıklama alan sayfalar var); tıklama, sayfanın arama sonucunda
-// gerçekten iş gördüğünün kanıtı. Tablo tanımı gereği küçük kalır.
+// EŞİK 1 TIKLAMA: "ölçülmüş performans" tanımı bu. Tıklama, sayfanın arama
+// sonucunda gerçekten iş gördüğünün kanıtı. Tablo tanımı gereği küçük kalır.
+//
+// ---------------------------------------------------------------------------
+// İKİNCİ DAL: 5 GÖSTERİM (3 Eyl 2026, ÖLÇÜMLE EKLENDİ)
+// ---------------------------------------------------------------------------
+// Buradaki eski not "gösterim yetmez (32 gösterim/0 tıklama alan sayfalar
+// var)" diyordu. O ölçüm DOĞRUYDU ama örneği bir KİŞİ sayfasıydı
+// (`/kisi/77880`) — kişi sayfası zaten `KAZANAN_YOL`dan geçmez, yani o örnek
+// bu eşiği hiç sınamıyordu. Bölüm ailesinde tablo başka:
+//
+//   28 günlük pencere (1 Eyl'de biter), gösterim alan 449 bölüm sayfası:
+//     tıklamalı (bugünkü kural)          42
+//     0 tıklama & gösterim >= 5          22   ← ortalama konumları 5–18
+//     0 tıklama & gösterim >= 3          64   (çok gevşek: kuyruk gürültüsü)
+//
+// Yani konumu 5–18 arasında, Google'ın DEFALARCA gösterdiği 22 bölüm sayfası
+// yalnız "henüz tıklanmadı" diye haritanın dışında kalıyordu. Tıklamayı
+// BEKLEMEK burada döngüsel: sayfa haritada olmayınca taranma önceliği düşük
+// kalıyor, tazeliği düşüyor, tıklama gelmiyor. 27 Ağu'daki "kazananı öksüz
+// bırakma" arızasının ta kendisi, bir adım erkeni.
+//
+// NEDEN 5, NEDEN 3 DEĞİL: 3'e inmek tabloyu 42 → 106'ya çıkarıyor ve eklenen
+// 42 satırın çoğu tek haneli konum ALMAYAN kuyruk gürültüsü. 5, ölçülen
+// dağılımda gürültünün kesildiği yer.
+//
+// SINIR: bu dal tabloya 22 satır ekler, bölüm haritası 26.184 URL'dir —
+// kendi başına tarama tablosunu DEĞİŞTİRMEZ. Değeri, kanıtlanmış talebi olan
+// sayfanın haritadan düşmesini ÖNLEMEKtir, hacim değil.
 export const KAZANAN_YOL = /\/dizi\/(\d+)\/sezon\/(\d+)\/bolum\/(\d+)\/?$/;
 export const KAZANAN_MIN_TIKLAMA = 1;
+export const KAZANAN_MIN_GOSTERIM = 5;
 
 /** GSC satırlarından bölüm kazananları. Saf: ağ/DB yok, test doğrudan çağırır. */
-export function kazananlariCoz(satirlar, esik = KAZANAN_MIN_TIKLAMA) {
+export function kazananlariCoz(
+  satirlar,
+  esik = KAZANAN_MIN_TIKLAMA,
+  gosterimEsigi = KAZANAN_MIN_GOSTERIM,
+) {
   const harita = new Map();
   for (const r of satirlar || []) {
     const tiklama = Number(r?.clicks || 0);
-    if (tiklama < esik) continue;
+    // İKİ DALDAN BİRİ yeterli: tıklama kanıttır, yüksek gösterim TALEP kanıtı.
+    if (tiklama < esik && Number(r?.impressions || 0) < gosterimEsigi) continue;
     const m = KAZANAN_YOL.exec(String(r?.keys?.[0] || ''));
     if (!m) continue;
     const kayit = {
@@ -746,7 +778,10 @@ export function kazananlariCoz(satirlar, esik = KAZANAN_MIN_TIKLAMA) {
       harita.set(anahtar, kayit);
     }
   }
-  return [...harita.values()].sort((a, b) => b.tiklama - a.tiklama);
+  // Tıklama birincil, gösterim ikincil: gösterim dalıyla gelenler (tıklama 0)
+  // kendi aralarında talebe göre sıralansın, tıklamalıların ARDINDA kalsın.
+  return [...harita.values()]
+    .sort((a, b) => b.tiklama - a.tiklama || b.gosterim - a.gosterim);
 }
 
 /**

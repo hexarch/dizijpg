@@ -7545,13 +7545,53 @@ const ISITMA_BOLUM_SORGU = `
 // sorgusu artık `seo_kisi_olcu_esik` indeksinden okuyor (< 50 ms).
 //
 // EŞİK SABİTLERİ HÂLÂ BURADA: tabloda karar değil HAM SAYI saklanıyor, yani
-// `SEO_KISI_BIYO_MIN`/`SEO_KISI_YAPIM_MIN` değişirse harita yeniden ölçüm
-// GEREKTİRMEDEN yeni eşiğe uyar. Ölçünün TANIMI (aşağıdaki tazeleme sorgusu)
+// eşikler değişirse harita yeniden ölçüm GEREKTİRMEDEN yeni eşiğe uyar.
+// (3 Eyl 2026: harita artık `SEO_HARITA_KISI_BIYO_MIN` okuyor, sayfanınkini
+// değil — gerekçe aşağıda. Ham sayı saklamanın karşılığını tam burada aldık:
+// eşik 200'den 1.500'e çıkarken tek satır yeniden ölçülmedi.) Ölçünün TANIMI (aşağıdaki tazeleme sorgusu)
 // eski sorgunun ifadeleriyle BİREBİR aynıdır — kapsam değişmedi.
+// ---------------------------------------------------------------------------
+// HARİTA EŞİĞİ ≠ SAYFA EŞİĞİ (3 Eyl 2026, GSC ölçümüyle)
+// ---------------------------------------------------------------------------
+// 28 günlük pencere (1 Eyl'de biter) kişi ailesini şöyle gösterdi:
+//   kisi   6.203 gösterim →     4 tıklama  (TO %0,06, ort. konum 31)
+//   bolum  1.058 gösterim →    69 tıklama  (TO %6,5)  ← tıklamanın %87'si
+// Aynı anda bölüm ailesi panel denetiminde YALNIZ %4 indeksliydi (11/250).
+// Kişi evreni Ağustos'ta 19 bin → 26 bin, harita 13.004 → 16.778 büyüdü.
+// Yani tarama bütçesi, tıklama üretmeyen ve büyümeye devam eden bir aileye
+// akıyor; tıklamayı getiren aile taranmayı bekliyor.
+//
+// EŞİK SAYFADAN AYRILDI, YÜKSELTİLMEDİ. `SEO_KISI_BIYO_MIN` (200) sayfanın
+// `noindex` kararını verir ve AYNEN KALIYOR — onu yükseltmek bugün indekste
+// olan ~13 bin sayfayı noindex'e iter ve 6.203 gösterimi yok ederdi. Oysa
+// istediğimiz şey indeksten çıkarmak değil, TARAMA SIRASINDA öne koymamak.
+// Haritadan düşen URL indeksten DÜŞMEZ: Google bildiği URL'i unutmaz, yalnız
+// yeniden tarama önceliği azalır.
+//
+// KODUN KENDİ KURALI: harita ⊆ indekslenebilir. Bu yüzden harita eşiği ancak
+// SAYFA eşiğinden SIKI olabilir, gevşek olamaz — aşağıdaki `assert` bunu
+// başlangıçta kilitler.
+//
+// NEDEN BİYOGRAFİ, NEDEN YAPIM SAYISI DEĞİL: ölçüldü (canlı, 3 Eyl, 46.771
+// kişi belgesi). `yapim_sayisi` ayırıcı DEĞİL — eşiği 6'dan 40'a çekmek
+// 17.187'yi ancak 9.702'ye indiriyor (TMDB `combined_credits` her figüranlığı
+// sayıyor). Biyografi uzunluğu ise keskin: 200→17.187, 600→8.030, 1000→4.771,
+// 1500→**2.915**. 1.500 karakter "gerçekten yazılmış bir biyografi" demek.
+//
+// NEDEN `ozgunVar` DALI YİNE YOK: yukarıdaki gerekçe aynen geçerli (dar
+// kalmak). Ayrıca `ozgunVar` yorum/inceleme sayar, PUAN saymaz — puanlı ama
+// biyografisi kısa bir kişiyi haritaya almak tam da yukarıda anlatılan
+// "haritada ama noindex" hatasını üretirdi.
+//
+// GERİ ALMA: `SEO_HARITA_KISI_BIYO_MIN`i `SEO_KISI_BIYO_MIN`e eşitle.
+const SEO_HARITA_KISI_BIYO_MIN = 1500;
+console.assert(SEO_HARITA_KISI_BIYO_MIN >= SEO_KISI_BIYO_MIN,
+  'harita eşiği sayfa eşiğinden GEVŞEK — haritada noindex URL üretir');
+
 const SITEMAP_KISI_SORGU = `
   SELECT tmdb_id, NULL::date AS son
     FROM seo_kisi_olcu
-   WHERE biyo_uzunluk >= ${SEO_KISI_BIYO_MIN}
+   WHERE biyo_uzunluk >= ${SEO_HARITA_KISI_BIYO_MIN}
      AND yapim_sayisi >= ${SEO_KISI_YAPIM_MIN}
    ORDER BY tmdb_id`;
 
@@ -8019,8 +8059,45 @@ const sitemapParcaLastmod = (sayfa, degisim) => {
 // hâlâ hreflang halkasında. Değişen tek şey Google'a BİLDİRİLEN küme —
 // harita daralmak serbesttir, genişlemek denetim ister (harita ⊆ indexlenebilir).
 const SEO_HARITA_DILSIZ_AILE = new Set(['bolum']);
-const SEO_HARITA_DILLERI = (aile) =>
-  (SEO_HARITA_DILSIZ_AILE.has(aile) ? ['tr'] : SEO_DILLER);
+
+// ---------------------------------------------------------------------------
+// HARİTADA BİLDİRİLEN DİLLER: 46 → 2 (3 Eyl 2026, ÖLÇÜMLE)
+// ---------------------------------------------------------------------------
+// Yukarıdaki `bolum` kararının aynısı, bu kez KALAN ÜÇ AİLE için ve GSC
+// verisiyle. 28 günlük pencere (1 Eyl'de biter) şunu söyledi:
+//
+//   aile      gösterim   tıklama
+//   bolum        1.058       69     ← tıklamanın %87'si, TO %6,5
+//   kisi         6.203        4
+//   en:kisi        953        0
+//   icerik         580        0
+//   diğer 44 dil    ~60        0     ← toplam, 132 alt haritanın karşılığı
+//
+// Yani 44 dilin 132 alt haritası 28 günde ~60 gösterim ve SIFIR tıklama
+// üretti. Aynı dönemde bölüm ailesi — tıklamaların %87'sini getiren yüzey —
+// panel denetiminde YALNIZ %4 indeksliydi (11/250). Dış bağlantımız 0
+// olduğu için tarama bütçesi küçük; o bütçe bugün tıklama üretmeyen dil
+// varyantlarına gidiyor.
+//
+// Google'ın bildiği URL sayısı bu yüzden 830.522'ye çıkmıştı: dizin 141 alt
+// harita ilan ediyordu. GSC'ye TEK TEK bildirilen 10 harita zaten yalnız
+// tr+en'di — ama dizin katmanı 44 dili yine de keşfe açıyordu.
+//
+// NEDEN `en` KALIYOR: tek tek bildirilmiş, Google günlük okuyor ve ölçülebilir
+// gösterim üretiyor (953). Sıfır olan 44 dille aynı kovaya konamaz.
+//
+// NE DEĞİŞMEDİ: SSR, hreflang halkası ve `/de/kisi/123` gibi sayfaların
+// kendisi AYNEN duruyor; `/sitemap-de-kisi-1.xml` istenirse hâlâ üretiliyor.
+// Değişen tek şey dizinin İLAN ETTİĞİ küme. Harita daralmak serbesttir
+// (harita ⊆ indekslenebilir); genişlemek denetim ister.
+//
+// GERİ ALMA: bu kümeyi `null` yap — `SEO_DILLER`in tamamına döner.
+const SEO_HARITA_DIL_BEYAZ = new Set(['tr', 'en']);
+const SEO_HARITA_DILLERI = (aile) => (
+  SEO_HARITA_DILSIZ_AILE.has(aile)
+    ? ['tr']
+    : (SEO_HARITA_DIL_BEYAZ ? SEO_DILLER.filter((k) => SEO_HARITA_DIL_BEYAZ.has(k)) : SEO_DILLER)
+);
 
 app.get('/sitemap.xml', sarici(async (_req, res) => {
   // Dört harita PARALEL ve BAĞIMSIZ okunur: biri düşse bile diğerleri dizinden
