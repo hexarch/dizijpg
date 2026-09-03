@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
@@ -104,8 +105,20 @@ const String tamAramaYolu = '/tam-arama';
 /// Masaüstünün satır-içi çubuğu ([AramaCubugu]) ile mobilin tam ekran araması
 /// ([TamEkranAramaSayfasi]) AYNI mixin'i kullanır. Kopyalansaydı birinde
 /// düzeltilen hata ötekinde kalırdı.
+/// Geçmiş aramaların saklandığı SharedPreferences anahtarı.
+///
+/// Eski `AramaEkrani` de aynı anahtarı kullanıyordu: adı DEĞİŞTİRME, yoksa
+/// kullanıcıların birikmiş geçmişi bir sürümde yok olmuş gibi görünür.
+const String aramaGecmisiAnahtari = 'arama_gecmisi';
+
+/// Saklanan azami geçmiş satırı.
+const int aramaGecmisiSiniri = 10;
+
 mixin AramaMantigi<T extends StatefulWidget> on State<T> {
   final TextEditingController aramaKutu = TextEditingController();
+
+  /// Kutu odakta mı — masaüstünde geçmiş panelini AÇAN tek koşul.
+  final FocusNode aramaOdak = FocusNode();
   Timer? _aramaGecikme;
   String sorgu = '';
   bool araniyor = false;
@@ -115,6 +128,16 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
   List<dynamic> _aramaSirketler = []; // yapım firması (TMDB company)
   List<dynamic> _aramaKullanicilar = []; // uygulama kullanıcıları
   String? _duzeltme; // "şunu mu demek istedin" — sunucu yazım düzeltmesi
+  List<String> gecmis = []; // son aramalar (en yeni başta)
+
+  /// Masaüstünde geçmiş paneli görünür mü?
+  ///
+  /// Odaktan DOĞRUDAN türetilmez: kutu odağı, geçmiş satırına basılan parmak
+  /// daha kalkmadan (pointer DOWN) gider. Doğrudan bağlasaydık panel tam
+  /// `onTap` ateşlenmeden kaybolur, dokunma boşa düşerdi. Odak gidince
+  /// kapanış bir kare değil kısa bir süre GECİKTİRİLİR.
+  bool gecmisAcik = false;
+  Timer? _gecmisKapatma;
 
   /// Sonuç göstermeye yetecek uzunlukta sorgu var mı?
   bool get sorguYeterli => sorgu.trim().length >= 2;
@@ -126,8 +149,65 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
       _aramaSirketler.isEmpty;
 
   @override
+  void initState() {
+    super.initState();
+    aramaOdak.addListener(_odakDegisti);
+    SharedPreferences.getInstance().then((p) {
+      if (!mounted) return;
+      setState(() => gecmis = p.getStringList(aramaGecmisiAnahtari) ?? []);
+    });
+  }
+
+  void _odakDegisti() {
+    _gecmisKapatma?.cancel();
+    if (aramaOdak.hasFocus) {
+      if (!gecmisAcik && mounted) setState(() => gecmisAcik = true);
+      return;
+    }
+    _gecmisKapatma = Timer(const Duration(milliseconds: 180), () {
+      if (mounted && !aramaOdak.hasFocus) setState(() => gecmisAcik = false);
+    });
+  }
+
+  /// Sorguyu geçmişin BAŞINA taşır (varsa tekrarını siler) ve saklar.
+  Future<void> gecmiseEkle(String s) async {
+    final t = s.trim();
+    if (t.length < 2) return;
+    final yeni = <String>[t, ...gecmis.where((g) => g != t)];
+    if (yeni.length > aramaGecmisiSiniri) {
+      yeni.removeRange(aramaGecmisiSiniri, yeni.length);
+    }
+    if (mounted) setState(() => gecmis = yeni);
+    final p = await SharedPreferences.getInstance();
+    await p.setStringList(aramaGecmisiAnahtari, yeni);
+  }
+
+  /// Tek satırı siler (sağdaki çarpı). Geri alma yok: eylem zaten yıkıcı değil.
+  Future<void> gecmistenSil(String s) async {
+    final yeni = gecmis.where((g) => g != s).toList();
+    if (mounted) setState(() => gecmis = yeni);
+    final p = await SharedPreferences.getInstance();
+    await p.setStringList(aramaGecmisiAnahtari, yeni);
+  }
+
+  /// Geçmiş satırına dokunulunca: kutuyu doldur, İMLECİ SONA al, hemen ara.
+  void gecmistenAra(String s) {
+    aramaKutu.text = s;
+    aramaKutu.selection = TextSelection.collapsed(offset: s.length);
+    _aramaGecikme?.cancel();
+    setState(() {
+      sorgu = s;
+      aramaHatasi = null;
+    });
+    ara(s);
+  }
+
+  @override
   void dispose() {
     _aramaGecikme?.cancel();
+    _gecmisKapatma?.cancel();
+    aramaOdak.removeListener(_odakDegisti);
+    aramaOdak.dispose();
     aramaKutu.dispose();
     super.dispose();
   }
@@ -166,6 +246,9 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
         _aramaSirketler = aramaSirketListesi(sonuclar);
         _aramaKullanicilar = y[1]['kullanicilar'] as List<dynamic>? ?? [];
       });
+      // Geçmişe YALNIZ sonuç dönen sorgu yazılır: yazarken oluşan yarım
+      // kelimeler ("bre", "brea") listeyi doldurmasın.
+      if (!_sonucBos) gecmiseEkle(sorgu);
     } catch (_) {
       if (mounted) setState(() => aramaHatasi = 'Arama başarısız'.c);
     } finally {
@@ -176,7 +259,13 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
   /// Arama kutusunun kendisi (masaüstü çubuğu ve tam ekran AYNI kutuyu kullanır).
   Widget aramaKutusu({bool otomatikOdak = false}) => TextField(
     controller: aramaKutu,
+    focusNode: aramaOdak,
     onChanged: aramaDegisti,
+    onSubmitted: (s) {
+      if (s.trim().length < 2) return;
+      _aramaGecikme?.cancel();
+      ara(s);
+    },
     autofocus: otomatikOdak,
     textInputAction: TextInputAction.search,
     decoration: InputDecoration(
@@ -229,6 +318,54 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
     key: Key('daha-fazla-$tur'),
     onTap: () => context.push(
       '/arama-liste?tur=$tur&q=${Uri.encodeComponent(sorgu.trim())}',
+    ),
+  );
+
+  /// Boş sorgu hâlinde gösterilen "Son aramalar" listesi.
+  ///
+  /// Sağdaki çarpı SATIRI siler, aramayı ÇALIŞTIRMAZ: IconButton kendi
+  /// hit-test alanını kaptığı için altındaki ListTile'ın `onTap`'i tetiklenmez.
+  /// Dokunma hedefi IconButton'ın kendi 48 dp'lik kutusudur — ikon 18 dp olsa
+  /// da alan küçülmez.
+  Widget gecmisListesi() => OrtaKolon(
+    azami: masaustuKolonGenisligi,
+    cocuk: ListView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      // altGuvenli: bkz. aramaSonuclari() — açık padding verilince Flutter
+      // alt güvenli alanı KENDİ eklemez, son satır navi çubuğunun altında kalır.
+      padding: EdgeInsets.only(top: 4, bottom: altGuvenli(context, ekstra: 16)),
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: Row(
+            children: [
+              Icon(Icons.history, size: 16, color: DiziRenkler.metin54),
+              const SizedBox(width: 6),
+              Text(
+                'Son aramalar'.c,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: DiziRenkler.metin54,
+                ),
+              ),
+            ],
+          ),
+        ),
+        for (final g in gecmis)
+          ListTile(
+            key: ValueKey('arama-gecmis-$g'),
+            leading: Icon(Icons.history, size: 20, color: DiziRenkler.metin38),
+            title: Text(g, maxLines: 1, overflow: TextOverflow.ellipsis),
+            trailing: IconButton(
+              key: ValueKey('arama-gecmis-sil-$g'),
+              tooltip: 'Sil'.c,
+              icon: Icon(Icons.close, size: 18, color: DiziRenkler.metin54),
+              onPressed: () => gecmistenSil(g),
+            ),
+            onTap: () => gecmistenAra(g),
+          ),
+      ],
     ),
   );
 
@@ -478,7 +615,16 @@ class _AramaCubuguState extends State<AramaCubugu> with AramaMantigi {
         // Satır-içi arama: dizi/film/kişi + kullanıcılar; sonuçlar
         // modal yerine çubuğun hemen altında listelenir
         _masaustuUstBar(ekranGenisligi),
-        Expanded(child: sorguYeterli ? aramaSonuclari() : widget.cocuk),
+        // Sorgu kısayken: kutu ODAKTAYSA ve geçmiş varsa son aramalar,
+        // aksi hâlde sayfanın kendi içeriği. Odak yokken panel açık kalsaydı
+        // ana sayfa kendi içeriğini hiç gösteremezdi.
+        Expanded(
+          child: sorguYeterli
+              ? aramaSonuclari()
+              : (gecmisAcik && gecmis.isNotEmpty
+                    ? gecmisListesi()
+                    : widget.cocuk),
+        ),
       ],
     );
   }
@@ -595,10 +741,12 @@ class _TamEkranAramaSayfasiState extends State<TamEkranAramaSayfasi>
       ),
       body: sorguYeterli
           ? aramaSonuclari()
-          : BosDurum(
-              ikon: Icons.search,
-              baslik: 'Dizi, film, kişi veya şirket ara...'.c,
-            ),
+          : (gecmis.isNotEmpty
+                ? gecmisListesi()
+                : BosDurum(
+                    ikon: Icons.search,
+                    baslik: 'Dizi, film, kişi veya şirket ara...'.c,
+                  )),
     );
   }
 }

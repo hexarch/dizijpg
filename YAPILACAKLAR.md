@@ -1,6 +1,32 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-03 (8. tur) — 🔎 Aramada GEÇMİŞ geri geldi (1.119.0+186)
+
+- **İstek:** *"ana sayfadaki yaptığım aramaların geçmişi gözükmüyor geçmiş
+  aramalarım gözükmeli ve en sağında çarpı olmalı tıklayınca silinmeli"*
+- ✅ **Kök sebep:** geçmiş, eski `AramaEkrani`de (lib/ekranlar/arama.dart)
+  duruyordu; arama 1.x'te `AramaMantigi` mixin'ine (`arama_cubugu.dart`)
+  taşınırken geçmiş GERİDE KALDI. O ekran artık hiçbir rotaya bağlı değil —
+  yani özellik kodda vardı ama kullanıcıya ULAŞMIYORDU.
+- ✅ **Düzeltme:** geçmiş mixin'e taşındı → mobil tam ekran arama
+  (`TamEkranAramaSayfasi`) ve masaüstü satır-içi çubuk (`AramaCubugu`) AYNI
+  listeyi kullanıyor. Anahtar aynı bırakıldı (`arama_gecmisi`), böylece eski
+  kullanıcıların birikmiş geçmişi kaybolmadı.
+  - Her satırın sağında çarpı: satırı siler ve diske yazar; ListTile'ın
+    `onTap`'ini TETİKLEMEZ (IconButton hit-test'i kapar).
+  - Geçmişe YALNIZ sonuç dönen sorgu yazılır (yazarken oluşan "bre", "brea"
+    girmesin), en yeni başta, azami 10 satır.
+  - Masaüstünde panel kutu ODAKTAYKEN açılır; odak gidince 180 ms GECİKMEYLE
+    kapanır — kutunun odağı parmak kalkmadan (pointer down) gittiği için
+    doğrudan bağlansaydı satır dokunuşu boşa düşerdi.
+  - Enter (`onSubmitted`) artık 450 ms'lik gecikmeyi beklemeden arıyor.
+- ✅ **Kanıt:** `test/arama_gecmisi_test.dart` — 12 widget testi (listeleme,
+  sıra, çarpıyla silme + diske yazma, çarpının arama açmaması, satırdan arama,
+  10 sınırı, sonuçsuz sorgu yazılmaması, masaüstü odak açılış/kapanışı).
+  Tüm paket: 2.516 test geçti.
+- ✅ Yeni çeviri anahtarı YOK: `Son aramalar` ve `Sil` 45 dilde zaten vardı.
+
 ## 2026-09-03 (7. tur) — 📏 GEO durum ölçümü: CEVAP BOTU GERİ DÖNDÜ, araç 5 kat eksik sayıyormuş
 
 - **İstek:** *"dizi jpg projesinde geo konusunda ne durumdayız?"* → ölçüm koşuldu,
