@@ -44,6 +44,38 @@
   değil `/kisi/`; aday sorular oradan çıkacak.
 - ⬜ **GEO §6.2 (aylık elle sorgu turu) vadesi 28 Eylül** — elle koşulacak.
 
+## 2026-09-03 (7. tur) — 🚀 "Hâlâ Puanla yazıyor": geniş ölçekte kaydırıcı SAYFA İÇİNE alındı
+
+- **İstek:** 6. turdan sonra kullanıcı *"hala puanla yazıyor"* dedi.
+- ✅ **Teşhis (canlı site + `/api/puan-olcegi`):** kullanıcının KENDİ hesabında
+  `puan_olcegi = 100`. `yildizSatiriOlur(100) = false` olduğu için ekranda yıldız
+  şeridi değil ROZET çiziliyordu — rozet de "Puanla" yazan bir DÜĞMEYDİ ve
+  kaydırıcı ancak dokununca `puanSecSheet` içinde açılıyordu. 6. turda yapılan
+  değişiklik bu yüzden kullanıcının hesabında HİÇ GÖRÜNMEDİ. İsteğin ikinci
+  yarısı ("5'ten fazlaysa kaydırma slider koy") aslında hiç karşılanmamıştı.
+- ✅ **Düzeltme — `YildizPuan._kaydirici`** (`app/lib/ekranlar/tepki.dart`):
+  geniş ölçekte (ve yıldızın 18 dp'nin altına ineceği dar kutularda) artık
+  SAYFA İÇİ kaydırıcı çiziliyor, altında aynı ufak etiket ("Puanla" / "73/100").
+  - Alt uç **0** = puan yok; sonuna kadar sola çekmek puanı GERÇEKTEN siler
+    (sheet'te alt uç 1'dir, çünkü orada silme ayrı düğme).
+  - Yazma `onChangeEnd`'de: sürüklerken tek harekette onlarca POST olurdu.
+  - Oturum kontrolü `onChangeStart`'ta: oturumsuzda tutamak hiç kıpırdamaz.
+  - Etiket + "ince ayar" ikonu dokunulabilir → ±1 düğmeli `puanSecSheet`
+    (100 bölmede bir adım ~4 dp; "73 mü 74 mü" parmakla çözülmez).
+  - Dikey pay 14 dp: `padding: EdgeInsets.zero` Slider'ı 20 dp'ye düşürüp
+    dokunma hedefini 44 dp eşiğinin altına indiriyordu (test yakaladı).
+  - Bölme noktaları 10 üstünde gizli (100 bölmede şerit tarak gibi görünüyordu)
+    ve şerit en fazla 420 dp: masaüstünde 1.050 dp'ye yayılıp ilerleme çubuğu
+    gibi duruyordu (ikisi de canlı ekran görüntüsüyle yakalandı).
+  - `_rozet` yalnız ÖLÇÜSÜZ kutuda (Row içinde Expanded'sız) yedek olarak kaldı.
+- ✅ **Yan düzeltme:** `Api.surum` 1.117.0+184'te kalmıştı; pubspec ile eşitlendi
+  (`surum_esleme_test` + `surum_tutarlilik_test` yakaladı).
+- 🚀 **Canlıda:** web 1.118.0+185 (`main.f616c25052b7.dart.js`), 3 Eyl.
+- Kanıt: `profil_yildiz_serit_test.dart` + `puan_olcek_secimi_test.dart` +
+  `yildiz_surukleme_test.dart` kaydırıcı kipini kilitliyor (bırakınca yazar,
+  sürüklerken yazmaz, min 0 / max ölçek, hedef ≥44 dp). Tam paket **2.504/2.504**.
+  Canlı doğrulama: kişi, film ve şirket sayfaları ekran görüntüsüyle görüldü.
+
 ## 2026-09-03 (6. tur) — 🚀 Kişi ve yapım şirketi sayfalarında "Puanla" düğmesi yerine yıldız şeridi
 
 - **İstek:** *"oyuncu profili, dizi/film profilinde 'Puanla' tuşu yerine —

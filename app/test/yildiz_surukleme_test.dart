@@ -195,13 +195,16 @@ void main() {
     expect(kutu.height, greaterThanOrEqualTo(44));
   });
 
-  testWidgets('10 yıldız DAR kutuda satır yerine rozet çizer', (tester) async {
+  testWidgets('10 yıldız DAR kutuda satır yerine KAYDIRICI çizer', (
+    tester,
+  ) async {
     PuanOlcegi.deger.value = 10;
     // 200 / 10 = 20 dp hücre → ikon 16 dp'ye inerdi; eşik 18.
     await _kur(tester, genislik: 200);
-    // Rozet kipinde tek bir yıldız ikonu + metin var; on yıldızlık ŞERİT yok.
-    expect(_bos, findsOneWidget);
-    expect(find.text('Puanla'), findsOneWidget);
+    // Kaydırıcı kipi (3 Eyl 2026): dar kutuda tek parmakla tüm aralık gezilir;
+    // on yıldızlık ŞERİT yok, "Puanla" düğmesi de yok — yalnız ufak etiket.
+    expect(_bos, findsNothing);
+    expect(find.byType(Slider), findsOneWidget);
     expect(tester.getRect(find.byType(YildizPuan)).height, greaterThan(43));
   });
 }

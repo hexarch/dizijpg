@@ -572,7 +572,6 @@ class _YildizPuanState extends State<YildizPuan> {
     return ValueListenableBuilder<int>(
       valueListenable: PuanOlcegi.deger,
       builder: (context, olcek, _) {
-        if (!yildizSatiriOlur(olcek)) return _rozet(olcek);
         final boy = yildizIkonBoyu(olcek, taban: widget.boyut);
         // DOKUNMA HEDEFİ — ÖLÇÜLMÜŞ TAVİZ (26 Ağu 2026):
         // 10 yıldız × 44 dp = 440 dp, 360 dp'lik telefona SIĞMAZ. Yani
@@ -584,11 +583,23 @@ class _YildizPuanState extends State<YildizPuan> {
         // Ölçek 5'te (varsayılan) hiçbir taviz yok: 44x44 korunur.
         return LayoutBuilder(
           builder: (context, kisit) {
+            // Kaydırıcı SINIRLI genişlik ister (Slider sonsuz kutuda patlar).
+            // Ölçüsüz bir Row'un içindeysek tek dürüst seçenek eski rozet.
+            final sonsuz = !kisit.maxWidth.isFinite;
+            // GENİŞ ÖLÇEK → SAYFA İÇİ KAYDIRICI (3 Eyl 2026, kullanıcı:
+            // *"5'ten fazla yıldızlama kullanıyorsa kaydırma slider koy"*).
+            //
+            // ESKİDEN ROZETTİ ve rozet "Puanla" yazan bir DÜĞMEYDİ: dokununca
+            // kaydırıcı bir sheet'te açılıyordu. Kullanıcı ölçeğini 100 yapmış
+            // olduğu için ekranda gördüğü şey hâlâ "Puanla" düğmesiydi —
+            // istediği değişiklik onun hesabında hiç görünmedi. Kaydırıcı artık
+            // sayfanın İÇİNDE; sheet yalnız ince ayar/silme için kalıyor.
+            if (!yildizSatiriOlur(olcek)) {
+              return sonsuz ? _rozet(olcek) : _kaydirici(olcek);
+            }
             // Sonsuz genişlikte (Row içinde ölçüsüz) eldeki tek bilgi ikon
             // boyu; o durumda eski sabit payı kullan.
-            final kullanilabilir = kisit.maxWidth.isFinite
-                ? kisit.maxWidth
-                : olcek * (boy + 14);
+            final kullanilabilir = sonsuz ? olcek * (boy + 14) : kisit.maxWidth;
             // TAŞMA YASAK: eski sürüm hücreyi `boy + 4`ün ALTINA indirmiyordu,
             // yani dar bir kutuda (içerik sayfasında favori düğmesinin yanı,
             // 3 Eyl 2026) satır kutudan taşıp sarı çizgi basıyordu. Artık dar
@@ -597,8 +608,9 @@ class _YildizPuanState extends State<YildizPuan> {
             final ham = kullanilabilir / olcek;
             if (ham < boy + 4) b = ham - 4;
             // ...18 dp de sığmıyorsa satır hiç çizilmez: o boyutta yıldız ne
-            // okunur ne dokunulur, rozet + kaydırıcılı sayfa dürüst olan.
-            if (b < 18) return _rozet(olcek);
+            // okunur ne dokunulur. Dar kutuda kaydırıcı yıldızdan İYİ çalışır
+            // (tek parmakla tüm aralık), o yüzden burada da ona düşülür.
+            if (b < 18) return sonsuz ? _rozet(olcek) : _kaydirici(olcek);
             final hucre = ham.clamp(b + 4, 44.0);
             final yatay = ((hucre - b) / 2).clamp(2.0, 7.0);
             final satir = _satir(olcek, b, yatay, hucre);
@@ -705,49 +717,164 @@ class _YildizPuanState extends State<YildizPuan> {
   ///
   /// Sürükleme sırasında parmağı izler (`_surukleme`): kullanıcı bırakmadan
   /// önce kaç puan verdiğini SAYIYLA da görür — 8 yıldızı gözle saymak zor.
-  Widget _altYazi(int olcek, double yatay) {
+  Widget _altYazi(int olcek, double yatay) => Padding(
+    padding: EdgeInsets.only(left: yatay),
+    child: _altYaziMetni(olcek),
+  );
+
+  /// Alt yazının kendisi (sarmalayıcısız) — kaydırıcı kipi bunu kendi
+  /// satırında, "ince ayar" ikonunun yanında kullanır.
+  Widget _altYaziMetni(int olcek) {
     final gosterilen = _surukleme ?? _yildiz;
     final ek = widget.altYaziEki;
-    return Padding(
-      padding: EdgeInsets.only(left: yatay),
-      child: Text.rich(
-        TextSpan(
-          children: [
-            // SENİN girdin/çağrın: tam kontrast. `metin38` (pasif ton)
-            // BİLEREK kullanılmadı — "Puanla" tıklanabilir bir çağrı, ipucu
-            // değil; 11 dp'de white38 zaten okunmuyor (tema.dart md.).
-            TextSpan(text: gosterilen > 0 ? '$gosterilen/$olcek' : 'Puanla'.c),
-            // Ek (topluluk ortalaması) İKİNCİL: aynı renkte olsaydı
-            // "3/5 · ort. 4.2" tek bir sayı dizisi gibi okunur, kullanıcı
-            // hangisinin kendi puanı olduğunu ayırt edemezdi. `acikGri`
-            // projenin ikincil metin tonu (siyah zeminde ~8,7:1 kontrast),
-            // `metin38` gibi eşiğin altına düşmez.
-            if (ek != null && ek.isNotEmpty)
-              TextSpan(
-                text: '  ·  $ek',
-                style: TextStyle(
-                  color: DiziRenkler.acikGri,
-                  fontWeight: FontWeight.w500,
-                ),
+    return Text.rich(
+      TextSpan(
+        children: [
+          // SENİN girdin/çağrın: tam kontrast. `metin38` (pasif ton)
+          // BİLEREK kullanılmadı — "Puanla" tıklanabilir bir çağrı, ipucu
+          // değil; 11 dp'de white38 zaten okunmuyor (tema.dart md.).
+          TextSpan(text: gosterilen > 0 ? '$gosterilen/$olcek' : 'Puanla'.c),
+          // Ek (topluluk ortalaması) İKİNCİL: aynı renkte olsaydı
+          // "3/5 · ort. 4.2" tek bir sayı dizisi gibi okunur, kullanıcı
+          // hangisinin kendi puanı olduğunu ayırt edemezdi. `acikGri`
+          // projenin ikincil metin tonu (siyah zeminde ~8,7:1 kontrast),
+          // `metin38` gibi eşiğin altına düşmez.
+          if (ek != null && ek.isNotEmpty)
+            TextSpan(
+              text: '  ·  $ek',
+              style: TextStyle(
+                color: DiziRenkler.acikGri,
+                fontWeight: FontWeight.w500,
               ),
-          ],
-        ),
-        // RichText tema rengini DEVRALMAZ; taban stil (RENK DAHİL) burada
-        // açıkça verilir — skill md. 2, koyu temada siyah basma tuzağı.
-        style: TextStyle(
-          fontSize: 11,
-          height: 1,
-          fontWeight: FontWeight.w700,
-          color: DiziRenkler.metin,
-        ),
-        // Dar sütunda ek uzunsa satırı taşırmasın.
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+            ),
+        ],
       ),
+      // RichText tema rengini DEVRALMAZ; taban stil (RENK DAHİL) burada
+      // açıkça verilir — skill md. 2, koyu temada siyah basma tuzağı.
+      style: TextStyle(
+        fontSize: 11,
+        height: 1,
+        fontWeight: FontWeight.w700,
+        color: DiziRenkler.metin,
+      ),
+      // Dar sütunda ek uzunsa satırı taşırmasın.
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 
-  /// Geniş ölçekte satır yerine çizilen rozet. Puansızken de dokunulabilir
+  /// GENİŞ ÖLÇEK KİPİ: sayfa içi kaydırıcı + altında ufak etiket.
+  ///
+  /// TASARIM KARARLARI
+  /// -----------------
+  ///  * ALT UÇ 0, 1 DEĞİL: 0 "puan yok" demek ve kaydırıcıyı sonuna kadar
+  ///    sola çekmek puanı GERÇEKTEN siler. [puanSecSheet]'te alt uç 1'dir,
+  ///    çünkü orada silme ayrı bir düğmedir ve 0'a inen bir kaydırıcı
+  ///    "sildim" der ama silmezdi (kullanıcıya yalan söyleyen kontrol).
+  ///    Burada yalan yok: 0 = sil.
+  ///  * PUANSIZ AÇILIŞ SOLDA: tutamak 0'da durur, etiket "Puanla" der.
+  ///    1'den başlasaydı puan vermemiş kullanıcı 1/100 vermiş görünürdü.
+  ///  * BIRAKINCA YAZAR (`onChangeEnd`): sürüklerken her adımda POST atmak
+  ///    100'lük ölçekte tek bir sürüklemede onlarca istek demekti.
+  ///  * OTURUM KONTROLÜ BAŞTA (`onChangeStart`): satır kipiyle aynı kural —
+  ///    iyimser önizleme gösterip 401 ile geri almak yerine kullanıcı
+  ///    doğrudan giriş istemini görür ve tutamak hiç kıpırdamaz.
+  ///  * ETİKET DOKUNULABİLİR (ince ayar ikonu): 100 bölmeli bir kaydırıcıda
+  ///    bir adım ~3 dp; "73 mü 74 mü" sorusunu parmakla çözmek imkânsız.
+  ///    Dokununca ±1 düğmeli [puanSecSheet] açılır.
+  ///  * DİKEY PAY 14 DP: `padding: EdgeInsets.zero` verilince Slider'ın
+  ///    yüksekliği 20 dp'ye düşüyordu — dokunma hedefi 44 dp eşiğinin ALTINDA
+  ///    (puan_olcek_secimi_test yakaladı). 20 + 2x14 = 48 dp.
+  ///  * YATAY PAY = TUTAMAK YARIÇAPI: 0 verilirse uçtaki tutamak kutudan taşar
+  ///    ve kırpılır. Etiket de aynı payla girintilenir ki metin tutamağın
+  ///    başlangıcıyla hizalansın.
+  Widget _kaydirici(int olcek) {
+    const yatayPay = 10.0;
+    final gosterilen = (_surukleme ?? _yildiz).clamp(0, olcek);
+    return ConstrainedBox(
+      // TAVAN 420 DP: şirket sayfasında satır tam sayfa genişliğinde ve
+      // kaydırıcı masaüstünde 1.050 dp'ye yayılıyordu — bir puan denetimi
+      // değil, ilerleme çubuğu gibi duruyordu. 420 dp'de 100 bölmenin her
+      // adımı ~4 dp; kesin değer zaten "ince ayar" sayfasından giriliyor.
+      constraints: const BoxConstraints(maxWidth: 420),
+      child: _kaydiriciGovde(olcek, yatayPay, gosterilen),
+    );
+  }
+
+  Widget _kaydiriciGovde(int olcek, double yatayPay, int gosterilen) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            trackHeight: 4,
+            activeTrackColor: DiziRenkler.sari,
+            inactiveTrackColor: DiziRenkler.metin24,
+            thumbColor: DiziRenkler.sari,
+            overlayColor: DiziRenkler.sari.withValues(alpha: 0.14),
+            valueIndicatorColor: DiziRenkler.sari,
+            valueIndicatorTextStyle: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w800,
+            ),
+            showValueIndicator: ShowValueIndicator.onlyForDiscrete,
+            // BÖLME NOKTALARI 10 ÜSTÜNDE GİZLİ: 100 bölmede yol boyunca 99
+            // nokta çıkıyor ve şerit TARAK gibi görünüyor (3 Eyl 2026,
+            // şirket sayfası ekran görüntüsü). 10 ve altında (dar kutuya
+            // düşen yıldız ölçeği) noktalar okunur ve adımı gösterir.
+            activeTickMarkColor: olcek > 10 ? Colors.transparent : null,
+            inactiveTickMarkColor: olcek > 10 ? Colors.transparent : null,
+          ),
+          child: Slider(
+            value: gosterilen.toDouble(),
+            min: 0,
+            max: olcek.toDouble(),
+            divisions: olcek,
+            label: gosterilen == 0 ? 'Puanla'.c : '$gosterilen/$olcek',
+            padding: EdgeInsets.symmetric(horizontal: yatayPay, vertical: 14),
+            onChangeStart: (_) {
+              _kaydirmaIzni = !_isleniyor && girisGerekli(context);
+            },
+            onChanged: (d) {
+              if (!_kaydirmaIzni) return;
+              final y = d.round();
+              if (y != _surukleme) setState(() => _surukleme = y);
+            },
+            onChangeEnd: (d) {
+              if (!_kaydirmaIzni) return;
+              final y = d.round();
+              setState(() => _surukleme = null);
+              if (y != _yildiz) _yaz(y);
+            },
+          ),
+        ),
+        InkWell(
+          onTap: () => _sheetAc(olcek),
+          borderRadius: BorderRadius.circular(6),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(yatayPay, 0, 6, 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(child: _altYaziMetni(olcek)),
+                const SizedBox(width: 4),
+                Icon(Icons.tune, size: 13, color: DiziRenkler.acikGri),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Kaydırıcıya dokunan kişi giriş yapmış mı (dokunuş başında bir kez
+  /// ölçülür). `false` ise `onChanged` değeri değiştirmez: tutamak yerinde
+  /// kalır, kullanıcı giriş istemini görür.
+  bool _kaydirmaIzni = false;
+
+  /// ÖLÇÜSÜZ kutuda (Row içinde Expanded'sız) çizilen rozet — kaydırıcı
+  /// sonsuz genişlikte çizilemediği için tek yedek bu. Puansızken de dokunulabilir
   /// olmalı — yoksa geniş ölçekteki kullanıcı puan VEREMEZ.
   ///
   /// [YildizPuan.altYaziEki] BURADA DA ÇİZİLİR (rozetin sağında, sönük):

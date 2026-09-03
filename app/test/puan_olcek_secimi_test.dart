@@ -105,15 +105,26 @@ void main() {
       }
     });
 
-    testWidgets('ölçek 100: satır YOK, tek rozet var', (tester) async {
+    testWidgets('ölçek 100: satır YOK, SAYFA İÇİ kaydırıcı var', (
+      tester,
+    ) async {
+      // 3 Eyl 2026: burası eskiden "Puanla" yazan bir ROZET DÜĞMESİYDİ ve
+      // kaydırıcı ancak dokununca sheet'te açılıyordu. Ölçeği 100 olan
+      // kullanıcı bu yüzden hâlâ düğme görüyordu; kaydırıcı sayfaya alındı.
       Api.istemci = _istemci();
       PuanOlcegi.deger.value = 100;
       await _kur(tester, const YildizPuan(tur: 'tv', tmdbId: 1));
-      // Tek ikon = rozetin yıldızı; 100 ayrı yıldız ÇİZİLMEMELİ.
-      expect(find.byType(Icon), findsOneWidget);
-      expect(find.text('Puanla'), findsOneWidget);
+      expect(find.byType(Slider), findsOneWidget);
+      // 100 ayrı yıldız ÇİZİLMEMELİ; tek ikon "ince ayar" (tune) ikonudur.
+      expect(find.byIcon(Icons.star_outline_rounded), findsNothing);
+      expect(find.byIcon(Icons.tune), findsOneWidget);
+      // Alt uç 0 = puansız; sonuna kadar sola çekmek puanı siler.
+      final k = tester.widget<Slider>(find.byType(Slider));
+      expect(k.min, 0);
+      expect(k.max, 100);
+      // Kaydırıcının dokunma hedefi Flutter'ın kendi asgarisiyle ≥44 dp.
       expect(
-        tester.getSize(find.byType(InkWell)).height,
+        tester.getSize(find.byType(Slider)).height,
         greaterThanOrEqualTo(44),
       );
     });
@@ -139,7 +150,8 @@ void main() {
       // Ayarlar'dan ölçek değişti: açık ekran ESKİ ölçekte kalmamalı.
       PuanOlcegi.deger.value = 100;
       await tester.pump();
-      expect(find.byType(Icon), findsOneWidget);
+      expect(find.byIcon(Icons.star_outline_rounded), findsNothing);
+      expect(find.byType(Slider), findsOneWidget);
     });
   });
 

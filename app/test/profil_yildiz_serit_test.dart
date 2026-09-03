@@ -180,17 +180,56 @@ void main() {
       expect(puan.first.$2['kanonik'], true);
     });
 
-    testWidgets('100\'lük ölçek: şerit yerine rozet (kaydırıcıya kapı)', (
+    testWidgets('100\'lük ölçek: şerit yerine SAYFA İÇİ KAYDIRICI', (
+      tester,
+    ) async {
+      // 3 Eyl 2026 — kullanıcının kendi hesabında ölçek 100 olduğu için
+      // ekranda hâlâ "Puanla" DÜĞMESİ (rozet) görünüyordu. Geniş ölçekte
+      // kaydırıcı artık sayfanın içinde; düğme yok.
+      await _ac(tester, const KisiEkrani(kisiId: 6193), olcek: 100);
+
+      expect(find.byType(YildizPuan), findsOneWidget);
+      expect(find.byType(Slider), findsOneWidget);
+      // 100 yıldız ÇİZİLMEZ ve rozetin 15 dp'lik düğme etiketi de yok:
+      // "Puanla" yalnız kaydırıcının altındaki ufak etikettir.
+      expect(find.byIcon(Icons.star_outline_rounded), findsNothing);
+      expect(_metniGecen(tester, 'Puanla').style?.fontSize, 11);
+
+      final k = tester.widget<Slider>(find.byType(Slider));
+      // ALT UÇ 0 = "puan yok"; sonuna kadar sola çekmek puanı SİLER.
+      expect(k.min, 0);
+      expect(k.max, 100);
+      expect(k.value, 0);
+    });
+
+    testWidgets('kaydırıcı bırakılınca /puan yazar, sürüklerken YAZMAZ', (
       tester,
     ) async {
       await _ac(tester, const KisiEkrani(kisiId: 6193), olcek: 100);
 
-      expect(find.byType(YildizPuan), findsOneWidget);
-      // Rozet kipinde 100 yıldız ÇİZİLMEZ; tek bir ikon + etiket vardır.
-      expect(find.byIcon(Icons.star_outline_rounded), findsOneWidget);
-      // Etiket rozetin İÇİNDE (15 dp), ayrıca alt yazı olarak tekrarlanmaz.
-      expect(find.text('Puanla'), findsOneWidget);
-      expect(_metniGecen(tester, 'Puanla').style?.fontSize, 15);
+      // Kaydırıcının ORTASINDAN tut (Slider varsayılan "tapAndSlide"
+      // etkileşiminde tutuş noktası doğrudan değer olur → ~50/100), sonra
+      // biraz sağa kaydır.
+      final jest = await tester.startGesture(
+        tester.getCenter(find.byType(Slider)),
+      );
+      await tester.pump();
+      await jest.moveBy(const Offset(20, 0));
+      await tester.pump();
+      // Sürükleme SÜRERKEN istek yok (100 ölçekte onlarca POST olurdu).
+      expect(_gonderiler.where((g) => g.$1 == '/api/puan'), isEmpty);
+
+      await jest.up();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final puan = _gonderiler.where((g) => g.$1 == '/api/puan').toList();
+      expect(puan, hasLength(1));
+      expect(puan.first.$2['tur'], 'person');
+      expect(puan.first.$2['kanonik'], true);
+      // 100'lük ölçekte görünüm = kanonik; orta + biraz sağ ≈ 50-70.
+      expect(puan.first.$2['puan'], inInclusiveRange(45, 80));
+      expect(find.byType(BottomSheet), findsNothing);
     });
   });
 
@@ -210,20 +249,23 @@ void main() {
     expect(find.byIcon(Icons.star_outline_rounded), findsNWidgets(5));
   });
 
-  testWidgets('dar telefonda 10\'luk ölçek: yıldız sığmayınca rozete düşer', (
-    tester,
-  ) async {
-    // Kişi sütununda 10 yıldız × ~17 dp okunmaz; [YildizPuan] kendiliğinden
-    // rozet + kaydırıcı kipine geçer (eşik: 18 dp).
-    await _ac(
-      tester,
-      const KisiEkrani(kisiId: 6193),
-      olcek: 10,
-      boyut: const Size(360, 800),
-    );
-    expect(tester.takeException(), isNull);
-    expect(find.byIcon(Icons.star_outline_rounded), findsOneWidget);
-  });
+  testWidgets(
+    'dar telefonda 10\'luk ölçek: yıldız sığmayınca kaydırıcıya düşer',
+    (tester) async {
+      // Kişi sütununda 10 yıldız × ~17 dp okunmaz; [YildizPuan] kendiliğinden
+      // kaydırıcı kipine geçer (eşik: 18 dp). Kaydırıcı dar kutuda yıldızdan
+      // İYİ çalışır — tek parmakla tüm aralığı gezer.
+      await _ac(
+        tester,
+        const KisiEkrani(kisiId: 6193),
+        olcek: 10,
+        boyut: const Size(360, 800),
+      );
+      expect(tester.takeException(), isNull);
+      expect(find.byType(Slider), findsOneWidget);
+      expect(find.byIcon(Icons.star_outline_rounded), findsNothing);
+    },
+  );
 
   group('yapım şirketi sayfası', () {
     testWidgets('5\'lik ölçek: yıldız şeridi + ufak "Puanla"', (tester) async {
