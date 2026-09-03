@@ -1540,4 +1540,11 @@ const Map<String, String> cevirilerHi = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'आप सिर्फ़ उन्हें बुला सकते हैं जो आपको वापस फ़ॉलो करते हैं।',
   'Oda açılamadı': 'रूम नहीं खुल सका',
+  'Tam ekrandan çık': 'फ़ुलस्क्रीन से बाहर',
+  'Sohbeti gizle': 'चैट छिपाएँ',
+  'Sohbeti göster': 'चैट दिखाएँ',
+  'Fragman': 'ट्रेलर',
+  'Tekrar oynat': 'फिर से चलाएँ',
+  '@{} seni izleme odasına davet etti': '@{} ने आपको देखने वाले रूम में बुलाया',
+  '{} · {} davet bekliyor': '{} · {} न्योते बाकी',
 };

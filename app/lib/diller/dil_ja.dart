@@ -1468,4 +1468,11 @@ const Map<String, String> cevirilerJa = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       '相互フォローの相手だけ招待できます。',
   'Oda açılamadı': 'ルームを開けませんでした',
+  'Tam ekrandan çık': '全画面を終了',
+  'Sohbeti gizle': 'チャットを隠す',
+  'Sohbeti göster': 'チャットを表示',
+  'Fragman': '予告編',
+  'Tekrar oynat': 'もう一度再生',
+  '@{} seni izleme odasına davet etti': '@{}さんが視聴ルームに招待しました',
+  '{} · {} davet bekliyor': '{} · 招待 {} 件',
 };

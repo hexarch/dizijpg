@@ -7,15 +7,20 @@ import '../ceviri.dart';
 import '../tema.dart';
 import '../tmdb_fragman.dart';
 import 'fragman_gom.dart';
+import 'fragman_kontrol.dart';
 
 /// Dizi/film/bölüm kahramanındaki resmi fragman.
 ///
-/// Başta yalnız YouTube kapağı + oynat düğmesi vardır (yer ayrılır, CLS yok,
-/// sessiz autoplay yok). Dokununca uygulama içi oynatıcı açılır — YouTube
-/// uygulamasına gidilmez. Kaydırılıp görünmez olunca DURAKLAR; sökülmez ki
-/// geri gelince başa sarılmasın.
+/// Başta yalnız YouTube kapağı (1280×720 maxres; yoksa hqdefault) + sarı
+/// oynat düğmesi + üst şeritte "FRAGMAN" rozeti ve fragman adı vardır (yer
+/// ayrılır, CLS yok, sessiz autoplay yok). Dokununca uygulama içi oynatıcı
+/// açılır — YouTube uygulamasına gidilmez. Kaydırılıp görünmez olunca
+/// DURAKLAR; sökülmez ki geri gelince başa sarılmasın.
 class FragmanOynatici extends StatefulWidget {
   final String youtubeId;
+
+  /// Fragman adı (TMDB `name`) — kapakta ve oynatıcının üst şeridinde.
+  final String? baslik;
 
   /// Null = gömme (web iframe / native yüzey). Testte `false` verilirse
   /// [disariAc] çağrılır; üretimde varsayılan gömmedir.
@@ -34,6 +39,7 @@ class FragmanOynatici extends StatefulWidget {
   const FragmanOynatici({
     super.key,
     required this.youtubeId,
+    this.baslik,
     this.gomulu,
     this.aktif = true,
     this.altBosluk = 8,
@@ -105,6 +111,9 @@ class _FragmanOynaticiState extends State<FragmanOynatici>
                   youtubeId: widget.youtubeId,
                   aktif: widget.aktif && _gorunur,
                   altBosluk: widget.altBosluk,
+                  baslik: widget.baslik,
+                  kapakUrl: youtubeKapakUrl(widget.youtubeId, yuksek: true),
+                  kapakYedekUrl: youtubeKapakUrl(widget.youtubeId),
                 )
               : _kapak(),
         ),
@@ -112,22 +121,31 @@ class _FragmanOynaticiState extends State<FragmanOynatici>
     );
   }
 
-  /// Kapak karesi + sarı oynat düğmesi (en az 44 dp).
+  /// Kapak karesi + üst şerit + sarı oynat düğmesi (en az 44 dp).
   Widget _kapak() {
     return Stack(
       fit: StackFit.expand,
       children: [
         CachedNetworkImage(
-          // Adres SATIR İÇİNDE çağrılıyor, ara değişkenle değil: WebP başlık
-          // denetimi (test/gorsel_webp_test.dart) çağrı noktasından sonraki
-          // 500 karakteri tarıyor ve ara değişken kaynağı o pencerenin DIŞINA
-          // itiyordu — kapak i.ytimg.com'dan gelir, TMDB başlıkları burada
-          // anlamsızdır ama tarayıcının bunu görebilmesi gerekiyor.
-          imageUrl: youtubeKapakUrl(widget.youtubeId),
+          // Adres SATIR İÇİNDE (WebP denetimi 500 karakter tarar; kapak
+          // i.ytimg.com'dan gelir). Önce maxres; 404 → hqdefault.
+          imageUrl: youtubeKapakUrl(widget.youtubeId, yuksek: true),
           fit: BoxFit.cover,
-          errorWidget: (_, _, _) => const ColoredBox(color: Colors.black),
+          errorWidget: (_, _, _) => CachedNetworkImage(
+            imageUrl: youtubeKapakUrl(widget.youtubeId),
+            fit: BoxFit.cover,
+            errorWidget: (_, _, _) => const ColoredBox(color: Colors.black),
+          ),
         ),
-        const ColoredBox(color: Color(0x66000000)),
+        const ColoredBox(color: Color(0x4D000000)),
+        Positioned(
+          left: 0,
+          right: 0,
+          top: 0,
+          child: IgnorePointer(
+            child: FragmanBaslikSeridi(baslik: widget.baslik),
+          ),
+        ),
         Center(
           child: Semantics(
             button: true,
@@ -136,13 +154,15 @@ class _FragmanOynaticiState extends State<FragmanOynatici>
               color: DiziRenkler.sari,
               shape: const CircleBorder(),
               clipBehavior: Clip.antiAlias,
+              elevation: 6,
+              shadowColor: Colors.black54,
               child: InkWell(
                 customBorder: const CircleBorder(),
                 onTap: _oynat,
                 child: const SizedBox(
-                  width: 56,
-                  height: 56,
-                  child: Icon(Icons.play_arrow, color: Colors.black, size: 36),
+                  width: 64,
+                  height: 64,
+                  child: Icon(Icons.play_arrow, color: Colors.black, size: 40),
                 ),
               ),
             ),

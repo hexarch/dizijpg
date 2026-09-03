@@ -1470,4 +1470,11 @@ const Map<String, String> cevirilerKo = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       '맞팔로우한 사람만 초대할 수 있습니다.',
   'Oda açılamadı': '방을 열 수 없습니다',
+  'Tam ekrandan çık': '전체화면 종료',
+  'Sohbeti gizle': '채팅 숨기기',
+  'Sohbeti göster': '채팅 표시',
+  'Fragman': '예고편',
+  'Tekrar oynat': '다시 재생',
+  '@{} seni izleme odasına davet etti': '@{}님이 시청 방에 초대했습니다',
+  '{} · {} davet bekliyor': '{} · 초대 {}건 대기 중',
 };

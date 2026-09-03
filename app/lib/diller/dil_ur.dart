@@ -1543,4 +1543,12 @@ const Map<String, String> cevirilerUr = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'آپ صرف انہیں مدعو کر سکتے ہیں جو آپ کو واپس فالو کرتے ہیں۔',
   'Oda açılamadı': 'کمرہ نہیں کھل سکا',
+  'Tam ekrandan çık': 'فل اسکرین سے نکلیں',
+  'Sohbeti gizle': 'گفتگو چھپائیں',
+  'Sohbeti göster': 'گفتگو دکھائیں',
+  'Fragman': 'ٹریلر',
+  'Tekrar oynat': 'دوبارہ چلائیں',
+  '@{} seni izleme odasına davet etti':
+      '@{} نے آپ کو دیکھنے کے کمرے میں مدعو کیا',
+  '{} · {} davet bekliyor': '{} · {} دعوتیں زیرِ التوا',
 };

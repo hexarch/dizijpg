@@ -1,6 +1,7 @@
 import 'package:dizijpg/ekranlar/fragman_kontrol.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Fragman kromu: otomatik gizlenme, dokunuşla geri gelme, fare desteği,
@@ -29,6 +30,13 @@ void main() {
         ),
       ),
     );
+  }
+
+  /// Yarımın ortası artık −10/+10 kümesine denk gelir; yarımın kendisine
+  /// (kümenin üstünde, başlık şeridinin altında) dokunmak için nokta.
+  Offset yanNokta(WidgetTester tester, String etiket) {
+    final kutu = tester.getRect(find.bySemanticsLabel(etiket));
+    return Offset(kutu.center.dx, kutu.top + 120);
   }
 
   double kromOpaklik(WidgetTester tester) {
@@ -62,7 +70,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 250));
     expect(kromOpaklik(tester), 0);
 
-    await tester.tap(find.bySemanticsLabel('10 saniye ileri'));
+    await tester.tapAt(yanNokta(tester, '10 saniye ileri'));
     // Tek dokunuş 240 ms bekledikten sonra karar verir (çift dokunuş payı).
     await tester.pump(const Duration(milliseconds: 300));
     expect(kromOpaklik(tester), 1);
@@ -78,7 +86,7 @@ void main() {
     var oynat = 0;
     await tester.pumpWidget(kur(onOynatDuraklat: () => oynat++));
     await tester.pump();
-    await tester.tap(find.bySemanticsLabel('10 saniye ileri'));
+    await tester.tapAt(yanNokta(tester, '10 saniye ileri'));
     await tester.pump(const Duration(milliseconds: 300));
     expect(oynat, 1);
   });
@@ -93,10 +101,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 250));
     expect(kromOpaklik(tester), 0);
 
-    final sag = find.bySemanticsLabel('10 saniye ileri');
-    await tester.tap(sag);
+    final sag = yanNokta(tester, '10 saniye ileri');
+    await tester.tapAt(sag);
     await tester.pump(const Duration(milliseconds: 50));
-    await tester.tap(sag);
+    await tester.tapAt(sag);
     await tester.pump(const Duration(milliseconds: 400));
     expect(ileri, 1);
     expect(kromOpaklik(tester), 0);
@@ -152,5 +160,257 @@ void main() {
     await tester.tap(find.text('Tekrar dene'));
     await tester.pump();
     expect(tekrar, 1);
+  });
+
+  testWidgets('üst şerit: FRAGMAN rozeti + fragman adı', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 700));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: FragmanKontrol(
+            yukleniyor: false,
+            oynuyor: true,
+            sessiz: false,
+            baslik: 'Silo — Season 3 Official Trailer',
+            konum: const Duration(seconds: 10),
+            sure: const Duration(seconds: 60),
+            onOynatDuraklat: () {},
+            onSessiz: () {},
+            onAltyazi: () {},
+            onHiz: () {},
+            onGeri10: () {},
+            onIleri10: () {},
+            onBasili2x: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('FRAGMAN'), findsOneWidget);
+    expect(find.text('Silo — Season 3 Official Trailer'), findsOneWidget);
+    // Krom gizlenince şerit de kaybolur.
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pump(const Duration(milliseconds: 250));
+    final ust = tester.widget<AnimatedOpacity>(
+      find.byKey(const ValueKey('fragman-ust')),
+    );
+    expect(ust.opacity, 0);
+  });
+
+  testWidgets('orta küme: büyük düğme oynat/duraklat, yanlar ±10', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(400, 700));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    var oynat = 0;
+    var ileri = 0;
+    var geri = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: FragmanKontrol(
+            yukleniyor: false,
+            oynuyor: true,
+            sessiz: false,
+            konum: const Duration(seconds: 10),
+            sure: const Duration(seconds: 60),
+            onOynatDuraklat: () => oynat++,
+            onSessiz: () {},
+            onAltyazi: () {},
+            onHiz: () {},
+            onGeri10: () => geri++,
+            onIleri10: () => ileri++,
+            onBasili2x: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('fragman-buyuk')));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(oynat, 1);
+    await tester.tap(find.byIcon(Icons.forward_10));
+    await tester.tap(find.byIcon(Icons.replay_10));
+    await tester.pump();
+    expect(ileri, 1);
+    expect(geri, 1);
+    // Küme kromla birlikte gizlenir.
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pump(const Duration(milliseconds: 250));
+    final kume = tester.widget<AnimatedOpacity>(
+      find.byKey(const ValueKey('fragman-kume')),
+    );
+    expect(kume.opacity, 0);
+  });
+
+  testWidgets('bitince Tekrar oynat + krom sabit; tam ekran düğmesi', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(400, 700));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    var tamEkran = 0;
+    var oynat = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: FragmanKontrol(
+            yukleniyor: false,
+            oynuyor: false,
+            bitti: true,
+            sessiz: false,
+            konum: const Duration(seconds: 60),
+            sure: const Duration(seconds: 60),
+            onOynatDuraklat: () => oynat++,
+            onSessiz: () {},
+            onAltyazi: () {},
+            onHiz: () {},
+            onGeri10: () {},
+            onIleri10: () {},
+            onBasili2x: (_) {},
+            onTamEkran: () => tamEkran++,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(find.byIcon(Icons.replay), findsNWidgets(2));
+    expect(find.byTooltip('Tekrar oynat'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 4));
+    await tester.pump(const Duration(milliseconds: 250));
+    expect(kromOpaklik(tester), 1);
+
+    await tester.tap(find.byTooltip('Tekrar oynat'));
+    await tester.pump();
+    expect(oynat, 1);
+
+    await tester.tap(find.byKey(const ValueKey('fragman-tam-ekran')));
+    await tester.pump();
+    expect(tamEkran, 1);
+    expect(find.byTooltip('Tam ekran'), findsOneWidget);
+  });
+
+  testWidgets(
+    'tam ekran içinde düğme "Tam ekrandan çık"; onTamEkran yoksa düğme yok',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(400, 700));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: FragmanKontrol(
+              yukleniyor: false,
+              oynuyor: true,
+              tamEkran: true,
+              sessiz: false,
+              konum: const Duration(seconds: 1),
+              sure: const Duration(seconds: 60),
+              onOynatDuraklat: () {},
+              onSessiz: () {},
+              onAltyazi: () {},
+              onHiz: () {},
+              onGeri10: () {},
+              onIleri10: () {},
+              onBasili2x: (_) {},
+              onTamEkran: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(find.byTooltip('Tam ekrandan çık'), findsOneWidget);
+      expect(find.byIcon(Icons.fullscreen_exit), findsOneWidget);
+
+      await tester.pumpWidget(kur());
+      await tester.pump();
+      expect(find.byKey(const ValueKey('fragman-tam-ekran')), findsNothing);
+    },
+  );
+
+  testWidgets('klavye: boşluk oynat/duraklat, → +10, ← −10, M ses', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(400, 700));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    var oynat = 0;
+    var ileri = 0;
+    var geri = 0;
+    var ses = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: FragmanKontrol(
+            yukleniyor: false,
+            oynuyor: true,
+            sessiz: false,
+            konum: const Duration(seconds: 10),
+            sure: const Duration(seconds: 60),
+            onOynatDuraklat: () => oynat++,
+            onSessiz: () => ses++,
+            onAltyazi: () {},
+            onHiz: () {},
+            onGeri10: () => geri++,
+            onIleri10: () => ileri++,
+            onBasili2x: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    // Odak dokunuşla alınır (klavye başka alanı ele geçirmesin).
+    await tester.tapAt(yanNokta(tester, '10 saniye ileri'));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(oynat, 1);
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.space);
+    await tester.pump();
+    expect(oynat, 2);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+    await tester.sendKeyEvent(LogicalKeyboardKey.keyM);
+    await tester.pump();
+    expect(ileri, 1);
+    expect(geri, 1);
+    expect(ses, 1);
+  });
+
+  testWidgets('yüklenirken: kapak + sarı halka, krom ve küme yok', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(400, 700));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: FragmanKontrol(
+            yukleniyor: true,
+            oynuyor: true,
+            sessiz: false,
+            baslik: 'Teaser',
+            konum: Duration.zero,
+            sure: Duration.zero,
+            onOynatDuraklat: () {},
+            onSessiz: () {},
+            onAltyazi: () {},
+            onHiz: () {},
+            onGeri10: () {},
+            onIleri10: () {},
+            onBasili2x: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.text('FRAGMAN'), findsOneWidget);
+    expect(find.text('Teaser'), findsOneWidget);
+    expect(find.byKey(const ValueKey('fragman-krom')), findsNothing);
+    expect(find.byKey(const ValueKey('fragman-kume')), findsNothing);
   });
 }

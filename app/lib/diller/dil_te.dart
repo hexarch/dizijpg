@@ -1543,4 +1543,11 @@ const Map<String, String> cevirilerTe = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'మిమ్మల్ని తిరిగి అనుసరించే వారిని మాత్రమే ఆహ్వానించగలరు.',
   'Oda açılamadı': 'గదిని తెరవలేకపోయాం',
+  'Tam ekrandan çık': 'ఫుల్‌స్క్రీన్ నుండి నిష్క్రమించు',
+  'Sohbeti gizle': 'చాట్‌ను దాచు',
+  'Sohbeti göster': 'చాట్‌ను చూపు',
+  'Fragman': 'ట్రైలర్',
+  'Tekrar oynat': 'మళ్లీ ప్లే చేయండి',
+  '@{} seni izleme odasına davet etti': '@{} మిమ్మల్ని చూసే గదికి ఆహ్వానించారు',
+  '{} · {} davet bekliyor': '{} · {} ఆహ్వానాలు పెండింగ్',
 };

@@ -1561,4 +1561,11 @@ const Map<String, String> cevirilerMy = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'ပြန်ဖော်လိုးလုပ်သူများကိုသာ ဖိတ်နိုင်ပါတယ်။',
   'Oda açılamadı': 'အခန်းကို ဖွင့်၍မရပါ',
+  'Tam ekrandan çık': 'မျက်နှာပြင်အပြည့်မှ ထွက်ရန်',
+  'Sohbeti gizle': 'စကားပြောခန်း ဖျောက်ရန်',
+  'Sohbeti göster': 'စကားပြောခန်း ပြရန်',
+  'Fragman': 'နမူနာဗီဒီယို',
+  'Tekrar oynat': 'ပြန်ဖွင့်ရန်',
+  '@{} seni izleme odasına davet etti': '@{} က ကြည့်ရှုခန်းသို့ ဖိတ်ခေါ်ထားသည်',
+  '{} · {} davet bekliyor': '{} · ဖိတ်ကြားချက် {} ခု စောင့်ဆိုင်းနေသည်',
 };

@@ -1535,4 +1535,11 @@ const Map<String, String> cevirilerAz = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Yalnız səni qarşılıqlı izləyənləri dəvət edə bilərsən.',
   'Oda açılamadı': 'Otaq açıla bilmədi',
+  'Tam ekrandan çık': 'Tam ekrandan çıx',
+  'Sohbeti gizle': 'Söhbəti gizlət',
+  'Sohbeti göster': 'Söhbəti göstər',
+  'Fragman': 'Treyler',
+  'Tekrar oynat': 'Yenidən oynat',
+  '@{} seni izleme odasına davet etti': '@{} səni izləmə otağına dəvət etdi',
+  '{} · {} davet bekliyor': '{} · {} dəvət gözləyir',
 };

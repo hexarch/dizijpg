@@ -159,6 +159,7 @@ class _KahramanKarisikState extends State<KahramanKarisik> {
                 if (oge.videoMi) {
                   return FragmanOynatici(
                     youtubeId: oge.youtubeId!,
+                    baslik: oge.ad,
                     aktif: i == _sayfa,
                     altBosluk: coklu ? 44 : 8,
                   );

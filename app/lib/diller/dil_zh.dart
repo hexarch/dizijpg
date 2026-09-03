@@ -1469,4 +1469,11 @@ const Map<String, String> cevirilerZh = {
   'kullanıcı adı': '用户名',
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.': '只能邀请互相关注的人。',
   'Oda açılamadı': '无法打开房间',
+  'Tam ekrandan çık': '退出全屏',
+  'Sohbeti gizle': '隐藏聊天',
+  'Sohbeti göster': '显示聊天',
+  'Fragman': '预告片',
+  'Tekrar oynat': '重新播放',
+  '@{} seni izleme odasına davet etti': '@{} 邀请你加入观看房间',
+  '{} · {} davet bekliyor': '{} · {} 个邀请待处理',
 };

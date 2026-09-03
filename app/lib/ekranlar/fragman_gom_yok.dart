@@ -6,12 +6,22 @@ class FragmanGomucu extends StatelessWidget {
   final String youtubeId;
   final bool aktif;
   final double altBosluk;
+  final Duration baslangic;
+  final bool tamEkran;
+  final String? baslik;
+  final String? kapakUrl;
+  final String? kapakYedekUrl;
 
   const FragmanGomucu({
     super.key,
     required this.youtubeId,
     this.aktif = true,
     this.altBosluk = 8,
+    this.baslangic = Duration.zero,
+    this.tamEkran = false,
+    this.baslik,
+    this.kapakUrl,
+    this.kapakYedekUrl,
   });
 
   @override

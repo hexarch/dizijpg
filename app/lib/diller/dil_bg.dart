@@ -1552,4 +1552,11 @@ const Map<String, String> cevirilerBg = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Можеш да каниш само хора, които те следват взаимно.',
   'Oda açılamadı': 'Стаята не можа да се отвори',
+  'Tam ekrandan çık': 'Изход от цял екран',
+  'Sohbeti gizle': 'Скрий чата',
+  'Sohbeti göster': 'Покажи чата',
+  'Fragman': 'Трейлър',
+  'Tekrar oynat': 'Пусни отново',
+  '@{} seni izleme odasına davet etti': '@{} те покани в стая за гледане',
+  '{} · {} davet bekliyor': '{} · {} покани чакат',
 };

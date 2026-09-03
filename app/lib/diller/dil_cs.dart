@@ -1540,4 +1540,12 @@ const Map<String, String> cevirilerCs = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Pozvat můžeš jen lidi, kteří tě sledují zpět.',
   'Oda açılamadı': 'Místnost se nepodařilo otevřít',
+  'Tam ekrandan çık': 'Ukončit celou obrazovku',
+  'Sohbeti gizle': 'Skrýt chat',
+  'Sohbeti göster': 'Zobrazit chat',
+  'Fragman': 'Trailer',
+  'Tekrar oynat': 'Přehrát znovu',
+  '@{} seni izleme odasına davet etti':
+      '@{} tě pozval(a) do sledovací místnosti',
+  '{} · {} davet bekliyor': '{} · čeká {} pozvánek',
 };

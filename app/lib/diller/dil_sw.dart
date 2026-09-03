@@ -1551,4 +1551,12 @@ const Map<String, String> cevirilerSw = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Unaweza kualika tu watu wanaokufuata pia.',
   'Oda açılamadı': 'Chumba hakikuweza kufunguliwa',
+  'Tam ekrandan çık': 'Ondoka skrini nzima',
+  'Sohbeti gizle': 'Ficha gumzo',
+  'Sohbeti göster': 'Onyesha gumzo',
+  'Fragman': 'Trela',
+  'Tekrar oynat': 'Cheza tena',
+  '@{} seni izleme odasına davet etti':
+      '@{} amekualika kwenye chumba cha kutazama',
+  '{} · {} davet bekliyor': '{} · mialiko {} inasubiri',
 };

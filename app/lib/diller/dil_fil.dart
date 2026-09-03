@@ -1574,4 +1574,12 @@ const Map<String, String> cevirilerFil = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Ang mga nagfo-follow back lang ang puwede mong i-invite.',
   'Oda açılamadı': 'Hindi mabuksan ang room',
+  'Tam ekrandan çık': 'Lumabas sa fullscreen',
+  'Sohbeti gizle': 'Itago ang chat',
+  'Sohbeti göster': 'Ipakita ang chat',
+  'Fragman': 'Trailer',
+  'Tekrar oynat': 'I-play muli',
+  '@{} seni izleme odasına davet etti':
+      'Ini-invite ka ni @{} sa isang panoorang room',
+  '{} · {} davet bekliyor': '{} · {} imbitasyon ang naghihintay',
 };

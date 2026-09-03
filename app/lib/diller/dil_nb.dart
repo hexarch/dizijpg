@@ -1546,4 +1546,11 @@ const Map<String, String> cevirilerNb = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Du kan bare invitere folk som følger deg tilbake.',
   'Oda açılamadı': 'Rommet kunne ikke åpnes',
+  'Tam ekrandan çık': 'Avslutt fullskjerm',
+  'Sohbeti gizle': 'Skjul chat',
+  'Sohbeti göster': 'Vis chat',
+  'Fragman': 'Trailer',
+  'Tekrar oynat': 'Spill av på nytt',
+  '@{} seni izleme odasına davet etti': '@{} har invitert deg til et se-rom',
+  '{} · {} davet bekliyor': '{} · {} invitasjoner venter',
 };

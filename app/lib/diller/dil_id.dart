@@ -1545,4 +1545,11 @@ const Map<String, String> cevirilerId = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Kamu hanya bisa mengundang orang yang mengikutimu balik.',
   'Oda açılamadı': 'Ruang tidak dapat dibuka',
+  'Tam ekrandan çık': 'Keluar dari layar penuh',
+  'Sohbeti gizle': 'Sembunyikan obrolan',
+  'Sohbeti göster': 'Tampilkan obrolan',
+  'Fragman': 'Trailer',
+  'Tekrar oynat': 'Putar ulang',
+  '@{} seni izleme odasına davet etti': '@{} mengundangmu ke ruang nonton',
+  '{} · {} davet bekliyor': '{} · {} undangan menunggu',
 };

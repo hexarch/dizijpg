@@ -1574,4 +1574,12 @@ const Map<String, String> cevirilerEl = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Μπορείς να προσκαλέσεις μόνο όσους σε ακολουθούν κι εκείνοι.',
   'Oda açılamadı': 'Δεν ήταν δυνατό το άνοιγμα του δωματίου',
+  'Tam ekrandan çık': 'Έξοδος από πλήρη οθόνη',
+  'Sohbeti gizle': 'Απόκρυψη συνομιλίας',
+  'Sohbeti göster': 'Εμφάνιση συνομιλίας',
+  'Fragman': 'Τρέιλερ',
+  'Tekrar oynat': 'Αναπαραγωγή ξανά',
+  '@{} seni izleme odasına davet etti':
+      'Ο/Η @{} σε προσκάλεσε σε δωμάτιο προβολής',
+  '{} · {} davet bekliyor': '{} · {} προσκλήσεις σε αναμονή',
 };

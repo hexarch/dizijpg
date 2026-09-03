@@ -33,6 +33,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // fragman_kontrol.dart — oynatıcı kromu (4 Eyl 2026): üst şerit rozeti,
+  // tam ekrandan çıkış düğmesi, bitince tekrar oynat.
+  'Fragman',
+  'Tam ekrandan çık',
+  'Tekrar oynat',
   // gif_sec.dart — KENDİ GIF ARŞİVİMİZİN ortak seçicisi (29 Ağu 2026).
   // Dış GIF servisi kurulmadı (Tenor kapandı, Giphy saatlik sınırlı+ücretli,
   // Klipy proxy/önbelleği yasaklıyor); arşiv kullanıcı yüklemesiyle büyüyor.

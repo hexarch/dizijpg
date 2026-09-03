@@ -1548,4 +1548,11 @@ const Map<String, String> cevirilerSr = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Možeš pozvati samo one koji te prate nazad.',
   'Oda açılamadı': 'Soba nije mogla da se otvori',
+  'Tam ekrandan çık': 'Izađi iz punog ekrana',
+  'Sohbeti gizle': 'Sakrij ćaskanje',
+  'Sohbeti göster': 'Prikaži ćaskanje',
+  'Fragman': 'Trejler',
+  'Tekrar oynat': 'Pusti ponovo',
+  '@{} seni izleme odasına davet etti': '@{} te je pozvao u sobu za gledanje',
+  '{} · {} davet bekliyor': '{} · {} pozivnica čeka',
 };

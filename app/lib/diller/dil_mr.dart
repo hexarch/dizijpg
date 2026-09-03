@@ -1537,4 +1537,12 @@ const Map<String, String> cevirilerMr = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'तुम्हाला परत फॉलो करणाऱ्यांनाच आमंत्रण देता येते.',
   'Oda açılamadı': 'रूम उघडता आले नाही',
+  'Tam ekrandan çık': 'पूर्ण स्क्रीनमधून बाहेर',
+  'Sohbeti gizle': 'चॅट लपवा',
+  'Sohbeti göster': 'चॅट दाखवा',
+  'Fragman': 'ट्रेलर',
+  'Tekrar oynat': 'पुन्हा प्ले करा',
+  '@{} seni izleme odasına davet etti':
+      '@{} यांनी तुम्हाला बघण्याच्या रूममध्ये बोलावले',
+  '{} · {} davet bekliyor': '{} · {} आमंत्रणे प्रलंबित',
 };

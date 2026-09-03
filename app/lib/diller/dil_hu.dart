@@ -1555,4 +1555,11 @@ const Map<String, String> cevirilerHu = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Csak azokat hívhatod meg, akik vissza is követnek.',
   'Oda açılamadı': 'A szobát nem sikerült megnyitni',
+  'Tam ekrandan çık': 'Teljes képernyő bezárása',
+  'Sohbeti gizle': 'Csevegés elrejtése',
+  'Sohbeti göster': 'Csevegés megjelenítése',
+  'Fragman': 'Előzetes',
+  'Tekrar oynat': 'Újralejátszás',
+  '@{} seni izleme odasına davet etti': '@{} meghívott egy nézőszobába',
+  '{} · {} davet bekliyor': '{} · {} meghívó vár',
 };

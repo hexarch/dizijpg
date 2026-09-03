@@ -1,5 +1,62 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-04 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-04 (1. tur) — 🎬 Fragman oynatıcısı profesyonel krom: YouTube sızıntısı bitti, tam ekran, bitiş durumu (1.121.0+188)
+
+Kullanıcı isteği: "video playeri çooook kötü, YouTube fragmanını bizim tasarıma
+uygun profesyonel bir oynatıcıya çevir." Canlıda görülen (tarayıcı, Silo):
+bizim çubuğun üstünden YouTube'un kendi başlığı + kanal adı (üst), "Diğer
+videolar" duraklama kutusu, logo ve beyaz spinner sızıyordu; kapak hqdefault
+(480×360) bulanıktı; tam ekran yoktu; bitince hiçbir şey olmuyordu.
+
+Yapılan (web CANLI `main.12367e967095.dart.js`, commit bu tur):
+- **YouTube kromu KIRPILARAK gizlendi (`fragman_gom_web.dart`):** çapraz
+  kökenli iframe'e CSS işlemez; iframe kabından 140 px üstten/alttan taşırılıp
+  kap `overflow:hidden` ile kesiliyor. Video genişliğe göre 16:9 çizilip
+  dikeyde ortalandığı için TAM görünür; YouTube'un üst/alt şeritleri siyah
+  bantlara düşüp kesiliyor. Duraklayınca bile "Diğer videolar" yok.
+- **Krom yeniden (`fragman_kontrol.dart`):** üst şerit sarı "FRAGMAN" rozeti +
+  fragman adı (TMDB `name`, `KahramanOge.video(ad:)` ile taşınır; kapakta da
+  aynı `FragmanBaslikSeridi`); orta küme −10 · büyük oynat/duraklat · +10
+  (duraklatınca/bitince sarı, oynarken yarı saydam siyah); alt: tam genişlik
+  ilerleme çubuğu (hover/sürüklemede kalınlaşır, sarı zaman balonu) + oynat,
+  süre, CC, 1×/2×, ses, tam ekran. Klavye (odaklıyken): boşluk/K, ←→/J L,
+  M, C, F. Bitiş durumu: `bitti` → "Tekrar oynat" (replay ikonu), krom kilitli.
+  Ara tamponlama: `tamponluyor` → küçük sarı halka.
+- **Yükleme:** kapak (1280×720 `maxresdefault`, 404 → `hqdefault`) opak kalır +
+  sarı halka; YouTube'un siyah karesi/spinner'ı hiç görünmez. Webde kapak ilk
+  `playing` haberiyle kalkar; 12 sn'de haber yoksa kalkar, 20 sn'de HİÇ mesaj
+  yoksa `FragmanHata`. Autoplay engellenirse (onReady sonrası 2 sn oynama yok)
+  sarı oynat gösterilir, dokunuş jestiyle çalar.
+- **Tam ekran (`fragman_tam_ekran.dart`):** `rootNavigator` üstüne siyah rota,
+  16:9 gömücü `tamEkran:true` + `baslangic:` (URL `start=`); kahraman altta
+  duraklar, dönüşte tam ekranın bıraktığı saniyeye sarıp sürer (pop değeri;
+  geri tuşu `PopScope` ile konumu döndürür). Webde `requestFullscreen` (Safari
+  iOS'ta yok, sessiz geçilir); mobilde yatay kilit + immersiveSticky, dispose'da
+  geri alınır. Canlıda denendi: tam ekrana geçti, 0:03→0:26 oynadı, çıkınca
+  kahraman 0:26'dan sürdü.
+- **Mobil (`fragman_gom_io.dart`):** aynı krom; nabız `e` (ended) ve `w`
+  (readyState<3 bekliyor) alanları; kapak `<video>` gerçekten akınca kalkar,
+  12 sn yedek. CİHAZDA DENENMEDİ (APK'yı projeler-f1 oturumu derliyor).
+- 3 yeni anahtar 45 dile: 'Fragman', 'Tekrar oynat' (+ 'Tam ekrandan çık'
+  zaten vardı). Sürüm 1.121.0+188 (pubspec + `Api.surum`).
+- Kanıt: `test/fragman_krom_test.dart` 13 test (6 yeni: üst şerit, orta küme,
+  bitiş+tam ekran düğmesi, tam ekran içi düğme, klavye, yükleme ekranı) +
+  `fragman_oynatici_test` 5 + kahraman/detay/bölüm/webp/çeviri testleri yeşil;
+  tam takım 2556 yeşil (kırmızılar yalnız projeler-f1'in oda WIP'i).
+
+**TUZAK (dart2js, 4 Eyl):** `event.source == iframe.contentWindow` karşılaştırması
+dart2js'te SecurityError fırlatır (eşitlik için interceptor nesnenin
+özelliklerine dokunur; çapraz kökenli WindowProxy izin vermez) → mesaj işleyici
+sessizce ölür, oynatıcı 20 sn sonra "Bir şeyler ters gitti" der. Çözüm:
+`listening` el sıkışmasına oynatıcıya özel `id` ver, YouTube her mesajda
+yankılar, JSON'daki `id` ile süz. Pencereye hiç dokunma.
+
+**TUZAK (dağıtım):** iki kez dağıtırken `index.html.br` / `flutter_bootstrap.js.br`
+eski hash'i servis etti (brotli_static) — `web_brotli.sh` koşmadan önce
+şüphede kalırsan o ikisini sil. Ayrıca ilk derleme çalışma ağacındaki
+BAŞKA oturumun commit'lenmemiş oda kodunu taşıdı; temiz dağıtım için HEAD +
+yalnız kendi dosyalarımla scratchpad'de `git worktree` kurup oradan derledim.
 
 ## 2026-09-03 (8. tur) — 🔎 Aramada GEÇMİŞ geri geldi (1.119.0+186)
 

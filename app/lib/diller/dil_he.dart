@@ -1509,4 +1509,11 @@ const Map<String, String> cevirilerHe = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'אפשר להזמין רק אנשים שעוקבים אחריך בחזרה.',
   'Oda açılamadı': 'לא ניתן היה לפתוח את החדר',
+  'Tam ekrandan çık': 'יציאה ממסך מלא',
+  'Sohbeti gizle': "הסתר צ'אט",
+  'Sohbeti göster': "הצג צ'אט",
+  'Fragman': 'טריילר',
+  'Tekrar oynat': 'הפעלה מחדש',
+  '@{} seni izleme odasına davet etti': '@{} הזמין אותך לחדר צפייה',
+  '{} · {} davet bekliyor': '{} · {} הזמנות ממתינות',
 };

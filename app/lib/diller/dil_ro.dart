@@ -1588,4 +1588,12 @@ const Map<String, String> cevirilerRo = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Poți invita doar persoanele care te urmăresc înapoi.',
   'Oda açılamadı': 'Camera nu a putut fi deschisă',
+  'Tam ekrandan çık': 'Ieși din ecran complet',
+  'Sohbeti gizle': 'Ascunde chatul',
+  'Sohbeti göster': 'Arată chatul',
+  'Fragman': 'Trailer',
+  'Tekrar oynat': 'Redă din nou',
+  '@{} seni izleme odasına davet etti':
+      '@{} te-a invitat într-o cameră de vizionare',
+  '{} · {} davet bekliyor': '{} · {} invitații în așteptare',
 };

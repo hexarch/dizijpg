@@ -1551,4 +1551,11 @@ const Map<String, String> cevirilerMs = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Anda hanya boleh menjemput orang yang mengikut anda semula.',
   'Oda açılamadı': 'Bilik tidak dapat dibuka',
+  'Tam ekrandan çık': 'Keluar skrin penuh',
+  'Sohbeti gizle': 'Sembunyikan sembang',
+  'Sohbeti göster': 'Tunjukkan sembang',
+  'Fragman': 'Treler',
+  'Tekrar oynat': 'Main semula',
+  '@{} seni izleme odasına davet etti': '@{} menjemput anda ke bilik tontonan',
+  '{} · {} davet bekliyor': '{} · {} jemputan menunggu',
 };

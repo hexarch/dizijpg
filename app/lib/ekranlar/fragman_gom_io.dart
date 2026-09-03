@@ -10,6 +10,7 @@ import '../ceviri.dart';
 import '../tema.dart';
 import '../tmdb_fragman.dart';
 import 'fragman_kontrol.dart';
+import 'fragman_tam_ekran.dart';
 
 /// Android/iOS: YouTube gömme yüzeyi + bizim kontrol çubuğu.
 ///
@@ -22,11 +23,26 @@ class FragmanGomucu extends StatefulWidget {
   final bool aktif;
   final double altBosluk;
 
+  /// Tam ekrandan dönüşte/geçişte kaldığı yerden sürmek için.
+  final Duration baslangic;
+
+  /// Tam ekran rotasının içindeyiz (düğme "çık" olur, geri tuşu konumu
+  /// döndürür).
+  final bool tamEkran;
+  final String? baslik;
+  final String? kapakUrl;
+  final String? kapakYedekUrl;
+
   const FragmanGomucu({
     super.key,
     required this.youtubeId,
     this.aktif = true,
     this.altBosluk = 8,
+    this.baslangic = Duration.zero,
+    this.tamEkran = false,
+    this.baslik,
+    this.kapakUrl,
+    this.kapakYedekUrl,
   });
 
   @override
@@ -38,10 +54,13 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
   bool _yukleniyor = true;
   bool _hata = false;
   bool _oynuyor = true;
+  bool _tamponluyor = false;
+  bool _bitti = false;
   bool _sessiz = false;
   bool _oynatmakIstiyor = true;
   bool _altyazi = false;
   bool _basili2x = false;
+  bool _tamEkranda = false;
   double _kaliciHiz = 1;
   Duration _konum = Duration.zero;
   Duration _sure = Duration.zero;
@@ -59,6 +78,7 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
   @override
   void initState() {
     super.initState();
+    _konum = widget.baslangic;
     if (_otomatikTest) return;
     _denetciKur();
   }
@@ -78,7 +98,7 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
       _yukle();
       return;
     }
-    if (eski.aktif != widget.aktif) _oynatmayiUygula();
+    if (eski.aktif != widget.aktif && !_tamEkranda) _oynatmayiUygula();
   }
 
   /// Aktif karede ve kullanıcı duraklatmadıysa oynat; değilse duraklat.
@@ -126,8 +146,16 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
           });
           _js(_gizleJs);
           if (!mounted) return;
-          setState(() => _yukleniyor = false);
           _oynatmayiUygula();
+          // `<video>` 12 sn'de akmadıysa (autoplay engeli, gömme kapalı)
+          // kapak kalkar, sarı oynat görünür; dokunuş jestiyle çalar.
+          Future<void>.delayed(const Duration(seconds: 12), () {
+            if (!mounted || !_yukleniyor) return;
+            setState(() {
+              _yukleniyor = false;
+              _oynuyor = false;
+            });
+          });
         },
         onWebResourceError: (hata) {
           if (hata.isForMainFrame != true || !mounted) return;
@@ -161,10 +189,12 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
     setState(() {
       _yukleniyor = true;
       _hata = false;
-      _konum = Duration.zero;
+      _konum = widget.baslangic;
       _sure = Duration.zero;
       _tampon = Duration.zero;
       _oynuyor = true;
+      _tamponluyor = false;
+      _bitti = false;
       _altyazi = false;
       _basili2x = false;
       _kaliciHiz = 1;
@@ -176,6 +206,7 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
           otomatik: true,
           gizlilikDostu: false,
           dil: Ceviri.dil.value,
+          baslangicSn: widget.baslangic.inSeconds,
         ),
       ),
       headers: const {'Referer': 'https://dizijpg.com/'},
@@ -187,7 +218,8 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
     _yukle();
   }
 
-  /// `<video>` zaman damgası (JS kanalı).
+  /// `<video>` zaman damgası (JS kanalı). Kapak, ilk kare gerçekten
+  /// akmaya başlayınca (p=true) kalkar — YouTube'un siyah karesi görünmez.
   void _kanal(JavaScriptMessage msg) {
     Map<String, dynamic>? m;
     try {
@@ -202,14 +234,20 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
     final b = ((m['b'] as num?)?.toDouble() ?? 0) * 1000;
     final p = m['p'] == true;
     final sessiz = m['m'] == true;
+    final bitti = m['e'] == true;
+    final tamponluyor = m['w'] == true && !bitti;
     final konum = Duration(milliseconds: t.round());
     final sure = Duration(milliseconds: d.round());
     final tampon = Duration(milliseconds: b.round());
+    final yukleniyor = _yukleniyor && !p;
     if (konum == _konum &&
         sure == _sure &&
         tampon == _tampon &&
         p == _oynuyor &&
-        sessiz == _sessiz) {
+        sessiz == _sessiz &&
+        bitti == _bitti &&
+        tamponluyor == _tamponluyor &&
+        yukleniyor == _yukleniyor) {
       return;
     }
     setState(() {
@@ -218,6 +256,9 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
       _tampon = tampon;
       _oynuyor = p;
       _sessiz = sessiz;
+      _bitti = bitti;
+      _tamponluyor = tamponluyor;
+      _yukleniyor = yukleniyor;
     });
   }
 
@@ -243,6 +284,17 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
   }
 
   void _oynatDuraklat() {
+    if (_bitti) {
+      _oynatmakIstiyor = true;
+      _js('fragmanSar(0)');
+      _js('fragmanOynat()');
+      setState(() {
+        _bitti = false;
+        _oynuyor = true;
+        _konum = Duration.zero;
+      });
+      return;
+    }
     _oynatmakIstiyor = !_oynuyor;
     if (_oynatmakIstiyor) {
       _js('fragmanOynat()');
@@ -262,7 +314,10 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
     if (hedef < Duration.zero) hedef = Duration.zero;
     if (_sure > Duration.zero && hedef > _sure) hedef = _sure;
     _js('fragmanSar(${hedef.inMilliseconds / 1000})');
-    setState(() => _konum = hedef);
+    setState(() {
+      _konum = hedef;
+      if (_bitti && hedef < _sure) _bitti = false;
+    });
   }
 
   void _ileri10() => _sar(_konum + const Duration(seconds: 10));
@@ -286,48 +341,93 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
     setState(() => _altyazi = hedef);
   }
 
+  /// Tam ekrana geç / tam ekrandan çık. Kahraman altta duraklar, dönüşte
+  /// tam ekranın bıraktığı saniyeye sarıp sürer.
+  Future<void> _tamEkran() async {
+    if (widget.tamEkran) {
+      Navigator.of(context).pop(_konum);
+      return;
+    }
+    _oynatmakIstiyor = false;
+    _js('fragmanDuraklat()');
+    setState(() {
+      _oynuyor = false;
+      _tamEkranda = true;
+    });
+    final k = await fragmanTamEkranAc(
+      context,
+      youtubeId: widget.youtubeId,
+      baslangic: _konum,
+      baslik: widget.baslik,
+      kapakUrl: widget.kapakUrl,
+      kapakYedekUrl: widget.kapakYedekUrl,
+    );
+    if (!mounted) return;
+    _tamEkranda = false;
+    if (k != null) _sar(k);
+    _oynatmakIstiyor = true;
+    _oynatmayiUygula();
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_otomatikTest) {
       return const ColoredBox(color: Colors.black);
     }
     final denetci = _denetci;
+    final Widget govde;
     if (denetci == null) {
-      return const ColoredBox(
+      govde = const ColoredBox(
         color: Colors.black,
         child: Center(
           child: CircularProgressIndicator(color: DiziRenkler.sari),
         ),
       );
+    } else {
+      govde = Stack(
+        fit: StackFit.expand,
+        children: [
+          // Dokunuş Flutter'da kalsın: kaydırıcı WebView pan'ini yutmasın.
+          IgnorePointer(child: _webGorunum(denetci)),
+          if (_hata)
+            FragmanHata(onTekrar: _tekrar)
+          else
+            FragmanKontrol(
+              yukleniyor: _yukleniyor,
+              oynuyor: _oynuyor,
+              tamponluyor: _tamponluyor,
+              bitti: _bitti,
+              sessiz: _sessiz,
+              altyazi: _altyazi,
+              hiz: _hiz,
+              konum: _konum,
+              sure: _sure,
+              tampon: _tampon,
+              altBosluk: widget.altBosluk,
+              tamEkran: widget.tamEkran,
+              baslik: widget.baslik,
+              kapakUrl: widget.kapakUrl,
+              kapakYedekUrl: widget.kapakYedekUrl,
+              onOynatDuraklat: _oynatDuraklat,
+              onSessiz: _sessizDegistir,
+              onAltyazi: _altyaziDegistir,
+              onHiz: _hizDegistir,
+              onGeri10: _geri10,
+              onIleri10: _ileri10,
+              onBasili2x: _basiliTut,
+              onSarma: _sar,
+              onTamEkran: _tamEkran,
+            ),
+        ],
+      );
     }
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        // Dokunuş Flutter'da kalsın: kaydırıcı WebView pan'ini yutmasın.
-        IgnorePointer(child: _webGorunum(denetci)),
-        if (_hata)
-          FragmanHata(onTekrar: _tekrar)
-        else
-          FragmanKontrol(
-            yukleniyor: _yukleniyor,
-            oynuyor: _oynuyor,
-            sessiz: _sessiz,
-            altyazi: _altyazi,
-            hiz: _hiz,
-            konum: _konum,
-            sure: _sure,
-            tampon: _tampon,
-            altBosluk: widget.altBosluk,
-            onOynatDuraklat: _oynatDuraklat,
-            onSessiz: _sessizDegistir,
-            onAltyazi: _altyaziDegistir,
-            onHiz: _hizDegistir,
-            onGeri10: _geri10,
-            onIleri10: _ileri10,
-            onBasili2x: _basiliTut,
-            onSarma: _sar,
-          ),
-      ],
+    if (!widget.tamEkran) return govde;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) Navigator.of(context).pop(_konum);
+      },
+      child: govde,
     );
   }
 }
@@ -349,7 +449,8 @@ const _gizleJs = r'''
       '.ytp-youtube-button,.ytp-share-button,.ytp-watch-later-button,',
       '.ytp-chrome-bottom,.ytp-gradient-bottom,.ytp-show-tiles,',
       '.ytp-large-play-button,.ytp-cued-thumbnail-overlay,',
-      '.ytp-overflow-panel,.ytp-menuitem,.annotation',
+      '.ytp-overflow-panel,.ytp-menuitem,.annotation,.ytp-spinner,',
+      '.ytp-pause-overlay-container,.ytp-suggestion-set',
       '{display:none!important;visibility:hidden!important;}',
       'html,body,#player,#player-api,.html5-video-player,.html5-video-container',
       '{width:100%!important;height:100%!important;margin:0!important;',
@@ -417,7 +518,9 @@ const _gizleJs = r'''
         d: isFinite(v.duration) ? v.duration : 0,
         b: b,
         p: !v.paused && !v.ended,
-        m: !!v.muted
+        m: !!v.muted,
+        e: !!v.ended,
+        w: !v.paused && !v.ended && v.readyState < 3
       }));
     }
   }

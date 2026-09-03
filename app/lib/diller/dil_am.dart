@@ -1489,4 +1489,11 @@ const Map<String, String> cevirilerAm = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'መልሰው የሚከተሉህን ብቻ መጋበዝ ትችላለህ።',
   'Oda açılamadı': 'ክፍሉ ሊከፈት አልቻለም',
+  'Tam ekrandan çık': 'ከሙሉ ማያ ውጣ',
+  'Sohbeti gizle': 'ውይይቱን ደብቅ',
+  'Sohbeti göster': 'ውይይቱን አሳይ',
+  'Fragman': 'ትሬለር',
+  'Tekrar oynat': 'እንደገና አጫውት',
+  '@{} seni izleme odasına davet etti': '@{} ወደ መመልከቻ ክፍል ጋብዞሃል',
+  '{} · {} davet bekliyor': '{} · {} ግብዣ በመጠባበቅ ላይ',
 };

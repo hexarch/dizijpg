@@ -130,25 +130,32 @@ void main() {
     );
     await tester.pump();
 
-    final sag = find.bySemanticsLabel('10 saniye ileri');
-    await tester.tap(sag);
+    // Yarımın tam ortası artık −10/+10 kümesi; yarımın kendisine
+    // (kümenin üstüne) dokunulur.
+    Offset nokta(String etiket) {
+      final kutu = tester.getRect(find.bySemanticsLabel(etiket));
+      return Offset(kutu.center.dx, kutu.top + 120);
+    }
+
+    final sag = nokta('10 saniye ileri');
+    await tester.tapAt(sag);
     await tester.pump(const Duration(milliseconds: 50));
-    await tester.tap(sag);
+    await tester.tapAt(sag);
     await tester.pump();
     expect(ileri, 1);
     expect(find.text('+10'), findsOneWidget);
     await tester.pump(const Duration(milliseconds: 250));
     expect(oynat, 0);
 
-    final sol = find.bySemanticsLabel('10 saniye geri');
-    await tester.tap(sol);
+    final sol = nokta('10 saniye geri');
+    await tester.tapAt(sol);
     await tester.pump(const Duration(milliseconds: 50));
-    await tester.tap(sol);
+    await tester.tapAt(sol);
     await tester.pump();
     expect(geri, 1);
     expect(find.text('−10'), findsOneWidget);
 
-    await tester.tap(sag);
+    await tester.tapAt(sag);
     await tester.pump(const Duration(milliseconds: 250));
     expect(oynat, 1);
   });
@@ -217,7 +224,8 @@ void main() {
     );
     await tester.pump();
 
-    await tester.longPress(find.bySemanticsLabel('10 saniye ileri'));
+    final kutu = tester.getRect(find.bySemanticsLabel('10 saniye ileri'));
+    await tester.longPressAt(Offset(kutu.center.dx, kutu.top + 120));
     await tester.pump();
     expect(hizlar, [true, false]);
   });

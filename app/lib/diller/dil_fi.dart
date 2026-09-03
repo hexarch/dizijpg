@@ -1551,4 +1551,11 @@ const Map<String, String> cevirilerFi = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Voit kutsua vain heitä, jotka seuraavat sinua takaisin.',
   'Oda açılamadı': 'Huonetta ei voitu avata',
+  'Tam ekrandan çık': 'Poistu koko näytöstä',
+  'Sohbeti gizle': 'Piilota keskustelu',
+  'Sohbeti göster': 'Näytä keskustelu',
+  'Fragman': 'Traileri',
+  'Tekrar oynat': 'Toista uudelleen',
+  '@{} seni izleme odasına davet etti': '@{} kutsui sinut katseluhuoneeseen',
+  '{} · {} davet bekliyor': '{} · {} kutsua odottaa',
 };

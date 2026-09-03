@@ -14,11 +14,14 @@ class TmdbFragman {
 
 /// Kahraman kaydırıcısındaki bir kare: YouTube fragmanı veya kapak fotoğrafı.
 class KahramanOge {
-  const KahramanOge.foto(this.url) : youtubeId = null;
-  const KahramanOge.video(this.youtubeId) : url = null;
+  const KahramanOge.foto(this.url) : youtubeId = null, ad = null;
+  const KahramanOge.video(this.youtubeId, {this.ad}) : url = null;
 
   final String? url;
   final String? youtubeId;
+
+  /// Fragman adı (TMDB `name`); oynatıcının üst şeridinde görünür.
+  final String? ad;
 
   bool get videoMi => youtubeId != null;
 }
@@ -39,9 +42,11 @@ bool youtubeIdGecerli(String? id) =>
 String tmdbVideoDilParametre([String? dil]) =>
     'include_video_language=${dil ?? Ceviri.dil.value},en,null';
 
-/// YouTube kapak karesi (hqdefault her id'de vardır; maxres bazı id'lerde 404).
-String youtubeKapakUrl(String youtubeId) =>
-    'https://i.ytimg.com/vi/$youtubeId/hqdefault.jpg';
+/// YouTube kapak karesi. [yuksek] 1280×720 `maxresdefault` ister (çoğu
+/// resmi fragmanda var, bazı id'lerde 404 — çağıran hqdefault'a düşer);
+/// varsayılan `hqdefault` her id'de vardır (480×360, 4:3; cover kırpar).
+String youtubeKapakUrl(String youtubeId, {bool yuksek = false}) =>
+    'https://i.ytimg.com/vi/$youtubeId/${yuksek ? 'maxresdefault' : 'hqdefault'}.jpg';
 
 /// YouTube izleme adresi (yedek; gömme başarısız olursa dışarı açılmaz —
 /// kullanıcı Android'de uygulamada kalsın diye).
@@ -105,12 +110,14 @@ bool fragmanGommeIstek(String url) {
 /// Error 153 verdiği için orada `youtube.com/embed` kullanılır.
 /// [otomatik] yalnız kullanıcı dokunduktan sonra — sessiz autoplay yok.
 /// `controls=0` + `enablejsapi=1`: YouTube kromu gizlenir, bizim çubuk
-/// duraklatır/sarar; kaydırınca sökülmeden duraklar.
+/// duraklatır/sarar; kaydırınca sökülmeden duraklar. [baslangicSn] tam
+/// ekrana geçişte kaldığı saniyeden sürdürmek için (`start=`).
 String youtubeGommeUrl(
   String youtubeId, {
   bool otomatik = false,
   bool gizlilikDostu = true,
   String? dil,
+  int baslangicSn = 0,
 }) {
   final host = gizlilikDostu ? 'www.youtube-nocookie.com' : 'www.youtube.com';
   final q = StringBuffer(
@@ -122,6 +129,7 @@ String youtubeGommeUrl(
     '&widget_referrer=https://dizijpg.com',
   );
   if (otomatik) q.write('&autoplay=1');
+  if (baslangicSn > 0) q.write('&start=$baslangicSn');
   final hl = dil?.trim().toLowerCase() ?? '';
   if (RegExp(r'^[a-z]{2,3}$').hasMatch(hl)) {
     q.write('&hl=$hl&cc_lang_pref=$hl');
@@ -185,7 +193,7 @@ List<KahramanOge> karisikKahramanDiz(
     return [for (final u in fotoUrlleri) KahramanOge.foto(u)];
   }
   if (fotoUrlleri.isEmpty) {
-    return [for (final v in videolar) KahramanOge.video(v.youtubeId)];
+    return [for (final v in videolar) KahramanOge.video(v.youtubeId, ad: v.ad)];
   }
   final n = videolar.length > fotoUrlleri.length
       ? videolar.length
@@ -193,7 +201,7 @@ List<KahramanOge> karisikKahramanDiz(
   final sonuc = <KahramanOge>[];
   for (var i = 0; i < n; i++) {
     if (i < videolar.length) {
-      sonuc.add(KahramanOge.video(videolar[i].youtubeId));
+      sonuc.add(KahramanOge.video(videolar[i].youtubeId, ad: videolar[i].ad));
     }
     if (i < fotoUrlleri.length) {
       sonuc.add(KahramanOge.foto(fotoUrlleri[i]));

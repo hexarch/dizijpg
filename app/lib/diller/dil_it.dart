@@ -1558,4 +1558,12 @@ const Map<String, String> cevirilerIt = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Puoi invitare solo chi ti segue a sua volta.',
   'Oda açılamadı': 'Impossibile aprire la stanza',
+  'Tam ekrandan çık': 'Esci da schermo intero',
+  'Sohbeti gizle': 'Nascondi chat',
+  'Sohbeti göster': 'Mostra chat',
+  'Fragman': 'Trailer',
+  'Tekrar oynat': 'Riproduci di nuovo',
+  '@{} seni izleme odasına davet etti':
+      '@{} ti ha invitato in una stanza di visione',
+  '{} · {} davet bekliyor': '{} · {} inviti in attesa',
 };

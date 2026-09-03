@@ -1561,4 +1561,12 @@ const Map<String, String> cevirilerPl = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Możesz zapraszać tylko osoby, które też Cię obserwują.',
   'Oda açılamadı': 'Nie udało się otworzyć pokoju',
+  'Tam ekrandan çık': 'Zamknij pełny ekran',
+  'Sohbeti gizle': 'Ukryj czat',
+  'Sohbeti göster': 'Pokaż czat',
+  'Fragman': 'Zwiastun',
+  'Tekrar oynat': 'Odtwórz ponownie',
+  '@{} seni izleme odasına davet etti':
+      '@{} zaprosił(a) Cię do pokoju wspólnego oglądania',
+  '{} · {} davet bekliyor': '{} · oczekujące zaproszenia: {}',
 };

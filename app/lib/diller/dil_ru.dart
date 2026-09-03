@@ -1571,4 +1571,11 @@ const Map<String, String> cevirilerRu = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Приглашать можно только тех, кто подписан на вас в ответ.',
   'Oda açılamadı': 'Не удалось открыть комнату',
+  'Tam ekrandan çık': 'Выйти из полноэкранного режима',
+  'Sohbeti gizle': 'Скрыть чат',
+  'Sohbeti göster': 'Показать чат',
+  'Fragman': 'Трейлер',
+  'Tekrar oynat': 'Воспроизвести снова',
+  '@{} seni izleme odasına davet etti': '@{} пригласил вас в комнату просмотра',
+  '{} · {} davet bekliyor': '{} · ожидают приглашений: {}',
 };

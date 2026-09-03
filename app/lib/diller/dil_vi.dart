@@ -1543,4 +1543,11 @@ const Map<String, String> cevirilerVi = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'Bạn chỉ mời được những người theo dõi lại bạn.',
   'Oda açılamadı': 'Không mở được phòng',
+  'Tam ekrandan çık': 'Thoát toàn màn hình',
+  'Sohbeti gizle': 'Ẩn trò chuyện',
+  'Sohbeti göster': 'Hiện trò chuyện',
+  'Fragman': 'Trailer',
+  'Tekrar oynat': 'Phát lại',
+  '@{} seni izleme odasına davet etti': '@{} đã mời bạn vào phòng xem chung',
+  '{} · {} davet bekliyor': '{} · {} lời mời đang chờ',
 };

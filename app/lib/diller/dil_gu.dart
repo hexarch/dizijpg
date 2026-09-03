@@ -1531,4 +1531,12 @@ const Map<String, String> cevirilerGu = {
   'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
       'તમને પાછા ફોલો કરનારાઓને જ આમંત્રણ આપી શકાય.',
   'Oda açılamadı': 'રૂમ ખૂલી શક્યો નહીં',
+  'Tam ekrandan çık': 'પૂર્ણ સ્ક્રીનમાંથી બહાર',
+  'Sohbeti gizle': 'ચેટ છુપાવો',
+  'Sohbeti göster': 'ચેટ બતાવો',
+  'Fragman': 'ટ્રેલર',
+  'Tekrar oynat': 'ફરી ચલાવો',
+  '@{} seni izleme odasına davet etti':
+      '@{} એ તમને જોવાના રૂમમાં આમંત્રણ આપ્યું',
+  '{} · {} davet bekliyor': '{} · {} આમંત્રણ બાકી',
 };
