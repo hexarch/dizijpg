@@ -39,6 +39,7 @@ import { ARSIV_YAS_SAAT } from '../siralama.js';
 // e-posta biçimini bunlarla eliyor (bkz. eposta_bicimi.test.js). Taklit
 // koysaydık test, uçların artık geçerli e-posta istediğini göremezdi.
 import { epostaGecerli, epostaNormalle } from '../iki_adim.js';
+import { dilTespit } from '../dil_tespit.js';
 
 const KOK = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const oku = (a) => fs.readFileSync(path.join(KOK, a), 'utf8');
@@ -451,7 +452,11 @@ test('server.js\'te `dizi.jpg.ai` KİMLİK OLARAK karşılaştırılmıyor', () 
 
 const akisSatiri = kur(
   ['ceviriUygula', 'akisSatiri'],
-  { istekBaglam: { getStore: () => ({ dil: 'tr' }) } },
+  // `dilTespit` enjekte ediliyor: `ceviriUygula` sütun boşsa metinden dil
+  // kestiriyor (3 Eyl 2026) ve kestirim ayrı modülde — sanal alanda import
+  // yok, bağımlılık parametre olarak verilir. Gerçek işlev veriliyor ki
+  // testler kestirimin yan etkisiyle birlikte çalışsın.
+  { istekBaglam: { getStore: () => ({ dil: 'tr' }) }, dilTespit },
   'akisSatiri');
 
 test('AKIŞ: AI hesabının ADI DEĞİŞSE DE spoiler muafiyeti sürüyor', () => {

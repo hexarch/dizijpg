@@ -16,6 +16,7 @@ import net from 'net';
 import geoip from 'geoip-lite';
 import admin from 'firebase-admin';
 import { disaAktar, iceAktar } from './veri_aktar.js';
+import { dilTespit } from './dil_tespit.js';
 import {
   dizinOzet, turDagilimi, oksuzler, oksuzSil, yedekDurumu,
 } from './depolama.js';
@@ -1251,51 +1252,10 @@ async function latinAdaDus(veri, yol, ttlSn) {
 
 // ---------- gönderi dili + çeviri ----------
 // Dış servis YOK: yazı sistemi + sık kelime sezgisiyle kaynak dili kestirir.
-// Amaç kusursuz tespit değil, "bu gönderi zaten kullanıcının dilinde mi?"
-// sorusuna yetecek isabet; yanılırsa en fazla gereksiz bir çevir düğmesi çıkar.
-const YAZI_SISTEMI = [
-  [/[\u3040-\u30ff]/, 'ja'], [/[\uac00-\ud7af]/, 'ko'],
-  [/[\u0e00-\u0e7f]/, 'th'], [/[\u0590-\u05ff]/, 'he'],
-  [/[\u0600-\u06ff]/, 'ar'], [/[\u0900-\u097f]/, 'hi'],
-  [/[\u0980-\u09ff]/, 'bn'], [/[\u0400-\u04ff]/, 'ru'],
-  [/[\u0370-\u03ff]/, 'el'], [/[\u4e00-\u9fff]/, 'zh'],
-];
-// Latin alfabesi: ayırt edici kelimeler (küçük harfe indirgenmiş metinde aranır)
-const DIL_KELIMELERI = {
-  tr: ['bir','ve','bu','için','çok','ama','daha','ben','sen','değil','gibi','olan','şey','yok','var'],
-  en: ['the','and','is','of','to','in','this','that','with','you','for','was','are','it'],
-  es: ['el','la','de','que','los','una','por','con','para','como','pero','más'],
-  pt: ['de','que','não','uma','com','para','mais','como','mas','muito'],
-  fr: ['le','la','les','des','une','pour','avec','dans','pas','plus','être'],
-  de: ['der','die','das','und','ist','nicht','für','mit','auch','eine','aber'],
-  it: ['il','la','di','che','per','non','con','una','sono','anche','più'],
-  nl: ['de','het','een','van','en','is','niet','voor','met','maar'],
-  pl: ['nie','się','jest','tak','ale','jak','tym','czy'],
-  id: ['yang','dan','ini','itu','untuk','dengan','tidak','saya'],
-  vi: ['của','và','các','một','người','những','được','trong'],
-};
-function dilTespit(ham) {
-  const metin = String(ham || '')
-    .replace(/[#@][\w._-]+/g, ' ')   // etiket ve kullanıcı adları dile karışmasın
-    .replace(/https?:\/\/\S+/g, ' ')
-    .trim();
-  if (metin.length < 3) return null;
-  for (const [desen, kod] of YAZI_SISTEMI) {
-    if (desen.test(metin)) return kod;
-  }
-  const kucuk = ' ' + metin.toLowerCase().replace(/[^\p{L}\s]/gu, ' ').replace(/\s+/g, ' ') + ' ';
-  const puanlar = {};
-  for (const [kod, kelimeler] of Object.entries(DIL_KELIMELERI)) {
-    puanlar[kod] = kelimeler.reduce((t, k) => t + (kucuk.includes(` ${k} `) ? 1 : 0), 0);
-  }
-  // Türkçeye özgü harfler güçlü kanıt
-  if (/[ğışİĞİŞ]/.test(metin)) puanlar.tr += 2;
-  const [enIyi, puan] = Object.entries(puanlar).sort((a, b) => b[1] - a[1])[0];
-  if (puan >= 2) return enIyi;
-  if (puan === 1) return enIyi;
-  // Ayırt edici kelime yok (çok kısa/emoji): Türkçe harf varsa tr, yoksa bilinmiyor
-  return /[ğışçöüĞİŞÇÖÜ]/.test(metin) ? 'tr' : null;
-}
+// Kestirim `dil_tespit.js`e TAŞINDI (3 Eyl 2026): saf bir işlev ve isabeti
+// doğrudan "çevir düğmesi çıkıyor mu" sorusunu belirliyor, bu yüzden birim
+// testi gerekiyordu — `server.js` içe aktarıldığı anda `app.listen` çağırdığı
+// için buradan test edilemiyordu (test/dil_tespit.test.js).
 
 // Geçerli TMDB id: tam sayı, 1..1e9 (int4 taşması → temiz 400).
 function gecerliTmdb(x) { return Number.isInteger(x) && x > 0 && x <= 1e9; }
@@ -14401,14 +14361,27 @@ async function akisIcerikleri(rows) {
 // `ceviri_var`: çeviri UYGULANDIYSA düğmeye gerek yok → false. Uygulanmadıysa
 // ama gönderi yabancı dildeyse true — /ceviri ucu artık hazır çeviri yoksa
 // ANINDA üretiyor, yani düğme her yabancı gönderide iş görür.
+//
+// `kaynak_dil` SÜTUNU BOŞSA METİNDEN ANINDA KESTİRİLİR (3 Eyl 2026). Sütun
+// yalnız `POST /yorumlar` yolunda dolduruluyordu; Instagram/Letterboxd
+// aktarımı (`veri_aktar.js`) ve bazı tohumlama araçları alanı boş bırakmıştı.
+// Sonuç kullanıcının gördüğü hâliyle şuydu: akıştaki YALNIZ-YAZI
+// gönderilerinin 204'ünde dil bilinmiyordu ve Arapça/Rusça bir yazı
+// gönderisinde bile "Çevir" düğmesi ÇIKMIYORDU (medyalı gönderilerde
+// çıkıyordu, çünkü onları yazan intl personaların dili elle yazılmıştı).
+// Kestirimi burada yapmak tek satırla BÜTÜN okuma uçlarını düzeltir —
+// akış, keşfet, yorumlar, profil — ve alanı doldurmayı unutan bir yazma
+// yoluna karşı da bağışıktır. Maliyet: satır başına bir regex taraması.
 function ceviriUygula({ ceviri_metin, ...r }) {
   const dil = istekBaglam.getStore()?.dil || 'tr';
-  if (ceviri_metin && r.kaynak_dil && r.kaynak_dil !== dil) {
-    return { ...r, metin: ceviri_metin, orijinal_metin: r.metin,
+  const kaynakDil = r.kaynak_dil || dilTespit(r.metin) || null;
+  if (ceviri_metin && kaynakDil && kaynakDil !== dil) {
+    return { ...r, kaynak_dil: kaynakDil,
+      metin: ceviri_metin, orijinal_metin: r.metin,
       cevrildi: true, ceviri_var: false };
   }
-  return { ...r, cevrildi: false,
-    ceviri_var: !!(r.kaynak_dil && r.kaynak_dil !== dil
+  return { ...r, kaynak_dil: kaynakDil, cevrildi: false,
+    ceviri_var: !!(kaynakDil && kaynakDil !== dil
       && String(r.metin || '').trim().length > 1) };
 }
 
@@ -14727,9 +14700,12 @@ app.get('/ceviri/:yorumId', girisIsteğeBagli, ceviriLimiti, sarici(async (req, 
   if (!rows.length) return res.json({ yok: true });
   const y = rows[0];
   if (y.ceviri) return res.json({ metin: y.ceviri, dil });
-  // Zaten okuyanın dilindeyse çevirmeye gerek yok
-  if (!y.metin || y.kaynak_dil === dil) return res.json({ yok: true });
-  const ceviri = await metniCevir(y.metin, dil, y.kaynak_dil);
+  // Zaten okuyanın dilindeyse çevirmeye gerek yok. Sütun boşsa metinden
+  // kestirilir — `ceviriUygula` düğmeyi de bu kestirime göre gösteriyor,
+  // iki taraf AYNI karara varmalı (yoksa düğme çıkar ama uç {yok:true} der).
+  const kaynakDil = y.kaynak_dil || dilTespit(y.metin) || null;
+  if (!y.metin || kaynakDil === dil) return res.json({ yok: true });
+  const ceviri = await metniCevir(y.metin, dil, kaynakDil);
   if (!ceviri) return res.json({ yok: true });
   await havuz.query(
     `INSERT INTO metin_cevirileri (ozet, dil, metin) VALUES ($1, $2, $3)

@@ -4,6 +4,7 @@
 // Güvenlik: yalnızca sahibinin verisi; zip-bomb/path-traversal/boyut korumaları.
 import JSZip from 'jszip';
 import { parse } from 'csv-parse/sync';
+import { dilTespit } from './dil_tespit.js';
 
 // ---- CSV üretimi (virgül/tırnak/yeni satır içeren alanları kaçırır) ----
 function csvAlan(deger) {
@@ -190,10 +191,13 @@ async function yorumEkleTekil(havuz, userId, tur, tmdbId, sezon, bolum, metin) {
      LIMIT 1`,
     [userId, tur, tmdbId, sezon, bolum, metin]);
   if (mevcut.rows.length) return false;
+  // `kaynak_dil` BURADA DA YAZILIR (3 Eyl 2026): aktarılan yorum yabancı
+  // dildeyse okuyan kişiye "Çevir" düğmesi çıksın. Alan boş bırakıldığı için
+  // Letterboxd/Instagram'dan gelen yazı gönderilerinde düğme hiç çıkmıyordu.
   await havuz.query(
-    `INSERT INTO yorumlar (kullanici_id, tur, tmdb_id, sezon, bolum, metin)
-     VALUES ($1,$2,$3,$4,$5,$6)`,
-    [userId, tur, tmdbId, sezon, bolum, metin]);
+    `INSERT INTO yorumlar (kullanici_id, tur, tmdb_id, sezon, bolum, metin, kaynak_dil)
+     VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+    [userId, tur, tmdbId, sezon, bolum, metin, dilTespit(metin)]);
   return true;
 }
 
