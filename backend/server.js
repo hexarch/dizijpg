@@ -4445,6 +4445,67 @@ app.use('/og', (req, res, next) => {
   next();
 });
 
+// ---------------------------------------------------------------------------
+// DİZİ KADROSU — TMDB `credits` "KADRO" DEĞİL "SABİT KADRO" DÖNDÜRÜYOR
+// (3 Eylül 2026, GSC teşhisiyle bulundu)
+// ---------------------------------------------------------------------------
+// ÖLÇÜLEN ARIZA: `/icerik/tv/1622` sayfasının başlığı "Supernatural (2005)
+// **oyuncuları**" diyor — çünkü GSC'de bu ailenin kazanan sorgu kalıbı
+// "<yapım> oyuncuları". Ama gövdede ÜÇ oyuncu vardı (Jared Padalecki,
+// Jensen Ackles, Misha Collins). 15 sezonluk bir dizi için bu, vaadin
+// karşılığını vermeyen bir sayfadır ve sıralama da onu söylüyordu:
+// içerik ailesi 28 günde 580 gösterim, **0 tıklama**, ortalama konum 52.
+// Aynı sorgu kalıbında `supernatural oyuncuları` 40,5 · `lost oyuncuları`
+// 56,8 · `küçük ev dizisi oyuncuları` 78,0.
+//
+// KÖK NEDEN RENDER DEĞİL VERİ: `seoAfisListesi` zaten 10 oyuncu basmaya
+// hazırdı; TMDB'nin `/tv/{id}?append_to_response=credits` ucu diziler için
+// yalnız "series regulars" döndürüyor. Canlı ölçüm (tmdb_onbellek, 3 Eyl):
+// 15.321 dizi belgesinin **3.807'sinde (%25) kadro 5'ten az**, ortalama 10.
+//
+// ÇÖZÜM `aggregate_credits` — AMA PAYLAŞILAN ANAHTARA DOKUNMADAN.
+// `ICERIK_APPEND`e eklemek en kısa yol GİBİ görünüyordu ve REDDEDİLDİ:
+//   · anahtar değişir ⇒ 15 binden fazla dizi VE film belgesi bir anda
+//     geçersizleşir (`icerikTmdbYolu` başlığındaki "tek satır" disiplini),
+//   · `aggregate_credits` 15 sezonluk bir dizide her konuk oyuncuyu taşır;
+//     o gövdeyi paylaşılan satıra koymak jsonb TOAST maliyetini her okumaya
+//     yükler — 1 Eyl'de kişi haritasını 500'e düşüren maliyetin ta kendisi,
+//   · film tarafı bu alandan hiç yararlanmaz, boşuna geçersizleşirdi.
+// Bunun yerine AYRI UÇ = AYRI ÖNBELLEK SATIRI, ve yalnız kadro İNCEYSE
+// çağrılır. Yani dizi sayfalarının ~%25'inde bir ek istek, o da 7 günlük
+// TTL ile amortize.
+//
+// HİÇBİR DURUMDA GERİLEME YOK: çağrı düşerse/boş dönerse elde ne varsa o
+// kullanılır (`catch` → `temel`), ve zengin liste temelden KISA çıkarsa yine
+// temel kullanılır. SSR süre bütçesi `tmdbGetir` içinde zaten uygulanıyor.
+const SEO_KADRO_LISTE = 20;   // gövdede listelenen oyuncu (ilki `tavan` kadarı görselli)
+const SEO_KADRO_INCE = 6;     // bu sayının ALTINDA kalan dizi kadrosu "ince" sayılır
+
+/**
+ * Dizi/film kadrosu. Film ve kadrosu dolu diziler için `credits.cast`;
+ * kadrosu ince DİZİLER için `aggregate_credits`ten tamamlanır.
+ * Dönen öğeler `{ id, name, profile_path }` taşır (iki uçta da aynı adlar).
+ */
+async function seoIcerikKadrosu(tur, id, v) {
+  const temel = (v.credits?.cast || []).filter((o) => o && o.name);
+  if (tur !== 'tv' || temel.length >= SEO_KADRO_INCE) {
+    return temel.slice(0, SEO_KADRO_LISTE);
+  }
+  try {
+    const ag = await tmdbGetir(`/tv/${Number(id)}/aggregate_credits`,
+      ONBELLEK_TTL_SN.uzun);
+    // `total_episode_count`a göre azalan: konuk oyuncular listenin başına
+    // geçmesin. TMDB `order` alanı bu uçta sabit kadro için güvenilir değil.
+    const zengin = (ag?.cast || [])
+      .filter((o) => o && o.name)
+      .sort((a, b) => (b.total_episode_count || 0) - (a.total_episode_count || 0))
+      .slice(0, SEO_KADRO_LISTE);
+    return zengin.length > temel.length ? zengin : temel.slice(0, SEO_KADRO_LISTE);
+  } catch {
+    return temel.slice(0, SEO_KADRO_LISTE);
+  }
+}
+
 app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
   const { tur, tmdbId } = req.params;
   const id = parseInt(tmdbId, 10);
@@ -4482,7 +4543,11 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
     // GÖRSELLER (19 Ağu 2026): oyuncu profilleri ve benzer yapım afişleri artık
     // `<img>` olarak basılıyor (tavan gerekçesi SEO_AFIS_TAVAN'da). Sayfa
     // toplamı: 1 ana afiş + 10 oyuncu + 8 benzer = 19 <= 20.
-    const oyuncular = (v.credits?.cast || []).filter((o) => o && o.name).slice(0, 10);
+    // GÖRSEL SAYISI DEĞİŞMEDİ: liste 20'ye çıktı ama `tavan` 10 — ilk 10
+    // görselli, kalanı düz bağlantı (`seoAfisListesi` başlığı). Yani sayfa
+    // toplamı hâlâ 1 ana afiş + 10 oyuncu + 8 benzer = 19 <= SEO_AFIS_TAVAN,
+    // buna karşılık `/kisi/` iç bağlantısı iki katına çıkıyor.
+    const oyuncular = await seoIcerikKadrosu(tur, id, v);
     const oyuncuBlok = seoAfisListesi(t.bsOyuncular,
       oyuncular
         .map((o) => ({
@@ -4643,9 +4708,19 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       // SSS KONUNUN HEMEN ARDINDA: uzun kuyruk sorusunun tam karşılığı
       // gövdenin üst yarısında dursun. Değerlendirme/bölüm/oyuncu listeleri
       // (uzun ve tekrarlayan bloklar) altında kalır.
+      //
+      // OYUNCULAR BÖLÜM LİSTESİNİN ÜSTÜNDE (3 Eyl 2026): eski sıra
+      // `... + bolumBlok + oyuncuBlok + ...` idi ve "Oyuncular" sayfanın
+      // SEKİZİNCİ <h2>'siydi — SSS, yorumlar ve DÖRT sezon bölüm listesinin
+      // altında. Oysa bu ailenin ölçülmüş kazanan sorgu kalıbı
+      // "<yapım> oyuncuları" ve sayfa başlığı da onu vaat ediyor. Vaat
+      // edilen içeriğin, tekrarlayan bölüm bağlantı yığınının ALTINDA
+      // kalması sıralamada aleyhimize (içerik ailesi: 580 gösterim,
+      // 0 tıklama, ort. konum 52).
+      // Bölüm listesi iç bağlantı kütlesidir, cevap değil — sırası ikinci.
       govde: seoAnaGorsel(v.poster_path, bic(t.altAfis, { ad: adYil }))
         + kunyeBlok + ozetBlok + sssBlok
-        + degerlendirmeBlok + bolumBlok + oyuncuBlok + benzerBlok + firmaBlok,
+        + degerlendirmeBlok + oyuncuBlok + bolumBlok + benzerBlok + firmaBlok,
       jsonLd: icerikJsonLd({
         // ŞEMA = GÖRÜNEN: `description` sayfaya BASILAN özettir (ham
         // `v.overview` değil), yoksa Almanca sayfada görünmeyen İngilizce

@@ -1,5 +1,11 @@
 # dizi.jpg — SEO yapılacaklar
 
+> Sürüm **6.1** · 3 Eylül 2026 (ikinci tur) — **§17'NİN AÇIKLARI KAPATILDI**:
+> `isitici.js` de kardeş koşucuya alındı; içerik ailesinin düşük sıralaması
+> teşhis edildi ve düzeltildi — dizi `credits` ucu "sabit kadro" döndürüyor
+> (dizilerin %25'inde <5 oyuncu), `aggregate_credits` AYRI uçtan tamamlanıyor
+> ve "Oyuncular" bölüm listesinin üstüne alındı — bkz. §18
+>
 > Sürüm **6.0** · 3 Eylül 2026 — **TARAMA BÜTÇESİ YENİDEN DAĞITILDI**:
 > izleme 3 gündür ölüydü, kök sebep bulundu (`docker exec` + admin-IP'nin
 > konteyner yeniden yaratması → kardeş konteyner); harita dizini 141 → 9 alt
@@ -1698,3 +1704,81 @@ talebi olan sayfanın haritadan düşmesini ÖNLEMEKtir.
    13.383) ve `bolum` panel indeks oranı (%4). Kuyruk düşüp bölüm oranı
    artmıyorsa tez yanlıştı, geri al (her iki değişikliğin de geri alma satırı
    kodda yazılı).
+
+---
+
+## 18. 🚀 §17'NİN AÇIK MADDELERİ KAPATILDI (3 Eylül 2026, ikinci tur)
+
+### 18.1 🚀 `isitici.js` de `docker exec` tuzağından çıkarıldı
+
+§17.1'in açık maddesi. Koşucu tek dosyada genelleştirildi:
+`/usr/local/bin/dizijpg-kardes-kos.sh <kilit-adı> <komut...>` (kilit başına
+ayrı `flock`). `dizijpg-gsc-kos.sh` artık ona delege eden üç satırlık bir
+kabuk — **ad bilerek korundu**, crontab/bu belge/hafıza ona atıf yapıyor.
+
+Isıtıcı normalde 0,5–6 sn sürüyor (log ölçümü), yani penceresi küçüktü; ama
+kuyruk büyüdüğünde dakikalara çıkıyor ve o an aynı şekilde ölürdü. **Kural:
+bundan sonra eklenecek her uzun iş `docker exec` değil bu koşucuyla.**
+
+### 18.2 🚀 İÇERİK AİLESİ — KADRO SEYREKLİĞİ (§17.5 md.2'nin cevabı)
+
+§17.5'te "ayrı teşhis gerekiyor: rekabet mi, sayfa derinliği mi" diye
+bırakılmıştı. **Cevap: sayfa derinliği, ve sebep render değil VERİ.**
+
+**ÖLÇÜM:** `/icerik/tv/1622` başlığı "Supernatural (2005) **oyuncuları**"
+diyor (bu ailenin kazanan sorgu kalıbı bu) ama gövdede **3 oyuncu** vardı ve
+"Oyuncular" sayfanın **8. `<h2>`**'siydi — SSS, yorumlar ve DÖRT sezon bölüm
+listesinin altında. `seoAfisListesi` zaten 10 oyuncu basmaya hazırdı; sınır
+TMDB'de: dizi `credits` ucu "series regulars" döndürüyor.
+Canlı sayım (`tmdb_onbellek`, 3 Eyl): **15.321 dizi belgesinin 3.807'si (%25)
+5'ten az kadro**, ortalama 10.
+
+**İKİ DÜZELTME:**
+
+1. **Veri — `seoIcerikKadrosu`.** Kadro inceyse (< `SEO_KADRO_INCE` = 6)
+   **AYRI uçtan** `/tv/<id>/aggregate_credits` çekilir,
+   `total_episode_count`a göre azalan sıralanır (konuk oyuncu başa geçmesin).
+   Liste 20; `tavan` 10 kalıyor, yani ilk 10 görselli, kalanı düz bağlantı —
+   **sayfa görsel bütçesi değişmedi** (1 + 10 + 8 = 19 ≤ `SEO_AFIS_TAVAN`),
+   `/kisi/` iç bağlantısı ise iki katına çıktı.
+
+   ⛔ **`ICERIK_APPEND`e EKLENMEDİ** (en kısa yol gibi görünüyordu):
+   anahtar değişir ⇒ 15 binden fazla dizi VE film belgesi bir anda
+   geçersizleşir; `aggregate_credits` gövdesi 15 sezonluk bir dizide her konuk
+   oyuncuyu taşır ve paylaşılan satıra konursa jsonb TOAST maliyetini HER
+   okumaya yükler (1 Eyl'de kişi haritasını 500'e düşüren maliyetin aynısı);
+   film tarafı bu alandan hiç yararlanmaz.
+
+   ⚠ **DÜZELTME (aynı gün):** ilk değerlendirmede "`SEO_KISI_OLCU_TAZELE` tam
+   anahtar kalıbıyla eşleşiyor, o da güncellenmeli" denmişti — **YANLIŞ**.
+   O regex `/person/` anahtarlarına bakar, `/tv/` anahtarına değil. TV
+   anahtarını okuyan sorgu (`^/tv/[0-9]+\?` + `LIKE '%language=tr-TR%'`)
+   zaten toleranslı. `ICERIK_APPEND` kararının gerekçesi bu maddeye
+   dayanmıyordu, yukarıdaki üç sebep ayakta.
+
+2. **Sıra — `oyuncuBlok` artık `bolumBlok`un ÜSTÜNDE.** Vaat edilen içeriğin,
+   tekrarlayan bölüm bağlantı yığınının altında kalması sıralamada aleyhimize.
+   Bölüm listesi iç bağlantı kütlesidir, sorunun cevabı değil.
+
+**CANLI DOĞRULAMA:**
+
+| sayfa | kişi bağlantısı | "Oyuncular" sırası | süre |
+|---|---|---|---|
+| `/icerik/tv/1622` (Supernatural) | 4 → **21** | 8. → **4.** | 0,60 sn |
+| `/icerik/tv/4607` (Lost) | **18** | **4.** | 0,26 sn |
+| `/icerik/tv/1781` (Küçük Ev) | **13** | **4.** | 0,12 sn |
+
+`<img>` sayısı **19'da sabit**. Sıralama doğru (Jared Padalecki / Jensen
+Ackles / Misha Collins başta, `total_episode_count` azalan).
+
+**GERİLEME KORUMASI:** `aggregate_credits` düşerse ya da temelden kısa
+dönerse elde ne varsa o basılır — test paketi üç yolu da çalıştırıyor.
+
+### 18.3 ⬜ HÂLÂ AÇIK
+
+- **Dış bağlantı 0.** Değişmedi ve kod tarafında değişmez. Bu turda yalnız
+  `Organization.sameAs` eklendi (Play kaydı) — varlık birleştirme, otorite
+  değil. App Store adresi kayıt incelemede olduğu için (404) BİLEREK yok.
+- **Ölçüm penceresi:** §17.5 md.4 aynen geçerli — **10 Eylül'de** keşif
+  kuyruğu ve `bolum` panel indeks oranı okunacak. Kadro düzeltmesinin etkisi
+  ayrıca `icerik` ailesinin ortalama konumunda (bugün 52) aranacak.

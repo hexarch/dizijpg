@@ -181,3 +181,71 @@ test('içerik sayfası yapım firmasına bağlanıyor (yeni SSR yüzeyi keşfedi
   assert.match(govde, /yol: seoDilliYol\(`\/sirket\/\$\{f\.id\}`, dil\)/);
   assert.match(govde, /SEO_ICERIK_FIRMA/);
 });
+
+// ===========================================================================
+// DİZİ KADROSU — TMDB `credits` "SABİT KADRO" DÖNDÜRÜYOR (3 Eylül 2026)
+// ===========================================================================
+// Ölçülen arıza: `/icerik/tv/1622` başlığı "Supernatural (2005) oyuncuları"
+// diyordu ama gövdede ÜÇ oyuncu vardı. Render sınırı değil VERİ sınırıydı:
+// 15.321 dizi belgesinin 3.807'sinde (%25) `credits.cast` 5'ten az.
+// `aggregate_credits` AYRI UÇTAN çekiliyor — paylaşılan `icerikTmdbYolu`
+// anahtarına dokunmak 15 binden fazla belgeyi bir anda geçersizleştirirdi.
+test('kadrosu ince DİZİ aggregate_credits ile tamamlanır', async () => {
+  const kadro = alan(
+    ['SEO_KADRO_LISTE', 'SEO_KADRO_INCE', 'seoIcerikKadrosu'], 'seoIcerikKadrosu');
+  const cagrilar = [];
+  globalThis.ONBELLEK_TTL_SN = { uzun: 604800 };
+  globalThis.tmdbGetir = async (y) => {
+    cagrilar.push(y);
+    return { cast: [
+      { id: 1, name: 'Az bölümlü', total_episode_count: 2 },
+      { id: 2, name: 'Baş rol', total_episode_count: 327 },
+      { id: 3, name: 'Yan rol', total_episode_count: 100 },
+    ] };
+  };
+  const ince = { credits: { cast: [{ id: 9, name: 'Tek' }] } };
+  const c = await kadro('tv', 1622, ince);
+  assert.deepEqual(cagrilar, ['/tv/1622/aggregate_credits'],
+    'ayrı uç çağrılmadı — paylaşılan anahtar kirletilmiş olabilir');
+  assert.deepEqual(c.map((o) => o.name), ['Baş rol', 'Yan rol', 'Az bölümlü'],
+    'bölüm sayısına göre sıralanmıyor — konuk oyuncu başa geçer');
+});
+
+test('kadrosu DOLU dizi ve FİLM ek istek yapmaz', async () => {
+  const kadro = alan(
+    ['SEO_KADRO_LISTE', 'SEO_KADRO_INCE', 'seoIcerikKadrosu'], 'seoIcerikKadrosu');
+  globalThis.ONBELLEK_TTL_SN = { uzun: 604800 };
+  let cagri = 0;
+  globalThis.tmdbGetir = async () => { cagri += 1; return { cast: [] }; };
+  const dolu = { credits: { cast: Array.from({ length: 8 },
+    (_, i) => ({ id: i, name: `O${i}` })) } };
+  assert.equal((await kadro('tv', 1, dolu)).length, 8);
+  assert.equal(cagri, 0, 'kadrosu dolu dizide boşuna ek istek atıldı');
+  // Film: `credits.cast` zaten tam, aggregate_credits ucu FİLMDE YOK.
+  assert.equal((await kadro('movie', 550, { credits: { cast: [{ id: 1, name: 'Tek' }] } })).length, 1);
+  assert.equal(cagri, 0, 'filmde aggregate_credits denendi');
+});
+
+test('aggregate_credits düşerse GERİLEME YOK (elde ne varsa o basılır)', async () => {
+  const kadro = alan(
+    ['SEO_KADRO_LISTE', 'SEO_KADRO_INCE', 'seoIcerikKadrosu'], 'seoIcerikKadrosu');
+  globalThis.ONBELLEK_TTL_SN = { uzun: 604800 };
+  globalThis.tmdbGetir = async () => { throw new Error('502'); };
+  const ince = { credits: { cast: [{ id: 9, name: 'Tek' }] } };
+  assert.deepEqual((await kadro('tv', 1, ince)).map((o) => o.name), ['Tek']);
+  // Zengin liste temelden KISA çıkarsa da temel kazanır.
+  globalThis.tmdbGetir = async () => ({ cast: [] });
+  assert.deepEqual((await kadro('tv', 1, ince)).map((o) => o.name), ['Tek']);
+});
+
+test('kadro listesi görsel tavanını AŞMIYOR (liste 20, tavan 10)', () => {
+  const liste = Number(/const SEO_KADRO_LISTE = (\d+);/.exec(KAYNAK)[1]);
+  assert.equal(liste, 20);
+  // Çağrı `tavan`ı 10 vermeli: ilk 10 görselli, kalan 10 düz bağlantı.
+  // Sayfa toplamı 1 ana afiş + 10 oyuncu + 8 benzer = 19 <= SEO_AFIS_TAVAN.
+  const b = bolum('const oyuncuBlok = seoAfisListesi', 'const benzerListe');
+  assert.match(b, /\}\)\), 10\);/,
+    'oyuncu listesi tavansız/20 tavanlı basılıyor — sayfa görsel bütçesi aşılır');
+  assert.ok(liste + 8 + 1 > Number(/const SEO_AFIS_TAVAN = (\d+);/.exec(KAYNAK)[1]),
+    'bu test anlamını yitirdi: liste artık tavanı zorlamıyor');
+});

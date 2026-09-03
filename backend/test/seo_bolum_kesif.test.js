@@ -75,7 +75,13 @@ test('/og/icerik dizi sayfasında bölüm gövdesini çağırır, filmde çağı
   const b = bolum("app.get('/og/icerik/:tur/:tmdbId'", "app.get('/og/kisi/:id'");
   assert.match(b, /seoDiziBolumGovdesi/);
   assert.match(b, /tur === 'tv' \? await seoDiziBolumGovdesi/);
-  assert.match(b, /degerlendirmeBlok \+ bolumBlok \+ oyuncuBlok/);
+  // 3 EYL 2026 — SIRA DEĞİŞTİ, BİLEREK: oyuncular ARTIK bölüm listesinin
+  // ÜSTÜNDE. Eskiden "Oyuncular" sayfanın 8. <h2>'siydi (SSS + yorumlar +
+  // dört sezon bölüm listesinin altında), oysa bu ailenin ölçülmüş kazanan
+  // sorgu kalıbı "<yapım> oyuncuları" ve başlık da onu vaat ediyor.
+  // Bölüm listesi iç bağlantı kütlesidir, sorunun cevabı değil.
+  assert.match(b, /degerlendirmeBlok \+ oyuncuBlok \+ bolumBlok/,
+    'oyuncu bloğu bölüm listesinin altına düşmüş — vaat edilen içerik gömülü kalır');
 });
 
 test('olmayan bölüm kaydı ogYok (boş 200 dizi.jpg iskeleti değil)', () => {
