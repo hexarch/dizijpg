@@ -1,0 +1,33 @@
+<en-US>
+Chat rebuilt: attachment panel, hold-to-record voice notes, photo albums, document sharing, swipe to reply, time inside the bubble, floating date and a jump-to-bottom button. Sending a video no longer freezes the app. Video covers now show the first colorful frame. Feed and Discover sit side by side at the top. Tag picker remembers recent searches, including a title's studio, creator, director and cast, and no longer slides under the status bar. Favorite and Rate moved below the year row.
+</en-US>
+<ar>
+دردشة مجددة: لوحة مرفقات، تسجيل صوتي بالضغط المطول، ألبومات صور، مشاركة ملفات، السحب للرد، الوقت داخل الفقاعة، تاريخ عائم وزر النزول للأسفل. إرسال الفيديو لم يعد يجمّد التطبيق. أغلفة الفيديو تعرض الآن أول إطار ملوّن. الخلاصة والاستكشاف جنبًا إلى جنب في الأعلى. منتقي الوسوم يتذكر عمليات البحث الأخيرة ولا ينزلق خلف شريط الحالة. المفضلة والتقييم انتقلا تحت سطر السنة.
+</ar>
+<de-DE>
+Chat neu gebaut: Anhang-Panel, Sprachnotizen per Gedrückthalten, Fotoalben, Dokumente teilen, Wischen zum Antworten, Uhrzeit in der Blase, schwebendes Datum und Nach-unten-Knopf. Videos senden friert die App nicht mehr ein. Video-Cover zeigen jetzt das erste farbige Bild. Feed und Entdecken stehen oben nebeneinander. Die Tag-Auswahl merkt sich letzte Suchen (auch Studio, Regie und Besetzung) und rutscht nicht mehr unter die Statusleiste. Favorit und Bewerten sind unter die Jahreszeile gezogen.
+</de-DE>
+<el-GR>
+Νέα συνομιλία: πίνακας συνημμένων, φωνητικά με παρατεταμένο πάτημα, άλμπουμ φωτογραφιών, κοινή χρήση εγγράφων, σύρσιμο για απάντηση, ώρα μέσα στο μπαλόνι, πλωτή ημερομηνία και κουμπί μετάβασης στο τέλος. Η αποστολή βίντεο δεν παγώνει πια την εφαρμογή. Τα εξώφυλλα βίντεο δείχνουν το πρώτο έγχρωμο καρέ. Ροή και Εξερεύνηση δίπλα-δίπλα στην κορυφή. Ο επιλογέας ετικετών θυμάται πρόσφατες αναζητήσεις. Αγαπημένο και Βαθμολογία κάτω από τη γραμμή έτους.
+</el-GR>
+<es-ES>
+Chat renovado: panel de adjuntos, notas de voz manteniendo pulsado, álbumes de fotos, envío de documentos, deslizar para responder, hora en el globo, fecha flotante y botón para ir al final. Enviar un vídeo ya no congela la app. Las portadas muestran el primer fotograma con color. Inicio y Descubrir van lado a lado arriba. El selector de etiquetas recuerda búsquedas recientes (estudio, director, reparto) y ya no se mete bajo la barra de estado. Favorito y Puntuar bajan a la fila del año.
+</es-ES>
+<fr-FR>
+Chat repensé : panneau de pièces jointes, notes vocales par appui long, albums photo, partage de documents, glisser pour répondre, heure dans la bulle, date flottante et bouton vers le bas. L'envoi d'une vidéo ne fige plus l'appli. Les couvertures montrent la première image en couleur. Fil et Découvrir côte à côte en haut. Le sélecteur de tags retient les recherches récentes (studio, réalisateur, casting) et ne passe plus sous la barre d'état. Favori et Noter passent sous la ligne de l'année.
+</fr-FR>
+<id>
+Chat dibangun ulang: panel lampiran, pesan suara tahan-untuk-rekam, album foto, berbagi dokumen, geser untuk membalas, jam di dalam gelembung, tanggal mengambang, dan tombol lompat ke bawah. Mengirim video tidak lagi membekukan aplikasi. Sampul video kini memakai frame berwarna pertama. Beranda dan Jelajahi berdampingan di atas. Pemilih tag mengingat pencarian terakhir (studio, sutradara, pemeran) dan tidak lagi masuk ke bawah bilah status. Favorit dan Nilai pindah ke bawah baris tahun.
+</id>
+<it-IT>
+Chat rifatta: pannello allegati, note vocali tenendo premuto, album di foto, condivisione documenti, scorri per rispondere, ora nel fumetto, data flottante e pulsante per scendere in fondo. Inviare un video non blocca più l'app. Le copertine video mostrano il primo fotogramma a colori. Feed ed Esplora affiancati in alto. Il selettore di tag ricorda le ricerche recenti (studio, regista, cast) e non finisce più sotto la barra di stato. Preferito e Vota spostati sotto la riga dell'anno.
+</it-IT>
+<pt-BR>
+Chat refeito: painel de anexos, áudio segurando o botão, álbuns de fotos, envio de documentos, deslizar para responder, hora dentro do balão, data flutuante e botão para descer ao fim. Enviar vídeo não trava mais o app. Capas de vídeo mostram o primeiro quadro colorido. Feed e Descobrir lado a lado no topo. O seletor de tags lembra buscas recentes (inclusive estúdio, criador, diretor e elenco) e não entra mais sob a barra de status. Favorito e Avaliar passaram para baixo da linha do ano.
+</pt-BR>
+<ru-RU>
+Чат переработан: панель вложений, голосовые по удержанию, фотоальбомы, отправка документов, свайп для ответа, время внутри пузыря, плавающая дата и кнопка «вниз». Отправка видео больше не подвешивает приложение. Обложки видео показывают первый цветной кадр. Лента и Обзор рядом вверху. Выбор тегов запоминает недавние поиски (студия, создатель, режиссёр, актёры) и не уезжает под строку состояния. Избранное и Оценка перенесены под строку года.
+</ru-RU>
+<tr-TR>
+Sohbet baştan yapıldı: ataç paneli, basılı tutarak ses kaydı, fotoğraf albümü, belge gönderme, kaydırarak yanıtlama, balon içinde saat, yüzen tarih ve aşağı in düğmesi. Video gönderirken uygulama artık donmuyor. Video kapakları ilk renkli kareyi gösteriyor. Akış ve Keşfet üstte yan yana. Etiket seçici son aramaları hatırlıyor (dizinin firması, yaratıcısı, yönetmeni ve oyuncuları da listede) ve klavyede durum çubuğunun altına kaymıyor. Favori ve Puanla yıl satırının altına taşındı.
+</tr-TR>
