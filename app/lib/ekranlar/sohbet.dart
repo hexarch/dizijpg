@@ -18,6 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../oda/oda_sheet.dart';
 import '../dosya_oku.dart';
 import '../gorsel_basliklari.dart';
 import '../gorusme/arama_dugmeleri.dart';
@@ -421,6 +422,11 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani>
       appBar: AppBar(
         title: Text('Mesajlar'.c),
         actions: [
+          // İZLEME ODASI (3 Eyl 2026) — kullanıcı isteği birebir: "mesajlar
+          // kısmında isteklerin YANINA + iconu koy". İstek ikonunun SOLUNDA
+          // duruyor: `actions` soldan sağa dizilir ve istek kutusu "en sağda"
+          // kalmalı (1 Eyl kararı, `MesajIstekleriDugmesi` başlığındaki not).
+          OdaDugmesi(onTap: () => odaSheetAc(context)),
           MesajIstekleriDugmesi(
             okunmamisIstek: _istekler
                 .where((s) => ((s['okunmamis'] as int?) ?? 0) > 0)
@@ -435,6 +441,44 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani>
       // PC'de akış/bildirimler ile AYNI ortalanmış okuma kolonu (720);
       // mobilde kısıt bağlamaz, kullanıcı satırları tam genişlikte kalır.
       body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
+    );
+  }
+}
+
+/// Başlıktaki "+" — izleme odası (birlikte izleme) modalini açar.
+///
+/// Kullanıcı isteği (3 Eyl 2026, birebir): *"mesajlar kısmında isteklerin
+/// yanına + iconu koy tıklayınca modal aç oda oluştur odaya katıl olsun"*.
+///
+/// YALNIZ İKON, yazı yok — komşusu [MesajIstekleriDugmesi] ile aynı gerekçe:
+/// başlıkta iki etiket uzun çevirilerde (Almanca, Fince) satır sarardı.
+/// Metin kaybolmuyor: `tooltip` ve `Semantics` aynı çevrili anahtarı okur.
+///
+/// Dokunma alanı 44 dp (ui-ux-pro-max, Touch Target Size).
+class OdaDugmesi extends StatelessWidget {
+  final VoidCallback onTap;
+  const OdaDugmesi({super.key, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final etiket = 'Birlikte izle'.c;
+    return Tooltip(
+      message: etiket,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: Semantics(
+          button: true,
+          label: etiket,
+          child: SizedBox(
+            width: 44,
+            height: 44,
+            child: Center(
+              child: Icon(Icons.add, size: 24, color: DiziRenkler.sariMetin),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

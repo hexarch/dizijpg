@@ -242,9 +242,20 @@ test('kalıp yalnız bizim ürettiğimiz adları kabul eder', () => {
     'm7-aabbccddeeff0011.ogg', 'm7-aabbccddeeff0011.mp4.jpg']) {
     assert.ok(DOSYA_KALIP.test(iyi), `reddedilmemeliydi: ${iyi}`);
   }
+  // İZLEME ODASI videoları (3 Eyl 2026): `o<oda_id>-<16 hex>` öneki de
+  // İMZALANABİLİR olmalı. Kalıba girmezse `imzali()` yolu olduğu gibi döndürür
+  // ve istemciye imzasız bir adres gider — `MEDYA_IMZA_ZORUNLU` açıkken video
+  // 403 alır ve hiç açılmaz (canlıda tam olarak bu yaşandı).
+  for (const iyi of ['o1-8cd6a45c0c5e643f.mp4', 'o42-0011223344556677.webm',
+    'o7-8cd6a45c0c5e643f.mp4.jpg']) {
+    assert.ok(DOSYA_KALIP.test(iyi), `reddedilmemeliydi: ${iyi}`);
+  }
   for (const kotu of ['m1-8cd6a45c0c5e643f.svg', 'm1-XYZ.png', 'a1-123.png',
     'm0-8cd6a45c0c5e643f.png', '../m1-8cd6a45c0c5e643f.png',
-    'm1-8cd6a45c0c5e643.png', 'm1-8cd6a45c0c5e643ff.png']) {
+    'm1-8cd6a45c0c5e643.png', 'm1-8cd6a45c0c5e643ff.png',
+    // Önek listesi KAPALI: `m` ve `o` dışında hiçbir harf geçmez.
+    'x1-8cd6a45c0c5e643f.png', 'o0-8cd6a45c0c5e643f.mp4',
+    'mo1-8cd6a45c0c5e643f.png']) {
     assert.ok(!DOSYA_KALIP.test(kotu), `kabul edilmemeliydi: ${kotu}`);
   }
 });

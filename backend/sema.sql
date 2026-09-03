@@ -1560,3 +1560,67 @@ ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS dosya TEXT;
 ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS dosya_ad TEXT;
 ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS dosya_boyut BIGINT;
 ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS dosya_tur TEXT;
+
+-- 2026-09-03 — İZLEME ODASI (birlikte izleme). Uzun gerekçe:
+-- migrasyon-2026-09-03.sql + IZLEME-ODASI-PLANI.md.
+-- Şemanın tek kritik fikri: sunucu "video nerede" değil "ŞU ANDA neredeydi"
+-- tutar (konum_ms + konum_zaman) — yoklama gecikmesi senkronu bozmasın diye.
+CREATE TABLE IF NOT EXISTS izleme_odalari (
+  id            BIGSERIAL PRIMARY KEY,
+  kod           TEXT        NOT NULL UNIQUE,
+  sahip_id      INT         NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  baslik        TEXT,
+  video         TEXT,
+  video_ad      TEXT,
+  video_boyut   BIGINT,
+  video_sure_ms BIGINT,
+  video_kapak   TEXT,
+  oynuyor       BOOLEAN     NOT NULL DEFAULT false,
+  konum_ms      BIGINT      NOT NULL DEFAULT 0,
+  konum_zaman   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  hiz           REAL        NOT NULL DEFAULT 1.0,
+  surum         BIGINT      NOT NULL DEFAULT 1,
+  olusturuldu   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  biter         TIMESTAMPTZ NOT NULL DEFAULT (now() + interval '12 hours'),
+  kapandi       TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS izleme_odalari_sahip ON izleme_odalari (sahip_id);
+CREATE INDEX IF NOT EXISTS izleme_odalari_biter ON izleme_odalari (biter);
+CREATE UNIQUE INDEX IF NOT EXISTS izleme_odalari_tek_acik
+  ON izleme_odalari (sahip_id) WHERE kapandi IS NULL;
+
+CREATE TABLE IF NOT EXISTS oda_uyeler (
+  oda_id       BIGINT      NOT NULL REFERENCES izleme_odalari(id) ON DELETE CASCADE,
+  kullanici_id INT         NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  rol          TEXT        NOT NULL DEFAULT 'izleyici',
+  davet_eden   INT         REFERENCES kullanicilar(id) ON DELETE SET NULL,
+  katildi      TIMESTAMPTZ,
+  son_gorulme  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  hazir        BOOLEAN     NOT NULL DEFAULT false,
+  PRIMARY KEY (oda_id, kullanici_id)
+);
+CREATE INDEX IF NOT EXISTS oda_uyeler_kullanici ON oda_uyeler (kullanici_id);
+
+CREATE TABLE IF NOT EXISTS oda_mesajlar (
+  id           BIGSERIAL PRIMARY KEY,
+  oda_id       BIGINT      NOT NULL REFERENCES izleme_odalari(id) ON DELETE CASCADE,
+  kullanici_id INT         REFERENCES kullanicilar(id) ON DELETE SET NULL,
+  metin        TEXT,
+  tepki        TEXT,
+  konum_ms     BIGINT,
+  sistem       BOOLEAN     NOT NULL DEFAULT false,
+  tarih        TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS oda_mesajlar_oda ON oda_mesajlar (oda_id, id);
+
+CREATE TABLE IF NOT EXISTS oda_yuklemeler (
+  id           TEXT        PRIMARY KEY,
+  oda_id       BIGINT      NOT NULL REFERENCES izleme_odalari(id) ON DELETE CASCADE,
+  kullanici_id INT         NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  ad           TEXT,
+  boyut        BIGINT      NOT NULL,
+  ofset        BIGINT      NOT NULL DEFAULT 0,
+  olusturuldu  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  guncellendi  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS oda_yuklemeler_guncellendi ON oda_yuklemeler (guncellendi);

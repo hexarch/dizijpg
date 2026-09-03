@@ -85,9 +85,25 @@ export const IMZA_BAYT = 16;
  */
 export const KOVA_MS = 12 * 60 * 60 * 1000;
 
-/** Gerçek medya dosyası adı: `m<kullanıcı_id>-<16 hex>.<uzanti>` (+ video kapağı `.jpg`). */
+/**
+ * Gerçek medya dosyası adı (+ video kapağı `.jpg`). İKİ ÖNEK:
+ *
+ *   `m<kullanıcı_id>-<16 hex>.<uzanti>`  — kullanıcı yüklemesi (`POST /medya`)
+ *   `o<oda_id>-<16 hex>.<uzanti>`        — İZLEME ODASI videosu (3 Eyl 2026)
+ *
+ * ÖNEK NEDEN AYRI (ve neden oda videosu da `m` OLMADI): yorum eki sahipliği
+ * `^/medya/m<benim_id>-…$` kalıbıyla doğrulanıyor (server.js, iki yerde).
+ * Oda videosu `m<sahip_id>-…` diye adlandırılsaydı sahibi onu HALKA AÇIK bir
+ * yoruma iliştirebilir, dosya `ozelMedyaYukle`daki `EXCEPT … yorumlar`
+ * kuralına takılıp ÖZEL kümeden düşer ve herkese açılırdı. `o` öneki o
+ * kalıba hiçbir kullanıcı için uymaz — izolasyon adın kendisinde.
+ *
+ * Kalıba UYMAYAN ad İMZALANMAZ (`imzali` yolu olduğu gibi döndürür) ve bu
+ * SESSİZ bir hatadır: 3 Eyl 2026'da oda videosu tam da bu yüzden imzasız
+ * yolla gitti, istemci 403 aldı ve video hiç açılmadı.
+ */
 export const DOSYA_KALIP =
-  /^m[1-9][0-9]{0,9}-[0-9a-f]{16}\.(gif|png|jpg|jpeg|webp|mp4|webm|ogg|m4a|mp3|aac)(\.jpg)?$/;
+  /^[mo][1-9][0-9]{0,9}-[0-9a-f]{16}\.(gif|png|jpg|jpeg|webp|mp4|webm|ogg|m4a|mp3|aac)(\.jpg)?$/;
 
 /**
  * Anahtar türetme: ayrı bir sır YÖNETMEMEK için JWT sırrından HKDF benzeri

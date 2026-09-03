@@ -640,7 +640,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.118.0+185';
+  static const surum = '1.120.0+187';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.
@@ -765,6 +765,37 @@ class Api {
                   body: veri,
                 )
                 .timeout(const Duration(minutes: 5)),
+          )
+          as Map<String, dynamic>;
+
+  /// İZLEME ODASI — video parçası yükler (devam edilebilir yükleme).
+  ///
+  /// `/medya` ve `/dosya`dan AYRI bir hat: oda videosu 5 GB'a kadar çıkabilir,
+  /// yani TEK gövdeye sığmaz (nginx `client_max_body_size` 105m) ve kopan bir
+  /// bağlantı her şeyi baştan aldırmamalı. Sözleşme `backend/oda.js`
+  /// (`parcaKarari`) içinde: istemci "şu ofsetten devam ediyorum" der, sunucu
+  /// beklediği ofseti HER yanıtta geri söyler.
+  ///
+  /// Zaman aşımı parça başınadır (8 MB): 2 dakika yavaş hücresel bağlantıda
+  /// bile yeter, takılan bir parçayı da sonsuza kadar bekletmez.
+  static Future<Map<String, dynamic>> odaParcaYukle(
+    Uint8List veri, {
+    required String yukleme,
+    required int ofset,
+  }) async =>
+      await _yanit(
+            () => _istemci
+                .post(
+                  Uri.parse('$apiTaban/oda-video/parca'),
+                  headers: {
+                    'Content-Type': 'application/octet-stream',
+                    'X-Yukleme': yukleme,
+                    'X-Ofset': '$ofset',
+                    if (_token != null) 'Authorization': 'Bearer $_token',
+                  },
+                  body: veri,
+                )
+                .timeout(const Duration(minutes: 2)),
           )
           as Map<String, dynamic>;
 

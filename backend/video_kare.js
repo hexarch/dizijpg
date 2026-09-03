@@ -163,6 +163,39 @@ export function medyaBoyutOlc(dosyaYolu, secenek = {}) {
 }
 
 /**
+ * Videonun SÜRESİNİ milisaniye olarak ölçer. Başarısızsa null.
+ *
+ * NEDEN GEREKLİ: izleme odasında sunucu, sahibin bildirdiği oynatma konumunu
+ * süreye KIRPAR (`oda.js` beklenenKonum) ve istemci ilerleme çubuğunu video
+ * daha açılmadan doğru boyda kurar. Süre bilinmezse (ffprobe yok, bozuk
+ * konteyner) null döner ve iki taraf da bugünkü gibi oynatıcıdan öğrenir —
+ * yani ölçüm YOKLUĞU bir gerileme değil, yalnız bir iyileştirmenin eksikliği.
+ *
+ * `format=duration` seçildi (`stream=duration` DEĞİL): bazı MP4 akışlarında
+ * akış süresi yazılmaz ama konteyner süresi durur.
+ *
+ * @param {string} dosyaYolu
+ * @param {{ timeout?: number }} [secenek]
+ * @returns {Promise<number|null>} milisaniye
+ */
+export function videoSureOlc(dosyaYolu, secenek = {}) {
+  const timeout = secenek.timeout ?? 15000;
+  return new Promise((bitti) => {
+    execFile(
+      'ffprobe',
+      ['-v', 'error', '-show_entries', 'format=duration', '-of',
+        'default=noprint_wrappers=1:nokey=1', dosyaYolu],
+      { timeout },
+      (hata, stdout) => {
+        if (hata) return bitti(null);
+        const sn = Number.parseFloat(String(stdout).trim());
+        bitti(Number.isFinite(sn) && sn > 0 ? Math.round(sn * 1000) : null);
+      },
+    );
+  });
+}
+
+/**
  * Videonun ilk renkli karesinin anını bulur. Başarısızsa (ffmpeg yok, zaman
  * aşımı, ölçüm yok) `null` — çağıran varsayılan 0,5 sn'ye düşer.
  *

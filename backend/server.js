@@ -8,7 +8,19 @@ import path from 'path';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { execFile } from 'child_process';
-import { videoKareCikar, medyaBoyutOlc } from './video_kare.js';
+import { videoKareCikar, medyaBoyutOlc, videoSureOlc } from './video_kare.js';
+// İZLEME ODASI — saf mantık (senkron matematiği, kod, parça sözleşmesi,
+// yetki kararları). Ad çakışmasını önlemek için `oda*` öneki: `mesajTemizle`
+// gibi genel adlar server.js'te başka anlamlara gelebilir.
+import {
+  ODA_OMRU_MS, ODA_VIDEO_AZAMI, ODA_AZAMI_UYE, ODA_PARCA_AZAMI, ODA_HATA_METNI,
+  YUKLEME_OMRU_MS as ODA_YUKLEME_OMRU_MS,
+  kodUret as odaKodUret, kodNormalle as odaKodNormalle,
+  baslikTemizle as odaBaslikTemizle, mesajTemizle as odaMesajTemizle,
+  tepkiGecerli as odaTepkiGecerli, boyutKontrol as odaBoyutKontrol,
+  parcaKarari as odaParcaKarari, durumYazabilir as odaDurumYazabilir,
+  girisKarari as odaGirisKarari, cevrimiciMi as odaCevrimiciMi,
+} from './oda.js';
 import { AsyncLocalStorage } from 'async_hooks';
 import os from 'os';
 import http from 'http';
@@ -452,19 +464,40 @@ abone('ozel_medya_sil', (ad) => {
   OZEL_MEDYA.delete(ad);
   OZEL_MEDYA.delete(`${ad}.jpg`);
 });
+// İki sorgu: birincisi oda videolarını da toplar, ikincisi ONLARSIZ eşidir.
+// NEDEN İKİSİ: `izleme_odalari` migrasyonu uygulanmadan yeni server.js
+// başlatılırsa birinci sorgu "relation does not exist" ile patlar ve küme BOŞ
+// kalır — yani DM medyası imzasız + PUBLIC ÖNBELLEKLİ servis edilir. Bu bir
+// gerileme DEĞİL sessiz bir GÜVENLİK açığı olurdu (denetim §2.1'in geri
+// alınması). Geri düşüş, en kötü ihtimalle bugünkü davranışı korur.
+const OZEL_MEDYA_SORGU = (odaVarMi) => `SELECT medya FROM (
+   SELECT medya FROM mesajlar WHERE medya IS NOT NULL
+   UNION SELECT unnest(medyalar) FROM mesajlar WHERE medyalar IS NOT NULL${
+  odaVarMi ? `
+   UNION SELECT video FROM izleme_odalari WHERE video IS NOT NULL` : ''}
+ ) o
+ EXCEPT SELECT DISTINCT unnest(medya) FROM yorumlar WHERE medya IS NOT NULL`;
+
 async function ozelMedyaYukle() {
   try {
     // Aynı dosya hem DM'de hem halka açık bir yorumda geçiyorsa GENEL sayılır:
     // yorum akışında 403 vermek görünür bir bozulma olurdu. (2026-08-08:
     // kesişim canlıda 0 satır; kural yine de ileriye dönük duruyor.)
-    const { rows } = await havuz.query(
-      // ALBÜM (2 Eyl 2026): `medyalar` dizisindeki öğeler de özeldir.
-      `SELECT medya FROM (
-         SELECT medya FROM mesajlar WHERE medya IS NOT NULL
-         UNION SELECT unnest(medyalar) FROM mesajlar WHERE medyalar IS NOT NULL
-       ) o
-       EXCEPT SELECT DISTINCT unnest(medya) FROM yorumlar WHERE medya IS NOT NULL`,
-    );
+    // ALBÜM (2 Eyl 2026): `medyalar` dizisindeki öğeler de özeldir.
+    // İZLEME ODASI (3 Eyl 2026): oda videoları da ÖZELDİR ve bu sorguya
+    // GİRMEK ZORUNDA. Kümeyi aşağıda `clear()` ediyoruz; oda videoları
+    // sorguda olmasaydı saatte bir "genel"e düşer, imzasız + public
+    // önbellekli + indekslenebilir servis edilmeye başlarlardı. Kapak
+    // karesi (`<video>.jpg`) `ozelMedyaEkle` tarafından zaten eklenir.
+    let rows;
+    try {
+      ({ rows } = await havuz.query(OZEL_MEDYA_SORGU(true)));
+    } catch (e) {
+      if (!/does not exist/i.test(e.message)) throw e;
+      console.error('özel medya: izleme_odalari yok (migrasyon bekliyor), '
+        + 'oda videoları HARİÇ yükleniyor');
+      ({ rows } = await havuz.query(OZEL_MEDYA_SORGU(false)));
+    }
     OZEL_MEDYA.clear();
     for (const r of rows) ozelMedyaEkle(r.medya);
     console.log(`Özel (DM) medya kümesi yüklendi: ${rows.length} dosya`);
@@ -1843,22 +1876,22 @@ const buzLimiti = hizLimiti(60, (req) => `bz:${req.kullanici.id}`);
 // (özne "серия", dişil), ar 'صدرت' (özne "حلقة", dişil).
 // Kilit: test/cinsiyetsiz_dil.test.js.
 const PUSH_SABLON = {
-  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi', arama: '{ad} seni arıyor', kacirilan_arama: '{ad} seni aradı', bolum: '{dizi} {sb} yayınlandı', kisi: '{kisi} yeni bir yapımda: {yapim}', geri_bildirim: 'Geri bildirimine yanıt verdik' },
-  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment', arama: '{ad} is calling you', kacirilan_arama: '{ad} called you', bolum: '{dizi} {sb} is out', kisi: 'New from {kisi}: {yapim}', geri_bildirim: 'We replied to your feedback' },
-  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario', arama: '{ad} te está llamando', kacirilan_arama: '{ad} te llamó', bolum: 'Ya está disponible {dizi} {sb}', kisi: 'Novedad de {kisi}: {yapim}', geri_bildirim: 'Respondimos a tus comentarios' },
-  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário', arama: '{ad} está te ligando', kacirilan_arama: '{ad} te ligou', bolum: '{dizi} {sb} já está disponível', kisi: 'Novidade de {kisi}: {yapim}', geri_bildirim: 'Respondemos ao seu feedback' },
-  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt', arama: '{ad} ruft dich an', kacirilan_arama: '{ad} hat dich angerufen', bolum: '{dizi} {sb} ist da', kisi: 'Neu von {kisi}: {yapim}', geri_bildirim: 'Wir haben auf dein Feedback geantwortet' },
-  fr: { takip: '{ad} te suit maintenant', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: 'Mention de {ad} dans un commentaire', arama: '{ad} t\'appelle', kacirilan_arama: 'Appel manqué de {ad}', bolum: '{dizi} {sb} est disponible', kisi: 'Nouveauté de {kisi} : {yapim}', geri_bildirim: 'Nous avons répondu à ton retour' },
-  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: 'Menzione da {ad} in un commento', arama: '{ad} ti sta chiamando', kacirilan_arama: 'Chiamata persa da {ad}', bolum: '{dizi} {sb} è disponibile', kisi: 'Novità di {kisi}: {yapim}', geri_bildirim: 'Abbiamo risposto al tuo feedback' },
-  ru: { takip: 'Новый подписчик: {ad}', begeni: 'Новая оценка твоего комментария: {ad}', yanit: 'Новый ответ на твой комментарий: {ad}', mesaj: 'Новое сообщение от {ad}', etiket: 'Упоминание от {ad} в комментарии', arama: '{ad} звонит тебе', kacirilan_arama: 'Пропущенный звонок от {ad}', bolum: 'Вышла серия {dizi} {sb}', kisi: 'Новинка с участием {kisi}: {yapim}', geri_bildirim: 'Мы ответили на ваш отзыв' },
-  ar: { takip: 'متابعة جديدة: {ad}', begeni: 'إعجاب جديد بتعليقك: {ad}', yanit: 'رد جديد على تعليقك: {ad}', mesaj: 'رسالة جديدة من {ad}', etiket: 'إشارة إليك من {ad} في تعليق', arama: 'مكالمة واردة من {ad}', kacirilan_arama: 'مكالمة فائتة من {ad}', bolum: 'صدرت {dizi} {sb}', kisi: 'جديد من {kisi}: {yapim}', geri_bildirim: 'لقد رددنا على ملاحظاتك' },
-  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया', arama: '{ad} की ओर से कॉल आ रही है', kacirilan_arama: '{ad} ने आपको कॉल किया', bolum: '{dizi} {sb} आ गया है', kisi: '{kisi} का नया काम: {yapim}', geri_bildirim: 'हमने आपके फ़ीडबैक का जवाब दिया' },
-  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar', arama: '{ad} sedang meneleponmu', kacirilan_arama: '{ad} meneleponmu', bolum: '{dizi} {sb} sudah tayang', kisi: 'Baru dari {kisi}: {yapim}', geri_bildirim: 'Kami membalas masukanmu' },
-  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました', arama: '{ad}さんが着信中です', kacirilan_arama: '{ad}さんから不在着信があります', bolum: '{dizi} {sb} が配信されました', kisi: '{kisi}さんの新作: {yapim}', geri_bildirim: 'フィードバックに返信しました' },
-  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요', arama: '{ad}님이 전화를 걸고 있어요', kacirilan_arama: '{ad}님의 부재중 전화가 있어요', bolum: '{dizi} {sb}이(가) 공개됐어요', kisi: '{kisi}님의 신작: {yapim}', geri_bildirim: '보내주신 의견에 답변했어요' },
-  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你', arama: '{ad} 正在呼叫你', kacirilan_arama: '{ad} 给你打过电话', bolum: '{dizi} {sb} 已更新', kisi: '{kisi} 的新作: {yapim}', geri_bildirim: '我们回复了你的反馈' },
-  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie', arama: '{ad} belt je', kacirilan_arama: '{ad} heeft je gebeld', bolum: '{dizi} {sb} is uit', kisi: 'Nieuw van {kisi}: {yapim}', geri_bildirim: 'We hebben op je feedback gereageerd' },
-  pl: { takip: '{ad} obserwuje cię teraz', begeni: '{ad} lubi twój komentarz', yanit: 'Nowa odpowiedź na twój komentarz: {ad}', mesaj: 'Nowa wiadomość od {ad}', etiket: 'Wzmianka od {ad} w komentarzu', arama: '{ad} dzwoni do ciebie', kacirilan_arama: 'Nieodebrane połączenie od {ad}', bolum: '{dizi} {sb} już jest', kisi: 'Nowość od {kisi}: {yapim}', geri_bildirim: 'Odpowiedzieliśmy na Twoją opinię' },
+  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi', arama: '{ad} seni arıyor', kacirilan_arama: '{ad} seni aradı', bolum: '{dizi} {sb} yayınlandı', kisi: '{kisi} yeni bir yapımda: {yapim}', geri_bildirim: 'Geri bildirimine yanıt verdik', oda_davet: '{ad} seni izleme odasına davet etti' },
+  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment', arama: '{ad} is calling you', kacirilan_arama: '{ad} called you', bolum: '{dizi} {sb} is out', kisi: 'New from {kisi}: {yapim}', geri_bildirim: 'We replied to your feedback', oda_davet: '{ad} invited you to a watch party' },
+  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario', arama: '{ad} te está llamando', kacirilan_arama: '{ad} te llamó', bolum: 'Ya está disponible {dizi} {sb}', kisi: 'Novedad de {kisi}: {yapim}', geri_bildirim: 'Respondimos a tus comentarios', oda_davet: '{ad} te invitó a una sala de visualización' },
+  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário', arama: '{ad} está te ligando', kacirilan_arama: '{ad} te ligou', bolum: '{dizi} {sb} já está disponível', kisi: 'Novidade de {kisi}: {yapim}', geri_bildirim: 'Respondemos ao seu feedback', oda_davet: '{ad} te convidou para uma sala de exibição' },
+  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt', arama: '{ad} ruft dich an', kacirilan_arama: '{ad} hat dich angerufen', bolum: '{dizi} {sb} ist da', kisi: 'Neu von {kisi}: {yapim}', geri_bildirim: 'Wir haben auf dein Feedback geantwortet', oda_davet: '{ad} hat dich in einen Watch-Party-Raum eingeladen' },
+  fr: { takip: '{ad} te suit maintenant', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: 'Mention de {ad} dans un commentaire', arama: '{ad} t\'appelle', kacirilan_arama: 'Appel manqué de {ad}', bolum: '{dizi} {sb} est disponible', kisi: 'Nouveauté de {kisi} : {yapim}', geri_bildirim: 'Nous avons répondu à ton retour', oda_davet: '{ad} t\'a invité dans une salle de visionnage' },
+  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: 'Menzione da {ad} in un commento', arama: '{ad} ti sta chiamando', kacirilan_arama: 'Chiamata persa da {ad}', bolum: '{dizi} {sb} è disponibile', kisi: 'Novità di {kisi}: {yapim}', geri_bildirim: 'Abbiamo risposto al tuo feedback', oda_davet: '{ad} ti ha invitato in una stanza di visione' },
+  ru: { takip: 'Новый подписчик: {ad}', begeni: 'Новая оценка твоего комментария: {ad}', yanit: 'Новый ответ на твой комментарий: {ad}', mesaj: 'Новое сообщение от {ad}', etiket: 'Упоминание от {ad} в комментарии', arama: '{ad} звонит тебе', kacirilan_arama: 'Пропущенный звонок от {ad}', bolum: 'Вышла серия {dizi} {sb}', kisi: 'Новинка с участием {kisi}: {yapim}', geri_bildirim: 'Мы ответили на ваш отзыв', oda_davet: '{ad} пригласил вас в комнату совместного просмотра' },
+  ar: { takip: 'متابعة جديدة: {ad}', begeni: 'إعجاب جديد بتعليقك: {ad}', yanit: 'رد جديد على تعليقك: {ad}', mesaj: 'رسالة جديدة من {ad}', etiket: 'إشارة إليك من {ad} في تعليق', arama: 'مكالمة واردة من {ad}', kacirilan_arama: 'مكالمة فائتة من {ad}', bolum: 'صدرت {dizi} {sb}', kisi: 'جديد من {kisi}: {yapim}', geri_bildirim: 'لقد رددنا على ملاحظاتك', oda_davet: 'دعاك {ad} إلى غرفة مشاهدة مشتركة' },
+  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया', arama: '{ad} की ओर से कॉल आ रही है', kacirilan_arama: '{ad} ने आपको कॉल किया', bolum: '{dizi} {sb} आ गया है', kisi: '{kisi} का नया काम: {yapim}', geri_bildirim: 'हमने आपके फ़ीडबैक का जवाब दिया', oda_davet: '{ad} ने आपको साथ देखने वाले रूम में बुलाया' },
+  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar', arama: '{ad} sedang meneleponmu', kacirilan_arama: '{ad} meneleponmu', bolum: '{dizi} {sb} sudah tayang', kisi: 'Baru dari {kisi}: {yapim}', geri_bildirim: 'Kami membalas masukanmu', oda_davet: '{ad} mengundangmu ke ruang nonton bareng' },
+  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました', arama: '{ad}さんが着信中です', kacirilan_arama: '{ad}さんから不在着信があります', bolum: '{dizi} {sb} が配信されました', kisi: '{kisi}さんの新作: {yapim}', geri_bildirim: 'フィードバックに返信しました', oda_davet: '{ad}さんが一緒に見る部屋に招待しました' },
+  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요', arama: '{ad}님이 전화를 걸고 있어요', kacirilan_arama: '{ad}님의 부재중 전화가 있어요', bolum: '{dizi} {sb}이(가) 공개됐어요', kisi: '{kisi}님의 신작: {yapim}', geri_bildirim: '보내주신 의견에 답변했어요', oda_davet: '{ad}님이 같이 보기 방에 초대했습니다' },
+  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你', arama: '{ad} 正在呼叫你', kacirilan_arama: '{ad} 给你打过电话', bolum: '{dizi} {sb} 已更新', kisi: '{kisi} 的新作: {yapim}', geri_bildirim: '我们回复了你的反馈', oda_davet: '{ad} 邀请你加入一起看房间' },
+  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie', arama: '{ad} belt je', kacirilan_arama: '{ad} heeft je gebeld', bolum: '{dizi} {sb} is uit', kisi: 'Nieuw van {kisi}: {yapim}', geri_bildirim: 'We hebben op je feedback gereageerd', oda_davet: '{ad} heeft je uitgenodigd in een kijkkamer' },
+  pl: { takip: '{ad} obserwuje cię teraz', begeni: '{ad} lubi twój komentarz', yanit: 'Nowa odpowiedź na twój komentarz: {ad}', mesaj: 'Nowa wiadomość od {ad}', etiket: 'Wzmianka od {ad} w komentarzu', arama: '{ad} dzwoni do ciebie', kacirilan_arama: 'Nieodebrane połączenie od {ad}', bolum: '{dizi} {sb} już jest', kisi: 'Nowość od {kisi}: {yapim}', geri_bildirim: 'Odpowiedzieliśmy na Twoją opinię', oda_davet: '{ad} zaprosił(a) Cię do pokoju wspólnego oglądania' },
 };
 
 /**
@@ -1943,6 +1976,10 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
       veri.icerik_tur = String(ekstra?.icerik_tur ?? '');
       veri.kisi_id = String(ekstra?.kisi_id ?? '');
     }
+    // İZLEME ODASI DAVETİ (3 Eyl 2026): dokununca doğrudan /oda/:id açılsın.
+    // Davet CANLI bir olaydır — oda 12 saat yaşıyor — ama push kaybolsa bile
+    // davet KAYBOLMAZ: `GET /odalar` listesinde "davet" satırı olarak durur.
+    if (tur === 'oda_davet') veri.oda_id = String(ekstra?.oda_id ?? '');
     let paket;
     if (tur === 'arama') {
       // GELEN ARAMA — data-only (mesajla aynı kalıp): istemci kendi tam ekran
@@ -6932,6 +6969,10 @@ const BOT_ROTALARI = [
   { yol: '/yenilikler/:surum', desen: /^\/yenilikler\/[\d.]+$/ },
   { yol: '/sohbetler', desen: /^\/sohbetler$/ },
   { yol: '/mesaj-istekleri', desen: /^\/mesaj-istekleri$/ },
+  // İZLEME ODASI (3 Eyl 2026). Tabloda olması "bu yol vardır, 404 değildir"
+  // demektir; içeriği robots.txt ile KAPALI ve `girisZorunlu` zaten botu
+  // içeri almaz. Oda id'si sayıdır (`sayiParam('id')` ile aynı kısıt).
+  { yol: '/oda/:id', desen: /^\/oda\/\d+$/ },
   { yol: '/sohbet/:ad', desen: /^\/sohbet\/[^/]+$/ },
   // Sohbet detayı: tema, arama, sessize al, medya (31 Ağu 2026)
   { yol: '/sohbet/:ad/detay', desen: /^\/sohbet\/[^/]+\/detay$/ },
@@ -15920,6 +15961,776 @@ app.delete('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
   if (belge) fs.unlink(path.join(DOSYA_EK_DIZIN, belge), () => {});
   res.json({ tamam: true });
 }));
+
+// ===========================================================================
+// İZLEME ODASI — birlikte video izleme (3 Eyl 2026, 1. tur)
+// ===========================================================================
+// İSTEK (birebir): "mesajlar kısmında isteklerin yanına + iconu koy tıklayınca
+// modal aç oda oluştur odaya katıl olsun burada insanlar video import edip
+// arkadaş listesindeki insanları davet edip birlikte video izleyebilmeli …
+// videoda oda sahibi 10 saniye ileri sararsa izleyenlerde de ileri sarılmalı"
+//
+// Kararlar, gerekçeler ve turlara bölünme: ../IZLEME-ODASI-PLANI.md
+// Saf mantık (senkron matematiği, kod, parça sözleşmesi): oda.js + test/oda.test.js
+//
+// ---------------------------------------------------------------------------
+// TASARIMIN TEK KRİTİK FİKRİ
+// ---------------------------------------------------------------------------
+// Sunucu "video ŞU AN nerede" değil, "video ŞU ANDA şuradaydı" tutar:
+// (`oynuyor`, `konum_ms`, `konum_zaman`). İzleyici beklenen konumu KENDİSİ
+// türetir. Böylece 1 saniyelik yoklama gecikmesi senkronu BOZMAZ — yanıt geç
+// gelse bile `konum_zaman` o gecikmeyi içerir. Yalnız `konum_ms` gönderilseydi
+// her izleyici sistematik olarak bir tur geride kalırdı.
+//
+// ---------------------------------------------------------------------------
+// NEDEN WEBSOCKET YOK
+// ---------------------------------------------------------------------------
+// `ARAMA-API-SOZLESMESI.md` §1'deki karar burada da geçerli: nginx `/api/`
+// bloğunda `Upgrade` başlıkları yok, Cloudflare ücretsiz planda 100 sn boşta
+// kalma zaman aşımı var. Yoklama, üstteki duvar saati şeması sayesinde
+// gecikmeye DAYANIKLI olduğu için burada bedeli de yok.
+// ---------------------------------------------------------------------------
+
+// Oda yüklemesi için AYRI bayt bütçesi. Normal `yuklemeBaytButcesi` IP başına
+// 1 GB/saat: TEK bir 5 GB'lık oda videosu onu beşe katlardı ve kullanıcı
+// normal medya yükleyemez hâle gelirdi. Ayrı anahtar (`ob:`) iki hattı
+// birbirinden ayırır; tavan yine de var (sınırsız bırakmak diski açar).
+const ODA_IP_BAYT_BUTCE = 20 * 1024 ** 3;
+const odaBaytButcesi = baytButcesi({
+  butce: Math.floor(ODA_IP_BAYT_BUTCE / ISCI_SAYISI),
+  anahtar: (req) => `ob:${req.ip}`,
+});
+
+// Yarım yüklemelerin parçaları. MEDYA_DIZIN'in ALTINDA değil YANINDA:
+// `/medya` statik/X-Accel kuralları bu dizini hiç görmemeli — yarım bir
+// videonun imzasız da olsa servis edilebilir olması istenmez.
+const ODA_GECICI_DIZIN = path.join(MEDYA_DIZIN, '..', 'oda-gecici');
+fs.mkdirSync(ODA_GECICI_DIZIN, { recursive: true });
+
+const odaLimiti = hizLimiti(120, (req) => `od:${req.kullanici.id}`);
+// Yoklama 1 sn'de bir çalışır: saatte 3600 tur + sekme değiştirme payı.
+const odaAkisLimiti = hizLimiti(6000, (req) => `oda:${req.kullanici.id}`);
+const odaMesajLimiti = hizLimiti(600, (req) => `om:${req.kullanici.id}`);
+// Durum yazma yalnız SAHİPTEN gelir ve kullanıcı eylemi başına bir kez
+// (oynat/duraklat/sar) + 10 sn'lik kalp atışı: saatte 360 + pay.
+const odaDurumLimiti = hizLimiti(2000, (req) => `odr:${req.kullanici.id}`);
+const odaParcaLimiti = hizLimiti(4000, (req) => `op:${req.kullanici.id}`);
+
+/** `izleme_odalari` satırını istemcinin beklediği gövdeye çevirir. */
+function odaGovde(o, uyeler, benimId) {
+  return {
+    id: Number(o.id),
+    kod: o.kod,
+    baslik: o.baslik,
+    sahip_id: o.sahip_id,
+    sahip: o.sahip_adi,
+    sahip_avatar: o.sahip_avatar,
+    // Video İMZALI yolla gider (OZEL_MEDYA): imzasız istek 403 alır.
+    video: medyaImzali(o.video, MEDYA_IMZA_ANAHTARI),
+    video_ad: o.video_ad,
+    video_boyut: o.video_boyut == null ? null : Number(o.video_boyut),
+    video_sure_ms: o.video_sure_ms == null ? null : Number(o.video_sure_ms),
+    video_kapak: medyaImzali(o.video_kapak, MEDYA_IMZA_ANAHTARI),
+    oynuyor: o.oynuyor,
+    konum_ms: Number(o.konum_ms),
+    // İstemci duvar saati hesabı yapacak: epoch ms olarak gönderilir.
+    konum_zaman: new Date(o.konum_zaman).getTime(),
+    hiz: Number(o.hiz),
+    surum: Number(o.surum),
+    biter: new Date(o.biter).getTime(),
+    sahibi_miyim: o.sahip_id === benimId,
+    uyeler,
+  };
+}
+
+/** Üye listesi + çevrimiçilik. */
+async function odaUyeleri(odaId) {
+  const { rows } = await havuz.query(
+    `SELECT u.kullanici_id, u.rol, u.katildi, u.hazir, u.son_gorulme,
+            k.kullanici_adi, k.avatar
+       FROM oda_uyeler u JOIN kullanicilar k ON k.id = u.kullanici_id
+      WHERE u.oda_id = $1
+      ORDER BY (u.rol = 'sahip') DESC, u.katildi NULLS LAST, u.kullanici_id`,
+    [odaId],
+  );
+  const simdi = Date.now();
+  return rows.map((r) => ({
+    id: r.kullanici_id,
+    ad: r.kullanici_adi,
+    avatar: r.avatar,
+    rol: r.rol,
+    // `katildi` NULL = davet edildi ama HENÜZ GİRMEDİ (davet listesi ile üye
+    // listesi aynı tabloda; bkz. migrasyon-2026-09-03.sql).
+    katildi: r.katildi ? new Date(r.katildi).getTime() : null,
+    hazir: r.hazir,
+    cevrimici: r.katildi != null
+      && odaCevrimiciMi(new Date(r.son_gorulme).getTime(), simdi),
+  }));
+}
+
+/**
+ * Odayı ve isteyenin üyeliğini tek turda getirir.
+ * @returns {{oda:object|null, uye:object|null}}
+ */
+async function odaVeUyelik(odaId, kullaniciId) {
+  const { rows } = await havuz.query(
+    `SELECT o.*, k.kullanici_adi AS sahip_adi, k.avatar AS sahip_avatar,
+            u.rol AS benim_rol, u.katildi AS benim_katildi
+       FROM izleme_odalari o
+       JOIN kullanicilar k ON k.id = o.sahip_id
+       LEFT JOIN oda_uyeler u ON u.oda_id = o.id AND u.kullanici_id = $2
+      WHERE o.id = $1`,
+    [odaId, kullaniciId],
+  );
+  if (!rows.length) return { oda: null, uye: null };
+  const o = rows[0];
+  return {
+    oda: o,
+    uye: o.benim_rol ? { rol: o.benim_rol, katildi: o.benim_katildi } : null,
+  };
+}
+
+/**
+ * Ortak kapı: oda açık mı, isteyen İÇERİDE mi.
+ * Değilse yanıt YAZILIR ve null döner (çağıran hemen return eder).
+ *
+ * 410 (ODA_KAPANDI) 404'ten AYRI: istemci "oda kapandı" ekranını gösterip
+ * yoklamayı durdurmalı; 404 ise "böyle bir oda yok" (yanlış bağlantı).
+ */
+async function odaKapisi(req, res) {
+  const { oda, uye } = await odaVeUyelik(req.params.id, req.kullanici.id);
+  if (!oda) {
+    res.status(404).json({ hata: 'Oda bulunamadı', kod: 'ODA_YOK' });
+    return null;
+  }
+  if (oda.kapandi || Date.now() >= new Date(oda.biter).getTime()) {
+    res.status(410).json({ hata: 'Bu oda kapandı', kod: 'ODA_KAPANDI' });
+    return null;
+  }
+  if (!uye || !uye.katildi) {
+    res.status(403).json({ hata: 'Bu odanın üyesi değilsin', kod: 'UYE_DEGIL' });
+    return null;
+  }
+  return { oda, uye };
+}
+
+/** Sistem satırı (katıldı/ayrıldı/video yüklendi) — akışta ortada gri çizilir. */
+function odaSistemMesaji(odaId, kullaniciId, anahtar) {
+  return havuz.query(
+    `INSERT INTO oda_mesajlar (oda_id, kullanici_id, metin, sistem)
+     VALUES ($1, $2, $3, true)`,
+    [odaId, kullaniciId, anahtar],
+  ).catch(() => {});
+}
+
+/** Odanın videosunu ve yarım parçalarını diskten siler, özel kümeden düşürür. */
+function odaVideosunuSil(oda) {
+  const yol = oda?.video;
+  if (typeof yol === 'string' && yol.startsWith('/medya/')) {
+    const ad = path.basename(yol);
+    fs.unlink(path.join(MEDYA_DIZIN, ad), () => {});
+    fs.unlink(path.join(MEDYA_DIZIN, `${ad}.jpg`), () => {});
+    OZEL_MEDYA.delete(ad);
+    OZEL_MEDYA.delete(`${ad}.jpg`);
+    // KÜME: kümeden düşürmeyi TÜM işçilere duyur — yoksa öteki işçiler
+    // silinmiş dosyayı bir saat daha "özel" sayıp Set'i şişirirdi.
+    yayinla('ozel_medya_sil', ad);
+  }
+}
+
+// ---------- oda oluştur ----------
+app.post('/odalar', girisZorunlu, odaLimiti, sarici(async (req, res) => {
+  // MİSAFİR ODA AÇAMAZ: oda 5 GB disk hakkı demek ve misafir hesap IP başına
+  // saatte 30 tane açılabiliyor (denetim §3.1'in dayanağı). Davetle GİREBİLİR
+  // — kısıt diski açan tarafta, katılan tarafta değil.
+  if (req.misafir === true) {
+    return res.status(403).json({
+      hata: 'Misafir hesaplar izleme odası açamaz. Hesap oluşturursan açabilirsin.',
+      kod: 'MISAFIR_ODA_YOK',
+    });
+  }
+  const baslik = odaBaslikTemizle(req.body?.baslik);
+  // TEK AÇIK ODA. Kontrol burada da var ama ASIL güvence kısmi tekil indeks
+  // (`izleme_odalari_tek_acik`): iki eşzamanlı istek buradaki SELECT'te ikisi
+  // de "yok" görebilir, indeks görmez.
+  const varolan = await havuz.query(
+    'SELECT id FROM izleme_odalari WHERE sahip_id=$1 AND kapandi IS NULL', [req.kullanici.id]);
+  if (varolan.rows.length) {
+    return res.status(409).json({
+      hata: 'Zaten açık bir odan var', kod: 'ODA_ZATEN_VAR', oda: Number(varolan.rows[0].id),
+    });
+  }
+  // Kod çakışması pratikte imkânsız (32^6) ama tekil indekse çarparsa yeniden
+  // dene: kullanıcıya "bir hata oldu" demek yerine sessizce çöz.
+  let satir = null;
+  for (let deneme = 0; deneme < 5 && !satir; deneme++) {
+    const kod = odaKodUret((n) => crypto.randomBytes(n));
+    try {
+      const { rows } = await havuz.query(
+        `INSERT INTO izleme_odalari (kod, sahip_id, baslik, biter)
+         VALUES ($1, $2, $3, now() + ($4 || ' milliseconds')::interval)
+         RETURNING *`,
+        [kod, req.kullanici.id, baslik, String(ODA_OMRU_MS)],
+      );
+      satir = rows[0];
+    } catch (e) {
+      if (e.code !== '23505') throw e;
+      // 23505 iki sebepten gelebilir: kod çakıştı (yeniden dene) ya da
+      // "tek açık oda" indeksi (yeniden denemek AYNI hatayı verir).
+      if (String(e.constraint || '').includes('tek_acik')) {
+        return res.status(409).json({ hata: 'Zaten açık bir odan var', kod: 'ODA_ZATEN_VAR' });
+      }
+    }
+  }
+  if (!satir) return res.status(503).json({ hata: 'Oda oluşturulamadı, tekrar dene' });
+  await havuz.query(
+    `INSERT INTO oda_uyeler (oda_id, kullanici_id, rol, katildi)
+     VALUES ($1, $2, 'sahip', now())`,
+    [satir.id, req.kullanici.id],
+  );
+  const uyeler = await odaUyeleri(satir.id);
+  // Sahibin adı JWT'DEN DEĞİL üye listesinden (yani DB'den) alınır: token 90
+  // gün yaşıyor ve kullanıcı adını değiştiren biri o süre boyunca odasını eski
+  // adıyla görürdü (`test/kullanici_adi.test.js` bu okumayı kilitliyor).
+  satir.sahip_adi = uyeler.find((u) => u.id === req.kullanici.id)?.ad ?? '';
+  res.json(odaGovde(satir, uyeler, req.kullanici.id));
+}));
+
+// ---------- odalarım + davetlerim ----------
+// "+" modalinin açılış listesi: içinde olduğum açık odalar ve BEKLEYEN
+// davetler. Rozet sayısı da buradan (`katildi IS NULL` satırlar).
+app.get('/odalar', girisZorunlu, odaLimiti, sarici(async (req, res) => {
+  const { rows } = await havuz.query(
+    `SELECT o.id, o.kod, o.baslik, o.video, o.video_ad, o.video_kapak, o.biter,
+            o.sahip_id, k.kullanici_adi AS sahip_adi, k.avatar AS sahip_avatar,
+            u.katildi, u.rol,
+            (SELECT count(*)::int FROM oda_uyeler x
+              WHERE x.oda_id = o.id AND x.katildi IS NOT NULL) AS uye_sayisi
+       FROM oda_uyeler u
+       JOIN izleme_odalari o ON o.id = u.oda_id
+       JOIN kullanicilar k ON k.id = o.sahip_id
+      WHERE u.kullanici_id = $1 AND o.kapandi IS NULL AND o.biter > now()
+      ORDER BY (u.katildi IS NULL) DESC, o.olusturuldu DESC
+      LIMIT 50`,
+    [req.kullanici.id],
+  );
+  res.json({
+    odalar: rows.map((r) => ({
+      id: Number(r.id),
+      kod: r.kod,
+      baslik: r.baslik,
+      sahip_id: r.sahip_id,
+      sahip: r.sahip_adi,
+      sahip_avatar: r.sahip_avatar,
+      video_var: !!r.video,
+      video_ad: r.video_ad,
+      video_kapak: medyaImzali(r.video_kapak, MEDYA_IMZA_ANAHTARI),
+      biter: new Date(r.biter).getTime(),
+      uye_sayisi: r.uye_sayisi,
+      // Bekleyen davet: modal bunu "Davet edildin" satırı olarak çizer.
+      davet: r.katildi == null,
+      sahibi_miyim: r.sahip_id === req.kullanici.id,
+    })),
+  });
+}));
+
+// ---------- kodla katıl ----------
+app.post('/odalar/katil', girisZorunlu, odaLimiti, sarici(async (req, res) => {
+  const kod = odaKodNormalle(req.body?.kod);
+  if (!kod) return res.status(400).json({ hata: 'Oda kodu 6 karakter olmalı', kod: 'KOD_GECERSIZ' });
+  const { rows } = await havuz.query(
+    `SELECT o.*, k.kullanici_adi AS sahip_adi, k.avatar AS sahip_avatar
+       FROM izleme_odalari o JOIN kullanicilar k ON k.id = o.sahip_id
+      WHERE o.kod = $1`, [kod]);
+  const oda = rows[0] || null;
+  if (!oda) return res.status(404).json({ hata: 'Böyle bir oda yok', kod: 'ODA_YOK' });
+
+  const [uyeQ, sayiQ, engel] = await Promise.all([
+    havuz.query('SELECT katildi FROM oda_uyeler WHERE oda_id=$1 AND kullanici_id=$2',
+      [oda.id, req.kullanici.id]),
+    havuz.query('SELECT count(*)::int n FROM oda_uyeler WHERE oda_id=$1 AND katildi IS NOT NULL',
+      [oda.id]),
+    engelliMi(req.kullanici.id, oda.sahip_id),
+  ]);
+  const karar = odaGirisKarari(oda, Date.now(), {
+    uye: uyeQ.rows.length > 0 && uyeQ.rows[0].katildi != null,
+    davetli: uyeQ.rows.length > 0,
+    kodDogru: true,
+    uyeSayisi: sayiQ.rows[0].n,
+    engelli: engel,
+  });
+  if (!karar.tamam) {
+    const durum = karar.kod === 'ODA_KAPANDI' ? 410 : karar.kod === 'ODA_DOLU' ? 409 : 403;
+    return res.status(durum).json({ hata: ODA_HATA_METNI[karar.kod] || 'Odaya girilemedi', kod: karar.kod });
+  }
+  const yeniMi = !(uyeQ.rows.length && uyeQ.rows[0].katildi != null);
+  await havuz.query(
+    `INSERT INTO oda_uyeler (oda_id, kullanici_id, katildi, son_gorulme)
+     VALUES ($1, $2, now(), now())
+     ON CONFLICT (oda_id, kullanici_id)
+       DO UPDATE SET katildi = COALESCE(oda_uyeler.katildi, now()), son_gorulme = now()`,
+    [oda.id, req.kullanici.id],
+  );
+  if (yeniMi) await odaSistemMesaji(oda.id, req.kullanici.id, 'katildi');
+  const uyeler = await odaUyeleri(oda.id);
+  res.json(odaGovde(oda, uyeler, req.kullanici.id));
+}));
+
+// ---------- oda anlık görüntüsü ----------
+app.get('/odalar/:id', girisZorunlu, odaLimiti, sarici(async (req, res) => {
+  const kapi = await odaKapisi(req, res);
+  if (!kapi) return;
+  const uyeler = await odaUyeleri(kapi.oda.id);
+  res.json({
+    ...odaGovde(kapi.oda, uyeler, req.kullanici.id),
+    // İstemci saat sapmasını bununla ölçer (bkz. oda_senkron.dart).
+    sunucu_zaman: Date.now(),
+  });
+}));
+
+// ---------- 1 SANİYELİK YOKLAMA ----------
+// Sohbet yoklamasıyla (`sohbetYoklamaAraligi`) aynı disiplin: değişmemişse
+// gövde neredeyse boş döner. `surum` odanın oynatma durumunun sürümü,
+// `mesajdan` istemcinin gördüğü son mesaj id'si.
+//
+// `sunucu_zaman` HER YANITTA gider — "değişiklik yok" yanıtında bile. İstemci
+// saat sapmasını sürekli tazeler; sapma tazelenmezse cihaz saati kayan bir
+// telefon (ya da uyandıktan sonra saati düzelten bir dizüstü) yavaş yavaş
+// senkrondan çıkardı.
+app.get('/odalar/:id/akis', girisZorunlu, odaAkisLimiti, sarici(async (req, res) => {
+  const kapi = await odaKapisi(req, res);
+  if (!kapi) return;
+  const oda = kapi.oda;
+  // Yoklama AYNI ZAMANDA kalp atışıdır: üye listesindeki "çevrimiçi" noktası
+  // bu yazmadan besleniyor. Ateşle-unut — yoklamayı bekletmesin.
+  havuz.query('UPDATE oda_uyeler SET son_gorulme=now() WHERE oda_id=$1 AND kullanici_id=$2',
+    [oda.id, req.kullanici.id]).catch(() => {});
+
+  const gorulenSurum = Number.parseInt(req.query.surum, 10);
+  const mesajdan = Number.parseInt(req.query.mesajdan, 10) || 0;
+  const durumDegisti = !Number.isInteger(gorulenSurum) || gorulenSurum !== Number(oda.surum);
+
+  const { rows: mesajlar } = await havuz.query(
+    `SELECT m.id, m.kullanici_id, m.metin, m.tepki, m.konum_ms, m.sistem, m.tarih,
+            k.kullanici_adi, k.avatar
+       FROM oda_mesajlar m LEFT JOIN kullanicilar k ON k.id = m.kullanici_id
+      WHERE m.oda_id = $1 AND m.id > $2
+      ORDER BY m.id ASC LIMIT 100`,
+    [oda.id, mesajdan],
+  );
+  // Üye listesi her turda çekilmez: yalnız durum değiştiyse ya da 5 saniyede
+  // bir (istemci `uyeler=1` ile ister). Aksi hâlde 1 sn'lik yoklama her turda
+  // bir JOIN daha koşardı ve hiçbir şey değişmezdi.
+  const uyeIstendi = req.query.uyeler === '1';
+  const uyeler = (durumDegisti || uyeIstendi) ? await odaUyeleri(oda.id) : null;
+
+  res.json({
+    sunucu_zaman: Date.now(),
+    surum: Number(oda.surum),
+    biter: new Date(oda.biter).getTime(),
+    durum: durumDegisti ? {
+      oynuyor: oda.oynuyor,
+      konum_ms: Number(oda.konum_ms),
+      konum_zaman: new Date(oda.konum_zaman).getTime(),
+      hiz: Number(oda.hiz),
+      video: medyaImzali(oda.video, MEDYA_IMZA_ANAHTARI),
+      video_ad: oda.video_ad,
+      video_sure_ms: oda.video_sure_ms == null ? null : Number(oda.video_sure_ms),
+    } : null,
+    uyeler,
+    mesajlar: mesajlar.map((m) => ({
+      id: Number(m.id),
+      kullanici_id: m.kullanici_id,
+      ad: m.kullanici_adi,
+      avatar: m.avatar,
+      metin: m.metin,
+      tepki: m.tepki,
+      konum_ms: m.konum_ms == null ? null : Number(m.konum_ms),
+      sistem: m.sistem,
+      tarih: new Date(m.tarih).getTime(),
+    })),
+  });
+}));
+
+// ---------- oynatma durumu (YALNIZ SAHİP) ----------
+// Kullanıcı isteği: "oda sahibi 10 saniye ileri sararsa izleyenlerde de ileri
+// sarılmalı". Kontrol TEK ELDE: izleyici de yazabilseydi iki kişi aynı anda
+// sardığında oda salınıma girerdi (her biri ötekinin konumuna düzeltme yapar).
+app.post('/odalar/:id/durum', girisZorunlu, odaDurumLimiti, sarici(async (req, res) => {
+  const kapi = await odaKapisi(req, res);
+  if (!kapi) return;
+  if (!odaDurumYazabilir(kapi.oda, req.kullanici.id)) {
+    return res.status(403).json({ hata: 'Oynatmayı yalnız oda sahibi yönetir', kod: 'SAHIP_DEGIL' });
+  }
+  const oynuyor = req.body?.oynuyor === true;
+  const konum = Number(req.body?.konum_ms);
+  if (!Number.isFinite(konum) || konum < 0) {
+    return res.status(400).json({ hata: 'Geçersiz konum' });
+  }
+  // `surum` ARTAR: istemci sürümün atladığını görünce yumuşak düzeltmeyi
+  // atlayıp DOĞRUDAN seek eder — 10 sn'lik sarma anında görünsün diye.
+  // KALP ATIŞI İSTİSNASI: sahip oynatırken 10 sn'de bir konum tazeler; o
+  // turlarda sürüm ARTMAZ (`kalp: true`), yoksa izleyiciler sürekli seek eder
+  // ve düzgün akan video her 10 saniyede bir zıplardı.
+  const kalp = req.body?.kalp === true && oynuyor === kapi.oda.oynuyor;
+  const { rows } = await havuz.query(
+    `UPDATE izleme_odalari
+        SET oynuyor=$2, konum_ms=$3, konum_zaman=now(),
+            surum = surum + CASE WHEN $4 THEN 0 ELSE 1 END
+      WHERE id=$1 RETURNING surum, konum_zaman`,
+    [kapi.oda.id, oynuyor, Math.round(konum), kalp],
+  );
+  res.json({
+    surum: Number(rows[0].surum),
+    konum_zaman: new Date(rows[0].konum_zaman).getTime(),
+    sunucu_zaman: Date.now(),
+  });
+}));
+
+// ---------- oda sohbeti / tepki ----------
+app.post('/odalar/:id/mesaj', girisZorunlu, odaMesajLimiti, sarici(async (req, res) => {
+  const kapi = await odaKapisi(req, res);
+  if (!kapi) return;
+  const tepki = req.body?.tepki;
+  const metin = odaMesajTemizle(req.body?.metin);
+  if (tepki != null) {
+    if (!odaTepkiGecerli(tepki)) return res.status(400).json({ hata: 'Geçersiz tepki' });
+  } else if (!metin) {
+    return res.status(400).json({ hata: 'Mesaj boş olamaz' });
+  }
+  const konum = Number(req.body?.konum_ms);
+  const { rows } = await havuz.query(
+    `INSERT INTO oda_mesajlar (oda_id, kullanici_id, metin, tepki, konum_ms)
+     VALUES ($1, $2, $3, $4, $5) RETURNING id, tarih`,
+    [kapi.oda.id, req.kullanici.id, tepki ? null : metin, tepki || null,
+      Number.isFinite(konum) && konum >= 0 ? Math.round(konum) : null],
+  );
+  res.json({ id: Number(rows[0].id), tarih: new Date(rows[0].tarih).getTime() });
+}));
+
+// ---------- davet ----------
+// "arkadaş listesindeki insanları davet edip" — dizi.jpg'de arkadaşlık
+// KARŞILIKLI TAKİP demek (aramada da aynı ölçüt, `karsilikliTakipMi`).
+app.post('/odalar/:id/davet', girisZorunlu, odaLimiti, sarici(async (req, res) => {
+  const kapi = await odaKapisi(req, res);
+  if (!kapi) return;
+  if (kapi.oda.sahip_id !== req.kullanici.id) {
+    return res.status(403).json({ hata: 'Davet etmeyi yalnız oda sahibi yapar', kod: 'SAHIP_DEGIL' });
+  }
+  const ad = String(req.body?.kullanici || '').trim();
+  if (!ad) return res.status(400).json({ hata: 'kullanici gerekli' });
+  const { rows: k } = await havuz.query(
+    'SELECT id FROM kullanicilar WHERE lower(kullanici_adi)=lower($1)', [ad]);
+  if (!k.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı', kod: 'KULLANICI_YOK' });
+  const hedef = k[0].id;
+  if (hedef === req.kullanici.id) return res.status(400).json({ hata: 'Kendini davet edemezsin' });
+
+  const [engel, karsilikli, sayiQ] = await Promise.all([
+    engelliMi(req.kullanici.id, hedef),
+    karsilikliTakipMi(req.kullanici.id, hedef),
+    havuz.query('SELECT count(*)::int n FROM oda_uyeler WHERE oda_id=$1', [kapi.oda.id]),
+  ]);
+  if (engel) return res.status(403).json({ hata: 'Bu kullanıcı davet edilemez', kod: 'ENGELLI' });
+  if (!karsilikli) {
+    return res.status(403).json({
+      hata: 'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin', kod: 'TAKIP_YOK',
+    });
+  }
+  // Davetliler de sayılır: 12 kişilik odaya 40 davet gönderilip sonra ilk
+  // 12'nin girmesi "kim girecek" yarışı olurdu.
+  if (sayiQ.rows[0].n >= ODA_AZAMI_UYE) {
+    return res.status(409).json({ hata: 'Oda dolu', kod: 'ODA_DOLU' });
+  }
+  await havuz.query(
+    `INSERT INTO oda_uyeler (oda_id, kullanici_id, davet_eden)
+     VALUES ($1, $2, $3) ON CONFLICT (oda_id, kullanici_id) DO NOTHING`,
+    [kapi.oda.id, hedef, req.kullanici.id],
+  );
+  // Push: davet CANLI bir olaydır (oda 12 saat yaşıyor), uygulama kapalıyken
+  // görülmezse davet işe yaramaz. Uygulama içi karşılığı `GET /odalar`
+  // listesindeki "davet" satırı — push gitmese de davet KAYBOLMAZ.
+  pushBildirim(hedef, 'oda_davet', req.kullanici.id, { oda_id: Number(kapi.oda.id) })
+    .catch(() => {});
+  res.json({ tamam: true });
+}));
+
+// ---------- hazır bayrağı ----------
+// İzleyicinin oynatıcısı videoyu tamponladı mı: üye listesinde nokta.
+// Sahip "herkes hazır olunca başlat" diyebilsin diye var.
+app.post('/odalar/:id/hazir', girisZorunlu, odaAkisLimiti, sarici(async (req, res) => {
+  const kapi = await odaKapisi(req, res);
+  if (!kapi) return;
+  await havuz.query('UPDATE oda_uyeler SET hazir=$3 WHERE oda_id=$1 AND kullanici_id=$2',
+    [kapi.oda.id, req.kullanici.id, req.body?.hazir === true]);
+  res.json({ tamam: true });
+}));
+
+// ---------- ayrıl ----------
+app.post('/odalar/:id/ayril', girisZorunlu, odaLimiti, sarici(async (req, res) => {
+  const { oda, uye } = await odaVeUyelik(req.params.id, req.kullanici.id);
+  if (!oda || !uye) return res.json({ tamam: true }); // zaten içinde değil
+  if (oda.sahip_id === req.kullanici.id) {
+    // Sahip AYRILAMAZ, kapatır: videoyu ve odayı o tutuyor. Ayrılmasına izin
+    // verilseydi sahipsiz bir oda kalır, kimse oynatmayı yönetemezdi.
+    return res.status(400).json({ hata: 'Oda sahibi odayı kapatmalı', kod: 'SAHIP_AYRILAMAZ' });
+  }
+  await havuz.query('DELETE FROM oda_uyeler WHERE oda_id=$1 AND kullanici_id=$2',
+    [oda.id, req.kullanici.id]);
+  if (uye.katildi) await odaSistemMesaji(oda.id, req.kullanici.id, 'ayrildi');
+  res.json({ tamam: true });
+}));
+
+// ---------- odayı kapat (sahip) ----------
+app.delete('/odalar/:id', girisZorunlu, odaLimiti, sarici(async (req, res) => {
+  const { oda } = await odaVeUyelik(req.params.id, req.kullanici.id);
+  if (!oda) return res.status(404).json({ hata: 'Oda bulunamadı', kod: 'ODA_YOK' });
+  if (oda.sahip_id !== req.kullanici.id) {
+    return res.status(403).json({ hata: 'Odayı yalnız sahibi kapatır', kod: 'SAHIP_DEGIL' });
+  }
+  odaVideosunuSil(oda);
+  // Satır SİLİNİR (kapandi damgalanıp bırakılmaz): oda 12 saatlik geçici bir
+  // şey, sohbeti saklamanın bir değeri yok ve `ON DELETE CASCADE` üye/mesaj/
+  // yükleme satırlarını birlikte toplar.
+  await havuz.query('DELETE FROM izleme_odalari WHERE id=$1', [oda.id]);
+  res.json({ tamam: true });
+}));
+
+// ===========================================================================
+// ODA VİDEOSU — DEVAM EDİLEBİLİR (parçalı) YÜKLEME
+// ===========================================================================
+// nginx `client_max_body_size` 105m; 5 GB tek gövdeye sığmaz ve sığsaydı bile
+// kopan bağlantı her şeyi baştan aldırırdı. Sözleşme:
+//   POST /oda-video/basla  -> {yukleme, ofset}     (ofset > 0 ise DEVAM et)
+//   POST /oda-video/parca  -> {ofset}              (X-Yukleme, X-Ofset)
+//   POST /oda-video/bitir  -> {video, ...}
+// `X-Ofset` sözleşmenin kalbi: sunucu beklediği ofseti HER yanıtta döndürür,
+// istemci kopunca oradan devam eder (bkz. oda.js `parcaKarari`).
+
+const odaParcaYolu = (id) => path.join(ODA_GECICI_DIZIN, `${id}.parca`);
+
+app.post('/oda-video/basla', girisZorunlu, odaLimiti, diskKapi, sarici(async (req, res) => {
+  const odaId = Number.parseInt(req.body?.oda, 10);
+  if (!Number.isInteger(odaId)) return res.status(400).json({ hata: 'oda gerekli' });
+  const { rows } = await havuz.query(
+    'SELECT * FROM izleme_odalari WHERE id=$1', [odaId]);
+  const oda = rows[0];
+  if (!oda) return res.status(404).json({ hata: 'Oda bulunamadı', kod: 'ODA_YOK' });
+  if (oda.sahip_id !== req.kullanici.id) {
+    return res.status(403).json({ hata: 'Videoyu yalnız oda sahibi yükler', kod: 'SAHIP_DEGIL' });
+  }
+  if (oda.kapandi || Date.now() >= new Date(oda.biter).getTime()) {
+    return res.status(410).json({ hata: 'Bu oda kapandı', kod: 'ODA_KAPANDI' });
+  }
+  const boyut = Number(req.body?.boyut);
+  const kontrol = odaBoyutKontrol(boyut);
+  if (!kontrol.tamam) {
+    return res.status(kontrol.kod === 'VIDEO_COK_BUYUK' ? 413 : 400).json({
+      hata: kontrol.kod === 'VIDEO_COK_BUYUK'
+        ? `Video en fazla ${Math.round(ODA_VIDEO_AZAMI / 1024 ** 3)} GB olabilir`
+        : 'Geçersiz dosya boyutu',
+      kod: kontrol.kod,
+    });
+  }
+  const ad = typeof req.body?.ad === 'string' ? req.body.ad.slice(0, 200) : null;
+
+  // DEVAM: aynı oda + aynı boyut için yarım bir yükleme varsa ONU sürdür.
+  // Yeni kimlik üretmek, kopan 3 GB'ı çöpe atardı — parçalı yüklemenin tüm
+  // amacı bu durumu kurtarmak.
+  const eski = await havuz.query(
+    `SELECT id, ofset FROM oda_yuklemeler
+      WHERE oda_id=$1 AND kullanici_id=$2 AND boyut=$3
+      ORDER BY guncellendi DESC LIMIT 1`,
+    [odaId, req.kullanici.id, boyut],
+  );
+  if (eski.rows.length) {
+    // Diskteki GERÇEK uzunluk tek doğru kaynak: satır yazıldıktan sonra süreç
+    // ölmüşse dosya satırdan kısa kalabilir. Küçük olanı alırız.
+    let diskte = 0;
+    try { diskte = fs.statSync(odaParcaYolu(eski.rows[0].id)).size; } catch { diskte = 0; }
+    const ofset = Math.min(Number(eski.rows[0].ofset), diskte);
+    await havuz.query('UPDATE oda_yuklemeler SET ofset=$2, guncellendi=now() WHERE id=$1',
+      [eski.rows[0].id, ofset]);
+    return res.json({ yukleme: eski.rows[0].id, ofset, parca_azami: ODA_PARCA_AZAMI });
+  }
+
+  const id = crypto.randomBytes(12).toString('hex');
+  await havuz.query(
+    `INSERT INTO oda_yuklemeler (id, oda_id, kullanici_id, ad, boyut) VALUES ($1,$2,$3,$4,$5)`,
+    [id, odaId, req.kullanici.id, ad, boyut],
+  );
+  fs.writeFileSync(odaParcaYolu(id), '');
+  res.json({ yukleme: id, ofset: 0, parca_azami: ODA_PARCA_AZAMI });
+}));
+
+app.post('/oda-video/parca',
+  girisZorunlu,
+  odaParcaLimiti,
+  // Disk eşiği express.raw'dan ÖNCE (disk.js "KONUM" notu): reddedilecek
+  // isteğin gövdesini belleğe almanın anlamı yok.
+  diskKapi,
+  odaBaytButcesi,
+  // `type` GLOB DİZGİSİ DEĞİL, İŞLEV — ve bu bilinçli.
+  //
+  // "her MIME türü" anlamına gelen glob, kaynak dosyaya yıldız-eğik-çizgi
+  // ikilisini sokar. Bloklu yorumları ayıklayan araçlar (ör.
+  // `test/hesap_on_kacirma.test.js` içindeki `kodsuz`) bunu bir yorum
+  // sınırı sanır ve eşleşmeleri kayar. 3 Eyl 2026'da tam olarak bu yaşandı:
+  // ayıklayıcı buradan yüzlerce satır ileriye kadar her şeyi yuttu ve
+  // ALAKASIZ iki güvenlik testi kırıldı (şifre sıfırlama SQL'i ve 2FA kilidi
+  // "kayboldu"). İşlev aynı işi yapar — her türü kabul eder — ve kaynağa
+  // böyle bir dizi sokmaz.
+  express.raw({ type: () => true, limit: ODA_PARCA_AZAMI }),
+  sarici(async (req, res) => {
+    const id = String(req.get('X-Yukleme') || '');
+    if (!/^[0-9a-f]{24}$/.test(id)) return res.status(400).json({ hata: 'X-Yukleme gerekli' });
+    const gelenOfset = Number.parseInt(req.get('X-Ofset'), 10);
+    const veri = req.body;
+    if (!Buffer.isBuffer(veri)) return res.status(400).json({ hata: 'Parça gövdesi gerekli' });
+
+    const { rows } = await havuz.query('SELECT * FROM oda_yuklemeler WHERE id=$1', [id]);
+    const y = rows[0];
+    if (!y || y.kullanici_id !== req.kullanici.id) {
+      return res.status(404).json({ hata: 'Yükleme bulunamadı', kod: 'YUKLEME_YOK' });
+    }
+    const karar = odaParcaKarari(Number(y.ofset), gelenOfset, veri.length, Number(y.boyut));
+    if (karar.karar === 'tekrar') {
+      // İstemci geride: baytları YENİDEN YAZMAYIZ (dosyayı bozardı), doğru
+      // ofseti söyleriz. 200 döner çünkü bu bir HATA değil, senkronizasyon.
+      return res.json({ ofset: karar.ofset, tekrar: true });
+    }
+    if (karar.karar !== 'yaz') {
+      return res.status(409).json({
+        hata: 'Yükleme konumu uyuşmuyor', kod: 'OFSET_UYUSMAZ', ofset: karar.ofset,
+      });
+    }
+    // `a` kipi: sona ekle. Ofset zaten doğrulandı, konumlu yazma gerekmez ve
+    // append tek çağrıda atomiktir.
+    await fs.promises.appendFile(odaParcaYolu(id), veri);
+    await havuz.query('UPDATE oda_yuklemeler SET ofset=$2, guncellendi=now() WHERE id=$1',
+      [id, karar.ofset]);
+    res.json({ ofset: karar.ofset });
+  }));
+
+app.post('/oda-video/bitir', girisZorunlu, odaLimiti, sarici(async (req, res) => {
+  const id = String(req.body?.yukleme || '');
+  if (!/^[0-9a-f]{24}$/.test(id)) return res.status(400).json({ hata: 'yukleme gerekli' });
+  const { rows } = await havuz.query('SELECT * FROM oda_yuklemeler WHERE id=$1', [id]);
+  const y = rows[0];
+  if (!y || y.kullanici_id !== req.kullanici.id) {
+    return res.status(404).json({ hata: 'Yükleme bulunamadı', kod: 'YUKLEME_YOK' });
+  }
+  const parca = odaParcaYolu(id);
+  let st;
+  try { st = fs.statSync(parca); } catch { st = null; }
+  if (!st || st.size !== Number(y.boyut)) {
+    return res.status(409).json({
+      hata: 'Yükleme tamamlanmadı', kod: 'EKSIK', ofset: st ? st.size : 0,
+    });
+  }
+  // TÜR DOĞRULAMA: uzantıya DEĞİL sihirli baytlara bakılır (yükleme ucundaki
+  // `VIDEO_TURLERI` ile aynı tablo). İlk 16 bayt yeter; 5 GB'ı okumaya gerek yok.
+  const bas = Buffer.alloc(16);
+  const fd = fs.openSync(parca, 'r');
+  try { fs.readSync(fd, bas, 0, 16, 0); } finally { fs.closeSync(fd); }
+  const tur = VIDEO_TURLERI.find((t) => t.kontrol(bas));
+  if (!tur) {
+    fs.unlink(parca, () => {});
+    await havuz.query('DELETE FROM oda_yuklemeler WHERE id=$1', [id]);
+    return res.status(400).json({ hata: 'Yalnızca MP4 veya WebM izlenebilir', kod: 'TUR_GECERSIZ' });
+  }
+  const { rows: oq } = await havuz.query('SELECT * FROM izleme_odalari WHERE id=$1', [y.oda_id]);
+  const oda = oq[0];
+  if (!oda || oda.sahip_id !== req.kullanici.id) {
+    return res.status(403).json({ hata: 'Videoyu yalnız oda sahibi yükler', kod: 'SAHIP_DEGIL' });
+  }
+  // ESKİ VİDEO GİDER: oda başına tek video. Değiştirmek serbest ama iki 5 GB
+  // dosya aynı anda durmaz.
+  odaVideosunuSil(oda);
+
+  const dosya = `o${oda.id}-${crypto.randomBytes(8).toString('hex')}.${tur.uzanti}`;
+  const hedef = path.join(MEDYA_DIZIN, dosya);
+  // rename AYNI dosya sistemindeyse atomik; değilse (ODA_GECICI_DIZIN başka
+  // bir bağ noktasına düşerse) kopyala-sil'e düş.
+  try {
+    fs.renameSync(parca, hedef);
+  } catch (e) {
+    if (e.code !== 'EXDEV') throw e;
+    fs.copyFileSync(parca, hedef);
+    fs.unlinkSync(parca);
+  }
+  const yol = `/medya/${dosya}`;
+  // ÖZEL: imzasız erişim yok, public önbellek yok, noindex. Kümedeki tüm
+  // işçilere duyurulur — yoksa öteki işçiler dosyayı "genel" servis ederdi.
+  ozelMedyaEkle(yol);
+  yayinla('ozel_medya_ekle', yol);
+
+  const kapakVar = await videoKaresiCikar(hedef);
+  const sure = await videoSureOlc(hedef);
+  await havuz.query(
+    `UPDATE izleme_odalari
+        SET video=$2, video_ad=$3, video_boyut=$4, video_sure_ms=$5, video_kapak=$6,
+            oynuyor=false, konum_ms=0, konum_zaman=now(), surum=surum+1
+      WHERE id=$1`,
+    [oda.id, yol, y.ad, y.boyut, sure, kapakVar ? `${yol}.jpg` : null],
+  );
+  await havuz.query('DELETE FROM oda_yuklemeler WHERE id=$1', [id]);
+  await odaSistemMesaji(oda.id, req.kullanici.id, 'video_yuklendi');
+  res.json({
+    video: medyaImzali(yol, MEDYA_IMZA_ANAHTARI),
+    video_ad: y.ad,
+    video_sure_ms: sure,
+    video_kapak: kapakVar ? medyaImzali(`${yol}.jpg`, MEDYA_IMZA_ANAHTARI) : null,
+  });
+}));
+
+// ---------- 12 SAATLİK SÜPÜRGE ----------
+// Kullanıcı kararı: "oda zaten 12 saat sonra silinecek komple".
+// KÜME: yalnız görevli işçi — DELETE'ler idempotent ama N kez koşmaları boşuna
+// DB yüküdür (`tablolariBuda` ile aynı kalıp).
+async function odalariSupur() {
+  try {
+    // 1) Süresi dolmuş odaların videoları — SATIRLARI SİLMEDEN ÖNCE oku,
+    //    yoksa dosya yolunu kaybeder ve diskte 5 GB'lık öksüzler bırakırdık.
+    const { rows } = await havuz.query(
+      'SELECT id, video FROM izleme_odalari WHERE biter <= now() OR kapandi IS NOT NULL LIMIT 500');
+    for (const o of rows) odaVideosunuSil(o);
+    if (rows.length) {
+      await havuz.query('DELETE FROM izleme_odalari WHERE id = ANY($1::bigint[])',
+        [rows.map((r) => r.id)]);
+      console.log(`izleme odası süpürgesi: ${rows.length} oda silindi`);
+    }
+    // 2) Yarım kalmış yüklemeler: kullanıcı 6 saat dönmediyse parçası çöptür.
+    const { rows: yy } = await havuz.query(
+      `DELETE FROM oda_yuklemeler
+        WHERE guncellendi < now() - ($1 || ' milliseconds')::interval
+        RETURNING id`,
+      [String(ODA_YUKLEME_OMRU_MS)],
+    );
+    for (const y of yy) fs.unlink(odaParcaYolu(y.id), () => {});
+    // 3) SAHİPSİZ parça dosyaları: satırı olmayan `.parca` (süreç yükleme
+    //    ortasında ölmüşse satır yazılmadan dosya kalmış olabilir).
+    let dosyalar = [];
+    try { dosyalar = fs.readdirSync(ODA_GECICI_DIZIN); } catch { dosyalar = []; }
+    for (const ad of dosyalar) {
+      if (!ad.endsWith('.parca')) continue;
+      const yol = path.join(ODA_GECICI_DIZIN, ad);
+      let st;
+      try { st = fs.statSync(yol); } catch { continue; }
+      if (Date.now() - st.mtimeMs < ODA_YUKLEME_OMRU_MS) continue;
+      const { rows: v } = await havuz.query('SELECT 1 FROM oda_yuklemeler WHERE id=$1',
+        [ad.slice(0, -'.parca'.length)]);
+      if (!v.length) fs.unlink(yol, () => {});
+    }
+  } catch (e) {
+    // Tablolar henüz yoksa (migrasyon uygulanmadıysa) sessiz geç: süpürge
+    // yüzünden log dolmasın.
+    if (!/does not exist/i.test(e.message)) console.error('oda süpürgesi:', e.message);
+  }
+}
+if (ISCI_GOREVLI) {
+  setInterval(odalariSupur, 10 * 60 * 1000);
+  setTimeout(odalariSupur, 90 * 1000);
+}
 
 // ---------- şifre sıfırlama ----------
 app.post('/auth/sifre-sifirla-istek', authLimiti, sifirlamaIstekLimiti,

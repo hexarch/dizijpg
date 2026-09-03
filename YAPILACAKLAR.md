@@ -8532,3 +8532,70 @@ otomatik etiket, kilit, bölüm düzeyi, oturumsuz kart, 45 dil). Uyarlanan
 testler: `gif_dort_yuzey` (yüzey sayısı 4→3, kapsam aynı),
 `masaustu_orta_kolon` (bulucu tipe geçti), `medya_inceleme` (ek düğmesi
 paylaşım ekranında), `puan_dagilimi` (person ikonu sheet içinde aranıyor).
+
+## 2026-09-03 (4. tur) — 🚀 İZLEME ODASI: birlikte video izleme (1. tur)
+
+**İSTEK (birebir):** *"mesajlar kısmında isteklerin yanına + iconu koy tıklayınca
+modal aç oda oluştur odaya katıl olsun burada insanlar video import edip
+arkadaş listesindeki insanları davet edip birlikte video izleyebilmeli ama
+burası büyük bir iş burada yayın odası gibi bir şey olacak videoda oda sahibi
+10 saniye ileri sararsa izleyenlerde de ileri sarılmalı vb"*
+
+**Kullanıcı kararları:** video kullanıcı yükler (telif kullanıcıda) · dosya
+tavanı **5 GB** · oda **12 saatte komple silinir** · katılım **davetli + oda
+kodu** · oda içi **yazılı sohbet + tepkiler + sesli sohbet**.
+
+Plan ve gerekçeler: `IZLEME-ODASI-PLANI.md`.
+
+- ✅ **Senkron oynatma — duvar saati şeması.** Sunucu "video ŞU AN nerede"
+  değil "ŞU ANDA neredeydi" tutuyor (`konum_ms` + `konum_zaman`); izleyici
+  beklenen konumu kendi türetiyor. Böylece **1 sn'lik yoklama gecikmesi
+  senkronu bozmuyor** — yalnız `konum_ms` gönderilseydi her izleyici kalıcı
+  olarak bir tur geride kalırdı. Saat sapması her yanıttaki `sunucu_zaman` ile
+  ölçülüyor (**en küçük RTT kazanır**, NTP disiplini; ortalama tek bir yavaş
+  turdan zehirlenirdi).
+- ✅ **Düzeltme merdiveni** (`oda_senkron.dart`, saf + 19 test): ≤250 ms dokunma ·
+  ≤3 sn hızı %7 oynat (görünmez) · >3 sn **sar**. `surum` atladıysa merdiven
+  ATLANIR ve doğrudan sarılır — isteğin özü buydu: sahip 10 sn ileri sarınca
+  izleyicide de ANINDA sarılıyor (yumuşak düzeltmeye bırakılsaydı ~2,5 dakikada
+  kapanır, yani hiç olmamış görünürdü).
+- ✅ **Kontrol tek elde:** oynat/duraklat/sar yalnız sahipte; izleyicinin
+  kontrolleri hiç ÇİZİLMİYOR. İkisi de yazabilseydi oda salınıma girerdi.
+  Sahibin 10 sn'lik kalp atışı sürümü ARTIRMIYOR (`kalp:true`) — artırsaydı
+  düzgün akan video her 10 saniyede bir zıplardı.
+- ✅ **5 GB devam edilebilir yükleme** (`/oda-video/basla|parca|bitir`).
+  nginx `client_max_body_size` 105m olduğu için 8 MB'lık parçalar; `X-Ofset`
+  sözleşmesi kopan yüklemeyi kaldığı yerden sürdürüyor, aynı parça tekrar
+  gelirse **yeniden YAZILMIYOR** (yazmak dosyayı bozardı). Ayrı bayt bütçesi
+  (IP başına 20 GB/sa): normal 1 GB/sa bütçesi tek yüklemede tükenirdi.
+  İstemci dosyayı AKIŞTAN okuyor (`withReadStream`), 5 GB belleğe alınmıyor.
+- ✅ **12 saatlik süpürge** (`ISCI_GOREVLI`, 10 dk'da bir): oda satırı +
+  video dosyası + kapak + yarım parçalar. Canlıda doğrulandı (25 MB'lık video
+  ve satır gitti).
+- ✅ **Yazılı sohbet + 8 emoji tepkisi** (uçuşan), üye listesi + çevrimiçi
+  noktası, davet (karşılıklı takip şartı) + FCM push (16 dil), oda kodu
+  kopyalama, kalan süre.
+- ✅ **45 dil** (64 yeni anahtar), backend 2246 test yeşil, Flutter analiz
+  temiz, 19 senkron + 8 arayüz testi.
+
+**BULUNAN VE DÜZELTİLEN ÜÇ TUZAK:**
+1. `medya_imza.js` `DOSYA_KALIP` yalnız `m<uid>-` önekini tanıyordu; oda
+   videosu `o<oda>-` ile başladığı için **sessizce imzasız** yolla gidiyor ve
+   istemci 403 alıyordu. Kalıp `[mo]` oldu. Oda videosu bilerek `m` ile
+   adlandırılmadı: `m<sahip_id>-…` olsaydı sahibi onu halka açık bir yoruma
+   iliştirip özel kümeden düşürebilir ve **herkese açabilirdi**.
+2. `ozelMedyaYukle()` saatte bir kümeyi `clear()` ediyor; sorguya
+   `izleme_odalari.video` eklenmeseydi oda videoları saatte bir "genel"e
+   düşerdi. Migrasyon uygulanmadan açılışa karşı **geri düşüş sorgusu** kondu.
+3. `express.raw({type: <glob>})` kaynağa yıldız-eğik-çizgi ikilisi sokuyor;
+   bloklu yorum ayıklayan testler kayıp ALAKASIZ iki güvenlik testini kırdı.
+   `type` artık işlev.
+
+**Widget testi iki gerçek düzen hatası yakaladı:** kısa ekranda video+kontroller
+sohbeti eziyor ve Column taşıyordu (video tavanı artık KALAN yerden hesaplanıyor,
+üye şeridi dar alanda düşüyor, boş durum kaydırılabilir).
+
+**SIRADA (2. tur):** oda içi **sesli sohbet**. `lib/gorusme/` ikili arama için
+yazıldı; çok kişili mesh (N×(N-1) bağlantı) ayrı sinyalleşme şeması, TURN
+bütçesi ve kabul/ret akışı istiyor. Oda tavanı 12 kişi ŞİMDİDEN kondu ki o tur
+geldiğinde canlıda 40 kişilik odalar bulunmasın.

@@ -1495,4 +1495,83 @@ const Map<String, String> cevirilerEl = {
   'Dosya açılamadı': 'Το αρχείο δεν άνοιξε',
   'Temizle': 'Εκκαθάριση',
   'Oyuncu': 'Ηθοποιός',
+  'Böyle bir oda yok': 'Δεν υπάρχει τέτοιο δωμάτιο',
+  'Bu oda kapandı': 'Αυτό το δωμάτιο έκλεισε',
+  'Bu odaya girmek için davet ya da oda kodu gerekli':
+      'Χρειάζεσαι πρόσκληση ή κωδικό δωματίου',
+  'Oda dolu': 'Το δωμάτιο είναι γεμάτο',
+  'Bu odaya giremezsin': 'Δεν μπορείς να μπεις σε αυτό το δωμάτιο',
+  'Bu odanın üyesi değilsin': 'Δεν είσαι μέλος αυτού του δωματίου',
+  'Bunu yalnız oda sahibi yapabilir':
+      'Αυτό μπορεί να το κάνει μόνο ο οικοδεσπότης',
+  'Oda sahibi odayı kapatmalı':
+      'Το δωμάτιο πρέπει να το κλείσει ο οικοδεσπότης',
+  'Zaten açık bir odan var': 'Έχεις ήδη ένα ανοιχτό δωμάτιο',
+  'Oda kodu 6 karakter olmalı':
+      'Ο κωδικός δωματίου πρέπει να έχει 6 χαρακτήρες',
+  'Misafir hesaplar izleme odası açamaz. Hesap oluşturursan açabilirsin.':
+      'Οι λογαριασμοί επισκέπτη δεν μπορούν να ανοίξουν δωμάτιο. Δημιούργησε λογαριασμό για να ανοίξεις.',
+  'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin':
+      'Μπορείς να προσκαλέσεις μόνο όσους σε ακολουθούν κι εκείνοι',
+  'Video en fazla {} GB olabilir': 'Το βίντεο μπορεί να είναι έως {} GB',
+  'Yalnızca MP4 veya WebM izlenebilir': 'Αναπαράγονται μόνο MP4 ή WebM',
+  '{} odaya katıldı': 'Ο/Η {} μπήκε στο δωμάτιο',
+  '{} odadan ayrıldı': 'Ο/Η {} έφυγε από το δωμάτιο',
+  '{} bir video yükledi': 'Ο/Η {} ανέβασε ένα βίντεο',
+  'bitti': 'τέλος',
+  '{} sn': '{} δευτ.',
+  'Birlikte izle': 'Δείτε μαζί',
+  'Bir video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'Ανέβασε ένα βίντεο, κάλεσε τους φίλους σου και δείτε ταυτόχρονα.',
+  'Henüz bir odan ya da davetin yok.':
+      'Δεν έχεις ακόμη δωμάτιο ούτε πρόσκληση.',
+  'Odaya katıl': 'Μπες σε δωμάτιο',
+  'Oda kodu': 'Κωδικός δωματίου',
+  'Katıl': 'Μπες',
+  'Oda oluştur': 'Δημιουργία δωματίου',
+  'Odalar 12 saat sonra kendiliğinden kapanır ve video silinir.':
+      'Τα δωμάτια κλείνουν μόνα τους μετά από 12 ώρες και το βίντεο διαγράφεται.',
+  'Odam': 'Το δωμάτιό μου',
+  '@{} odası': 'Δωμάτιο του/της @{}',
+  'Seni davet etti': 'Σε προσκάλεσε',
+  '{} kişi': '{} άτομα',
+  'Video yok': 'Χωρίς βίντεο',
+  '{} kaldı': 'Απομένουν {}',
+  'Davet': 'Πρόσκληση',
+  '@{} davet edildi': 'Ο/Η @{} προσκλήθηκε',
+  'Oda kodu kopyalandı': 'Ο κωδικός δωματίου αντιγράφηκε',
+  'Odayı kapat': 'Κλείσιμο δωματίου',
+  'Odadan ayrıl': 'Αποχώρηση από το δωμάτιο',
+  'Oda kapanacak ve video silinecek. Bu geri alınamaz.':
+      'Το δωμάτιο θα κλείσει και το βίντεο θα διαγραφεί. Δεν αναιρείται.',
+  'Odadan çıkacaksın. Kodla ya da davetle geri dönebilirsin.':
+      'Θα φύγεις από το δωμάτιο. Μπορείς να επιστρέψεις με τον κωδικό ή με πρόσκληση.',
+  'Ayrıl': 'Αποχώρηση',
+  'İzleme odası': 'Δωμάτιο προβολής',
+  'Odalar 12 saat sonra kendiliğinden kapanır.':
+      'Τα δωμάτια κλείνουν μόνα τους μετά από 12 ώρες.',
+  '{} kişi · {} kaldı': '{} άτομα · απομένουν {}',
+  'Davet et': 'Πρόσκληση',
+  'Bir video yükle, izlemeye başlayın': 'Ανέβασε ένα βίντεο και ξεκινήστε',
+  'Oda sahibi henüz video yüklemedi':
+      'Ο οικοδεσπότης δεν έχει ανεβάσει βίντεο ακόμη',
+  'Video yükle': 'Ανέβασμα βίντεο',
+  'En fazla {} GB · MP4 veya WebM': 'Έως {} GB · MP4 ή WebM',
+  'Kaldığı yerden yükleniyor · {}/{} MB': 'Συνέχιση μεταφόρτωσης · {}/{} MB',
+  'Yükleniyor · {}/{} MB': 'Μεταφόρτωση · {}/{} MB',
+  'Videoyu değiştir': 'Αλλαγή βίντεο',
+  'Oda sahibiyle eşleniyor': 'Συγχρονισμός με τον οικοδεσπότη',
+  'Sohbet boş': 'Η συνομιλία είναι άδεια',
+  'İzlerken buradan konuşabilirsiniz.': 'Εδώ μπορείτε να μιλάτε ενώ βλέπετε.',
+  'oda sahibi': 'οικοδεσπότης',
+  'davet bekliyor': 'εκκρεμεί πρόσκληση',
+  'çevrimdışı': 'εκτός σύνδεσης',
+  'Mesaj yaz...': 'Γράψε μήνυμα...',
+  'Oda kodunu kopyala': 'Αντιγραφή κωδικού δωματίου',
+  'Oda kodu {} — kopyala': 'Κωδικός δωματίου {} — αντιγραφή',
+  'Arkadaşını davet et': 'Κάλεσε έναν φίλο',
+  'kullanıcı adı': 'όνομα χρήστη',
+  'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.':
+      'Μπορείς να προσκαλέσεις μόνο όσους σε ακολουθούν κι εκείνοι.',
+  'Oda açılamadı': 'Δεν ήταν δυνατό το άνοιγμα του δωματίου',
 };

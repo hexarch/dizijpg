@@ -42,6 +42,11 @@ Disallow: /izlediklerim
 Disallow: /sohbetler
 Disallow: /sohbet/
 Disallow: /mesaj-istekleri
+# IZLEME ODASI (3 Eyl 2026): oda 12 saat yasayan, davetle/kodla girilen
+# KISISEL bir yuzey. Icerigi (yuklenen video, oda sohbeti) hicbir kosulda
+# indekslenmemeli; bot zaten giremez (girisZorunlu) ama tarama butcesi de
+# harcanmasin.
+Disallow: /oda/
 Disallow: /kitaplik/
 # 8 Agu 2026: favori oyuncular ve "oyuncunun yapimlarindan kacini izledim"
 # listesi. Ikisi de KISIYE OZEL (oturum zorunlu, icerik kullaniciya gore

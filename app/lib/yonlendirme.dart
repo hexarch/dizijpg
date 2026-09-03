@@ -15,6 +15,7 @@ import 'ekranlar/kesfet_akis.dart';
 import 'ekranlar/bildirimler.dart';
 import 'ekranlar/ozet.dart';
 import 'ekranlar/sohbet.dart';
+import 'oda/oda_ekrani.dart';
 import 'ekranlar/sohbet_detay.dart';
 import 'ekranlar/ayarlar.dart';
 import 'ekranlar/bolum.dart';
@@ -415,6 +416,16 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
               GoRoute(
                 path: '/mesaj-istekleri',
                 builder: (_, __) => const MesajIstekleriEkrani(),
+              ),
+              // İZLEME ODASI (3 Eyl 2026). KABUĞUN İÇİNDE: oda Mesajlar
+              // sekmesinden açılıyor ve kullanıcı odadan çıkınca alt menüyle
+              // birlikte sohbet listesine dönmeli (`ux-kontrol` md. 4:
+              // "kullanıcı sayfaları kabuk İÇİNDE kalmalı").
+              GoRoute(
+                path: '/oda/:id',
+                builder: (_, s) => OdaEkrani(
+                  odaId: int.tryParse(s.pathParameters['id'] ?? '') ?? 0,
+                ),
               ),
               GoRoute(
                 path: '/sohbet/:ad',
