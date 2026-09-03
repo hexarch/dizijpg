@@ -241,8 +241,14 @@ void main() {
     }
 
     // Sunucu kanonik 100 dedi; varsayılan ölçekte (5) kullanıcı 5.0 görür.
-    expect(find.text('ort. 5.0'), findsOneWidget);
-    expect(find.text('ort. 100.0'), findsNothing);
+    //
+    // findRichText: 3 Eyl 2026'dan beri ortalama, yıldız şeridinin ufak alt
+    // yazısında İKİNCİ BİR SPAN olarak duruyor ("4/5  ·  ort. 5.0"), ayrı bir
+    // `Text` değil (bkz. YildizPuan.altYaziEki). Gösterilen metin AYNI.
+    // (`text` DEĞİL `textContaining`: span'in düz metni "4/5  ·  ort. 5.0",
+    // tam eşleşme aramaz.)
+    expect(find.textContaining('ort. 5.0', findRichText: true), findsOneWidget);
+    expect(find.textContaining('ort. 100.0', findRichText: true), findsNothing);
   });
 
   testWidgets('ölçek 100 iken AYNI ortalama 100 olarak görünür', (
@@ -280,7 +286,9 @@ void main() {
     }
 
     // 100'lük ölçekte ondalık atılır (sahte kesinlik) → "ort. 100".
-    expect(find.text('ort. 100'), findsOneWidget);
-    expect(find.text('ort. 5.0'), findsNothing);
+    // Bu ölçekte şerit ROZET kipinde; ek rozetin sağında ayrı `Text` olarak
+    // çizilir (kaybolmaması bilerek kilitli — bkz. `_rozet`).
+    expect(find.textContaining('ort. 100', findRichText: true), findsOneWidget);
+    expect(find.textContaining('ort. 5.0', findRichText: true), findsNothing);
   });
 }

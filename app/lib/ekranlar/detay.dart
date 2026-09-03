@@ -1301,6 +1301,11 @@ class _DetayEkraniState extends State<DetayEkrani>
                                         tur: widget.tur,
                                         tmdbId: widget.tmdbId,
                                         baslangicPuan: benimPuan,
+                                        // Yıldızların altında ufak "Puanla"
+                                        // (puanlıyken "4/5"): düğme gidince
+                                        // sözcük de gitmişti, şeridin ne işe
+                                        // yaradığı yalnız ikondan okunuyordu.
+                                        altYazi: true,
                                         kaydedildi: (_, _) => _puanKaydedildi(),
                                       ),
                                     ),

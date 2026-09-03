@@ -44,7 +44,7 @@
   değil `/kisi/`; aday sorular oradan çıkacak.
 - ⬜ **GEO §6.2 (aylık elle sorgu turu) vadesi 28 Eylül** — elle koşulacak.
 
-## 2026-09-03 (6. tur) — 🔨 Kişi ve yapım şirketi sayfalarında "Puanla" düğmesi yerine yıldız şeridi
+## 2026-09-03 (6. tur) — 🚀 Kişi ve yapım şirketi sayfalarında "Puanla" düğmesi yerine yıldız şeridi
 
 - **İstek:** *"oyuncu profili, dizi/film profilinde 'Puanla' tuşu yerine —
   eğer 5'li sistem kullanıyorsa 5 yıldız koy, altına 'puanla' yaz ufak bir
@@ -78,9 +78,14 @@
   kalkan yalnız her puanlamada zorla açılan metin kutusuydu (dizi/film
   sayfasında 3 Eyl'de alınan kararla aynı).
 - ✅ **Yeni çeviri anahtarı YOK:** "Puanla" 45 dilde zaten var, "3/5" biçimli.
+- 🚀 **Canlıda:** web 1.118.0+185 (`main.3e674398550c.dart.js`), 3 Eyl.
 - Kanıt: `test/profil_yildiz_serit_test.dart` (8 test) — şerit + ufak etiket,
   puanlıyken "3/5", dokununca MODAL AÇILMADAN `/puan` (`tur: person` / `company`,
-  `kanonik: true`), 100'lük ölçekte rozet, 360 dp'de taşma yok.
+  `kanonik: true`), 100'lük ölçekte rozet, 360 dp'de taşma yok. Ayrıca
+  `puan_olcegi_test.dart` iki testi ortalamanın 5'lik (şerit alt yazısı) ve
+  100'lük (rozet yanı) ölçekte de görünür kalmasını kilitliyor — ilk yazımda
+  100'lük ölçekte "ort." SESSİZCE KAYBOLUYORDU, testler yakaladı.
+  Tam paket: **2.503/2.503**.
 
 ## 2026-09-03 (5. tur) — 🚀 Akışta yalnız-yazı gönderilerinde "Çevir" düğmesi yoktu
 

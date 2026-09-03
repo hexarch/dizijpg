@@ -417,6 +417,33 @@ class YildizPuan extends StatefulWidget {
   final int? baslangicPuan; // sunucu (kanonik) ölçeği 1-100
   final double boyut;
 
+  /// Yıldızların ALTINA küçük bir etiket koy: puansızken "Puanla", puanlıyken
+  /// "4/5". 3 Eyl 2026, kullanıcı: *"5 yıldız koy, altına puanla yaz ufak bir
+  /// şekilde."*
+  ///
+  /// NEDEN VARSAYILAN KAPALI: bölüm satırında (`BolumPuani`) yıldızların
+  /// solunda zaten "S1B4" etiketi, sağında topluluk ortalaması var; oraya bir
+  /// de alt yazı koymak aynı bilgiyi üçüncü kez tekrar ederdi. Etiket YALNIZ
+  /// yıldızların tek başına durduğu profil başlıklarında (dizi/film, kişi,
+  /// şirket) açılır — orada eskiden "Puanla" yazan bir düğme vardı ve
+  /// yıldızlara geçince o sözcük kayboluyordu.
+  ///
+  /// ROZET KİPİNDE ÇİZİLMEZ: rozetin kendi içinde zaten "Puanla" / "73/100"
+  /// yazıyor (bkz. [_rozet]).
+  final bool altYazi;
+
+  /// Alt yazının SONUNA eklenen kısa metin: "Puanla · ort. 4.2".
+  ///
+  /// NEDEN YANDA DEĞİL ALTTA: kişi sayfasında topluluk ortalaması şeridin
+  /// SAĞINDAYDI ve 390 dp telefonda ondan 98 dp çalıyordu — geriye 128 dp
+  /// kalınca yıldızlar 21,6 dp'ye, dokunma hücresi 25,6 dp'ye iniyordu
+  /// (ölçüldü). Ortalama zaten ufak, gri, ikincil bir bilgi; alt yazının
+  /// yanına inince şerit sütunun TAMAMINI (234 dp) kullanıyor ve yıldız
+  /// 30 dp'ye, hücre 44 dp'ye çıkıyor.
+  ///
+  /// [altYazi] kapalıyken YOK SAYILIR.
+  final String? altYaziEki;
+
   /// Kaydetme BAŞARILI olduğunda çağrılır: (yıldız 0..N, sunucu yanıtı).
   /// 0 = puan silindi. Üst blok ortalamayı tazelemek ve sunucunun bildirdiği
   /// yan etkiyi (bölüm "izlendi" işaretlendi) göstermek için kullanır.
@@ -430,6 +457,8 @@ class YildizPuan extends StatefulWidget {
     this.bolum,
     this.baslangicPuan,
     this.boyut = 30,
+    this.altYazi = false,
+    this.altYaziEki,
     this.kaydedildi,
   });
 
@@ -572,7 +601,16 @@ class _YildizPuanState extends State<YildizPuan> {
             if (b < 18) return _rozet(olcek);
             final hucre = ham.clamp(b + 4, 44.0);
             final yatay = ((hucre - b) / 2).clamp(2.0, 7.0);
-            return _satir(olcek, b, yatay, hucre);
+            final satir = _satir(olcek, b, yatay, hucre);
+            if (!widget.altYazi) return satir;
+            // Etiket yıldızlarla SOLDAN HİZALI: `yatay` ilk yıldızın sol payı,
+            // aynısını metne de vererek "Puanla" sözcüğü ilk yıldızın gövdesi
+            // altında başlar (yoksa 4-7 dp sola kayık görünürdü).
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [satir, _altYazi(olcek, yatay)],
+            );
           },
         );
       },
@@ -659,10 +697,66 @@ class _YildizPuanState extends State<YildizPuan> {
     );
   }
 
+  /// Yıldız satırının altındaki küçük etiket ([YildizPuan.altYazi]).
+  ///
+  /// Satır YÜKSEKLİĞİ SABİT: puansızken "Puanla", puanlıyken "4/5" yazar ama
+  /// hiçbir zaman kaybolmaz. Kaybolsaydı ilk puanı veren kullanıcının altında
+  /// bir satır çöker, sayfanın geri kalanı 13 dp yukarı zıplardı.
+  ///
+  /// Sürükleme sırasında parmağı izler (`_surukleme`): kullanıcı bırakmadan
+  /// önce kaç puan verdiğini SAYIYLA da görür — 8 yıldızı gözle saymak zor.
+  Widget _altYazi(int olcek, double yatay) {
+    final gosterilen = _surukleme ?? _yildiz;
+    final ek = widget.altYaziEki;
+    return Padding(
+      padding: EdgeInsets.only(left: yatay),
+      child: Text.rich(
+        TextSpan(
+          children: [
+            // SENİN girdin/çağrın: tam kontrast. `metin38` (pasif ton)
+            // BİLEREK kullanılmadı — "Puanla" tıklanabilir bir çağrı, ipucu
+            // değil; 11 dp'de white38 zaten okunmuyor (tema.dart md.).
+            TextSpan(text: gosterilen > 0 ? '$gosterilen/$olcek' : 'Puanla'.c),
+            // Ek (topluluk ortalaması) İKİNCİL: aynı renkte olsaydı
+            // "3/5 · ort. 4.2" tek bir sayı dizisi gibi okunur, kullanıcı
+            // hangisinin kendi puanı olduğunu ayırt edemezdi. `acikGri`
+            // projenin ikincil metin tonu (siyah zeminde ~8,7:1 kontrast),
+            // `metin38` gibi eşiğin altına düşmez.
+            if (ek != null && ek.isNotEmpty)
+              TextSpan(
+                text: '  ·  $ek',
+                style: TextStyle(
+                  color: DiziRenkler.acikGri,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+          ],
+        ),
+        // RichText tema rengini DEVRALMAZ; taban stil (RENK DAHİL) burada
+        // açıkça verilir — skill md. 2, koyu temada siyah basma tuzağı.
+        style: TextStyle(
+          fontSize: 11,
+          height: 1,
+          fontWeight: FontWeight.w700,
+          color: DiziRenkler.metin,
+        ),
+        // Dar sütunda ek uzunsa satırı taşırmasın.
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
   /// Geniş ölçekte satır yerine çizilen rozet. Puansızken de dokunulabilir
   /// olmalı — yoksa geniş ölçekteki kullanıcı puan VEREMEZ.
+  ///
+  /// [YildizPuan.altYaziEki] BURADA DA ÇİZİLİR (rozetin sağında, sönük):
+  /// ek çağıranın tek "ortalama" göstergesi olabiliyor. Yalnız satır kipinde
+  /// çizseydik ölçeğini 100 yapan kullanıcı kişi sayfasındaki "ort. 42"yi
+  /// SESSİZCE KAYBEDERDİ — `puan_olcegi_test.dart` bunu yakaladı.
   Widget _rozet(int olcek) {
     final puanli = _yildiz > 0;
+    final ek = widget.altYazi ? widget.altYaziEki : null;
     return InkWell(
       onTap: () => _sheetAc(olcek),
       borderRadius: BorderRadius.circular(20),
@@ -679,14 +773,33 @@ class _YildizPuanState extends State<YildizPuan> {
               color: puanli ? DiziRenkler.sari : DiziRenkler.metin38,
             ),
             const SizedBox(width: 6),
-            Text(
-              puanli ? '$_yildiz/$olcek' : 'Puanla'.c,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w800,
-                color: puanli ? DiziRenkler.metin : DiziRenkler.metin54,
+            Flexible(
+              child: Text(
+                puanli ? '$_yildiz/$olcek' : 'Puanla'.c,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: puanli ? DiziRenkler.metin : DiziRenkler.metin54,
+                ),
               ),
             ),
+            if (ek != null && ek.isNotEmpty) ...[
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  ek,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: DiziRenkler.acikGri,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),

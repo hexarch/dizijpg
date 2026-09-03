@@ -9,7 +9,6 @@ import '../puan.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
 import 'ortak.dart';
-import 'puan_sheet.dart';
 import 'tepki.dart';
 import 'yorumlar.dart';
 
@@ -234,18 +233,6 @@ class _KisiEkraniState extends State<KisiEkrani> with OlcekDinler<KisiEkrani> {
     }
   }
 
-  Future<void> _puanla() async {
-    if (!girisGerekli(context)) return;
-    final kaydedildi = await puanlaVeKaydet(
-      context,
-      tur: 'person',
-      tmdbId: widget.kisiId,
-      mevcutPuan: _benimPuan?['puan'] as int?,
-      mevcutYorum: _benimPuan?['yorum'] as String?,
-    );
-    if (kaydedildi) _puanYenile();
-  }
-
   Future<void> _yukle() async {
     setState(() => _hata = null);
     _puanYenile();
@@ -394,39 +381,50 @@ class _KisiEkraniState extends State<KisiEkrani> with OlcekDinler<KisiEkrani> {
                               metin: '{}+ yapım'.cf([_isler.length]),
                             ),
                             const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                OutlinedButton.icon(
-                                  onPressed: _puanla,
-                                  icon: Icon(
-                                    _benimPuan != null
-                                        ? Icons.star
-                                        : Icons.star_border,
-                                    size: 18,
-                                    color: DiziRenkler.sari,
-                                  ),
-                                  label: Text(
-                                    _benimPuan != null
-                                        ? '${yildiza(_benimPuan!['puan'])}/$yildizAzami'
-                                        : 'Puanla'.c,
-                                    style: TextStyle(
-                                      color: DiziRenkler.sariMetin,
-                                    ),
-                                  ),
-                                ),
-                                if (_toplum?['ortalama'] != null) ...[
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'ort. {}'.cf([
+                            // PUAN ŞERİDİ — DÜĞME + MODAL YOK (3 Eyl 2026).
+                            //
+                            // Eskiden burada "Puanla" yazan bir
+                            // `OutlinedButton` vardı; dokununca puan +
+                            // "Yorum yaz..." sheet'i açılıyordu. Kullanıcı,
+                            // dizi/film sayfasında verdiği kararı kişi ve
+                            // şirket sayfaları için de istedi: *"puanla tuş
+                            // yerine, eğer 5'li sistem kullanıyorsa 5 yıldız
+                            // koy, altına puanla yaz ufak bir şekilde; eğer
+                            // 5'ten fazla yıldızlama kullanıyorsa kaydırma
+                            // slider koy."* İkisini de [YildizPuan] yapıyor:
+                            // ölçek satıra sığdığı sürece dokunulabilir /
+                            // sürüklenebilir yıldızlar, sığmayınca rozet →
+                            // kaydırıcılı sayfa ([puanSecSheet]).
+                            //
+                            // YORUM KAYBOLMADI: sayfanın altındaki yorumlar
+                            // bölümü yerinde duruyor; kaybolan yalnız her
+                            // puanlamada zorla açılan metin kutusuydu.
+                            //
+                            // ŞERİT SÜTUNUN TAMAMINI KULLANIR, "ort." YANDA
+                            // DEĞİL ALT YAZIDA (ölçüldü, 390 dp telefon):
+                            // ortalama sağda dururken şeride 128 dp kalıyor,
+                            // yıldız 21,6 dp'ye ve dokunma hücresi 25,6 dp'ye
+                            // düşüyordu. Ortalama alt yazının yanına inince
+                            // şerit 234 dp'nin tamamını alıyor → yıldız 30 dp,
+                            // hücre 44 dp (asgari dokunma hedefi).
+                            //
+                            // 10'luk ölçekte 234/10 = 23,4 → ikon 19,4 dp ile
+                            // hâlâ satır kipinde kalır; rozete ancak daha dar
+                            // ekranlarda düşer ([YildizPuan] kendi ölçer).
+                            YildizPuan(
+                              tur: 'person',
+                              tmdbId: widget.kisiId,
+                              baslangicPuan: puanSayisi(
+                                _benimPuan?['puan'],
+                              )?.toInt(),
+                              altYazi: true,
+                              altYaziEki: _toplum?['ortalama'] == null
+                                  ? null
+                                  : 'ort. {}'.cf([
                                       yildizOrtalamaMetni(_toplum!['ortalama']),
                                     ]),
-                                    style: TextStyle(
-                                      color: DiziRenkler.metin54,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ],
+                              // Alt yazıdaki ortalama puan değişince tazelensin.
+                              kaydedildi: (_, _) => _puanYenile(),
                             ),
                             // İSTEK: "puanla yazısının ALTINDA 10/20 gibi".
                             // Oturumsuzda ve oran gelmeden hiç çizilmez.

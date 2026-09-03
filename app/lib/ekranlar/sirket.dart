@@ -9,9 +9,7 @@ import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import '../puan.dart';
 import 'ayarlar.dart' show ulkeler;
-import 'giris_istem.dart';
 import 'ortak.dart';
-import 'puan_sheet.dart';
 import 'tepki.dart';
 import 'yorumlar.dart';
 
@@ -545,18 +543,6 @@ class _SirketEkraniState extends State<SirketEkrani>
     }
   }
 
-  Future<void> _puanla() async {
-    if (!girisGerekli(context)) return;
-    final kaydedildi = await puanlaVeKaydet(
-      context,
-      tur: 'company',
-      tmdbId: widget.sirketId,
-      mevcutPuan: puanSayisi(_benimPuan?['puan'])?.toInt(),
-      mevcutYorum: _benimPuan?['yorum'] as String?,
-    );
-    if (kaydedildi) _puanYenile();
-  }
-
   /// Her rafın HER kaynağından İLK sayfa; hepsi paralel. Dört küçük istek,
   /// hepsi `/tmdb/*` beyaz listesinde ve sunucuda önbellekli.
   ///
@@ -860,18 +846,27 @@ class _SirketEkraniState extends State<SirketEkrani>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // PUAN ŞERİDİ — DÜĞME + MODAL YOK (3 Eyl 2026). Gerekçe ve
+          // kullanıcı cümlesi kisi.dart'ta; yapım şirketi sayfası aynı
+          // kuralı paylaşıyor ("yapım şirketi ve yönetmenlerde de aynı
+          // şekilde"). Yönetmen zaten kişi sayfasıdır, ayrı ekranı yok.
+          //
+          // Expanded YOK, Flexible: bu satır sayfanın TAM genişliğinde
+          // (~334 dp) ve sağındaki topluluk rozeti kısa. Yıldızlar eldeki
+          // yeri sonuna kadar yaymasın diye şerit kendi doğal boyunda
+          // kalır; 5'lik ölçekte 5x44 = 220 dp buraya rahat sığar.
           Row(
+            // ALTTAN HİZA — gerekçe kisi.dart'ta: topluluk rozeti şeridin
+            // ufak alt yazısıyla aynı satıra otursun.
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              FilledButton.tonalIcon(
-                onPressed: _puanla,
-                icon: Icon(
-                  _benimPuan != null ? Icons.star : Icons.star_border,
-                  size: 20,
-                ),
-                label: Text(
-                  _benimPuan != null
-                      ? '${yildiza(_benimPuan!['puan'])}/$yildizAzami'
-                      : 'Puanla'.c,
+              Flexible(
+                child: YildizPuan(
+                  tur: 'company',
+                  tmdbId: widget.sirketId,
+                  baslangicPuan: puanSayisi(_benimPuan?['puan'])?.toInt(),
+                  altYazi: true,
+                  kaydedildi: (_, _) => _puanYenile(),
                 ),
               ),
               if (ort != null && adet > 0) ...[
