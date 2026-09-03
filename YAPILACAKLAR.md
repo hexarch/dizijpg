@@ -1,6 +1,36 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-03 (4. tur) — 🚀 Google arama sonucunda site simgesi yerine genel "küre" ikonu
+
+- ✅ **Teşhis:** Google favicon tarayıcısı dizijpg.com'dan geçerli simge
+  bulamıyordu. İki ayrı açık:
+  1. **SSR kabuğunda `<link rel="icon">` HİÇ YOKTU.** Simge bağlantısı yalnız
+     Flutter `index.html`'inde duruyor; Googlebot'a SSR HTML gidiyor, o kabukta
+     canonical/hreflang/og var ama simge yok.
+  2. **Yedek yol `/favicon.ico` resim değil HTML dönüyordu.** nginx bu adresi
+     SPA fallback'e düşürüyordu: `content-type: text/html`, gövde index.html.
+     Google bunu geçersiz sayıp simgeyi reddeder.
+- ✅ **Düzeltme:**
+  - `server.js` SSR head şablonuna 3 satır: `favicon.png` (48x48),
+    `favicon.ico`, `apple-touch-icon` (Icon-192). Adresler **MUTLAK** —
+    `/kisi/123` gibi alt yollarda `<base href>` yok, göreli yol
+    `/kisi/favicon.png`'ye çözülür (o da HTML döner).
+  - Gerçek `favicon.ico` üretildi (48/32/16 çok boyutlu, 3.759 B, PIL ile
+    `favicon.png`'den) → `app/web/favicon.ico` + `/var/www/dizijpg/`.
+  - nginx kök görsel bloğu `(png|webp|svg)` → `(png|webp|svg|ico)`; artık
+    statik servis ediliyor, 30 gün önbellek.
+  - Flutter `index.html`'ine de `.ico` bağlantısı eklendi (canlı kopya elle
+    yamalandı + brotli yenilendi; sonraki derlemede kaynaktan gelir).
+  - **Cloudflare kenarı eski HTML'i HIT ile servis ediyordu** — panelden
+    özel temizleme (`/favicon.ico`, `/favicon.png`, `/`).
+- Kanıt: `/favicon.ico` → `image/x-icon`, 3.759 B, MS Windows icon (3 boyut);
+  Googlebot ile 6 SSR yüzeyinde (ana sayfa, kişi, içerik, şirket, /en, gizlilik)
+  2'şer icon bağlantısı; SEO testleri 57/57; giriş ucu 200.
+- ⬜ **Sırada (kullanıcı işi):** Search Console → URL denetimi → ana sayfa için
+  "Dizine eklenmesini iste". Google simgeyi ana sayfa yeniden tarandığında
+  günceller (birkaç gün–birkaç hafta).
+
 ## 2026-09-03 (3. tur) — 🚀 "Akış ile Keşfet aynı postları aynı sırayla gösteriyor" — KÖK SEBEP + düzeltme (backend)
 
 - ✅ **Teşhis (kullanıcı 3, görülmüşler hariç, `algoritma-onizleme?gorulen=haric`

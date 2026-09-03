@@ -2638,11 +2638,20 @@ function ogSayfa({ baslik, aciklama, gorsel, url, tur = 'website',
     : '';
   const hreflang = (dilliMi && indexle)
     ? `\n${seoHreflang(canonical || url)}` : '';
+  // Favicon (3 Eyl 2026): Google arama sonucunda site simgesi yerine genel
+  // "kure" ikonu cikiyordu. Sebep: bu SSR kabugunda <link rel="icon"> YOKTU
+  // (yalniz Flutter index.html'de vardi, Googlebot'a o gitmiyor) ve yedek yol
+  // /favicon.ico nginx'te SPA fallback'e dusup text/html donuyordu. Adresler
+  // MUTLAK: /kisi/123 gibi alt yollarda <base href> yok, goreli yol
+  // /kisi/favicon.png'ye cozulur (o da HTML doner).
   return `<!doctype html><html lang="${htmlKacir(dil)}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${b}</title>
 <meta name="description" content="${a}">
 <link rel="canonical" href="${kan}">${indexle ? '' : '\n<meta name="robots" content="noindex,follow">'}${hreflang}
+<link rel="icon" type="image/png" sizes="48x48" href="https://dizijpg.com/favicon.png">
+<link rel="icon" type="image/x-icon" href="https://dizijpg.com/favicon.ico">
+<link rel="apple-touch-icon" sizes="192x192" href="https://dizijpg.com/icons/Icon-192.png">
 <meta property="og:type" content="${htmlKacir(tur)}">
 <meta property="og:site_name" content="dizi.jpg">
 <meta property="og:locale" content="${yerel}">
