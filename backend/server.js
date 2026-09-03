@@ -14055,7 +14055,11 @@ async function turListesi({ benId, yuzey, dil, kadro, ayar, olcum, tohum, gorule
     kesfet: yuzey === 'kesfet', // sert filtre: Keşfet havuzunda medyasız yok
     kitaplikGerek: ayar.kitaplik_oncelik > 0,
   });
-  const { idler } = siralaVeKotala(adaylar, ayar, olcum);
+  // Keşfet'te eşit skorlar tohumla dağılır (siralama.js `esitlikKirici`);
+  // Akış yeni→eski kalır.
+  const { idler } = siralaVeKotala(adaylar, ayar, olcum, {
+    tohum: yuzey === 'kesfet' ? tohum : null,
+  });
   tohumDeposu.yaz(anahtar, idler);
   yayinla('tohum', { a: anahtar, i: idler }); // kardeş işçilere (gerekçe yukarıda)
   return idler;
@@ -20262,17 +20266,26 @@ app.get('/admin/algoritma-onizleme', adminKisit, sarici(async (req, res) => {
   const ayar = ayarBirlestir(ham, yuzey);
   const olcum = await algoritmaOlcumleri();
   const hacim = hacimUygula(ayar, olcum);
+  // `?gorulen=haric`: kullanıcının GERÇEKTEN göreceği liste (görülmüşler
+  // düşer, kadro gerçek). Varsayılan eski davranış: tüm havuz, kadro boş —
+  // ağırlık ayarı yaparken görülmüş/görülmemiş ayrımı gürültü olurdu.
+  // (3 Eyl 2026: "Akış ile Keşfet aynı geliyor" teşhisi için eklendi.)
+  const gercek = String(req.query.gorulen || '') === 'haric';
+  const kadro = gercek ? await kadroKisileri(kimId) : [];
   const t0 = Date.now();
   const adaylar = await adaylariGetir({
-    benId: kimId, dil: 'tr', kadro: [], hacim,
-    gorulenHaric: false, kat: hacim.pay.medya > 0 || ayar.video_tabani > 0,
+    benId: kimId, dil: 'tr', kadro, hacim,
+    gorulenHaric: gercek, kat: hacim.pay.medya > 0 || ayar.video_tabani > 0,
     // Panel YALAN SÖYLEMEMELİ: kullanıcı yolundaki sert filtre burada da var.
     kesfet: yuzey === 'kesfet',
     kitaplikGerek: ayar.kitaplik_oncelik > 0,
   });
   const sqlMs = Date.now() - t0;
   const t1 = Date.now();
-  const { idler, kirilim } = siralaVeKotala(adaylar, ayar, olcum, { kirilimAdet: adet });
+  const { idler, kirilim } = siralaVeKotala(adaylar, ayar, olcum, {
+    kirilimAdet: adet,
+    tohum: yuzey === 'kesfet' ? tohumUret(kimId, 'kesfet') : null,
+  });
   const skorMs = Date.now() - t1;
   // Yazar adı + yapım anahtarı (metin/medya YOK)
   const ust = idler.slice(0, adet);
@@ -20287,6 +20300,7 @@ app.get('/admin/algoritma-onizleme', adminKisit, sarici(async (req, res) => {
   res.json({
     yuzey,
     kullanici: kimId,
+    gorulen: gercek ? 'haric' : 'dahil',
     aday: adaylar.length,
     susan: hacim.susan,
     pay: hacim.pay,

@@ -239,13 +239,35 @@ const DOYGUNLUK_PENCERESI = 150;
 // döngüyü 730 bin adımdan 60 bine indirir.
 const CESITLENDIR_ADET = 400;
 
+// EŞİTLİK KIRICI (3 Eyl 2026): Akış'ta eşit skorlar yeni→eski (id azalan);
+// Keşfet'te TOHUMA bağlı karıştırma. Neden: kullanıcı 3'te (ölçüldü) görülmemiş
+// havuzun %90'ı tek hesabın arşiv gönderisiydi — hepsi aynı kitaplık/takip/
+// tazelik sinyaliyle BİREBİR aynı skoru alıyordu, dolayısıyla iki yüzeyin
+// farklı ağırlıkları hiçbir şeyi yeniden sıralamıyor ve ikisi de id'ye
+// göre AYNI diziyi döndürüyordu ("akış ile keşfet aynı postlar aynı sıra").
+// Keşfet "ne varmış" yüzeyi: bağlar tohumla dağılır, 2 dk'lık pencere
+// içinde deterministik kalır (sayfalama liste dondurma varsayımına dayanır).
+// Tohum verilmezse eski davranış (id azalan) — mevcut testler buna dayanır.
+const esitlikKirici = (tohum) => {
+  if (!tohum) return (a, b) => b.id - a.id;
+  let h0 = 0;
+  for (const ch of String(tohum)) h0 = (Math.imul(h0, 31) + ch.charCodeAt(0)) | 0;
+  const kar = (id) => {
+    let x = (Math.imul(id ^ h0, 2654435761) ^ (id >>> 3)) >>> 0;
+    x ^= x >>> 15; x = Math.imul(x, 2246822519) >>> 0; x ^= x >>> 13;
+    return x;
+  };
+  return (a, b) => (kar(b.id) - kar(a.id)) || (b.id - a.id);
+};
+
 export function siralaVeKotala(adaylar, ayar, olcum, {
-  kirilimAdet = 0, cesitlendirAdet = CESITLENDIR_ADET,
+  kirilimAdet = 0, cesitlendirAdet = CESITLENDIR_ADET, tohum = null,
 } = {}) {
   const hacim = hacimUygula(ayar, olcum);
   const sinyalGerek = kirilimAdet > 0;
   const puanli = adaylar.map((g) => ({ g, ...skorla(g, ayar, olcum, hacim, sinyalGerek) }));
-  puanli.sort((a, b) => (b.skor - a.skor) || (b.id - a.id));
+  const kirici = esitlikKirici(tohum);
+  puanli.sort((a, b) => (b.skor - a.skor) || kirici(a, b));
 
   const yazarSayac = new Map();
   const icerikSayac = new Map();
@@ -271,7 +293,7 @@ export function siralaVeKotala(adaylar, ayar, olcum, {
     // sırayı hafifçe bozmuş olabilir, yeniden sıralanır — sonuç DETERMİNİSTİK
     // kalmalı, tur tohumu sayfalaması buna dayanıyor.
     if (secilen.length >= cesitlendirAdet) {
-      const tail = kalan.slice(bas).sort((a, b) => (b.skor - a.skor) || (b.id - a.id));
+      const tail = kalan.slice(bas).sort((a, b) => (b.skor - a.skor) || kirici(a, b));
       for (const p of tail) secilen.push(p.id);
       break;
     }
@@ -311,9 +333,41 @@ export function siralaVeKotala(adaylar, ayar, olcum, {
         * Math.pow(ayar.icerik_doygunluk, ic);
       if (puan > enIyiPuan) { enIyiPuan = puan; enIyi = i; }
     }
-    // Kotalar yüzünden pencerede hiçbir aday uygun değilse ERTELEMEYİ BIRAK:
-    // sıradakini al. Havuz asla boşalmaz — uç ayar (AI payı %0 gibi) listeyi
-    // kısaltmaz, yalnız sırasını değiştirir (plan §5.4 güvenli mod gerekçesi).
+    // PENCERE KOTALARLA TIKANDI (3 Eyl 2026 düzeltmesi). Eski davranış
+    // "sıradakini al" idi (`bas`): kullanıcı 3'te görülmemiş havuzun %90'ı
+    // arşiv olduğu için 150'lik pencere BAŞTAN SONA arşivdi, %45 tavanı her
+    // adımda pencereyi boşa çıkarıyor ve fallback ham sırayı (aynı yazarın
+    // 30 art arda kartı, id azalan) döndürüyordu — yazar doygunluğu HİÇ
+    // uygulanmıyordu (etkin_skor == skor). Şimdi iki kademe:
+    //   1. pencerenin DIŞINDA kotaya uyan en iyi aday (tüm kalan havuz —
+    //      video tabanıyla aynı maliyet sınıfı, yalnız tıkanınca);
+    //   2. havuzda kotaya uyan kimse kalmadıysa kotaları bırak ama pencerede
+    //      DOYGUNLUK CEZALI en iyiyi seç (ham sırayı değil).
+    // Havuz yine boşalmaz — uç ayar listeyi kısaltmaz, sırasını değiştirir.
+    if (enIyi < 0) {
+      for (let i = son; i < kalan.length; i++) {
+        const p = kalan[i];
+        if (p.g.ai && (aiSayi + 1) / sonraki > aiTavan + 1e-9) continue;
+        if (p.g.arsiv && (arsivSayi + 1) / sonraki > arsivTavan + 1e-9) continue;
+        const yz = yazarSayac.get(p.g.kullanici_id) || 0;
+        const ic = icerikSayac.get(`${p.g.tur}:${p.g.tmdb_id}`) || 0;
+        const puan = p.skor
+          * Math.pow(ayar.yazar_doygunluk, yz)
+          * Math.pow(ayar.icerik_doygunluk, ic);
+        if (puan > enIyiPuan) { enIyiPuan = puan; enIyi = i; }
+      }
+    }
+    if (enIyi < 0) {
+      for (let i = bas; i < son; i++) {
+        const p = kalan[i];
+        const yz = yazarSayac.get(p.g.kullanici_id) || 0;
+        const ic = icerikSayac.get(`${p.g.tur}:${p.g.tmdb_id}`) || 0;
+        const puan = p.skor
+          * Math.pow(ayar.yazar_doygunluk, yz)
+          * Math.pow(ayar.icerik_doygunluk, ic);
+        if (puan > enIyiPuan) { enIyiPuan = puan; enIyi = i; }
+      }
+    }
     const secim = enIyi >= 0 ? enIyi : bas;
     const p = kalan[secim];
     kalan[secim] = kalan[bas];

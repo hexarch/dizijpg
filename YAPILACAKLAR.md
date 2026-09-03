@@ -1,6 +1,33 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-03 (3. tur) — 🚀 "Akış ile Keşfet aynı postları aynı sırayla gösteriyor" — KÖK SEBEP + düzeltme (backend)
+
+- ✅ **Teşhis (kullanıcı 3, görülmüşler hariç, `algoritma-onizleme?gorulen=haric`
+  — bu parametre bu tur eklendi):** iki yüzey de `1947,1946,1945…` diye AYNI
+  dizi.jpg arşiv bloğunu döndürüyordu. İki hata üst üste:
+  1. **Doygunluk penceresi kotayla tıkanıyordu.** Havuzun %90'ı arşiv → 150'lik
+     pencere baştan sona arşiv → %45 arşiv tavanı pencereyi boşa çıkarıyor →
+     eski fallback "sıradakini al" HAM sırayı veriyordu: aynı yazar 30 kez art
+     arda, `etkin_skor == skor` (yazar doygunluğu hiç uygulanmıyor).
+  2. **Eşit skorlar id'ye göre kırılıyordu.** Bu blokta her gönderi aynı
+     sinyali taşıyor (kitaplık 0,7 + takip 1 + pop 1 + tazelik tabanı 0,15)
+     → birebir aynı skor → ağırlıklar farklı olsa da sıra değişmiyor → iki
+     yüzey aynı dizi.
+  3. Ayrıca canlı Keşfet ayarında `medya: 0` idi (plan 25) — video ağırlığı
+     yoktu.
+- ✅ **Düzeltme (`siralama.js`):** pencere tıkanınca (1) pencere DIŞINDA
+  kotaya uyan en iyi aday tüm havuzdan seçilir, (2) hiç yoksa kotalar bırakılır
+  ama doygunluk cezalı en iyi seçilir; `esitlikKirici`: Keşfet'te eşit skorlar
+  TOHUMLA dağılır (2 dk penceresinde deterministik, sayfalama bozulmaz), Akış
+  yeni→eski kalır, tohumsuz çağrı eski davranış. Keşfet ayarı panelden:
+  kitaplık 10 · pop 35 · medya 30 · takip 5 · yazar 10 · dil 10 (kullanıcı:
+  "keşfet video ağırlıklı ve kütüphane dışı").
+- Kanıt: `siralama.test.js` +4 (pencere tıkanması, kotasız havuz, tohumlu
+  eşitlik, tohumsuz eski davranış), npm test 2178/2178. Canlı önizleme
+  (kullanıcı 3, görülen hariç): Akış ilk 30'da 17 farklı yazar, arşiv %43;
+  Keşfet video-önce, farklı sıra. Skor süresi 67 → 292 ms (tıkanma taraması).
+
 ## 2026-09-03 (2. tur) — 🚀 Akış | Keşfet yan yana · etiket seçici geçmişi + klavye yüksekliği (1.117.0+184)
 
 - ✅ **"Akış ve Keşfet'i yan yana yaz, seçili olanın altında - olsun."**

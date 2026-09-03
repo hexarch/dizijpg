@@ -704,3 +704,83 @@ test('ayarBirlestir: kitaplik_oncelik 0-100 kırpılır; akış %100, Keşfet ka
   assert.equal(ayarBirlestir({}, 'akis').kitaplik_oncelik, 100, 'akış varsayılanı %100');
   assert.equal(ayarBirlestir({}, 'kesfet').kitaplik_oncelik, 0, 'Keşfet varsayılanı kapalı');
 });
+
+// ---------------------------------------------------------------------------
+// 3 Eyl 2026 — "Akış ile Keşfet aynı postları aynı sırayla gösteriyor"
+//
+// Canlıda ölçülen tablo (kullanıcı 3, görülmüşler hariç): 4.060 adayın
+// %90'ı tek hesabın (dizi.jpg) arşiv gönderisi; hepsi kitaplıkta, hepsi
+// takip edilen yazardan, hepsi tazelik tabanında → BİREBİR AYNI SKOR.
+// İki hata birden:
+//   (a) 150'lik doygunluk penceresi baştan sona arşiv → %45 arşiv tavanı
+//       pencereyi boşa çıkarıyor → eski fallback "sıradakini al" ham sırayı
+//       döndürüyor: aynı yazar 30 kez art arda, doygunluk HİÇ uygulanmıyor;
+//   (b) eşit skorlar id'ye göre kırılıyor → iki yüzey de aynı diziyi veriyor.
+// ---------------------------------------------------------------------------
+const arsivHavuzu = () => [
+  // 600 arşiv, tek yazar, hepsi kitaplıkta ve takipte — canlıdaki blok.
+  ...Array.from({ length: 600 }, (_, i) => gonderi({
+    id: 5000 - i, kullanici_id: 42, tmdb_id: 1000 + (i % 40), kat: 1,
+    guvenli: true, durum: 'bitirdim', takip_ediyorum: true, arsiv: true,
+    yas_saat: 30000,
+  })),
+  // 60 güncel, farklı yazarlar, kitaplık dışı — skoru daha düşük.
+  ...Array.from({ length: 60 }, (_, i) => gonderi({
+    id: 9000 + i, kullanici_id: 100 + i, tmdb_id: 2000 + i, kat: 1,
+    yas_saat: 5,
+  })),
+];
+
+test('pencere kotayla tıkanınca doygunluk ve arşiv tavanı YİNE uygulanır', () => {
+  const a = ayarBirlestir({ arsiv_payi: 45, yazar_doygunluk: 0.7 }, 'akis');
+  const adaylar = arsivHavuzu();
+  const { idler } = siralaVeKotala(adaylar, a, OLCUM_CANLI);
+  const ilk30 = idler.slice(0, 30).map((id) => adaylar.find((g) => g.id === id));
+  const arsiv = ilk30.filter((g) => g.arsiv).length;
+  assert.ok(arsiv <= 15, `ilk 30'da en fazla 14-15 arşiv beklenirdi (tavan %45), ${arsiv} çıktı`);
+  const yazarlar = new Set(ilk30.map((g) => g.kullanici_id));
+  assert.ok(yazarlar.size >= 10, `ilk 30'da yazar çeşitliliği bekleniyordu, ${yazarlar.size} yazar`);
+  assert.equal(idler.length, adaylar.length, 'havuz boşalmamalı');
+});
+
+test('havuzda kotaya uyan kimse kalmayınca ham sıra DEĞİL doygunluk cezalı seçim', () => {
+  // Yalnız arşiv, iki yazar: tavan %45 hiçbir zaman sağlanamaz; eski kod
+  // ham sırayı (yazar 1'in 10 kartı, sonra yazar 2) döndürürdü.
+  const a = ayarBirlestir({ arsiv_payi: 45, yazar_doygunluk: 0.5, tazelik_gucu: 0 }, 'akis');
+  const adaylar = [
+    ...Array.from({ length: 10 }, (_, i) => gonderi({
+      id: 100 + i, kullanici_id: 1, tmdb_id: 500 + i, guvenli: true, arsiv: true })),
+    ...Array.from({ length: 10 }, (_, i) => gonderi({
+      id: 50 + i, kullanici_id: 2, tmdb_id: 600 + i, guvenli: true, arsiv: true })),
+  ];
+  const { idler } = siralaVeKotala(adaylar, a, OLCUM_CANLI);
+  const ilk4 = idler.slice(0, 4).map((id) => adaylar.find((g) => g.id === id).kullanici_id);
+  assert.deepEqual(ilk4, [1, 2, 1, 2], `yazarlar dönüşümlü olmalıydı: ${ilk4}`);
+  assert.equal(idler.length, 20);
+});
+
+test('eşit skor: Keşfet tohumla dağılır, Akış yeni→eski kalır, tohum deterministik', () => {
+  const adaylar = arsivHavuzu();
+  const akis = siralaVeKotala(adaylar, ayarBirlestir({}, 'akis'), OLCUM_CANLI).idler;
+  const kesfetA = siralaVeKotala(adaylar, ayarBirlestir({}, 'kesfet'), OLCUM_CANLI,
+    { tohum: 'abc12' }).idler;
+  const kesfetA2 = siralaVeKotala(adaylar, ayarBirlestir({}, 'kesfet'), OLCUM_CANLI,
+    { tohum: 'abc12' }).idler;
+  const kesfetB = siralaVeKotala(adaylar, ayarBirlestir({}, 'kesfet'), OLCUM_CANLI,
+    { tohum: 'zzz99' }).idler;
+  assert.deepEqual(kesfetA, kesfetA2, 'aynı tohum aynı liste (sayfalama buna dayanır)');
+  assert.notDeepEqual(kesfetA.slice(0, 30), kesfetB.slice(0, 30), 'farklı tohum farklı sıra');
+  assert.notDeepEqual(akis.slice(0, 30), kesfetA.slice(0, 30), 'Akış ile Keşfet aynı olmamalı');
+  // Akış'ta eşit skorlu arşivler arasında yeni olan önde (id azalan).
+  const akisArsiv = akis.map((id) => adaylar.find((g) => g.id === id))
+    .filter((g) => g.arsiv).slice(0, 5).map((g) => g.id);
+  assert.deepEqual(akisArsiv, [...akisArsiv].sort((x, y) => y - x));
+  assert.equal(new Set(kesfetA).size, adaylar.length, 'karıştırma eleman kaybetmemeli');
+});
+
+test('tohum verilmezse eski davranış (id azalan) birebir korunur', () => {
+  const adaylar = Array.from({ length: 8 }, (_, i) => gonderi({
+    id: 10 + i, kullanici_id: 1 + i, tmdb_id: 100 + i, guvenli: true }));
+  const a = ayarBirlestir({ tazelik_gucu: 0, yazar_doygunluk: 1, icerik_doygunluk: 1 }, 'akis');
+  assert.deepEqual(siralaVeKotala(adaylar, a, OLCUM_CANLI).idler, [17, 16, 15, 14, 13, 12, 11, 10]);
+});
