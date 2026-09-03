@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (zh).
 const Map<String, String> cevirilerZh = {
+  'Yorumun bu sayfada görünecek': '你的评论会显示在这个页面上',
   'Hepsini gördün, baştan gösteriyoruz': '您已经看到了这一切，我们从头开始向您展示',
   'Aktarılacak tanınan veri bulunamadı.': '未找到可导入的有效数据。',
   'Arama': '搜索',

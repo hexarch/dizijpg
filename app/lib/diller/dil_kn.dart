@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (kn).
 const Map<String, String> cevirilerKn = {
+  'Yorumun bu sayfada görünecek': 'ನಿಮ್ಮ ಕಾಮೆಂಟ್ ಈ ಪುಟದಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ',
   'Hepsini gördün, baştan gösteriyoruz':
       'ನೀವು ಎಲ್ಲವನ್ನೂ ನೋಡಿದ್ದೀರಿ, ನಾವು ನಿಮಗೆ ಮೊದಲಿನಿಂದಲೂ ತೋರಿಸುತ್ತೇವೆ',
   'Aktarılacak tanınan veri bulunamadı.':

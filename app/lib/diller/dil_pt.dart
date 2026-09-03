@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (pt).
 const Map<String, String> cevirilerPt = {
+  'Yorumun bu sayfada görünecek': 'O teu comentário vai aparecer nesta página',
   'Hepsini gördün, baştan gösteriyoruz':
       'Você já viu de tudo, nós mostramos desde o início',
   'Aktarılacak tanınan veri bulunamadı.':

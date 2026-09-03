@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (da).
 const Map<String, String> cevirilerDa = {
+  'Yorumun bu sayfada görünecek': 'Din kommentar vises på denne side',
   'Hepsini gördün, baştan gösteriyoruz':
       'Du har set det hele, vi viser dig fra begyndelsen',
   'Aktarılacak tanınan veri bulunamadı.': 'Ingen genkendte data at importere.',

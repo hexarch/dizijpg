@@ -127,7 +127,18 @@ const double _ekKaresi = 128;
 double _enKucuk(double a, double b) => a < b ? a : b;
 
 class PaylasYorumEkrani extends StatefulWidget {
-  const PaylasYorumEkrani({super.key});
+  /// Ekran açılırken HAZIR gelen etiketler (3 Eyl 2026, kullanıcı isteği:
+  /// *"oradaki yorum yapma kısmına tıklayınca akıştaki gibi olsun, dizi ve
+  /// film otomatik etiketlensin tabi"*).
+  ///
+  /// İçerik/kişi/firma sayfasının yorum kutusundan gelindiğinde o sayfanın
+  /// yapımı buraya konur. KİLİTLİDİR: rozetinde çarpı yoktur ve kaldırılamaz —
+  /// çünkü gönderi o sayfanın yorum listesine `yorum_etiketleri` üzerinden
+  /// bağlanıyor; etiket silinseydi kullanıcı yorumunu yazdığı sayfada
+  /// GÖREMEZDİ. Kullanıcı üstüne 5 etiket daha ekleyebilir, onlar serbest.
+  final List<PaylasimEtiketi> baslangicEtiketleri;
+
+  const PaylasYorumEkrani({super.key, this.baslangicEtiketleri = const []});
 
   @override
   State<PaylasYorumEkrani> createState() => _PaylasYorumEkraniState();
@@ -141,7 +152,12 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
   final _metin = TextEditingController();
   final _odak = FocusNode();
 
-  final List<PaylasimEtiketi> _etiketler = [];
+  late final List<PaylasimEtiketi> _etiketler = [...widget.baslangicEtiketleri];
+
+  /// Kaldırılamayan (sayfadan gelen) etiketlerin anahtarları.
+  late final Set<String> _kilitli = {
+    for (final e in widget.baslangicEtiketleri) e.anahtar,
+  };
   final List<Map<String, dynamic>> _ekler = []; // {yol, video}
   bool _ekYukleniyor = false;
   int _ekToplam = 0;
@@ -271,7 +287,14 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
       _ekler.addAll(sonuc.yuklenen);
       _ekYukleniyor = false;
     });
-    if (sonuc.hata != null) _uyar(sonuc.hata!);
+    // `bildirim`, `hata` DEĞİL (3 Eyl 2026): `hata` ilk ham sunucu metnidir;
+    // kısmi başarıda kullanıcıya "sunucu hatası" deyip kaç dosyanın
+    // yüklendiğini SÖYLEMEZ. `MedyaYuklemeSonuc.bildirim` sözleşmesi bu
+    // (medya_yukle.dart: "Çağıran `bildirim`i SnackBar'a basar") ve içerik
+    // sayfasının yorum kutusu artık bu ekrana bağlı — oradaki dürüst
+    // "1 medya eklendi, 1 yüklenemedi" mesajı kaybolmasın.
+    final bildirim = sonuc.bildirim;
+    if (bildirim != null) _uyar(bildirim);
   }
 
   void _uyar(String mesaj) => ScaffoldMessenger.of(
@@ -310,10 +333,13 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
 
   // ------------------------------------------------------------------- çıkış
   /// Yazılmış bir şey var mı — kapatma onayı buna bakar.
+  /// TOHUM ETİKETLER SAYILMAZ: sayfadan gelen etiketle açılan ekranı hiç
+  /// yazmadan kapatan kullanıcıya "vazgeçilsin mi?" sormak, dokunup fikrini
+  /// değiştiren herkesi bir diyalogla cezalandırırdı.
   bool get _dolu =>
       _metin.text.trim().isNotEmpty ||
       _ekler.isNotEmpty ||
-      _etiketler.isNotEmpty;
+      _etiketler.any((e) => !_kilitli.contains(e.anahtar));
 
   /// Kapatmadan önce onay. `true` dönerse ekran kapanır.
   ///
@@ -562,10 +588,18 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
                     // Dizide rozete dokunmak DÜZEYİ değiştirir; film/kişi/
                     // firmada değiştirilecek düzey yok, o yüzden dokunma da
                     // yok (tıklanınca hiçbir şey olmayan hedef bırakmıyoruz).
-                    onDuzey: _etiketler[i].dizi
+                    // Kilitli etikette düzey de değişmez: "Silo" sayfasında
+                    // yazılan yorumu "Silo 2x3"e çevirmek gönderiyi dizinin
+                    // genel listesinden düşürmez ama BÖLÜM spoiler perdesi
+                    // ekler — kullanıcının istemediği bir yan etki.
+                    onDuzey:
+                        _etiketler[i].dizi &&
+                            !_kilitli.contains(_etiketler[i].anahtar)
                         ? () => _duzeyDegistir(i)
                         : null,
-                    onKaldir: () => setState(() => _etiketler.removeAt(i)),
+                    onKaldir: _kilitli.contains(_etiketler[i].anahtar)
+                        ? null
+                        : () => setState(() => _etiketler.removeAt(i)),
                   ),
               ],
             ),
@@ -1037,7 +1071,10 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
 class _EtiketRozeti extends StatelessWidget {
   final PaylasimEtiketi etiket;
   final VoidCallback? onDuzey;
-  final VoidCallback onKaldir;
+
+  /// `null` = KİLİTLİ etiket (sayfadan geldi). Çarpı hiç çizilmez —
+  /// basınca çalışmayan bir düğme göstermek yalan söylemek olurdu.
+  final VoidCallback? onKaldir;
 
   const _EtiketRozeti({
     required this.etiket,
@@ -1139,18 +1176,33 @@ class _EtiketRozeti extends StatelessWidget {
           ),
           // 44 dp'lik ayrı dokunma hedefi: rozetin gövdesi düzeyi açar,
           // buradaki çarpı rozeti KALDIRIR. İkisi karışmasın diye ayrık.
-          Semantics(
-            button: true,
-            label: 'Kaldır'.c,
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: onKaldir,
-              child: const Padding(
-                padding: EdgeInsets.all(12),
-                child: Icon(Icons.close, size: 16),
+          // Kilitli etikette çarpı yerine küçük bir kilit durur: kullanıcı
+          // "kaldıramıyorum" diye uğraşmasın, NEDEN olduğunu ipucu söylesin.
+          if (onKaldir != null)
+            Semantics(
+              button: true,
+              label: 'Kaldır'.c,
+              child: InkWell(
+                customBorder: const CircleBorder(),
+                onTap: onKaldir,
+                child: const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Icon(Icons.close, size: 16),
+                ),
+              ),
+            )
+          else
+            Tooltip(
+              message: 'Yorumun bu sayfada görünecek'.c,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Icon(
+                  Icons.lock_outline,
+                  size: 14,
+                  color: DiziRenkler.metin38,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -1162,11 +1214,14 @@ class _EtiketRozeti extends StatelessWidget {
 ///
 /// `fullscreenDialog: true`: iOS'ta aşağıdan yukarı geçiş + çarpı ikonu,
 /// Android'de de "bu bir görev, bir sayfa değil" davranışı.
-Future<bool> paylasYorumAc(BuildContext context) async {
+Future<bool> paylasYorumAc(
+  BuildContext context, {
+  List<PaylasimEtiketi> etiketler = const [],
+}) async {
   final sonuc = await Navigator.of(context).push<bool>(
     MaterialPageRoute(
       fullscreenDialog: true,
-      builder: (_) => const PaylasYorumEkrani(),
+      builder: (_) => PaylasYorumEkrani(baslangicEtiketleri: etiketler),
     ),
   );
   return sonuc == true;

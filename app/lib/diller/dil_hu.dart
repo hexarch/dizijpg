@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (hu).
 const Map<String, String> cevirilerHu = {
+  'Yorumun bu sayfada görünecek': 'A hozzászólásod ezen az oldalon jelenik meg',
   'Hepsini gördün, baştan gösteriyoruz':
       'Te mindent láttál, mi megmutatjuk az elejétől',
   'Aktarılacak tanınan veri bulunamadı.':

@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (gu).
 const Map<String, String> cevirilerGu = {
+  'Yorumun bu sayfada görünecek': 'તમારી ટિપ્પણી આ પેજ પર દેખાશે',
   'Hepsini gördün, baştan gösteriyoruz':
       'તમે તે બધું જોયું છે, અમે તમને શરૂઆતથી જ બતાવીએ છીએ',
   'Aktarılacak tanınan veri bulunamadı.':

@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (uk).
 const Map<String, String> cevirilerUk = {
+  'Yorumun bu sayfada görünecek': 'Твій коментар з’явиться на цій сторінці',
   'Hepsini gördün, baştan gösteriyoruz':
       'Ви бачили все, ми показуємо вам з самого початку',
   'Aktarılacak tanınan veri bulunamadı.':

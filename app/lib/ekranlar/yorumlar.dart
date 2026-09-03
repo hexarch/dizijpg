@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -11,15 +10,15 @@ import '../icerik_deposu.dart';
 import '../medya_yukle.dart';
 import '../spoiler_tercihi.dart';
 import '../tema.dart';
+import 'akis.dart' show PaylasKutusu;
 import 'begenenler.dart';
 import 'etiket.dart';
-import 'gif_sec.dart';
 import 'gonderi_istatistik.dart' show IstatistikGirisi;
-import 'medya_inceleme.dart';
 import 'giris_istem.dart';
 import 'kesfet_akis.dart' show ReelsGorunumu, yanitlariAc;
 import 'ek_etiket_seridi.dart';
 import 'ortak.dart';
+import 'paylas_yorum.dart' show PaylasimEtiketi;
 
 /// Bir yoruma eklenebilecek en çok medya.
 ///
@@ -64,15 +63,6 @@ class YorumBolumu extends StatefulWidget {
 class _YorumBolumuState extends State<YorumBolumu> {
   List<dynamic>? _yorumlar;
   bool _yorumHatasi = false; // yükleme başarısız mı (boş ≠ hata)
-  final _metin = TextEditingController();
-  final _odak = FocusNode(); // yazma kutusunun odağı
-  final List<Map<String, dynamic>> _ekler = []; // {yol, video}
-  bool _ekYukleniyor = false;
-  int _ekToplam =
-      0; // bu turda yüklenecek dosya sayısı (ilerleme: _ekBiten/_ekToplam)
-  int _ekBiten = 0;
-  bool _gonderiliyor = false;
-  bool _spoiler = false; // "spoiler içerir" işareti
 
   /// Reels'in içerik kartı için: {'tur:tmdb_id': {ad, poster}}
   Map<String, dynamic> _icerikler = const {};
@@ -81,13 +71,34 @@ class _YorumBolumuState extends State<YorumBolumu> {
   void initState() {
     super.initState();
     _yukle();
+    _etiketBilgiYukle();
   }
 
-  @override
-  void dispose() {
-    _metin.dispose();
-    _odak.dispose();
-    super.dispose();
+  /// Paylaşım kutusunun KİLİTLİ rozeti için ad + afiş (3 Eyl 2026).
+  ///
+  /// [_icerikYukle]'den AYRI ve daha erken: o, Reels'in üst kartı için ve
+  /// yalnız MEDYALI yorum varsa çalışıyor. Rozet ise medyasız sayfada da
+  /// gerekli — yoksa kullanıcı yorum kutusuna dokunduğunda etiketsiz bir
+  /// paylaşım ekranı açılırdı ve yorumu bu sayfada GÖRÜNMEZDİ.
+  ///
+  /// Sayfa bilgisini kendisi veriyorsa (kişi/firma) ya da depo zaten
+  /// doluysa ağa çıkılmaz; [IcerikDeposu] önbellekli.
+  Future<void> _etiketBilgiYukle() async {
+    if (!Api.girisli) return; // kutu yalnız oturumluda çizilir
+    if (widget.icerik != null) return;
+    if (_icerikler.containsKey(_icerikAnahtar)) return;
+    if (widget.tur != 'tv' && widget.tur != 'movie') return;
+    final k = await IcerikDeposu.getir(widget.tur, widget.tmdbId);
+    if (!mounted || k == null) return;
+    setState(() {
+      _icerikler = {
+        _icerikAnahtar: {
+          'ad': k['name'] ?? k['title'] ?? '?',
+          'poster': k['poster_path'],
+        },
+        ..._icerikler,
+      };
+    });
   }
 
   /// Yanıtla: AKIŞTAKİ İLE AYNI YÜZEY — yanıt sheet'i açılır ([yanitlariAc]).
@@ -241,97 +252,30 @@ class _YorumBolumuState extends State<YorumBolumu> {
     );
   }
 
-  /// Galeriden ÇOKLU seçim → sırayla yükleme.
+  /// Yorum yazma AKIŞTAKİ TAM EKRAN paylaşım ekranına devredildi
+  /// (3 Eyl 2026). Bu yüzden buradaki satır içi kutu ve onun ek/GIF/spoiler/
+  /// gönder mantığı SİLİNDİ — iki ayrı yazma yüzeyi iki ayrı hata yüzeyi
+  /// demekti (ekler burada 4, orada 6; spoiler burada kutucuk, orada
+  /// önizleme adımı; etiketleme yalnız orada vardı).
   ///
-  /// SIRAYLA (paralel değil): 10 dosya × 30 MB'ı aynı anda belleğe alıp
-  /// paralel POST etmek düşük bellekli Android'de uygulamayı öldürür ve
-  /// sunucunun yükleme hız limitini tetikler. Sıralı akış ayrıca "3/5" gibi
-  /// dürüst bir ilerleme göstergesi verir.
-  ///
-  /// KISMİ BAŞARI: bir dosya patlarsa geri kalanı yüklenmeye devam eder ve
-  /// sonunda kaçının yüklendiği/yüklenemediği söylenir — sessiz kayıp YOK.
-  /// Arşivden GIF seç. Dosya YENİDEN YÜKLENMEZ — sunucudaki yol doğrudan
-  /// ek listesine girer (`POST /yorumlar` sahiplik regexi aynı adı bekler).
-  Future<void> _gifSec() async {
-    if (!girisGerekli(context)) return;
-    if (_ekler.length >= enCokEk || _ekYukleniyor) return;
-    final gif = await gifSecAc(context);
-    if (gif == null || !mounted) return;
-    final yol = gif['yol'] as String?;
-    if (yol == null) return;
-    setState(() => _ekler.add({'yol': yol, 'video': false}));
-  }
-
-  Future<void> _ekSec() async {
-    if (!girisGerekli(context)) return;
-    final kalan = enCokEk - _ekler.length;
-    if (kalan <= 0) return;
-    // Sistem Fotoğraf Seçici (Android 13+ ACTION_PICK_IMAGES) → bizim
-    // inceleme/düzenleme ekranımız. Geniş galeri izni İSTENMEZ.
-    final secim = await medyaSec(context, azami: kalan);
-    if (secim.isEmpty || !mounted) return;
-
-    setState(() {
-      _ekYukleniyor = true;
-      _ekToplam = secim.length;
-      _ekBiten = 0;
-    });
-    MedyaYuklemeSonuc sonuc;
-    try {
-      sonuc = await medyalariYukle(
-        secim,
-        adim: (biten) {
-          if (mounted) setState(() => _ekBiten = biten);
-        },
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _ekYukleniyor = false;
-          _ekToplam = 0;
-          _ekBiten = 0;
-        });
-      }
-    }
-    if (!mounted) return;
-    setState(() => _ekler.addAll(sonuc.yuklenen));
-    // Başarıda SnackBar yok (karolar zaten göründü); kısmi/tam başarısızlıkta
-    // sessiz kayıp da yok.
-    final bildirim = sonuc.bildirim;
-    if (bildirim != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(bildirim)));
-    }
-  }
-
-  Future<void> _gonder() async {
-    if (!girisGerekli(context)) return;
-    final metin = _metin.text.trim();
-    if (metin.isEmpty) return;
-    setState(() => _gonderiliyor = true);
-    try {
-      await Api.post('/yorumlar', {
-        'tur': widget.tur,
-        'tmdb_id': widget.tmdbId,
-        if (widget.sezon != null) 'sezon': widget.sezon,
-        if (widget.sezon != null) 'bolum': widget.bolum,
-        'metin': metin,
-        'medya': _ekler.map((e) => e['yol']).toList(),
-        'spoiler': _spoiler,
-      });
-      _metin.clear();
-      _ekler.clear();
-      _spoiler = false;
-      await _yukle();
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
-    } finally {
-      if (mounted) setState(() => _gonderiliyor = false);
-    }
+  /// Sayfanın yapımı [_paylasimEtiketi] ile kilitli rozet olarak gider;
+  /// gönderi `yorum_etiketleri` üzerinden bu sayfanın listesine düşer
+  /// (sunucu sorgusu zaten bağ tablosundan eşleştiriyor).
+  PaylasimEtiketi? get _paylasimEtiketi {
+    final bilgi = widget.icerik ?? _icerikler[_icerikAnahtar];
+    final ad = (bilgi?['ad'] ?? '').toString();
+    // AD OLMADAN ETİKETLEME YOK: rozet "?" yazardı ve kullanıcı neyi
+    // etiketlediğini göremezdi. Bilgi gelene kadar kutu etiketsiz açılır
+    // (nadirdir: [_etiketBilgiYukle] açılışta önbellekten dolduruyor).
+    if (ad.isEmpty) return null;
+    return PaylasimEtiketi(
+      tur: widget.tur,
+      tmdbId: widget.tmdbId,
+      ad: ad,
+      gorsel: bilgi?['poster'] as String?,
+      sezon: widget.sezon,
+      bolum: widget.bolum,
+    );
   }
 
   Future<void> _sil(int id) async {
@@ -379,229 +323,33 @@ class _YorumBolumuState extends State<YorumBolumu> {
             ],
           ),
         ),
-        // Yorum yazma kutusu. Oturumsuzda yerine giriş istemi kartı gelir:
-        // odaklanılabilen ama hiçbir zaman gönderilemeyen bir kutu, kullanıcıyı
-        // yazdırıp 401 ile karşılamak demekti.
+        // YORUM YAZMA = AKIŞTAKİ KUTU (3 Eyl 2026, kullanıcı isteği:
+        // *"oradaki yorum yapma kısmına tıklayınca akıştaki gibi olsun, dizi
+        // ve film otomatik etiketlensin tabi"*).
+        //
+        // ESKİDEN burada satır içi bir Card vardı: metin alanı + ek/GIF/
+        // spoiler düğmeleri + "Gönder". Akıştaki tam ekran paylaşım ekranıyla
+        // İKİ AYRI yazma yüzeyi demekti ve ayrışmışlardı — etiketleme
+        // (birden çok yapım/kişi/firma), iki adımlı önizleme ve 6 ek yalnız
+        // akıştakinde vardı. Artık tek yüzey var: [PaylasKutusu] dokununca
+        // [paylasYorumAc] açılıyor.
+        //
+        // OTOMATİK ETİKET: bu sayfanın yapımı KİLİTLİ rozet olarak gider
+        // ([_paylasimEtiketi]) — bölüm sayfasında sezon/bölüm düzeyiyle.
+        // Gönderi `yorum_etiketleri` üzerinden bu listeye düşüyor.
+        //
+        // Oturumsuzda kutu yerine giriş istemi kartı: dokunup giriş istemi
+        // görmek yerine ne gerektiğini baştan söylemek daha dürüst.
         if (!Api.girisli)
           GirisIstemiKarti(metin: 'Yorum yazmak için giriş yap'.c),
         if (Api.girisli)
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  EtiketliGirdi(
-                    controller: _metin,
-                    focusNode: _odak,
-                    maxLines: 3,
-                    minLines: 1,
-                    maxLength: 1000,
-                    decoration: InputDecoration(
-                      // KULLANICI İSTEĞİ (7 Ağu): "(@ ile etiketle)" ipucundan
-                      // çıktı — etiketleme zaten @ yazınca beliren listeyle
-                      // kendini anlatıyor, ipucu ise dar ekranda kırpılıyordu.
-                      hintText: 'Yorum yaz...'.c,
-                      border: InputBorder.none,
-                    ),
-                  ),
-                  if (_ekler.isNotEmpty)
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (var i = 0; i < _ekler.length; i++)
-                          Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: SizedBox(
-                                  width: 72,
-                                  height: 72,
-                                  child: _ekler[i]['video'] == true
-                                      ? Container(
-                                          color: DiziRenkler.koyuGri,
-                                          child: Icon(
-                                            Icons.videocam,
-                                            color: DiziRenkler.metin54,
-                                          ),
-                                        )
-                                      : CachedNetworkImage(
-                                          imageUrl: dosyaUrl(
-                                            _ekler[i]['yol'] as String,
-                                          )!,
-                                          fit: BoxFit.cover,
-                                        ),
-                                ),
-                              ),
-                              Positioned(
-                                top: 0,
-                                right: 0,
-                                child: InkWell(
-                                  onTap: () =>
-                                      setState(() => _ekler.removeAt(i)),
-                                  borderRadius: BorderRadius.circular(20),
-                                  // Görünmez padding: rozet küçük kalır ama
-                                  // dokunma alanı 40px olur (20 avatar + 2×10)
-                                  child: const Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: CircleAvatar(
-                                      radius: 10,
-                                      backgroundColor: Colors.black87,
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 13,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
-                  // Çok dosya yüklenirken BELİRLİ ilerleme çubuğu + "3/5":
-                  // kullanıcı takıldı sanmasın ve ne kadar kaldığını görsün
-                  // (ui-ux-pro-max, Feedback/Progress Indicators: "Step 2 of 4
-                  // indicator", "Don't: No indication of progress"). Kendi
-                  // satırında: düğme sırasına sıkıştırılınca dar telefonda
-                  // taşıyordu.
-                  if (_ekYukleniyor && _ekToplam > 1)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4, bottom: 2),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(3),
-                              child: LinearProgressIndicator(
-                                value: _ekBiten / _ekToplam,
-                                minHeight: 4,
-                                backgroundColor: DiziRenkler.metin12,
-                                color: DiziRenkler.sari,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '$_ekBiten/$_ekToplam',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: DiziRenkler.metin70,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: _ekYukleniyor || _ekler.length >= enCokEk
-                            ? null
-                            : _ekSec,
-                        icon: _ekYukleniyor
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: DiziRenkler.sari,
-                                ),
-                              )
-                            : Icon(
-                                Icons.attach_file,
-                                color: DiziRenkler.sariMetin,
-                              ),
-                        tooltip: 'Fotoğraf / video ekle'.c,
-                      ),
-                      // KENDİ GIF ARŞİVİMİZ (29 Ağu 2026). Dış servis yok;
-                      // seçicinin içindeki "GIF yükle" arşivi büyütür.
-                      IconButton(
-                        onPressed: _ekYukleniyor || _ekler.length >= enCokEk
-                            ? null
-                            : _gifSec,
-                        icon: Icon(
-                          Icons.gif_box_outlined,
-                          color: DiziRenkler.sariMetin,
-                        ),
-                        tooltip: 'GIF ekle'.c,
-                      ),
-                      // Spoiler işareti: yorumu bulanık gönderir.
-                      // FLEXIBLE ŞART (29 Ağu 2026): satıra GIF düğmesi
-                      // eklenince dar ekranda Row 16 px TAŞTI (medya_inceleme
-                      // testi kırmızıya döndü, 338 px genişlik). Esneyen tek
-                      // öğe METİNLİ olan bu; ikon düğmeleri 44 px dokunma
-                      // hedefinin altına inemez.
-                      Flexible(
-                        child: InkWell(
-                          onTap: () => setState(() => _spoiler = !_spoiler),
-                          borderRadius: BorderRadius.circular(20),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 8,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  _spoiler
-                                      ? Icons.visibility_off
-                                      : Icons.visibility_off_outlined,
-                                  size: 20,
-                                  color: _spoiler
-                                      ? DiziRenkler.sariMetin
-                                      : DiziRenkler.metin54,
-                                ),
-                                const SizedBox(width: 4),
-                                Flexible(
-                                  child: Text(
-                                    'Spoiler'.c,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: _spoiler
-                                          ? FontWeight.w700
-                                          : FontWeight.w400,
-                                      color: _spoiler
-                                          ? DiziRenkler.sariMetin
-                                          : DiziRenkler.metin54,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                      FilledButton(
-                        // Yükleme sürerken gönderilemez: eskiden basılınca
-                        // yorum medyasız gidiyor, video kaybediliyordu.
-                        onPressed: _gonderiliyor || _ekYukleniyor
-                            ? null
-                            : _gonder,
-                        child: _gonderiliyor
-                            ? SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: DiziRenkler.metin,
-                                ),
-                              )
-                            : Text('Gönder'.c),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+          PaylasKutusu(
+            key: const Key('yorum-yaz-kutusu'),
+            ipucu: 'Yorum yaz...'.c,
+            etiketler: [?_paylasimEtiketi],
+            onPaylasildi: _yukle,
           ),
+
         // Yorum listesi
         if (_yorumHatasi && _yorumlar == null)
           Padding(

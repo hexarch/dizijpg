@@ -4,8 +4,8 @@ import 'dart:typed_data';
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/medya_inceleme.dart';
 import 'package:dizijpg/ekranlar/ortak.dart';
+import 'package:dizijpg/ekranlar/paylas_yorum.dart';
 import 'package:dizijpg/ekranlar/video_duzenle.dart';
-import 'package:dizijpg/ekranlar/yorumlar.dart';
 import 'package:dizijpg/foto_secici.dart';
 import 'package:dizijpg/video_islem.dart';
 import 'package:flutter/material.dart';
@@ -550,6 +550,10 @@ void main() {
   });
 
   // --- 9. YORUM EKRANI BAĞLANTISI ----------------------------------------
+  //
+  // 3 Eyl 2026: yorum yazma yüzeyi [YorumBolumu]'ndan [PaylasYorumEkrani]'na
+  // taşındı (içerik sayfasındaki kutu dokununca akıştaki tam ekranı açıyor).
+  // Ek düğmesi de oraya gitti — kapsam aynı, ölçülen ekran değişti.
 
   testWidgets(
     'yorumda ek düğmesi sistem seçicisini açar ve incelemeye götürür',
@@ -573,24 +577,18 @@ void main() {
       await tester.pumpWidget(
         ChangeNotifierProvider<Oturum>.value(
           value: Oturum(),
-          child: const MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: YorumBolumu(tur: 'tv', tmdbId: 1),
-              ),
-            ),
-          ),
+          child: const MaterialApp(home: PaylasYorumEkrani()),
         ),
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.attach_file));
+      await tester.tap(find.byIcon(Icons.photo_library_outlined));
       await tester.pumpAndSettle();
 
       expect(
         istenenTavan,
         10,
-        reason: 'yoruma 10 medya sığıyor (sunucu tavanı)',
+        reason: 'gönderiye 10 medya sığıyor (sunucu tavanı)',
       );
       expect(find.byType(MedyaIncelemeEkrani), findsOneWidget);
       expect(find.text('1/10'), findsOneWidget);
@@ -635,17 +633,11 @@ void main() {
       await tester.pumpWidget(
         ChangeNotifierProvider<Oturum>.value(
           value: Oturum(),
-          child: const MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: YorumBolumu(tur: 'tv', tmdbId: 1),
-              ),
-            ),
-          ),
+          child: const MaterialApp(home: PaylasYorumEkrani()),
         ),
       );
       await tester.pumpAndSettle();
-      await tester.tap(find.byIcon(Icons.attach_file));
+      await tester.tap(find.byIcon(Icons.photo_library_outlined));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('İleri'));

@@ -8359,3 +8359,32 @@ Kanıt: analyze 0 uyarı, flutter test 2496/2496 (yeni: `yildiz_surukleme_test`
 parmak kalkmadan istek yok, mevcut puana sürükleyince silme yok, 360 dp'de
 taşma yok, geri dönünce dolu yıldız). Yeni çeviri anahtarı YOK ("Puanla" ve
 "Puanın" 45 dilde zaten vardı).
+
+## 3 Eyl 2026 — İçerik sayfası yorum kutusu = akıştaki kutu (otomatik etiket)
+- [x] Kullanıcı: *"oradaki yorum yapma kısmına tıklayınca akıştaki gibi olsun,
+  dizi ve film otomatik etiketlensin tabi."* `YorumBolumu`'ndaki SATIR İÇİ
+  yazma kutusu (metin alanı + ek/GIF/spoiler satırı + "Gönder") KALDIRILDI;
+  yerine akışın `PaylasKutusu`'su kondu (avatar + "Yorum yaz..." hapı).
+  Dokununca tam ekran `PaylasYorumEkrani` açılıyor — yarım modal yok.
+- [x] OTOMATİK ETİKET: sayfanın yapımı KİLİTLİ rozet olarak geliyor
+  (`baslangicEtiketleri`). Rozette çarpı yok, yerinde kilit + "Yorumun bu
+  sayfada görünecek" ipucu var; gerekçe: gönderi `yorum_etiketleri` üzerinden
+  bu sayfanın listesine düşüyor, etiket silinseydi kullanıcı yorumunu yazdığı
+  sayfada göremezdi. Bölüm sayfasında etiket sezon+bölüm düzeyinde.
+  Kullanıcı üstüne 5 etiket daha ekleyebiliyor (tavan 6).
+- [x] YAN KAZANÇ — iki yazma yüzeyi teke indi. Eskiden içerik sayfasında
+  etiketleme, iki adımlı önizleme ve 6. ek YOKTU; artık her yerde var.
+  Kullanıcının bu turdaki ilk isteği (*"PC'de gönder butonu en sağda değil,
+  kocaman Gönder yazmak yerine ikon olsun; telefonda da ikon"*) bununla
+  KENDİLİĞİNDEN çözüldü: yazma adımının birincil eylemi zaten sağ alt köşede
+  sarı daire içinde ok ikonu (44 dp), metin yok.
+- [x] `paylas_yorum.dart` kısmi yükleme hatası: `sonuc.hata` (ham "sunucu
+  hatası") yerine `sonuc.bildirim` ("1 medya eklendi, 1 yüklenemedi").
+  Yorum ekleri artık bu ekrandan geçtiği için dürüst mesaj kaybolmamalıydı.
+- [x] Çeviri: 1 yeni anahtar ("Yorumun bu sayfada görünecek") × 45 dil.
+Kanıt: analyze 0 uyarı, flutter test 2495/2495 (yeni
+`yorum_paylasim_kutusu_test` 7 test: satır içi kutu yok, tam ekran açılıyor,
+otomatik etiket, kilit, bölüm düzeyi, oturumsuz kart, 45 dil). Uyarlanan
+testler: `gif_dort_yuzey` (yüzey sayısı 4→3, kapsam aynı),
+`masaustu_orta_kolon` (bulucu tipe geçti), `medya_inceleme` (ek düğmesi
+paylaşım ekranında), `puan_dagilimi` (person ikonu sheet içinde aranıyor).

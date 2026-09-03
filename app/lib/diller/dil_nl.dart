@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (nl).
 const Map<String, String> cevirilerNl = {
+  'Yorumun bu sayfada görünecek': 'Je reactie verschijnt op deze pagina',
   'Hepsini gördün, baştan gösteriyoruz':
       'Je hebt het allemaal gezien, we laten het je vanaf het begin zien',
   'Aktarılacak tanınan veri bulunamadı.':

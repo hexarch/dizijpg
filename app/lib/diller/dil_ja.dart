@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (ja).
 const Map<String, String> cevirilerJa = {
+  'Yorumun bu sayfada görünecek': 'あなたのコメントはこのページに表示されます',
   'Hepsini gördün, baştan gösteriyoruz': 'あなたはすべてを見ました、私たちは最初からあなたに見せます',
   'Aktarılacak tanınan veri bulunamadı.': 'インポートできるデータが見つかりませんでした。',
   'Arama': '検索',

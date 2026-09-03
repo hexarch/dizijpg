@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (pa).
 const Map<String, String> cevirilerPa = {
+  'Yorumun bu sayfada görünecek': 'ਤੁਹਾਡੀ ਟਿੱਪਣੀ ਇਸ ਪੰਨੇ ਉੱਤੇ ਦਿਖੇਗੀ',
   'Hepsini gördün, baştan gösteriyoruz':
       'ਤੁਸੀਂ ਇਹ ਸਭ ਦੇਖਿਆ ਹੈ, ਅਸੀਂ ਤੁਹਾਨੂੰ ਸ਼ੁਰੂ ਤੋਂ ਦਿਖਾਉਂਦੇ ਹਾਂ',
   'Aktarılacak tanınan veri bulunamadı.':

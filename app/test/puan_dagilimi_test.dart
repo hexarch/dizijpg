@@ -455,8 +455,17 @@ void main() {
 
       expect(find.byType(PuanDagilimiSheet), findsOneWidget);
       expect(find.text('25 kişi puanladı'), findsOneWidget);
-      // Kendi puanı (kanonik 100 = 5 yıldız) işaretli
-      expect(find.byIcon(Icons.person), findsOneWidget);
+      // Kendi puanı (kanonik 100 = 5 yıldız) işaretli.
+      // SHEET İÇİNDE aranır: 3 Eyl 2026'dan beri sayfanın yorum bölümünde de
+      // bir `Icons.person` var (paylaşım kutusunun avatar yedeği), sayfa
+      // genelinde arayan eski hâli iki sonuç buluyordu.
+      expect(
+        find.descendant(
+          of: find.byType(PuanDagilimiSheet),
+          matching: find.byIcon(Icons.person),
+        ),
+        findsOneWidget,
+      );
     });
   });
 }

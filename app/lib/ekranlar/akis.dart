@@ -528,7 +528,7 @@ class _AkisEkraniState extends State<AkisEkrani>
             itemCount: _akis!.length + 1,
             itemBuilder: (context, i) {
               if (i == 0) {
-                return _PaylasKutusu(onPaylasildi: _yukle);
+                return PaylasKutusu(onPaylasildi: _yukle);
               }
               // Kart indeksi bir geride: 0 kutuya ayrıldı.
               final k = i - 1;
@@ -638,7 +638,7 @@ class _AkisEkraniState extends State<AkisEkrani>
                 // eskisi gibi tam genişlikte kalır.
                 OrtaKolon(
                   azami: masaustuKolonGenisligi,
-                  cocuk: _PaylasKutusu(
+                  cocuk: PaylasKutusu(
                     onPaylasildi: () {
                       // Yeni yorum akışta görünsün: paylaşımdan SONRA tazele.
                       _yukle();
@@ -666,9 +666,28 @@ class _AkisEkraniState extends State<AkisEkrani>
 /// Kutu bir DÜĞMEDİR: dokununca paylaşım sayfası açılır, içerik seçimi ve
 /// metin orada BİRLİKTE istenir. Görünüşü giriş alanı gibi çünkü işlevi o —
 /// ama sözleşmesi "buraya dokun", "buraya yaz" değil.
-class _PaylasKutusu extends StatelessWidget {
+///
+/// ORTAK (3 Eyl 2026): artık yalnız akışta değil, içerik/kişi/firma/bölüm
+/// sayfalarının yorum bölümünde de bu kutu duruyor. Kullanıcı: *"oradaki
+/// yorum yapma kısmına tıklayınca akıştaki gibi olsun, dizi ve film otomatik
+/// etiketlensin tabi"*. Sayfadan gelindiğinde [etiketler] o sayfanın yapımını
+/// taşır ve paylaşım ekranında KİLİTLİ rozet olarak açılır.
+class PaylasKutusu extends StatelessWidget {
   final VoidCallback onPaylasildi;
-  const _PaylasKutusu({required this.onPaylasildi});
+
+  /// Paylaşım ekranı bunlarla açılır (kilitli rozetler). Akışta boş.
+  final List<PaylasimEtiketi> etiketler;
+
+  /// Kutunun içindeki soluk metin. Akışta "Yorum yap"; içerik sayfasında
+  /// "Yorum yaz..." — kullanıcı orada bir YAPIM hakkında yazdığını bilir.
+  final String? ipucu;
+
+  const PaylasKutusu({
+    super.key,
+    required this.onPaylasildi,
+    this.etiketler = const [],
+    this.ipucu,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -709,12 +728,14 @@ class _PaylasKutusu extends StatelessWidget {
           Expanded(
             child: Semantics(
               button: true,
-              label: 'Yorum yap'.c,
+              label: ipucu ?? 'Yorum yap'.c,
               child: InkWell(
                 borderRadius: BorderRadius.circular(22),
                 onTap: () async {
                   if (!girisGerekli(context)) return;
-                  if (await paylasYorumAc(context)) onPaylasildi();
+                  if (await paylasYorumAc(context, etiketler: etiketler)) {
+                    onPaylasildi();
+                  }
                 },
                 child: Container(
                   // Dokunma hedefi 44 px (ux md.2): yükseklik dolgudan gelir.
@@ -727,7 +748,7 @@ class _PaylasKutusu extends StatelessWidget {
                     border: Border.all(color: DiziRenkler.metin12),
                   ),
                   child: Text(
-                    'Yorum yap'.c,
+                    ipucu ?? 'Yorum yap'.c,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 13, color: DiziRenkler.metin54),

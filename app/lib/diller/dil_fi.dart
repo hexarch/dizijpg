@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (fi).
 const Map<String, String> cevirilerFi = {
+  'Yorumun bu sayfada görünecek': 'Kommenttisi näkyy tällä sivulla',
   'Hepsini gördün, baştan gösteriyoruz':
       'Olet nähnyt kaiken, näytämme sinulle alusta alkaen',
   'Aktarılacak tanınan veri bulunamadı.':

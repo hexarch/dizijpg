@@ -48,13 +48,12 @@ void _ekran(WidgetTester t, double g, double y) {
   addTearDown(t.view.reset);
 }
 
-/// Akıştaki paylaşım kutusu (`_PaylasKutusu`) — sınıf `akis.dart`'a ÖZEL, o
-/// yüzden tipiyle değil adıyla bulunur. Bilerek dışa açılmadı: kutu ekranın iç
-/// parçası, uygulamanın başka yerinden kurulmuyor.
-final Finder _paylasKutusu = find.byWidgetPredicate(
-  (w) => w.runtimeType.toString() == '_PaylasKutusu',
-  description: 'akıştaki paylaşım kutusu',
-);
+/// Akıştaki paylaşım kutusu ([PaylasKutusu]).
+///
+/// 3 Eyl 2026'da `_PaylasKutusu` DIŞA AÇILDI: içerik/kişi/firma/bölüm
+/// sayfalarının yorum bölümü de aynı kutuyu kullanıyor (yorum yazma tek
+/// yüzeye indi). Bulucu artık tipe bakıyor — ad dizisiyle aramaya gerek yok.
+final Finder _paylasKutusu = find.byType(PaylasKutusu);
 
 /// Sol boşluk ≈ sağ boşluk mu (yani blok YATAYDA ORTALANMIŞ mı)?
 void _ortalanmis(Rect r, double ekranGenisligi, {String ne = 'blok'}) {

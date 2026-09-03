@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (bg).
 const Map<String, String> cevirilerBg = {
+  'Yorumun bu sayfada görünecek': 'Коментарът ти ще се появи на тази страница',
   'Hepsini gördün, baştan gösteriyoruz':
       'Вие сте видели всичко, ние ви показваме от самото начало',
   'Aktarılacak tanınan veri bulunamadı.':

@@ -1,4 +1,4 @@
-// GIF SEÇİCİ DÖRT YÜZEYE DE BAĞLI MI? (29 Ağu 2026)
+// GIF SEÇİCİ HER YAZMA YÜZEYİNE BAĞLI MI? (29 Ağu 2026)
 //
 // Ortak bir seçici yazmanın tek anlamı DÖRT yüzeyin de onu kullanmasıdır.
 // Bir yüzey unutulursa kimse hata görmez: o ekranda GIF düğmesi ya hiç olmaz
@@ -17,12 +17,20 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-/// Ortak seçiciyi kullanması ZORUNLU dört yüzey.
+/// Ortak seçiciyi kullanması ZORUNLU yüzeyler.
+///
+/// 3 Eyl 2026 — DÖRT YÜZEY ÜÇE İNDİ, kapsam DARALMADI: içerik/kişi/firma/
+/// bölüm sayfalarının "yorum yazma kutusu" artık kendi satır içi yazma
+/// yüzeyi değil; dokununca akıştaki tam ekran paylaşım ekranını
+/// (`paylas_yorum.dart`) açıyor. Yani o yüzeyin GIF yolu bu listedeki
+/// "Paylaşım ekranı" satırıyla ölçülüyor — `yorumlar.dart`ta ölçülecek ayrı
+/// bir GIF düğmesi KALMADI. Bağlantı `yorumlar_paylasim_kutusu_test.dart`ta
+/// ayrıca kilitli.
 const _yuzeyler = <String, String>{
   'Reels yanıt kutusu': 'lib/ekranlar/kesfet_akis.dart',
   'Sohbet/DM eki': 'lib/ekranlar/sohbet.dart',
-  'Yorum yazma kutusu': 'lib/ekranlar/yorumlar.dart',
-  'Akış paylaşım kutusu': 'lib/ekranlar/paylas_yorum.dart',
+  'Paylaşım ekranı (akış + içerik sayfası yorumu)':
+      'lib/ekranlar/paylas_yorum.dart',
 };
 
 String _oku(String yol) {
@@ -32,7 +40,7 @@ String _oku(String yol) {
 }
 
 void main() {
-  group('DÖRT YÜZEY ortak GIF seçicisine bağlı', () {
+  group('HER YAZMA YÜZEYİ ortak GIF seçicisine bağlı', () {
     _yuzeyler.forEach((ad, yol) {
       test('$ad → gifSecAc', () {
         final k = _oku(yol);

@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (sr).
 const Map<String, String> cevirilerSr = {
+  'Yorumun bu sayfada görünecek':
+      'Tvoj komentar će se pojaviti na ovoj stranici',
   'Hepsini gördün, baştan gösteriyoruz':
       'Видели сте све, ми вам показујемо од почетка',
   'Aktarılacak tanınan veri bulunamadı.':

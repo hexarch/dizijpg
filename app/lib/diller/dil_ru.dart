@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (ru).
 const Map<String, String> cevirilerRu = {
+  'Yorumun bu sayfada görünecek': 'Твой комментарий появится на этой странице',
   'Hepsini gördün, baştan gösteriyoruz':
       'Вы все это видели, мы покажем вам с самого начала',
   'Aktarılacak tanınan veri bulunamadı.':

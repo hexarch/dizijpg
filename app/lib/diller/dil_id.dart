@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (id).
 const Map<String, String> cevirilerId = {
+  'Yorumun bu sayfada görünecek': 'Komentarmu akan muncul di halaman ini',
   'Hepsini gördün, baştan gösteriyoruz':
       'Anda telah melihat semuanya, kami tunjukkan dari awal',
   'Aktarılacak tanınan veri bulunamadı.':

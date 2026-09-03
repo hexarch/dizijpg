@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (sw).
 const Map<String, String> cevirilerSw = {
+  'Yorumun bu sayfada görünecek': 'Maoni yako yataonekana kwenye ukurasa huu',
   'Hepsini gördün, baştan gösteriyoruz':
       'Umeona yote, tunakuonyesha tangu mwanzo',
   'Aktarılacak tanınan veri bulunamadı.':

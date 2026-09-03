@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (ta).
 const Map<String, String> cevirilerTa = {
+  'Yorumun bu sayfada görünecek': 'உங்கள் கருத்து இந்தப் பக்கத்தில் தோன்றும்',
   'Hepsini gördün, baştan gösteriyoruz':
       'நீங்கள் அனைத்தையும் பார்த்தீர்கள், நாங்கள் உங்களுக்கு ஆரம்பத்தில் இருந்து காட்டுகிறோம்',
   'Aktarılacak tanınan veri bulunamadı.':
