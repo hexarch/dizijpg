@@ -392,6 +392,20 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
 /// bağlı olduğu için widget `PuanOlcegi.deger`i DİNLER: kullanıcı Ayarlar'dan
 /// ölçeği değiştirince açık ekranlar kendini yeniden çizer.
 ///
+/// SÜRÜKLEMELİ (3 Eyl 2026, kullanıcı isteği): satır kipinde parmağı
+/// yıldızların üzerinde gezdirmek puanı CANLI değiştirir, bırakınca kaydeder.
+/// Dokunma da çalışmaya devam eder — sürükleme onun YERİNE değil YANINA
+/// eklendi. Neden gerekli: 10'luk ölçekte hücre 44 dp'nin altına iniyor
+/// (aşağıdaki taviz notu); tek tek isabet ettirmek zorlaşınca kullanıcı
+/// yanlış yıldıza basıyordu. Sürüklerken dolan yıldızlar geri bildirimi
+/// parmağın altında verir, isabet gereksinimi ortadan kalkar.
+/// KAYIT YALNIZ BIRAKINCA: her `onUpdate`te POST atmak 10 yıldızlık bir
+/// sürüklemede 10 istek + 10 yanlış "kaydedildi" demekti.
+///
+/// DAR KUTU: satır, verilen genişliğe SIĞAR (Expanded/dar sütun). Hücre
+/// yıldızı 18 dp'nin altına itiyorsa satır çizilmez, rozet kipine düşülür —
+/// 14 dp'lik bir yıldız şeridi ne okunur ne dokunulur.
+///
 /// HEDEF (8 Ağu 2026-d): `sezon`+`bolum` verilirse puan O BÖLÜME, verilmezse
 /// dizi/film/kişi GENELİNE yazılır — `TepkiSatiri` ve yorumlarla aynı
 /// sözleşme. İkisi sunucuda AYRI satırdır, birbirine karışmaz.
@@ -426,6 +440,37 @@ class YildizPuan extends StatefulWidget {
 class _YildizPuanState extends State<YildizPuan> {
   late int _yildiz = yildiza(widget.baslangicPuan);
   bool _isleniyor = false;
+
+  /// Parmak yıldızların üzerindeyken canlı önizleme; sürükleme bitince null.
+  /// `null` DEĞİL de 0 kullanılsaydı "sürüklemiyor" ile "sıfır yıldız" aynı
+  /// değere düşerdi — sıfır bu dosyada "puanı sil" demek.
+  int? _surukleme;
+
+  /// Bir yıldızın kapladığı yatay genişlik (build'de ölçülür). Sürükleme
+  /// bunu kullanarak parmağın x'ini yıldıza çevirir; sabit sayı yazsaydık
+  /// dar kutuda önizleme parmağın altındaki yıldızdan kayardı.
+  double _hucre = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // Ölçek değişince (Ayarlar) yerel yıldız sayısı da yeni ölçeğe çevrilmeli.
+    // `build` zaten ValueListenableBuilder ile yenileniyor ama `_yildiz`
+    // ondan bağımsız bir alan: 5'lik ölçekte 4 yıldız duran ekran 100'lük
+    // ölçeğe geçince 4/100 gösterirdi.
+    PuanOlcegi.deger.addListener(_olcekDegisti);
+  }
+
+  @override
+  void dispose() {
+    PuanOlcegi.deger.removeListener(_olcekDegisti);
+    super.dispose();
+  }
+
+  void _olcekDegisti() {
+    if (!mounted || _isleniyor) return;
+    setState(() => _yildiz = yildiza(widget.baslangicPuan));
+  }
 
   @override
   void didUpdateWidget(YildizPuan eski) {
@@ -515,16 +560,72 @@ class _YildizPuanState extends State<YildizPuan> {
             final kullanilabilir = kisit.maxWidth.isFinite
                 ? kisit.maxWidth
                 : olcek * (boy + 14);
-            final hucre = (kullanilabilir / olcek).clamp(boy + 4, 44.0);
-            final yatay = ((hucre - boy) / 2).clamp(2.0, 7.0);
-            return _satir(olcek, boy, yatay);
+            // TAŞMA YASAK: eski sürüm hücreyi `boy + 4`ün ALTINA indirmiyordu,
+            // yani dar bir kutuda (içerik sayfasında favori düğmesinin yanı,
+            // 3 Eyl 2026) satır kutudan taşıp sarı çizgi basıyordu. Artık dar
+            // kutuda önce İKON küçülür...
+            var b = boy;
+            final ham = kullanilabilir / olcek;
+            if (ham < boy + 4) b = ham - 4;
+            // ...18 dp de sığmıyorsa satır hiç çizilmez: o boyutta yıldız ne
+            // okunur ne dokunulur, rozet + kaydırıcılı sayfa dürüst olan.
+            if (b < 18) return _rozet(olcek);
+            final hucre = ham.clamp(b + 4, 44.0);
+            final yatay = ((hucre - b) / 2).clamp(2.0, 7.0);
+            return _satir(olcek, b, yatay, hucre);
           },
         );
       },
     );
   }
 
-  Widget _satir(int olcek, double boy, double yatay) {
+  /// Parmağın yatay konumunu (satırın soluna göre) yıldıza çevirir.
+  /// `ceil`: 1. hücrenin herhangi bir noktası 1 yıldızdır, sınırı geçince 2.
+  /// Sola taşan sürükleme 1'e kırpılır — 0 (silme) SÜRÜKLEMEYLE VERİLMEZ,
+  /// çünkü kullanıcı puan vermek için sürüklerken kazara silmemeli; silme
+  /// yine "aynı yıldıza dokun" kısayolu.
+  int _hedefYildiz(double dx, int olcek) {
+    if (_hucre <= 0) return 1;
+    return (dx / _hucre).ceil().clamp(1, olcek);
+  }
+
+  Widget _satir(int olcek, double boy, double yatay, double hucre) {
+    _hucre = hucre;
+    // Sürüklerken dolan yıldız sayısı parmağı izler; bırakınca gerçek puana
+    // döner (kaydetme başarısızsa iyimser güncelleme zaten geri alıyor).
+    final gosterilen = _surukleme ?? _yildiz;
+    return GestureDetector(
+      // Yıldızların ARASINDAKİ paylar da sürüklemeyi taşısın.
+      behavior: HitTestBehavior.opaque,
+      onHorizontalDragStart: (d) {
+        // Oturumsuzda hiç başlatma: iyimser önizleme gösterip 401 ile geri
+        // almak yerine kullanıcı doğrudan giriş istemini görür (`_sec` ile
+        // aynı kural).
+        if (!girisGerekli(context)) return;
+        if (_isleniyor) return;
+        setState(() => _surukleme = _hedefYildiz(d.localPosition.dx, olcek));
+      },
+      onHorizontalDragUpdate: (d) {
+        if (_surukleme == null) return;
+        final h = _hedefYildiz(d.localPosition.dx, olcek);
+        if (h != _surukleme) setState(() => _surukleme = h);
+      },
+      onHorizontalDragEnd: (_) {
+        final secim = _surukleme;
+        setState(() => _surukleme = null);
+        // Aynı değere sürükleyip bırakmak DEĞİŞİKLİK DEĞİLDİR: ne istek
+        // atılır ne de "aynı yıldıza dokununca sil" kısayolu tetiklenir
+        // (sürükleyerek puan verirken kazara silme olmamalı).
+        if (secim != null && secim != _yildiz) _yaz(secim);
+      },
+      onHorizontalDragCancel: () {
+        if (_surukleme != null) setState(() => _surukleme = null);
+      },
+      child: _yildizlar(olcek, boy, yatay, gosterilen),
+    );
+  }
+
+  Widget _yildizlar(int olcek, double boy, double yatay, int gosterilen) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -546,9 +647,11 @@ class _YildizPuanState extends State<YildizPuan> {
                 vertical: ((44 - boy) / 2).clamp(8.0, 20.0),
               ),
               child: Icon(
-                y <= _yildiz ? Icons.star_rounded : Icons.star_outline_rounded,
+                y <= gosterilen
+                    ? Icons.star_rounded
+                    : Icons.star_outline_rounded,
                 size: boy,
-                color: y <= _yildiz ? DiziRenkler.sari : DiziRenkler.metin38,
+                color: y <= gosterilen ? DiziRenkler.sari : DiziRenkler.metin38,
               ),
             ),
           ),

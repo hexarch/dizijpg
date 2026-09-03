@@ -8303,3 +8303,26 @@ ikisi de aapt2 ile 1.93.0/143 + apksigner yayın imzası doğrulandı; eski
 ## 30 Ağu 2026 — Topluluk tanıtım yazıları (dış bağlantı = 0 işine ilk adım)
 - [x] `TOPLULUK-YAZILARI.md`: 9 hazır gönderi (Technopat ×2, DonanımHaber ×2, Ekşi, btt.community, Show HN, r/androidapps, r/SideProject) + platform kuralları + ölçülmüş nofollow tablosu (followed bağlantı ihtimali olan tek yer: Hacker News) + gönderme takvimi + ölçüm bölümü (GSC Bağlantılar, nginx referrer, `araclar/geo-olcum.sh trend`, marka-varlık araması). Ürün iddiaları koddan doğrulandı; ⛔ Trakt/Letterboxd içe aktarma, "mesajlar E2E", iOS, "45 dil" iddiaları yazılara girmedi.
 - [ ] **Gönderiler kullanıcının kendi hesabıyla atılacak** — `TOPLULUK-YAZILARI.md` §4 takvimi ve §5.5 kayıt tablosu doldurulacak. Kabul: GSC Bağlantılar ≥1 yönlendiren alan adı.
+
+## 3 Eyl 2026 — İçerik sayfasında SÜRÜKLEMELİ puan şeridi
+- [x] Dizi/film sayfasında yıldıza dokununca AÇILAN SHEET KALDIRILDI (puan +
+  "Yorum yaz..." kutusu). Kullanıcı: *"yıldıza tıklayınca yorum yaz
+  açılmasın, yıldız verme modalı açılsın; hatta onu açma bile, yıldız işareti
+  yerine puan verme kısmı olsun sürüklemeli."* Tek yıldız düğmesinin yerini
+  sayfanın İÇİNDEKİ `YildizPuan` şeridi aldı: dokun ya da parmağını
+  yıldızların üzerinde gezdir, bırakınca kaydeder. Yorum yazma kaybolmadı —
+  sayfanın altındaki `YorumBolumu` zaten tam bir yorum alanı.
+- [x] *"Puan verince tekrar gittiğinde puanını görsün"*: şeridin başlangıç
+  değeri `/benim` ucundan gelen kendi puanı; sayfa açılır açılmaz dolu
+  yıldızlar duruyor (ipucu metni de "Puanla" → "Puanın" oluyor).
+- [x] `YildizPuan` sürükleme kazanımı bölüm sayfasına ve takvim modalına da
+  geldi (aynı widget). Kayıt YALNIZ parmak kalkınca — sürüklerken 10 POST yok.
+- [x] Dar kutu düzeltmesi: şerit artık verilen genişliğe SIĞAR (eski
+  `clamp(boy + 4, 44)` dar sütunda taşıyordu). Sığmazsa önce ikon küçülür,
+  18 dp'nin altına inecekse rozet + kaydırıcılı sayfa kipine düşer.
+- [x] Ölçek değişince (Ayarlar) açık şerit kendini yeni ölçeğe çeviriyor.
+Kanıt: analyze 0 uyarı, flutter test 2496/2496 (yeni: `yildiz_surukleme_test`
+8 test + `detay_favori_puan_yeri_test`e 4 yeni test — sürükleme kaydı,
+parmak kalkmadan istek yok, mevcut puana sürükleyince silme yok, 360 dp'de
+taşma yok, geri dönünce dolu yıldız). Yeni çeviri anahtarı YOK ("Puanla" ve
+"Puanın" 45 dilde zaten vardı).

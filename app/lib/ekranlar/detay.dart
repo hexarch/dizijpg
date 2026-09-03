@@ -21,7 +21,6 @@ import 'kahraman_karisik.dart';
 import 'medya_goster.dart';
 import 'ortak.dart';
 import 'puan_dagilimi.dart';
-import 'puan_sheet.dart';
 import 'sirket.dart';
 import 'tmdb_puan_izgara.dart';
 import 'tepki.dart';
@@ -867,24 +866,25 @@ class _DetayEkraniState extends State<DetayEkrani>
     );
   });
 
-  Future<void> _puanla() async {
-    if (!girisGerekli(context)) return;
-    final kaydedildi = await puanlaVeKaydet(
-      context,
-      tur: widget.tur,
-      tmdbId: widget.tmdbId,
-      mevcutPuan: _benim?['puan']?['puan'] as int?,
-      mevcutYorum: _benim?['puan']?['yorum'] as String?,
-    );
-    if (kaydedildi) {
-      _benimYenile();
-      try {
-        final inc = await Api.get(
-          '/incelemeler/${widget.tur}/${widget.tmdbId}',
-        );
-        if (mounted) setState(() => _incelemeler = inc as Map<String, dynamic>);
-      } catch (_) {}
-    }
+  /// Yıldız şeridi puanı KAYDETTİKTEN sonra çağrılır (3 Eyl 2026).
+  ///
+  /// ESKİDEN: yıldıza dokunmak `puanlaVeKaydet` sheet'ini açıyordu — puan
+  /// seçimi + "Yorum yaz..." kutusu + Kaydet. Kullanıcı: *"yıldıza tıklayınca
+  /// yorum yaz açılmasın, puan verme kısmı olsun, sürüklemeli"*. Artık şerit
+  /// SAYFANIN İÇİNDE duruyor, sürüklenerek puan veriliyor ve hiçbir modal
+  /// açılmıyor. Yorum yazma kaybolmadı: sayfanın altındaki [YorumBolumu]
+  /// zaten fotoğraf/video destekli tam bir yorum alanı.
+  ///
+  /// İKİ ŞEY TAZELENİR: `_benim` (kendi puanın — sayfaya geri gelince dolu
+  /// yıldızları o besler) ve `_incelemeler` (topluluk ortalaması + dağılım;
+  /// kendi oyun ortalamayı hemen değiştirir, eski değeri bırakmak kullanıcıya
+  /// "kaydedilmedi" hissi verirdi).
+  Future<void> _puanKaydedildi() async {
+    _benimYenile();
+    try {
+      final inc = await Api.get('/incelemeler/${widget.tur}/${widget.tmdbId}');
+      if (mounted) setState(() => _incelemeler = inc as Map<String, dynamic>);
+    } catch (_) {}
   }
 
   /// Tüm izleme izlerini siler: hiç izlenmemiş sayılır + listelerden kalkar.
@@ -1268,34 +1268,41 @@ class _DetayEkraniState extends State<DetayEkrani>
                                           : DiziRenkler.metin,
                                     ),
                                   ),
-                                  IconButton(
-                                    key: const Key('puanla-dugmesi'),
-                                    onPressed: _puanla,
-                                    tooltip: 'Puanla'.c,
-                                    padding: EdgeInsets.zero,
-                                    alignment: Alignment.centerLeft,
-                                    constraints: const BoxConstraints(
-                                      minWidth: 44,
-                                      minHeight: 44,
-                                    ),
-                                    icon: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          benimPuan != null
-                                              ? Icons.star
-                                              : Icons.star_border,
-                                          color: DiziRenkler.sari,
-                                        ),
-                                        if (benimPuan != null)
-                                          Text(
-                                            ' ${yildiza(benimPuan)}',
-                                            style: TextStyle(
-                                              color: DiziRenkler.sariMetin,
-                                              fontWeight: FontWeight.w800,
-                                            ),
-                                          ),
-                                      ],
+                                  // PUAN ŞERİDİ — MODAL YOK (3 Eyl 2026).
+                                  //
+                                  // Eskiden burada tek bir yıldız düğmesi
+                                  // vardı ve dokununca puan + "Yorum yaz..."
+                                  // sheet'i açılıyordu. Kullanıcı: *"yıldıza
+                                  // tıklayınca yorum yaz açılmasın, yıldız
+                                  // işareti yerine puan verme kısmı olsun,
+                                  // sürüklemeli"*. Şerit sayfanın İÇİNDE:
+                                  // dokun ya da parmağını üzerinde gezdir,
+                                  // bırakınca kaydeder ([YildizPuan]).
+                                  //
+                                  // GERİ GELİNCE PUANIN GÖRÜNÜR: `benimPuan`
+                                  // `/benim` ucundan gelir ve şeridin
+                                  // başlangıç değeridir; dolu yıldızlar
+                                  // kullanıcının KENDİ puanıdır (topluluk
+                                  // ortalaması ayrı sarı rozette).
+                                  //
+                                  // Expanded: şerit afişin sağındaki sütunun
+                                  // KALAN genişliğine sığar. [YildizPuan]
+                                  // kendi LayoutBuilder'ıyla yıldızı o
+                                  // genişliğe göre boyutlar; sığmayacak kadar
+                                  // dar kalırsa rozet + kaydırıcı kipine
+                                  // düşer (bkz. tepki.dart).
+                                  Expanded(
+                                    child: Tooltip(
+                                      message: benimPuan != null
+                                          ? 'Puanın'.c
+                                          : 'Puanla'.c,
+                                      child: YildizPuan(
+                                        key: const Key('puanla-dugmesi'),
+                                        tur: widget.tur,
+                                        tmdbId: widget.tmdbId,
+                                        baslangicPuan: benimPuan,
+                                        kaydedildi: (_, _) => _puanKaydedildi(),
+                                      ),
                                     ),
                                   ),
                                 ],

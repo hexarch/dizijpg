@@ -12,13 +12,15 @@
 //  3) Sayfada her düğmeden TEK tane var (aksiyon satırındaki eski kopya
 //     kaldırıldı).
 //  4) Dokunma hedefi ≥ 44 px (kural: padding'le büyüt, ikonu değil).
-//  5) Favori dokununca /favori/toggle'a, Puanla dokununca puan sheet'ine
-//     gider — düğmeler taşınırken bağları kopmadı.
+//  5) Favori dokununca /favori/toggle'a gider.
+//  6) (3 Eyl 2026) Yıldız artık MODAL AÇMIYOR: dokunuş ve SÜRÜKLEME
+//     doğrudan /puan'a yazar; kaydetme yalnız parmak KALKINCA olur.
 import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ceviri.dart';
 import 'package:dizijpg/ekranlar/detay.dart';
+import 'package:dizijpg/ekranlar/tepki.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -69,12 +71,16 @@ Map<String, dynamic> _dizi() => {
 
 final List<Uri> _istekler = [];
 
-void _sunucu(Map<String, dynamic> icerik) {
+void _sunucu(Map<String, dynamic> icerik, {Map<String, dynamic>? benim}) {
   _istekler.clear();
   Api.istemci = MockClient((istek) async {
     _istekler.add(istek.url);
     final yol = istek.url.path.replaceFirst('/api', '');
-    final govde = yol.startsWith('/tmdb/') ? jsonEncode(icerik) : '{}';
+    final govde = yol.startsWith('/tmdb/')
+        ? jsonEncode(icerik)
+        : (yol.startsWith('/benim/') && benim != null
+              ? jsonEncode(benim)
+              : '{}');
     return http.Response(
       govde,
       200,
@@ -87,11 +93,13 @@ Future<void> _kur(
   WidgetTester tester, {
   required Map<String, dynamic> icerik,
   bool film = true,
+  Map<String, dynamic>? benim,
+  Size ekran = _ekran,
 }) async {
   SharedPreferences.setMockInitialValues({'token': 'sahte'});
   await Api.tokenYukle();
-  _sunucu(icerik);
-  await tester.binding.setSurfaceSize(_ekran);
+  _sunucu(icerik, benim: benim);
+  await tester.binding.setSurfaceSize(ekran);
   addTearDown(() => tester.binding.setSurfaceSize(null));
   final yonlendirici = GoRouter(
     initialLocation: film ? '/icerik/movie/27205' : '/icerik/tv/1396',
@@ -162,12 +170,23 @@ void main() {
     _yeriDogrula(tester, _durumRozeti, const Key('tur-cip-18'));
   });
 
-  testWidgets('eski kopya yok: sayfada TEK favori, TEK puanla', (tester) async {
+  testWidgets('eski kopya yok: sayfada TEK favori, TEK puan şeridi', (
+    tester,
+  ) async {
     await _kur(tester, icerik: _film());
     expect(find.byIcon(Icons.favorite_border), findsOneWidget);
-    expect(find.byIcon(Icons.star_border), findsOneWidget);
+    expect(find.byType(YildizPuan), findsOneWidget);
     expect(find.byTooltip('Favori'), findsOneWidget);
+    // Puansızken ipucu "Puanla"; puan verilince "Puanın" olur.
     expect(find.byTooltip('Puanla'), findsOneWidget);
+    // 5'lik varsayılan ölçek → beş boş yıldız (tek yıldız düğmesi DEĞİL).
+    expect(
+      find.descendant(
+        of: find.byType(YildizPuan),
+        matching: find.byIcon(Icons.star_outline_rounded),
+      ),
+      findsNWidgets(5),
+    );
   });
 
   testWidgets('favoriye dokununca /favori/toggle istenir', (tester) async {
@@ -177,14 +196,102 @@ void main() {
     expect(_istekler.any((u) => u.path.endsWith('/favori/toggle')), isTrue);
   });
 
-  testWidgets('puanlaya dokununca puan sayfası açılır', (tester) async {
+  // 3 Eyl 2026 — kullanıcı: "yıldıza tıklayınca yorum yaz açılmasın, yıldız
+  // işareti yerine puan verme kısmı olsun, sürüklemeli". Yıldız artık MODAL
+  // AÇMIYOR; dokunuş/sürükleme doğrudan `/puan`a yazıyor.
+  testWidgets('yıldıza dokununca modal AÇILMAZ, puan doğrudan kaydedilir', (
+    tester,
+  ) async {
     await _kur(tester, icerik: _film());
-    await tester.tap(find.byKey(_puanla));
+    final yildizlar = find.descendant(
+      of: find.byType(YildizPuan),
+      matching: find.byIcon(Icons.star_outline_rounded),
+    );
+    await tester.tap(yildizlar.at(3)); // 4. yıldız
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 50));
     }
-    // Puan sheet'inde en az bir seçilebilir yıldız çıkar (5'li dizi).
-    expect(find.byIcon(Icons.star_border), findsWidgets);
-    expect(find.byType(BottomSheet), findsOneWidget);
+    expect(find.byType(BottomSheet), findsNothing);
+    expect(_istekler.any((u) => u.path.endsWith('/puan')), isTrue);
+  });
+
+  // "Kullanıcı bir filme veya diziye puan verince tekrar gittiğinde puanını
+  // görsün" (3 Eyl 2026). Puan `/benim` ucundan gelir ve şeridin BAŞLANGIÇ
+  // değeridir — sayfa açılır açılmaz dolu yıldız olarak durur.
+  testWidgets('sayfaya geri gelince kendi puanı DOLU yıldız olarak görünür', (
+    tester,
+  ) async {
+    // Kanonik 80 = 5'lik ölçekte 4 yıldız (lib/puan.dart).
+    await _kur(
+      tester,
+      icerik: _film(),
+      benim: {
+        'puan': {'puan': 80},
+      },
+    );
+    expect(
+      find.descendant(
+        of: find.byType(YildizPuan),
+        matching: find.byIcon(Icons.star_rounded),
+      ),
+      findsNWidgets(4),
+    );
+    expect(
+      find.descendant(
+        of: find.byType(YildizPuan),
+        matching: find.byIcon(Icons.star_outline_rounded),
+      ),
+      findsOneWidget,
+    );
+    // Puanlıyken ipucu "Puanın" olur.
+    expect(find.byTooltip('Puanın'), findsOneWidget);
+  });
+
+  // DAR TELEFON: şerit afişin sağındaki sütuna sığmalı. Taşma olsaydı bu
+  // test RenderFlex overflow ile düşerdi (Flutter testte hata fırlatır).
+  testWidgets('360 dp telefonda şerit TAŞMAZ ve beş yıldız çizer', (
+    tester,
+  ) async {
+    await _kur(tester, icerik: _film(), ekran: const Size(360, 800));
+    final kutu = tester.getRect(find.byKey(_puanla));
+    expect(kutu.right, lessThanOrEqualTo(360));
+    expect(kutu.height, greaterThanOrEqualTo(44));
+    expect(
+      find.descendant(
+        of: find.byType(YildizPuan),
+        matching: find.byIcon(Icons.star_outline_rounded),
+      ),
+      findsNWidgets(5),
+    );
+  });
+
+  testWidgets('yıldızların üzerinde sürüklemek puanı belirler', (tester) async {
+    await _kur(tester, icerik: _film());
+    final yildizlar = find.descendant(
+      of: find.byType(YildizPuan),
+      matching: find.byIcon(Icons.star_outline_rounded),
+    );
+    // 1. yıldızdan başlayıp 4.'ye kadar sürükle, orada bırak.
+    final bas = tester.getCenter(yildizlar.first);
+    final son = tester.getCenter(yildizlar.at(3));
+    final imlec = await tester.startGesture(bas);
+    await tester.pump(const Duration(milliseconds: 20));
+    await imlec.moveTo(son);
+    await tester.pump(const Duration(milliseconds: 20));
+    // Bırakmadan ÖNCE: canlı önizleme dolu 4 yıldız, ama HENÜZ istek YOK.
+    expect(
+      find.descendant(
+        of: find.byType(YildizPuan),
+        matching: find.byIcon(Icons.star_rounded),
+      ),
+      findsNWidgets(4),
+    );
+    expect(_istekler.any((u) => u.path.endsWith('/puan')), isFalse);
+    await imlec.up();
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(_istekler.any((u) => u.path.endsWith('/puan')), isTrue);
+    expect(find.byType(BottomSheet), findsNothing);
   });
 }
