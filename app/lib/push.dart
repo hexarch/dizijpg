@@ -371,6 +371,16 @@ String? bildirimHedefi(Map<String, dynamic> veri) {
       return RegExp(r'^\d+\.\d+\.\d+$').hasMatch(surum)
           ? '/yenilikler/$surum'
           : '/bildirimler';
+    case 'oda_davet':
+      // İzleme odası daveti (4 Eyl 2026). Kullanıcı bildirdi: "bildirime
+      // tıklayınca oda açılmıyor" — KÖK SEBEP bu switch'te 'oda_davet'
+      // vakasının HİÇ OLMAMASIYDI; hedef null dönüyor ve dokunuş hiçbir yere
+      // gitmiyordu. Sunucu tarafı doğruydu (FCM data'sında `oda_id` var).
+      //
+      // id sayısal değilse bildirim listesine düş — bolum/kisi/surum ile AYNI
+      // güvenli kural (yanlış rota açmaktansa liste).
+      final odaId = _alan(veri, 'oda_id');
+      return RegExp(r'^\d+$').hasMatch(odaId) ? '/oda/$odaId' : '/bildirimler';
   }
   return null;
 }

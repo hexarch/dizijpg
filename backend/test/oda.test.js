@@ -358,6 +358,95 @@ test('bağlantı: oda videosu YORUM EKİ olarak iliştirilemez', () => {
   assert.equal(sahiplik.test('/medya/m184-0011223344556677.mp4'), true);
 });
 
+// ===========================================================================
+// 7. DAVET BİLDİRİMİ (4 Eyl 2026 — kullanıcı: "sohbette de bildirim gözükmüyor")
+// ===========================================================================
+// Davet eskiden YALNIZ `oda_uyeler` satırı + FCM push üretiyordu. Push'u
+// kaçıran kullanıcı daveti HİÇBİR YERDE göremiyordu. Bu testler üç şeyi
+// kilitler: tür CHECK'te, kolon şemada, uç satırı GERÇEKTEN yazıyor.
+
+test('davet: bildirimler.tur CHECK listesinde oda_davet var', () => {
+  for (const p of ['sema.sql', 'migrasyon-2026-09-04.sql']) {
+    const k = oku(p);
+    // sema.sql BİRİKİMLİ bir dosya: aynı kısıt tarih tarih yeniden kuruluyor.
+    // İLK eşleşme ESKİ tanımdır; geçerli olan SONUNCUSUDUR.
+    const hepsi = [...k.matchAll(
+      /bildirimler_tur_check[\s\S]{0,400}?CHECK \(tur IN \(([^)]*)\)/g)];
+    assert.ok(hepsi.length, `${p}: tur CHECK bulunamadı`);
+    const m = hepsi[hepsi.length - 1];
+    assert.match(m[1], /'oda_davet'/, `${p}: 'oda_davet' türü CHECK'te yok`);
+    // Eski türler DÜŞMEMELİ: CHECK'i yeniden kururken biri unutulursa o türde
+    // bildirim yazan uçlar 23514 ile patlardı.
+    for (const eski of ['yanit', 'begeni', 'takip', 'mesaj', 'etiket',
+      'kacirilan_arama', 'bolum', 'kisi', 'geri_bildirim', 'surum']) {
+      assert.match(m[1], new RegExp(`'${eski}'`), `${p}: '${eski}' türü DÜŞMÜŞ`);
+    }
+  }
+});
+
+test('davet: bildirimler.oda_id kolonu şemada VE migrasyonda', () => {
+  for (const p of ['sema.sql', 'migrasyon-2026-09-04.sql']) {
+    assert.match(oku(p), /ADD COLUMN IF NOT EXISTS oda_id BIGINT/, p);
+  }
+});
+
+test('davet: aynı odaya ikinci davet bildirimi ÇOĞALTMIYOR (kısmi tekil indeks)', () => {
+  // İndeks olmasaydı sahip düğmeye iki kez basınca karşı taraf bildirim
+  // kutusunda iki satır görürdü; uçtaki ON CONFLICT çıkarımı da buna dayanır.
+  for (const p of ['sema.sql', 'migrasyon-2026-09-04.sql']) {
+    assert.match(
+      oku(p),
+      /bildirimler_oda_davet_tekil[\s\S]{0,140}WHERE tur = 'oda_davet'/,
+      `${p}: kısmi tekil indeks yok`,
+    );
+  }
+});
+
+test('davet ucu bildirim satırı YAZIYOR ve push yalnız YENİ satırda gidiyor', () => {
+  const s = oku('server.js');
+  const i = s.indexOf("app.post('/odalar/:id/davet'");
+  assert.ok(i > 0, 'davet ucu yok');
+  const govde = s.slice(i, s.indexOf('}));', i));
+  assert.match(govde, /INSERT INTO bildirimler[\s\S]{0,200}'oda_davet'/,
+    'davet uygulama içi bildirim satırı yazmıyor');
+  assert.match(govde, /ON CONFLICT \(kullanici_id, oda_id\) WHERE tur='oda_davet'/,
+    'tekrarlı davet bildirim satırını çoğaltmamalı');
+  // Push YALNIZ satır gerçekten yazıldıysa: iki kez davet edilen kişi iki kez
+  // titremesin.
+  assert.match(govde, /if \(bildirimYazildi\)[\s\S]{0,160}pushBildirim/,
+    'push, bildirim satırı yazıldı mı kontrolüne bağlı değil');
+  // MİGRASYON UYGULANMADAN açılışa karşı: INSERT patlarsa push YİNE gitmeli
+  // (davet sessizce kaybolmasın).
+  assert.match(govde, /catch[\s\S]{0,160}console\.error\('oda daveti bildirimi/,
+    'bildirim INSERT hatası yakalanmıyor — davet tamamen kaybolabilir');
+});
+
+test('GET /bildirimler yanıtı oda_id taşıyor (istemci adresi ondan kurar)', () => {
+  const s = oku('server.js');
+  const i = s.indexOf("app.get('/bildirimler'");
+  const govde = s.slice(i, i + 3000);
+  assert.match(govde, /b\.oda_id/, 'oda_id seçilmiyor — satır tıklanamaz kalır');
+});
+
+test('/sohbetler rozet sayısını veriyor ve tablo yoksa 0a DÜŞÜYOR', () => {
+  // Mesajlar ekranı bu ucu 3 sn'de bir yokluyor; rozet için AYRI bir istek
+  // eklemek en sıcak ekranın trafiğini ikiye katlardı.
+  const s = oku('server.js');
+  const i = s.indexOf("app.get('/sohbetler'");
+  assert.ok(i > 0);
+  // `}));` ile KESİLMEZ: gövdedeki `.catch(() => ({ rows: [{ adet: 0 }] }));`
+  // de o diziyi içeriyor ve `res.json`dan ÖNCE kesiyordu. Sabit pencere,
+  // bir sonraki uca kadar.
+  const son = s.indexOf("app.get('/sohbetler/okunmamis'", i);
+  const govde = s.slice(i, son > i ? son : i + 12000);
+  assert.match(govde, /oda_davet: odaDavet\.rows\[0\]\.adet/,
+    '/sohbetler yanıtında oda_davet sayısı yok');
+  assert.match(govde, /FROM oda_uyeler[\s\S]{0,260}katildi IS NULL/,
+    'rozet sayısı BEKLEYEN davetlerden türetilmeli');
+  assert.match(govde, /\.catch\(\(\) => \(\{ rows: \[\{ adet: 0 \}\] \}\)\)/,
+    'oda tablosu yoksa /sohbetler 500 dönmemeli — en kritik ekran');
+});
+
 test('bağlantı: Dart senkron modülü sunucudaki formülle aynı', () => {
   // İki dilde iki kopya var; formül kayarsa izleyiciler sahibin konumundan
   // sistematik olarak sapardı ve bunu hiçbir tek-taraflı test göremezdi.

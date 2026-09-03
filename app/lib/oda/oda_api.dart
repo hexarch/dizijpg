@@ -136,6 +136,20 @@ class OdaMesaj {
   final bool sistem;
   final int tarih;
 
+  /// İYİMSER SATIRIN yerel anahtarı; sunucudan gelen satırlarda null.
+  ///
+  /// Mesaj dokunur dokunmaz listede belirsin diye var (`sohbet.dart`taki
+  /// `_yerelEkle` kalıbının tipli karşılığı). Sunucu onaylayınca aynı satırın
+  /// [id]'si gerçek id ile değiştirilir — YENİ SATIR EKLENMEZ, yoksa yoklama
+  /// aynı mesajı ikinci kez çizerdi.
+  final String? yerel;
+
+  /// Sunucu onayı bekleniyor (saat ikonu + soluk balon).
+  final bool bekliyor;
+
+  /// Gönderilemedi — satır KALIR ve "tekrar dene" der. Sessiz kayıp yasak.
+  final bool hataliMi;
+
   const OdaMesaj({
     required this.id,
     required this.tarih,
@@ -146,7 +160,25 @@ class OdaMesaj {
     this.metin,
     this.tepki,
     this.konumMs,
+    this.yerel,
+    this.bekliyor = false,
+    this.hataliMi = false,
   });
+
+  OdaMesaj kopya({int? id, bool? bekliyor, bool? hataliMi}) => OdaMesaj(
+    id: id ?? this.id,
+    tarih: tarih,
+    sistem: sistem,
+    kullaniciId: kullaniciId,
+    ad: ad,
+    avatar: avatar,
+    metin: metin,
+    tepki: tepki,
+    konumMs: konumMs,
+    yerel: yerel,
+    bekliyor: bekliyor ?? this.bekliyor,
+    hataliMi: hataliMi ?? this.hataliMi,
+  );
 
   factory OdaMesaj.json(Map<String, dynamic> d) => OdaMesaj(
     id: (d['id'] as num?)?.toInt() ?? 0,
@@ -442,17 +474,22 @@ class OdaApi {
           })
           as Map<String, dynamic>;
 
-  static Future<void> mesaj(
+  /// Mesaj/tepki gönderir ve sunucunun yanıtını (`{id, tarih}`) döndürür.
+  ///
+  /// `id` GEREKLİ: iyimser satır onaylanınca gerçek id'sini alır ve yoklama
+  /// aynı satırı ikinci kez çizmesin diye elenir (bkz. `_metniGonder`).
+  static Future<Map<String, dynamic>> mesaj(
     int id, {
     String? metin,
     String? tepki,
     int? konumMs,
-  }) {
+  }) async {
     final govde = <String, dynamic>{};
     if (metin != null) govde['metin'] = metin;
     if (tepki != null) govde['tepki'] = tepki;
     if (konumMs != null) govde['konum_ms'] = konumMs;
-    return Api.post('/odalar/$id/mesaj', govde);
+    final d = await Api.post('/odalar/$id/mesaj', govde);
+    return d is Map<String, dynamic> ? d : const {};
   }
 
   static Future<void> davet(int id, String kullanici) =>

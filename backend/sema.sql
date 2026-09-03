@@ -1548,8 +1548,17 @@ ALTER TABLE bildirimler DROP CONSTRAINT IF EXISTS bildirimler_tur_check;
 ALTER TABLE bildirimler ADD CONSTRAINT bildirimler_tur_check
   CHECK (tur IN ('yanit', 'begeni', 'takip', 'mesaj', 'etiket',
                  'kacirilan_arama', 'bolum', 'kisi', 'geri_bildirim',
-                 'surum'));
+                 'surum', 'oda_davet'));
 ALTER TABLE bildirimler ADD COLUMN IF NOT EXISTS surum TEXT;
+
+-- 2026-09-04 — İZLEME ODASI DAVETİ uygulama içi bildirim satırı.
+-- Uzun gerekçe: migrasyon-2026-09-04.sql. Aktörlü tür (davet eden kullanıcı),
+-- ek alan yalnız `oda_id`. Tekil indeks aynı odaya ikinci daveti bildirim
+-- kutusunda ÇOĞALTMAZ; uçtaki ON CONFLICT çıkarımı buna dayanır.
+ALTER TABLE bildirimler ADD COLUMN IF NOT EXISTS oda_id BIGINT;
+CREATE UNIQUE INDEX IF NOT EXISTS bildirimler_oda_davet_tekil
+  ON bildirimler (kullanici_id, oda_id)
+  WHERE tur = 'oda_davet';
 CREATE UNIQUE INDEX IF NOT EXISTS bildirimler_surum_tekil
   ON bildirimler (kullanici_id, surum)
   WHERE tur = 'surum';

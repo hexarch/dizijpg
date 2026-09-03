@@ -14847,6 +14847,10 @@ app.get('/bildirimler', girisZorunlu, sarici(async (req, res) => {
               -- 'surum' (2 Eyl 2026): surum duyurusu satiri — istemci
               -- /yenilikler/<surum> sayfasini acar.
               b.surum,
+              -- 'oda_davet' (4 Eyl 2026): izleme odasi daveti — istemci
+              -- /oda/<oda_id> adresini bundan kurar. Oda 12 saat sonra
+              -- silinse bile satir kalir; dokununca "Bu oda kapandi" cikar.
+              b.oda_id,
               k.kullanici_adi AS aktor, k.avatar AS aktor_avatar,
               -- Aile rozeti: bildirim satiri aktor adinin yanina mini tik
               -- cizer (1 Eyl 2026 istegi). Herkese acik nisan.
@@ -15037,12 +15041,36 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
                        WHERE rk.kullanici_id=$1 AND rk.partner_id=gonderen_id
                          AND rk.karar='red')`,
     [req.kullanici.id]);
+  // İZLEME ODASI DAVET ROZETİ (4 Eyl 2026) — "+" ikonunun üstündeki sayı.
+  //
+  // NEDEN BURADA, NEDEN AYRI BİR `GET /odalar` İSTEĞİYLE DEĞİL: Mesajlar
+  // ekranı bu ucu 3 SANİYEDE BİR yokluyor. Rozet için ikinci bir HTTP turu
+  // eklemek, uygulamanın en sıcak ekranındaki istek sayısını İKİYE KATLARDI;
+  // üstelik `/odalar` üç tabloyu JOIN'leyip 50 satır çekiyor. Buradaki ek
+  // yalnız `oda_uyeler_kullanici` indeksinden tek bir COUNT.
+  //
+  // SAYININ KAYNAĞI `oda_uyeler` (bildirimler DEĞİL): rozet "seni bekleyen
+  // davet" saymalı ve kullanıcı odaya girince KENDİLİĞİNDEN düşmeli.
+  // Okunmamış bildirim sayılsaydı, davete uyup odaya giren kişide rozet
+  // zil okunana kadar asılı kalırdı.
+  //
+  // Tablo yoksa (migrasyon uygulanmamış) 0'a düşer: bu uç uygulamanın en
+  // kritik ekranıdır, bir izleme odası sorgusu yüzünden 500 dönmemeli.
+  const odaDavet = await havuz.query(
+    `SELECT count(*)::int AS adet
+       FROM oda_uyeler u JOIN izleme_odalari o ON o.id = u.oda_id
+      WHERE u.kullanici_id = $1 AND u.katildi IS NULL
+        AND o.kapandi IS NULL AND o.biter > now()`,
+    [req.kullanici.id],
+  ).catch(() => ({ rows: [{ adet: 0 }] }));
   res.json({
     sohbetler,
     istekler,
     // Eski istemci bu alanı tanımaz ve görmezden gelir (çökme olmaz);
     // yeni istemci Reddedilenler sekmesini bundan çizer.
     reddedilenler,
+    // Bekleyen izleme odası daveti sayısı — başlıktaki "+" rozeti.
+    oda_davet: odaDavet.rows[0].adet,
     // Rozet SAYISI = okunmamışı olan istek sayısı (açılmış ama cevaplanmamış
     // eski istekler rozeti şişirmesin). `okunmamis` alanı GERİYE DÖNÜK
     // uyumluluk için TOPLAM kalır — eski istemciler onu okuyor.
@@ -16446,11 +16474,44 @@ app.post('/odalar/:id/davet', girisZorunlu, odaLimiti, sarici(async (req, res) =
      VALUES ($1, $2, $3) ON CONFLICT (oda_id, kullanici_id) DO NOTHING`,
     [kapi.oda.id, hedef, req.kullanici.id],
   );
+  // ---------------------------------------------------------------------
+  // UYGULAMA İÇİ BİLDİRİM SATIRI (4 Eyl 2026 — kullanıcı bildirdi:
+  // "sohbette de bildirim gözükmüyor")
+  // ---------------------------------------------------------------------
+  // Eskiden davet YALNIZ `oda_uyeler` satırı + FCM push üretiyordu. Push'u
+  // kaçıran (izin vermemiş, web'de olan, telefonu kapalı) kullanıcı daveti
+  // HİÇBİR YERDE göremiyordu — 'surum' türünde 2 Eyl'de ödediğimiz bedelin
+  // aynısı. Artık zil de haber veriyor.
+  //
+  // PUSH YALNIZ SATIR GERÇEKTEN YAZILDIYSA gider (`RETURNING` boşsa aynı
+  // odaya ikinci davettir): oda sahibi düğmeye iki kez basınca karşı taraf
+  // iki kez titremesin. `bolumBildirimiEkle`/`surum` ile aynı disiplin.
+  //
+  // MİGRASYON UYGULANMADAN yeni server.js başlatılırsa bu INSERT patlar
+  // ('oda_davet' CHECK'te yok / `oda_id` kolonu yok). O hâlde push YİNE
+  // gitmeli: davetin tek yüzeyi push olarak kalır, yani en kötü ihtimalle
+  // BUGÜNKÜ davranışa düşeriz — davet sessizce kaybolmaz.
+  let bildirimYazildi = true;
+  try {
+    const { rows: yeni } = await havuz.query(
+      `INSERT INTO bildirimler (kullanici_id, tur, aktor_id, oda_id)
+       VALUES ($1, 'oda_davet', $2, $3)
+       ON CONFLICT (kullanici_id, oda_id) WHERE tur='oda_davet' DO NOTHING
+       RETURNING id`,
+      [hedef, req.kullanici.id, kapi.oda.id],
+    );
+    bildirimYazildi = yeni.length > 0;
+  } catch (e) {
+    console.error('oda daveti bildirimi:', e.message);
+  }
   // Push: davet CANLI bir olaydır (oda 12 saat yaşıyor), uygulama kapalıyken
-  // görülmezse davet işe yaramaz. Uygulama içi karşılığı `GET /odalar`
-  // listesindeki "davet" satırı — push gitmese de davet KAYBOLMAZ.
-  pushBildirim(hedef, 'oda_davet', req.kullanici.id, { oda_id: Number(kapi.oda.id) })
-    .catch(() => {});
+  // görülmezse davet işe yaramaz. Uygulama içi karşılığı hem bildirim
+  // satırı hem `GET /odalar` listesindeki "davet" satırı — push gitmese de
+  // davet KAYBOLMAZ.
+  if (bildirimYazildi) {
+    pushBildirim(hedef, 'oda_davet', req.kullanici.id, { oda_id: Number(kapi.oda.id) })
+      .catch(() => {});
+  }
   res.json({ tamam: true });
 }));
 

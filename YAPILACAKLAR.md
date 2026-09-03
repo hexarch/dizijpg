@@ -8656,3 +8656,55 @@ sohbeti eziyor ve Column taşıyordu (video tavanı artık KALAN yerden hesaplan
 yazıldı; çok kişili mesh (N×(N-1) bağlantı) ayrı sinyalleşme şeması, TURN
 bütçesi ve kabul/ret akışı istiyor. Oda tavanı 12 kişi ŞİMDİDEN kondu ki o tur
 geldiğinde canlıda 40 kişilik odalar bulunmasın.
+
+## 2026-09-04 — İzleme odası: canlıda çıkan 4 hata + tam ekran (1.121.0+188)
+
+Kullanıcı 1.120.0'ı iki telefona kurup canlıda denedi ve dört şey bildirdi.
+Dördü de GERÇEKTİ ve dördü de 1. turdaki eksiklerimdi.
+
+- ✅ **"+ → odaya katıl dediğimde 'bu odanın üyesi değilsin' diyor"** (engelleyici).
+  Modal, davet satırında doğrudan `/oda/:id`e gidiyordu; ama davetli kişi HENÜZ
+  ÜYE DEĞİL (`oda_uyeler.katildi IS NULL`) ve `odaKapisi` haklı olarak 403
+  `UYE_DEGIL` dönüyordu. **Sunucu doğruydu, istemci eksikti: davet bir çağrıdır,
+  kabul edilmeden üyelik olmaz.** Satır artık önce `POST /odalar/katil` ile
+  kabul ediyor (kod satırda zaten geliyordu), sonra odayı açıyor; spinner +
+  çift dokunuş kilidi + hata SnackBar'ı ile.
+- ✅ **"emoji attığımda odaya katılanlarda sonsuz döngüye giriyor."**
+  Yoklama imleci (`mesajdan`) ÇİZİLEN listeden türetiliyordu
+  (`_mesajlar.last.id`) ama tepkiler o listeye girmiyor. En yeni satır bir
+  tepkiyse imleç onu asla geçmiyor, sunucu her turda AYNI tepkiyi gönderiyor ve
+  emoji saniyede bir yeniden uçuyordu. **Kural: çizilen liste ile imleç aynı şey
+  değildir** — listeye girmeyen bir satır türü olduğu anda imleci listeden
+  türetmek sonsuz tekrar üretir. Ayrı `_sonMesajId` eklendi; görülen HER satır
+  (tepki/sistem/kendi mesajın) imleci ilerletiyor.
+- ✅ **"gönderdiğim mesajlar gitmiyor."** İki ayrı kök sebep vardı:
+  (a) iyimser satır yoktu — kutu temizleniyor, mesaj ancak bir sonraki turda
+  görünüyordu; POST düşerse yazdığın SESSİZCE kayboluyordu. Artık satır anında
+  beliriyor (soluk + saat), onaylanınca gerçek id'sini alıyor (çift çizilmiyor),
+  hata olunca "Gönderilemedi · tekrar dene" oluyor.
+  (b) oda YÜKLENDİKTEN SONRA gelen kalıcı hatalar hiç görünmüyordu: hata ekranı
+  yalnız `oda == null` iken çiziliyordu. `UYE_DEGIL` alan ya da **odası kapanan**
+  kullanıcı boş bir odaya bakıp yazıyor, hiçbir şey olmuyordu.
+- ✅ **"bildirime tıklayınca oda açılmıyor" + "sohbette bildirim gözükmüyor."**
+  `push.dart`ta `oda_davet` vakası HİÇ YOKTU (hedef null dönüyordu) ve davet
+  `bildirimler` tablosuna satır YAZMIYORDU — push'u kaçıran kullanıcı daveti
+  hiçbir yerde göremiyordu. Migrasyon `-09-04`: `bildirimler` CHECK'ine
+  'oda_davet' + `oda_id` kolonu. Mesajlar başlığındaki "+" ikonuna bekleyen
+  davet ROZETİ eklendi (sayı `/sohbetler` yanıtında geliyor: o uç zaten 3 sn'de
+  bir yoklanıyor, ikinci bir tur açmamak için).
+- ✅ **Tam ekran** (istek: "tam ekran da olsun, yan çevirince otomatik geçsin
+  ama sağda sohbet olmaya devam etsin, gizleme açma kapama olsun"):
+  düğme + yan çevirince otomatik geçiş + sohbet paneli sağda kalıyor ve
+  gizle/göster ile açılıp kapanıyor (tercih hatırlanıyor).
+  **Yön otomatiği DURUMA değil OLAYA bağlı:** yalnız yön DEĞİŞİNCE karar
+  uygulanıyor, yoksa yatayken elle tam ekrandan çıkan kullanıcı bir sonraki
+  karede geri atılırdı. Otomatik yalnız telefonda (`shortestSide < 600`) —
+  masaüstü penceresi daima "yatay"dır, orada oda açılır açılmaz tam ekrana
+  atlamak sürpriz olurdu.
+
+**Ayrıca yakalanan üç taşma:** video yer tutucusu yatay telefonda, "tekrar dene"
+satırı 320 dp panelde, boş sohbet durumu dar alanda.
+
+Testler: backend 2250, Flutter tam takım yeşil; oda tarafında 51 + 21 yeni test.
+Emoji döngüsü düzeltmesi geçici geri alınıp testlerin KIRMIZIYA döndüğü ayrıca
+doğrulandı.

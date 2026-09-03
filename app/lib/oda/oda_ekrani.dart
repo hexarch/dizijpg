@@ -37,7 +37,8 @@ import 'dart:math' as math;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show Clipboard, ClipboardData;
+import 'package:flutter/services.dart'
+    show Clipboard, ClipboardData, SystemChrome, SystemUiMode;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -48,10 +49,27 @@ import '../ekranlar/ortak.dart';
 import '../tema.dart';
 import 'oda_api.dart';
 import 'oda_senkron.dart';
+import 'oda_tercihi.dart';
 import 'oda_yukle.dart';
 
 /// Sohbetin yan panele geçtiği genişlik. Altında video üstte, sohbet altta.
 const double _genisEsik = 900;
+
+/// Tam ekranda (ve geniş ekranda) sohbet panelinin genişliği.
+const double _sohbetPaneliGenislik = 320;
+
+/// Panelin açılıp kapanma süresi — ui-ux-pro-max Animation: 150-300 ms.
+const Duration _panelSuresi = Duration(milliseconds: 200);
+
+/// TELEFON eşiği: kısa kenarı BUNDAN KÜÇÜK olan cihazda yön otomatiği çalışır.
+///
+/// 600 dp, telefon/tablet ayrımının yerleşik sınırıdır (Android `sw600dp`).
+/// Otomatik tam ekran bir TELEFON davranışıdır: masaüstü tarayıcı penceresi ve
+/// tablet zaten daima "yatay" sayılır; oda açılır açılmaz kendini tam ekranda
+/// bulmak kimsenin istemediği bir sürpriz olurdu.
+///
+/// Karşılaştırma `<` (eşit DEĞİL): 600 dp'nin kendisi tablet sayılır.
+const double _telefonKisaKenar = 600;
 
 class OdaEkrani extends StatefulWidget {
   final int odaId;
@@ -65,6 +83,14 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   Oda? _oda;
   String? _hata;
   bool _kapandi = false;
+
+  /// Hata KALICI mı — yani ekranın geri kalanını göstermenin anlamı kalmadı mı.
+  ///
+  /// ⚠ Bu bayrak olmadan `_hata` yalnız oda HİÇ YÜKLENMEMİŞKEN görünüyordu
+  /// (`build`: `_hata != null && oda == null`). Oda yüklendikten SONRA kapanan
+  /// ya da üyeliği düşen kullanıcı hiçbir şey görmüyor, boş bir odaya bakıp
+  /// mesaj yazmayı deniyordu (3 Eyl 2026, canlıda "mesajlarım gitmiyor").
+  bool _kalici = false;
 
   final _mesajlar = <OdaMesaj>[];
   final _metin = TextEditingController();
@@ -97,6 +123,70 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   final _ucusan = <_UcusanTepki>[];
   int _tepkiSayac = 0;
 
+  /// SUNUCUDAN GÖRÜLEN son satır id'si — yoklamanın imleci.
+  ///
+  /// ===========================================================================
+  /// NEDEN [_mesajlar]'DAN TÜRETİLMİYOR (3 Eyl 2026, canlıda emoji sonsuz
+  /// döngüsü)
+  /// ===========================================================================
+  /// İmleç `_mesajlar.last.id` idi. Ama TEPKİLER listeye girmiyor (bilinçli:
+  /// 12 kişilik bir odada sohbet emoji yağmuruna dönerdi). Yani en yeni satır
+  /// bir tepkiyse imleç onu ASLA geçmiyordu; sunucu `id > mesajdan` sorgusuna
+  /// her turda AYNI tepkiyi döndürüyor, `_tepkiUcur` saniyede bir yeniden
+  /// çağrılıyor ve emoji sonsuza kadar uçuyordu.
+  ///
+  /// KURAL: **çizilen liste ile imleç AYNI ŞEY DEĞİLDİR.** İmleci listeden
+  /// türetmek, listeye girmeyen bir satır türü olduğu anda sonsuz tekrara yol
+  /// açar. Buradaki imleç GÖRÜLEN her satırı sayar — tepki, sistem satırı ve
+  /// kendi mesajın dahil.
+  ///
+  /// İyimser satırlar da ayrıca imleci bozardı: onların id'si YERELDİR
+  /// (negatif) ve sunucunun sırasıyla ilgisi yoktur.
+  int _sonMesajId = 0;
+
+  /// Listede ÇİZİLİ gerçek satır id'leri — yoklamanın çift satır eklemesini
+  /// önler (iyimser satır onaylanınca gerçek id'sini alır, sonra yoklama aynı
+  /// satırı getirir; burada elenir).
+  final _cizilenIdler = <int>{};
+
+  /// İyimser satır anahtarı sayacı ve "tekrar dene" eylemleri.
+  int _yerelSayac = 0;
+  final _yerelTekrar = <String, Future<void> Function()>{};
+
+  // ---- TAM EKRAN ----------------------------------------------------------
+
+  bool _tamEkran = false;
+
+  /// Sohbet paneli açık mı (tam ekranda ve geniş ekranda). [OdaTercihi]'nden
+  /// yüklenir, değişince oraya yazılır.
+  bool _sohbetAcik = OdaTercihi.sohbetAcik.value;
+
+  /// EN SON İŞLENEN yön. Otomatik karar YALNIZ bu değiştiğinde uygulanır.
+  ///
+  /// ===========================================================================
+  /// NEDEN "yalnız yön DEĞİŞİNCE" — kullanıcının elle verdiği karar kutsaldır
+  /// ===========================================================================
+  /// İstek iki cümle: *"yan çevirince otomatik tam ekrana geçsin"* ve
+  /// *"sohbeti gizleme açma kapama olsun"*. Yani otomatik davranış var ama
+  /// kullanıcı hâlâ yönetiyor. Otomatiği her yeniden çizimde uygulasaydık,
+  /// telefon yatayken tam ekrandan ELLE çıkan kullanıcı bir sonraki karede
+  /// geri tam ekrana atılırdı — düğmesi çalışmıyor sanırdı.
+  ///
+  /// Çözüm: otomatik karar bir OLAYA bağlı, bir DURUMA değil. Yön değişimi bir
+  /// olaydır; o an karar uygulanır ve [_sonYon] güncellenir. Elle yapılan
+  /// değişiklik [_sonYon]'a DOKUNMAZ, dolayısıyla aynı yön içinde otomatik bir
+  /// daha konuşmaz. Kullanıcı telefonu çevirdiğinde otomatik yeniden devreye
+  /// girer — çünkü orada gerçekten yeni bir niyet vardır.
+  Orientation? _sonYon;
+
+  /// `_cik()` sırasında PopScope'un programlı `pop`u yutmasını engeller.
+  ///
+  /// ⚠ `canPop: false` YALNIZ geri hareketini değil `Navigator.pop`u da
+  /// yakalar (aynı tuzak `paylas_yorum.dart`ta yazılı). Odayı kapatıp
+  /// çıkarken tam ekrandaysak, pop "tam ekrandan çık"a dönüşür ve kullanıcı
+  /// KAPANMIŞ bir odanın içinde kalırdı.
+  bool _cikiliyor = false;
+
   int get _benimId =>
       (context.read<Oturum>().kullanici?['id'] as num?)?.toInt() ?? -1;
 
@@ -107,11 +197,24 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _ilkYukle();
+    OdaTercihi.yukle().then((_) {
+      if (mounted) setState(() => _sohbetAcik = OdaTercihi.sohbetAcik.value);
+    });
+    // İlk kare: o anki yönü İŞLE. Telefonu zaten yatay tutarken odaya giren
+    // biri videoyu büyük görmek istiyordur; dikeye çevirince kendiliğinden
+    // çıkacağı için bu bir tuzak değil.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _yonuIsle());
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    // SİSTEM ÇUBUKLARINI GERİ VER. Atlanırsa odadan çıkan kullanıcı,
+    // uygulamanın geri kalanında çubuksuz (immersive) bir telefonla kalırdı —
+    // ve bunun oda ekranından geldiğini asla anlayamazdı.
+    if (_tamEkran) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
     _yoklama?.cancel();
     _kalp?.cancel();
     _yukleyici?.iptal();
@@ -119,6 +222,52 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     _metin.dispose();
     _kaydirma.dispose();
     super.dispose();
+  }
+
+  /// Cihaz döndüğünde Flutter bunu çağırır (test: `tester.view.physicalSize`).
+  @override
+  void didChangeMetrics() {
+    if (!mounted) return;
+    // Ölçüler `View`den okunuyor, `MediaQuery`den DEĞİL: bu geri çağırma
+    // MediaQuery yeniden kurulmadan önce de gelebilir ve o an bayat bir yön
+    // okunurdu.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _yonuIsle());
+  }
+
+  /// Yön değiştiyse otomatik tam ekran kararını uygular.
+  void _yonuIsle() {
+    if (!mounted) return;
+    final gorunum = View.of(context);
+    final boyut = gorunum.physicalSize / gorunum.devicePixelRatio;
+    if (boyut.isEmpty) return;
+    final yon = boyut.width >= boyut.height
+        ? Orientation.landscape
+        : Orientation.portrait;
+    if (_sonYon == yon) return; // aynı yön: ELLE verilen kararı ezme
+    _sonYon = yon;
+    // Masaüstü/tablet daima "yatay"dır; orada otomatik konuşmaz.
+    if (boyut.shortestSide >= _telefonKisaKenar) return;
+    final hedef = yon == Orientation.landscape;
+    if (hedef != _tamEkran) _tamEkraniAyarla(hedef);
+  }
+
+  /// Tam ekranı açar/kapatır ve sistem çubuklarını buna göre ayarlar.
+  void _tamEkraniAyarla(bool acik) {
+    if (_tamEkran == acik) return;
+    setState(() => _tamEkran = acik);
+    SystemChrome.setEnabledSystemUIMode(
+      // `immersiveSticky`: çubuklar gizlenir, kenardan kaydırınca GEÇİCİ
+      // görünür ve kendiliğinden geri kaybolur. `immersive` (sticky olmayan)
+      // ilk dokunuşta çubukları kalıcı geri getirirdi — video ortasında
+      // ekranın üstü aniden dolar.
+      acik ? SystemUiMode.immersiveSticky : SystemUiMode.edgeToEdge,
+    );
+  }
+
+  Future<void> _sohbetiAcKapa() async {
+    final yeni = !_sohbetAcik;
+    setState(() => _sohbetAcik = yeni);
+    await OdaTercihi.sohbetSec(yeni);
   }
 
   @override
@@ -161,6 +310,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       if (!mounted) return;
       setState(() {
         _kapandi = e.makineKodu == OdaKod.odaKapandi;
+        _kalici = true;
         _hata = odaHataMetni(e);
       });
     } catch (_) {
@@ -199,7 +349,8 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       final akis = await OdaApi.akis(
         widget.odaId,
         surum: _oda!.durum.surum,
-        mesajdan: _mesajlar.isEmpty ? 0 : _mesajlar.last.id,
+        // İmleç ÇİZİLEN listeden değil, GÖRÜLEN son id'den (bkz. _sonMesajId).
+        mesajdan: _sonMesajId,
         uyeler: _tur % 5 == 0,
       );
       if (!mounted) return;
@@ -234,13 +385,21 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       if (akis.mesajlar.isNotEmpty) {
         setState(() {
           for (final m in akis.mesajlar) {
-            if (m.tepki != null && m.kullaniciId != _benimId) {
-              _tepkiUcur(m.tepki!);
+            // İMLEÇ HER SATIRDA İLERLER — çizilsin çizilmesin. Bu satır
+            // olmasaydı tepkiler imleci geçemez ve sunucu aynı tepkiyi
+            // sonsuza dek göndermeye devam ederdi (bkz. `_sonMesajId`).
+            if (m.id > _sonMesajId) _sonMesajId = m.id;
+            if (m.tepki != null) {
+              // Kendi tepkin gönderirken ZATEN uçtu; ikinci kez uçurma.
+              if (m.kullaniciId != _benimId) _tepkiUcur(m.tepki!);
+              // Tepkiler sohbet listesine GİRMEZ: 12 kişilik bir odada sohbeti
+              // emoji yağmuruna çevirirdi. Yalnız uçuşurlar.
+              continue;
             }
-            // Tepkiler sohbet listesine de girer ama YALNIZ uçuşurlar:
-            // listeye eklemek 20 kişilik bir odada sohbeti emoji yağmuruna
-            // çevirirdi. Metinli mesajlar ve sistem satırları listede durur.
-            if (m.tepki == null) _mesajlar.add(m);
+            // Kendi iyimser satırım onaylandıysa yoklama onu YENİDEN eklemesin.
+            if (_cizilenIdler.contains(m.id)) continue;
+            _cizilenIdler.add(m.id);
+            _mesajlar.add(m);
           }
         });
         _sonaKaydir();
@@ -254,11 +413,25 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         _oynatici?.pause();
         setState(() {
           _kapandi = true;
+          _kalici = true;
           _hata = 'Bu oda kapandı'.c;
         });
+      } else if (e.makineKodu == OdaKod.uyeDegil ||
+          e.makineKodu == OdaKod.odaYok) {
+        // KALICI durumlar SESSİZ KALAMAZ. Davet edilip odaya HENÜZ GİRMEMİŞ
+        // biri her uçtan 403 alır; ekran sessiz kalırsa kullanıcı boş bir oda
+        // görür, mesaj yazar, hiçbir şey olmaz ve nedenini ASLA öğrenemez
+        // (3 Eyl 2026, canlıda "mesajlarım gitmiyor" olarak bildirildi).
+        // Yoklamayı da durduruyoruz: saniyede bir 403 almanın faydası yok.
+        _yoklama?.cancel();
+        _oynatici?.pause();
+        setState(() {
+          _kalici = true;
+          _hata = odaHataMetni(e);
+        });
       }
-      // Diğer hatalar SESSİZ: 1 sn'lik yoklamada geçici bir ağ tökezlemesi
-      // için SnackBar basmak ekranı kullanılamaz hâle getirirdi.
+      // GEÇİCİ hatalar sessiz: 1 sn'lik yoklamada bir ağ tökezlemesi için
+      // SnackBar basmak ekranı kullanılamaz hâle getirirdi.
     } finally {
       _yoklamaUcuyor = false;
     }
@@ -535,21 +708,129 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     });
   }
 
+  /// İYİMSER GÖNDERİM — `sohbet.dart`taki `_yerelEkle` kalıbının tipli eşi.
+  ///
+  /// ===========================================================================
+  /// NEDEN İYİMSER (3 Eyl 2026, canlıda "mesajlarım gitmiyor")
+  /// ===========================================================================
+  /// Eskiden kutu ANINDA temizleniyor ama listeye hiçbir şey eklenmiyordu:
+  /// mesaj ancak bir sonraki yoklama turunda görünürdü. Ağ yavaşsa ya da POST
+  /// başarısız olursa kullanıcı yazdığının KAYBOLDUĞUNU görüyordu — kutu boş,
+  /// listede yok, hiçbir uyarı yok. Klasik SESSİZ BAŞARISIZLIK; proje kuralı
+  /// her eylemin ÜÇ HÂLİNİ ister: yükleniyor / başarı / hata.
+  ///
+  /// ÇİFT SATIR RİSKİ nasıl kapandı: iyimser satır YEREL (negatif) bir id ile
+  /// eklenir; sunucu onaylayınca aynı satırın id'si gerçek id ile değiştirilir
+  /// ve o id [_cizilenIdler]'e girer. Yoklama aynı satırı getirdiğinde orada
+  /// elenir. Yani satır ASLA ikinci kez eklenmez.
   Future<void> _mesajGonder() async {
     final metin = _metin.text.trim();
     if (metin.isEmpty) return;
     _metin.clear();
+    final konum = _oynatici?.value.position.inMilliseconds;
+    await _metniGonder(metin, konum);
+  }
+
+  Future<void> _metniGonder(String metin, int? konumMs) async {
+    final anahtar =
+        'y${DateTime.now().microsecondsSinceEpoch}-${_yerelSayac++}';
+    final benim = _benimId;
+    final bendeki = _oda?.uyeler.where((u) => u.id == benim).firstOrNull;
+    setState(() {
+      _mesajlar.add(
+        OdaMesaj(
+          // NEGATİF id: sunucunun sırasıyla çakışmaz ve `_sonMesajId`
+          // imlecini asla kirletmez.
+          id: -(_yerelSayac),
+          tarih: DateTime.now().millisecondsSinceEpoch,
+          sistem: false,
+          kullaniciId: benim,
+          ad: bendeki?.ad,
+          avatar: bendeki?.avatar,
+          metin: metin,
+          konumMs: konumMs,
+          yerel: anahtar,
+          bekliyor: true,
+        ),
+      );
+    });
+    _yerelTekrar[anahtar] = () => _yenidenGonder(anahtar, metin, konumMs);
+    _sonaKaydir();
     try {
-      await OdaApi.mesaj(
+      final y = await OdaApi.mesaj(
         widget.odaId,
         metin: metin,
-        konumMs: _oynatici?.value.position.inMilliseconds,
+        konumMs: konumMs,
       );
-      // Mesaj bir sonraki yoklamada (en çok 1 sn) listeye düşer; iyimser
-      // eklemiyoruz çünkü sunucu id'yi o zaman veriyor ve çift satır riski
-      // (iyimser + yoklama) sohbeti bozardı.
+      if (!mounted) return;
+      final gercekId = (y['id'] as num?)?.toInt();
+      setState(() {
+        if (gercekId != null) _cizilenIdler.add(gercekId);
+        _yerelDegistir(
+          anahtar,
+          (m) => m.kopya(id: gercekId ?? m.id, bekliyor: false),
+        );
+      });
+      _yerelTekrar.remove(anahtar);
     } on ApiHata catch (e) {
+      if (!mounted) return;
+      // Satır KALIR ve "tekrar dene" der — yazdığı metin kaybolmasın.
+      setState(
+        () => _yerelDegistir(
+          anahtar,
+          (m) => m.kopya(bekliyor: false, hataliMi: true),
+        ),
+      );
       _uyar(odaHataMetni(e));
+    }
+  }
+
+  Future<void> _yenidenGonder(
+    String anahtar,
+    String metin,
+    int? konumMs,
+  ) async {
+    setState(
+      () => _yerelDegistir(
+        anahtar,
+        (m) => m.kopya(bekliyor: true, hataliMi: false),
+      ),
+    );
+    try {
+      final y = await OdaApi.mesaj(
+        widget.odaId,
+        metin: metin,
+        konumMs: konumMs,
+      );
+      if (!mounted) return;
+      final gercekId = (y['id'] as num?)?.toInt();
+      setState(() {
+        if (gercekId != null) _cizilenIdler.add(gercekId);
+        _yerelDegistir(
+          anahtar,
+          (m) => m.kopya(id: gercekId ?? m.id, bekliyor: false),
+        );
+      });
+      _yerelTekrar.remove(anahtar);
+    } on ApiHata catch (e) {
+      if (!mounted) return;
+      setState(
+        () => _yerelDegistir(
+          anahtar,
+          (m) => m.kopya(bekliyor: false, hataliMi: true),
+        ),
+      );
+      _uyar(odaHataMetni(e));
+    }
+  }
+
+  /// Yerel anahtarlı satırı YERİNDE değiştirir (setState çağıranın işi).
+  void _yerelDegistir(String anahtar, OdaMesaj Function(OdaMesaj) yama) {
+    for (var i = 0; i < _mesajlar.length; i++) {
+      if (_mesajlar[i].yerel == anahtar) {
+        _mesajlar[i] = yama(_mesajlar[i]);
+        return;
+      }
     }
   }
 
@@ -625,6 +906,9 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       ),
     );
     if (onay != true || !mounted) return;
+    // PopScope aşağıdaki `context.pop()`u da yakalar; `_cikiliyor` onu serbest
+    // bırakır (bkz. alanın başındaki not).
+    setState(() => _cikiliyor = true);
     try {
       if (sahip) {
         await OdaApi.kapat(widget.odaId);
@@ -633,6 +917,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       }
       if (mounted) context.pop();
     } on ApiHata catch (e) {
+      if (mounted) setState(() => _cikiliyor = false);
       _uyar(odaHataMetni(e));
     }
   }
@@ -644,7 +929,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final oda = _oda;
-    if (_hata != null && oda == null) {
+    if (_hata != null && (oda == null || _kalici)) {
       return Scaffold(
         appBar: AppBar(title: Text('İzleme odası'.c)),
         body: BosDurum(
@@ -663,6 +948,42 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       );
     }
     final genis = MediaQuery.of(context).size.width >= _genisEsik;
+    // GERİ TUŞU tam ekranda ÖNCE tam ekrandan çıkar, odayı kapatmaz: tam ekran
+    // bir ADIMDIR ve geri hareketi bir adım geri almalıdır (aynı gerekçe
+    // `paylas_yorum.dart` önizleme adımında yazılı).
+    return PopScope(
+      canPop: _cikiliyor || !_tamEkran,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        _tamEkraniAyarla(false);
+      },
+      child: _tamEkran
+          ? _tamEkranIskelet(oda)
+          : _normalIskelet(oda, genis: genis),
+    );
+  }
+
+  /// TAM EKRAN: AppBar yok, zemin siyah, sohbet sağda kalır.
+  ///
+  /// Kullanıcı isteği birebir: *"sağda sohbet olmaya devam etsin"*. Tam ekranı
+  /// "yalnız video" yapmak kolay olurdu ama odanın amacı BİRLİKTE izlemek;
+  /// sohbeti kapatmak isteyene zaten düğme var.
+  Widget _tamEkranIskelet(Oda oda) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: _tamEkranVideo(oda)),
+            _sohbetPaneli(oda),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _normalIskelet(Oda oda, {required bool genis}) {
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -711,10 +1032,14 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                       builder: (context, k) => _videoBolumu(
                         oda,
                         videoTavan: _videoTavani(k.maxHeight, sohbetAyri: true),
+                        // Sohbet düğmesi YALNIZ panel düzeninde anlamlı: dar
+                        // ekranda sohbet videonun ALTINDA, gizlenince yerine
+                        // koca bir boşluk kalırdı.
+                        sohbetDugmesi: true,
                       ),
                     ),
                   ),
-                  SizedBox(width: 340, child: _sohbet(oda)),
+                  _sohbetPaneli(oda),
                 ],
               )
             // DAR EKRAN: video ve sohbet AYNI dikey alanı paylaşır, yani
@@ -752,7 +1077,111 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     return kalan.clamp(120.0, yukseklik * 0.62);
   }
 
-  Widget _videoBolumu(Oda oda, {required double videoTavan}) {
+  /// SOHBET PANELİ — kapalıyken ağaçta HİÇ YOK.
+  ///
+  /// `AnimatedContainer(width: 0)` da düşünülebilirdi ama o, panel kapalıyken
+  /// bile sohbeti kurar: 1 sn'lik yoklamayla dolan bir liste, ölçülemeyecek bir
+  /// genişlikte çizilmeye çalışır ve taşma uyarıları üretir. [AnimatedSize] ile
+  /// çocuk YOK olur, genişlik yine de yumuşak kayar.
+  Widget _sohbetPaneli(Oda oda) {
+    return AnimatedSize(
+      duration: _panelSuresi,
+      curve: Curves.easeOut,
+      alignment: Alignment.centerLeft,
+      child: _sohbetAcik
+          ? SizedBox(width: _sohbetPaneliGenislik, child: _sohbet(oda))
+          : const SizedBox.shrink(),
+    );
+  }
+
+  /// Tam ekrandaki video yüzeyi: video ortada, kontroller ve tepkiler ÜSTÜNE
+  /// bindirilmiş. Bindirme şart — tam ekranda altta ayrı bir şerit olsaydı
+  /// "tam ekran" olmazdı.
+  Widget _tamEkranVideo(Oda oda) {
+    final d = _oynatici;
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: ColoredBox(
+            color: Colors.black,
+            child: Center(
+              child: AspectRatio(
+                aspectRatio: d != null && _oynaticiHazir
+                    ? d.value.aspectRatio
+                    : 16 / 9,
+                child: d != null && _oynaticiHazir
+                    ? VideoPlayer(d)
+                    : _videoYerine(oda),
+              ),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: IgnorePointer(
+            child: Stack(children: [for (final t in _ucusan) _ucusanCiz(t)]),
+          ),
+        ),
+        Positioned(top: 6, right: 6, child: _ustDugmeler(sohbetDugmesi: true)),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: DecoratedBox(
+            // Kontroller parlak bir karenin üstüne düşerse okunmaz; alttan
+            // yukarı koyulaşan ince bir perde onları her sahnede ayırır.
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.75),
+                  Colors.black.withValues(alpha: 0),
+                ],
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_yuklemeDurumu != null) _yuklemeCubugu(_yuklemeDurumu!),
+                if (d != null && _oynaticiHazir) _kontroller(oda, d),
+                _tepkiSeridi(),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Video köşesindeki ikon-only düğmeler: sohbeti gizle/göster + tam ekran.
+  ///
+  /// İkisi de `tooltip` + `Semantics` taşır: ekran okuyucu kullanan biri de
+  /// düğmenin ne yaptığını bilmeli (aynı kural `MesajIstekleriDugmesi`nde).
+  Widget _ustDugmeler({required bool sohbetDugmesi}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (sohbetDugmesi)
+          _VideoDugmesi(
+            ikon: _sohbetAcik ? Icons.chat_bubble : Icons.chat_bubble_outline,
+            etiket: _sohbetAcik ? 'Sohbeti gizle'.c : 'Sohbeti göster'.c,
+            onTap: _sohbetiAcKapa,
+          ),
+        const SizedBox(width: 4),
+        _VideoDugmesi(
+          ikon: _tamEkran ? Icons.fullscreen_exit : Icons.fullscreen,
+          etiket: _tamEkran ? 'Tam ekrandan çık'.c : 'Tam ekran'.c,
+          onTap: () => _tamEkraniAyarla(!_tamEkran),
+        ),
+      ],
+    );
+  }
+
+  Widget _videoBolumu(
+    Oda oda, {
+    required double videoTavan,
+    bool sohbetDugmesi = false,
+  }) {
     final d = _oynatici;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -786,6 +1215,13 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                 ),
               ),
             ),
+            // Tam ekran düğmesi HER İKİ ROLDE de var: izleyicinin oynatma
+            // kontrolü yok ama videoyu büyütme hakkı var.
+            Positioned(
+              right: 6,
+              bottom: 6,
+              child: _ustDugmeler(sohbetDugmesi: sohbetDugmesi),
+            ),
           ],
         ),
         if (_yuklemeDurumu != null) _yuklemeCubugu(_yuklemeDurumu!),
@@ -802,7 +1238,12 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     if (oda.video != null) {
       return const Center(child: CircularProgressIndicator());
     }
-    return Center(
+    // KAYDIRILABİLİR: bu yer tutucu ikon + metin + düğme ile ~180 dp ister,
+    // oysa video kutusunun boyu KALAN YERDEN hesaplanıyor ve yatay telefonda
+    // 120 dp'ye kadar inebiliyor. Doğrudan `Center` içinde dursaydı Column
+    // TAŞARDI (4 Eyl 2026, tam ekran testi 780×390'da yakaladı). Kaydırma
+    // içinde en kötü ihtimalle biraz kaydırılır.
+    return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -1107,9 +1548,17 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                     ),
                     itemCount: _mesajlar.length,
                     itemBuilder: (context, i) => _MesajSatiri(
-                      key: ValueKey(_mesajlar[i].id),
+                      // ANAHTAR yerel satırda YEREL anahtardır: iyimser satır
+                      // onaylanınca id'si değişiyor ve id anahtarı kullansaydık
+                      // Flutter satırı YENİ sanıp durumunu atardı.
+                      key: ValueKey(
+                        _mesajlar[i].yerel ?? 's${_mesajlar[i].id}',
+                      ),
                       mesaj: _mesajlar[i],
                       benim: _mesajlar[i].kullaniciId == _benimId,
+                      onTekrar: _mesajlar[i].hataliMi
+                          ? () => _yerelTekrar[_mesajlar[i].yerel]?.call()
+                          : null,
                     ),
                   ),
           ),
@@ -1236,6 +1685,46 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   }
 }
 
+/// Video üstündeki yuvarlak, ikon-only düğme (tam ekran / sohbeti gizle).
+///
+/// Zemin YARI SAYDAM SİYAH: düğme hem parlak hem karanlık sahnelerde görünür
+/// kalmalı. Dokunma hedefi 44 dp (ui-ux-pro-max, Touch Target Size) — ikon 20
+/// dp ama kutu büyük.
+class _VideoDugmesi extends StatelessWidget {
+  final IconData ikon;
+  final String etiket;
+  final VoidCallback onTap;
+  const _VideoDugmesi({
+    required this.ikon,
+    required this.etiket,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: etiket,
+      child: Semantics(
+        button: true,
+        label: etiket,
+        child: Material(
+          color: Colors.black.withValues(alpha: 0.45),
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: SizedBox(
+              width: 44,
+              height: 44,
+              child: Icon(ikon, size: 20, color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _UcusanTepki {
   final int id;
   final String emoji;
@@ -1293,7 +1782,15 @@ class _KodRozeti extends StatelessWidget {
 class _MesajSatiri extends StatelessWidget {
   final OdaMesaj mesaj;
   final bool benim;
-  const _MesajSatiri({super.key, required this.mesaj, required this.benim});
+
+  /// Gönderilemeyen satırın "tekrar dene" eylemi.
+  final VoidCallback? onTekrar;
+  const _MesajSatiri({
+    super.key,
+    required this.mesaj,
+    required this.benim,
+    this.onTekrar,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1354,10 +1851,56 @@ class _MesajSatiri extends StatelessWidget {
                     ],
                   ],
                 ),
-                Text(
-                  mesaj.metin ?? '',
-                  style: const TextStyle(fontSize: 14, height: 1.35),
+                Opacity(
+                  // Onay bekleyen satır SOLUK: gönderildiği değil, yolda
+                  // olduğu okunsun.
+                  opacity: mesaj.bekliyor ? 0.55 : 1,
+                  child: Text(
+                    mesaj.metin ?? '',
+                    style: const TextStyle(fontSize: 14, height: 1.35),
+                  ),
                 ),
+                // ÜÇ HÂLİN görünür kısmı: bekliyor (saat) ve hata (tekrar
+                // dene). Başarıda hiçbir şey çizilmez — satırın kendisi zaten
+                // onaydır.
+                if (mesaj.bekliyor)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Icon(
+                      Icons.schedule,
+                      size: 12,
+                      color: DiziRenkler.metin38,
+                    ),
+                  ),
+                if (mesaj.hataliMi)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: InkWell(
+                      onTap: onTekrar,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            size: 12,
+                            color: DiziRenkler.ilerlemeKirmizi,
+                          ),
+                          const SizedBox(width: 4),
+                          // ESNEK: sohbet paneli 320 dp ve metin uzun dillerde
+                          // (Almanca, Fince) satıra sığmıyor — Row TAŞARDI.
+                          Flexible(
+                            child: Text(
+                              'Gönderilemedi · tekrar dene'.c,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: DiziRenkler.ilerlemeKirmizi,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

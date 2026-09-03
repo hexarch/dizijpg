@@ -310,6 +310,10 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani>
     with WidgetsBindingObserver {
   List<dynamic>? _sohbetler;
   List<dynamic> _istekler = const [];
+
+  /// Bekleyen izleme odası daveti sayısı — başlıktaki "+" rozeti.
+  /// `/sohbetler` yanıtından gelir; eski sunucu göndermezse 0 kalır.
+  int _odaDavet = 0;
   String? _hata;
   Timer? _sayac;
   bool _cekiliyor = false;
@@ -355,8 +359,11 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani>
       final sohbetler = d['sohbetler'] as List<dynamic>;
       // Eski sunucu `istekler` göndermez -> bölüm boş kalır, çökme olmaz.
       final istekler = (d['istekler'] as List<dynamic>?) ?? const [];
+      // Eski sunucu `oda_davet` göndermez -> rozet çizilmez, çökme olmaz.
+      final odaDavet = (d['oda_davet'] as num?)?.toInt() ?? 0;
       if (sessiz &&
           _hata == null &&
+          _odaDavet == odaDavet &&
           _sohbetSatirlariAyni(_sohbetler, sohbetler) &&
           _sohbetSatirlariAyni(_istekler, istekler)) {
         return;
@@ -364,6 +371,7 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani>
       setState(() {
         _sohbetler = sohbetler;
         _istekler = istekler;
+        _odaDavet = odaDavet;
         _hata = null;
       });
     } catch (e) {
@@ -426,7 +434,15 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani>
           // kısmında isteklerin YANINA + iconu koy". İstek ikonunun SOLUNDA
           // duruyor: `actions` soldan sağa dizilir ve istek kutusu "en sağda"
           // kalmalı (1 Eyl kararı, `MesajIstekleriDugmesi` başlığındaki not).
-          OdaDugmesi(onTap: () => odaSheetAc(context)),
+          OdaDugmesi(
+            bekleyenDavet: _odaDavet,
+            onTap: () async {
+              await odaSheetAc(context);
+              // Modaldan davet kabul edilmiş olabilir: rozet ANINDA düşsün,
+              // 3 saniyelik yoklama turunu bekletmesin.
+              if (mounted) _yukle(sessiz: true);
+            },
+          ),
           MesajIstekleriDugmesi(
             okunmamisIstek: _istekler
                 .where((s) => ((s['okunmamis'] as int?) ?? 0) > 0)
@@ -457,11 +473,39 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani>
 /// Dokunma alanı 44 dp (ui-ux-pro-max, Touch Target Size).
 class OdaDugmesi extends StatelessWidget {
   final VoidCallback onTap;
-  const OdaDugmesi({super.key, required this.onTap});
+
+  /// Bekleyen izleme odası daveti sayısı (4 Eyl 2026, kullanıcı bildirdi:
+  /// *"sohbette de bildirim gözükmüyor"*). Sunucu bunu `/sohbetler`
+  /// yanıtında `oda_davet` alanıyla veriyor — ayrı bir istek YOK.
+  final int bekleyenDavet;
+
+  const OdaDugmesi({super.key, required this.onTap, this.bekleyenDavet = 0});
+
+  /// Sayı 0'ken [Badge] HİÇ çizilmez: boş rozet ikonu kaydırırdı
+  /// ([MesajIstekleriDugmesi] ile aynı kural).
+  ///
+  /// [ExcludeSemantics]: rozetin KENDİ semantik düğümü var ve TalkBack sayıyı
+  /// İKİ KEZ okuyordu — "Birlikte izle · 2 davet bekliyor, 2". Sayı zaten
+  /// düğmenin etiketinin içinde; rozetinki gürültü. Görünüş DEĞİŞMEZ, yalnız
+  /// ekran okuyucu tek ve tam bir cümle duyar.
+  Widget _rozetle(Widget ikon) => bekleyenDavet > 0
+      ? ExcludeSemantics(
+          child: Badge.count(
+            count: bekleyenDavet,
+            backgroundColor: DiziRenkler.sari,
+            textColor: Colors.black,
+            child: ikon,
+          ),
+        )
+      : ikon;
 
   @override
   Widget build(BuildContext context) {
-    final etiket = 'Birlikte izle'.c;
+    // Etiket rozetli hâlde SAYIYI DA söyler: ekran okuyucu kullanan biri
+    // rozeti göremez, "2 davet bekliyor" bilgisini metinden almalı.
+    final etiket = bekleyenDavet > 0
+        ? '{} · {} davet bekliyor'.cf(['Birlikte izle'.c, bekleyenDavet])
+        : 'Birlikte izle'.c;
     return Tooltip(
       message: etiket,
       child: InkWell(
@@ -474,7 +518,9 @@ class OdaDugmesi extends StatelessWidget {
             width: 44,
             height: 44,
             child: Center(
-              child: Icon(Icons.add, size: 24, color: DiziRenkler.sariMetin),
+              child: _rozetle(
+                Icon(Icons.add, size: 24, color: DiziRenkler.sariMetin),
+              ),
             ),
           ),
         ),

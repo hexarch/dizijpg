@@ -35,24 +35,35 @@ Future<void> odaSheetAc(BuildContext context) async {
     backgroundColor: DiziRenkler.koyuGri,
     isScrollControlled: true,
     showDragHandle: true,
-    builder: (_) => const _OdaSheet(),
+    builder: (_) => const OdaSheetGovdesi(),
   );
   if (id == null || !context.mounted) return;
   context.push('/oda/$id');
 }
 
-class _OdaSheet extends StatefulWidget {
-  const _OdaSheet();
+/// Modalın GÖVDESİ — [odaSheetAc] bunu `showModalBottomSheet` içinde kurar.
+///
+/// HERKESE AÇIK, çünkü widget testi onu TEK BAŞINA kurmak zorunda:
+/// [odaSheetAc] dönen id ile `context.push('/oda/<id>')` çağırıyor, yani
+/// testte kullanmak GoRouter kurmayı gerektirirdi ve test asıl sınamak
+/// istediğimiz şeyi (davet satırına dokununca ÖNCE katılım) gezinme
+/// altyapısının arkasına saklardı.
+class OdaSheetGovdesi extends StatefulWidget {
+  const OdaSheetGovdesi({super.key});
 
   @override
-  State<_OdaSheet> createState() => _OdaSheetState();
+  State<OdaSheetGovdesi> createState() => _OdaSheetState();
 }
 
-class _OdaSheetState extends State<_OdaSheet> {
+class _OdaSheetState extends State<OdaSheetGovdesi> {
   final _kod = TextEditingController();
   List<OdaOzet>? _odalar;
   String? _hata;
   bool _mesgul = false;
+
+  /// Şu an katılım isteği uçan DAVET satırının oda id'si (yoksa null).
+  /// Satırda spinner çizmek ve çift dokunuşu engellemek için.
+  int? _katilanOda;
 
   @override
   void initState() {
@@ -93,6 +104,40 @@ class _OdaSheetState extends State<_OdaSheet> {
         setState(() => _mesgul = false);
         _uyar(odaHataMetni(e));
       }
+    }
+  }
+
+  /// Listedeki bir satıra dokunulduğunda.
+  ///
+  /// ===========================================================================
+  /// NEDEN DAVET SATIRI DOĞRUDAN AÇILAMAZ (4 Eyl 2026, canlıda yakalandı)
+  /// ===========================================================================
+  /// Kullanıcı bildirdi: *"+ tıklayıp odaya katıl dediğimde bu odanın üyesi
+  /// değilsin diyor"*. Satır doğrudan `/oda/:id`e gidiyordu; ama BEKLEYEN
+  /// DAVETTE kişi henüz üye DEĞİL (`oda_uyeler.katildi IS NULL`) ve sunucudaki
+  /// `odaKapisi` haklı olarak 403 `UYE_DEGIL` döndürüyordu. Sunucu doğruydu,
+  /// eksik olan istemciydi: davet bir ÇAĞRIDIR, kabul edilmeden üyelik olmaz.
+  ///
+  /// Artık davet satırı ÖNCE `POST /odalar/katil` ile kabul edilir (satırda
+  /// oda kodu zaten var), sonra oda açılır. Zaten üye olunan satırlarda
+  /// davranış AYNEN eskisi gibi: tek dokunuş, doğrudan açılır.
+  Future<void> _satiraDokun(OdaOzet o) async {
+    if (!o.davet) {
+      Navigator.pop(context, o.id);
+      return;
+    }
+    if (_katilanOda != null) return; // çift dokunuş
+    setState(() => _katilanOda = o.id);
+    try {
+      final oda = await OdaApi.katil(o.kod);
+      if (mounted) Navigator.pop(context, oda.id);
+    } on ApiHata catch (e) {
+      if (!mounted) return;
+      setState(() => _katilanOda = null);
+      // Oda dolu / kapandı / engelli hâlleri buradan geçer; modal AÇIK kalır
+      // ki kullanıcı öteki odalarına ya da kod alanına dönebilsin.
+      _uyar(odaHataMetni(e));
+      _yukle(); // liste bayatlamış olabilir (oda kapanmış olabilir)
     }
   }
 
@@ -177,7 +222,8 @@ class _OdaSheetState extends State<_OdaSheet> {
                   _OdaSatiri(
                     key: ValueKey(o.id),
                     oda: o,
-                    onTap: () => Navigator.pop(context, o.id),
+                    katiliyor: _katilanOda == o.id,
+                    onTap: () => _satiraDokun(o),
                   ),
                 const SizedBox(height: 8),
                 Divider(color: DiziRenkler.metin38.withValues(alpha: 0.25)),
@@ -269,13 +315,23 @@ class _OdaSheetState extends State<_OdaSheet> {
 class _OdaSatiri extends StatelessWidget {
   final OdaOzet oda;
   final VoidCallback onTap;
-  const _OdaSatiri({super.key, required this.oda, required this.onTap});
+
+  /// Bu satır için katılım isteği uçuyor: spinner çizilir ve dokunma kapanır
+  /// (üç hal kuralı — yükleniyor / başarı / hata; sessiz bekleme yasak).
+  final bool katiliyor;
+
+  const _OdaSatiri({
+    super.key,
+    required this.oda,
+    required this.onTap,
+    this.katiliyor = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final kalan = oda.biter - DateTime.now().millisecondsSinceEpoch;
     return InkWell(
-      onTap: onTap,
+      onTap: katiliyor ? null : onTap,
       borderRadius: BorderRadius.circular(12),
       child: Padding(
         // Dokunma alanı 44 dp'nin altına düşmesin (ui-ux-pro-max, Touch Target).
@@ -335,7 +391,17 @@ class _OdaSatiri extends StatelessWidget {
                   ),
                 ),
               ),
-            Icon(Icons.chevron_right, color: DiziRenkler.metin38),
+            if (katiliyor)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              )
+            else
+              Icon(Icons.chevron_right, color: DiziRenkler.metin38),
           ],
         ),
       ),

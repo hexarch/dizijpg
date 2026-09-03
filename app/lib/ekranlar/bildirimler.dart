@@ -123,6 +123,16 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
       final s = b['surum'] as String? ?? '';
       return RegExp(r'^\d+\.\d+\.\d+$').hasMatch(s) ? '/yenilikler/$s' : null;
     }
+    // İzleme odası daveti (4 Eyl 2026): hedef ODANIN KENDİSİ. Aktörü var
+    // (davet eden) ama profiline gitmek yanlış olurdu — kullanıcı "davet
+    // edildim" diye dokunuyor, gitmek istediği yer oda.
+    if (b['tur'] == 'oda_davet') {
+      final id = b['oda_id'];
+      // Oda 12 saat sonra siliniyor; id yoksa satır tıklanmaz. id varsa oda
+      // kapanmış olsa bile açılır: ekran "Bu oda kapandı" boş durumunu çizer,
+      // bu sessiz bir tıklamamadan daha dürüst.
+      return id == null ? null : '/oda/$id';
+    }
     if (b['tur'] == 'mesaj') return '/sohbet/${b['aktor']}';
     final yorumId = b['yorum_id'];
     // yorum silinmişse (JOIN'de yorum_tur null) gönderi 404 verir → profile git
@@ -174,6 +184,13 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
         return (Icons.person_add, '@{} seni takip etti'.cf([b['aktor']]));
       case 'mesaj':
         return (Icons.mail, '@{} sana mesaj gönderdi'.cf([b['aktor']]));
+      // 4 Eyl 2026 — İZLEME ODASI DAVETİ. Aktörlü tür: davet edenin avatarı
+      // solda durur, köşedeki mini ikon eylemi anlatır.
+      case 'oda_davet':
+        return (
+          Icons.groups_2_outlined,
+          '@{} seni izleme odasına davet etti'.cf([b['aktor']]),
+        );
       case 'bolum':
         // Aktörsüz bildirim: "@" ile başlayan kalıba GİRMEZ, dizi adını yazar.
         // Dizi adı sunucudan gelmezse (TMDB önbelleği ıskaladı) sayı biçimi
