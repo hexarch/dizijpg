@@ -129,3 +129,48 @@ test('gönderi modalı üç bağlantıyı da basar; etiketsiz gönderide yapım 
 test('yanıt kartlarının her biri kendi sitedeki adresini taşır', () => {
   assert.match(fonksiyonuCek(ADMIN, 'gKart'), /siteMini\('\/gonderi\/'\+y\.id/);
 });
+
+// 3 Eyl 2026: modal BAŞLIKLARI da sitede açar. İstek aynen: "kullanıcı
+// profili açılsın … oradaki ada tıklayınca da dizijpg'deki profili açılacak".
+// Yönetici "@ad"a (kullanıcı modalı), "Gönderi #id"ye (gönderi modalı) ve
+// yapım adına (yapım modalı) tıklayınca yeni sekmede canlı sayfa açılır.
+const alan2 = new Function(`
+  ${fonksiyonuCek(ADMIN, 'esc')}
+  ${blok('const siteYolu =', 'const TMDB_GORSEL')}
+  return { siteBaslik };
+`)();
+
+test('siteBaslik: yeni sekme + noopener + kaçırma + tıklama sızmaz', () => {
+  const html = alan2.siteBaslik('/kullanici/ali', '@<b>ali</b>');
+  assert.match(html, /target="_blank"/);
+  assert.match(html, /rel="noopener noreferrer"/);
+  assert.match(html, /href="\/kullanici\/ali"/);
+  assert.match(html, /event\.stopPropagation\(\)/);
+  assert.equal(html.includes('<b>'), false, 'başlık kaçırılmamış');
+});
+
+test('kullanıcı modalı: başlık ve düğme /kullanici/<ad> rotasına gider', () => {
+  const k = fonksiyonuCek(ADMIN, 'kullaniciDetay');
+  assert.match(k, /#k-baslik'\)\.innerHTML=siteBaslik\('\/kullanici\/'\+encodeURIComponent\(ad\)/,
+    'başlık siteye bağlanmıyor');
+  assert.match(k, /siteBag\('\/kullanici\/'\+encodeURIComponent\(ad\),'Profili sitede aç'\)/,
+    '"Profili sitede aç" düğmesi yok');
+  assert.equal(k.includes("#k-baslik').textContent"), false,
+    'başlık hâlâ düz metin yazılıyor — bağlantı sonradan eziliyor');
+  assert.ok(rotaVarMi('/kullanici/ali'), '/kullanici/:ad rotası uygulamada yok');
+});
+
+test('gönderi modalı: başlık /gonderi/<id>, yol şeridinde yazarın site çapası', () => {
+  const g = fonksiyonuCek(ADMIN, 'gonderiDetay');
+  assert.equal((g.match(/#g-baslik'\)\.innerHTML=siteBaslik\('\/gonderi\/'\+/g) || []).length, 2,
+    'yüklenirken ve yüklenince başlık iki kez de bağlantı olmalı');
+  assert.equal(g.includes("#g-baslik').textContent"), false);
+  assert.match(g, /siteMini\('\/kullanici\/'\+encodeURIComponent\(g\.kullanici_adi\)/,
+    'yol şeridinde yazarın site çapası yok');
+});
+
+test('yapım modalı: başlık siteYolu ile doğru rotaya (tv/movie/person/company) gider', () => {
+  const i = fonksiyonuCek(ADMIN, 'icerikDetay');
+  assert.equal((i.match(/#i-baslik'\)\.innerHTML=siteBaslik\(siteYolu\(tur,tmdbId,null,null\)/g) || []).length, 2);
+  assert.equal(i.includes("#i-baslik').textContent"), false);
+});

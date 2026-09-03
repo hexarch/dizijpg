@@ -1196,6 +1196,12 @@ const siteBag = (yol,metin) => `<a class="btn" href="${SITE_TABAN}${esc(yol)}"
 const siteMini = (yol,baslik) => `<a class="bag" href="${SITE_TABAN}${esc(yol)}"
   target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
   title="${esc(baslik)}" aria-label="${esc(baslik)}">↗</a>`;
+/* Modal BAŞLIĞI sitede açan çapa — yönetici "@ad"a ya da "Gönderi #id"ye
+   tıklayınca doğrudan dizijpg'deki sayfaya gider (yeni sekme). Tıklama
+   üstteki h3'e sızmasın diye stopPropagation. */
+const siteBaslik = (yol,metin) => `<a class="bag sade" href="${SITE_TABAN}${esc(yol)}"
+  target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
+  title="Sitede yeni sekmede açar">${esc(metin)} <span aria-hidden="true" style="font-size:.8em">↗</span></a>`;
 const TMDB_GORSEL='https://image.tmdb.org/t/p/w185';
 
 /* ---- 3D Globe ---- */
@@ -1362,14 +1368,14 @@ async function hareketleriYukle(){
 async function gonderiDetay(id){
   yiginaEkle({t:'gonderi',a:id});
   modalTekGoster('#g-modal');
-  $('#g-baslik').textContent='Gönderi #'+id;
+  $('#g-baslik').innerHTML=siteBaslik('/gonderi/'+Number(id),'Gönderi #'+Number(id));
   $('#g-yol').innerHTML='';
   $('#g-icerik').innerHTML='<div class="bos">Yükleniyor…</div>';
   try{
     const d=await api('/gonderi/'+id);
     const g=d.gonderi, ad=d.yapim?.ad||('#'+g.tmdb_id);
-    $('#g-baslik').textContent=(g.ust_id?'Yanıt #':'Gönderi #')+g.id;
-    $('#g-yol').innerHTML=`${kBag(g.kullanici_adi)} <span>›</span> ${iBag(g.tur,g.tmdb_id,ad)}`
+    $('#g-baslik').innerHTML=siteBaslik('/gonderi/'+g.id,(g.ust_id?'Yanıt #':'Gönderi #')+g.id);
+    $('#g-yol').innerHTML=`${kBag(g.kullanici_adi)} ${siteMini('/kullanici/'+encodeURIComponent(g.kullanici_adi),'Yazarın profilini sitede aç')} <span>›</span> ${iBag(g.tur,g.tmdb_id,ad)}`
       + (g.sezon?` <span>›</span> <span class="mono" style="color:var(--mor)">S${g.sezon}B${g.bolum}</span>`:'')
       + ` <span>›</span> <span class="mono">${esc(new Date(g.tarih).toLocaleString('tr'))}</span>`;
     $('#g-icerik').innerHTML=
@@ -1454,12 +1460,12 @@ async function yorumSilKul(id, ad){
 async function icerikDetay(tur,tmdbId){
   yiginaEkle({t:'icerik',a:[tur,tmdbId]});
   modalTekGoster('#i-modal');
-  $('#i-baslik').textContent=(tur==='tv'?'Dizi':'Film')+' #'+tmdbId;
+  $('#i-baslik').innerHTML=siteBaslik(siteYolu(tur,tmdbId,null,null),(tur==='tv'?'Dizi':'Film')+' #'+tmdbId);
   $('#i-icerik').innerHTML='<div class="bos">Yükleniyor…</div>';
   try{
     const d=await api(`/icerik/${encodeURIComponent(tur)}/${encodeURIComponent(tmdbId)}`);
     const y=d.yapim||{}, s=d.sayilar;
-    $('#i-baslik').textContent=(y.ad||('#'+tmdbId))+(y.yil?' ('+y.yil+')':'');
+    $('#i-baslik').innerHTML=siteBaslik(siteYolu(tur,tmdbId,null,null),(y.ad||('#'+tmdbId))+(y.yil?' ('+y.yil+')':''));
     const kutu=(e,v)=>`<div class="kart" style="padding:10px 14px"><div class="etk">${e}</div>
       <div style="font-size:20px;font-weight:800">${v}</div></div>`;
     const dAd={izleyecegim:'İzleyecek',izliyorum:'İzliyor',bitirdim:'Bitirdi',biraktim:'Bıraktı'};
@@ -1505,7 +1511,7 @@ async function kullaniciDetay(ad){
   SON_KULLANICI=ad;
   yiginaEkle({t:'kullanici',a:ad});
   modalTekGoster('#k-modal');
-  $('#k-baslik').textContent='@'+ad;
+  $('#k-baslik').innerHTML=siteBaslik('/kullanici/'+encodeURIComponent(ad),'@'+ad);
   $('#k-icerik').innerHTML='<div class="bos">Yükleniyor…</div>';
   try{
     const k=await api('/kullanici/'+encodeURIComponent(ad));
@@ -1542,6 +1548,7 @@ async function kullaniciDetay(ad){
           ?`<button class="btn iyi" onclick="yasakKaldir(${k.id},()=>kullaniciDetay('${escJs(ad)}'))">Yasağı kaldır</button>`
           :`<button class="btn tehlike" onclick="banAc(${k.id},'${escJs(ad)}',()=>kullaniciDetay('${escJs(ad)}'))">Yasakla… (süreli / kalıcı)</button>`}
         <button class="btn" onclick="guvenDuzelt(${k.id},'${escJs(ad)}')">Güven skorunu düzelt</button>
+        ${siteBag('/kullanici/'+encodeURIComponent(ad),'Profili sitede aç')}
       </div>
       ${(k.son_ipler||[]).length?`<div style="margin-bottom:14px"><b style="font-size:12px">Son IP'ler</b>
         <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px">${k.son_ipler.map(p=>
