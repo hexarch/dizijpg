@@ -1,6 +1,87 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-03 (7. tur) — 📏 GEO durum ölçümü: CEVAP BOTU GERİ DÖNDÜ, araç 5 kat eksik sayıyormuş
+
+- **İstek:** *"dizi jpg projesinde geo konusunda ne durumdayız?"* → ölçüm koşuldu,
+  çıkan bulgular `GEO-PLANI.md` v1.5 §0.4'e işlendi.
+- ✅ **§0.3'ün açık tahmini DOĞRULANDI: Claude-SearchBot içerik taramasına döndü.**
+  29 Ağu'dan 3 Eyl'e **~409 bin içerik sayfası**, hepsi `200` + gerçek SSR
+  (origin'den doğrulandı: `/kisi/8293` ham 21.405 B, `/icerik/tv/1396` 27.564 B,
+  dördünde de `FAQPage`). 23-28 Ağu arası tarama SIFIRDI.
+- ✅ **Dönüşün sebebi ölçüldü, tahmin edilmedi: 29 Ağu'da SSR 46 dilli oldu**
+  (`seo_dil.js` o gün canlıya çıktı) ve URL uzayı 45 dil önekiyle çarpıldı.
+  20-22 Ağu taramasında dil önekli tek istek YOK; 29 Ağu'dan sonra içeriğin
+  %82-99'u dil önekli. Bot yeni bir URL kümesi buldu.
+- ✅🚀 **`araclar/geo-olcum.sh` — ÜÇ kusur daha ölçüldü, düzeltildi, sunucuya kuruldu**
+  (`/root/geo-olcum.sh`, koşuldu ve çıktı doğrulandı):
+  - **Dil önekli yollar sayılmıyordu** — `^/(icerik|kisi|sirket|dizi)/` kalıbı
+    `/kn/kisi/92908`i tutmuyor. Araç "içerik=9.329" diyordu, gerçek **50.378**:
+    **5,3 kat eksik.** 29 Ağu'daki `bolum` öneki kusurunun birebir kardeşi —
+    üçüncü kez aynı ders: *ölçmediğin yüzey yoktur.* Düzeltme, 45 kodun TAM
+    listesiyle (`fil` üç harfli; `[a-z]{2}` tahmini YETMEZ).
+  - **`ort_bayt` sıkıştırılmışı hamla kıyaslıyordu.** nginx `$body_bytes_sent`
+    yazar; belgenin ölçütü (`16.215 B = SSR`) `curl`ün ham boyu. Logdaki
+    "2.109 B" kabuk sanılabilirdi — aynı sayfa ham 20.273 B / gzip 2.337 B,
+    yani SSR'in ta kendisi. Sütun `ort_gzip` oldu + betik her koşuda origin'den
+    **canlı ölçü çubuğu** basıyor (ham/gzip/FAQPage, dört yüzey).
+  - **`trend` kipi günü değil DOSYAYI sayıyordu** (gün etiketi dosyanın ilk
+    satırından); dosya sınırındaki satırlar komşu güne sızıyordu. Artık gün
+    her satırın kendi damgasından okunuyor.
+  - Bonus: **atıf sayacı satırın tamamına bakıyordu** — `Claude-SearchBot`
+    UA'sını "claude" diye sayıp sahte 291 üretiyordu. Artık yalnız Referer alanı.
+    Gerçek atıf: **hâlâ 0** (beklenen, §8).
+- 📌 **Asıl bulgu — tarama bütçesi yanlış yüzeye akıyor:** 3 Eyl dağılımı
+  `/kisi/` %80 · `/sirket/` %14 · `/icerik/` %5,6 · **bölüm 0**. §6.1'in 11
+  sayfalık örneklemle yazdığı "ince sayfalar" bulgusu 47 bin sayfayla doğrulandı.
+- ⚠ **BOŞ KABUK YİYEN YÜZEY HÂLÂ TAZELENMEDİ:** 20-21 Ağu'da kabuk alan 55.832
+  sayfanın tamamı **bölüm** sayfasıydı; Claude-SearchBot 21 Ağustos'tan beri tek
+  bir bölüm sayfasına dönmedi. §0.3'ün "kalıcı kanaat" riski taşıyan tam o yüzey
+  ölçüm dışında. Karar yine **bekle ve ölç** — `lastmod` hilesi ÇALIŞAN kanalı
+  riske atar (§0.4).
+- ✅ **§5.1'in üçüncü kilidi ("okunmayan sayfaya soru eklemek") DÜŞTÜ**, ama veri
+  kapısı duruyor. Ölçüm artık bir SIRA veriyor: motorun okuduğu yüzey `/icerik/`
+  değil `/kisi/`; aday sorular oradan çıkacak.
+- ⬜ **GEO §6.2 (aylık elle sorgu turu) vadesi 28 Eylül** — elle koşulacak.
+
+## 2026-09-03 (6. tur) — 🔨 Kişi ve yapım şirketi sayfalarında "Puanla" düğmesi yerine yıldız şeridi
+
+- **İstek:** *"oyuncu profili, dizi/film profilinde 'Puanla' tuşu yerine —
+  eğer 5'li sistem kullanıyorsa 5 yıldız koy, altına 'puanla' yaz ufak bir
+  şekilde; eğer 5'ten fazla yıldızlama kullanıyorsa kaydırma slider koy.
+  Tabii yapım şirketi ve yönetmenlerde de aynı şekilde."*
+- ✅ **Kapsam:** dizi/film sayfası bu şeride aynı gün (3. tur) geçmişti;
+  eksik olan **kişi** (`/kisi/:id` — oyuncu VE yönetmen aynı ekran, yönetmenin
+  ayrı sayfası yok) ile **yapım şirketi** (`/sirket/:id`) sayfalarıydı. İkisinde
+  de "Puanla" yazan bir düğme vardı ve dokununca "Yorum yaz..." modalı açılıyordu.
+- ✅ **Değişiklik:**
+  - `app/lib/ekranlar/tepki.dart` — `YildizPuan`a **`altYazi`** parametresi:
+    yıldızların altına 11 dp'lik etiket, puansızken "Puanla", puanlıyken "3/5".
+    Satır YÜKSEKLİĞİ SABİT (ilk puanda sayfa zıplamasın), sürüklerken parmağı
+    izler. Rozet kipinde çizilmez — rozetin içinde zaten yazıyor. Varsayılan
+    kapalı: `BolumPuani` satırında aynı bilgi üçüncü kez tekrarlanmasın.
+  - `app/lib/ekranlar/tepki.dart` — **`altYaziEki`**: alt yazının sonuna sönük
+    bir ek ("Puanla · ort. 4.2"). Kişi sayfasında topluluk ortalaması şeridin
+    SAĞINDAYKEN 390 dp telefonda ondan 98 dp çalıyordu; kalan 128 dp'de yıldız
+    **21,6 dp**, dokunma hücresi **25,6 dp** oluyordu (widget testinde ölçüldü).
+    Ortalama alt yazıya inince şerit sütunun tamamını (234 dp) kullanıyor →
+    yıldız **30 dp**, hücre **44 dp** (erişilebilirlik asgarisi).
+  - `app/lib/ekranlar/kisi.dart`, `app/lib/ekranlar/sirket.dart` — düğme +
+    `puanlaVeKaydet` modalı gitti, yerine `YildizPuan(altYazi: true)`.
+  - `app/lib/ekranlar/detay.dart` — mevcut şeride `altYazi: true` eklendi;
+    düğme kalkınca "Puanla" sözcüğü kaybolmuştu.
+- ✅ **Ölçek eşiği 10'da KALDI** (kullanıcı onayı): 5 ve 10'luk ölçekte yıldız
+  satırı, üstünde rozet → kaydırıcılı `puanSecSheet`. Ayrıca `YildizPuan` dar
+  kutuda kendiliğinden rozete düşüyor — kişi sayfasının afiş yanındaki ~234 dp'lik
+  sütununda 10'luk ölçek zaten rozet çiziyor (yıldız 18 dp'nin altına inerdi).
+- ✅ **Yorum kaybolmadı:** her iki sayfanın altındaki yorumlar bölümü yerinde;
+  kalkan yalnız her puanlamada zorla açılan metin kutusuydu (dizi/film
+  sayfasında 3 Eyl'de alınan kararla aynı).
+- ✅ **Yeni çeviri anahtarı YOK:** "Puanla" 45 dilde zaten var, "3/5" biçimli.
+- Kanıt: `test/profil_yildiz_serit_test.dart` (8 test) — şerit + ufak etiket,
+  puanlıyken "3/5", dokununca MODAL AÇILMADAN `/puan` (`tur: person` / `company`,
+  `kanonik: true`), 100'lük ölçekte rozet, 360 dp'de taşma yok.
+
 ## 2026-09-03 (5. tur) — 🚀 Akışta yalnız-yazı gönderilerinde "Çevir" düğmesi yoktu
 
 - **İstek:** "akışta sadece metin içeren içeriklerde çevir buttonu yok".

@@ -1,6 +1,10 @@
 # dizi.jpg — GEO (Üretken Motor Optimizasyonu) Planı
 
-> Sürüm **1.4** · 29 Ağustos 2026 — **§6.1'in ANA BULGUSU ÇÜRÜDÜ (bkz. §0.3): cevap
+> Sürüm **1.5** · 3 Eylül 2026 — **CEVAP BOTU GERİ DÖNDÜ (bkz. §0.4): 29 Ağu'dan
+> beri 6 günde ~409 bin içerik sayfası, hepsi gerçek SSR. §0.3'ün açık bıraktığı
+> tahmin yanlışlanmadı, DOĞRULANDI. Ölçüm aracında ÜÇ kusur daha bulundu.**
+>
+> Sürüm 1.4 · 29 Ağustos 2026 — **§6.1'in ANA BULGUSU ÇÜRÜDÜ (bkz. §0.3): cevap
 > botları düzeltmeden ÖNCE 65.793 içerik sayfası çekmiş ve HEPSİNDE boş kabuk almış**
 >
 > Sürüm 1.3 · 28 Ağustos 2026 — §5 bitti (üç yüzeye SSS), §2/§6 kararları kapandı
@@ -121,6 +125,99 @@ harita hilesi değil §4.6 (dış görünürlük) olur.
 > PATLAMALIDIR — en az 14 günlük seri okunmadan "bot şunu yapmıyor" denmez.
 > `geo-olcum.sh trend` bu yüzden yazıldı.
 
+## 0.4 ✅ CEVAP BOTU GERİ DÖNDÜ — ve ölçüm aracı bunu 5 KAT EKSİK gösteriyordu (3 Eyl 2026)
+
+§0.3, 29 Ağustos'ta bir tahmin bırakmıştı: *"Claude-SearchBot içerik taramasına
+kendiliğinden dönecek mi? Kanal 1 bunu doğrudan gösterir."* Karar da oradaydı:
+harita hilesi yapma, **bekle ve ölç**. Beş gün sonra ölçüm alındı.
+
+**Döndü — ölçümün ertesi günü ve ölçekle.** Gerçek seri (dil önekleri dahil,
+düzeltilmiş `geo-olcum.sh trend`):
+
+| gün | istek | içerik sayfası | dil sürümü | not |
+|---|---|---|---|---|
+| 20 Ağu | 2.494 | 2.463 | 0 | **boş kabuk** (nginx düzeltmesinden önce) |
+| 21 Ağu | 53.417 | 53.369 | 0 | **boş kabuk** |
+| 22 Ağu | 10.003 | 9.961 | 0 | **boş kabuk** |
+| 23-25 Ağu | 30-263 | **0** | 0 | kesilme |
+| 26-28 Ağu | 38-46 | 2-21 | 0 | kesilme |
+| **29 Ağu** | 32.853 | **32.541** | 32.391 | dönüş |
+| 30 Ağu | 84.263 | 83.979 | 83.187 | |
+| 31 Ağu | 77.842 | 77.751 | 72.886 | |
+| 1 Eyl | 84.048 | 83.864 | 69.866 | |
+| 2 Eyl | 81.447 | 81.171 | 68.956 | |
+| 3 Eyl (14:26'ya kadar) | 50.403 | 50.378 | 41.015 | |
+
+Altı günde **~409 bin içerik sayfası**, tamamı `200` ve **gerçek SSR**
+(48 adet `502` dışında; origin'den doğrulandı: `/kisi/8293` ham 21.405 B,
+`/icerik/tv/1396` ham 27.564 B, dördünde de `FAQPage` var).
+
+**DÖNÜŞÜN SEBEBİ TESADÜF DEĞİL: 29 Ağustos'ta SSR 46 DİLLİ oldu** (`seo_dil.js`,
+o gün canlıya çıktı). URL uzayı 45 dil önekiyle çarpıldı ve tarama aynı gün
+başladı. 20-22 Ağustos taramasında dil önekli tek istek YOK; 29 Ağustos'tan
+sonra içeriğin **%82-99'u** dil önekli. Yani bot yeni bir URL kümesi buldu.
+
+### ⚠ BU SERİYİ GÖRMEK İÇİN ARACIN ÜÇ KUSURU DÜZELTİLDİ
+
+Ham `geo-olcum.sh` 3 Eylül'de *"içerik=9.329"* diyordu; gerçek **50.378** idi.
+
+1. **Dil önekli yollar sayılmıyordu** — kusur 1'in (`bolum` öneki) birebir
+   kardeşi, ama bu sefer **sayıyı bozdu**. `^/(icerik|kisi|sirket|dizi)/`
+   kalıbı `/kn/kisi/92908`i tutmuyor. **5,3 kat eksik.** Düzeltme: yolu
+   saymadan önce bilinen dil öneki soyuluyor (`ONEK` — 45 kodun TAM listesi,
+   `[a-z]{2}` tahmini DEĞİL; `fil` üç harfli).
+   → **DERS, üçüncü kez aynı ders:** ölçmediğin yüzey yoktur. Yeni bir URL
+   biçimi canlıya çıktığında ölçüm regex'i de aynı turda güncellenir.
+2. **`ort_bayt` sütunu yanıltıyordu.** nginx `$body_bytes_sent` yazar —
+   **sıkıştırılmış** gövde. Bu belgenin baştan beri kullandığı ölçüt
+   (`16.215 B = SSR`, `12.679 B = kabuk`) ise `curl`ün **ham** boyu. İkisi
+   kıyaslanamaz. Logda 2.109 B görülüyordu; aynı sayfa origin'den ham
+   20.273 B / gzip 2.337 B — yani o "2 KB" **SSR'in ta kendisiydi.**
+   Düzeltme: sütun adı `ort_gzip`, ve betik her koşuda origin'den **canlı ölçü
+   çubuğu** basıyor (§5 bölümü) — log baytının neyle kıyaslanacağı artık ekranda.
+   ⚠ **§0.3'ün "4.726 bayt = kabuk imzası" akıl yürütmesi bu kusurdan
+   etkilendi ama SONUCU DEĞİŞMİYOR:** 20-22 Ağustos'ta o botlar `$og_bot`
+   regex'inde HENÜZ YOKTU (27 Ağu'da eklendi, §3) — kabuk aldıkları bayt
+   kıyasından değil, yapıdan kesindir.
+3. **`trend` kipi günü değil DOSYAYI sayıyordu.** Gün etiketi her dosyanın ilk
+   satırından alınıp o dosyanın tüm satırlarına yazılıyordu; dosya sınırındaki
+   satırlar komşu güne sızıyordu. Düzeltme: gün her satırın kendi damgasından.
+
+Üçü de `araclar/geo-olcum.sh` başında gerekçeleriyle kayıtlı; düzeltilmiş betik
+sunucuda (`/root/geo-olcum.sh`) ve koşuldu.
+
+### 📌 ASIL BULGU: TARAMA BÜTÇESİ YANLIŞ YÜZEYE AKIYOR
+
+3 Eylül dağılımı (dil öneki soyulmuş):
+
+| yüzey | istek | pay |
+|---|---|---|
+| `/kisi/` | 40.454 | **%80** |
+| `/sirket/` | 7.109 | %14 |
+| `/icerik/tv` | 2.752 | %5,4 |
+| `/icerik/movie` | 77 | %0,2 |
+| **bölüm** | **0** | — |
+
+8.547 benzersiz kişi, kişi başına ~4,7 dil sürümü. §6.1'in *"tarama bütçesi ince
+sayfalara gidiyor"* bulgusu 11 sayfalık örneklemle yazılmıştı; **47 bin sayfayla
+doğrulandı ve büyüdü.**
+
+**VE EN ÖNEMLİSİ — BOŞ KABUK YİYEN YÜZEY HÂLÂ TAZELENMEDİ.** 20-21 Ağustos'ta
+kabuk alan 55.832 sayfanın tamamı **bölüm sayfasıydı** (`/dizi/*/bolum/*`).
+Claude-SearchBot 21 Ağustos'tan bu yana **tek bir bölüm sayfasına dönmedi**;
+dönen tarama tamamen `/kisi/` + `/sirket/`e gitti. Yani §0.3'ün "kalıcı kanaat"
+riski taşıyan tam o yüzey ölçüm dışında duruyor. Bölüme yalnız OAI-SearchBot
+uğruyor (30-31 Ağu ve 1 Eyl: 134 / 316 / 119 sayfa).
+
+### ⛔ YİNE YAPILMAYAN: bölüm haritasını taramaya zorlamak
+
+§0.3'ün `lastmod` kararı burada da aynen geçerli ve gerekçesi güçlendi: tarama
+artık ÇALIŞIYOR, günde 80 bin sayfa. Çalışan bir kanalın harita güvenilirliğini
+harcamak, kazanılmış olanı riske atmaktır. Bölüm yüzeyi için doğru hamle
+**bekle ve ölç** (kanal 1 zaten günlük gösteriyor) — bot kişi/şirket uzayını
+bitirince bölüme dönerse iş yok; dönmezse o zaman karar §4.6'dır (dış
+görünürlük), harita hilesi değil.
+
 ---
 ## 0. Yönetici özeti — İKİ DUVAR
 
@@ -168,8 +265,8 @@ görmüyor.
 | **1** | ✅🚀 **nginx `$og_bot` regex'ine AI botlarını ekle** | ⚠ **CF'TEN ÖNCE.** Ters sırada, engel kalkar kalkmaz gelen İLK tarama boş kabuk görür ve motor "bu sitede içerik yok" diye kaydeder — 403'ten kötüdür, çünkü 403 geçici sayılır, boş sayfa KALICI kanaat olur. Kapı açılmadan arkasını hazırla. | §3 | ✅ **27 Ağu, canlıda** |
 | **2** | ~~CF'te engeli kaldır~~ → **panelde ölçüldü: cevap botları ZATEN AÇIK** | Tek sapma `Claude-User`; açmanın bedeli blanket korumayı sökmek | §2 | ✅ ölçüldü · karar **A (dokunma)** öneriliyor |
 | **3** | **Uçtan uca doğrula** — her bot UA'sı ile curl | "Ayarı yaptım" yetmez, 16 KB SSR gelmeli | §3 | ✅ **27 Ağu** — origin'den altı bot da 200 + 16.215 B; 28 Ağu'da SSS'li üç yüzey de aynı yöntemle doğrulandı |
-| **4** | **Ölçüm hattını kur** (log + atıf + elle sorgu) | GEO'nun Search Console'u YOK; ölçmeden içerik işi körlemedir | §6 | ✅ **28 Ağu** — `araclar/geo-olcum.sh` (kanal 1+2) · §6.2 sabit 10 soruluk liste (kanal 3). ✅ Kanal 3 **29 Ağu'da prova edildi** (`GEO-SORGU-TURU-2026-08-YONTEM-PROVASI.md`) — 13/13 atıf yok, ama listenin 6 sorusunun atıf ÜRETEMEYECEĞİ bulundu |
-| **5** | İçerik: SSS yüzeyini genişlet | Cevap motorları SORU-CEVAP alıntılıyor | §5 | 🔨 `/kisi/`, `/sirket/`, **bölüm** ✅ canlıda · `/icerik/` genişletmesi §5.1'de bekliyor |
+| **4** | **Ölçüm hattını kur** (log + atıf + elle sorgu) | GEO'nun Search Console'u YOK; ölçmeden içerik işi körlemedir | §6 | ✅ **28 Ağu** — `araclar/geo-olcum.sh` (kanal 1+2) · §6.2 sabit 10 soruluk liste (kanal 3). ✅ Kanal 3 **29 Ağu'da prova edildi** (`GEO-SORGU-TURU-2026-08-YONTEM-PROVASI.md`) — 13/13 atıf yok, ama listenin 6 sorusunun atıf ÜRETEMEYECEĞİ bulundu · ⚠ **3 Eyl: aracın ÜÇ kusuru daha ölçüldü ve düzeltildi** (dil öneki 5,3 kat eksik sayıyordu, `ort_bayt` sıkıştırılmış/ham kıyaslıyordu, `trend` günü değil dosyayı sayıyordu) — bkz. §0.4 |
+| **5** | İçerik: SSS yüzeyini genişlet | Cevap motorları SORU-CEVAP alıntılıyor | §5 | 🔨 `/kisi/`, `/sirket/`, **bölüm** ✅ canlıda · `/icerik/` genişletmesi §5.1'de bekliyor. **3 Eyl: kapının üçüncü kilidi ("okunmayan sayfa") DÜŞTÜ** — sayfalar günde 80 bin okunuyor; veri kapısı duruyor |
 | ~~llms.txt~~ | | Kanıtsız moda | §7 | ⛔ şimdilik |
 
 ---
@@ -475,12 +572,23 @@ vermek cloaking'dir; görünür `<dl>` tam da bu yüzden zorunlu.
 - **KAPININ AÇILMA KOŞULU:** §6.2 turu bir kez çalıştırılıp GSC'de yeni
   yüzeylerin sorguları göründüğünde (gerçekçi olarak 1-2 hafta) bu madde
   ölçülmüş adaylarla açılır.
-- 🔒 **29 Ağu 2026 — KAPI HÂLÂ KAPALI, ve artık ÜÇÜNCÜ bir kilit var.** §0.3
+- 🔒 ~~**29 Ağu 2026 — KAPI HÂLÂ KAPALI, ve artık ÜÇÜNCÜ bir kilit var.**~~ §0.3
   ölçtü: iki büyük cevap motorundan biri (Claude-SearchBot) 23 Ağustos'tan beri
   hiç içerik sayfası çekmiyor, öteki (OAI-SearchBot) 28 Ağustos'ta 0 çekti.
   SSS'i şimdi genişletmek, **okunmayan bir sayfaya soru eklemek** olur:
   maliyet kesin, ölçüm imkânsız. Önce kanal 1'de içerik taramasının döndüğü
   görülmeli. Bu, aynı §5.1'in "veri kapısı" kuralının GEO tarafındaki karşılığı.
+- ✅ **3 EYL 2026 — ÜÇÜNCÜ KİLİT DÜŞTÜ, ama kapı hâlâ VERİ kapısıdır.** §0.4:
+  tarama döndü, günde ~80 bin içerik sayfası okunuyor. "Okunmayan sayfa"
+  gerekçesi artık geçersiz. Asıl kilit — *"aday sorular ölçülmüş talebe göre
+  seçilir"* — yerinde duruyor, çünkü GSC sorguları ve §6.2 turu hâlâ boş.
+  **AMA ÖLÇÜM ARTIK BİR SIRA VERİYOR:** tarama bütçesinin **%94'ü**
+  `/kisi/` + `/sirket/`e gidiyor, `/icerik/`e yalnız %5,6. Yani §5.1'in başlığı
+  olan *"`/icerik/` SSS'ini genişlet"* maddesi, ölçülmüş davranışa göre **sıranın
+  başı DEĞİL**. Motorun gerçekten okuduğu yüzey kişi sayfası; oradaki SSS
+  28 Ağu'dan beri canlı ve bugün ilk kez gerçek hacimle okunuyor. Doğru sıra:
+  önce §6.2 turunun/GSC'nin `/kisi/` sorgularını görmesini bekle, aday soruları
+  ORADAN çıkar.
 - Eski §5 metni (karar gerekçeleriyle) aşağıda duruyor:
 
 ### Özgün §5 kararları
@@ -521,14 +629,18 @@ gösteren resmî bir panel yok.** Kurulacak üç kanal:
 yanıttı). Doğrusu: başlangıçta kanal 1 sıfırdı çünkü botlar **boş kabuk**
 alıyordu; kanal 2 ve 3 ise henüz veri üretecek kadar zaman geçmemişti.
 
-**Kanalların bugünkü hâli (29 Ağu 2026):**
+**Kanalların bugünkü hâli (3 Eyl 2026):**
 | Kanal | Durum | Son değer |
 |---|---|---|
-| 1 — sunucu logu | ✅ kuruldu · **29 Ağu'da `trend` kipi eklendi** (`araclar/geo-olcum.sh`) | 28 Ağu: 31 istek / 2 içerik · 15 günlük seri §0.3'te |
-| 2 — atıf trafiği (`Referer`) | ✅ kuruldu (aynı betik) | **0** — beklenen (§8) |
-| 3 — elle sorgu turu | ✅ liste sabitlendi (§6.2) | ✅ **29 Ağu: yöntem provası koşuldu** — 13/13 atıf yok; listenin 6 sorusu yapısal olarak atıf üretemiyor (§6.3) |
+| 1 — sunucu logu | ✅ kuruldu · 29 Ağu `trend` kipi · **3 Eyl: üç kusur daha düzeltildi** (dil öneki, `ort_gzip`, gün sayımı — §0.4) | **3 Eyl: 50.403 istek / 50.378 içerik**, %81'i dil önekli · 15 günlük seri §0.4'te |
+| 2 — atıf trafiği (`Referer`) | ✅ kuruldu (aynı betik) · **3 Eyl: alan sınırlandı** — satırın tamamına bakan `grep`, `Claude-SearchBot` UA'sını "claude" diye sayıyordu (sahte 291); artık yalnız Referer alanı okunuyor | **0** — beklenen (§8) |
+| 3 — elle sorgu turu | ✅ liste sabitlendi (§6.2) | ✅ **29 Ağu: yöntem provası koşuldu** — 13/13 atıf yok; listenin 6 sorusu yapısal olarak atıf üretemiyor (§6.3). İlk gerçek tur ~28 Eyl |
 
 ### ⚠ 29 AĞU 2026 — ÖLÇÜM ARACININ KENDİ İKİ KUSURU (ölçülerek bulundu)
+
+> ⚠ **3 Eyl 2026: aynı araçta ÜÇ kusur daha ölçüldü — §0.4.** Aşağıdaki iki
+> kusur kaydı geçmiş kaydıdır; güncel kusur listesi `araclar/geo-olcum.sh`
+> başındadır (beş madde).
 
 `gsc_izle.js`in `genel` kovası dersinin aynısı, bu kez GEO tarafında:
 
@@ -646,6 +758,12 @@ atıyor; log'da GERÇEK bot trafiğinden ayırt edilemiyorlar ve 16.215 baytlık
 `?n=` içeren istekleri ve `127.0.0.1` kaynaklı satırları HARİÇ TUT.**
 
 ### 📌 ÖLÇÜMDEN ÇIKAN YENİ İŞ — tarama bütçesi ince sayfalara gidiyor
+
+> ✅ **3 Eyl 2026: bu bulgu 47 BİN SAYFAYLA DOĞRULANDI ve büyüdü — §0.4.**
+> Aşağıdaki 11 sayfalık örneklem küçüktü ama yönü doğruymuş: bugün taramanın
+> %80'i `/kisi/`, %14'ü `/sirket/`, yalnız %5,6'sı `/icerik/`. Aradaki tek
+> fark, bu üç yüzeye 28 Ağu'da SSS eklendiği için tablodaki "FAQPage YOK"
+> satırının artık geçerli olmaması (dördünde de var, origin'den doğrulandı).
 OAI-SearchBot'un çektiği 22 sayfanın **11'i `/kisi/` ve `/sirket/`**. Bu iki
 yüzeyin SSR zenginliği dizi sayfasının çok altında:
 
@@ -724,6 +842,13 @@ indeksine girmek haftalar sürer, `/kisi` ve bölüm SSS'i daha bugün canlıya
 ---
 
 ## Ek A — Ölçüm komutları (tekrarlanabilir)
+
+> ⚠ **HAM/SIKIŞTIRILMIŞ TUZAĞI (3 Eyl 2026, §0.4 kusur 2).** Aşağıdaki
+> `curl` boyları **ham**tır (`Accept-Encoding` gönderilmiyor). nginx logundaki
+> bayt sütunu ise **sıkıştırılmış** gövdedir — aynı sayfa ham 20.273 B / gzip
+> 2.337 B. İkisini birbiriyle kıyaslayan "bu bot boş kabuk alıyor" hükmü
+> YANLIŞTIR. `geo-olcum.sh` artık her koşuda origin'den canlı ölçü çubuğu
+> basıyor; log baytını onunla kıyasla.
 
 ```bash
 # Hangi bot ne alıyor (403 = CF engeli, ~12,7 KB = boş kabuk, ~16 KB = SSR)
