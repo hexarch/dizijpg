@@ -6335,6 +6335,25 @@ app.get('/og/ana', sarici(async (_req, res) => {
           name: 'dizi.jpg',
           url: `${SITE_KOK}/`,
           logo: `${SITE_KOK}/icons/Icon-192.png`,
+          // `sameAs` (3 Eyl 2026): siteyi Play kaydıyla AYNI VARLIK olarak
+          // bildirir. Bağlantı değeri taşımaz — Play sayfasının bize verdiği
+          // bağlantı izlenmez olarak işaretlidir, GSC'nin "dış bağlantı 0"ı
+          // bu yüzden. İşlevi VARLIK BİRLEŞTİRME: "dizi.jpg" adı hem sitede
+          // hem mağazada geçiyor ve Google'ın ikisini tek varlık sayması bizim
+          // beyanımıza bağlı. Otorite sorununu ÇÖZMEZ (§4.6 hâlâ açık).
+          //
+          // (O `rel` niteliğinin adı bu yorumda BİLEREK yazılmıyor:
+          // `seo_gizlilik.test.js` SSR bölümünde o kelimeyi arayarak
+          // "kullanıcı metni bağlantıya çevrilmiyor" güvencesini bekçiliyor —
+          // yalnız yorumda geçmesi bile testi düşürür, doğru davranış budur.)
+          //
+          // YALNIZ DOĞRULANMIŞ ADRES: App Store kaydı 3 Eyl'de hâlâ incelemede
+          // ve `apps.apple.com/app/id6806987135` **404** dönüyor. Yayına
+          // girdiğinde buraya eklenmeli — var olmayan adresi `sameAs`e yazmak
+          // beyanın tamamını şüpheli yapar. Sosyal hesap beyan edilmiyor:
+          // depoda dizi.jpg'nin KENDİ hesabı yok (sosyal.dart'takiler
+          // kullanıcıların kendi profilleri için şablon).
+          sameAs: ['https://play.google.com/store/apps/details?id=com.dizijpg.dizijpg'],
         },
         // İçerik/kişi/firma/bölüm sayfalarıyla AYNI disiplin: ayrı `@graph`
         // öğesi, `#sss` kimliği, WebSite/Organization içine GÖMÜLMEZ.
