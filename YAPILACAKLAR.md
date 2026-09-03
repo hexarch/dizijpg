@@ -1,6 +1,39 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-03 (5. tur) — 🚀 Akışta yalnız-yazı gönderilerinde "Çevir" düğmesi yoktu
+
+- **İstek:** "akışta sadece metin içeren içeriklerde çevir buttonu yok".
+- ✅ **Teşhis — sorun istemcide DEĞİL veride:** düğme `kaynak_dil` alanına
+  bakıyor (`CeviriliMetin`, `app/lib/ekranlar/ortak.dart`), o alan ise yalnız
+  `POST /yorumlar` yolunda dolduruluyordu. Aktarım (`veri_aktar.js`) ve bazı
+  tohumlama araçları alanı boş bırakmış: canlıda dili bilinmeyen **208
+  gönderinin 204'ü YAZI gönderisiydi**. Medyalı gönderilerde düğme çıkıyordu
+  çünkü onları yazan intl personaların dili elle yazılmıştı — kullanıcının
+  gördüğü "yazıda yok, medyada var" ayrımı tam olarak buydu. Arapça/Rusça bir
+  yazı gönderisinde bile düğme çıkmıyordu.
+- ✅ **Düzeltme (yalnız sunucu — istemci güncellemesi GEREKMEZ):**
+  - `backend/dil_tespit.js` **(YENİ)**: kestirim `server.js`ten çıkarıldı;
+    `server.js` içe aktarıldığı anda `app.listen` çağırdığı için işlev birim
+    testinden çağrılamıyordu. Artık `backend/test/dil_tespit.test.js` sınıyor.
+  - `ceviriUygula` sütun boşsa metinden ANINDA kestirir → tek satır bütün
+    okuma uçlarını düzeltir (akış, keşfet, yorumlar, profil) ve alanı
+    doldurmayı unutan bir yazma yoluna karşı bağışıktır.
+  - `/ceviri` ucu AYNI kestirimi kullanır (düğme çıkıp uç `{yok:true}` demesin).
+  - `veri_aktar.js` içe aktarımda `kaynak_dil` yazar.
+  - **Kestirim isabeti** (4.871 etiketli canlı gönderiyle ölçüldü, hata
+    **91 → 6**): `ö/ü` artık Almanca kanıtı değil (Türkçede de var, 71 gönderi
+    Almancaya kayıyordu); tek başına PAYLAŞILAN kelime kanıt sayılmıyor
+    ("en" yüzünden Türkçe yorum Felemenkçe oluyordu); Urduca Arapçadan,
+    Bengalce Hintçe dandasından (`।`, U+0964) ayrıldı; Türkçe çekim ekleri
+    eklendi ("Tedesco yine kaybediyor" artık `tr`).
+- ✅ **Geriye dönük doldurma:** `POST /admin/dil-tespit` → 159 gönderi
+  işaretlendi; "bilinmiyor" 222 → 63 (kalanlar e-posta/emoji/`test` gibi
+  gerçekten dilsiz metinler, onlarda düğme çıkmaması DOĞRU).
+- Kanıt: İngilizce okur (`/akis?dil=en`) için akıştaki 16 yazı gönderisinin
+  11'inde düğme çıkıyor; `GET /ceviri/5507?dil=en` → "The best horror movie
+  I've seen recently"; aynı dilde `{yok:true}`. Backend testleri 2.199/2.199.
+
 ## 2026-09-03 (4. tur) — 🚀 Google arama sonucunda site simgesi yerine genel "küre" ikonu
 
 - ✅ **Teşhis:** Google favicon tarayıcısı dizijpg.com'dan geçerli simge
