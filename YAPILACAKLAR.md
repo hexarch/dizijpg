@@ -8708,3 +8708,44 @@ satırı 320 dp panelde, boş sohbet durumu dar alanda.
 Testler: backend 2250, Flutter tam takım yeşil; oda tarafında 51 + 21 yeni test.
 Emoji döngüsü düzeltmesi geçici geri alınıp testlerin KIRMIZIYA döndüğü ayrıca
 doğrulandı.
+
+## 2026-09-04 (2. tur) — 🚀 MKV desteği · tam ekran · oda yetkisi (1.123.0+190)
+
+- ✅ **MKV DESTEĞİ.** MKV, WebM ile AYNI EBML imzasını taşıdığı için zaten
+  sessizce kabul ediliyor ve `.webm` diye kaydediliyordu; içindeki tipik
+  H.264+AC3 tarayıcıda hiç, Android'de SESSİZ oynuyordu. Film indirmelerinin
+  çoğu MKV — yani en olası dosya sessizce bozuktu. Artık ffprobe ile inceleniyor:
+  kap düzeltme (saniyeler, `-c copy` + `+faststart`) · ses çevirme (AC3/DTS/
+  TrueHD/FLAC/PCM → AAC, görüntü KOPYALANIR) · H.265'e DOKUNULMUYOR (telefonda
+  zaten oynuyor; 2 saatlik filmi x264'e çevirmek 16 çekirdekte 20-40 dk sürer ve
+  makine paylaşımlı — web'de açık uyarı + sahibe elle tetikleme).
+  `ffprobe` MKV ile WebM'i AYIRT EDEMEZ (`matroska,webm`), karar KODEĞE bakar.
+- ✅ **ODA YETKİSİ** (istek: "oda sahibi diğer kullanıcılara yetki verebilmeli").
+  sahip / yetkili / izleyici. Yetkili oynatmayı ve videoyu yönetir; odayı
+  KAPATAMAZ ve yetki DAĞITAMAZ (geri alınamaz kayıp ve kontrolün tamamen
+  kaybı). Yetki kuralı TEK fonksiyonda (`durumYazabilir`) — aynı kuralın iki
+  yere yazılması bugün "üyesi değilsin" hatasını doğurmuştu.
+  Kalp atışı SAHİPTE kaldı: birden fazla tazeleyici damgaları ezer.
+- ✅ **TAM EKRAN** (istek: "yan çevirince otomatik", "alt navigasyon barları
+  kapanmalı emojiler de gizlenmeli", "bir süre tıklanmayınca player şeyleri
+  gitsin"): kabuk çubuğu gizleniyor, kontroller 3 sn'de sönüyor
+  (duraklatılmışken/sürüklerken/klavye açıkken/video yokken SÖNMEZ).
+
+**CANLIDA ÇIKAN ALTI HATA — hiçbiri birim testinde görünmüyordu:**
+1. Bildirimden girişte "üyesi değilsin": kural `girisKarari` ve `odaKapisi`'ne
+   İKİ KEZ yazılmış ve ayrışmıştı. Kapı artık saf katmana soruyor.
+2. Hazırlık kuyruğu 5 dk bekliyordu: tetikleme yalnız `ISCI_GOREVLI`'de
+   çalışıyor ama yüklemeyi nginx dört işçiden HERHANGİ BİRİNE veriyor.
+   Küme yayın kanalıyla duyuruluyor.
+3. ffmpeg HER SEFERİNDE düşüyordu: geçici çıktı `15.hazirlik` — UZANTISIZ;
+   ffmpeg muxer'ı uzantıdan çıkarır. Testler argüman DİZİSİNİ karşılaştırdığı
+   için göremiyordu → ffmpeg'i GERÇEKTEN çalıştıran davranış testi eklendi.
+4. WebM hedefinde ses AAC'ye çevriliyordu — WebM kabı AAC kabul etmez.
+5. Hazırlık sürerken oynatıcı kuruluyordu; dosya yeni ada yazıldığı için
+   `initialize()` askıda kalıp ilerleme %0'da donuyordu.
+6. `KabukTamEkran` bayrağı global: oda ekranı `dispose`ta KOŞULSUZ indiriyor,
+   yoksa odadan çıkan kullanıcıda gezinme çubuğu hiçbir yerde görünmezdi.
+
+Backend 2327 test · Flutter 2614 · analiz temiz. Canlı sunucuda gerçek
+H.264+AC3 MKV uçtan uca (çıktı h264+aac, moov başta) ve yetki tablosunun dokuz
+senaryosu curl ile doğrulandı.
