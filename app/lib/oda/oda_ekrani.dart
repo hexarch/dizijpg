@@ -40,7 +40,12 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'
-    show Clipboard, ClipboardData, SystemChrome, SystemUiMode;
+    show
+        Clipboard,
+        ClipboardData,
+        DeviceOrientation,
+        SystemChrome,
+        SystemUiMode;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -84,6 +89,34 @@ const Duration kontrolSonmeSuresi = Duration(seconds: 3);
 /// Sönme/belirme geçişi. ui-ux-pro-max Animation: 150-300 ms; ani kaybolma
 /// kullanıcıya "bir şey bozuldu" hissi verir.
 const Duration kontrolSonmeGecisi = Duration(milliseconds: 200);
+
+/// Tam ekrandan çıkarken DİKEY kısıtının kaç ms sonra kaldırılacağı.
+///
+/// Kısıt bir an dayatılır ki cihaz gerçekten dönsün; hemen kaldırılsaydı bazı
+/// cihazlar yatayda kalırdı. Kalıcı bırakmak ise kullanıcıyı uygulamanın
+/// tamamında dikeye kilitler — gerekçe [_OdaEkraniState._yonuAyarla]'da.
+const Duration _yonSerbestGecikmesi = Duration(milliseconds: 700);
+
+/// Tam ekranda mesajların videonun üstünde bindirildiği panelin AZAMİ genişliği.
+///
+/// Ekranın %38'i ile sınırlı: sabit 320 dp, dar bir telefonda yatayken bile
+/// videonun üçte birinden fazlasını yerdi. Kullanıcı isteği zaten "panel"
+/// değil bindirme — *"mesajlar videonun sağında emojiler gibi gözükmeli"*.
+const double _bindirmeAzamiGenislik = 320;
+
+/// Videonun kapladığı SİYAH yüzeyin anahtarı — testler genişliğini ölçer.
+///
+/// Dolaylı iddialar (AspectRatio boyu, GestureDetector sırası) 4 Eyl'deki
+/// hatayı yakalayamıyordu: dikeyde tam ekrana geçince yan panel 320 dp alıyor,
+/// videoya 40 dp kalıyordu ama en-boy oranı yine "geçerli" görünüyordu.
+@visibleForTesting
+const Key odaVideoYuzeyiAnahtari = ValueKey('oda-video-yuzeyi');
+
+/// Bindirmede aynı anda en fazla kaç mesaj görünür.
+///
+/// Canlı yayın sohbeti kalıbı: ekranı kaplamamalı, son birkaç satır yeter.
+/// Fazlası videoyu okunmaz hâle getirir.
+const int _bindirmeAzamiSatir = 7;
 
 /// Kontroller ŞU AN sönebilir mi — SAF kural, tek doğru.
 ///
@@ -219,6 +252,15 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   /// girer — çünkü orada gerçekten yeni bir niyet vardır.
   Orientation? _sonYon;
 
+  /// Tam ekrandan çıkarken dayatılan DİKEY kısıtını kaldıracak sayaç.
+  /// (Gerekçe [_yonuAyarla]'da: kalıcı kısıt kullanıcıyı uygulamanın
+  /// tamamında dikeye kilitlerdi.)
+  Timer? _yonKisitiSayaci;
+
+  /// Cihaza GERÇEKTEN bir yön kısıtı uyguladık mı. `dispose` bunu okur;
+  /// oradan `context`e bakmak yasak olduğu için bayrak şart.
+  bool _yonDayatildi = false;
+
   // ---- KONTROLLERİN KENDİLİĞİNDEN SÖNMESİ --------------------------------
 
   /// Oynatma kontrolleri ve tepki şeridi şu an görünür mü.
@@ -299,6 +341,10 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     // yetmez: bayrak global ve açık kalırsa kullanıcı odadan çıktıktan sonra
     // uygulamanın HİÇBİR yerinde gezinme çubuğu göremez.
     KabukTamEkran.sifirla();
+    // YÖN KISITINI KOŞULSUZ GERİ VER — aynı gerekçe: kısıt cihaz genelinde
+    // etkili, açık kalırsa kullanıcı uygulamanın hiçbir yerinde telefonunu
+    // çeviremez ve sebebini asla bulamaz.
+    _yonKisitiniKaldir();
     _sonmeSayaci?.cancel();
     _yoklama?.cancel();
     _kalp?.cancel();
@@ -338,9 +384,14 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   }
 
   /// Tam ekranı açar/kapatır ve sistem çubuklarını buna göre ayarlar.
+  ///
+  /// ***TEK YOL.*** Düğme, geri tuşu ve yön otomatiği ÜÇÜ DE buradan geçer.
+  /// Üçüne ayrı ayrı yazsaydık biri düzelip öteki kalırdı — nitekim 4 Eyl'de
+  /// yön çevirme hiç yazılmadığı için üçü birden kırıktı.
   void _tamEkraniAyarla(bool acik) {
     if (_tamEkran == acik) return;
     setState(() => _tamEkran = acik);
+    _yonuAyarla(acik);
     // UYGULAMANIN alt gezinme çubuğu (kabuk) da gizlensin: sistem çubuklarını
     // saklayıp uygulamanınkini bırakmak "tam ekran"ı yarım bırakırdı.
     KabukTamEkran.ayarla(acik);
@@ -354,6 +405,70 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     // Tam ekrana girerken/çıkarken kontroller görünsün ve sayaç yeniden
     // başlasın: kullanıcı yeni düzeni bir kez görmeli.
     _kontrolleriGoster();
+  }
+
+  /// Tam ekranda cihazı YATAYA, çıkışta DİKEYE çevirir.
+  ///
+  /// ===========================================================================
+  /// NEDEN GEREKLİ (4 Eyl 2026, kullanıcı canlıda bildirdi)
+  /// ===========================================================================
+  /// *"dikey moddayken ekranı büyüt diyince yatay moda geçmiyor sağdaki sohbet
+  /// kocaman oluyor solu komple baskılıyor"* — ölçüldü: 360 dp genişlikte
+  /// sohbet paneli 320 dp alıyor, videoya **40 dp** kalıyordu. Tam ekran
+  /// bayrağı yerleşimi değiştiriyor ama cihaz dikey kalıyordu.
+  ///
+  /// ===========================================================================
+  /// ⚠ KISIT KALICI BIRAKILMAZ
+  /// ===========================================================================
+  /// `setPreferredOrientations([portraitUp])` verip ORADA BIRAKMAK, kullanıcıyı
+  /// uygulamanın TAMAMINDA dikeye kilitler — odadan çıkar, bir daha hiçbir
+  /// ekranda telefonunu çeviremez ve bunun oda ekranından geldiğini asla
+  /// anlayamaz. Bu yüzden dikey yalnız BİR AN dayatılır (cihaz gerçekten
+  /// dönsün diye), sonra kısıt kaldırılır. Aynı disiplin [KabukTamEkran]
+  /// bayrağında da var: global olan şey koşulsuz geri verilir.
+  ///
+  /// Yalnız TELEFONDA çalışır: masaüstü/tablette yön dayatmak anlamsızdır
+  /// (pencere zaten kullanıcının kontrolünde) ve web'de etkisizdir.
+  void _yonuAyarla(bool tamEkran) {
+    if (!_yonDayatilabilir) return;
+    // Bir kısıt UYGULADIK: `dispose` bunu context'e dokunmadan geri alabilsin.
+    _yonDayatildi = true;
+    if (tamEkran) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+      return;
+    }
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    _yonKisitiSayaci?.cancel();
+    _yonKisitiSayaci = Timer(_yonSerbestGecikmesi, _yonKisitiniKaldir);
+  }
+
+  /// Yön kısıtını kaldırır — `dispose`ta da çağrılır, KOŞULSUZ.
+  ///
+  /// `context`e DOKUNMAZ: `dispose` sırasında `View.maybeOf(context)` okumak
+  /// yasaktır. Bunun yerine "kısıt uyguladık mı" bayrağına bakar.
+  void _yonKisitiniKaldir() {
+    _yonKisitiSayaci?.cancel();
+    _yonKisitiSayaci = null;
+    if (!_yonDayatildi) return;
+    _yonDayatildi = false;
+    SystemChrome.setPreferredOrientations([]);
+  }
+
+  /// Yön dayatması yalnız telefonda anlamlı (masaüstü penceresi ve tablet hariç).
+  bool get _yonDayatilabilir {
+    if (kIsWeb) return false;
+    if (defaultTargetPlatform != TargetPlatform.android &&
+        defaultTargetPlatform != TargetPlatform.iOS) {
+      return false;
+    }
+    final gorunum = View.maybeOf(context);
+    if (gorunum == null) return false;
+    final boyut = gorunum.physicalSize / gorunum.devicePixelRatio;
+    if (boyut.isEmpty) return false;
+    return boyut.shortestSide < _telefonKisaKenar;
   }
 
   // -------------------------------------------------------------------------
@@ -1120,38 +1235,62 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         body: const IskeletListe(adet: 4),
       );
     }
-    final genis = MediaQuery.of(context).size.width >= _genisEsik;
-    // GERİ TUŞU tam ekranda ÖNCE tam ekrandan çıkar, odayı kapatmaz: tam ekran
-    // bir ADIMDIR ve geri hareketi bir adım geri almalıdır (aynı gerekçe
-    // `paylas_yorum.dart` önizleme adımında yazılı).
+    final olcu = MediaQuery.of(context).size;
+    final genis = olcu.width >= _genisEsik;
+    // ***YERLEŞİM KARARI YÖNE BAKAR, TAM EKRAN BAYRAĞINA DEĞİL.***
+    //
+    // 4 Eyl 2026, kullanıcı canlıda: *"dikey moddayken ekranı büyüt diyince
+    // yatay moda geçmiyor sağdaki sohbet kocaman oluyor solu komple
+    // baskılıyor"*. Ölçüldü: 360 dp genişlikte yan panel 320 dp alıyor,
+    // videoya 40 dp kalıyordu. Kök sebep yön çevirmenin yazılmamış olmasıydı
+    // (artık yazıldı) ama YALNIZ onu düzeltmek yetmez: yön dayatması cihazda
+    // reddedilebilir (kullanıcı otomatik döndürmeyi kapatmış olabilir, tablet
+    // olabilir). O yüzden dikeyde yan/bindirme düzeni ASLA devreye girmez —
+    // dikeyde sohbet HER ZAMAN videonun altındadır.
+    final yatay = olcu.width > olcu.height;
     return PopScope(
       canPop: _cikiliyor || !_tamEkran,
+      // GERİ TUŞU tam ekranda ÖNCE tam ekrandan çıkar, odayı kapatmaz: tam
+      // ekran bir ADIMDIR ve geri hareketi bir adım geri almalıdır (aynı
+      // gerekçe `paylas_yorum.dart` önizleme adımında yazılı). Çıkış
+      // `_tamEkraniAyarla` üzerinden gider, yani yön de dikeye döner.
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
         _tamEkraniAyarla(false);
       },
       child: _tamEkran
-          ? _tamEkranIskelet(oda)
-          : _normalIskelet(oda, genis: genis),
+          ? _tamEkranIskelet(oda, yatay: yatay)
+          : _normalIskelet(oda, genis: genis && yatay),
     );
   }
 
-  /// TAM EKRAN: AppBar yok, zemin siyah, sohbet sağda kalır.
+  /// TAM EKRAN: AppBar yok, zemin siyah.
   ///
-  /// Kullanıcı isteği birebir: *"sağda sohbet olmaya devam etsin"*. Tam ekranı
-  /// "yalnız video" yapmak kolay olurdu ama odanın amacı BİRLİKTE izlemek;
-  /// sohbeti kapatmak isteyene zaten düğme var.
-  Widget _tamEkranIskelet(Oda oda) {
+  /// YATAYDA sohbet videonun ÜSTÜNE, sağa BİNDİRİLİR — katı panel değil.
+  /// Kullanıcı isteği birebir (4 Eyl): *"mesajlar videonun sağında emojiler
+  /// gibi gözükmeli"*. Katı panel videodan yer çalıyordu; bindirme videoyu tam
+  /// genişlikte bırakır ve sohbet yine sağda kalır.
+  ///
+  /// DİKEYDE (yön dayatması cihazca reddedildiyse) sohbet videonun ALTINDA
+  /// kalır — 360 dp'lik bir ekranda yan yana koymak videoyu 40 dp'ye indirirdi.
+  Widget _tamEkranIskelet(Oda oda, {required bool yatay}) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(child: _tamEkranVideo(oda)),
-            _sohbetPaneli(oda),
-          ],
-        ),
+        child: yatay
+            ? _tamEkranVideo(oda)
+            : LayoutBuilder(
+                builder: (context, k) => Column(
+                  children: [
+                    _videoBolumu(
+                      oda,
+                      videoTavan: _videoTavani(k.maxHeight),
+                      sohbetDugmesi: false,
+                    ),
+                    Expanded(child: _sohbet(oda)),
+                  ],
+                ),
+              ),
       ),
     );
   }
@@ -1267,6 +1406,102 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     );
   }
 
+  /// SOHBET BİNDİRMESİ — yatay/tam ekranda mesajlar videonun ÜSTÜNDE, sağda.
+  ///
+  /// ===========================================================================
+  /// NEDEN PANEL DEĞİL BİNDİRME (4 Eyl 2026, kullanıcı isteği)
+  /// ===========================================================================
+  /// *"mesajlar videonun sağında emojiler gibi gözükmeli"*. Eskiden sohbet
+  /// `Row` içinde 320 dp'lik KATI bir panel idi ve videodan o kadar yer
+  /// çalıyordu. Bindirme, videoyu tam genişlikte bırakır; sohbet yine sağda
+  /// durur ama videonun üstünde yüzer — canlı yayın kalıbı.
+  ///
+  /// ===========================================================================
+  /// OKUNABİLİRLİK: HER SATIRIN KENDİ ZEMİNİ VAR
+  /// ===========================================================================
+  /// Video karesi bir anda bembeyaz olabilir; düz beyaz metin o karede
+  /// TAMAMEN kaybolur. Bu yüzden her balonun altında yarı saydam siyah bir
+  /// zemin var (ui-ux-pro-max, Color Contrast: en az 4.5:1 — siyah zemin
+  /// üstünde beyaz metin sahneden BAĞIMSIZ olarak bu oranı aşar). Yalnız
+  /// gölge/kontur denenseydi açık zeminlerde yine sınırda kalırdı.
+  ///
+  /// ===========================================================================
+  /// DOKUNMAYI YUTMAZ
+  /// ===========================================================================
+  /// Mesaj listesi [IgnorePointer] içinde: videoya dokunup kontrolleri geri
+  /// getirmek, bindirmenin altında kalan yerlerde de çalışmalı. Yazı alanı ve
+  /// üye satırı ise gerçek dokunma alanı — onlar hariç tutuldu.
+  Widget _sohbetBindirmesi(Oda oda) {
+    final en = MediaQuery.of(context).size.width;
+    final genislik = math.min(_bindirmeAzamiGenislik, en * 0.38);
+    // Yalnız SON birkaç satır: bindirme ekranı kaplamamalı. Sistem satırları
+    // da dahil, çünkü "X odaya katıldı" izlerken görülmesi gereken bir olay.
+    final son = _mesajlar.length <= _bindirmeAzamiSatir
+        ? _mesajlar
+        : _mesajlar.sublist(_mesajlar.length - _bindirmeAzamiSatir);
+    return Positioned(
+      top: 44, // üst köşedeki düğmelerin altından başla
+      right: 0,
+      bottom: 0,
+      width: genislik,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Üye avatarları bindirmede de görünür: kiminle izlediğini bilmek
+          // tam ekranda da gerekli. Bindirmede KÜÇÜK boy — videonun üstünde
+          // yer kaplamamalı.
+          _uyeSatiri(oda, dar: true, bindirme: true),
+          Expanded(
+            child: IgnorePointer(
+              // TERS LİSTE (`reverse: true`): satırlar ALTTAN yukarı dizilir,
+              // yani en yeni mesaj hep en altta ve görünür kalır; sığmayanlar
+              // ÜSTTEN kırpılır. Düz bir `Column` kullanılamaz — 780×360'ta
+              // yedi satır + üye satırı + yazı alanı 140 dp TAŞIYORDU (bu
+              // dosyadaki taşma testi yakaladı). Liste ayrıca kaydırmıyor
+              // (`NeverScrollable`): bindirme salt görsel, sohbetin kendisi
+              // dikeydeki panelde.
+              child: ListView(
+                reverse: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                children: [
+                  for (var i = son.length - 1; i >= 0; i--)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(6, 2, 6, 2),
+                      child: Opacity(
+                        // ESKİ SATIRLAR SOLUK: en yeni altta ve en okunur.
+                        // Hepsi aynı parlaklıkta olsaydı göz en yeniyi
+                        // bulamazdı (uçuşan tepkilerdeki solma mantığı).
+                        opacity: _bindirmeSaydamlik(i, son.length),
+                        child: _BindirmeSatiri(
+                          mesaj: son[i],
+                          benim: son[i].kullaniciId == _benimId,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          // YAZMA YOLU KAYBOLMAZ: bindirme salt okunur olsaydı tam ekranda
+          // sohbete katılmak imkânsızlaşırdı. Bu satır dokunulabilir.
+          _sonebilir(_yaziAlani(saydam: true)),
+        ],
+      ),
+    );
+  }
+
+  /// Bindirmedeki satırın saydamlığı: en yeni tam görünür, eskiler solar.
+  ///
+  /// Son üç satır tam opak — göz oraya bakıyor. Daha eskiler kademeli soluyor
+  /// ama 0,35'in altına inmiyor: tamamen kaybolan bir satır "mesajım gitmedi"
+  /// sanılır.
+  double _bindirmeSaydamlik(int sira, int toplam) {
+    final gerideKalan = toplam - 1 - sira;
+    if (gerideKalan <= 2) return 1;
+    return (1 - (gerideKalan - 2) * 0.18).clamp(0.35, 1.0);
+  }
+
   /// Tam ekrandaki video yüzeyi: video ortada, kontroller ve tepkiler ÜSTÜNE
   /// bindirilmiş. Bindirme şart — tam ekranda altta ayrı bir şerit olsaydı
   /// "tam ekran" olmazdı.
@@ -1275,6 +1510,10 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     return Stack(
       children: [
         Positioned.fill(
+          // Testler videonun GERÇEK genişliğini bu anahtarla ölçüyor: 4 Eyl'de
+          // dikeyde tam ekrana geçince video 40 dp'ye düşmüştü ve hiçbir
+          // dolaylı iddia bunu yakalamıyordu.
+          key: odaVideoYuzeyiAnahtari,
           child: _dokunmaKatmani(
             cocuk: ColoredBox(
               color: Colors.black,
@@ -1296,6 +1535,8 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
             child: Stack(children: [for (final t in _ucusan) _ucusanCiz(t)]),
           ),
         ),
+        // SOHBET BİNDİRMESİ — videonun sağında, tıpkı uçuşan tepkiler gibi.
+        if (_sohbetAcik) _sohbetBindirmesi(oda),
         // Üst düğmeler de kontrollerle BİRLİKTE söner: "sadece video gözüksün"
         // isteği köşede duran iki ikonu da kapsıyor. Geri gelmeleri için
         // ekrana dokunmak yetiyor.
@@ -1406,6 +1647,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
             // (letterbox) — kırpmaktansa bant: kadraj bozulmasın.
             _dokunmaKatmani(
               cocuk: Container(
+                key: odaVideoYuzeyiAnahtari,
                 width: double.infinity,
                 color: Colors.black,
                 constraints: BoxConstraints(maxHeight: videoTavan),
@@ -1929,9 +2171,15 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     return LayoutBuilder(
       builder: (context, k) => Column(
         children: [
-          // Alan gerçekten darsa (yatay telefon) üye şeridi DÜŞER: mesajlar ve
-          // yazı alanı ondan önce gelir. Şerit sabit dursaydı Column taşardı.
-          if (k.maxHeight > 200) _uyeSeridi(oda),
+          // ÜYE SATIRI ARTIK HİÇ GİZLENMİYOR — yalnız KÜÇÜLÜYOR.
+          //
+          // Eskiden `if (k.maxHeight > 200)` idi ve kısa alanlarda düşüyordu.
+          // Kullanıcı 4 Eyl'de bildirdi: *"dikey modda odadaki kişiler
+          // gözükmüyor ... sohbetin sol yukarısında logoları dizilmeli"*.
+          // "Kiminle izliyorum" sorusu bir odanın en temel bilgisi; yer
+          // sıkışınca ilk feda edilecek şey o olamaz. Dar alanda avatarlar
+          // küçülür (bkz. [_uyeSatiri]), listeden DÜŞMEZ.
+          _uyeSatiri(oda, dar: k.maxHeight < 200),
           Expanded(
             child: _mesajlar.isEmpty
                 // BOŞ DURUM KAYDIRILABİLİR bir listenin içinde: `BosDurum`
@@ -1977,17 +2225,30 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     );
   }
 
-  Widget _uyeSeridi(Oda oda) {
-    return SizedBox(
-      height: 56,
+  /// ODADAKİ KİŞİLER — sohbetin SOL ÜSTÜNDE, avatarlar yan yana.
+  ///
+  /// Kullanıcı isteği (4 Eyl 2026, birebir): *"dikey modda sol yukarıda odadaki
+  /// kişiler gözükmeli logoları dizilmeli sohbetin sol yukarısında"*.
+  ///
+  /// [dar] — alan sıkışık (yatay telefon): avatarlar küçülür ama GİZLENMEZ.
+  /// [bindirme] — tam ekranda videonun üstünde çiziliyor; okunabilirlik için
+  /// yarı saydam koyu bir zemin gerekir (video karesi beyaz olabilir).
+  Widget _uyeSatiri(Oda oda, {bool dar = false, bool bindirme = false}) {
+    final yaricap = dar ? 12.0 : 18.0;
+    final yukseklik = dar ? 34.0 : 56.0;
+    final satir = SizedBox(
+      height: yukseklik,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.symmetric(horizontal: bindirme ? 6 : 10),
         itemCount: oda.uyeler.length,
         itemBuilder: (context, i) {
           final u = oda.uyeler[i];
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            padding: EdgeInsets.symmetric(
+              horizontal: dar ? 2 : 4,
+              vertical: dar ? 3 : 6,
+            ),
             child: Tooltip(
               message: [
                 '@${u.ad}',
@@ -2018,7 +2279,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                       child: KullaniciAvatari(
                         url: dosyaUrl(u.avatar),
                         kullaniciAdi: u.ad,
-                        yaricap: 18,
+                        yaricap: yaricap,
                       ),
                     ),
                     if (!u.bekliyor && u.cevrimici)
@@ -2026,14 +2287,14 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                         right: 0,
                         bottom: 0,
                         child: Container(
-                          width: 10,
-                          height: 10,
+                          width: dar ? 7 : 10,
+                          height: dar ? 7 : 10,
                           decoration: BoxDecoration(
                             color: DiziRenkler.cevrimiciYesil,
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: DiziRenkler.koyuGri,
-                              width: 2,
+                              width: dar ? 1 : 2,
                             ),
                           ),
                         ),
@@ -2044,7 +2305,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                         top: 0,
                         child: Icon(
                           Icons.star,
-                          size: 12,
+                          size: dar ? 9 : 12,
                           color: DiziRenkler.sariMetin,
                         ),
                       )
@@ -2056,7 +2317,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                         top: 0,
                         child: Icon(
                           Icons.shield_outlined,
-                          size: 12,
+                          size: dar ? 9 : 12,
                           color: DiziRenkler.sariMetin,
                         ),
                       ),
@@ -2067,6 +2328,16 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
           );
         },
       ),
+    );
+    if (!bindirme) return satir;
+    // BİNDİRMEDE ZEMİN ŞART: video karesi beyaz olduğunda avatar kenarları ve
+    // rozet ikonları kaybolur (ui-ux-pro-max, Color Contrast).
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.35),
+        borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(12)),
+      ),
+      child: satir,
     );
   }
 
@@ -2137,11 +2408,13 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     }
   }
 
-  Widget _yaziAlani() {
+  /// [saydam] — tam ekran bindirmesinde çiziliyor: kutunun kendi koyu zemini
+  /// olur, yoksa video karesinin üstünde ne çerçeve ne ipucu metni okunur.
+  Widget _yaziAlani({bool saydam = false}) {
     return Padding(
       padding: EdgeInsets.only(
-        left: 10,
-        right: 10,
+        left: saydam ? 6 : 10,
+        right: saydam ? 6 : 10,
         top: 4,
         bottom: MediaQuery.of(context).viewInsets.bottom > 0 ? 8 : 10,
       ),
@@ -2152,15 +2425,21 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
               controller: _metin,
               focusNode: _metinOdak,
               minLines: 1,
-              maxLines: 4,
+              maxLines: saydam ? 2 : 4,
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => _mesajGonder(),
+              style: saydam ? const TextStyle(color: Colors.white) : null,
               decoration: InputDecoration(
                 hintText: 'Mesaj yaz...'.c,
                 isDense: true,
-                contentPadding: const EdgeInsets.symmetric(
+                filled: saydam,
+                fillColor: saydam ? Colors.black.withValues(alpha: 0.55) : null,
+                hintStyle: saydam
+                    ? TextStyle(color: Colors.white.withValues(alpha: 0.7))
+                    : null,
+                contentPadding: EdgeInsets.symmetric(
                   horizontal: 14,
-                  vertical: 12,
+                  vertical: saydam ? 8 : 12,
                 ),
               ),
             ),
@@ -2273,6 +2552,71 @@ class _KodRozeti extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Tam ekran bindirmesindeki tek mesaj — videonun ÜSTÜNDE okunmalı.
+///
+/// [_MesajSatiri]'nın kopyası DEĞİL, kasten ayrı: oradaki satır bir panelin
+/// içinde, bilinen bir zemin üstünde yaşıyor ve avatar + zaman damgası +
+/// "tekrar dene" gibi ayrıntılar taşıyor. Burada zemin BİLİNMEZ (her kare
+/// farklı) ve yer dar; ayrıntı değil OKUNABİLİRLİK önceliklidir.
+///
+/// Zemin yarı saydam siyah: beyaz metin sahneden bağımsız olarak 4.5:1
+/// kontrast oranını aşar (ui-ux-pro-max, Color Contrast). Yalnız metin gölgesi
+/// denenseydi bembeyaz bir karede yine sınırda kalırdı.
+class _BindirmeSatiri extends StatelessWidget {
+  final OdaMesaj mesaj;
+  final bool benim;
+  const _BindirmeSatiri({required this.mesaj, required this.benim});
+
+  @override
+  Widget build(BuildContext context) {
+    final sistem = mesaj.sistem;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: sistem ? 0.4 : 0.58),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        child: sistem
+            ? Text(
+                mesaj.sistemMetni(),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontStyle: FontStyle.italic,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              )
+            : Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '${mesaj.ad ?? ''}: ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        // Kendi adın marka sarısı: yoğun bir sohbette kendi
+                        // satırını bir bakışta bulmak.
+                        color: benim
+                            ? DiziRenkler.acikSari
+                            : Colors.white.withValues(alpha: 0.75),
+                      ),
+                    ),
+                    TextSpan(
+                      text: mesaj.metin ?? '',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                style: const TextStyle(fontSize: 12, height: 1.3),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
       ),
     );
   }
