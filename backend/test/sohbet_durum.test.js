@@ -98,3 +98,44 @@ test('sohbet_durum.js Dockerfile COPY listesinde', () => {
   const dockerfile = fs.readFileSync(path.join(KOK, 'Dockerfile'), 'utf8');
   assert.match(dockerfile, /\bsohbet_durum\.js\b/);
 });
+
+// ---- Emoji efekti (5 Eyl 2026) ----
+import {
+  SOHBET_EFEKT_MS, sohbetEfektEmoji, sohbetEfektYaz, sohbetEfektOku,
+} from '../sohbet_durum.js';
+
+test('efekt emojisi: yalnız resimsi karakter, en çok 16 birim', () => {
+  assert.equal(sohbetEfektEmoji('🔥'), '🔥');
+  assert.equal(sohbetEfektEmoji('❤️'), '❤️');
+  assert.equal(sohbetEfektEmoji('👍🏽'), '👍🏽');
+  assert.equal(sohbetEfektEmoji('👨‍👩‍👧'), '👨‍👩‍👧');
+  assert.equal(sohbetEfektEmoji(' 🎉 '), '🎉');
+  assert.equal(sohbetEfektEmoji('merhaba'), null);
+  assert.equal(sohbetEfektEmoji('🔥x'), null);
+  assert.equal(sohbetEfektEmoji('<script>'), null);
+  assert.equal(sohbetEfektEmoji(''), null);
+  assert.equal(sohbetEfektEmoji(42), null);
+  assert.equal(sohbetEfektEmoji('🔥'.repeat(9)), null);
+});
+
+test('efekt TTL içinde okunur, dışında null; damga korunur', () => {
+  const h = new Map();
+  sohbetEfektYaz(h, '3:7', '🎉', T0);
+  assert.deepEqual(sohbetEfektOku(h, '3:7', T0), { emoji: '🎉', z: T0 });
+  assert.deepEqual(sohbetEfektOku(h, '3:7', T0 + SOHBET_EFEKT_MS - 1), { emoji: '🎉', z: T0 });
+  assert.equal(sohbetEfektOku(h, '3:7', T0 + SOHBET_EFEKT_MS), null);
+  assert.equal(sohbetEfektOku(h, '7:3', T0), null);
+});
+
+test('yeni efekt eskisini ezer (son dokunuş kazanır)', () => {
+  const h = new Map();
+  sohbetEfektYaz(h, '3:7', '🎉', T0);
+  sohbetEfektYaz(h, '3:7', '🔥', T0 + 500);
+  assert.deepEqual(sohbetEfektOku(h, '3:7', T0 + 600), { emoji: '🔥', z: T0 + 500 });
+});
+
+test('server.js: /sohbet-efekt ucu var, /mesajlar efekt alanı döner', () => {
+  assert.match(SERVER, /app\.post\('\/sohbet-efekt', girisZorunlu, sohbetEfektLimiti/);
+  assert.match(SERVER, /efekt: sohbetEfektOku\(efektler, `\$\{partnerId\}:\$\{req\.kullanici\.id\}`\)/);
+  assert.match(SERVER, /abone\('sohbet_efekt'/);
+});

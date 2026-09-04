@@ -17,6 +17,7 @@ import 'dart:io';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/tepki.dart';
+import 'package:dizijpg/hareketli_emoji.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -69,11 +70,26 @@ void main() {
         .whereType<File>()
         .where((f) => f.path.endsWith('.json'))
         .toList();
+    // 5 Eyl 2026: harita `hareketli_emoji.dart`e taşındı ve sohbet emoji
+    // paneli için 70+ emojiye genişledi. Ölçüt artık: haritadaki HER emojinin
+    // dosyası var, klasördeki HER dosya haritada (sahipsiz varlık yok) ve
+    // tepki emojilerinin hepsi haritada.
+    final adlar = {for (final f in dosyalar) f.uri.pathSegments.last};
+    for (final e in hareketliEmojiDosyalari.entries) {
+      expect(
+        adlar,
+        contains('${e.value}.json'),
+        reason: '${e.key} için dosya yok',
+      );
+    }
     expect(
       dosyalar.length,
-      mesajTepkiEmojileri.length,
-      reason: 'her tepki emojisi için bir animasyon dosyası olmalı',
+      hareketliEmojiDosyalari.length,
+      reason: 'haritada olmayan (sahipsiz) animasyon dosyası var',
     );
+    for (final e in mesajTepkiEmojileri) {
+      expect(hareketliEmojiDosyasi(e), isNotNull, reason: '$e haritada yok');
+    }
     for (final f in dosyalar) {
       final ad = f.uri.pathSegments.last;
       // Ad Unicode kod noktası olmalı (ör. 1f60d.json, 2764_fe0f.json) —

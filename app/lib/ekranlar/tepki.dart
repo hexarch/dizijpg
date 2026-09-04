@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import '../api.dart';
+import '../hareketli_emoji.dart';
 import '../ceviri.dart';
 import '../puan.dart';
 import 'puan_sec_sheet.dart';
@@ -12,23 +13,10 @@ import 'giris_istem.dart';
 /// korkmuş, sıkılmış, ağlamış, mutlu — dizi/film/kişi tepkileri.
 const tepkiEmojileri = ['😍', '😂', '😮', '😢', '😱', '🥱', '😭', '😄'];
 
-/// Emoji karakteri → Noto Animated Emoji dosya adı (Unicode kod noktası).
-///
-/// VERİTABANI YİNE EMOJİ KARAKTERİ SAKLAR (sunucudaki CHECK listesi aynı) —
-/// bu harita yalnız GÖRÜNÜM katmanıdır. Kod noktası tabloya girseydi görsel
-/// setini değiştirmek şema değişikliği gerektirirdi.
-const _tepkiDosyalari = {
-  '😄': '1f604',
-  '😢': '1f622',
-  '😮': '1f62e',
-  '🥱': '1f971',
-  '😭': '1f62d',
-  '😂': '1f602',
-  '😱': '1f631',
-  '😍': '1f60d',
-  // Yalnız MESAJ tepkilerinde (md. 43): çift tıklama kısayolu.
-  '❤️': '2764_fe0f',
-};
+/// Emoji → Lottie dosyası haritası `lib/hareketli_emoji.dart`e taşındı
+/// (5 Eyl 2026): sohbet emoji paneli, büyük emoji balonu ve tepkiler AYNI
+/// sözlüğü okur. VERİTABANI YİNE EMOJİ KARAKTERİ SAKLAR (sunucudaki CHECK
+/// listesi aynı) — harita yalnız GÖRÜNÜM katmanıdır.
 
 /// Mesaj (DM) tepkileri: içerik seti + başa KALP.
 ///
@@ -158,7 +146,7 @@ class _TepkiIkonuState extends State<TepkiIkonu>
 
   @override
   Widget build(BuildContext context) {
-    final dosya = _tepkiDosyalari[widget.emoji];
+    final dosya = hareketliEmojiDosyasi(widget.emoji);
     if (dosya == null || _yuklenemedi) {
       // Bilinmeyen emoji (sunucu listesi genişlemiş olabilir) ya da bozuk
       // varlık: sessizce sistem fontuna düş.

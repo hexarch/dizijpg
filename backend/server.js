@@ -63,6 +63,7 @@ import {
 import {
   SOHBET_DURUM_MS,
   sohbetDurumTur, sohbetDurumYaz, sohbetDurumSil, sohbetDurumOku,
+  sohbetEfektEmoji, sohbetEfektYaz, sohbetEfektOku,
 } from './sohbet_durum.js';
 import {
   yapimlariCikar, izlenenAnahtarlar, izlenmeOzeti,
@@ -15299,6 +15300,36 @@ app.post('/yaziyor', girisZorunlu, sarici(async (req, res) => {
   res.json({ tamam: true });
 }));
 
+// ---------- Emoji efekti (5 Eyl 2026) ----------
+// Büyük emoji balonuna dokunan tarafın patlaması karşı tarafa da gider;
+// alıcı sohbetteyse `GET /mesajlar` yanıtındaki `efekt` alanıyla alır.
+// Yazıyor damgasıyla aynı kalıp: bellek + küme yayını, kalıcılık yok.
+const efektler = new Map();
+abone('sohbet_efekt', (v) => {
+  if (!v || typeof v.a !== 'string' || !Number.isFinite(v.z)) return;
+  const emoji = sohbetEfektEmoji(v.e);
+  if (emoji) sohbetEfektYaz(efektler, v.a, emoji, v.z);
+});
+const sohbetEfektLimiti = hizLimiti(300, (req) => `se:${req.kullanici.id}`);
+app.post('/sohbet-efekt', girisZorunlu, sohbetEfektLimiti, sarici(async (req, res) => {
+  const emoji = sohbetEfektEmoji(req.body?.emoji);
+  if (!emoji) return res.status(400).json({ hata: 'Geçersiz emoji' });
+  const k = await havuz.query(
+    'SELECT id FROM kullanicilar WHERE kullanici_adi=$1',
+    [String(req.body?.kullanici_adi || '')]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const partnerId = k.rows[0].id;
+  // Engelli çifte efekt de gitmez (mesaj/tepki kapılarıyla aynı kural).
+  if (await engelliMi(req.kullanici.id, partnerId)) {
+    return res.status(403).json({ hata: 'Bu kullanıcıyla iletişim kapalı' });
+  }
+  const anahtar = `${req.kullanici.id}:${partnerId}`;
+  const zaman = Date.now();
+  sohbetEfektYaz(efektler, anahtar, emoji, zaman);
+  yayinla('sohbet_efekt', { a: anahtar, e: emoji, z: zaman });
+  res.json({ tamam: true });
+}));
+
 // ---------- özel mesajlara emoji tepkisi (istek listesi md. 43) ----------
 //
 // ***** TEPKİ EMOJİSİ BİLEREK ŞİFRELENMEZ (AÇIK ÜSTVERİ) *****
@@ -15667,6 +15698,8 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     durum: durum,
     // 'bekliyor' | 'red' | null — eski istemci alanı tanımaz, görmezden gelir.
     istek,
+    // Karşı tarafın son 8 sn içindeki emoji efekti ({emoji, z}) ya da null.
+    efekt: sohbetEfektOku(efektler, `${partnerId}:${req.kullanici.id}`),
   });
 }));
 

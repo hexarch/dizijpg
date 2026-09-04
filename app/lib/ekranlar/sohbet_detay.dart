@@ -141,77 +141,132 @@ class _SohbetDetayEkraniState extends State<SohbetDetayEkrani> {
 
   /// Tema seçici: balon rengi yuvarlakları — seçilen anında kaydedilir,
   /// açık sohbet ekranı [SohbetTemalari.nesil] üzerinden yeniden okur.
+  /// Tema seçici (5 Eyl 2026 yenilemesi): üstte TAM TEMALAR (gradyan zemin +
+  /// iki balonlu mini önizleme, Telegram'ın tema kartları), altta DÜZ RENKLER
+  /// (31 Ağu'nun daireleri). Seçince anında uygulanır ve kapanır.
   Future<void> _temaSec() => showModalBottomSheet<void>(
     context: context,
     backgroundColor: DiziRenkler.koyuGri,
+    showDragHandle: true,
+    // Küçük ekranda (320×568) içerik sayfayı aşar: kaydırılır, tavan %85.
+    isScrollControlled: true,
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+    ),
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
     ),
-    builder: (sheetContext) => SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 18, 20, 22),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.palette_outlined, size: 20, color: DiziRenkler.sari),
-                const SizedBox(width: 8),
-                Text(
-                  'Tema özelleştir'.c,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 14,
-              runSpacing: 14,
-              children: [
-                for (final t in SohbetTemalari.listesi)
-                  InkWell(
-                    key: Key('tema-${t.anahtar}'),
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () async {
-                      await SohbetTemalari.sec(widget.kullaniciAdi, t);
-                      if (mounted) setState(() => _tema = t);
-                      if (sheetContext.mounted) Navigator.pop(sheetContext);
-                    },
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: t.balon,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: t.anahtar == _tema.anahtar
-                                  ? DiziRenkler.metin
-                                  : Colors.transparent,
-                              width: 3,
-                            ),
-                          ),
-                          child: t.anahtar == _tema.anahtar
-                              ? Icon(Icons.check, color: t.yazi)
-                              : null,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(t.ad.c, style: const TextStyle(fontSize: 12)),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ],
+    builder: (sheetContext) {
+      Future<void> sec(SohbetTema t) async {
+        await SohbetTemalari.sec(widget.kullaniciAdi, t);
+        if (mounted) setState(() => _tema = t);
+        if (sheetContext.mounted) Navigator.pop(sheetContext);
+      }
+
+      Widget baslik(String metin) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 14, 20, 8),
+        child: Text(
+          metin,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: DiziRenkler.metin54,
+          ),
         ),
-      ),
-    ),
+      );
+
+      return SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.palette_outlined,
+                      size: 20,
+                      color: DiziRenkler.sari,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Tema özelleştir'.c,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              baslik('Temalar'.c),
+              SizedBox(
+                height: 168,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  children: [
+                    for (final t in SohbetTemalari.tamTemalar)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: _TemaKarti(
+                          key: Key('tema-${t.anahtar}'),
+                          tema: t,
+                          secili: t.anahtar == _tema.anahtar,
+                          onTap: () => sec(t),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              baslik('Renkler'.c),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 22),
+                child: Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    for (final t in SohbetTemalari.duzRenkler)
+                      InkWell(
+                        key: Key('tema-${t.anahtar}'),
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () => sec(t),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              // 6 daire × (44 + 12) = 336 dp: 390 dp'de tek satır.
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: t.balon,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: t.anahtar == _tema.anahtar
+                                      ? DiziRenkler.metin
+                                      : Colors.transparent,
+                                  width: 3,
+                                ),
+                              ),
+                              child: t.anahtar == _tema.anahtar
+                                  ? Icon(Icons.check, color: t.yazi)
+                                  : null,
+                            ),
+                            const SizedBox(height: 6),
+                            Text(t.ad.c, style: const TextStyle(fontSize: 12)),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
   );
 
   Widget _eylem({
@@ -528,6 +583,128 @@ class _SohbetDetayEkraniState extends State<SohbetDetayEkrani> {
                 ],
               ),
             ),
+    );
+  }
+}
+
+/// Tam tema kartı: gradyan zemin + silik desen + iki mini balon + ad.
+/// Seçili kart marka sarısıyla çerçevelenir ve onay rozeti taşır.
+class _TemaKarti extends StatelessWidget {
+  final SohbetTema tema;
+  final bool secili;
+  final VoidCallback onTap;
+
+  const _TemaKarti({
+    super.key,
+    required this.tema,
+    required this.secili,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final acik = DiziRenkler.acik;
+    final renkler = tema.zeminRenkleri(acik)!;
+    Widget balon(Color renk, bool sag) => Align(
+      alignment: sag ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        width: 46,
+        height: 16,
+        decoration: BoxDecoration(
+          color: renk,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(8),
+            topRight: const Radius.circular(8),
+            bottomLeft: Radius.circular(sag ? 8 : 2),
+            bottomRight: Radius.circular(sag ? 2 : 8),
+          ),
+        ),
+      ),
+    );
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 104,
+            height: 138,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: secili ? DiziRenkler.sari : DiziRenkler.metin12,
+                width: secili ? 3 : 1,
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(13),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: renkler,
+                      ),
+                    ),
+                  ),
+                  if (tema.desen != null)
+                    CustomPaint(
+                      painter: SohbetDeseni(
+                        ikon: tema.desen!,
+                        renk: (acik ? Colors.black : Colors.white).withValues(
+                          alpha: 0.10,
+                        ),
+                      ),
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 22, 10, 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        balon(tema.karsiBalon(acik), false),
+                        const SizedBox(height: 6),
+                        balon(tema.balon, true),
+                        const SizedBox(height: 6),
+                        balon(tema.karsiBalon(acik), false),
+                      ],
+                    ),
+                  ),
+                  if (secili)
+                    Positioned(
+                      top: 6,
+                      right: 6,
+                      child: Container(
+                        width: 22,
+                        height: 22,
+                        decoration: const BoxDecoration(
+                          color: DiziRenkler.sari,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.check,
+                          size: 15,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            tema.ad.c,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: secili ? FontWeight.w700 : FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

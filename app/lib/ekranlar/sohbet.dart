@@ -20,8 +20,10 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../oda/oda_sheet.dart';
 import '../dosya_oku.dart';
+import '../emoji_efekti.dart';
 import '../gorsel_basliklari.dart';
 import '../gorusme/arama_dugmeleri.dart';
+import '../hareketli_emoji.dart';
 import '../medya_yukle.dart';
 import '../yalniz_emoji.dart';
 import '../yerel_gorsel.dart';
@@ -34,6 +36,7 @@ import 'medya_goster.dart';
 import 'medya_inceleme.dart';
 import 'icerik_sec.dart';
 import 'gif_sec.dart';
+import 'emoji_paneli.dart';
 import 'ortak.dart';
 import 'ses.dart';
 
@@ -110,6 +113,21 @@ bool _sohbetSatirlariAyni(List<dynamic>? a, List<dynamic> b) {
     }
   }
   return true;
+}
+
+/// İki ardışık mesaj AYNI GRUPTA mı (5 Eyl 2026, Telegram gruplama)?
+///
+/// Aynı gönderen + aralarında en çok [mesajGrupAraligi] varsa balonlar
+/// birbirine yaklaşır ve kuyruk (sivri köşe) yalnız grubun SON balonunda
+/// çizilir. Tarih eksikse gruplanmaz.
+const Duration mesajGrupAraligi = Duration(minutes: 3);
+
+bool mesajGrubuAyni(Map<String, dynamic> a, Map<String, dynamic> b) {
+  if (a['gonderen_id'] != b['gonderen_id']) return false;
+  final ta = DateTime.tryParse(a['tarih'] as String? ?? '');
+  final tb = DateTime.tryParse(b['tarih'] as String? ?? '');
+  if (ta == null || tb == null) return false;
+  return tb.difference(ta).abs() <= mesajGrupAraligi;
 }
 
 /// Avatar boyu ve satır dolgusu — testler bu sabitleri ölçer.
@@ -994,6 +1012,14 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// yayını buradaki kopyayı tazeler.
   SohbetTema _sohbetTema = SohbetTemalari.listesi.first;
 
+  /// Emoji paneli açık mı (klavyenin yerine; 5 Eyl 2026). Yazı kutusu odak
+  /// alınca kapanır, geri tuşu önce paneli kapatır.
+  bool _emojiPaneliAcik = false;
+
+  /// Karşı taraftan son alınan efektin damgası: aynı efekt her yoklamada
+  /// yeniden oynamasın; ilk yüklemede eski efekt oynatılmaz.
+  int? _sonEfektZ;
+
   /// Bu sohbet bekleyen bir MESAJ İSTEĞİ mi? Sunucudan gelir:
   /// 'bekliyor' | 'red' | null. Null değilse yanıt kutusu yerine
   /// Kabul et / Reddet çubuğu çizilir (24 Ağu 2026 kullanıcı isteği:
@@ -1154,6 +1180,54 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     });
   }
 
+  /// Klavye açılınca (kutu odak alınca) emoji paneli kapanır: ikisi aynı
+  /// anda ekranın yarısını yer.
+  void _odakDegisti() {
+    if (_metinOdak.hasFocus && _emojiPaneliAcik && mounted) {
+      setState(() => _emojiPaneliAcik = false);
+    }
+  }
+
+  /// Gülen yüz düğmesi: panel kapalıysa klavyeyi indirip paneli açar,
+  /// açıksa paneli kapatıp klavyeyi geri getirir (Telegram davranışı).
+  void _emojiPaneliDegistir() {
+    if (_emojiPaneliAcik) {
+      setState(() => _emojiPaneliAcik = false);
+      _metinOdak.requestFocus();
+      return;
+    }
+    _metinOdak.unfocus();
+    setState(() => _emojiPaneliAcik = true);
+  }
+
+  /// Panelden seçilen emojiyi İMLEÇ KONUMUNA ekler (seçili metin varsa onun
+  /// yerine). Kutunun listeleri (`_yaziVar`, yazıyor sinyali) kendiliğinden
+  /// tetiklenir.
+  void _emojiEkle(String emoji) {
+    final t = _metin.text;
+    final sec = _metin.selection;
+    final basla = sec.isValid ? sec.start : t.length;
+    final bitir = sec.isValid ? sec.end : t.length;
+    final yeni = t.replaceRange(basla, bitir, emoji);
+    _metin.value = TextEditingValue(
+      text: yeni,
+      selection: TextSelection.collapsed(offset: basla + emoji.length),
+    );
+    EmojiPaneli.kaydet(emoji);
+  }
+
+  /// Ekranda emoji patlaması; [gonder] ise karşı tarafa da iletilir
+  /// (o da sohbetteyse aynı efekti görür — Telegram'ın etkileşimli emojisi).
+  void _efektOynat(String emoji, {Offset? kaynak, bool gonder = false}) {
+    if (!mounted) return;
+    EmojiEfekti.oynat(context, emoji, kaynak: kaynak);
+    if (!gonder) return;
+    Api.post('/sohbet-efekt', {
+      'kullanici_adi': widget.kullaniciAdi,
+      'emoji': emoji,
+    }).catchError((_) => null);
+  }
+
   /// Kutu doluluk bayrağını günceller (ikon gizleme — bkz. [_yaziVar]).
   void _yaziVarGuncelle() {
     final dolu = _metin.text.trim().isNotEmpty;
@@ -1176,6 +1250,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     _yukle(ilk: true);
     _metin.addListener(_yaziyorBildir);
     _metin.addListener(_yaziVarGuncelle);
+    _metinOdak.addListener(_odakDegisti);
     _temaYukle();
     SohbetTemalari.nesil.addListener(_temaYukle);
     WidgetsBinding.instance.addObserver(this);
@@ -1265,6 +1340,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     _kaydedici?.dispose();
     _metin.removeListener(_yaziyorBildir);
     _metin.removeListener(_yaziVarGuncelle);
+    _metinOdak.removeListener(_odakDegisti);
     SohbetTemalari.nesil.removeListener(_temaYukle);
     _metin.dispose();
     _metinOdak.dispose();
@@ -1675,6 +1751,18 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       final icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
       final gonderiler = d['gonderiler'] as Map<String, dynamic>? ?? {};
       final guncellemeler = d['guncellemeler'] as List<dynamic>? ?? const [];
+      // Karşı tarafın emoji efekti (5 Eyl 2026): sunucu son 8 sn içindekini
+      // `efekt: {emoji, z}` olarak yollar. Damga yeniyse oynat; İLK
+      // yüklemede yalnız kaydet (sohbeti açınca eski efekt patlamasın).
+      final efekt = d['efekt'] as Map<String, dynamic>?;
+      final efektZ = (efekt?['z'] as num?)?.toInt();
+      if (efektZ != null && efektZ != _sonEfektZ) {
+        _sonEfektZ = efektZ;
+        final efektEmoji = efekt?['emoji'] as String?;
+        if (!ilk && efektEmoji != null && efektEmoji.isNotEmpty) {
+          _efektOynat(efektEmoji);
+        }
+      }
 
       List<dynamic> birlesik;
       var yeniGeldi = false;
@@ -2331,9 +2419,30 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     // balonda yeniden aramak O(n²) olurdu ve uzun sohbette kaydırma takılırdı.
     final gorulduIndeksi = sonGorulenIndeks(_mesajlar, benimId);
 
+    // Geri tuşu önce emoji panelini kapatır (klavye gibi), sohbeti değil.
+    return PopScope(
+      canPop: !_emojiPaneliAcik,
+      onPopInvokedWithResult: (kapandi, _) {
+        if (!kapandi && _emojiPaneliAcik && mounted) {
+          setState(() => _emojiPaneliAcik = false);
+        }
+      },
+      child: _iskele(context, benimId, karsiYazi, gorulduIndeksi),
+    );
+  }
+
+  Widget _iskele(
+    BuildContext context,
+    Object? benimId,
+    String? karsiYazi,
+    int? gorulduIndeksi,
+  ) {
+    final acikTema = DiziRenkler.acik;
+    final karsiRenk = _sohbetTema.karsiBalon(acikTema);
     return Scaffold(
-      // Sohbete özel tema zemini: uygulama zemininin üstüne balon renginin
-      // çok hafif tonu; varsayılan temada null → hiçbir şey değişmez.
+      // Sohbete özel tema zemini: düz renk temalarında uygulama zemininin
+      // üstüne balon renginin çok hafif tonu; varsayılanda ve gradyanlı
+      // temalarda null (gradyanı [SohbetZemini] çizer).
       backgroundColor: _sohbetTema.zemin(context),
       appBar: AppBar(
         // BAŞLIK YÜKSEKLİĞİ (1 Eyl 2026 isteği: "yukarıdaki kullanıcı adı
@@ -2393,238 +2502,281 @@ class _SohbetEkraniState extends State<SohbetEkrani>
           ),
         ],
       ),
-      body: Center(
-        child: ConstrainedBox(
-          // Genis ekranda sohbet kolonu ortalanir (Telegram Web gibi)
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Column(
-            children: [
-              Expanded(
-                child: !_yuklendi
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: DiziRenkler.sari,
-                        ),
-                      )
-                    : (_hata != null && _mesajlar.isEmpty)
-                    ? HataGorunumu(
-                        mesaj: _hata!,
-                        tekrar: () => _yukle(ilk: true),
-                      )
-                    // Stack (2 Eyl 2026, Telegram düzeni): liste + üstte yüzen
-                    // tarih rozeti + sağ altta "aşağı in" düğmesi. Eski saat-
-                    // sürükleme jesti (RawGestureDetector) kalktı: saat artık
-                    // balonun içinde, yatay sürükleme "kaydırarak yanıtla".
-                    : Stack(
-                        children: [
-                          NotificationListener<ScrollNotification>(
-                            onNotification: _kaydirmaBildirimi,
-                            child: ListView.builder(
-                              controller: _kaydirma,
-                              // TERS LİSTE = ÇAPA DİPTE (28 Ağu 2026).
-                              // Kullanıcı: "sohbet ekranı sürekli yukarı kayıyor,
-                              // klavye aç/kapa yapıyorum, mesaj geliyor, mesaj
-                              // atıyorum — sürekli kayıyor."
-                              // SEBEP: liste düz çiziliyordu, dip ise `jumpTo(
-                              // maxScrollExtent)` ile TAKLİT ediliyordu. Kaydırma
-                              // uzaklığı listenin BAŞINDAN ölçülür; klavye açılıp
-                              // viewport küçülünce, yeni mesaj eklenince ya da bir
-                              // görsel geç yüklenip yüksekliği büyütünce
-                              // `maxScrollExtent` değişiyor ama `pixels` sabit
-                              // kalıyordu — görüntü dibe göre YUKARI kayıyordu.
-                              // Zamanlayıcılı jumpTo'lar bunu kovalıyor, arada bir
-                              // yetişemiyordu.
-                              // `reverse: true` ile offset 0 = EN YENİ mesaj ve
-                              // ölçüm dipten yapılır: içerik yukarıda büyüse de
-                              // çapa oynamaz. Kullanıcı kaydırmadıkça ekran
-                              // kıpırdamaz — istenen davranış BU.
-                              reverse: true,
-                              padding: const EdgeInsets.all(12),
-                              itemCount: _mesajlar.length,
-                              itemBuilder: (context, tersIndeks) {
-                                // `_mesajlar` KRONOLOJİK kalır (eski→yeni); yalnız
-                                // çizim sırası ters. Böylece "önceki gün" karşı-
-                                // laştırması ve tarih ayracı aynen çalışır.
-                                final i = _mesajlar.length - 1 - tersIndeks;
-                                final m = _mesajlar[i] as Map<String, dynamic>;
-                                final gun = (m['tarih'] as String? ?? '')
-                                    .split('T')
-                                    .first;
-                                final oncekiGun = i > 0
-                                    ? ((_mesajlar[i - 1]
-                                                      as Map<
-                                                        String,
-                                                        dynamic
-                                                      >)['tarih']
-                                                  as String? ??
-                                              '')
-                                          .split('T')
-                                          .first
-                                    : null;
-                                final benimMi = m['gonderen_id'] == benimId;
-                                final metinMi =
-                                    (m['metin'] as String?)?.isNotEmpty ==
-                                        true &&
-                                    m['medya'] == null &&
-                                    m['icerik_tur'] == null;
-                                final baloncuk = _MesajBaloncugu(
-                                  // Yoklama listeyi yenilerken baloncuk id ile
-                                  // eşleşsin: medya yeniden yüklenip kaymasın.
-                                  key: ValueKey(
-                                    m['id'] ?? m['_yerel'] ?? 'm$i',
-                                  ),
-                                  mesaj: m,
-                                  benim: benimMi,
-                                  icerikler: _icerikler,
-                                  gonderiler: _gonderiler,
-                                  // "Görüldü" YALNIZ son okunan kendi mesajımda.
-                                  gorulduGoster: i == gorulduIndeksi,
-                                  yanitla: m['id'] != null
-                                      ? () => _yanitBaslat(m)
-                                      : null,
-                                  sil: benimMi && m['id'] != null
-                                      ? () =>
-                                            _mesajSil((m['id'] as num).toInt())
-                                      : null,
-                                  duzenle: benimMi && metinMi
-                                      ? () => _duzenlemeBaslat(m)
-                                      : null,
-                                  sikayet: !benimMi && m['id'] != null
-                                      ? () => sikayetEtSheet(
-                                          context,
-                                          'mesaj',
-                                          (m['id'] as num).toInt(),
-                                        )
-                                      : null,
-                                  // Henüz gönderilmemiş (id'siz) iyimser satıra
-                                  // tepki verilemez: sunucuda karşılığı yok.
-                                  tepkiVer: m['id'] == null
-                                      ? null
-                                      : (emoji) => _tepkiVer(
-                                          (m['id'] as num).toInt(),
-                                          emoji,
-                                        ),
-                                  balonRenk: _sohbetTema.balon,
-                                  balonYazi: _sohbetTema.yazi,
-                                  tekrarDene: m['_hata'] == true
-                                      ? () => _yerelTekrarDene(m)
-                                      : null,
-                                );
-                                // Kaydırarak yanıtla (Telegram): satır sola
-                                // sürüklenince ok belirir, eşik geçilince yanıt.
-                                final satir = _KaydirYanitla(
-                                  key: _satirAnahtari(m, i),
-                                  etkin: m['id'] != null && _istek == null,
-                                  onYanitla: () => _yanitBaslat(m),
-                                  child: baloncuk,
-                                );
-                                if (gun == oncekiGun || gun.isEmpty)
-                                  return satir;
-                                // Tarih ayracı: gün değişince ortada küçük rozet
-                                final p = gun.split('-');
-                                final etiket = p.length == 3
-                                    ? '${p[2]}.${p[1]}.${p[0]}'
-                                    : gun;
-                                return Column(
-                                  children: [
-                                    Center(child: _TarihRozeti(etiket)),
-                                    satir,
-                                  ],
-                                );
-                              },
-                            ),
+      body: SohbetZemini(
+        tema: _sohbetTema,
+        child: Center(
+          child: ConstrainedBox(
+            // Genis ekranda sohbet kolonu ortalanir (Telegram Web gibi)
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Column(
+              children: [
+                Expanded(
+                  child: !_yuklendi
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: DiziRenkler.sari,
                           ),
-                          _yuzenTarih(),
-                          _asagiInDugmesi(),
-                        ],
-                      ),
-              ),
-              // Başlıkta kaçarsa (kırpma / bakış) kutunun üstünde de dursun.
-              if (karsiYazi != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      karsiYazi,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: DiziRenkler.sariMetin,
+                        )
+                      : (_hata != null && _mesajlar.isEmpty)
+                      ? HataGorunumu(
+                          mesaj: _hata!,
+                          tekrar: () => _yukle(ilk: true),
+                        )
+                      // Stack (2 Eyl 2026, Telegram düzeni): liste + üstte yüzen
+                      // tarih rozeti + sağ altta "aşağı in" düğmesi. Eski saat-
+                      // sürükleme jesti (RawGestureDetector) kalktı: saat artık
+                      // balonun içinde, yatay sürükleme "kaydırarak yanıtla".
+                      : Stack(
+                          children: [
+                            NotificationListener<ScrollNotification>(
+                              onNotification: _kaydirmaBildirimi,
+                              child: ListView.builder(
+                                controller: _kaydirma,
+                                // TERS LİSTE = ÇAPA DİPTE (28 Ağu 2026).
+                                // Kullanıcı: "sohbet ekranı sürekli yukarı kayıyor,
+                                // klavye aç/kapa yapıyorum, mesaj geliyor, mesaj
+                                // atıyorum — sürekli kayıyor."
+                                // SEBEP: liste düz çiziliyordu, dip ise `jumpTo(
+                                // maxScrollExtent)` ile TAKLİT ediliyordu. Kaydırma
+                                // uzaklığı listenin BAŞINDAN ölçülür; klavye açılıp
+                                // viewport küçülünce, yeni mesaj eklenince ya da bir
+                                // görsel geç yüklenip yüksekliği büyütünce
+                                // `maxScrollExtent` değişiyor ama `pixels` sabit
+                                // kalıyordu — görüntü dibe göre YUKARI kayıyordu.
+                                // Zamanlayıcılı jumpTo'lar bunu kovalıyor, arada bir
+                                // yetişemiyordu.
+                                // `reverse: true` ile offset 0 = EN YENİ mesaj ve
+                                // ölçüm dipten yapılır: içerik yukarıda büyüse de
+                                // çapa oynamaz. Kullanıcı kaydırmadıkça ekran
+                                // kıpırdamaz — istenen davranış BU.
+                                reverse: true,
+                                padding: const EdgeInsets.all(12),
+                                itemCount: _mesajlar.length,
+                                itemBuilder: (context, tersIndeks) {
+                                  // `_mesajlar` KRONOLOJİK kalır (eski→yeni); yalnız
+                                  // çizim sırası ters. Böylece "önceki gün" karşı-
+                                  // laştırması ve tarih ayracı aynen çalışır.
+                                  final i = _mesajlar.length - 1 - tersIndeks;
+                                  final m =
+                                      _mesajlar[i] as Map<String, dynamic>;
+                                  final gun = (m['tarih'] as String? ?? '')
+                                      .split('T')
+                                      .first;
+                                  final oncekiGun = i > 0
+                                      ? ((_mesajlar[i - 1]
+                                                        as Map<
+                                                          String,
+                                                          dynamic
+                                                        >)['tarih']
+                                                    as String? ??
+                                                '')
+                                            .split('T')
+                                            .first
+                                      : null;
+                                  final benimMi = m['gonderen_id'] == benimId;
+                                  // Gruplama (Telegram): aynı gönderenin 3 dk
+                                  // içindeki ardışık mesajları sıkışır, kuyruk
+                                  // yalnız grubun sonunda.
+                                  final grupBasi =
+                                      i == 0 ||
+                                      !mesajGrubuAyni(
+                                        _mesajlar[i - 1]
+                                            as Map<String, dynamic>,
+                                        m,
+                                      );
+                                  final grupSonu =
+                                      i == _mesajlar.length - 1 ||
+                                      !mesajGrubuAyni(
+                                        m,
+                                        _mesajlar[i + 1]
+                                            as Map<String, dynamic>,
+                                      );
+                                  final metinMi =
+                                      (m['metin'] as String?)?.isNotEmpty ==
+                                          true &&
+                                      m['medya'] == null &&
+                                      m['icerik_tur'] == null;
+                                  final baloncuk = _MesajBaloncugu(
+                                    // Yoklama listeyi yenilerken baloncuk id ile
+                                    // eşleşsin: medya yeniden yüklenip kaymasın.
+                                    key: ValueKey(
+                                      m['id'] ?? m['_yerel'] ?? 'm$i',
+                                    ),
+                                    mesaj: m,
+                                    benim: benimMi,
+                                    icerikler: _icerikler,
+                                    gonderiler: _gonderiler,
+                                    // "Görüldü" YALNIZ son okunan kendi mesajımda.
+                                    gorulduGoster: i == gorulduIndeksi,
+                                    yanitla: m['id'] != null
+                                        ? () => _yanitBaslat(m)
+                                        : null,
+                                    sil: benimMi && m['id'] != null
+                                        ? () => _mesajSil(
+                                            (m['id'] as num).toInt(),
+                                          )
+                                        : null,
+                                    duzenle: benimMi && metinMi
+                                        ? () => _duzenlemeBaslat(m)
+                                        : null,
+                                    sikayet: !benimMi && m['id'] != null
+                                        ? () => sikayetEtSheet(
+                                            context,
+                                            'mesaj',
+                                            (m['id'] as num).toInt(),
+                                          )
+                                        : null,
+                                    // Henüz gönderilmemiş (id'siz) iyimser satıra
+                                    // tepki verilemez: sunucuda karşılığı yok.
+                                    tepkiVer: m['id'] == null
+                                        ? null
+                                        : (emoji) => _tepkiVer(
+                                            (m['id'] as num).toInt(),
+                                            emoji,
+                                          ),
+                                    balonRenk: _sohbetTema.balon,
+                                    balonYazi: _sohbetTema.yazi,
+                                    karsiRenk: karsiRenk,
+                                    grupBasi: grupBasi,
+                                    grupSonu: grupSonu,
+                                    efekt: (emoji, kaynak) => _efektOynat(
+                                      emoji,
+                                      kaynak: kaynak,
+                                      gonder: true,
+                                    ),
+                                    tekrarDene: m['_hata'] == true
+                                        ? () => _yerelTekrarDene(m)
+                                        : null,
+                                  );
+                                  // Kaydırarak yanıtla (Telegram): satır sola
+                                  // sürüklenince ok belirir, eşik geçilince yanıt.
+                                  final satir = _KaydirYanitla(
+                                    key: _satirAnahtari(m, i),
+                                    etkin: m['id'] != null && _istek == null,
+                                    onYanitla: () => _yanitBaslat(m),
+                                    child: baloncuk,
+                                  );
+                                  if (gun == oncekiGun || gun.isEmpty)
+                                    return satir;
+                                  // Tarih ayracı: gün değişince ortada küçük rozet
+                                  final p = gun.split('-');
+                                  final etiket = p.length == 3
+                                      ? '${p[2]}.${p[1]}.${p[0]}'
+                                      : gun;
+                                  return Column(
+                                    children: [
+                                      Center(child: _TarihRozeti(etiket)),
+                                      satir,
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                            _yuzenTarih(),
+                            _asagiInDugmesi(),
+                          ],
+                        ),
+                ),
+                // Başlıkta kaçarsa (kırpma / bakış) kutunun üstünde de dursun.
+                if (karsiYazi != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        karsiYazi,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: DiziRenkler.sariMetin,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              // Bekleyen dizi/film kartı: seçildi ama HENÜZ gönderilmedi.
-              // Yanıt kutusuyla aynı kalıp (aynı yer, aynı zemin, aynı çarpı).
-              if (_bekleyenIcerik != null) _bekleyenIcerikSeridi(),
-              // Yanıt / düzenleme kutusu (giriş alanının hemen üstünde)
-              if (_yanitlanan != null || _duzenlenenId != null)
-                Container(
-                  padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
-                  color: DiziRenkler.koyuGri,
-                  child: Row(
-                    children: [
-                      Icon(
-                        _duzenlenenId != null ? Icons.edit : Icons.reply,
-                        size: 18,
-                        color: DiziRenkler.sariMetin,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _duzenlenenId != null
-                                  ? 'Mesajı düzenle'.c
-                                  : 'Yanıtlanıyor'.c,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: DiziRenkler.sariMetin,
-                              ),
-                            ),
-                            Text(
-                              _duzenlenenId != null
-                                  ? ((_metin.text).trim())
-                                  : _yanitOnizleme(_yanitlanan!),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: DiziRenkler.metin54,
-                              ),
-                            ),
-                          ],
+                // Bekleyen dizi/film kartı: seçildi ama HENÜZ gönderilmedi.
+                // Yanıt kutusuyla aynı kalıp (aynı yer, aynı zemin, aynı çarpı).
+                if (_bekleyenIcerik != null) _bekleyenIcerikSeridi(),
+                // Yanıt / düzenleme kutusu (giriş alanının hemen üstünde)
+                if (_yanitlanan != null || _duzenlenenId != null)
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
+                    color: DiziRenkler.koyuGri,
+                    child: Row(
+                      children: [
+                        Icon(
+                          _duzenlenenId != null ? Icons.edit : Icons.reply,
+                          size: 18,
+                          color: DiziRenkler.sariMetin,
                         ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                _duzenlenenId != null
+                                    ? 'Mesajı düzenle'.c
+                                    : 'Yanıtlanıyor'.c,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: DiziRenkler.sariMetin,
+                                ),
+                              ),
+                              Text(
+                                _duzenlenenId != null
+                                    ? ((_metin.text).trim())
+                                    : _yanitOnizleme(_yanitlanan!),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: DiziRenkler.metin54,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: _modIptal,
+                          icon: Icon(Icons.close, color: DiziRenkler.metin54),
+                        ),
+                      ],
+                    ),
+                  ),
+                SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 6, 8, 10),
+                        // Bekleyen mesaj isteğinde yanıt kutusu HİÇ çizilmez:
+                        // kabul edilmeden yanıt verilemez (24 Ağu 2026).
+                        // Basılı-tut kaydı sürerken de [_yaziCubugu] çizilir:
+                        // mikrofon düğmesi AYNI ağaç konumunda kalmalı, yoksa
+                        // uzun basma jesti kopar. Tam çubuk yalnız kayıt
+                        // KİLİTLENİNCE gelir.
+                        child: _istek != null
+                            ? _istekCubugu()
+                            : (_kaydediyor && _kayitKilitli)
+                            ? _kayitCubugu()
+                            : _yaziCubugu(),
                       ),
-                      IconButton(
-                        onPressed: _modIptal,
-                        icon: Icon(Icons.close, color: DiziRenkler.metin54),
-                      ),
+                      // Emoji paneli klavyenin yerini alır (5 Eyl 2026):
+                      // yükseklik ortalama klavye boyu; hareketli emojiler.
+                      if (_emojiPaneliAcik && _istek == null)
+                        SizedBox(
+                          height: 280,
+                          child: EmojiPaneli(onSec: _emojiEkle),
+                        ),
                     ],
                   ),
                 ),
-              SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 6, 8, 10),
-                  // Bekleyen mesaj isteğinde yanıt kutusu HİÇ çizilmez:
-                  // kabul edilmeden yanıt verilemez (24 Ağu 2026).
-                  // Basılı-tut kaydı sürerken de [_yaziCubugu] çizilir: mikrofon
-                  // düğmesi AYNI ağaç konumunda kalmalı, yoksa uzun basma jesti
-                  // kopar. Tam çubuk yalnız kayıt KİLİTLENİNCE gelir.
-                  child: _istek != null
-                      ? _istekCubugu()
-                      : (_kaydediyor && _kayitKilitli)
-                      ? _kayitCubugu()
-                      : _yaziCubugu(),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -2671,6 +2823,19 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
+                      // Gülen yüz: hareketli emoji paneli (klavye yerine).
+                      // TextField'ın DIŞINDA kardeş — ANR kuralı (üstteki not).
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4, bottom: 2),
+                        child: _kutuIkonu(
+                          ipucu: _emojiPaneliAcik ? 'Klavye'.c : 'Emoji'.c,
+                          ikon: _emojiPaneliAcik
+                              ? Icons.keyboard_outlined
+                              : Icons.emoji_emotions_outlined,
+                          kapali: _ekYukleniyor,
+                          onTap: _emojiPaneliDegistir,
+                        ),
+                      ),
                       Expanded(
                         child: TextField(
                           controller: _metin,
@@ -2697,7 +2862,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                             enabledBorder: InputBorder.none,
                             focusedBorder: InputBorder.none,
                             contentPadding: const EdgeInsets.fromLTRB(
-                              18,
+                              4,
                               12,
                               4,
                               12,
@@ -3416,6 +3581,19 @@ class _MesajBaloncugu extends StatelessWidget {
   /// düzeni). Yalnız `_hata` bayraklı yerel satırda dolu.
   final VoidCallback? tekrarDene;
 
+  /// Karşı tarafın balon rengi (temaya göre; 5 Eyl 2026). Varsayılan tema
+  /// kartı — gradyanlı temalar kendi tonunu verir.
+  final Color karsiRenk;
+
+  /// Gruplama (Telegram): grubun başı/sonu değilse dikey boşluk daralır;
+  /// kuyruk (sivri köşe) yalnız [grupSonu]'nda.
+  final bool grupBasi;
+  final bool grupSonu;
+
+  /// Emoji efekti: büyük emoji balonuna dokununca ve tepki seçince ekranda
+  /// patlama. `kaynak` dokunma noktası (global) ya da null (ekran ortası).
+  final void Function(String emoji, Offset? kaynak)? efekt;
+
   const _MesajBaloncugu({
     super.key,
     required this.mesaj,
@@ -3431,6 +3609,10 @@ class _MesajBaloncugu extends StatelessWidget {
     this.gonderiler = const {},
     this.balonRenk = DiziRenkler.sari,
     this.balonYazi = Colors.black,
+    this.karsiRenk = const Color(0xFF1F1F23),
+    this.grupBasi = true,
+    this.grupSonu = true,
+    this.efekt,
   });
 
   /// Kullanıcının bu mesaja verdiği tepki (yoksa null).
@@ -3460,6 +3642,10 @@ class _MesajBaloncugu extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: DiziRenkler.koyuGri,
+      showDragHandle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
       builder: (sheetCtx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -3479,7 +3665,11 @@ class _MesajBaloncugu extends StatelessWidget {
                         onTap: () {
                           Navigator.pop(sheetCtx);
                           // Aynı emojiye tekrar basmak tepkiyi kaldırır.
-                          tepkiVer!(_benimTepkim == e ? null : e);
+                          final kaldir = _benimTepkim == e;
+                          tepkiVer!(kaldir ? null : e);
+                          // Seçmenin ödülü: ekranda küçük patlama (kaldırmada
+                          // yok — geri alma sessiz olmalı).
+                          if (!kaldir) efekt?.call(e, null);
                         },
                         child: Container(
                           // 44 dp dokunma hedefi: 26 + 2×9 dolgu.
@@ -3603,14 +3793,29 @@ class _MesajBaloncugu extends StatelessWidget {
     // kapak doğrudan sohbetin üstünde durur. Mesajda başka bir şey varsa
     // (yazı, medya, içerik kartı, alıntı) baloncuk gerekir: onlar zeminsiz
     // okunmaz.
+    // BÜYÜK HAREKETLİ EMOJİ (5 Eyl 2026): mesaj TEK bir hareketli emojiyse
+    // balon çizilmez, Lottie büyük oynar; dokununca yeniden oynar + ekranda
+    // patlama (karşı tarafa da gider). Alıntı/medya/kart varsa balon kalır.
+    final tekEmoji =
+        metin != null &&
+            medya == null &&
+            dosya == null &&
+            yerel.isEmpty &&
+            icerikTur == null &&
+            gonderiId == null &&
+            yanitId == null &&
+            tekHareketliEmoji(metin)
+        ? metin.trim()
+        : null;
     final ciplak =
-        gonderiId != null &&
-        (metin == null || metin.isEmpty) &&
-        medya == null &&
-        dosya == null &&
-        yerel.isEmpty &&
-        icerikTur == null &&
-        yanitId == null;
+        tekEmoji != null ||
+        (gonderiId != null &&
+            (metin == null || metin.isEmpty) &&
+            medya == null &&
+            dosya == null &&
+            yerel.isEmpty &&
+            icerikTur == null &&
+            yanitId == null);
     // Alt satır (2 Eyl 2026, Telegram düzeni): SAAT balonun içinde sağ altta,
     // yanında "düzenlendi" / "Görüldü" / bekleme saati / hata. Sürükleyerek
     // açılan saat sütunu kalktı; o jest artık "kaydırarak yanıtla".
@@ -3643,7 +3848,11 @@ class _MesajBaloncugu extends StatelessWidget {
         // Gönderilemeyen satıra tek dokunuş = tekrar dene (Telegram).
         onTap: gonderimHatasi ? tekrarDene : null,
         child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 3),
+          // Grup içinde 1,5 dp, gruplar arası 4 dp (Telegram sıkışması).
+          margin: EdgeInsets.only(
+            top: grupBasi ? 4 : 1.5,
+            bottom: grupSonu ? 4 : 1.5,
+          ),
           // Alt bilgi satırı (düzenlendi/Görüldü) yoksa saatin bıraktığı
           // boşluk kapansın diye alt dolgu üstle eşitlenir. Çıplak mesajda
           // dolgu da YOK: zeminsiz bir kutuda dolgu, kapağı sohbetin
@@ -3660,12 +3869,13 @@ class _MesajBaloncugu extends StatelessWidget {
           decoration: ciplak
               ? null
               : BoxDecoration(
-                  color: benim ? balonRenk : DiziRenkler.kart,
+                  color: benim ? balonRenk : karsiRenk,
+                  // Kuyruk (sivri köşe) yalnız grubun son balonunda.
                   borderRadius: BorderRadius.only(
-                    topLeft: const Radius.circular(14),
-                    topRight: const Radius.circular(14),
-                    bottomLeft: Radius.circular(benim ? 14 : 3),
-                    bottomRight: Radius.circular(benim ? 3 : 14),
+                    topLeft: const Radius.circular(16),
+                    topRight: const Radius.circular(16),
+                    bottomLeft: Radius.circular(benim || !grupSonu ? 16 : 4),
+                    bottomRight: Radius.circular(!benim || !grupSonu ? 16 : 4),
                   ),
                 ),
           // IntrinsicWidth: baloncuk en geniş çocuğuna (metin/footer) göre küçülür;
@@ -3877,7 +4087,14 @@ class _MesajBaloncugu extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (metin != null && metin.isNotEmpty)
+                if (tekEmoji != null)
+                  _BuyukEmoji(
+                    emoji: tekEmoji,
+                    onDokun: efekt == null
+                        ? null
+                        : (kaynak) => efekt!(tekEmoji, kaynak),
+                  )
+                else if (metin != null && metin.isNotEmpty)
                   Text(
                     metin,
                     style: TextStyle(
@@ -4015,6 +4232,48 @@ class _MesajBaloncugu extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Tek emojili mesajın büyük hareketli hâli. Belirince bir kez oynar;
+/// dokununca yeniden oynar ve [onDokun] dokunma noktasını verir (efekt
+/// oradan saçılır).
+class _BuyukEmoji extends StatefulWidget {
+  final String emoji;
+  final void Function(Offset kaynak)? onDokun;
+
+  const _BuyukEmoji({required this.emoji, this.onDokun});
+
+  @override
+  State<_BuyukEmoji> createState() => _BuyukEmojiState();
+}
+
+class _BuyukEmojiState extends State<_BuyukEmoji> {
+  int _vurus = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: widget.emoji,
+      button: widget.onDokun != null,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapUp: (d) {
+          setState(() => _vurus++);
+          widget.onDokun?.call(d.globalPosition);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+          // 72 × 1,25 = 90 dp Lottie kutusu.
+          child: TepkiIkonu(
+            widget.emoji,
+            boyut: 72,
+            acilistaOynat: true,
+            vurus: _vurus,
           ),
         ),
       ),

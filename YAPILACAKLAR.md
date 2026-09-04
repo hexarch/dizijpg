@@ -1,5 +1,52 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-04 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-05 — 💬 Sohbet Telegram turu: hareketli emojiler, emoji efektleri, TAM temalar (1.126.0+193)
+
+Kullanıcı isteği: "sohbet kısmını komple tara, mobilde tam optimize; hareketli
+emojiler, emojilere tıklayınca ekranda animasyonlar, özel temalar (aşk,
+friends vb); Telegram sohbeti gibi akıcı, günümüze uygun."
+
+Tarama sonucu: düzen zaten Telegram'a geçmişti (ters liste, kaydırarak yanıtla,
+yüzen tarih, ataç paneli, kilitli ses kaydı). Eksikler: emoji yalnız 9 tepkide
+hareketliydi, emoji paneli yoktu, efekt yoktu, "tema" 6 düz balon rengiydi,
+ardışık mesajlar gruplanmıyordu. Yapılan:
+- ✅ **Hareketli emoji sözlüğü** `lib/hareketli_emoji.dart`: 79 Noto Animated
+  Emoji Lottie (CC BY 4.0, `assets/tepkiler/`, 4,2 MB; webde tembel iner).
+  Tepki haritası oradan okunuyor (tepki.dart'taki özel harita kalktı).
+  150 KB üstü altı emoji BİLEREK alınmadı (panel açılışı takılmasın).
+- ✅ **Tek emojili mesaj BÜYÜK Lottie** (90 dp, balonsuz; saat kalır).
+  Dokununca yeniden oynar + **ekranda patlama** (`lib/emoji_efekti.dart`:
+  18 parçacık, dokunma noktasından yukarı saçılır, 1,9 sn, glif çizimi —
+  Lottie kopyası değil; "hareketi azalt" açıkken oynamaz; en çok 4 eş zamanlı).
+- ✅ **Efekt karşı tarafa gidiyor** (Telegram etkileşimli emoji): `POST
+  /sohbet-efekt` → bellek damgası (`sohbet_durum.js`, 8 sn TTL, küme yayını)
+  → `GET /mesajlar` yanıtında `efekt:{emoji,z}`; istemci damgayı tekler, ilk
+  yüklemede eski efekt OYNAMAZ. Engelli çift 403, hız limiti 300/sa.
+- ✅ **Tepki seçince de patlama** (kaldırmada sessiz). Tepki sayfası yuvarlak
+  köşe + tutamaç.
+- ✅ **Emoji paneli** (`ekranlar/emoji_paneli.dart`): kutunun solunda gülen
+  yüz → klavye iner, 280 dp panel açılır (tembel ızgara, her emoji bir kez
+  oynar); üstte "Sık kullanılanlar" (cihazda son 16). Seçim İMLEÇ konumuna
+  girer; düğme klavye ikonuna döner; kutu odak alınca ve geri tuşunda
+  (PopScope) panel kapanır.
+- ✅ **TAM TEMALAR** (`sohbet_tema.dart`): Aşk, Arkadaşlar (Friends'in mor
+  kapı + sarı çerçevesi, kahve deseni), Gece, Okyanus, Gün batımı, Orman,
+  Sinema, Neon — gradyan zemin (açık/koyu uygulama temasına ayrı) + silik
+  Material ikon deseni (`SohbetDeseni`, RepaintBoundary) + karşı taraf balonu
+  temanın tonu. Eski 6 düz renk "Renkler" grubu olarak kaldı; kayıtlı
+  anahtarlar değişmedi. Pembe 0xFFEC407A → 0xFFD81B60 (beyaz yazı 4,3 → 4,9:1).
+  Seçici: yatay önizleme kartları (gradyan + üç mini balon + onay) + daireler;
+  kaydırılır, tavan %85 (390 dp'de taşıyordu, testte yakalandı).
+- ✅ **Gruplama**: aynı gönderenin 3 dk içindeki mesajları sıkışır (1,5 dp),
+  kuyruk köşesi (4 dp) yalnız grubun sonunda; köşeler 14 → 16.
+- Kanıt: `test/sohbet_emoji_test.dart` (8), `test/sohbet_tema_test.dart` (5:
+  kontrast ≥ 4,5:1 her temada), `hareketli_tepki_test` ortak haritaya
+  uyarlandı, backend `sohbet_durum.test.js` +4. Tüm paket **2657 geçti**.
+  11 yeni metin 45 dile (`scratchpad/ceviri_ekle.py`).
+- ⬜ Cihazda deneme (APK): panel açılış hızı, düşük donanımda patlama karesi.
+- ⬜ Telegram'ın tam ekran efekti (❤️ 🎉 için özel Lottie efekt dosyası)
+  bir sonraki tur; bugünkü glif patlaması her emojide çalışıyor.
 
 ## 2026-09-04 (1. tur) — 🎬 Fragman oynatıcısı profesyonel krom: YouTube sızıntısı bitti, tam ekran, bitiş durumu (1.121.0+188)
 
