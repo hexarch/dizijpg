@@ -1576,4 +1576,16 @@ const Map<String, String> cevirilerFi = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Palvelimella ei ole tilaa, yritä hetken kuluttua uudelleen',
   'Video bulunamadı': 'Videota ei löytynyt',
+  'Yetkili': 'Moderaattori',
+  'Kontrolü ver': 'Anna hallinta',
+  'Kontrolü al': 'Ota hallinta pois',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Voi toistaa, keskeyttää ja vaihtaa videon.',
+  'Artık videoyu yönetemez.': 'Ei voi enää hallita videota.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Vain isäntä ja hänen valtuuttamansa voivat tehdä sen',
+  'Kendi yetkini değiştiremezsin': 'Et voi muuttaa omia oikeuksiasi',
+  'Geçersiz yetki': 'Virheellinen oikeus',
+  '{} artık videoyu yönetebilir': '{} voi nyt hallita videota',
+  '{} kontrolü bıraktı': '{} ei enää hallitse videota',
 };

@@ -1569,4 +1569,16 @@ const Map<String, String> cevirilerUr = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'سرور پر جگہ نہیں بچی، تھوڑی دیر بعد کوشش کریں',
   'Video bulunamadı': 'ویڈیو نہیں ملی',
+  'Yetkili': 'منتظم',
+  'Kontrolü ver': 'کنٹرول دیں',
+  'Kontrolü al': 'کنٹرول واپس لیں',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'ویڈیو چلا، روک اور بدل سکتا ہے۔',
+  'Artık videoyu yönetemez.': 'اب ویڈیو کا انتظام نہیں کر سکتا۔',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'یہ صرف میزبان اور اُس کے مجاز افراد کر سکتے ہیں',
+  'Kendi yetkini değiştiremezsin': 'آپ اپنی اجازت خود نہیں بدل سکتے',
+  'Geçersiz yetki': 'غلط اجازت',
+  '{} artık videoyu yönetebilir': '{} اب ویڈیو کا انتظام کر سکتے ہیں',
+  '{} kontrolü bıraktı': '{} کے پاس اب کنٹرول نہیں',
 };

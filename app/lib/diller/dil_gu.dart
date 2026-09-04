@@ -1557,4 +1557,16 @@ const Map<String, String> cevirilerGu = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'સર્વર પર જગ્યા બચી નથી, થોડી વારે ફરી પ્રયાસ કરો',
   'Video bulunamadı': 'વીડિયો મળ્યો નહીં',
+  'Yetkili': 'મોડરેટર',
+  'Kontrolü ver': 'નિયંત્રણ આપો',
+  'Kontrolü al': 'નિયંત્રણ પાછું લો',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'વીડિયો ચલાવી, થોભાવી અને બદલી શકે છે.',
+  'Artık videoyu yönetemez.': 'હવે વીડિયો સંભાળી શકતા નથી.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'આ ફક્ત યજમાન અને તેમણે મંજૂરી આપેલા લોકો કરી શકે',
+  'Kendi yetkini değiştiremezsin': 'તમે તમારી પોતાની મંજૂરી બદલી શકતા નથી',
+  'Geçersiz yetki': 'અમાન્ય મંજૂરી',
+  '{} artık videoyu yönetebilir': '{} હવે વીડિયો સંભાળી શકે છે',
+  '{} kontrolü bıraktı': '{} પાસે હવે નિયંત્રણ નથી',
 };

@@ -1572,4 +1572,16 @@ const Map<String, String> cevirilerDa = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Der er ikke mere plads på serveren, prøv igen om lidt',
   'Video bulunamadı': 'Videoen blev ikke fundet',
+  'Yetkili': 'Moderator',
+  'Kontrolü ver': 'Giv kontrollen',
+  'Kontrolü al': 'Tag kontrollen tilbage',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Kan afspille, sætte på pause og skifte videoen.',
+  'Artık videoyu yönetemez.': 'Kan ikke længere styre videoen.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Det kan kun værten og dem, værten giver lov',
+  'Kendi yetkini değiştiremezsin': 'Du kan ikke ændre dine egne rettigheder',
+  'Geçersiz yetki': 'Ugyldig rettighed',
+  '{} artık videoyu yönetebilir': '{} kan nu styre videoen',
+  '{} kontrolü bıraktı': '{} har ikke længere kontrollen',
 };

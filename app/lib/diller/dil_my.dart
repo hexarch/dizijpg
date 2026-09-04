@@ -1586,4 +1586,17 @@ const Map<String, String> cevirilerMy = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'ဆာဗာတွင် နေရာမကျန်တော့ပါ၊ ခဏနေမှ ထပ်စမ်းပါ',
   'Video bulunamadı': 'ဗီဒီယို ရှာမတွေ့ပါ',
+  'Yetkili': 'စီမံသူ',
+  'Kontrolü ver': 'ထိန်းချုပ်ခွင့် ပေးရန်',
+  'Kontrolü al': 'ထိန်းချုပ်ခွင့် ပြန်ယူရန်',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'ဗီဒီယိုကို ဖွင့်၊ ရပ်၊ ပြောင်းနိုင်သည်။',
+  'Artık videoyu yönetemez.': 'ဗီဒီယိုကို ထိန်းချုပ်၍ မရတော့ပါ။',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'ဒါကို အခန်းရှင်နှင့် သူခွင့်ပြုသူများသာ လုပ်နိုင်သည်',
+  'Kendi yetkini değiştiremezsin':
+      'ကိုယ့်ခွင့်ပြုချက်ကို ကိုယ်တိုင် မပြောင်းနိုင်ပါ',
+  'Geçersiz yetki': 'မမှန်ကန်သော ခွင့်ပြုချက်',
+  '{} artık videoyu yönetebilir': '{} သည် ယခု ဗီဒီယိုကို ထိန်းချုပ်နိုင်ပါပြီ',
+  '{} kontrolü bıraktı': '{} တွင် ထိန်းချုပ်ခွင့် မရှိတော့ပါ',
 };

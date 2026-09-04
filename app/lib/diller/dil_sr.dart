@@ -1573,4 +1573,16 @@ const Map<String, String> cevirilerSr = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Na serveru je nestalo mesta, pokušaj ponovo za koji trenutak',
   'Video bulunamadı': 'Video nije pronađen',
+  'Yetkili': 'Moderator',
+  'Kontrolü ver': 'Daj kontrolu',
+  'Kontrolü al': 'Uzmi kontrolu',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Može da pušta, pauzira i menja video.',
+  'Artık videoyu yönetemez.': 'Više ne može da upravlja videom.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'To mogu samo domaćin i oni kojima on dozvoli',
+  'Kendi yetkini değiştiremezsin': 'Ne možeš da menjaš sopstvena prava',
+  'Geçersiz yetki': 'Nevažeće pravo',
+  '{} artık videoyu yönetebilir': '{} sada može da upravlja videom',
+  '{} kontrolü bıraktı': '{} više nema kontrolu',
 };

@@ -1494,4 +1494,15 @@ const Map<String, String> cevirilerKo = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       '서버 공간이 부족합니다. 잠시 후 다시 시도해 주세요',
   'Video bulunamadı': '영상을 찾을 수 없습니다',
+  'Yetkili': '관리자',
+  'Kontrolü ver': '제어 권한 주기',
+  'Kontrolü al': '제어 권한 회수',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.': '영상을 재생·일시정지·교체할 수 있습니다.',
+  'Artık videoyu yönetemez.': '더 이상 영상을 관리할 수 없습니다.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      '방장과 방장이 허락한 사람만 할 수 있습니다',
+  'Kendi yetkini değiştiremezsin': '자신의 권한은 바꿀 수 없습니다',
+  'Geçersiz yetki': '잘못된 권한',
+  '{} artık videoyu yönetebilir': '{}님이 이제 영상을 관리할 수 있습니다',
+  '{} kontrolü bıraktı': '{}님의 제어 권한이 사라졌습니다',
 };

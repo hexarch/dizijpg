@@ -1563,4 +1563,16 @@ const Map<String, String> cevirilerMr = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'सर्व्हरवर जागा उरली नाही, थोड्या वेळाने पुन्हा प्रयत्न करा',
   'Video bulunamadı': 'व्हिडिओ सापडला नाही',
+  'Yetkili': 'नियंत्रक',
+  'Kontrolü ver': 'नियंत्रण द्या',
+  'Kontrolü al': 'नियंत्रण परत घ्या',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'व्हिडिओ चालवू, थांबवू आणि बदलू शकतो.',
+  'Artık videoyu yönetemez.': 'आता व्हिडिओ हाताळू शकत नाही.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'हे फक्त होस्ट आणि त्याने परवानगी दिलेले लोक करू शकतात',
+  'Kendi yetkini değiştiremezsin': 'स्वतःची परवानगी बदलता येत नाही',
+  'Geçersiz yetki': 'अवैध परवानगी',
+  '{} artık videoyu yönetebilir': '{} आता व्हिडिओ हाताळू शकतात',
+  '{} kontrolü bıraktı': '{} कडे आता नियंत्रण नाही',
 };

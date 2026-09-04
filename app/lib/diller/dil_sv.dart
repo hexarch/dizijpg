@@ -1583,4 +1583,16 @@ const Map<String, String> cevirilerSv = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Servern har slut på utrymme, försök igen strax',
   'Video bulunamadı': 'Videon hittades inte',
+  'Yetkili': 'Moderator',
+  'Kontrolü ver': 'Ge kontrollen',
+  'Kontrolü al': 'Ta tillbaka kontrollen',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Kan spela upp, pausa och byta videon.',
+  'Artık videoyu yönetemez.': 'Kan inte längre styra videon.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Bara värden och de som värden tillåter kan göra det',
+  'Kendi yetkini değiştiremezsin': 'Du kan inte ändra dina egna rättigheter',
+  'Geçersiz yetki': 'Ogiltig rättighet',
+  '{} artık videoyu yönetebilir': '{} kan nu styra videon',
+  '{} kontrolü bıraktı': '{} har inte längre kontrollen',
 };

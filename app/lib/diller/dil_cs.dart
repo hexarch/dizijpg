@@ -1566,4 +1566,16 @@ const Map<String, String> cevirilerCs = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Na serveru došlo místo, zkus to za chvíli',
   'Video bulunamadı': 'Video nenalezeno',
+  'Yetkili': 'Moderátor',
+  'Kontrolü ver': 'Předat ovládání',
+  'Kontrolü al': 'Odebrat ovládání',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Může přehrávat, pozastavit a měnit video.',
+  'Artık videoyu yönetemez.': 'Už nemůže spravovat video.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'To může jen hostitel a lidé, kterým to povolí',
+  'Kendi yetkini değiştiremezsin': 'Nemůžeš měnit vlastní oprávnění',
+  'Geçersiz yetki': 'Neplatné oprávnění',
+  '{} artık videoyu yönetebilir': '{} teď může spravovat video',
+  '{} kontrolü bıraktı': '{} už nemá ovládání',
 };

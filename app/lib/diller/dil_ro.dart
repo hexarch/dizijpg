@@ -1614,4 +1614,16 @@ const Map<String, String> cevirilerRo = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Serverul nu mai are spațiu, încearcă din nou în scurt timp',
   'Video bulunamadı': 'Videoclipul nu a fost găsit',
+  'Yetkili': 'Moderator',
+  'Kontrolü ver': 'Dă controlul',
+  'Kontrolü al': 'Ia controlul înapoi',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Poate reda, pune pe pauză și schimba videoclipul.',
+  'Artık videoyu yönetemez.': 'Nu mai poate gestiona videoclipul.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Doar gazda și persoanele autorizate de ea pot face asta',
+  'Kendi yetkini değiştiremezsin': 'Nu îți poți schimba propriile drepturi',
+  'Geçersiz yetki': 'Drept nevalid',
+  '{} artık videoyu yönetebilir': '{} poate gestiona acum videoclipul',
+  '{} kontrolü bıraktı': '{} nu mai are controlul',
 };

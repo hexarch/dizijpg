@@ -1601,4 +1601,17 @@ const Map<String, String> cevirilerFil = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Wala nang espasyo ang server, subukan ulit maya-maya',
   'Video bulunamadı': 'Hindi nakita ang video',
+  'Yetkili': 'Moderator',
+  'Kontrolü ver': 'Ibigay ang kontrol',
+  'Kontrolü al': 'Bawiin ang kontrol',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Puwedeng i-play, i-pause at palitan ang video.',
+  'Artık videoyu yönetemez.': 'Hindi na puwedeng pamahalaan ang video.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Ang host lang at ang mga pinahintulutan niya ang puwede',
+  'Kendi yetkini değiştiremezsin':
+      'Hindi mo puwedeng baguhin ang sarili mong pahintulot',
+  'Geçersiz yetki': 'Hindi wastong pahintulot',
+  '{} artık videoyu yönetebilir': 'Puwede nang pamahalaan ni {} ang video',
+  '{} kontrolü bıraktı': 'Wala nang kontrol si {}',
 };

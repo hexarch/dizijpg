@@ -1609,6 +1609,11 @@ CREATE TABLE IF NOT EXISTS oda_uyeler (
   PRIMARY KEY (oda_id, kullanici_id)
 );
 CREATE INDEX IF NOT EXISTS oda_uyeler_kullanici ON oda_uyeler (kullanici_id);
+-- 2026-09-04c: üçüncü rol 'yetkili' (sahip kontrolü paylaşabiliyor).
+-- Uzun gerekçe: migrasyon-2026-09-04c.sql + oda.js `durumYazabilir`.
+ALTER TABLE oda_uyeler DROP CONSTRAINT IF EXISTS oda_uyeler_rol_check;
+ALTER TABLE oda_uyeler ADD CONSTRAINT oda_uyeler_rol_check
+  CHECK (rol IN ('sahip', 'yetkili', 'izleyici'));
 
 CREATE TABLE IF NOT EXISTS oda_mesajlar (
   id           BIGSERIAL PRIMARY KEY,

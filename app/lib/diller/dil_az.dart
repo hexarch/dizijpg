@@ -1560,4 +1560,16 @@ const Map<String, String> cevirilerAz = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Serverdə yer qalmayıb, bir azdan yenidən yoxla',
   'Video bulunamadı': 'Video tapılmadı',
+  'Yetkili': 'Moderator',
+  'Kontrolü ver': 'Nəzarəti ver',
+  'Kontrolü al': 'Nəzarəti geri al',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Videonu oynada, dayandıra və dəyişə bilər.',
+  'Artık videoyu yönetemez.': 'Artıq videonu idarə edə bilməz.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Bunu yalnız otaq sahibi və icazə verdiyi şəxslər edə bilər',
+  'Kendi yetkini değiştiremezsin': 'Öz icazəni dəyişə bilməzsən',
+  'Geçersiz yetki': 'Yanlış icazə',
+  '{} artık videoyu yönetebilir': '{} artıq videonu idarə edə bilər',
+  '{} kontrolü bıraktı': '{} artıq nəzarətə malik deyil',
 };

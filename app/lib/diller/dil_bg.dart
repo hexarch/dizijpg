@@ -1577,4 +1577,16 @@ const Map<String, String> cevirilerBg = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'На сървъра свърши мястото, опитай пак след малко',
   'Video bulunamadı': 'Видеото не е намерено',
+  'Yetkili': 'Модератор',
+  'Kontrolü ver': 'Дай контрола',
+  'Kontrolü al': 'Вземи контрола',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Може да пуска, спира и сменя видеото.',
+  'Artık videoyu yönetemez.': 'Вече не може да управлява видеото.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Това могат само домакинът и тези, на които е дал право',
+  'Kendi yetkini değiştiremezsin': 'Не можеш да смениш собствените си права',
+  'Geçersiz yetki': 'Невалидно право',
+  '{} artık videoyu yönetebilir': '{} вече може да управлява видеото',
+  '{} kontrolü bıraktı': '{} вече няма контрол',
 };

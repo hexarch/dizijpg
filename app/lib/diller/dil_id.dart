@@ -1570,4 +1570,16 @@ const Map<String, String> cevirilerId = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Ruang server habis, coba lagi sebentar lagi',
   'Video bulunamadı': 'Video tidak ditemukan',
+  'Yetkili': 'Moderator',
+  'Kontrolü ver': 'Beri kendali',
+  'Kontrolü al': 'Ambil kendali',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Bisa memutar, menjeda, dan mengganti video.',
+  'Artık videoyu yönetemez.': 'Tidak bisa lagi mengelola video.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Hanya tuan rumah dan orang yang diizinkannya yang bisa',
+  'Kendi yetkini değiştiremezsin': 'Kamu tidak bisa mengubah izinmu sendiri',
+  'Geçersiz yetki': 'Izin tidak valid',
+  '{} artık videoyu yönetebilir': '{} sekarang bisa mengelola video',
+  '{} kontrolü bıraktı': '{} tidak lagi punya kendali',
 };

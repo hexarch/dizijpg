@@ -1569,4 +1569,16 @@ const Map<String, String> cevirilerKn = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'ಸರ್ವರ್‌ನಲ್ಲಿ ಸ್ಥಳವಿಲ್ಲ, ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ',
   'Video bulunamadı': 'ವೀಡಿಯೊ ಸಿಗಲಿಲ್ಲ',
+  'Yetkili': 'ಮಾಡರೇಟರ್',
+  'Kontrolü ver': 'ನಿಯಂತ್ರಣ ಕೊಡಿ',
+  'Kontrolü al': 'ನಿಯಂತ್ರಣ ಹಿಂಪಡೆಯಿರಿ',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'ವೀಡಿಯೊ ಪ್ಲೇ ಮಾಡಬಹುದು, ನಿಲ್ಲಿಸಬಹುದು, ಬದಲಿಸಬಹುದು.',
+  'Artık videoyu yönetemez.': 'ಇನ್ನು ವೀಡಿಯೊ ನಿರ್ವಹಿಸಲಾಗದು.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'ಇದನ್ನು ಆತಿಥೇಯರು ಮತ್ತು ಅವರು ಅನುಮತಿಸಿದವರು ಮಾತ್ರ ಮಾಡಬಹುದು',
+  'Kendi yetkini değiştiremezsin': 'ನಿಮ್ಮ ಸ್ವಂತ ಅನುಮತಿಯನ್ನು ಬದಲಿಸಲಾಗದು',
+  'Geçersiz yetki': 'ಅಮಾನ್ಯ ಅನುಮತಿ',
+  '{} artık videoyu yönetebilir': '{} ಈಗ ವೀಡಿಯೊ ನಿರ್ವಹಿಸಬಹುದು',
+  '{} kontrolü bıraktı': '{} ಬಳಿ ಇನ್ನು ನಿಯಂತ್ರಣವಿಲ್ಲ',
 };

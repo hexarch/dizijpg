@@ -1597,4 +1597,17 @@ const Map<String, String> cevirilerDe = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Auf dem Server ist kein Platz mehr, versuch es gleich noch mal',
   'Video bulunamadı': 'Video nicht gefunden',
+  'Yetkili': 'Moderator',
+  'Kontrolü ver': 'Steuerung geben',
+  'Kontrolü al': 'Steuerung entziehen',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Kann das Video abspielen, pausieren und wechseln.',
+  'Artık videoyu yönetemez.': 'Kann das Video nicht mehr verwalten.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Das können nur der Gastgeber und die von ihm berechtigten Personen',
+  'Kendi yetkini değiştiremezsin':
+      'Du kannst deine eigenen Rechte nicht ändern',
+  'Geçersiz yetki': 'Ungültiges Recht',
+  '{} artık videoyu yönetebilir': '{} kann das Video jetzt verwalten',
+  '{} kontrolü bıraktı': '{} hat die Steuerung nicht mehr',
 };

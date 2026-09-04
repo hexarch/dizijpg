@@ -1601,4 +1601,18 @@ const Map<String, String> cevirilerEl = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Ο διακομιστής δεν έχει άλλο χώρο, δοκίμασε ξανά σε λίγο',
   'Video bulunamadı': 'Το βίντεο δεν βρέθηκε',
+  'Yetkili': 'Συντονιστής',
+  'Kontrolü ver': 'Δώσε τον έλεγχο',
+  'Kontrolü al': 'Πάρε τον έλεγχο',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Μπορεί να παίζει, να κάνει παύση και να αλλάζει το βίντεο.',
+  'Artık videoyu yönetemez.': 'Δεν μπορεί πια να διαχειρίζεται το βίντεο.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Αυτό μπορεί να το κάνει μόνο ο οικοδεσπότης και όσοι έχουν άδεια',
+  'Kendi yetkini değiştiremezsin':
+      'Δεν μπορείς να αλλάξεις τα δικά σου δικαιώματα',
+  'Geçersiz yetki': 'Μη έγκυρο δικαίωμα',
+  '{} artık videoyu yönetebilir':
+      'Ο/Η {} μπορεί τώρα να διαχειρίζεται το βίντεο',
+  '{} kontrolü bıraktı': 'Ο/Η {} δεν έχει πια τον έλεγχο',
 };

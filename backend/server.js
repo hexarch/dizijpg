@@ -19,6 +19,7 @@ import {
   baslikTemizle as odaBaslikTemizle, mesajTemizle as odaMesajTemizle,
   tepkiGecerli as odaTepkiGecerli, boyutKontrol as odaBoyutKontrol,
   parcaKarari as odaParcaKarari, durumYazabilir as odaDurumYazabilir,
+  rolAtamaKarari as odaRolAtamaKarari,
   girisKarari as odaGirisKarari, cevrimiciMi as odaCevrimiciMi,
 } from './oda.js';
 // İZLEME ODASI VİDEO HAZIRLAMA (4 Eyl 2026) — MKV desteği. Matroska ile WebM
@@ -16050,10 +16051,13 @@ const odaMesajLimiti = hizLimiti(600, (req) => `om:${req.kullanici.id}`);
 // Durum yazma yalnız SAHİPTEN gelir ve kullanıcı eylemi başına bir kez
 // (oynat/duraklat/sar) + 10 sn'lik kalp atışı: saatte 360 + pay.
 const odaDurumLimiti = hizLimiti(2000, (req) => `odr:${req.kullanici.id}`);
+// Rol değişimi nadir bir yönetim eylemi: 60/saat bol bol yeter ve bir kazayla
+// (ya da kötü niyetle) sistem satırı yağmuru üretilmesini engeller.
+const odaRolLimiti = hizLimiti(60, (req) => `oro:${req.kullanici.id}`);
 const odaParcaLimiti = hizLimiti(4000, (req) => `op:${req.kullanici.id}`);
 
 /** `izleme_odalari` satırını istemcinin beklediği gövdeye çevirir. */
-function odaGovde(o, uyeler, benimId) {
+function odaGovde(o, uyeler, benimId, benimRol = null) {
   return {
     id: Number(o.id),
     kod: o.kod,
@@ -16075,6 +16079,10 @@ function odaGovde(o, uyeler, benimId) {
     surum: Number(o.surum),
     biter: new Date(o.biter).getTime(),
     sahibi_miyim: o.sahip_id === benimId,
+    // ROL (4 Eyl 2026): istemci kontrolleri buna göre çiziyor. `sahibi_miyim`
+    // KALIYOR — yayındaki eski istemciler onu okuyor ve `benim_rol` bilmiyor;
+    // ikisi birlikte gidince eski sürüm bugünkü davranışını sürdürür.
+    benim_rol: benimRol || (o.sahip_id === benimId ? 'sahip' : 'izleyici'),
     ...odaHazirlikGovde(o),
     uyeler,
   };
@@ -16146,6 +16154,25 @@ async function odaVeUyelik(odaId, kullaniciId) {
     oda: o,
     uye: o.benim_rol ? { rol: o.benim_rol, katildi: o.benim_katildi } : null,
   };
+}
+
+/**
+ * Videoyu yönetebilir mi (yükle/değiştir/çevir) — `oda_uyeler.rol`u OKUR.
+ *
+ * `/oda-video/basla` ve `/bitir` oda kimliğini GÖVDEDE alıyor (yolda değil),
+ * bu yüzden `odaKapisi`nden geçmiyorlar ve ellerinde rol yok. Rolü burada tek
+ * sorguyla okuyup kararı yine `odaDurumYazabilir`e veriyoruz — yetki kuralının
+ * ikinci bir kopyası ÇIKMASIN. (Aynı kuralın iki yere yazılması 4 Eyl'de
+ * `girisKarari` / `odaKapisi` ayrışmasıyla canlıda bir hataya yol açtı.)
+ */
+async function odaVideoYonetebilir(oda, kullaniciId) {
+  if (!oda) return false;
+  if (oda.sahip_id === kullaniciId) return true;
+  const { rows } = await havuz.query(
+    'SELECT rol FROM oda_uyeler WHERE oda_id=$1 AND kullanici_id=$2 AND katildi IS NOT NULL',
+    [oda.id, kullaniciId],
+  );
+  return odaDurumYazabilir(oda, kullaniciId, rows[0]?.rol ?? null);
 }
 
 /**
@@ -16291,7 +16318,7 @@ app.post('/odalar', girisZorunlu, odaLimiti, sarici(async (req, res) => {
   // gün yaşıyor ve kullanıcı adını değiştiren biri o süre boyunca odasını eski
   // adıyla görürdü (`test/kullanici_adi.test.js` bu okumayı kilitliyor).
   satir.sahip_adi = uyeler.find((u) => u.id === req.kullanici.id)?.ad ?? '';
-  res.json(odaGovde(satir, uyeler, req.kullanici.id));
+  res.json(odaGovde(satir, uyeler, req.kullanici.id, 'sahip'));
 }));
 
 // ---------- odalarım + davetlerim ----------
@@ -16371,7 +16398,8 @@ app.post('/odalar/katil', girisZorunlu, odaLimiti, sarici(async (req, res) => {
   );
   if (yeniMi) await odaSistemMesaji(oda.id, req.kullanici.id, 'katildi');
   const uyeler = await odaUyeleri(oda.id);
-  res.json(odaGovde(oda, uyeler, req.kullanici.id));
+  res.json(odaGovde(oda, uyeler, req.kullanici.id,
+    uyeler.find((u) => u.id === req.kullanici.id)?.rol));
 }));
 
 // ---------- oda anlık görüntüsü ----------
@@ -16380,7 +16408,7 @@ app.get('/odalar/:id', girisZorunlu, odaLimiti, sarici(async (req, res) => {
   if (!kapi) return;
   const uyeler = await odaUyeleri(kapi.oda.id);
   res.json({
-    ...odaGovde(kapi.oda, uyeler, req.kullanici.id),
+    ...odaGovde(kapi.oda, uyeler, req.kullanici.id, kapi.uye.rol),
     // İstemci saat sapmasını bununla ölçer (bkz. oda_senkron.dart).
     sunucu_zaman: Date.now(),
   });
@@ -16426,6 +16454,11 @@ app.get('/odalar/:id/akis', girisZorunlu, odaAkisLimiti, sarici(async (req, res)
     sunucu_zaman: Date.now(),
     surum: Number(oda.surum),
     biter: new Date(oda.biter).getTime(),
+    // ROL HER TURDA GİDER (4 Eyl 2026). Sahip birine kontrolü verdiğinde o
+    // kişi ekranı yeniden AÇMADAN kontrolleri görmeli; rol yalnız anlık
+    // görüntüde gitseydi yetki ancak sayfa yenilenince işe yarardı. Tek bir
+    // kısa dizgi — 1 sn'lik turun boyutunu değiştirmez.
+    benim_rol: kapi.uye.rol,
     durum: durumDegisti ? {
       oynuyor: oda.oynuyor,
       konum_ms: Number(oda.konum_ms),
@@ -16454,15 +16487,18 @@ app.get('/odalar/:id/akis', girisZorunlu, odaAkisLimiti, sarici(async (req, res)
   });
 }));
 
-// ---------- oynatma durumu (YALNIZ SAHİP) ----------
+// ---------- oynatma durumu (SAHİP + YETKİLİ) ----------
 // Kullanıcı isteği: "oda sahibi 10 saniye ileri sararsa izleyenlerde de ileri
-// sarılmalı". Kontrol TEK ELDE: izleyici de yazabilseydi iki kişi aynı anda
-// sardığında oda salınıma girerdi (her biri ötekinin konumuna düzeltme yapar).
+// sarılmalı" (3 Eyl) ve "yetki verdiği de aynı şekilde video durdurabilir
+// kapatabilir" (4 Eyl). Yetki kararı TEK YERDE: `oda.js` `durumYazabilir`.
+// Salınım korkusunun neden geçersiz kaldığı o fonksiyonun başlığında yazılı.
 app.post('/odalar/:id/durum', girisZorunlu, odaDurumLimiti, sarici(async (req, res) => {
   const kapi = await odaKapisi(req, res);
   if (!kapi) return;
-  if (!odaDurumYazabilir(kapi.oda, req.kullanici.id)) {
-    return res.status(403).json({ hata: 'Oynatmayı yalnız oda sahibi yönetir', kod: 'SAHIP_DEGIL' });
+  if (!odaDurumYazabilir(kapi.oda, req.kullanici.id, kapi.uye.rol)) {
+    return res.status(403).json({
+      hata: 'Oynatmayı oda sahibi ve yetki verdiği kişiler yönetir', kod: 'YETKI_YOK',
+    });
   }
   const oynuyor = req.body?.oynuyor === true;
   const konum = Number(req.body?.konum_ms);
@@ -16589,6 +16625,58 @@ app.post('/odalar/:id/davet', girisZorunlu, odaLimiti, sarici(async (req, res) =
   res.json({ tamam: true });
 }));
 
+// ---------- KONTROLÜ PAYLAŞMA (yalnız sahip) ----------
+// İSTEK (4 Eyl 2026, birebir): "oda sahibi diğer kullanıcılara yetki
+// verebilmeli yetki verdiği de aynı şekilde video durdurabilir kapatabilir"
+//
+// Rol tablosu ve neden yetki verme + odayı kapatma SAHİPTE kaldığı:
+// `oda.js` `durumYazabilir` / `rolVerebilir` başlıkları ve
+// `migrasyon-2026-09-04c.sql`.
+app.post('/odalar/:id/rol', girisZorunlu, odaRolLimiti, sarici(async (req, res) => {
+  const kapi = await odaKapisi(req, res);
+  if (!kapi) return;
+  const ad = String(req.body?.kullanici || '').trim();
+  const rol = String(req.body?.rol || '').trim();
+  if (!ad) return res.status(400).json({ hata: 'kullanici gerekli' });
+
+  const { rows: k } = await havuz.query(
+    'SELECT id FROM kullanicilar WHERE lower(kullanici_adi)=lower($1)', [ad]);
+  if (!k.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı', kod: 'KULLANICI_YOK' });
+  const hedef = k[0].id;
+
+  const { rows: u } = await havuz.query(
+    'SELECT rol FROM oda_uyeler WHERE oda_id=$1 AND kullanici_id=$2',
+    [kapi.oda.id, hedef]);
+
+  const karar = odaRolAtamaKarari(
+    kapi.oda, req.kullanici.id, hedef, rol, u.length > 0);
+  if (!karar.tamam) {
+    const durum = karar.kod === 'UYE_DEGIL' ? 404 : 403;
+    return res.status(durum).json({
+      hata: ODA_HATA_METNI[karar.kod] || 'Yetki değiştirilemedi', kod: karar.kod,
+    });
+  }
+  // Sahibin rolü ASLA değişmez: `AND rol <> 'sahip'` ikinci kapıdır. Karar
+  // fonksiyonu "kendi rolün" durumunu zaten eliyor, ama sahip BAŞKA bir
+  // satırda da 'sahip' olarak duruyorsa (veri bozulması) bu koşul onu korur.
+  //
+  // `AND rol <> $3` İDEMPOTENSİ SAĞLAR: aynı rolü ikinci kez vermek hiçbir
+  // satır eşleştirmez, `rowCount` 0 döner ve İKİNCİ SİSTEM SATIRI YAZILMAZ.
+  // Sahip iki kez "kontrolü ver" derse odada iki bildirim çıkmaz.
+  // (Aynı "koşulu UPDATE'in İÇİNE koy" kalıbı `odaKapisi`teki davet
+  // kabulünde de var — orada `WHERE katildi IS NULL`.)
+  const { rowCount } = await havuz.query(
+    `UPDATE oda_uyeler SET rol=$3
+      WHERE oda_id=$1 AND kullanici_id=$2 AND rol <> 'sahip' AND rol <> $3`,
+    [kapi.oda.id, hedef, rol]);
+  if (rowCount) {
+    await odaSistemMesaji(kapi.oda.id, hedef,
+      rol === 'yetkili' ? 'yetki_verildi' : 'yetki_alindi');
+  }
+  const uyeler = await odaUyeleri(kapi.oda.id);
+  res.json({ tamam: true, degisti: rowCount > 0, uyeler });
+}));
+
 // ---------- hazır bayrağı ----------
 // İzleyicinin oynatıcısı videoyu tamponladı mı: üye listesinde nokta.
 // Sahip "herkes hazır olunca başlat" diyebilsin diye var.
@@ -16650,8 +16738,12 @@ app.post('/oda-video/basla', girisZorunlu, odaLimiti, diskKapi, sarici(async (re
     'SELECT * FROM izleme_odalari WHERE id=$1', [odaId]);
   const oda = rows[0];
   if (!oda) return res.status(404).json({ hata: 'Oda bulunamadı', kod: 'ODA_YOK' });
-  if (oda.sahip_id !== req.kullanici.id) {
-    return res.status(403).json({ hata: 'Videoyu yalnız oda sahibi yükler', kod: 'SAHIP_DEGIL' });
+  // Bu uç `odaKapisi`nden GEÇMİYOR (oda id gövdede, yolda değil), o yüzden
+  // rolü kendisi okur. Yetki kararı yine tek yerde: `odaDurumYazabilir`.
+  if (!(await odaVideoYonetebilir(oda, req.kullanici.id))) {
+    return res.status(403).json({
+      hata: 'Videoyu oda sahibi ve yetki verdiği kişiler yükler', kod: 'YETKI_YOK',
+    });
   }
   if (oda.kapandi || Date.now() >= new Date(oda.biter).getTime()) {
     return res.status(410).json({ hata: 'Bu oda kapandı', kod: 'ODA_KAPANDI' });
@@ -16775,8 +16867,10 @@ app.post('/oda-video/bitir', girisZorunlu, odaLimiti, sarici(async (req, res) =>
   }
   const { rows: oq } = await havuz.query('SELECT * FROM izleme_odalari WHERE id=$1', [y.oda_id]);
   const oda = oq[0];
-  if (!oda || oda.sahip_id !== req.kullanici.id) {
-    return res.status(403).json({ hata: 'Videoyu yalnız oda sahibi yükler', kod: 'SAHIP_DEGIL' });
+  if (!oda || !(await odaVideoYonetebilir(oda, req.kullanici.id))) {
+    return res.status(403).json({
+      hata: 'Videoyu oda sahibi ve yetki verdiği kişiler yükler', kod: 'YETKI_YOK',
+    });
   }
   // ESKİ VİDEO GİDER: oda başına tek video. Değiştirmek serbest ama iki 5 GB
   // dosya aynı anda durmaz.
@@ -17139,8 +17233,12 @@ app.post('/odalar/:id/video-cevir', girisZorunlu, odaLimiti, sarici(async (req, 
   const kapi = await odaKapisi(req, res);
   if (!kapi) return;
   const oda = kapi.oda;
-  if (oda.sahip_id !== req.kullanici.id) {
-    return res.status(403).json({ hata: 'Bunu yalnız oda sahibi yapabilir', kod: 'SAHIP_DEGIL' });
+  // Video YÖNETİMİ yetkilide de var (kullanıcı kararı 4 Eyl): "yetki verdiği
+  // de aynı şekilde video durdurabilir kapatabilir".
+  if (!odaDurumYazabilir(oda, req.kullanici.id, kapi.uye.rol)) {
+    return res.status(403).json({
+      hata: 'Bunu oda sahibi ve yetki verdiği kişiler yapabilir', kod: 'YETKI_YOK',
+    });
   }
   if (!oda.video) return res.status(400).json({ hata: 'Odada video yok', kod: 'VIDEO_YOK' });
   if (oda.hazirlik_durum === 'kuyrukta' || oda.hazirlik_durum === 'isleniyor') {

@@ -1568,4 +1568,16 @@ const Map<String, String> cevirilerTe = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'సర్వర్‌లో స్థలం లేదు, కాసేపటి తర్వాత ప్రయత్నించండి',
   'Video bulunamadı': 'వీడియో దొరకలేదు',
+  'Yetkili': 'మోడరేటర్',
+  'Kontrolü ver': 'నియంత్రణ ఇవ్వు',
+  'Kontrolü al': 'నియంత్రణ వెనక్కి తీసుకో',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'వీడియోను ప్లే చేయవచ్చు, ఆపవచ్చు, మార్చవచ్చు.',
+  'Artık videoyu yönetemez.': 'ఇక వీడియోను నిర్వహించలేరు.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'దీన్ని హోస్ట్ మరియు అతను అనుమతించినవారు మాత్రమే చేయగలరు',
+  'Kendi yetkini değiştiremezsin': 'మీ స్వంత అనుమతిని మీరు మార్చలేరు',
+  'Geçersiz yetki': 'చెల్లని అనుమతి',
+  '{} artık videoyu yönetebilir': '{} ఇప్పుడు వీడియోను నిర్వహించగలరు',
+  '{} kontrolü bıraktı': '{} వద్ద ఇక నియంత్రణ లేదు',
 };

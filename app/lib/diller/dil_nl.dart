@@ -1579,4 +1579,16 @@ const Map<String, String> cevirilerNl = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'De server heeft geen ruimte meer, probeer het zo opnieuw',
   'Video bulunamadı': 'Video niet gevonden',
+  'Yetkili': 'Moderator',
+  'Kontrolü ver': 'Bediening geven',
+  'Kontrolü al': 'Bediening terugnemen',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Kan de video afspelen, pauzeren en wisselen.',
+  'Artık videoyu yönetemez.': 'Kan de video niet meer beheren.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Alleen de host en de mensen die hij toestaat kunnen dat',
+  'Kendi yetkini değiştiremezsin': 'Je kunt je eigen rechten niet wijzigen',
+  'Geçersiz yetki': 'Ongeldig recht',
+  '{} artık videoyu yönetebilir': '{} kan de video nu beheren',
+  '{} kontrolü bıraktı': '{} heeft de bediening niet meer',
 };

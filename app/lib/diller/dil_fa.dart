@@ -1553,4 +1553,16 @@ const Map<String, String> cevirilerFa = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'فضای سرور تمام شده، کمی بعد دوباره امتحان کن',
   'Video bulunamadı': 'ویدیو پیدا نشد',
+  'Yetkili': 'مدیر',
+  'Kontrolü ver': 'واگذاری کنترل',
+  'Kontrolü al': 'پس‌گرفتن کنترل',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'می‌تواند ویدیو را پخش، متوقف و عوض کند.',
+  'Artık videoyu yönetemez.': 'دیگر نمی‌تواند ویدیو را مدیریت کند.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'این کار فقط از میزبان و کسانی که او اجازه داده برمی‌آید',
+  'Kendi yetkini değiştiremezsin': 'نمی‌توانی دسترسی خودت را تغییر دهی',
+  'Geçersiz yetki': 'دسترسی نامعتبر',
+  '{} artık videoyu yönetebilir': '{} حالا می‌تواند ویدیو را مدیریت کند',
+  '{} kontrolü bıraktı': '{} دیگر کنترل ندارد',
 };

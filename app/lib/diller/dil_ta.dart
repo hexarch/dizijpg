@@ -1596,4 +1596,16 @@ const Map<String, String> cevirilerTa = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'சேவையகத்தில் இடம் இல்லை, சிறிது நேரம் கழித்து முயற்சிக்கவும்',
   'Video bulunamadı': 'வீடியோ கிடைக்கவில்லை',
+  'Yetkili': 'மதிப்பீட்டாளர்',
+  'Kontrolü ver': 'கட்டுப்பாட்டைக் கொடு',
+  'Kontrolü al': 'கட்டுப்பாட்டைத் திரும்பப் பெறு',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'வீடியோவை இயக்க, நிறுத்த, மாற்ற முடியும்.',
+  'Artık videoyu yönetemez.': 'இனி வீடியோவை நிர்வகிக்க முடியாது.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'இதைப் புரவலரும் அவர் அனுமதித்தவர்களும் மட்டுமே செய்ய முடியும்',
+  'Kendi yetkini değiştiremezsin': 'உங்கள் சொந்த அனுமதியை மாற்ற முடியாது',
+  'Geçersiz yetki': 'தவறான அனுமதி',
+  '{} artık videoyu yönetebilir': '{} இப்போது வீடியோவை நிர்வகிக்கலாம்',
+  '{} kontrolü bıraktı': '{} இடம் இனி கட்டுப்பாடு இல்லை',
 };

@@ -1542,4 +1542,16 @@ const Map<String, String> cevirilerTh = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'เซิร์ฟเวอร์ไม่มีพื้นที่แล้ว ลองใหม่อีกสักครู่',
   'Video bulunamadı': 'ไม่พบวิดีโอ',
+  'Yetkili': 'ผู้ดูแล',
+  'Kontrolü ver': 'มอบสิทธิ์ควบคุม',
+  'Kontrolü al': 'เอาสิทธิ์ควบคุมคืน',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'เล่น หยุด และเปลี่ยนวิดีโอได้',
+  'Artık videoyu yönetemez.': 'จัดการวิดีโอไม่ได้แล้ว',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'เฉพาะเจ้าของห้องและคนที่ได้รับอนุญาตเท่านั้นที่ทำได้',
+  'Kendi yetkini değiştiremezsin': 'เปลี่ยนสิทธิ์ของตัวเองไม่ได้',
+  'Geçersiz yetki': 'สิทธิ์ไม่ถูกต้อง',
+  '{} artık videoyu yönetebilir': '{} จัดการวิดีโอได้แล้ว',
+  '{} kontrolü bıraktı': '{} ไม่มีสิทธิ์ควบคุมแล้ว',
 };

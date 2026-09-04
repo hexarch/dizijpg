@@ -1560,4 +1560,16 @@ const Map<String, String> cevirilerBn = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'সার্ভারে জায়গা নেই, একটু পরে আবার চেষ্টা করুন',
   'Video bulunamadı': 'ভিডিও পাওয়া যায়নি',
+  'Yetkili': 'মডারেটর',
+  'Kontrolü ver': 'কন্ট্রোল দিন',
+  'Kontrolü al': 'কন্ট্রোল ফিরিয়ে নিন',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'ভিডিও চালাতে, থামাতে ও বদলাতে পারবেন।',
+  'Artık videoyu yönetemez.': 'আর ভিডিও নিয়ন্ত্রণ করতে পারবেন না।',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'এটা শুধু হোস্ট আর তার অনুমতি দেওয়া লোকজন পারে',
+  'Kendi yetkini değiştiremezsin': 'নিজের অনুমতি নিজে বদলাতে পারবেন না',
+  'Geçersiz yetki': 'অবৈধ অনুমতি',
+  '{} artık videoyu yönetebilir': '{} এখন ভিডিও নিয়ন্ত্রণ করতে পারবেন',
+  '{} kontrolü bıraktı': '{}-এর আর কন্ট্রোল নেই',
 };

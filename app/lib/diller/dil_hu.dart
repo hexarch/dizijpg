@@ -1581,4 +1581,16 @@ const Map<String, String> cevirilerHu = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'A szerveren elfogyott a hely, próbáld újra hamarosan',
   'Video bulunamadı': 'A videó nem található',
+  'Yetkili': 'Moderátor',
+  'Kontrolü ver': 'Vezérlés átadása',
+  'Kontrolü al': 'Vezérlés visszavétele',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Elindíthatja, megállíthatja és lecserélheti a videót.',
+  'Artık videoyu yönetemez.': 'Többé nem kezelheti a videót.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Ezt csak a gazda és az általa felhatalmazottak tehetik meg',
+  'Kendi yetkini değiştiremezsin': 'A saját jogosultságodat nem módosíthatod',
+  'Geçersiz yetki': 'Érvénytelen jogosultság',
+  '{} artık videoyu yönetebilir': '{} mostantól kezelheti a videót',
+  '{} kontrolü bıraktı': '{} már nem irányít',
 };

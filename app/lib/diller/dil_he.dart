@@ -1534,4 +1534,16 @@ const Map<String, String> cevirilerHe = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'נגמר המקום בשרת, נסה שוב עוד מעט',
   'Video bulunamadı': 'הסרטון לא נמצא',
+  'Yetkili': 'מנחה',
+  'Kontrolü ver': 'העבר שליטה',
+  'Kontrolü al': 'קח בחזרה את השליטה',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'יכול להפעיל, להשהות ולהחליף את הסרטון.',
+  'Artık videoyu yönetemez.': 'כבר לא יכול לנהל את הסרטון.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'רק המארח ומי שהוא מרשה יכולים לעשות זאת',
+  'Kendi yetkini değiştiremezsin': 'אי אפשר לשנות את ההרשאות של עצמך',
+  'Geçersiz yetki': 'הרשאה לא חוקית',
+  '{} artık videoyu yönetebilir': '{} יכול כעת לנהל את הסרטון',
+  '{} kontrolü bıraktı': 'ל{} כבר אין שליטה',
 };

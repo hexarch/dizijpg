@@ -1568,4 +1568,16 @@ const Map<String, String> cevirilerVi = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Máy chủ hết dung lượng, hãy thử lại sau ít phút',
   'Video bulunamadı': 'Không tìm thấy video',
+  'Yetkili': 'Người điều hành',
+  'Kontrolü ver': 'Trao quyền điều khiển',
+  'Kontrolü al': 'Thu lại quyền điều khiển',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Có thể phát, tạm dừng và đổi video.',
+  'Artık videoyu yönetemez.': 'Không còn quản lý được video.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Chỉ chủ phòng và người được chủ phòng cho phép mới làm được',
+  'Kendi yetkini değiştiremezsin': 'Bạn không thể đổi quyền của chính mình',
+  'Geçersiz yetki': 'Quyền không hợp lệ',
+  '{} artık videoyu yönetebilir': '{} giờ có thể quản lý video',
+  '{} kontrolü bıraktı': '{} không còn quyền điều khiển',
 };

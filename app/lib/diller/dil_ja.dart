@@ -1492,4 +1492,14 @@ const Map<String, String> cevirilerJa = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'サーバーの空き容量がありません。少ししてからお試しください',
   'Video bulunamadı': '動画が見つかりません',
+  'Yetkili': 'モデレーター',
+  'Kontrolü ver': '操作を任せる',
+  'Kontrolü al': '操作を戻す',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.': '動画の再生・一時停止・変更ができます。',
+  'Artık videoyu yönetemez.': '動画を操作できなくなります。',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir': 'ホストと許可された人だけができます',
+  'Kendi yetkini değiştiremezsin': '自分の権限は変更できません',
+  'Geçersiz yetki': '無効な権限',
+  '{} artık videoyu yönetebilir': '{}さんが動画を操作できるようになりました',
+  '{} kontrolü bıraktı': '{}さんの操作権限がなくなりました',
 };

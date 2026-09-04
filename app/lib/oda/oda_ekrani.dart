@@ -251,6 +251,17 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
 
   bool get _sahipMiyim => _oda?.sahibiMiyim == true;
 
+  /// Oynatmayı ve videoyu YÖNETEBİLİR miyim — sahip ya da yetkili.
+  ///
+  /// Kontrollerin çizilip çizilmeyeceği buna bakar; `_sahipMiyim` ise artık
+  /// yalnız SAHİBE ÖZEL işlerde (odayı kapat, davet et, yetki ver) kullanılır.
+  /// İkisini ayırmak şart: kullanıcı kararı (4 Eyl) "yetki verdiği de aynı
+  /// şekilde video durdurabilir kapatabilir" ama odayı kapatamaz.
+  bool get _yonetebilirMiyim {
+    final rol = _oda?.benimRol;
+    return _sahipMiyim || rol == 'yetkili';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -481,6 +492,16 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       );
       _tur++;
       var degisti = false;
+      // ROL DEĞİŞİMİ: sahip kontrolü verdiğinde/aldığında karşı taraf ekranı
+      // yeniden AÇMADAN kontrolleri görmeli (ya da kaybetmeli). Sunucu rolü
+      // her turda gönderiyor; değiştiyse hemen uygula.
+      if (akis.benimRol != null && akis.benimRol != _oda!.benimRol) {
+        setState(() => _oda = _oda!.kopya(benimRol: akis.benimRol));
+        // Yetki GİDERSE süren kalp atışını da durdur: yetkisi alınmış biri
+        // 10 sn'de bir konum yazmaya devam ederse sunucuda 403 yığar.
+        _kalbiKur(_oda!.durum.oynuyor);
+        degisti = true;
+      }
       // HAZIRLIK her turda güncellenir (durumdan bağımsız): yüzde sürüm
       // artmadan da ilerliyor. Değişmediyse setState çağırmayız — 1 sn'lik
       // yoklamada her turda yeniden çizim boşuna iş olurdu.
@@ -725,6 +746,13 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     }
   }
 
+  /// 10 saniyelik konum tazeleme — **YALNIZ SAHİPTE**, yetkilide DEĞİL.
+  ///
+  /// Yetkili oynatmayı yönetebiliyor (kullanıcı kararı, 4 Eyl) ama kalp atışı
+  /// o yetkinin İÇİNDE DEĞİL: birden fazla kişi 10 sn'de bir `konum_zaman`
+  /// damgasını tazelerse birbirlerinin damgasını ezerler ve izleyicilerde
+  /// küçük zıplamalar olur. Yetkili yalnız KASITLI eylemde (oynat/duraklat/
+  /// sar) yazar; sürekli tazeleme tek elde kalır.
   void _kalbiKur(bool oynuyor) {
     _kalp?.cancel();
     if (!oynuyor || !_sahipMiyim) return;
@@ -1214,7 +1242,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     if (!yukseklik.isFinite || yukseklik <= 0) return 240;
     // Kontroller + tepki şeridi. Sahipte oynat/sar satırı da var, izleyicide
     // yalnız tek satırlık "eşleniyor" göstergesi.
-    final kontrolPayi = _sahipMiyim ? 150.0 : 110.0;
+    final kontrolPayi = _yonetebilirMiyim ? 150.0 : 110.0;
     if (sohbetAyri) return math.max(120.0, yukseklik - kontrolPayi);
     // Sohbete en az bu kadar: üye şeridi + yazı alanı + birkaç satır balon.
     const sohbetAsgari = 170.0;
@@ -1451,13 +1479,13 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
             ),
             const SizedBox(height: 10),
             Text(
-              _sahipMiyim
+              _yonetebilirMiyim
                   ? 'Bir video yükle, izlemeye başlayın'.c
                   : 'Oda sahibi henüz video yüklemedi'.c,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white.withValues(alpha: 0.75)),
             ),
-            if (_sahipMiyim) ...[
+            if (_yonetebilirMiyim) ...[
               const SizedBox(height: 12),
               SizedBox(
                 height: 44,
@@ -1551,7 +1579,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white.withValues(alpha: 0.85)),
             ),
-            if (_sahipMiyim) ...[
+            if (_yonetebilirMiyim) ...[
               const SizedBox(height: 12),
               SizedBox(
                 height: 44,
@@ -1610,7 +1638,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
               style: const TextStyle(fontSize: 12),
             ),
           ),
-          if (webSorunu && _sahipMiyim)
+          if (webSorunu && _yonetebilirMiyim)
             TextButton(
               onPressed: _tarayiciIcinHazirla,
               child: Text('Tarayıcı için hazırla'.c),
@@ -1736,7 +1764,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                     ),
                   ),
                   Expanded(
-                    child: _sahipMiyim
+                    child: _yonetebilirMiyim
                         ? Slider(
                             value: sure > 0
                                 ? konum.toDouble().clamp(0, sure.toDouble())
@@ -1780,7 +1808,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                   ),
                 ],
               ),
-              if (_sahipMiyim)
+              if (_yonetebilirMiyim)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -1963,7 +1991,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
             child: Tooltip(
               message: [
                 '@${u.ad}',
-                if (u.sahip) 'oda sahibi'.c,
+                if (u.sahip) 'oda sahibi'.c else if (u.yetkili) 'Yetkili'.c,
                 if (u.bekliyor)
                   'davet bekliyor'.c
                 else if (u.cevrimici)
@@ -1971,53 +1999,142 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                 else
                   'çevrimdışı'.c,
               ].join(' · '),
-              child: Stack(
-                children: [
-                  Opacity(
-                    // Bekleyen davet SOLUK: listede duruyor ama "burada"
-                    // değil. Hiç göstermemek sahibin kimi davet ettiğini
-                    // unutmasına yol açardı.
-                    opacity: u.bekliyor ? 0.4 : 1,
-                    child: KullaniciAvatari(
-                      url: dosyaUrl(u.avatar),
-                      kullaniciAdi: u.ad,
-                      yaricap: 18,
+              child: InkWell(
+                // Rol menüsü YALNIZ sahipte ve KENDİSİ DIŞINDAKİ üyelerde
+                // açılır. `onTap: null` verildiğinde InkWell dalgayı da
+                // çizmez, yani izleyici "dokunulabilir ama bir şey olmuyor"
+                // hissi yaşamaz.
+                onTap: (_sahipMiyim && u.id != _benimId)
+                    ? () => _rolMenusu(u)
+                    : null,
+                borderRadius: BorderRadius.circular(24),
+                child: Stack(
+                  children: [
+                    Opacity(
+                      // Bekleyen davet SOLUK: listede duruyor ama "burada"
+                      // değil. Hiç göstermemek sahibin kimi davet ettiğini
+                      // unutmasına yol açardı.
+                      opacity: u.bekliyor ? 0.4 : 1,
+                      child: KullaniciAvatari(
+                        url: dosyaUrl(u.avatar),
+                        kullaniciAdi: u.ad,
+                        yaricap: 18,
+                      ),
                     ),
-                  ),
-                  if (!u.bekliyor && u.cevrimici)
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: DiziRenkler.cevrimiciYesil,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: DiziRenkler.koyuGri,
-                            width: 2,
+                    if (!u.bekliyor && u.cevrimici)
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: DiziRenkler.cevrimiciYesil,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: DiziRenkler.koyuGri,
+                              width: 2,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  if (u.sahip)
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Icon(
-                        Icons.star,
-                        size: 12,
-                        color: DiziRenkler.sariMetin,
+                    if (u.sahip)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Icon(
+                          Icons.star,
+                          size: 12,
+                          color: DiziRenkler.sariMetin,
+                        ),
+                      )
+                    // Yetkili sahipten AYRI bir ikon taşır: ikisi de yıldız
+                    // olsaydı odada kimin sahip olduğu görünmezdi.
+                    else if (u.yetkili)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Icon(
+                          Icons.shield_outlined,
+                          size: 12,
+                          color: DiziRenkler.sariMetin,
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
         },
       ),
     );
+  }
+
+  /// Sahibin bir üyeye kontrolü verip aldığı yarım sayfa.
+  ///
+  /// Yalnız sahipte ve yalnız BAŞKA bir üyede açılır (`_uyeSeridi`teki
+  /// `onTap` koşulu). Sahip kendi rolünü değiştiremez — sunucu da bunu
+  /// `KENDI_ROLUN` ile reddeder, ama menüyü hiç açmamak daha iyi: kullanıcı
+  /// yapamayacağı bir seçeneği görmemeli.
+  Future<void> _rolMenusu(OdaUye u) async {
+    final ver = !u.yetkili;
+    final onay = await showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      builder: (c) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+              child: Row(
+                children: [
+                  KullaniciAvatari(
+                    url: dosyaUrl(u.avatar),
+                    kullaniciAdi: u.ad,
+                    yaricap: 18,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      '@${u.ad}',
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: Icon(
+                ver ? Icons.shield_outlined : Icons.shield_moon_outlined,
+                color: DiziRenkler.sariMetin,
+              ),
+              title: Text(ver ? 'Kontrolü ver'.c : 'Kontrolü al'.c),
+              subtitle: Text(
+                ver
+                    ? 'Videoyu oynatıp durdurabilir ve değiştirebilir.'.c
+                    : 'Artık videoyu yönetemez.'.c,
+                style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
+              ),
+              onTap: () => Navigator.pop(c, true),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+    if (onay != true || !mounted) return;
+    try {
+      final uyeler = await OdaApi.rolVer(
+        widget.odaId,
+        kullanici: u.ad,
+        yetkili: ver,
+      );
+      // Sunucu güncel listeyi döndürüyor: rozet BİR TUR beklemeden değişsin.
+      if (mounted) setState(() => _oda = _oda?.kopya(uyeler: uyeler));
+    } on ApiHata catch (e) {
+      _uyar(odaHataMetni(e));
+    }
   }
 
   Widget _yaziAlani() {

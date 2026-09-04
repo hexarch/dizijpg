@@ -1566,4 +1566,16 @@ const Map<String, String> cevirilerPa = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'ਸਰਵਰ ਉੱਤੇ ਥਾਂ ਨਹੀਂ ਬਚੀ, ਥੋੜ੍ਹੀ ਦੇਰ ਬਾਅਦ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
   'Video bulunamadı': 'ਵੀਡੀਓ ਨਹੀਂ ਮਿਲੀ',
+  'Yetkili': 'ਮਾਡਰੇਟਰ',
+  'Kontrolü ver': 'ਕੰਟਰੋਲ ਦਿਓ',
+  'Kontrolü al': 'ਕੰਟਰੋਲ ਵਾਪਸ ਲਓ',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'ਵੀਡੀਓ ਚਲਾ, ਰੋਕ ਤੇ ਬਦਲ ਸਕਦਾ ਹੈ।',
+  'Artık videoyu yönetemez.': 'ਹੁਣ ਵੀਡੀਓ ਨਹੀਂ ਸੰਭਾਲ ਸਕਦਾ।',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'ਇਹ ਸਿਰਫ਼ ਮੇਜ਼ਬਾਨ ਤੇ ਉਸ ਦੇ ਇਜਾਜ਼ਤ ਦਿੱਤੇ ਲੋਕ ਕਰ ਸਕਦੇ ਹਨ',
+  'Kendi yetkini değiştiremezsin': 'ਤੁਸੀਂ ਆਪਣੀ ਇਜਾਜ਼ਤ ਆਪ ਨਹੀਂ ਬਦਲ ਸਕਦੇ',
+  'Geçersiz yetki': 'ਗਲਤ ਇਜਾਜ਼ਤ',
+  '{} artık videoyu yönetebilir': '{} ਹੁਣ ਵੀਡੀਓ ਸੰਭਾਲ ਸਕਦੇ ਹਨ',
+  '{} kontrolü bıraktı': '{} ਕੋਲ ਹੁਣ ਕੰਟਰੋਲ ਨਹੀਂ',
 };

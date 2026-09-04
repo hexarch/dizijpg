@@ -81,6 +81,9 @@ export const ODA_HATA_METNI = {
   ENGELLI: 'Bu odaya giremezsin',
   UYE_DEGIL: 'Bu odanın üyesi değilsin',
   SAHIP_DEGIL: 'Bunu yalnız oda sahibi yapabilir',
+  YETKI_YOK: 'Bunu oda sahibi ve yetki verdiği kişiler yapabilir',
+  KENDI_ROLUN: 'Kendi yetkini değiştiremezsin',
+  ROL_GECERSIZ: 'Geçersiz yetki',
 };
 
 /**
@@ -230,16 +233,79 @@ export function parcaKarari(beklenenOfset, gelenOfset, parcaUzunluk, toplamBoyut
 // YETKİ
 // ---------------------------------------------------------------------------
 
+/** Rol değerleri — `oda_uyeler.rol` CHECK'i ile BİREBİR. */
+export const ROLLER = ['sahip', 'yetkili', 'izleyici'];
+
+/** Sahibin BAŞKASINA verebileceği roller. 'sahip' devredilemez (bu turda). */
+export const VERILEBILIR_ROLLER = ['yetkili', 'izleyici'];
+
 /**
- * Oynatma durumunu kim yazabilir.
+ * Oynatma durumunu ve videoyu kim yönetebilir — **tek doğru nokta**.
  *
- * Kullanıcı isteği açık: *"oda sahibi 10 saniye ileri sararsa izleyenlerde de
- * ileri sarılmalı"* — yani kontrol TEK ELDE. İzleyici de yazabilseydi iki kişi
- * aynı anda sardığında oda salınıma girerdi (her biri ötekinin konumuna
- * düzeltme yapar).
+ * Kullanıcı isteği (4 Eyl 2026): *"oda sahibi diğer kullanıcılara yetki
+ * verebilmeli yetki verdiği de aynı şekilde video durdurabilir kapatabilir"*.
+ * Yani kontrol artık tek elde DEĞİL, ama dağıtımı tek elde: yalnız sahip
+ * yetki verir (`rolVerebilir`).
+ *
+ * ===========================================================================
+ * "KONTROL TEK ELDE" GEREKÇESİ NEDEN GEÇERSİZ KALDI — geri alma
+ * ===========================================================================
+ * İlk tasarımda yalnız sahip yazabiliyordu ve gerekçe şuydu: iki kişi aynı
+ * anda sararsa her biri ötekinin konumuna düzeltme yapar ve oda SALINIMA
+ * girer. Bu korku OTOMATİK düzeltme için doğruydu; burada geçerli DEĞİL:
+ *   · Yazma yalnız KULLANICI EYLEMİNDE olur (düğmeye basmak), otomatik
+ *     düzeltmede asla — düzeltme yalnız yerel oynatıcıyı sunucuya yaklaştırır.
+ *   · Sunucudaki `surum` sayacı yazmaları SIRAYA SOKAR; herkes SON yazana
+ *     uyar. İki kişi aynı saniyede sarsa bile sonuç tek ve tutarlıdır.
+ * Bunu buraya yazıyorum ki ileride biri "tek elde olmalıydı" diye geri
+ * almasın: geri alınacak şey yazma yetkisi değil, otomatik düzeltmenin
+ * sunucuya yazmasıdır — o da zaten hiç yapılmıyor.
+ *
+ * KALP ATIŞI BU YETKİNİN İÇİNDE DEĞİL: 10 sn'lik konum tazeleme YALNIZ
+ * sahiptedir (bkz. `oda_ekrani.dart` `_kalbiKur`). Birden fazla kişi
+ * tazelerse birbirlerinin `konum_zaman` damgasını ezer ve izleyicilerde
+ * küçük zıplamalar olur.
+ *
+ * @param {object|null} oda
+ * @param {number} kullaniciId
+ * @param {string|null} [rol] isteyenin `oda_uyeler.rol` değeri
  */
-export function durumYazabilir(oda, kullaniciId) {
+export function durumYazabilir(oda, kullaniciId, rol = null) {
+  if (!oda) return false;
+  if (oda.sahip_id === kullaniciId) return true;
+  return rol === 'yetkili';
+}
+
+/**
+ * Rol dağıtma yetkisi — YALNIZ SAHİP.
+ *
+ * Yetkili de yetki dağıtabilseydi sahip, kendi odasının kontrolünü zincirleme
+ * biçimde tamamen kaybedebilirdi (yetkili yetkili atar, o da başkasını...).
+ * Aynı gerekçe odayı kapatma ve davet için de geçerli; onlar da sahipte.
+ */
+export function rolVerebilir(oda, kullaniciId) {
   return !!oda && oda.sahip_id === kullaniciId;
+}
+
+/**
+ * Bir rol ataması geçerli mi.
+ *
+ * @param {object|null} oda
+ * @param {number} isteyenId
+ * @param {number} hedefId
+ * @param {string} rol
+ * @param {boolean} hedefUyeMi hedef odanın `oda_uyeler` satırına sahip mi
+ * @returns {{tamam:boolean, kod?:string}}
+ */
+export function rolAtamaKarari(oda, isteyenId, hedefId, rol, hedefUyeMi) {
+  if (!rolVerebilir(oda, isteyenId)) return { tamam: false, kod: 'SAHIP_DEGIL' };
+  // Sahip KENDİ rolünü değiştiremez: kendini 'izleyici'ye düşürürse oda
+  // sahipsiz kalmaz (sahip_id durur) ama kimse yetki DAĞITAMAZ hâle gelir —
+  // odayı kurtarma yolu kalmaz.
+  if (hedefId === isteyenId) return { tamam: false, kod: 'KENDI_ROLUN' };
+  if (!VERILEBILIR_ROLLER.includes(rol)) return { tamam: false, kod: 'ROL_GECERSIZ' };
+  if (!hedefUyeMi) return { tamam: false, kod: 'UYE_DEGIL' };
+  return { tamam: true };
 }
 
 /**

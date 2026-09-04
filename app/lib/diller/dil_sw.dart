@@ -1577,4 +1577,16 @@ const Map<String, String> cevirilerSw = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Seva imeishiwa nafasi, jaribu tena baada ya muda mfupi',
   'Video bulunamadı': 'Video haikupatikana',
+  'Yetkili': 'Msimamizi',
+  'Kontrolü ver': 'Mpe udhibiti',
+  'Kontrolü al': 'Chukua udhibiti',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Anaweza kucheza, kusitisha na kubadilisha video.',
+  'Artık videoyu yönetemez.': 'Hawezi tena kusimamia video.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Ni mwenyeji na wale aliowaruhusu pekee wanaoweza',
+  'Kendi yetkini değiştiremezsin': 'Huwezi kubadilisha ruhusa zako mwenyewe',
+  'Geçersiz yetki': 'Ruhusa batili',
+  '{} artık videoyu yönetebilir': '{} sasa anaweza kusimamia video',
+  '{} kontrolü bıraktı': '{} hana tena udhibiti',
 };

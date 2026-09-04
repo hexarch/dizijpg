@@ -21,6 +21,9 @@ class OdaKod {
   static const engelli = 'ENGELLI';
   static const uyeDegil = 'UYE_DEGIL';
   static const sahipDegil = 'SAHIP_DEGIL';
+  static const yetkiYok = 'YETKI_YOK';
+  static const kendiRolun = 'KENDI_ROLUN';
+  static const rolGecersiz = 'ROL_GECERSIZ';
   static const sahipAyrilamaz = 'SAHIP_AYRILAMAZ';
   static const odaZatenVar = 'ODA_ZATEN_VAR';
   static const kodGecersiz = 'KOD_GECERSIZ';
@@ -51,6 +54,12 @@ String odaHataMetni(ApiHata e) {
       return 'Bu odaya giremezsin'.c;
     case OdaKod.uyeDegil:
       return 'Bu odanın üyesi değilsin'.c;
+    case OdaKod.yetkiYok:
+      return 'Bunu oda sahibi ve yetki verdiği kişiler yapabilir'.c;
+    case OdaKod.kendiRolun:
+      return 'Kendi yetkini değiştiremezsin'.c;
+    case OdaKod.rolGecersiz:
+      return 'Geçersiz yetki'.c;
     case OdaKod.sahipDegil:
       return 'Bunu yalnız oda sahibi yapabilir'.c;
     case OdaKod.sahipAyrilamaz:
@@ -111,6 +120,14 @@ class OdaUye {
   });
 
   bool get sahip => rol == 'sahip';
+
+  /// Sahibin kontrolü verdiği kişi (4 Eyl 2026). Oynatmayı ve videoyu
+  /// yönetebilir; yetki dağıtamaz, odayı kapatamaz.
+  bool get yetkili => rol == 'yetkili';
+
+  /// Oynatmayı yönetebilen herkes — sahip VE yetkili.
+  bool get yonetici => sahip || yetkili;
+
   bool get bekliyor => katildi == null;
 
   factory OdaUye.json(Map<String, dynamic> d) => OdaUye(
@@ -206,6 +223,10 @@ class OdaMesaj {
         return '{} odadan ayrıldı'.cf([kim]);
       case 'video_yuklendi':
         return '{} bir video yükledi'.cf([kim]);
+      case 'yetki_verildi':
+        return '{} artık videoyu yönetebilir'.cf([kim]);
+      case 'yetki_alindi':
+        return '{} kontrolü bıraktı'.cf([kim]);
       default:
         return metin ?? '';
     }
@@ -290,6 +311,11 @@ class Oda {
   final String? videoKapak;
   final int biter;
   final bool sahibiMiyim;
+
+  /// Kendi rolüm: 'sahip' | 'yetkili' | 'izleyici'. Kontrollerin çizilip
+  /// çizilmeyeceğini bu belirler; her yoklama turunda tazelenir, böylece
+  /// sahip kontrolü verdiğinde ekranı yeniden açmaya gerek kalmaz.
+  final String benimRol;
   final OdaDurum durum;
   final OdaHazirlik hazirlik;
   final List<OdaUye> uyeler;
@@ -301,6 +327,7 @@ class Oda {
     required this.sahip,
     required this.biter,
     required this.sahibiMiyim,
+    required this.benimRol,
     required this.durum,
     required this.uyeler,
     this.hazirlik = const OdaHazirlik(),
@@ -330,6 +357,12 @@ class Oda {
     videoKapak: d['video_kapak'] as String?,
     biter: (d['biter'] as num?)?.toInt() ?? 0,
     sahibiMiyim: d['sahibi_miyim'] == true,
+    // Eski sunucu `benim_rol` göndermez: `sahibi_miyim`den TÜRET. Yoksa
+    // güncellenmemiş bir sunucuya bağlanan istemcide oda sahibi bile
+    // kontrolleri göremezdi.
+    benimRol:
+        (d['benim_rol'] as String?) ??
+        (d['sahibi_miyim'] == true ? 'sahip' : 'izleyici'),
     durum: OdaDurum.json(d, surum: (d['surum'] as num?)?.toInt() ?? 0),
     hazirlik: OdaHazirlik.json(d),
     uyeler: ((d['uyeler'] as List<dynamic>?) ?? const [])
@@ -344,6 +377,7 @@ class Oda {
     OdaDurum? durum,
     OdaHazirlik? hazirlik,
     List<OdaUye>? uyeler,
+    String? benimRol,
   }) => Oda(
     id: id,
     kod: kod,
@@ -357,6 +391,7 @@ class Oda {
     videoKapak: videoKapak,
     biter: biter,
     sahibiMiyim: sahibiMiyim,
+    benimRol: benimRol ?? this.benimRol,
     durum: durum ?? this.durum,
     hazirlik: hazirlik ?? this.hazirlik,
     uyeler: uyeler ?? this.uyeler,
@@ -425,6 +460,12 @@ class OdaAkis {
   /// yüzdesi sürüm artmadan da akmalı, yoksa çubuk %0da donmuş görünürdü.
   final OdaHazirlik hazirlik;
 
+  /// Kendi rolüm — bu da HER turda gelir. Sahip kontrolü verdiğinde karşı
+  /// taraf ekranı yeniden AÇMADAN kontrolleri görmeli; yalnız anlık görüntüde
+  /// gelseydi yetki ancak sayfa yenilenince işe yarardı.
+  /// Eski sunucu göndermezse null — çağıran mevcut rolü korur.
+  final String? benimRol;
+
   const OdaAkis({
     required this.sunucuZaman,
     required this.surum,
@@ -436,6 +477,7 @@ class OdaAkis {
     this.videoSureMs,
     this.uyeler,
     this.hazirlik = const OdaHazirlik(),
+    this.benimRol,
   });
 
   factory OdaAkis.json(Map<String, dynamic> d) {
@@ -450,6 +492,7 @@ class OdaAkis {
       videoAd: ham?['video_ad'] as String?,
       videoSureMs: (ham?['video_sure_ms'] as num?)?.toInt(),
       hazirlik: OdaHazirlik.json(d),
+      benimRol: d['benim_rol'] as String?,
       uyeler: (d['uyeler'] as List<dynamic>?)
           ?.map((e) => OdaUye.json(e as Map<String, dynamic>))
           .toList(),
@@ -569,6 +612,26 @@ class OdaApi {
 
   static Future<void> davet(int id, String kullanici) =>
       Api.post('/odalar/$id/davet', {'kullanici': kullanici});
+
+  /// Bir üyeye kontrolü verir ya da geri alır — YALNIZ oda sahibi çağırabilir.
+  ///
+  /// Yanıtta güncel üye listesi gelir; çağıran onu doğrudan ekrana basabilir
+  /// ve bir yoklama turu beklemez (rozet anında değişsin).
+  static Future<List<OdaUye>> rolVer(
+    int id, {
+    required String kullanici,
+    required bool yetkili,
+  }) async {
+    final d =
+        await Api.post('/odalar/$id/rol', {
+              'kullanici': kullanici,
+              'rol': yetkili ? 'yetkili' : 'izleyici',
+            })
+            as Map<String, dynamic>;
+    return ((d['uyeler'] as List<dynamic>?) ?? const [])
+        .map((e) => OdaUye.json(e as Map<String, dynamic>))
+        .toList();
+  }
 
   static Future<void> hazir(int id, bool hazirMi) =>
       Api.post('/odalar/$id/hazir', {'hazir': hazirMi});

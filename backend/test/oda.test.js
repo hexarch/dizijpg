@@ -20,7 +20,7 @@ import {
   TEPKILER, MESAJ_AZAMI, BASLIK_AZAMI, CEVRIMICI_ESIK_MS,
   kodUret, kodNormalle, beklenenKonum, baslikTemizle, mesajTemizle,
   tepkiGecerli, boyutKontrol, parcaKarari, durumYazabilir, girisKarari,
-  cevrimiciMi,
+  cevrimiciMi, rolVerebilir, rolAtamaKarari, ROLLER, VERILEBILIR_ROLLER,
 } from '../oda.js';
 
 const KOK = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -199,11 +199,61 @@ test('parcaKarari: tam boyuta kadar yazma kabul (son parça)', () => {
 // 5. YETKİ
 // ===========================================================================
 
-test('durumYazabilir: yalnız sahip', () => {
+test('durumYazabilir: sahip ve YETKİLİ yazar, izleyici yazamaz', () => {
+  // 4 Eyl 2026: "yetki verdiği de aynı şekilde video durdurabilir kapatabilir".
   const oda = { sahip_id: 7 };
+  assert.equal(durumYazabilir(oda, 7, 'sahip'), true);
+  assert.equal(durumYazabilir(oda, 8, 'yetkili'), true);
+  assert.equal(durumYazabilir(oda, 9, 'izleyici'), false);
+  assert.equal(durumYazabilir(oda, 9, null), false);
+  assert.equal(durumYazabilir(null, 7, 'sahip'), false);
+  // Sahip, rol satırı ne olursa olsun yazar (rolü bilinmese bile).
+  assert.equal(durumYazabilir(oda, 7, 'izleyici'), true);
   assert.equal(durumYazabilir(oda, 7), true);
-  assert.equal(durumYazabilir(oda, 8), false);
-  assert.equal(durumYazabilir(null, 7), false);
+});
+
+test('rolVerebilir: YALNIZ sahip — yetkili yetki dağıtamaz', () => {
+  // Yetkili de dağıtabilseydi zincirleme atama olur ve sahip kendi odasının
+  // kontrolünü tamamen kaybedebilirdi.
+  const oda = { sahip_id: 7 };
+  assert.equal(rolVerebilir(oda, 7), true);
+  assert.equal(rolVerebilir(oda, 8), false);
+  assert.equal(rolVerebilir(null, 7), false);
+});
+
+test('ROLLER üç değer ve şema CHECKi ile birebir', () => {
+  assert.deepEqual(ROLLER, ['sahip', 'yetkili', 'izleyici']);
+  assert.deepEqual(VERILEBILIR_ROLLER, ['yetkili', 'izleyici']);
+  for (const p of ['sema.sql', 'migrasyon-2026-09-04c.sql']) {
+    assert.match(oku(p), /rol IN \('sahip', 'yetkili', 'izleyici'\)/, p);
+  }
+});
+
+test('rolAtamaKarari: yalnız sahip atar', () => {
+  const oda = { sahip_id: 7 };
+  assert.equal(rolAtamaKarari(oda, 8, 9, 'yetkili', true).kod, 'SAHIP_DEGIL');
+  assert.equal(rolAtamaKarari(oda, 7, 9, 'yetkili', true).tamam, true);
+});
+
+test('rolAtamaKarari: sahip KENDİ rolünü değiştiremez', () => {
+  // Kendini izleyiciye düşürse yetki dağıtacak kimse kalmaz — odayı kurtarma
+  // yolu kapanır.
+  assert.equal(rolAtamaKarari({ sahip_id: 7 }, 7, 7, 'izleyici', true).kod,
+    'KENDI_ROLUN');
+});
+
+test("rolAtamaKarari: 'sahip' rolü ATANAMAZ (devir bu turda yok)", () => {
+  assert.equal(rolAtamaKarari({ sahip_id: 7 }, 7, 9, 'sahip', true).kod,
+    'ROL_GECERSIZ');
+  assert.equal(rolAtamaKarari({ sahip_id: 7 }, 7, 9, 'kral', true).kod,
+    'ROL_GECERSIZ');
+  assert.equal(rolAtamaKarari({ sahip_id: 7 }, 7, 9, '', true).kod,
+    'ROL_GECERSIZ');
+});
+
+test('rolAtamaKarari: odanın üyesi olmayana rol verilemez', () => {
+  assert.equal(rolAtamaKarari({ sahip_id: 7 }, 7, 9, 'yetkili', false).kod,
+    'UYE_DEGIL');
 });
 
 const acikOda = (ek = {}) => ({ sahip_id: 1, kapandi: null, biter: 10_000, ...ek });
@@ -559,12 +609,103 @@ test('bağlantı: akış yanıtı hazırlık alanlarını taşıyor', () => {
     'yüzde koşullu durum bloğunun içinde olmamalı — %0da donardı');
 });
 
-test('bağlantı: elle çevrim ucu YALNIZ sahip ve tek iş', () => {
+test('bağlantı: durum ucu yetkiliyi de kabul ediyor (rol geçiriliyor)', () => {
+  // İLK YAZIMDA `odaDurumYazabilir(oda, id)` iki argümanla çağrılıyordu ve
+  // rol HİÇ okunmuyordu; yetkili kullanıcı 403 alırdı. Üçüncü argümanın
+  // geçirildiğini kilitle.
+  const s = oku('server.js');
+  const i = s.indexOf("app.post('/odalar/:id/durum'");
+  assert.ok(i > 0);
+  const govde = s.slice(i, s.indexOf('}));', i));
+  assert.match(govde, /odaDurumYazabilir\(kapi\.oda, req\.kullanici\.id, kapi\.uye\.rol\)/,
+    'rol üçüncü argüman olarak geçirilmeli');
+  assert.match(govde, /YETKI_YOK/);
+});
+
+test('bağlantı: video yükleme uçları yetkiliyi kabul ediyor', () => {
+  // `/oda-video/basla` ve `/bitir` oda kimliğini GÖVDEDE alıyor, yani
+  // `odaKapisi`nden geçmiyorlar ve ellerinde rol yok. Rolü okuyan ortak
+  // yardımcıdan geçmeliler; elle `sahip_id` karşılaştırması yetkiliyi
+  // dışarıda bırakırdı.
+  const s = oku('server.js');
+  for (const uc of ["app.post('/oda-video/basla'", "app.post('/oda-video/bitir'"]) {
+    const i = s.indexOf(uc);
+    assert.ok(i > 0, uc);
+    const govde = s.slice(i, s.indexOf('}));', i));
+    assert.match(govde, /odaVideoYonetebilir\(/, `${uc}: ortak yetki yardımcısı`);
+    assert.doesNotMatch(govde, /oda\.sahip_id !== req\.kullanici\.id/,
+      `${uc}: elle sahip karşılaştırması yetkiliyi dışarıda bırakır`);
+  }
+  // Yardımcı kararı yine TEK doğru noktaya sormalı (kural ikinci kez
+  // yazılmasın — 4 Eyl'de girisKarari/odaKapisi ayrışması canlıda ısırdı).
+  const j = s.indexOf('async function odaVideoYonetebilir');
+  assert.ok(j > 0, 'odaVideoYonetebilir olmalı');
+  assert.match(s.slice(j, j + 800), /odaDurumYazabilir\(/);
+});
+
+test('bağlantı: odayı kapatma ve davet SAHİPTE kalıyor', () => {
+  // Kullanıcı kararı: yetkili videoyu yönetir ama odayı KAPATAMAZ (geri
+  // alınamaz kayıp) ve yetki DAĞITAMAZ (zincirleme atama).
+  const s = oku('server.js');
+  for (const uc of ["app.delete('/odalar/:id'", "app.post('/odalar/:id/davet'"]) {
+    const i = s.indexOf(uc);
+    assert.ok(i > 0, uc);
+    const govde = s.slice(i, s.indexOf('}));', i));
+    assert.match(govde, /sahip_id !== req\.kullanici\.id/, `${uc}: sahip şartı`);
+    assert.match(govde, /SAHIP_DEGIL/, uc);
+  }
+});
+
+test('bağlantı: rol ucu yalnız sahip + idempotent + sistem satırı', () => {
+  const s = oku('server.js');
+  const i = s.indexOf("app.post('/odalar/:id/rol'");
+  assert.ok(i > 0, 'rol ucu olmalı');
+  const govde = s.slice(i, s.indexOf('}));', i));
+  assert.match(govde, /odaRolAtamaKarari\(/, 'karar saf fonksiyondan gelmeli');
+  // Sahibin rolü ikinci bir kapıyla da korunuyor.
+  assert.match(govde, /rol <> 'sahip'/);
+  // Aynı rolü ikinci kez vermek satır eşleştirmemeli -> ikinci sistem satırı yok.
+  assert.match(govde, /rol <> \$3/, 'idempotens: aynı rol ikinci kez yazılmamalı');
+  assert.match(govde, /rowCount/, 'sistem satırı yalnız GERÇEK değişimde yazılmalı');
+  assert.match(govde, /yetki_verildi/);
+  assert.match(govde, /yetki_alindi/);
+  assert.match(govde, /odaRolLimiti/, 'hız limiti olmalı');
+});
+
+test('bağlantı: rol HER YOKLAMA turunda gidiyor', () => {
+  // Rol yalnız anlık görüntüde gitseydi, sahip kontrolü verdiğinde karşı taraf
+  // ancak ekranı yeniden açınca kontrolleri görürdü.
+  const s = oku('server.js');
+  const i = s.indexOf("app.get('/odalar/:id/akis'");
+  assert.ok(i > 0);
+  const govde = s.slice(i, s.indexOf('}));', i));
+  assert.match(govde, /benim_rol: kapi\.uye\.rol/);
+});
+
+test('bağlantı: odaGovde rolü taşıyor ve sahibi_miyim KALIYOR', () => {
+  // `sahibi_miyim` yayındaki eski istemcilerin okuduğu alan; kaldırılsaydı
+  // güncellemeyen kullanıcıda oda kontrolleri kaybolurdu.
+  const s = oku('server.js');
+  const i = s.indexOf('function odaGovde(');
+  const govde = s.slice(i, s.indexOf('\n}', i));
+  assert.match(govde, /sahibi_miyim:/);
+  assert.match(govde, /benim_rol:/);
+});
+
+test('bağlantı: elle çevrim ucu SAHİP+YETKİLİ ve tek iş', () => {
+  // 4 Eyl 2026 kullanıcı kararı bu testin ESKİ iddiasını geçersiz kıldı:
+  // "yetki verdiği de aynı şekilde video durdurabilir kapatabilir" — video
+  // yönetimi artık yetkilide de var. Denetim `odaDurumYazabilir`e (tek doğru
+  // nokta) sorulmalı, elle `sahip_id` karşılaştırmasına DEĞİL.
   const s = oku('server.js');
   const i = s.indexOf("app.post('/odalar/:id/video-cevir'");
   assert.ok(i > 0, 'video-cevir ucu olmalı');
   const govde = s.slice(i, s.indexOf('}));', i));
-  assert.match(govde, /SAHIP_DEGIL/);
+  assert.match(govde, /odaDurumYazabilir\(/,
+    'yetki kararı tek yerden sorulmalı (oda.js durumYazabilir)');
+  assert.match(govde, /YETKI_YOK/);
+  assert.doesNotMatch(govde, /sahip_id !== req\.kullanici\.id/,
+    'elle sahip karşılaştırması yetkiliyi dışarıda bırakırdı');
   assert.match(govde, /HAZIRLIK_SURUYOR/, 'süren iş varken ikincisi başlatılmamalı');
 });
 

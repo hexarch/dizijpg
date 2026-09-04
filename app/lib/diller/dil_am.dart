@@ -1514,4 +1514,16 @@ const Map<String, String> cevirilerAm = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'በአገልጋዩ ላይ ቦታ አልቀረም፣ ከጥቂት ጊዜ በኋላ ሞክር',
   'Video bulunamadı': 'ቪዲዮ አልተገኘም',
+  'Yetkili': 'አወያይ',
+  'Kontrolü ver': 'መቆጣጠሪያ ስጥ',
+  'Kontrolü al': 'መቆጣጠሪያ መልስ',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'ቪዲዮውን ማጫወት፣ ማቆምና መቀየር ይችላል።',
+  'Artık videoyu yönetemez.': 'ከእንግዲህ ቪዲዮውን መቆጣጠር አይችልም።',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'ይህን ማድረግ የሚችሉት አስተናጋጁና የፈቀደላቸው ብቻ ናቸው',
+  'Kendi yetkini değiştiremezsin': 'የራስህን ፈቃድ መቀየር አትችልም',
+  'Geçersiz yetki': 'ልክ ያልሆነ ፈቃድ',
+  '{} artık videoyu yönetebilir': '{} አሁን ቪዲዮውን መቆጣጠር ይችላል',
+  '{} kontrolü bıraktı': '{} ከእንግዲህ መቆጣጠሪያ የለውም',
 };

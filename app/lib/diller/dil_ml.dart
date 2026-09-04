@@ -1576,4 +1576,16 @@ const Map<String, String> cevirilerMl = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'സെർവറിൽ സ്ഥലമില്ല, കുറച്ചു കഴിഞ്ഞ് ശ്രമിക്കൂ',
   'Video bulunamadı': 'വീഡിയോ കണ്ടെത്തിയില്ല',
+  'Yetkili': 'മോഡറേറ്റർ',
+  'Kontrolü ver': 'നിയന്ത്രണം നൽകൂ',
+  'Kontrolü al': 'നിയന്ത്രണം തിരിച്ചെടുക്കൂ',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'വീഡിയോ പ്ലേ ചെയ്യാനും നിർത്താനും മാറ്റാനും കഴിയും.',
+  'Artık videoyu yönetemez.': 'ഇനി വീഡിയോ കൈകാര്യം ചെയ്യാനാവില്ല.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'ഇത് ഹോസ്റ്റിനും അയാൾ അനുവദിച്ചവർക്കും മാത്രമേ കഴിയൂ',
+  'Kendi yetkini değiştiremezsin': 'നിങ്ങളുടെ സ്വന്തം അനുമതി മാറ്റാനാവില്ല',
+  'Geçersiz yetki': 'അസാധുവായ അനുമതി',
+  '{} artık videoyu yönetebilir': '{} ഇനി വീഡിയോ കൈകാര്യം ചെയ്യാം',
+  '{} kontrolü bıraktı': '{}ക്ക് ഇനി നിയന്ത്രണമില്ല',
 };

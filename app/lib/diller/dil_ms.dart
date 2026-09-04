@@ -1576,4 +1576,16 @@ const Map<String, String> cevirilerMs = {
   'Sunucuda yer kalmadı, biraz sonra tekrar dene':
       'Pelayan kehabisan ruang, cuba lagi sebentar',
   'Video bulunamadı': 'Video tidak dijumpai',
+  'Yetkili': 'Moderator',
+  'Kontrolü ver': 'Beri kawalan',
+  'Kontrolü al': 'Ambil balik kawalan',
+  'Videoyu oynatıp durdurabilir ve değiştirebilir.':
+      'Boleh main, jeda dan tukar video.',
+  'Artık videoyu yönetemez.': 'Tidak lagi boleh urus video.',
+  'Bunu oda sahibi ve yetki verdiği kişiler yapabilir':
+      'Hanya hos dan orang yang dibenarkannya boleh melakukannya',
+  'Kendi yetkini değiştiremezsin': 'Anda tidak boleh tukar kebenaran sendiri',
+  'Geçersiz yetki': 'Kebenaran tidak sah',
+  '{} artık videoyu yönetebilir': '{} kini boleh urus video',
+  '{} kontrolü bıraktı': '{} tiada lagi kawalan',
 };
