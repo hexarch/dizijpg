@@ -1599,4 +1599,13 @@ const Map<String, String> cevirilerPl = {
   'Geçersiz yetki': 'Nieprawidłowe uprawnienie',
   '{} artık videoyu yönetebilir': '{} może teraz zarządzać filmem',
   '{} kontrolü bıraktı': '{} nie ma już sterowania',
+  'Kişi ara...': 'Szukaj osób...',
+  'Karşılıklı takipleştiğin kimse yok':
+      'Nikt Cię jeszcze nie obserwuje wzajemnie',
+  'Böyle bir kullanıcı yok': 'Nie ma takiego użytkownika',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Możesz też zaprosić, udostępniając kod pokoju.',
+  'Karşılıklı takipleşmiyorsunuz': 'Nie obserwujecie się wzajemnie',
+  'Odada': 'W pokoju',
+  'Davet edildi': 'Zaproszono',
 };

@@ -1582,4 +1582,12 @@ const Map<String, String> cevirilerId = {
   'Geçersiz yetki': 'Izin tidak valid',
   '{} artık videoyu yönetebilir': '{} sekarang bisa mengelola video',
   '{} kontrolü bıraktı': '{} tidak lagi punya kendali',
+  'Kişi ara...': 'Cari orang...',
+  'Karşılıklı takipleştiğin kimse yok': 'Belum ada yang mengikutimu balik',
+  'Böyle bir kullanıcı yok': 'Tidak ada pengguna itu',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Kamu juga bisa mengundang dengan membagikan kode ruang.',
+  'Karşılıklı takipleşmiyorsunuz': 'Kalian tidak saling mengikuti',
+  'Odada': 'Di ruang',
+  'Davet edildi': 'Diundang',
 };

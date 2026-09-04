@@ -773,3 +773,76 @@ test('bağlantı: Dart senkron modülü sunucudaki formülle aynı', () => {
   assert.match(dart, /konumMs \+/, 'Dart: konum + geçen süre × hız');
   assert.match(dart, /oda\.js/, 'Dart dosyası sunucudaki eşine ATIF yapmalı');
 });
+
+// ===========================================================================
+// DAVET ADAYLARI SEÇİCİSİ (4 Eyl 2026)
+// ===========================================================================
+// İSTEK: "arkadaş davet ederken takipettiklerimden seç olsun ve son
+// mesajlaştığı kişilere göre sıralansın" + "belki olmayan kullanıcıya istek
+// gönderir bu hatayı ortadan kaldıralım".
+
+/** `/odalar/:id/davet-adaylari` ucunun gövdesi. */
+function adaylarUcu() {
+  const s = oku('server.js');
+  const i = s.indexOf("app.get('/odalar/:id/davet-adaylari'");
+  assert.ok(i > 0, 'davet-adaylari ucu yok');
+  return s.slice(i, s.indexOf('}));', i));
+}
+
+test('adaylar ucu YALNIZ SAHİPTE (yetkili ve izleyici giremez)', () => {
+  const g = adaylarUcu();
+  // Davet yetkisi sahipte; aday listesi de öyle olmalı, yoksa yetkili kimin
+  // davet edilebileceğini (ve kiminle mesajlaştığını) görürdü.
+  assert.match(g, /sahip_id !== req\.kullanici\.id/, 'sahip şartı yok');
+  assert.match(g, /SAHIP_DEGIL/);
+  assert.match(g, /odaKapisi/, 'oda kapısından geçmiyor');
+});
+
+test('adaylar KARŞILIKLI takipleşilenler — tek yönlü takip GİRMİYOR', () => {
+  // Kullanıcı "takip ettiklerim" dedi ama davet ucu KARŞILIKLI takip şartı
+  // koşuyor. Tek yönlü listelenseydi ekranda TIKLANAMAYAN satırlar olurdu:
+  // seç -> 403 TAKIP_YOK. Seçicinin tüm amacı o hatayı ortadan kaldırmak.
+  const g = adaylarUcu();
+  assert.match(
+    g,
+    /JOIN takipler b ON b\.takip_eden_id = a\.takip_edilen_id\s*\n\s*AND b\.takip_edilen_id = a\.takip_eden_id/,
+    'karşılıklı takip JOINi yok — tek yönlü liste dönerdi',
+  );
+});
+
+test('adaylar SON MESAJA göre sıralı, mesajlaşılmamışlar SONDA', () => {
+  const g = adaylarUcu();
+  assert.match(g, /LEFT JOIN LATERAL/, 'son mesaj LATERAL ile alınmalı');
+  // `mesajlar_cift` indeksi (LEAST, GREATEST, id DESC) birebir bunu karşılar.
+  assert.match(g, /LEAST\(m\.gonderen_id, m\.alici_id\)/);
+  assert.match(g, /GREATEST\(m\.gonderen_id, m\.alici_id\)/);
+  assert.match(g, /ORDER BY sm\.id DESC NULLS LAST/,
+    'hiç mesajlaşılmamışlar sona düşmeli');
+});
+
+test('adaylar: engelli ve misafir listeye GİRMİYOR, LIMIT var', () => {
+  const g = adaylarUcu();
+  assert.match(g, /engelSuzgec\('k\.id'/, 'engel süzgeci yok');
+  assert.match(g, /k\.misafir = false/, 'misafir süzülmüyor');
+  assert.match(g, /LIMIT 200/, 'sınırsız liste dönerdi');
+});
+
+test('adaylar: durum TEK alanda (odada > davet_edildi > davet_edilebilir)', () => {
+  // İki ayrı bayrak (davetli/odada) çelişkili bir hâl üretebilirdi
+  // (davetli=false, odada=true). Tek alan onu imkânsız kılar.
+  const g = adaylarUcu();
+  assert.match(
+    g,
+    /durum: r\.odada \? 'odada' : \(r\.davetli \? 'davet_edildi' : 'davet_edilebilir'\)/,
+    'durum önceliği yanlış ya da iki bayrak ayrı gidiyor',
+  );
+  assert.match(g, /LEFT JOIN oda_uyeler u/, 'oda üyeliği bakılmıyor');
+  // Oda kodu da dönmeli: liste boşsa tek davet yolu odur.
+  assert.match(g, /kod: kapi\.oda\.kod/, 'oda kodu dönmüyor');
+});
+
+test('adaylar ucu hız limitli', () => {
+  const s = oku('server.js');
+  const i = s.indexOf("app.get('/odalar/:id/davet-adaylari'");
+  assert.match(s.slice(i, i + 160), /odaLimiti/, 'hız limiti yok');
+});

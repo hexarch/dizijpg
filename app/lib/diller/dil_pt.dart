@@ -1611,4 +1611,12 @@ const Map<String, String> cevirilerPt = {
   'Geçersiz yetki': 'Permissão inválida',
   '{} artık videoyu yönetebilir': '{} agora pode gerenciar o vídeo',
   '{} kontrolü bıraktı': '{} não tem mais o controle',
+  'Kişi ara...': 'Buscar pessoas...',
+  'Karşılıklı takipleştiğin kimse yok': 'Ninguém te segue de volta ainda',
+  'Böyle bir kullanıcı yok': 'Esse usuário não existe',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Você também pode convidar compartilhando o código da sala.',
+  'Karşılıklı takipleşmiyorsunuz': 'Vocês não se seguem',
+  'Odada': 'Na sala',
+  'Davet edildi': 'Convidado',
 };

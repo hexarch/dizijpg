@@ -1608,4 +1608,13 @@ const Map<String, String> cevirilerTa = {
   'Geçersiz yetki': 'தவறான அனுமதி',
   '{} artık videoyu yönetebilir': '{} இப்போது வீடியோவை நிர்வகிக்கலாம்',
   '{} kontrolü bıraktı': '{} இடம் இனி கட்டுப்பாடு இல்லை',
+  'Kişi ara...': 'நபர்களைத் தேடு...',
+  'Karşılıklı takipleştiğin kimse yok':
+      'இன்னும் யாரும் உங்களைத் திரும்பப் பின்தொடரவில்லை',
+  'Böyle bir kullanıcı yok': 'அப்படி ஒரு பயனர் இல்லை',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'அறைக் குறியீட்டைப் பகிர்ந்தும் அழைக்கலாம்.',
+  'Karşılıklı takipleşmiyorsunuz': 'நீங்கள் ஒருவரையொருவர் பின்தொடரவில்லை',
+  'Odada': 'அறையில்',
+  'Davet edildi': 'அழைக்கப்பட்டார்',
 };

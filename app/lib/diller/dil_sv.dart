@@ -1595,4 +1595,12 @@ const Map<String, String> cevirilerSv = {
   'Geçersiz yetki': 'Ogiltig rättighet',
   '{} artık videoyu yönetebilir': '{} kan nu styra videon',
   '{} kontrolü bıraktı': '{} har inte längre kontrollen',
+  'Kişi ara...': 'Sök personer...',
+  'Karşılıklı takipleştiğin kimse yok': 'Ingen följer dig tillbaka än',
+  'Böyle bir kullanıcı yok': 'Den användaren finns inte',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Du kan också bjuda in genom att dela rumskoden.',
+  'Karşılıklı takipleşmiyorsunuz': 'Ni följer inte varandra',
+  'Odada': 'I rummet',
+  'Davet edildi': 'Inbjuden',
 };

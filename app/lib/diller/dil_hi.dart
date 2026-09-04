@@ -1577,4 +1577,12 @@ const Map<String, String> cevirilerHi = {
   'Geçersiz yetki': 'अमान्य अनुमति',
   '{} artık videoyu yönetebilir': '{} अब वीडियो चला सकते हैं',
   '{} kontrolü bıraktı': '{} के पास अब कंट्रोल नहीं',
+  'Kişi ara...': 'लोग खोजें...',
+  'Karşılıklı takipleştiğin kimse yok': 'अभी कोई आपको वापस फ़ॉलो नहीं करता',
+  'Böyle bir kullanıcı yok': 'ऐसा कोई यूज़र नहीं',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'रूम कोड शेयर करके भी बुला सकते हैं।',
+  'Karşılıklı takipleşmiyorsunuz': 'आप एक-दूसरे को फ़ॉलो नहीं करते',
+  'Odada': 'रूम में',
+  'Davet edildi': 'बुलाया गया',
 };

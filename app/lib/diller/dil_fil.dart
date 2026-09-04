@@ -1614,4 +1614,12 @@ const Map<String, String> cevirilerFil = {
   'Geçersiz yetki': 'Hindi wastong pahintulot',
   '{} artık videoyu yönetebilir': 'Puwede nang pamahalaan ni {} ang video',
   '{} kontrolü bıraktı': 'Wala nang kontrol si {}',
+  'Kişi ara...': 'Maghanap ng tao...',
+  'Karşılıklı takipleştiğin kimse yok': 'Wala pang nagfo-follow back sa iyo',
+  'Böyle bir kullanıcı yok': 'Walang ganoong user',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Puwede ka ring mag-invite sa pamamagitan ng room code.',
+  'Karşılıklı takipleşmiyorsunuz': "Hindi kayo nagfo-follow sa isa't isa",
+  'Odada': 'Nasa room',
+  'Davet edildi': 'Na-invite',
 };

@@ -1588,4 +1588,12 @@ const Map<String, String> cevirilerMs = {
   'Geçersiz yetki': 'Kebenaran tidak sah',
   '{} artık videoyu yönetebilir': '{} kini boleh urus video',
   '{} kontrolü bıraktı': '{} tiada lagi kawalan',
+  'Kişi ara...': 'Cari orang...',
+  'Karşılıklı takipleştiğin kimse yok': 'Belum ada yang mengikut anda semula',
+  'Böyle bir kullanıcı yok': 'Tiada pengguna sebegitu',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Anda juga boleh menjemput dengan berkongsi kod bilik.',
+  'Karşılıklı takipleşmiyorsunuz': 'Anda tidak saling mengikut',
+  'Odada': 'Dalam bilik',
+  'Davet edildi': 'Dijemput',
 };

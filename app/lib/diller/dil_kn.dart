@@ -1581,4 +1581,13 @@ const Map<String, String> cevirilerKn = {
   'Geçersiz yetki': 'ಅಮಾನ್ಯ ಅನುಮತಿ',
   '{} artık videoyu yönetebilir': '{} ಈಗ ವೀಡಿಯೊ ನಿರ್ವಹಿಸಬಹುದು',
   '{} kontrolü bıraktı': '{} ಬಳಿ ಇನ್ನು ನಿಯಂತ್ರಣವಿಲ್ಲ',
+  'Kişi ara...': 'ಜನರನ್ನು ಹುಡುಕಿ...',
+  'Karşılıklı takipleştiğin kimse yok':
+      'ಇನ್ನೂ ಯಾರೂ ನಿಮ್ಮನ್ನು ಮರಳಿ ಅನುಸರಿಸುತ್ತಿಲ್ಲ',
+  'Böyle bir kullanıcı yok': 'ಅಂಥ ಬಳಕೆದಾರರಿಲ್ಲ',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'ಕೊಠಡಿ ಕೋಡ್ ಹಂಚಿಯೂ ಆಹ್ವಾನಿಸಬಹುದು.',
+  'Karşılıklı takipleşmiyorsunuz': 'ನೀವು ಪರಸ್ಪರ ಅನುಸರಿಸುತ್ತಿಲ್ಲ',
+  'Odada': 'ಕೊಠಡಿಯಲ್ಲಿ',
+  'Davet edildi': 'ಆಹ್ವಾನಿಸಲಾಗಿದೆ',
 };

@@ -1578,4 +1578,12 @@ const Map<String, String> cevirilerPa = {
   'Geçersiz yetki': 'ਗਲਤ ਇਜਾਜ਼ਤ',
   '{} artık videoyu yönetebilir': '{} ਹੁਣ ਵੀਡੀਓ ਸੰਭਾਲ ਸਕਦੇ ਹਨ',
   '{} kontrolü bıraktı': '{} ਕੋਲ ਹੁਣ ਕੰਟਰੋਲ ਨਹੀਂ',
+  'Kişi ara...': 'ਲੋਕ ਲੱਭੋ...',
+  'Karşılıklı takipleştiğin kimse yok': 'ਹਾਲੇ ਕੋਈ ਤੁਹਾਨੂੰ ਵਾਪਸ ਫਾਲੋ ਨਹੀਂ ਕਰਦਾ',
+  'Böyle bir kullanıcı yok': 'ਅਜਿਹਾ ਕੋਈ ਵਰਤੋਂਕਾਰ ਨਹੀਂ',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'ਰੂਮ ਕੋਡ ਸਾਂਝਾ ਕਰਕੇ ਵੀ ਸੱਦ ਸਕਦੇ ਹੋ।',
+  'Karşılıklı takipleşmiyorsunuz': 'ਤੁਸੀਂ ਇੱਕ-ਦੂਜੇ ਨੂੰ ਫਾਲੋ ਨਹੀਂ ਕਰਦੇ',
+  'Odada': 'ਰੂਮ ਵਿੱਚ',
+  'Davet edildi': 'ਸੱਦਿਆ ਗਿਆ',
 };

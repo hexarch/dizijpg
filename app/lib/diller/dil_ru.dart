@@ -1608,4 +1608,12 @@ const Map<String, String> cevirilerRu = {
   'Geçersiz yetki': 'Недопустимое право',
   '{} artık videoyu yönetebilir': '{} теперь может управлять видео',
   '{} kontrolü bıraktı': '{} больше не управляет',
+  'Kişi ara...': 'Поиск людей...',
+  'Karşılıklı takipleştiğin kimse yok': 'На вас пока никто не подписан взаимно',
+  'Böyle bir kullanıcı yok': 'Такого пользователя нет',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Пригласить можно и поделившись кодом комнаты.',
+  'Karşılıklı takipleşmiyorsunuz': 'Вы не подписаны друг на друга',
+  'Odada': 'В комнате',
+  'Davet edildi': 'Приглашён',
 };

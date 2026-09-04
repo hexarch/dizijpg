@@ -16625,6 +16625,77 @@ app.post('/odalar/:id/davet', girisZorunlu, odaLimiti, sarici(async (req, res) =
   res.json({ tamam: true });
 }));
 
+// ---------- DAVET ADAYLARI (yalnız sahip) ----------
+// İSTEK (4 Eyl 2026, birebir): "arkadaş davet ederken takipettiklerimden seç
+// olsun ve son mesajlaştığı kişilere göre sıralansın oradan da davet edebilsin"
+//
+// ---------------------------------------------------------------------------
+// NEDEN "TAKİP ETTİKLERİM" DEĞİL, KARŞILIKLI TAKİPLEŞİLENLER
+// ---------------------------------------------------------------------------
+// Kullanıcı "takip ettiklerim" dedi ama `POST /odalar/:id/davet` KARŞILIKLI
+// takip şartı koşuyor (`karsilikliTakipMi`). Tek yönlü takip ettiklerini
+// listeleseydik ekranda TIKLANAMAYAN satırlar olurdu: kullanıcı seçer, 403
+// "Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin" yer ve neden
+// listede göründüğünü anlamazdı. Liste, davetin GERÇEKTEN gideceği kişileri
+// gösterir — seçicinin tüm amacı bu (elle ad yazarken alınan 404/403'leri
+// ortadan kaldırmak).
+//
+// ---------------------------------------------------------------------------
+// SIRALAMA: SON MESAJLAŞMAYA GÖRE
+// ---------------------------------------------------------------------------
+// LATERAL alt sorgu aday BAŞINA tek indeks aramasıdır ve `mesajlar_cift`
+// (LEAST, GREATEST, id DESC) onu birebir karşılar. Alternatif — kullanıcının
+// TÜM mesajları üzerinde `/sohbetler`deki DISTINCT ON — çok yazışan birinde
+// binlerce satır tarardı; burada aday sayısı zaten LIMIT'li.
+// `id DESC` kullanılıyor, `tarih` değil: aynı sırayı verir ve indeksin
+// kendisidir. Hiç mesajlaşılmamışlar NULLS LAST ile sona düşer.
+app.get('/odalar/:id/davet-adaylari', girisZorunlu, odaLimiti,
+  sarici(async (req, res) => {
+    const kapi = await odaKapisi(req, res);
+    if (!kapi) return;
+    if (kapi.oda.sahip_id !== req.kullanici.id) {
+      return res.status(403).json({
+        hata: 'Davet etmeyi yalnız oda sahibi yapar', kod: 'SAHIP_DEGIL',
+      });
+    }
+    const { rows } = await havuz.query(
+      `SELECT k.kullanici_adi, k.avatar,
+              sm.id IS NOT NULL AS mesajlasildi,
+              extract(epoch FROM sm.tarih) * 1000 AS son_mesaj,
+              u.kullanici_id IS NOT NULL AS davetli,
+              u.katildi IS NOT NULL AS odada
+         FROM takipler a
+         JOIN takipler b ON b.takip_eden_id = a.takip_edilen_id
+                        AND b.takip_edilen_id = a.takip_eden_id
+         JOIN kullanicilar k ON k.id = a.takip_edilen_id
+         LEFT JOIN oda_uyeler u ON u.oda_id = $2 AND u.kullanici_id = k.id
+         LEFT JOIN LATERAL (
+           SELECT m.id, m.tarih FROM mesajlar m
+            WHERE LEAST(m.gonderen_id, m.alici_id) = LEAST($1::int, k.id)
+              AND GREATEST(m.gonderen_id, m.alici_id) = GREATEST($1::int, k.id)
+            ORDER BY m.id DESC LIMIT 1
+         ) sm ON true
+        WHERE a.takip_eden_id = $1
+          AND k.misafir = false
+          AND ${engelSuzgec('k.id', '$1')}
+        ORDER BY sm.id DESC NULLS LAST, lower(k.kullanici_adi)
+        LIMIT 200`,
+      [req.kullanici.id, kapi.oda.id],
+    );
+    res.json({
+      adaylar: rows.map((r) => ({
+        kullanici_adi: r.kullanici_adi,
+        avatar: r.avatar,
+        son_mesaj: r.son_mesaj == null ? null : Math.round(Number(r.son_mesaj)),
+        // Üç durum TEK alanda: istemci `if/else` zinciri kurmasın ve iki
+        // bayrağın çelişkili olabileceği bir hâl (davetli=false, odada=true)
+        // hiç doğmasın.
+        durum: r.odada ? 'odada' : (r.davetli ? 'davet_edildi' : 'davet_edilebilir'),
+      })),
+      kod: kapi.oda.kod,
+    });
+  }));
+
 // ---------- KONTROLÜ PAYLAŞMA (yalnız sahip) ----------
 // İSTEK (4 Eyl 2026, birebir): "oda sahibi diğer kullanıcılara yetki
 // verebilmeli yetki verdiği de aynı şekilde video durdurabilir kapatabilir"

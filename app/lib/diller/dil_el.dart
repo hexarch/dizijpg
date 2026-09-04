@@ -1615,4 +1615,12 @@ const Map<String, String> cevirilerEl = {
   '{} artık videoyu yönetebilir':
       'Ο/Η {} μπορεί τώρα να διαχειρίζεται το βίντεο',
   '{} kontrolü bıraktı': 'Ο/Η {} δεν έχει πια τον έλεγχο',
+  'Kişi ara...': 'Αναζήτηση ατόμων...',
+  'Karşılıklı takipleştiğin kimse yok': 'Κανείς δεν σε ακολουθεί ακόμη πίσω',
+  'Böyle bir kullanıcı yok': 'Δεν υπάρχει τέτοιος χρήστης',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Μπορείς να προσκαλέσεις και μοιράζοντας τον κωδικό δωματίου.',
+  'Karşılıklı takipleşmiyorsunuz': 'Δεν ακολουθείτε ο ένας τον άλλον',
+  'Odada': 'Στο δωμάτιο',
+  'Davet edildi': 'Προσκλήθηκε',
 };

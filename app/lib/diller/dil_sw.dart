@@ -1589,4 +1589,12 @@ const Map<String, String> cevirilerSw = {
   'Geçersiz yetki': 'Ruhusa batili',
   '{} artık videoyu yönetebilir': '{} sasa anaweza kusimamia video',
   '{} kontrolü bıraktı': '{} hana tena udhibiti',
+  'Kişi ara...': 'Tafuta watu...',
+  'Karşılıklı takipleştiğin kimse yok': 'Bado hakuna anayekufuata pia',
+  'Böyle bir kullanıcı yok': 'Hakuna mtumiaji huyo',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Unaweza pia kualika kwa kushiriki msimbo wa chumba.',
+  'Karşılıklı takipleşmiyorsunuz': 'Hamfuatani',
+  'Odada': 'Chumbani',
+  'Davet edildi': 'Amealikwa',
 };

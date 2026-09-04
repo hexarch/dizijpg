@@ -1593,4 +1593,12 @@ const Map<String, String> cevirilerHu = {
   'Geçersiz yetki': 'Érvénytelen jogosultság',
   '{} artık videoyu yönetebilir': '{} mostantól kezelheti a videót',
   '{} kontrolü bıraktı': '{} már nem irányít',
+  'Kişi ara...': 'Emberek keresése...',
+  'Karşılıklı takipleştiğin kimse yok': 'Még senki nem követ vissza',
+  'Böyle bir kullanıcı yok': 'Nincs ilyen felhasználó',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'A szobakód megosztásával is meghívhatsz.',
+  'Karşılıklı takipleşmiyorsunuz': 'Nem követitek egymást',
+  'Odada': 'A szobában',
+  'Davet edildi': 'Meghívva',
 };

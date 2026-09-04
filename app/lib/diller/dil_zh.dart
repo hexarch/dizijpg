@@ -1500,4 +1500,11 @@ const Map<String, String> cevirilerZh = {
   'Geçersiz yetki': '无效权限',
   '{} artık videoyu yönetebilir': '{} 现在可以管理视频',
   '{} kontrolü bıraktı': '{} 不再有控制权',
+  'Kişi ara...': '搜索用户...',
+  'Karşılıklı takipleştiğin kimse yok': '还没有人回关你',
+  'Böyle bir kullanıcı yok': '没有这个用户',
+  'Oda kodunu paylaşarak da davet edebilirsin.': '也可以分享房间码来邀请。',
+  'Karşılıklı takipleşmiyorsunuz': '你们没有互相关注',
+  'Odada': '在房间里',
+  'Davet edildi': '已邀请',
 };

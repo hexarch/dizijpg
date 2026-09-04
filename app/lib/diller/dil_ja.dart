@@ -1502,4 +1502,11 @@ const Map<String, String> cevirilerJa = {
   'Geçersiz yetki': '無効な権限',
   '{} artık videoyu yönetebilir': '{}さんが動画を操作できるようになりました',
   '{} kontrolü bıraktı': '{}さんの操作権限がなくなりました',
+  'Kişi ara...': 'ユーザーを検索...',
+  'Karşılıklı takipleştiğin kimse yok': 'まだ相互フォローの相手がいません',
+  'Böyle bir kullanıcı yok': 'そのユーザーはいません',
+  'Oda kodunu paylaşarak da davet edebilirsin.': 'ルームコードを共有して招待することもできます。',
+  'Karşılıklı takipleşmiyorsunuz': '相互フォローではありません',
+  'Odada': 'ルームにいます',
+  'Davet edildi': '招待済み',
 };

@@ -1626,4 +1626,12 @@ const Map<String, String> cevirilerRo = {
   'Geçersiz yetki': 'Drept nevalid',
   '{} artık videoyu yönetebilir': '{} poate gestiona acum videoclipul',
   '{} kontrolü bıraktı': '{} nu mai are controlul',
+  'Kişi ara...': 'Caută persoane...',
+  'Karşılıklı takipleştiğin kimse yok': 'Nimeni nu te urmărește înapoi încă',
+  'Böyle bir kullanıcı yok': 'Nu există acest utilizator',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Poți invita și prin partajarea codului camerei.',
+  'Karşılıklı takipleşmiyorsunuz': 'Nu vă urmăriți reciproc',
+  'Odada': 'În cameră',
+  'Davet edildi': 'Invitat',
 };

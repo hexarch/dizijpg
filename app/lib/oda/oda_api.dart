@@ -529,6 +529,53 @@ String odaKonumBicim(int ms) {
   return sa > 0 ? '$sa:${iki(dk)}:${iki(sn)}' : '$dk:${iki(sn)}';
 }
 
+/// Davet seçicisindeki bir satır.
+///
+/// [durum] ÜÇ DEĞER taşır ve sunucudan TEK alan olarak gelir:
+/// 'davet_edilebilir' · 'davet_edildi' · 'odada'. İki ayrı bayrak
+/// (davetli/odada) olsaydı çelişkili bir hâl (davetli=false, odada=true)
+/// mümkün olurdu; tek alan o hâli imkânsız kılar.
+class OdaAday {
+  final String kullaniciAdi;
+  final String? avatar;
+
+  /// Son mesajlaşma anı (epoch ms); hiç mesajlaşılmadıysa null.
+  final int? sonMesaj;
+  final String durum;
+
+  /// Sunucu aramasından gelen ve KARŞILIKLI TAKİPLEŞİLMEYEN kişi.
+  ///
+  /// Böyle bir satır listede DURUR ama tıklanamaz ve sebebi yazılır. Aramadan
+  /// düşürmek yanlış olurdu: kullanıcı arkadaşını arar, bulamaz ve "uygulama
+  /// bozuk" der. Sebebi görmek ona ne yapacağını söyler.
+  final bool takipYok;
+
+  const OdaAday({
+    required this.kullaniciAdi,
+    required this.durum,
+    this.avatar,
+    this.sonMesaj,
+    this.takipYok = false,
+  });
+
+  bool get davetEdilebilir => durum == 'davet_edilebilir' && !takipYok;
+
+  factory OdaAday.json(Map<String, dynamic> d) => OdaAday(
+    kullaniciAdi: (d['kullanici_adi'] as String?) ?? '',
+    avatar: d['avatar'] as String?,
+    sonMesaj: (d['son_mesaj'] as num?)?.toInt(),
+    durum: (d['durum'] as String?) ?? 'davet_edilebilir',
+  );
+
+  OdaAday kopya({String? durum}) => OdaAday(
+    kullaniciAdi: kullaniciAdi,
+    avatar: avatar,
+    sonMesaj: sonMesaj,
+    durum: durum ?? this.durum,
+    takipYok: takipYok,
+  );
+}
+
 /// Uçların ince sarmalayıcısı.
 class OdaApi {
   static Future<Oda> olustur({String? baslik}) async {
@@ -612,6 +659,21 @@ class OdaApi {
 
   static Future<void> davet(int id, String kullanici) =>
       Api.post('/odalar/$id/davet', {'kullanici': kullanici});
+
+  /// Davet edilebilecek kişiler: KARŞILIKLI takipleşilenler, son mesajlaşmaya
+  /// göre sıralı. Oda kodu da döner (liste boşsa tek davet yolu odur).
+  static Future<({List<OdaAday> adaylar, String kod})> davetAdaylari(
+    int id,
+  ) async {
+    final d =
+        await Api.get('/odalar/$id/davet-adaylari') as Map<String, dynamic>;
+    return (
+      adaylar: ((d['adaylar'] as List<dynamic>?) ?? const [])
+          .map((e) => OdaAday.json(e as Map<String, dynamic>))
+          .toList(),
+      kod: (d['kod'] as String?) ?? '',
+    );
+  }
 
   /// Bir üyeye kontrolü verir ya da geri alır — YALNIZ oda sahibi çağırabilir.
   ///

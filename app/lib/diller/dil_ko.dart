@@ -1505,4 +1505,11 @@ const Map<String, String> cevirilerKo = {
   'Geçersiz yetki': '잘못된 권한',
   '{} artık videoyu yönetebilir': '{}님이 이제 영상을 관리할 수 있습니다',
   '{} kontrolü bıraktı': '{}님의 제어 권한이 사라졌습니다',
+  'Kişi ara...': '사람 검색...',
+  'Karşılıklı takipleştiğin kimse yok': '아직 맞팔로우한 사람이 없습니다',
+  'Böyle bir kullanıcı yok': '그런 사용자가 없습니다',
+  'Oda kodunu paylaşarak da davet edebilirsin.': '방 코드를 공유해서 초대할 수도 있습니다.',
+  'Karşılıklı takipleşmiyorsunuz': '서로 팔로우하지 않습니다',
+  'Odada': '방에 있음',
+  'Davet edildi': '초대함',
 };

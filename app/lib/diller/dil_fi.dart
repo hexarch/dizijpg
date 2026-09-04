@@ -1588,4 +1588,12 @@ const Map<String, String> cevirilerFi = {
   'Geçersiz yetki': 'Virheellinen oikeus',
   '{} artık videoyu yönetebilir': '{} voi nyt hallita videota',
   '{} kontrolü bıraktı': '{} ei enää hallitse videota',
+  'Kişi ara...': 'Hae henkilöitä...',
+  'Karşılıklı takipleştiğin kimse yok': 'Kukaan ei seuraa sinua takaisin',
+  'Böyle bir kullanıcı yok': 'Tällaista käyttäjää ei ole',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Voit kutsua myös jakamalla huonekoodin.',
+  'Karşılıklı takipleşmiyorsunuz': 'Ette seuraa toisianne',
+  'Odada': 'Huoneessa',
+  'Davet edildi': 'Kutsuttu',
 };

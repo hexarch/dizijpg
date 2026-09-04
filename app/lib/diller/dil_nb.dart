@@ -1583,4 +1583,12 @@ const Map<String, String> cevirilerNb = {
   'Geçersiz yetki': 'Ugyldig rettighet',
   '{} artık videoyu yönetebilir': '{} kan nå styre videoen',
   '{} kontrolü bıraktı': '{} har ikke lenger kontrollen',
+  'Kişi ara...': 'Søk etter personer...',
+  'Karşılıklı takipleştiğin kimse yok': 'Ingen følger deg tilbake ennå',
+  'Böyle bir kullanıcı yok': 'Den brukeren finnes ikke',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Du kan også invitere ved å dele romkoden.',
+  'Karşılıklı takipleşmiyorsunuz': 'Dere følger ikke hverandre',
+  'Odada': 'I rommet',
+  'Davet edildi': 'Invitert',
 };

@@ -1149,18 +1149,17 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   }
 
   Future<void> _davetEt() async {
-    final ad = await showDialog<String>(
+    // Elle ad yazma KALKTI: davet yalnız listeden seçmeyle gider, böylece
+    // "Kullanıcı bulunamadı" (404) ve "karşılıklı takip yok" (403) hataları
+    // kullanıcının hiç görmeyeceği şeyler olur.
+    await showModalBottomSheet<void>(
       context: context,
-      builder: (_) => const _DavetDialog(),
+      backgroundColor: DiziRenkler.koyuGri,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => OdaDavetSecici(odaId: widget.odaId),
     );
-    if (ad == null || ad.isEmpty) return;
-    try {
-      await OdaApi.davet(widget.odaId, ad);
-      _uyar('@{} davet edildi'.cf([ad]));
-      _tamYenile();
-    } on ApiHata catch (e) {
-      _uyar(odaHataMetni(e));
-    }
+    if (mounted) _tamYenile();
   }
 
   Future<void> _kodKopyala() async {
@@ -2753,57 +2752,393 @@ class _MesajSatiri extends StatelessWidget {
   }
 }
 
-class _DavetDialog extends StatefulWidget {
-  const _DavetDialog();
+/// Davet seçicisi — oda sahibinin kişi seçerek davet ettiği ekran.
+///
+/// ===========================================================================
+/// NEDEN ELLE AD YAZMA KALKTI
+/// ===========================================================================
+/// Önceki hâl boş bir metin kutusuydu. Kullanıcı adı yanlış yazınca 404
+/// (`KULLANICI_YOK`), karşılıklı takip yoksa 403 (`TAKIP_YOK`) alınıyordu.
+/// İkisi de kullanıcının ekranda GÖRMEMESİ gereken hatalar: seçilecek bir
+/// satır yoksa gönderilecek bir davet de olmamalı. Artık davet YALNIZ listeden
+/// seçmeyle gidiyor — var olmayan birine davet göndermek YAPISAL OLARAK
+/// imkânsız.
+///
+/// ===========================================================================
+/// ARAMA İKİ KATMANLI
+/// ===========================================================================
+///   1. YEREL SÜZME — elde duran karşılıklı takip listesi anında süzülür.
+///      Ağ turu yok; her tuşta anında tepki.
+///   2. SUNUCU ARAMASI — yerelde eşleşme yoksa `/kullanici-ara` (MEVCUT uç)
+///      sorulur. 300 ms geciktirilir ve uçuşan eski yanıt YOK SAYILIR
+///      (`_aramaTur` sayacı): her harfte istek atmak hız limitini yer ve
+///      yanıtlar sırasız dönerse kullanıcı bir önceki harfin sonucunu görür.
+///
+/// Sunucudan gelen ama KARŞILIKLI TAKİPLEŞİLMEYEN kişi listeden DÜŞÜRÜLMEZ:
+/// tıklanamaz olur ve sebebi yazılır. Düşürseydik kullanıcı arkadaşını arar,
+/// bulamaz ve "uygulama bozuk" derdi — sebebi görmek ona ne yapacağını söyler.
+class OdaDavetSecici extends StatefulWidget {
+  final int odaId;
+  const OdaDavetSecici({super.key, required this.odaId});
 
   @override
-  State<_DavetDialog> createState() => _DavetDialogState();
+  State<OdaDavetSecici> createState() => _OdaDavetSeciciState();
 }
 
-class _DavetDialogState extends State<_DavetDialog> {
-  final _ad = TextEditingController();
+class _OdaDavetSeciciState extends State<OdaDavetSecici> {
+  final _arama = TextEditingController();
+  final _odak = FocusNode();
+
+  List<OdaAday>? _adaylar;
+  String _kod = '';
+  String? _hata;
+  String _sorgu = '';
+
+  /// Sunucu arama sonuçları (yalnız yerelde eşleşme yokken kullanılır).
+  List<OdaAday>? _sunucuSonuc;
+  bool _araniyor = false;
+
+  /// Uçuşan istek sayacı: geç dönen eski yanıt yok sayılsın.
+  int _aramaTur = 0;
+  Timer? _gecikme;
+
+  /// Davet isteği süren satırlar — çift dokunuş kilidi.
+  final _gonderiliyor = <String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _yukle();
+  }
 
   @override
   void dispose() {
-    _ad.dispose();
+    _gecikme?.cancel();
+    _arama.dispose();
+    _odak.dispose();
     super.dispose();
+  }
+
+  Future<void> _yukle() async {
+    try {
+      final s = await OdaApi.davetAdaylari(widget.odaId);
+      if (!mounted) return;
+      setState(() {
+        _adaylar = s.adaylar;
+        _kod = s.kod;
+        _hata = null;
+      });
+    } on ApiHata catch (e) {
+      if (mounted) setState(() => _hata = odaHataMetni(e));
+    }
+  }
+
+  void _uyar(String m) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m)));
+  }
+
+  /// Yerelde eşleşenler (kullanıcı adına göre, büyük/küçük harf duyarsız).
+  List<OdaAday> get _yerel {
+    final liste = _adaylar ?? const <OdaAday>[];
+    if (_sorgu.isEmpty) return liste;
+    final q = _sorgu.toLowerCase();
+    return liste
+        .where((a) => a.kullaniciAdi.toLowerCase().contains(q))
+        .toList();
+  }
+
+  void _sorguDegisti(String v) {
+    final q = v.trim();
+    setState(() {
+      _sorgu = q;
+      // Yerelde eşleşme varsa sunucu sonuçları GÖRÜNMEZ: kullanıcı önce
+      // gerçekten davet edebileceği kişileri görsün.
+      if (q.isEmpty) _sunucuSonuc = null;
+    });
+    _gecikme?.cancel();
+    if (q.length < 2 || _yerel.isNotEmpty) {
+      setState(() {
+        _sunucuSonuc = null;
+        _araniyor = false;
+      });
+      return;
+    }
+    setState(() => _araniyor = true);
+    _gecikme = Timer(const Duration(milliseconds: 300), () => _sunucudaAra(q));
+  }
+
+  Future<void> _sunucudaAra(String q) async {
+    final tur = ++_aramaTur;
+    try {
+      final ham = await Api.kullaniciAra(q);
+      // Geç dönen eski yanıtı YOK SAY.
+      if (!mounted || tur != _aramaTur) return;
+      final adaylar = _adaylar ?? const <OdaAday>[];
+      final sonuc = <OdaAday>[];
+      for (final e in ham) {
+        final m = e as Map<String, dynamic>;
+        if (m['ben_mi'] == true) continue; // kendini davet edemezsin
+        final ad = (m['kullanici_adi'] as String?) ?? '';
+        if (ad.isEmpty) continue;
+        // Aday listesi karşılıklı takipleşilenlerin TAMAMI; burada yoksa
+        // karşılıklı takip YOKTUR. Ek uca gerek yok.
+        final eslesen = adaylar.where((a) => a.kullaniciAdi == ad).firstOrNull;
+        sonuc.add(
+          eslesen ??
+              OdaAday(
+                kullaniciAdi: ad,
+                avatar: m['avatar'] as String?,
+                durum: 'davet_edilebilir',
+                takipYok: true,
+              ),
+        );
+      }
+      setState(() {
+        _sunucuSonuc = sonuc;
+        _araniyor = false;
+      });
+    } on ApiHata catch (_) {
+      if (mounted && tur == _aramaTur) setState(() => _araniyor = false);
+    }
+  }
+
+  Future<void> _davetEt(OdaAday a) async {
+    if (_gonderiliyor.contains(a.kullaniciAdi)) return;
+    setState(() => _gonderiliyor.add(a.kullaniciAdi));
+    // İYİMSER: satır anında "Davet edildi" olur. Hata gelirse GERİ ALINIR
+    // (üç hal kuralı: yükleniyor -> başarı -> hata + geri alma).
+    _durumDegistir(a.kullaniciAdi, 'davet_edildi');
+    try {
+      await OdaApi.davet(widget.odaId, a.kullaniciAdi);
+      if (mounted) _uyar('@{} davet edildi'.cf([a.kullaniciAdi]));
+    } on ApiHata catch (e) {
+      _durumDegistir(a.kullaniciAdi, 'davet_edilebilir');
+      if (mounted) _uyar(odaHataMetni(e));
+    } finally {
+      if (mounted) setState(() => _gonderiliyor.remove(a.kullaniciAdi));
+    }
+  }
+
+  void _durumDegistir(String ad, String durum) {
+    if (!mounted) return;
+    setState(() {
+      _adaylar = _adaylar
+          ?.map((x) => x.kullaniciAdi == ad ? x.kopya(durum: durum) : x)
+          .toList();
+      _sunucuSonuc = _sunucuSonuc
+          ?.map((x) => x.kullaniciAdi == ad ? x.kopya(durum: durum) : x)
+          .toList();
+    });
+  }
+
+  Future<void> _kodKopyala() async {
+    if (_kod.isEmpty) return;
+    await Clipboard.setData(ClipboardData(text: _kod));
+    _uyar('Oda kodu kopyalandı'.c);
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Arkadaşını davet et'.c),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TextField(
-            controller: _ad,
-            autofocus: true,
-            autocorrect: false,
-            decoration: InputDecoration(
-              hintText: 'kullanıcı adı'.c,
-              prefixText: '@',
+    final yerel = _yerel;
+    final sunucu = _sunucuSonuc;
+    final liste = yerel.isNotEmpty ? yerel : (sunucu ?? const <OdaAday>[]);
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.person_add_alt_1_outlined,
+                    color: DiziRenkler.sariMetin,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Arkadaşını davet et'.c,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            onSubmitted: (v) => Navigator.pop(context, v.trim()),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Yalnız karşılıklı takipleştiğin kişileri davet edebilirsin.'.c,
-            style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: _arama,
+                focusNode: _odak,
+                autocorrect: false,
+                onChanged: _sorguDegisti,
+                decoration: InputDecoration(
+                  hintText: 'Kişi ara...'.c,
+                  isDense: true,
+                  prefixIcon: const Icon(Icons.search, size: 20),
+                  suffixIcon: _araniyor
+                      ? const Padding(
+                          padding: EdgeInsets.all(12),
+                          child: SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : null,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Flexible(child: _govde(liste)),
+            _kodSeridi(),
+          ],
+        ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('Vazgeç'.c),
+    );
+  }
+
+  Widget _govde(List<OdaAday> liste) {
+    if (_hata != null) {
+      return BosDurum(ikon: Icons.error_outline, baslik: _hata!);
+    }
+    if (_adaylar == null) return const IskeletListe(adet: 5);
+    if (liste.isEmpty) {
+      // ÇIKIŞSIZ BOŞ EKRAN YOK: her iki boş hâlde de oda kodu bir davet
+      // yoludur ve altta duruyor (ui-ux-pro-max: Empty States / No Results —
+      // "Show helpful message and action").
+      return BosDurum(
+        ikon: _sorgu.isEmpty ? Icons.group_outlined : Icons.search_off,
+        baslik: _sorgu.isEmpty
+            ? 'Karşılıklı takipleştiğin kimse yok'.c
+            : 'Böyle bir kullanıcı yok'.c,
+        ipucu: 'Oda kodunu paylaşarak da davet edebilirsin.'.c,
+      );
+    }
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      itemCount: liste.length,
+      itemBuilder: (context, i) => _AdaySatiri(
+        key: ValueKey(liste[i].kullaniciAdi),
+        aday: liste[i],
+        mesgul: _gonderiliyor.contains(liste[i].kullaniciAdi),
+        onDavet: () => _davetEt(liste[i]),
+      ),
+    );
+  }
+
+  Widget _kodSeridi() {
+    if (_kod.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      child: InkWell(
+        onTap: _kodKopyala,
+        borderRadius: BorderRadius.circular(10),
+        child: SizedBox(
+          height: 44,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Oda kodu'.c,
+                style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _kod,
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.5,
+                  color: DiziRenkler.sariMetin,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Icon(Icons.copy, size: 14, color: DiziRenkler.metin54),
+            ],
+          ),
         ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context, _ad.text.trim()),
-          child: Text('Davet et'.c),
+      ),
+    );
+  }
+}
+
+/// Seçicideki tek satır: avatar + ad + sağda durum/eylem.
+class _AdaySatiri extends StatelessWidget {
+  final OdaAday aday;
+  final bool mesgul;
+  final VoidCallback onDavet;
+  const _AdaySatiri({
+    super.key,
+    required this.aday,
+    required this.mesgul,
+    required this.onDavet,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final etiket = aday.takipYok
+        ? 'Karşılıklı takipleşmiyorsunuz'.c
+        : aday.durum == 'odada'
+        ? 'Odada'.c
+        : aday.durum == 'davet_edildi'
+        ? 'Davet edildi'.c
+        : null;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: SizedBox(
+        height: 52,
+        child: Row(
+          children: [
+            KullaniciAvatari(
+              url: dosyaUrl(aday.avatar),
+              kullaniciAdi: aday.kullaniciAdi,
+              yaricap: 18,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                '@${aday.kullaniciAdi}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
+            const SizedBox(width: 8),
+            if (etiket != null)
+              Flexible(
+                child: Text(
+                  etiket,
+                  textAlign: TextAlign.end,
+                  maxLines: 2,
+                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
+                ),
+              )
+            else
+              SizedBox(
+                height: 44,
+                child: FilledButton(
+                  onPressed: mesgul ? null : onDavet,
+                  child: mesgul
+                      ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text('Davet et'.c),
+                ),
+              ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

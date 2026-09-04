@@ -1580,4 +1580,12 @@ const Map<String, String> cevirilerVi = {
   'Geçersiz yetki': 'Quyền không hợp lệ',
   '{} artık videoyu yönetebilir': '{} giờ có thể quản lý video',
   '{} kontrolü bıraktı': '{} không còn quyền điều khiển',
+  'Kişi ara...': 'Tìm người...',
+  'Karşılıklı takipleştiğin kimse yok': 'Chưa có ai theo dõi lại bạn',
+  'Böyle bir kullanıcı yok': 'Không có người dùng này',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'Bạn cũng có thể mời bằng cách chia sẻ mã phòng.',
+  'Karşılıklı takipleşmiyorsunuz': 'Hai bạn không theo dõi nhau',
+  'Odada': 'Đang ở trong phòng',
+  'Davet edildi': 'Đã mời',
 };

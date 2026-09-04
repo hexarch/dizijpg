@@ -1599,4 +1599,12 @@ const Map<String, String> cevirilerMy = {
   'Geçersiz yetki': 'မမှန်ကန်သော ခွင့်ပြုချက်',
   '{} artık videoyu yönetebilir': '{} သည် ယခု ဗီဒီယိုကို ထိန်းချုပ်နိုင်ပါပြီ',
   '{} kontrolü bıraktı': '{} တွင် ထိန်းချုပ်ခွင့် မရှိတော့ပါ',
+  'Kişi ara...': 'လူများ ရှာရန်...',
+  'Karşılıklı takipleştiğin kimse yok': 'သင့်ကို ပြန်ဖော်လိုးလုပ်သူ မရှိသေးပါ',
+  'Böyle bir kullanıcı yok': 'ဤသို့သော အသုံးပြုသူ မရှိပါ',
+  'Oda kodunu paylaşarak da davet edebilirsin.':
+      'အခန်းကုဒ် မျှဝေ၍လည်း ဖိတ်နိုင်ပါသည်။',
+  'Karşılıklı takipleşmiyorsunuz': 'သင်တို့ အပြန်အလှန် မဖော်လိုးလုပ်ကြပါ',
+  'Odada': 'အခန်းထဲတွင်',
+  'Davet edildi': 'ဖိတ်ပြီး',
 };
