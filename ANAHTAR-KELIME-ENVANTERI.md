@@ -7,6 +7,14 @@
 > envanteri**, (2) neyi neden yaptığımızın/yapmadığımızın **karar kaydı**.
 > Ölçülmüş sayı ile tahmin AYRI etiketlenir. Kardeş belgeler:
 > `SEO-YAPILACAKLAR.md` (v5.1), `SEO-PLANI.md` (v3.0), `GEO-PLANI.md`.
+>
+> ⚠ **5 Eylül 2026 — bu belgenin öncelik ölçüsü EKSİK çıktı.** §5'teki
+> "doluluk × evrensellik × bizde olma × maliyet" ölçüsünde **talep** ve
+> **rakip** çarpanı yok; 90 günlük GSC ölçümü §5'in 4-9 numaralı sıradaki
+> niteliklerinin ölçülmüş bir talebe dayanmadığını gösterdi. Dördüncü
+> çarpan ("SERP'i kim tutuyor") ve kazanan/kaybeden küme ölçümü:
+> **`RAKIP-VE-ANAHTAR-KELIME-2026-09.md` v1.0.** §2'nin "KİŞİ SAYFASI
+> İSTİSNASI" uyarısı orada DOĞRULANDI (TO %0,08).
 
 ---
 

@@ -1,5 +1,20 @@
 # dizi.jpg — SEO yapılacaklar
 
+> Sürüm **6.2** · 5 Eylül 2026 — **RAKİP ANALİZİ İLK KEZ YAPILDI ve
+> anahtar kelime çalışmasına TALEP ekseni eklendi.** Ayrı belge:
+> `RAKIP-VE-ANAHTAR-KELIME-2026-09.md` v1.0. Buraya yalnız kararlar:
+> · Tıklamanın **%79'u** bölüm ailesinden, gösterimin **%81'i** kişi
+>   ailesinden (TO %0,08). Bölüm ailesinin TO'su kişinin **82 katı**.
+> · Bölüm SERP'inde meşru Türk bilgi sitesi **YOK** (ölçüldü:
+>   beyazperde `/bolumler/` 404, diziler.com yalnız TR dizisi,
+>   sinemalar'da bölüm sayfası yok) → **birinci öncelik bölüm ailesi**.
+> · SEO-PLANI v3.0'ın "kazanılabilir sorgu: oyuncu kadrosu" tezi
+>   **çürüdü**: 187 sorgu, 275 gösterim, **0 tıklama**, konum 55.
+> · Üç yeni açık: mutlak bölüm numarası kalıbı karşılıksız (§5.1),
+>   sezon sayfası yok (§5.2), 1.286 bölüm URL'i Latin dışı başlıkta (§5.3).
+> · `icerik` ailesi hakkında karar **15 Eylül'e ertelendi** — 3 Eyl'in
+>   `aggregate_credits` düzeltmesinin ölçümü henüz yok.
+
 > Sürüm **6.1** · 3 Eylül 2026 (ikinci tur) — **§17'NİN AÇIKLARI KAPATILDI**:
 > `isitici.js` de kardeş koşucuya alındı; içerik ailesinin düşük sıralaması
 > teşhis edildi ve düzeltildi — dizi `credits` ucu "sabit kadro" döndürüyor
