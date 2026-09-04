@@ -1558,4 +1558,22 @@ const Map<String, String> cevirilerMs = {
   'Tekrar oynat': 'Main semula',
   '@{} seni izleme odasına davet etti': '@{} menjemput anda ke bilik tontonan',
   '{} · {} davet bekliyor': '{} · {} jemputan menunggu',
+  'Sırada bekliyor': 'Dalam barisan',
+  'Hazırlanıyor · %{}': 'Sedang disediakan · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Video sedang ditukar supaya boleh dimainkan pada semua peranti.',
+  'Başka video yükle': 'Muat naik video lain',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Pelayar anda tidak boleh memainkan video ini. Buka pada telefon.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone tidak boleh memainkan video ini.',
+  'Tarayıcı için hazırla': 'Sediakan untuk pelayar',
+  'Başlat': 'Mula',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Format video ini tidak boleh dimainkan. Tukar kepada MP4 (H.264) dan cuba lagi.',
+  'Bu dosyada görüntü yok': 'Tiada video dalam fail ini',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Video tidak dapat dibaca, fail mungkin rosak',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Pelayan kehabisan ruang, cuba lagi sebentar',
+  'Video bulunamadı': 'Video tidak dijumpai',
 };

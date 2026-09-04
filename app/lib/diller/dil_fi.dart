@@ -1558,4 +1558,22 @@ const Map<String, String> cevirilerFi = {
   'Tekrar oynat': 'Toista uudelleen',
   '@{} seni izleme odasına davet etti': '@{} kutsui sinut katseluhuoneeseen',
   '{} · {} davet bekliyor': '{} · {} kutsua odottaa',
+  'Sırada bekliyor': 'Jonossa',
+  'Hazırlanıyor · %{}': 'Valmistellaan · {} %',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Video muunnetaan toistumaan kaikilla laitteilla.',
+  'Başka video yükle': 'Lataa toinen video',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Selaimesi ei voi toistaa tätä videota. Avaa se puhelimella.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone ei voi toistaa tätä videota.',
+  'Tarayıcı için hazırla': 'Valmistele selaimelle',
+  'Başlat': 'Aloita',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Tämän videon muotoa ei voi toistaa. Muunna se MP4:ksi (H.264) ja yritä uudelleen.',
+  'Bu dosyada görüntü yok': 'Tässä tiedostossa ei ole videota',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Videota ei voitu lukea, tiedosto voi olla rikki',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Palvelimella ei ole tilaa, yritä hetken kuluttua uudelleen',
+  'Video bulunamadı': 'Videota ei löytynyt',
 };

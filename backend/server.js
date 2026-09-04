@@ -21,6 +21,14 @@ import {
   parcaKarari as odaParcaKarari, durumYazabilir as odaDurumYazabilir,
   girisKarari as odaGirisKarari, cevrimiciMi as odaCevrimiciMi,
 } from './oda.js';
+// İZLEME ODASI VİDEO HAZIRLAMA (4 Eyl 2026) — MKV desteği. Matroska ile WebM
+// AYNI sihirli baytları taşıdığı için MKV sessizce kabul edilip `.webm` diye
+// kaydediliyordu; içindeki H.264+AC3 tarayıcıda hiç, Android'de SESSİZ oynardı.
+// Karar mantığı ve ffmpeg argümanları SAF modülde, testleri onun yanında.
+import {
+  hazirlikKarari, mp4FaststartVar, argumanlar, ilerlemeAyristir, redSebebi,
+  tamCevrimArgumanlari,
+} from './video_hazirla.js';
 import { AsyncLocalStorage } from 'async_hooks';
 import os from 'os';
 import http from 'http';
@@ -106,7 +114,7 @@ import {
 // bedava misafir hesap = ~10 dakikada diski doldurup MAKİNENİN TAMAMINI
 // (host PG, Postfix, gece yedeği dahil) durdurmak. Gerekçe disk.js başında.
 import {
-  diskKapisi, esikBayt as diskEsikBayt,
+  diskKapisi, esikBayt as diskEsikBayt, bosBayt as diskBosBayt,
   baytButcesi, VARSAYILAN_IP_BAYT_SAAT,
   kotaBayt, kullanimTopla, KOTA_DOLU_KODU, KOTA_DOLU_MESAJ,
 } from './disk.js';
@@ -16067,7 +16075,29 @@ function odaGovde(o, uyeler, benimId) {
     surum: Number(o.surum),
     biter: new Date(o.biter).getTime(),
     sahibi_miyim: o.sahip_id === benimId,
+    ...odaHazirlikGovde(o),
     uyeler,
+  };
+}
+
+/**
+ * Hazırlık alanları — hem anlık görüntüde hem yoklamada AYNI şekilde.
+ *
+ * `uyumsuz` istemcinin platform uyarısını kurduğu alandır: H.265 telefonda
+ * oynar ama tarayıcıda oynamaz, VP9 tersine iOS'ta oynamaz. Sunucu CÜMLE
+ * kurmaz, yalnız olguyu bildirir — çeviri istemcide (45 dil).
+ */
+function odaHazirlikGovde(o) {
+  const uyumsuz = [];
+  if (o.video_kodek === 'hevc') uyumsuz.push('web');
+  if (['vp8', 'vp9', 'av1'].includes(o.video_kodek)) uyumsuz.push('ios');
+  return {
+    hazirlik_durum: o.hazirlik_durum || 'yok',
+    hazirlik_yuzde: Number(o.hazirlik_yuzde) || 0,
+    hazirlik_hata: o.hazirlik_hata || null,
+    video_kodek: o.video_kodek || null,
+    ses_kodek: o.ses_kodek || null,
+    uyumsuz,
   };
 }
 
@@ -16131,13 +16161,53 @@ async function odaKapisi(req, res) {
     res.status(404).json({ hata: 'Oda bulunamadı', kod: 'ODA_YOK' });
     return null;
   }
-  if (oda.kapandi || Date.now() >= new Date(oda.biter).getTime()) {
-    res.status(410).json({ hata: 'Bu oda kapandı', kod: 'ODA_KAPANDI' });
-    return null;
-  }
-  if (!uye || !uye.katildi) {
+  // DAVETİ OLMAYAN burada durur. (Kararı `odaGirisKarari`ye sormuyoruz çünkü
+  // orada "davetsiz" hâli DAVET_YOK kodunu üretir; bu kapıda kullanıcıya
+  // gösterilen mesaj "bu odanın üyesi değilsin" olmalı — davet listesini ele
+  // vermeden. Kod ise UYE_DEGIL kalır, istemci ona göre dallanıyor.)
+  if (!uye) {
+    if (oda.kapandi || Date.now() >= new Date(oda.biter).getTime()) {
+      res.status(410).json({ hata: 'Bu oda kapandı', kod: 'ODA_KAPANDI' });
+      return null;
+    }
     res.status(403).json({ hata: 'Bu odanın üyesi değilsin', kod: 'UYE_DEGIL' });
     return null;
+  }
+  const karar = odaGirisKarari(oda, Date.now(), {
+    uye: uye.katildi != null,
+    davetli: true,
+    kodDogru: false,
+    uyeSayisi: 0,
+    // Engel YALNIZ henüz katılmamış davetli için sorulur: içerideki bir üyeyi
+    // her yoklamada engel sorgusuyla sınamak, 1 sn'lik turun her seferinde
+    // fazladan bir sorgu koşması demekti (ve bugünkü davranış da bu değil).
+    engelli: uye.katildi == null
+      ? await engelliMi(req.kullanici.id, oda.sahip_id)
+      : false,
+  });
+  if (!karar.tamam) {
+    const durum = karar.kod === 'ODA_KAPANDI' ? 410 : 403;
+    res.status(durum).json({
+      hata: ODA_HATA_METNI[karar.kod] || 'Odaya girilemedi', kod: karar.kod,
+    });
+    return null;
+  }
+  // DAVETİ BURADA KABUL ET. `WHERE katildi IS NULL` + `RETURNING` ikilisi
+  // İDEMPOTENSİN TA KENDİSİ: aynı anda gelen iki istek (kullanıcı bildirime
+  // iki kez dokundu, ya da ekran açılırken hem `/odalar/:id` hem ilk yoklama
+  // gitti) satır kilidinde sıraya girer ve YALNIZ BİRİ eşleşir — ikincisi
+  // `rowCount 0` görür. Böylece odada iki "katıldı" satırı çıkmaz.
+  // (`/odalar/katil` ucundaki `yeniMi` bunu SELECT ile önden okuyor ve o
+  // yüzden yarışa açık; oradaki kalıbı KOPYALAMA.)
+  if (karar.kabulGerek) {
+    const kabul = await havuz.query(
+      `UPDATE oda_uyeler SET katildi = now(), son_gorulme = now()
+        WHERE oda_id = $1 AND kullanici_id = $2 AND katildi IS NULL
+        RETURNING 1`,
+      [oda.id, req.kullanici.id],
+    );
+    if (kabul.rowCount) await odaSistemMesaji(oda.id, req.kullanici.id, 'katildi');
+    uye.katildi = new Date();
   }
   return { oda, uye };
 }
@@ -16365,6 +16435,10 @@ app.get('/odalar/:id/akis', girisZorunlu, odaAkisLimiti, sarici(async (req, res)
       video_ad: oda.video_ad,
       video_sure_ms: oda.video_sure_ms == null ? null : Number(oda.video_sure_ms),
     } : null,
+    // HAZIRLIK durumu `durum`un DIŞINDA: `durum` yalnız sürüm değişince
+    // gönderiliyor, oysa ilerleme yüzdesi sürüm artmadan da akmalı — yoksa
+    // kullanıcı %0'da donmuş bir çubuk görürdü.
+    ...odaHazirlikGovde(oda),
     uyeler,
     mesajlar: mesajlar.map((m) => ({
       id: Number(m.id),
@@ -16736,12 +16810,348 @@ app.post('/oda-video/bitir', girisZorunlu, odaLimiti, sarici(async (req, res) =>
   );
   await havuz.query('DELETE FROM oda_yuklemeler WHERE id=$1', [id]);
   await odaSistemMesaji(oda.id, req.kullanici.id, 'video_yuklendi');
+  // HAZIRLIK KUYRUĞA — MKV desteği (4 Eyl 2026). Dosya ffprobe ile incelenip
+  // gerekiyorsa kabı MP4'e çevrilir ve/veya sesi AAC'ye iner. UÇ BEKLEMEZ:
+  // 5 GB'lık bir işte nginx `proxy_read_timeout` (300s) dolar ve kullanıcı
+  // başarılı yüklemeyi "başarısız" görürdü. İlerleme yoklama kanalından akar.
+  await odaHazirligaAl(oda.id);
   res.json({
     video: medyaImzali(yol, MEDYA_IMZA_ANAHTARI),
     video_ad: y.ad,
     video_sure_ms: sure,
     video_kapak: kapakVar ? medyaImzali(`${yol}.jpg`, MEDYA_IMZA_ANAHTARI) : null,
+    hazirlik_durum: 'kuyrukta',
   });
+}));
+
+// ===========================================================================
+// ODA VİDEO HAZIRLAMA — MKV desteği (4 Eyl 2026)
+// ===========================================================================
+// İSTEK: "mkv desteği de ekle".
+//
+// SORUN (ölçüldü, tahmin değil): Matroska ile WebM AYNI EBML sihirli baytlarını
+// taşır, bu yüzden `VIDEO_TURLERI` MKV'yi kabul edip diske `.webm` adıyla
+// yazıyordu. Film MKV'lerinin tipik içeriği H.264+AC3'tür ve o bileşim
+// tarayıcıda HİÇ açılmaz, Android'de GÖRÜNTÜ VAR SES YOK olarak oynar.
+//
+// ÇÖZÜM: yükleme bitince dosya ffprobe ile incelenir; karar `video_hazirla.js`
+// (saf, testli) modülünde verilir ve gerekiyorsa ARKA PLANDA hazırlanır:
+//   remux -> kabı MP4'e çevir (yeniden kodlama YOK, saniyeler)
+//   ses   -> görüntüyü kopyala, sesi AAC'ye indir (~2 dk / 2 saatlik film)
+//   elle  -> H.265: dokunma, telefonda oynar; web için sahip tetikler
+//   red   -> hiçbir platformda oynamayacak kodek; sebebi söylenir
+//
+// NEDEN ARKA PLAN: `bitir` ucu bunu bekleseydi nginx `proxy_read_timeout`
+// (300s) 5 GB'lık bir işte dolabilirdi ve kullanıcı "yükleme başarısız" görürdü.
+// Uç hemen döner, oda `hazirlik_durum='kuyrukta'` olur, ilerleme 1 sn'lik
+// yoklama kanalından akar.
+
+/** ffprobe: kap + akış bilgisi (JSON). Başarısızsa null — çağıran karar verir. */
+function odaVideoProbe(dosyaYolu, zamanAsimi = 20000) {
+  return new Promise((bitti) => {
+    execFile(
+      'ffprobe',
+      ['-v', 'error', '-print_format', 'json', '-show_format', '-show_streams',
+        dosyaYolu],
+      { timeout: zamanAsimi, maxBuffer: 8 * 1024 * 1024 },
+      (hata, stdout) => {
+        if (hata) return bitti(null);
+        try { bitti(JSON.parse(String(stdout))); } catch { bitti(null); }
+      },
+    );
+  });
+}
+
+/** MP4'ün başından faststart kararı için gereken tamponu okur. */
+function odaVideoBasiOku(dosyaYolu, bayt = 65536) {
+  const tampon = Buffer.alloc(bayt);
+  let okunan = 0;
+  try {
+    const fd = fs.openSync(dosyaYolu, 'r');
+    try { okunan = fs.readSync(fd, tampon, 0, bayt, 0); } finally { fs.closeSync(fd); }
+  } catch { return null; }
+  return tampon.subarray(0, okunan);
+}
+
+/**
+ * AYNI ANDA TEK İŞ.
+ *
+ * ffmpeg tek başına birkaç çekirdek yiyor; dört işçi birden açsaydı (küme
+ * `ISCI_SAYISI`=4) paylaşımlı makinede host Postgres ve Postfix'in yanıt süresi
+ * bozulurdu. Kuyruk DB'de (`hazirlik_durum='kuyrukta'`), kilit bellekte: kilit
+ * yalnız GÖREVLİ işçide tutulduğu için tek süreçlik olması yeterli.
+ */
+let odaHazirlikMesgul = false;
+
+/** Şu an işlenen ffmpeg süreci — kapanışta öldürmek için. */
+let odaHazirlikSurec = null;
+
+/**
+ * Hazırlık ara/çıktı dosyası: kalıcı ada geçene kadar geçici dizinde durur.
+ *
+ * ***UZANTI ŞART (4 Eyl 2026, canlıda yaşandı).*** Ad önce `15.hazirlik` idi,
+ * yani uzantısız; ffmpeg çıktı kabını uzantıdan çıkardığı için her iş şu
+ * hatayla düşüyordu: "Unable to choose an output format ...; use a standard
+ * extension for the filename or specify the format manually." Kullanıcı yalnız
+ * "Video hazırlanamadı" görüyordu. Argüman testleri bunu YAKALAYAMADI çünkü
+ * argümanlar doğruydu — kırılan şey ffmpeg'in addan yaptığı çıkarımdı.
+ * `video_hazirla.js` ayrıca `-f` ile kabı açıkça veriyor (iki katman).
+ */
+const odaHazirlikYolu = (id, uzanti = 'mp4') =>
+  path.join(ODA_GECICI_DIZIN, `${id}.hazirlik.${uzanti}`);
+
+/**
+ * Odayı hazırlık kuyruğuna alır ve tetikler.
+ * `eylem` yoksa (iş gerekmiyorsa) hiçbir şey yapmaz.
+ */
+async function odaHazirligaAl(odaId) {
+  await havuz.query(
+    `UPDATE izleme_odalari SET hazirlik_durum='kuyrukta', hazirlik_yuzde=0,
+            hazirlik_hata=NULL
+      WHERE id=$1`, [odaId]);
+  odaHazirlikDuyur();
+}
+
+/**
+ * "Kuyrukta iş var" haberini KÜMEYE duyurur.
+ *
+ * ***4 Eyl 2026, CANLIDA ÖLÇÜLDÜ — yalnız `odaHazirlikTetikle()` çağırmak
+ * YETMEZ.*** Canlıda 4 işçi var ve nginx yüklemeyi HERHANGİ BİRİNE veriyor.
+ * `odaHazirlikTetikle` ilk satırında `ISCI_GOREVLI` kapısı olduğu için, iş
+ * görevli OLMAYAN bir işçiye düştüğünde çağrı sessizce hiçbir şey yapıyordu;
+ * görevli işçi işten haberdar olmuyordu. Geriye tek kurtarıcı 5 dakikalık
+ * `setInterval` kalıyordu: gerçek bir MKV yüklendiğinde iş 24 saniye sonra
+ * hâlâ "kuyrukta" görünüyor, kullanıcı %0'da donmuş bir ekrana bakıyordu.
+ * Bozuk değildi ama BOZUK GÖRÜNÜYORDU.
+ *
+ * Yayın kanalı (`ozel_medya_ekle` ile aynı kalıp) haberi tüm işçilere taşır;
+ * görevli olan milisaniyeler içinde başlar, ötekilerde `ISCI_GOREVLI` kapısı
+ * zaten no-op yapar. `yayinla` KÜMESİZKEN no-op olduğu için doğrudan çağrı da
+ * yapılır — tek süreçte (testler, `node server.js`) davranış aynen korunur.
+ */
+function odaHazirlikDuyur() {
+  odaHazirlikTetikle();
+  yayinla('oda_hazirlik', null);
+}
+
+// Kümedeki HER işçi dinler; yalnız görevli olan gerçekten başlatır.
+abone('oda_hazirlik', () => odaHazirlikTetikle());
+
+/** Kuyrukta iş varsa ve boştaysak bir sonrakini başlat (ateşle-unut). */
+function odaHazirlikTetikle() {
+  if (!ISCI_GOREVLI || odaHazirlikMesgul) return;
+  odaHazirlikSirasi().catch((e) => console.error('oda hazırlık:', e.message));
+}
+
+async function odaHazirlikSirasi() {
+  if (odaHazirlikMesgul) return;
+  odaHazirlikMesgul = true;
+  try {
+    // Sırayla TEK iş; her turda en eski bekleyeni al.
+    for (;;) {
+      const { rows } = await havuz.query(
+        `UPDATE izleme_odalari SET hazirlik_durum='isleniyor'
+          WHERE id = (SELECT id FROM izleme_odalari
+                       WHERE hazirlik_durum='kuyrukta' AND kapandi IS NULL
+                       ORDER BY olusturuldu LIMIT 1
+                       FOR UPDATE SKIP LOCKED)
+          RETURNING *`);
+      if (!rows.length) break;
+      await odaHazirlikCalistir(rows[0]);
+    }
+  } finally {
+    odaHazirlikMesgul = false;
+  }
+}
+
+/**
+ * Tek bir odanın videosunu hazırlar.
+ *
+ * DİSK: çıktı ikinci bir kopyadır (5 GB giriş + 5 GB çıkış). `diskBos`
+ * eşiğinin altındaysak işe HİÇ BAŞLAMAYIZ — yarıda kalan bir ffmpeg diski
+ * doldurup makinenin tamamını durdurabilir (disk.js'in tüm gerekçesi bu).
+ */
+async function odaHazirlikCalistir(oda) {
+  const yol = oda.video;
+  const ad = typeof yol === 'string' && yol.startsWith('/medya/')
+    ? path.basename(yol) : null;
+  if (!ad) return odaHazirlikBitir(oda.id, 'hata', 'VIDEO_YOK');
+  const kaynak = path.join(MEDYA_DIZIN, ad);
+  if (!fs.existsSync(kaynak)) return odaHazirlikBitir(oda.id, 'hata', 'VIDEO_YOK');
+
+  const probe = await odaVideoProbe(kaynak);
+  if (!probe) return odaHazirlikBitir(oda.id, 'hata', 'VIDEO_OKUNAMADI');
+  let karar = hazirlikKarari(probe, mp4FaststartVar(odaVideoBasiOku(kaynak)));
+
+  // Kodekleri HER DURUMDA yaz: istemci web uyarısını bunlardan kurar.
+  await havuz.query(
+    `UPDATE izleme_odalari SET video_kodek=$2, ses_kodek=$3,
+            video_sure_ms=COALESCE($4, video_sure_ms) WHERE id=$1`,
+    [oda.id, karar.videoKodek, karar.sesKodek, karar.sureMs]);
+
+  if (karar.eylem === 'red') {
+    // Oynamayacak dosyayı odada bırakmak, kullanıcıyı siyah bir ekranla baş
+    // başa bırakmaktır. Videoyu düşür ve SEBEBİ söyle.
+    odaVideosunuSil(oda);
+    await havuz.query(
+      `UPDATE izleme_odalari SET video=NULL, video_ad=NULL, video_boyut=NULL,
+              video_sure_ms=NULL, video_kapak=NULL, surum=surum+1 WHERE id=$1`,
+      [oda.id]);
+    return odaHazirlikBitir(oda.id, 'hata', redSebebi(karar));
+  }
+  // ELLE ÇEVRİM: sahip açıkça istediyse otomatik karar ATLANIR ve görüntü
+  // x264'e indirilir. `hedefUzanti` MP4'e sabitlenir — çevrimin tüm amacı
+  // tarayıcıda oynayan bir dosya üretmek.
+  const zorla = oda.zorla_cevir === true;
+  // Zorla çevrimde hedef DAİMA MP4 (amaç tarayıcıda oynayan dosya); geçici
+  // dosyanın uzantısı da ona göre seçilmeli.
+  if (zorla) karar = { ...karar, hedefUzanti: 'mp4' };
+  const gecici = odaHazirlikYolu(oda.id, karar.hedefUzanti);
+  const args = zorla
+    ? tamCevrimArgumanlari(kaynak, gecici)
+    : argumanlar(karar, kaynak, gecici);
+  if (!args) return odaHazirlikBitir(oda.id, 'yok', null); // 'yok' ya da 'elle'
+
+  let bos = null;
+  try { bos = diskBosBayt(fs.statfsSync(MEDYA_DIZIN)); } catch { bos = null; }
+  let kaynakBoyut = 0;
+  try { kaynakBoyut = fs.statSync(kaynak).size; } catch { kaynakBoyut = 0; }
+  if (bos != null && bos < kaynakBoyut + DISK_ESIK) {
+    return odaHazirlikBitir(oda.id, 'hata', 'DISK_YETERSIZ');
+  }
+  await odaFfmpegKos(oda, args, karar);
+}
+
+/** ffmpeg'i koşturur, ilerlemeyi DB'ye yazar, çıktıyı kalıcı ada taşır. */
+function odaFfmpegKos(oda, args, karar) {
+  const gecici = odaHazirlikYolu(oda.id, karar.hedefUzanti);
+  return new Promise((bitti) => {
+    let sonYazma = 0;
+    const surec = execFile('ffmpeg', args, { maxBuffer: 1024 * 1024 }, async (hata) => {
+      odaHazirlikSurec = null;
+      if (hata) {
+        fs.unlink(gecici, () => {});
+        console.error(`oda ${oda.id} hazırlık ffmpeg:`, hata.message.slice(0, 200));
+        await odaHazirlikBitir(oda.id, 'hata', 'VIDEO_HAZIRLIK_HATA');
+        return bitti();
+      }
+      await odaHazirlikYerlestir(oda, gecici, karar);
+      bitti();
+    });
+    odaHazirlikSurec = surec;
+    surec.stdout?.on('data', (parca) => {
+      const { yuzde } = ilerlemeAyristir(parca, karar.sureMs);
+      if (yuzde == null) return;
+      // DB'ye en fazla 2 saniyede bir: ffmpeg saniyede onlarca satır basar ve
+      // her satırda UPDATE atmak 1 sn'lik yoklama ucuyla aynı tabloda kilit
+      // yarışı üretirdi.
+      const simdi = Date.now();
+      if (simdi - sonYazma < 2000) return;
+      sonYazma = simdi;
+      havuz.query('UPDATE izleme_odalari SET hazirlik_yuzde=$2 WHERE id=$1',
+        [oda.id, yuzde]).catch(() => {});
+    });
+  });
+}
+
+/**
+ * Hazırlanan dosyayı kalıcı ada taşır ve odaya bağlar.
+ *
+ * AD KALIBI ŞART: `o<oda>-<16 hex>.<uzanti>` — `medya_imza.js` `DOSYA_KALIP`
+ * buna uymayan adı SESSİZCE imzasız döndürür ve istemci 403 alır
+ * (IZLEME-ODASI-PLANI.md §6.1, 3 Eyl 2026'da canlıda yaşandı).
+ */
+async function odaHazirlikYerlestir(oda, gecici, karar) {
+  const yeniAd = `o${oda.id}-${crypto.randomBytes(8).toString('hex')}.${karar.hedefUzanti}`;
+  const hedef = path.join(MEDYA_DIZIN, yeniAd);
+  try {
+    fs.renameSync(gecici, hedef);
+  } catch (e) {
+    if (e.code !== 'EXDEV') {
+      fs.unlink(gecici, () => {});
+      return odaHazirlikBitir(oda.id, 'hata', 'VIDEO_HAZIRLIK_HATA');
+    }
+    fs.copyFileSync(gecici, hedef);
+    fs.unlinkSync(gecici);
+  }
+  const yeniYol = `/medya/${yeniAd}`;
+  ozelMedyaEkle(yeniYol);
+  yayinla('ozel_medya_ekle', yeniYol);
+
+  // ESKİ dosya ancak YENİSİ yerine oturduktan SONRA silinir: sıra tersine
+  // olsaydı ffmpeg'in ürettiği dosya bozuk çıkarsa oda videosuz kalırdı.
+  odaVideosunuSil(oda);
+
+  const kapakVar = await videoKaresiCikar(hedef);
+  const sure = await videoSureOlc(hedef);
+  let boyut = null;
+  try { boyut = fs.statSync(hedef).size; } catch { boyut = null; }
+  await havuz.query(
+    `UPDATE izleme_odalari
+        SET video=$2, video_boyut=COALESCE($3, video_boyut),
+            video_sure_ms=COALESCE($4, video_sure_ms),
+            video_kapak=$5, hazirlik_durum='yok', hazirlik_yuzde=100,
+            hazirlik_hata=NULL, zorla_cevir=false, oynuyor=false, konum_ms=0,
+            konum_zaman=now(), surum=surum+1
+      WHERE id=$1`,
+    [oda.id, yeniYol, boyut, sure, kapakVar ? `${yeniYol}.jpg` : null]);
+}
+
+/** Hazırlığı sonlandırır (durum + hata anahtarı) ve odanın sürümünü artırır. */
+function odaHazirlikBitir(odaId, durum, hataAnahtari) {
+  return havuz.query(
+    `UPDATE izleme_odalari
+        SET hazirlik_durum=$2, hazirlik_hata=$3,
+            hazirlik_yuzde = CASE WHEN $2='yok' THEN 100 ELSE hazirlik_yuzde END,
+            surum=surum+1
+      WHERE id=$1`,
+    [odaId, durum, hataAnahtari]).catch(() => {});
+}
+
+// AÇILIŞTA ASILI İŞ KURTARMA — süreç ffmpeg ortasında ölürse satır
+// `isleniyor` kalır ve kullanıcı sonsuza kadar %42'de bakar. Açılışta onları
+// yeniden kuyruğa alıyoruz: iş idempotenttir (kaynak dosya hâlâ yerinde).
+if (ISCI_GOREVLI) {
+  setTimeout(() => {
+    havuz.query(
+      `UPDATE izleme_odalari SET hazirlik_durum='kuyrukta', hazirlik_yuzde=0
+        WHERE hazirlik_durum='isleniyor'`)
+      .then((r) => {
+        if (r.rowCount) console.log(`oda hazırlık: ${r.rowCount} asılı iş kuyruğa alındı`);
+        odaHazirlikTetikle();
+      })
+      .catch((e) => {
+        if (!/does not exist/i.test(e.message)) console.error('oda hazırlık kurtarma:', e.message);
+      });
+  }, 20_000);
+  // GÜVENLİK AĞI: yayın kaybolursa (IPC düştü, işçi yeniden doğdu) iş yine de
+  // başlasın. 5 dakikaydı — ama beş dakika bekleyen bir güvenlik ağı görevini
+  // yapmıyor demektir; kullanıcı o süre boyunca "Sırada bekliyor" görür.
+  // Sorgu tek kısmi indeks okuması, dakikada bir koşması bedava sayılır.
+  setInterval(odaHazirlikTetikle, 60_000);
+}
+
+// ---------- ELLE TAM ÇEVRİM (yalnız sahip) ----------
+// H.265 otomatik çevrilmiyor (telefonda zaten oynuyor, 2 saatlik film 20-40 dk
+// CPU yer ve makine PAYLAŞIMLI). Ama tarayıcıda izlemek isteyen sahip bunu
+// KENDİSİ tetikleyebilsin: karar onun, bedeli de bilinerek ödeniyor.
+app.post('/odalar/:id/video-cevir', girisZorunlu, odaLimiti, sarici(async (req, res) => {
+  const kapi = await odaKapisi(req, res);
+  if (!kapi) return;
+  const oda = kapi.oda;
+  if (oda.sahip_id !== req.kullanici.id) {
+    return res.status(403).json({ hata: 'Bunu yalnız oda sahibi yapabilir', kod: 'SAHIP_DEGIL' });
+  }
+  if (!oda.video) return res.status(400).json({ hata: 'Odada video yok', kod: 'VIDEO_YOK' });
+  if (oda.hazirlik_durum === 'kuyrukta' || oda.hazirlik_durum === 'isleniyor') {
+    return res.status(409).json({ hata: 'Zaten hazırlanıyor', kod: 'HAZIRLIK_SURUYOR' });
+  }
+  await havuz.query(
+    `UPDATE izleme_odalari SET hazirlik_durum='kuyrukta', hazirlik_yuzde=0,
+            hazirlik_hata=NULL, zorla_cevir=true, surum=surum+1 WHERE id=$1`,
+    [oda.id]);
+  odaHazirlikDuyur();
+  res.json({ tamam: true });
 }));
 
 // ---------- 12 SAATLİK SÜPÜRGE ----------
@@ -16773,6 +17183,16 @@ async function odalariSupur() {
     let dosyalar = [];
     try { dosyalar = fs.readdirSync(ODA_GECICI_DIZIN); } catch { dosyalar = []; }
     for (const ad of dosyalar) {
+      // HAZIRLIK ara dosyası: ffmpeg yarıda kalmışsa (süreç öldü, disk doldu)
+      // geride 5 GB'lık bir çöp bırakır. Kaynak dosya hâlâ yerinde olduğu için
+      // iş yeniden kuyruğa alınabilir; ara dosyanın saklanmasının bir değeri yok.
+      if (ad.includes('.hazirlik')) {
+        const yol = path.join(ODA_GECICI_DIZIN, ad);
+        let st2;
+        try { st2 = fs.statSync(yol); } catch { continue; }
+        if (Date.now() - st2.mtimeMs > ODA_YUKLEME_OMRU_MS) fs.unlink(yol, () => {});
+        continue;
+      }
       if (!ad.endsWith('.parca')) continue;
       const yol = path.join(ODA_GECICI_DIZIN, ad);
       let st;

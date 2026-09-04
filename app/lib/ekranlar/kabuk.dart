@@ -134,6 +134,35 @@ bool sohbetIcindeMi(String yol) => yol.startsWith('/sohbet/');
 bool kabukCubuguGizliMi(String yol) =>
     sohbetIcindeMi(yol) || yol.startsWith('/bildirimler');
 
+/// Alt gezinme çubuğunu GEÇİCİ olarak gizleyen ekran-içi bayrak.
+///
+/// KULLANICI İSTEĞİ (4 Eyl 2026): *"tam ekranda alttaki navigasyon barları
+/// kapanmalı"*. İzleme odası tam ekrana geçince video 52 dp'lik çubuğun
+/// üstünde kalıyordu — "tam ekran" derken kastedilen bu değil.
+///
+/// NEDEN YOL KURALI ([kabukCubuguGizliMi]) YETMEZ: orası yolu bilir, DURUMU
+/// bilmez. Oda `/oda/:id` yolunda hem normal hem tam ekran olabiliyor; çubuk
+/// yalnız tam ekranda gizlenmeli, normal hâlde durmalı.
+///
+/// ***AÇAN KAPATMAK ZORUNDA — `dispose`ta da.*** Bu bayrak GLOBAL ve kabuk
+/// tüm sekmelerin altında yaşıyor: açık kalırsa kullanıcı odadan çıkar ve
+/// uygulamanın hiçbir yerinde gezinme çubuğu olmaz. Aynı sebeple TESTLER
+/// ARASINDA da sızar (`_KabukEkraniState._mesajda` başlığındaki 29 Ağu
+/// notu tam bu tuzağı anlatıyor). Bu yüzden [sifirla] var ve oda ekranı onu
+/// `dispose` içinde koşulsuz çağırıyor.
+class KabukTamEkran {
+  KabukTamEkran._();
+
+  static final ValueNotifier<bool> acik = ValueNotifier(false);
+
+  static void ayarla(bool deger) {
+    if (acik.value != deger) acik.value = deger;
+  }
+
+  /// Koşulsuz kapat — `dispose` ve test `tearDown`ları için.
+  static void sifirla() => ayarla(false);
+}
+
 /// Çubukta HANGİ hedefin sarı yanacağı — DAL ÜYELİĞİNDEN AYRI bir sorudur.
 ///
 /// NEDEN AYRI (29 Ağu 2026, kullanıcı: "aşağıdaki 5'li navigasyonda mesajlar
@@ -652,21 +681,29 @@ class _KabukEkraniState extends State<KabukEkrani> {
         final gizli = kabukCubuguGizliMi(
           sohbetUstKonum(GoRouter.maybeOf(context)) ?? '',
         );
-        return Scaffold(
-          // Hesap askıya alındıysa üstte ince bir şerit çıkar (dokununca
-          // sebep + kalan süre). Yasak yokken hiçbir yer kaplamaz — kabuk
-          // aynen eskisi gibi çizilir. Buraya konmasının sebebi: kullanıcı
-          // hangi sekmede olursa olsun cezasından haberdar olmalı; tek bir
-          // ekrana koysaydık oraya hiç uğramayan kullanıcı sessizce
-          // kısıtlanmış olurdu.
-          // DOĞUM GÜNÜ (md. 36): kutlama kabuğun GÖVDESİNİ sarar, tek bir
-          // sekmeye konmaz — kullanıcı hangi sekmede açarsa açsın görsün.
-          // Doğum günü değilse ya da tarih girilmemişse katman hiçbir şey
-          // çizmez, ölçüye de dokunmaz (`build` doğrudan `child`ı döndürür).
-          body: OturumDustuKatmani(
-            child: DogumGunuKatmani(child: YasakSeridi(child: shell)),
+        return ValueListenableBuilder<bool>(
+          // Tam ekran bayrağı YOL DEĞİL DURUM olduğu için ayrıca dinlenir;
+          // `routerDelegate` o değişimde haber vermez (bkz. [KabukTamEkran]).
+          valueListenable: KabukTamEkran.acik,
+          builder: (context, tamEkran, _) => Scaffold(
+            // Hesap askıya alındıysa üstte ince bir şerit çıkar (dokununca
+            // sebep + kalan süre). Yasak yokken hiçbir yer kaplamaz — kabuk
+            // aynen eskisi gibi çizilir. Buraya konmasının sebebi: kullanıcı
+            // hangi sekmede olursa olsun cezasından haberdar olmalı; tek bir
+            // ekrana koysaydık oraya hiç uğramayan kullanıcı sessizce
+            // kısıtlanmış olurdu.
+            // DOĞUM GÜNÜ (md. 36): kutlama kabuğun GÖVDESİNİ sarar, tek bir
+            // sekmeye konmaz — kullanıcı hangi sekmede açarsa açsın görsün.
+            // Doğum günü değilse ya da tarih girilmemişse katman hiçbir şey
+            // çizmez, ölçüye de dokunmaz (`build` doğrudan `child`ı döndürür).
+            body: OturumDustuKatmani(
+              child: DogumGunuKatmani(child: YasakSeridi(child: shell)),
+            ),
+            // Yuva TAM EKRANDA da null — `SizedBox.shrink()` değil. Gerekçe
+            // yukarıdaki 1 Eyl notunda: dolu bir yuva gövdenin alt güvenli
+            // dolgusunu sıfırlıyor ve içerik sistem tuşlarının altında kalıyor.
+            bottomNavigationBar: (gizli || tamEkran) ? null : _cubuk(context),
           ),
-          bottomNavigationBar: gizli ? null : _cubuk(context),
         );
       },
     );

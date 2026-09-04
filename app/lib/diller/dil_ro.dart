@@ -1596,4 +1596,22 @@ const Map<String, String> cevirilerRo = {
   '@{} seni izleme odasına davet etti':
       '@{} te-a invitat într-o cameră de vizionare',
   '{} · {} davet bekliyor': '{} · {} invitații în așteptare',
+  'Sırada bekliyor': 'În așteptare',
+  'Hazırlanıyor · %{}': 'Se pregătește · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Videoclipul este convertit ca să meargă pe orice dispozitiv.',
+  'Başka video yükle': 'Încarcă alt videoclip',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Browserul tău nu poate reda acest videoclip. Deschide-l pe telefon.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone nu poate reda acest videoclip.',
+  'Tarayıcı için hazırla': 'Pregătește pentru browser',
+  'Başlat': 'Începe',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Formatul acestui videoclip nu poate fi redat. Convertește-l în MP4 (H.264) și încearcă din nou.',
+  'Bu dosyada görüntü yok': 'În acest fișier nu există videoclip',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Videoclipul nu a putut fi citit, fișierul poate fi deteriorat',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Serverul nu mai are spațiu, încearcă din nou în scurt timp',
+  'Video bulunamadı': 'Videoclipul nu a fost găsit',
 };

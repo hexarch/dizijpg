@@ -1633,3 +1633,28 @@ CREATE TABLE IF NOT EXISTS oda_yuklemeler (
   guncellendi  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS oda_yuklemeler_guncellendi ON oda_yuklemeler (guncellendi);
+
+-- 2026-09-04b — İZLEME ODASI video hazırlama (MKV desteği).
+-- Uzun gerekçe: migrasyon-2026-09-04b.sql. Kısaca: Matroska ile WebM AYNI
+-- sihirli baytları taşıdığı için MKV sessizce kabul edilip `.webm` diye
+-- kaydediliyordu; içindeki H.264+AC3 tarayıcıda hiç, Androidde sessiz oynuyordu.
+-- Yükleme bitince ffprobe ile kodeklere bakılıp gerekiyorsa kap düzeltiliyor
+-- ve/veya ses AACye çevriliyor. Karar mantığı: backend/video_hazirla.js.
+ALTER TABLE izleme_odalari
+  ADD COLUMN IF NOT EXISTS hazirlik_durum TEXT NOT NULL DEFAULT 'yok';
+ALTER TABLE izleme_odalari
+  ADD COLUMN IF NOT EXISTS hazirlik_yuzde INT NOT NULL DEFAULT 0;
+ALTER TABLE izleme_odalari ADD COLUMN IF NOT EXISTS hazirlik_hata TEXT;
+ALTER TABLE izleme_odalari ADD COLUMN IF NOT EXISTS video_kodek TEXT;
+ALTER TABLE izleme_odalari ADD COLUMN IF NOT EXISTS ses_kodek TEXT;
+-- ELLE TAM ÇEVRİM bayrağı: H.265 otomatik çevrilmiyor (telefonda oynuyor,
+-- 2 saatlik film 20-40 dk CPU yer, makine paylaşımlı). Sahip tarayıcıda
+-- izlemek isterse `POST /odalar/:id/video-cevir` bunu true yapar; işçi o
+-- zaman x264'e çevirir. İş bitince bayrak düşer.
+ALTER TABLE izleme_odalari ADD COLUMN IF NOT EXISTS zorla_cevir BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE izleme_odalari DROP CONSTRAINT IF EXISTS izleme_odalari_hazirlik_check;
+ALTER TABLE izleme_odalari ADD CONSTRAINT izleme_odalari_hazirlik_check
+  CHECK (hazirlik_durum IN ('yok', 'kuyrukta', 'isleniyor', 'hata'));
+CREATE INDEX IF NOT EXISTS izleme_odalari_hazirlik
+  ON izleme_odalari (hazirlik_durum, olusturuldu)
+  WHERE hazirlik_durum IN ('kuyrukta', 'isleniyor');

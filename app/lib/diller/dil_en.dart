@@ -1570,4 +1570,22 @@ const Map<String, String> cevirilerEn = {
   'Tekrar oynat': 'Replay',
   '@{} seni izleme odasına davet etti': '@{} invited you to a watch room',
   '{} · {} davet bekliyor': '{} · {} invites waiting',
+  'Sırada bekliyor': 'Waiting in queue',
+  'Hazırlanıyor · %{}': 'Preparing · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'The video is being converted to play on every device.',
+  'Başka video yükle': 'Upload another video',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      "Your browser can't play this video. Open it on your phone.",
+  'Bu videoyu iPhone oynatamıyor.': "iPhone can't play this video.",
+  'Tarayıcı için hazırla': 'Prepare for browser',
+  'Başlat': 'Start',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      "This video's format can't be played. Convert it to MP4 (H.264) and try again.",
+  'Bu dosyada görüntü yok': "There's no video in this file",
+  'Video okunamadı, dosya bozuk olabilir':
+      "The video couldn't be read, the file may be broken",
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'The server is out of space, try again shortly',
+  'Video bulunamadı': 'Video not found',
 };

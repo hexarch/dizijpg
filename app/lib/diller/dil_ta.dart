@@ -1578,4 +1578,22 @@ const Map<String, String> cevirilerTa = {
   '@{} seni izleme odasına davet etti':
       '@{} உங்களை பார்க்கும் அறைக்கு அழைத்தார்',
   '{} · {} davet bekliyor': '{} · {} அழைப்புகள் நிலுவையில்',
+  'Sırada bekliyor': 'வரிசையில் உள்ளது',
+  'Hazırlanıyor · %{}': 'தயாராகிறது · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'எல்லா சாதனங்களிலும் இயங்கும்படி வீடியோ மாற்றப்படுகிறது.',
+  'Başka video yükle': 'வேறு வீடியோ பதிவேற்று',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'உங்கள் உலாவி இந்த வீடியோவை இயக்க முடியாது. தொலைபேசியில் திறக்கவும்.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone இந்த வீடியோவை இயக்க முடியாது.',
+  'Tarayıcı için hazırla': 'உலாவிக்குத் தயாரி',
+  'Başlat': 'தொடங்கு',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'இந்த வீடியோவின் வடிவம் இயங்காது. MP4 (H.264) ஆக மாற்றி மீண்டும் முயற்சிக்கவும்.',
+  'Bu dosyada görüntü yok': 'இந்தக் கோப்பில் வீடியோ இல்லை',
+  'Video okunamadı, dosya bozuk olabilir':
+      'வீடியோவைப் படிக்க முடியவில்லை, கோப்பு சிதைந்திருக்கலாம்',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'சேவையகத்தில் இடம் இல்லை, சிறிது நேரம் கழித்து முயற்சிக்கவும்',
+  'Video bulunamadı': 'வீடியோ கிடைக்கவில்லை',
 };

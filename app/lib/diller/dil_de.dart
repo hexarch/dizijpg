@@ -1578,4 +1578,23 @@ const Map<String, String> cevirilerDe = {
   '@{} seni izleme odasına davet etti':
       '@{} hat dich in einen Watch-Raum eingeladen',
   '{} · {} davet bekliyor': '{} · {} Einladungen offen',
+  'Sırada bekliyor': 'In der Warteschlange',
+  'Hazırlanıyor · %{}': 'Wird vorbereitet · {} %',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Das Video wird so umgewandelt, dass es auf jedem Gerät läuft.',
+  'Başka video yükle': 'Anderes Video hochladen',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Dein Browser kann dieses Video nicht abspielen. Öffne es auf dem Handy.',
+  'Bu videoyu iPhone oynatamıyor.':
+      'Das iPhone kann dieses Video nicht abspielen.',
+  'Tarayıcı için hazırla': 'Für den Browser vorbereiten',
+  'Başlat': 'Starten',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Das Format dieses Videos lässt sich nicht abspielen. Wandle es in MP4 (H.264) um und versuch es erneut.',
+  'Bu dosyada görüntü yok': 'In dieser Datei ist kein Video',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Das Video konnte nicht gelesen werden, die Datei ist vielleicht beschädigt',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Auf dem Server ist kein Platz mehr, versuch es gleich noch mal',
+  'Video bulunamadı': 'Video nicht gefunden',
 };

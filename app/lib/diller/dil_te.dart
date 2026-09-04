@@ -1550,4 +1550,22 @@ const Map<String, String> cevirilerTe = {
   'Tekrar oynat': 'మళ్లీ ప్లే చేయండి',
   '@{} seni izleme odasına davet etti': '@{} మిమ్మల్ని చూసే గదికి ఆహ్వానించారు',
   '{} · {} davet bekliyor': '{} · {} ఆహ్వానాలు పెండింగ్',
+  'Sırada bekliyor': 'వరుసలో ఉంది',
+  'Hazırlanıyor · %{}': 'సిద్ధమవుతోంది · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'అన్ని పరికరాల్లో ఆడేలా వీడియో మార్చబడుతోంది.',
+  'Başka video yükle': 'మరో వీడియో అప్‌లోడ్ చేయండి',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'మీ బ్రౌజర్ ఈ వీడియోను ప్లే చేయలేదు. ఫోన్‌లో తెరవండి.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone ఈ వీడియోను ప్లే చేయలేదు.',
+  'Tarayıcı için hazırla': 'బ్రౌజర్ కోసం సిద్ధం చేయి',
+  'Başlat': 'ప్రారంభించు',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'ఈ వీడియో ఫార్మాట్ ప్లే కాదు. MP4 (H.264)కి మార్చి మళ్లీ ప్రయత్నించండి.',
+  'Bu dosyada görüntü yok': 'ఈ ఫైల్‌లో వీడియో లేదు',
+  'Video okunamadı, dosya bozuk olabilir':
+      'వీడియో చదవలేకపోయాం, ఫైల్ పాడైనట్టుంది',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'సర్వర్‌లో స్థలం లేదు, కాసేపటి తర్వాత ప్రయత్నించండి',
+  'Video bulunamadı': 'వీడియో దొరకలేదు',
 };

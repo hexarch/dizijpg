@@ -1535,4 +1535,22 @@ const Map<String, String> cevirilerFa = {
   'Tekrar oynat': 'پخش دوباره',
   '@{} seni izleme odasına davet etti': '@{} تو را به اتاق تماشا دعوت کرد',
   '{} · {} davet bekliyor': '{} · {} دعوت در انتظار',
+  'Sırada bekliyor': 'در صف',
+  'Hazırlanıyor · %{}': 'در حال آماده‌سازی · {}٪',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'ویدیو تبدیل می‌شود تا روی هر دستگاهی پخش شود.',
+  'Başka video yükle': 'ویدیوی دیگری بارگذاری کن',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'مرورگرت نمی‌تواند این ویدیو را پخش کند. با گوشی بازش کن.',
+  'Bu videoyu iPhone oynatamıyor.': 'آیفون نمی‌تواند این ویدیو را پخش کند.',
+  'Tarayıcı için hazırla': 'آماده‌سازی برای مرورگر',
+  'Başlat': 'شروع',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'قالب این ویدیو پخش نمی‌شود. آن را به MP4 ‏(H.264) تبدیل کن و دوباره امتحان کن.',
+  'Bu dosyada görüntü yok': 'در این فایل ویدیویی نیست',
+  'Video okunamadı, dosya bozuk olabilir':
+      'ویدیو خوانده نشد، ممکن است فایل خراب باشد',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'فضای سرور تمام شده، کمی بعد دوباره امتحان کن',
+  'Video bulunamadı': 'ویدیو پیدا نشد',
 };

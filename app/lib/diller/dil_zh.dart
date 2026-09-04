@@ -1476,4 +1476,18 @@ const Map<String, String> cevirilerZh = {
   'Tekrar oynat': '重新播放',
   '@{} seni izleme odasına davet etti': '@{} 邀请你加入观看房间',
   '{} · {} davet bekliyor': '{} · {} 个邀请待处理',
+  'Sırada bekliyor': '排队中',
+  'Hazırlanıyor · %{}': '准备中 · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.': '正在转换视频，让它能在所有设备上播放。',
+  'Başka video yükle': '上传其他视频',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.': '浏览器无法播放这个视频，请用手机打开。',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone 无法播放这个视频。',
+  'Tarayıcı için hazırla': '为浏览器准备',
+  'Başlat': '开始',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      '这个视频的格式无法播放。请转换成 MP4（H.264）后重试。',
+  'Bu dosyada görüntü yok': '这个文件里没有视频',
+  'Video okunamadı, dosya bozuk olabilir': '视频读取失败，文件可能已损坏',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene': '服务器空间不足，请稍后再试',
+  'Video bulunamadı': '找不到视频',
 };

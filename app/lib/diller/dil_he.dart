@@ -1516,4 +1516,22 @@ const Map<String, String> cevirilerHe = {
   'Tekrar oynat': 'הפעלה מחדש',
   '@{} seni izleme odasına davet etti': '@{} הזמין אותך לחדר צפייה',
   '{} · {} davet bekliyor': '{} · {} הזמנות ממתינות',
+  'Sırada bekliyor': 'בתור',
+  'Hazırlanıyor · %{}': 'בהכנה · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'הסרטון מומר כדי שיפעל בכל מכשיר.',
+  'Başka video yükle': 'העלה סרטון אחר',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'הדפדפן שלך לא יכול לנגן את הסרטון הזה. פתח אותו בטלפון.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone לא יכול לנגן את הסרטון הזה.',
+  'Tarayıcı için hazırla': 'הכנה לדפדפן',
+  'Başlat': 'התחל',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'אי אפשר לנגן את הפורמט של הסרטון הזה. המר אותו ל-MP4 ‏(H.264) ונסה שוב.',
+  'Bu dosyada görüntü yok': 'אין סרטון בקובץ הזה',
+  'Video okunamadı, dosya bozuk olabilir':
+      'לא ניתן היה לקרוא את הסרטון, ייתכן שהקובץ פגום',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'נגמר המקום בשרת, נסה שוב עוד מעט',
+  'Video bulunamadı': 'הסרטון לא נמצא',
 };

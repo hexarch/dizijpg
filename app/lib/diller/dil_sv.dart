@@ -1565,4 +1565,22 @@ const Map<String, String> cevirilerSv = {
   '@{} seni izleme odasına davet etti':
       '@{} har bjudit in dig till ett tittarrum',
   '{} · {} davet bekliyor': '{} · {} inbjudningar väntar',
+  'Sırada bekliyor': 'I kö',
+  'Hazırlanıyor · %{}': 'Förbereder · {} %',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Videon konverteras så att den spelas upp på alla enheter.',
+  'Başka video yükle': 'Ladda upp en annan video',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Din webbläsare kan inte spela upp den här videon. Öppna den i mobilen.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone kan inte spela upp den här videon.',
+  'Tarayıcı için hazırla': 'Förbered för webbläsare',
+  'Başlat': 'Starta',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Den här videons format går inte att spela upp. Konvertera den till MP4 (H.264) och försök igen.',
+  'Bu dosyada görüntü yok': 'Den här filen innehåller ingen video',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Videon kunde inte läsas, filen kan vara skadad',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Servern har slut på utrymme, försök igen strax',
+  'Video bulunamadı': 'Videon hittades inte',
 };

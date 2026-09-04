@@ -243,11 +243,37 @@ export function durumYazabilir(oda, kullaniciId) {
 }
 
 /**
- * Odaya girme kararı.
+ * Odaya girme kararı — **odaya giden HER kapının tek doğrusu**.
+ *
+ * ===========================================================================
+ * DAVET ZATEN YETKİDİR (4 Eyl 2026, canlıda iki kez ısırdı)
+ * ===========================================================================
+ * Davetli ama henüz "kabul"e dokunmamış kişi İÇERİ ALINIR. Kabul ayrı bir
+ * güvenlik adımı DEĞİLDİR: oda sahibi o kişiyi zaten açıkça çağırdı ve davet
+ * kapasiteden düşüldü (`POST /odalar/:id/davet` bekleyenleri de sayar). Ayrı
+ * bir kabul adımı yalnız ODAYA GİDEN HER KAPIDA tekrar edilmesi gereken bir
+ * tuzak üretir — nitekim üretti:
+ *   1. tur: modalda davet satırı doğrudan `/oda/:id`e gidiyordu  -> 403.
+ *           Düzeltme İSTEMCİYE yazıldı (satır önce `/odalar/katil` çağırıyor).
+ *   2. tur: kullanıcı bu kez PUSH BİLDİRİMİNDEN girdi -> yine 403. Çünkü
+ *           bildirim, uygulama içi bildirim listesi, derin bağlantı ve tarayıcı
+ *           geçmişi AYRI kapılar ve her biri kendi düzeltmesini bekliyordu.
+ * Kapıyı tek yerde açmak (burada) bu sınıfı bitirir.
+ *
+ * ***BU FONKSİYON `odaKapisi` TARAFINDAN ÇAĞRILMALIDIR.*** İlk yazımda kural
+ * iki yere yazılmıştı: burada "davetli geçer", `odaKapisi`nde ise elle
+ * `uye.katildi` şartı. İkisi ayrıştı ve kullanıcının gördüğü hata TAM OLARAK
+ * bu ayrışmaydı. Aynı kuralın ikinci bir kopyasını yazma.
+ *
  * @param {object|null} oda
  * @param {number} simdi epoch ms
  * @param {{uye:boolean, davetli:boolean, kodDogru:boolean, uyeSayisi:number, engelli:boolean}} d
- * @returns {{tamam:boolean, kod?:string}}
+ *   `uye` = KATILMIŞ üye · `davetli` = `oda_uyeler` satırı var (katılmış olsun
+ *   olmasın) · `kodDogru` = doğru oda koduyla geldi.
+ * @returns {{tamam:boolean, kod?:string, kabulGerek?:boolean}}
+ *   `kabulGerek` true ise çağıran, içeri almadan ÖNCE daveti kabul yazmalıdır
+ *   (`katildi=now()`); yani bu bir OKUMA kararı değil, yazma gerektiren bir
+ *   geçiştir.
  */
 export function girisKarari(oda, simdi, d) {
   if (!oda) return { tamam: false, kod: 'ODA_YOK' };
@@ -258,6 +284,10 @@ export function girisKarari(oda, simdi, d) {
   if (d.uye) return { tamam: true };
   if (d.engelli) return { tamam: false, kod: 'ENGELLI' };
   if (!d.davetli && !d.kodDogru) return { tamam: false, kod: 'DAVET_YOK' };
+  // DAVETLİ (satırı var) ise kapasite YENİDEN sorulmaz: davet verilirken
+  // bekleyenler de sayılmıştı, yani bu kişinin yeri ZATEN ayrıldı. Burada
+  // "oda dolu" demek, çağrılan kişiyi kapıda çevirmek olurdu.
+  if (d.davetli) return { tamam: true, kabulGerek: !d.uye };
   if (d.uyeSayisi >= ODA_AZAMI_UYE) return { tamam: false, kod: 'ODA_DOLU' };
   return { tamam: true };
 }

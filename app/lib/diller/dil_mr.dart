@@ -1545,4 +1545,22 @@ const Map<String, String> cevirilerMr = {
   '@{} seni izleme odasına davet etti':
       '@{} यांनी तुम्हाला बघण्याच्या रूममध्ये बोलावले',
   '{} · {} davet bekliyor': '{} · {} आमंत्रणे प्रलंबित',
+  'Sırada bekliyor': 'रांगेत आहे',
+  'Hazırlanıyor · %{}': 'तयार होत आहे · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'व्हिडिओ प्रत्येक डिव्हाइसवर चालावा म्हणून रूपांतरित होत आहे.',
+  'Başka video yükle': 'दुसरा व्हिडिओ अपलोड करा',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'तुमचा ब्राउझर हा व्हिडिओ चालवू शकत नाही. फोनवर उघडा.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone हा व्हिडिओ चालवू शकत नाही.',
+  'Tarayıcı için hazırla': 'ब्राउझरसाठी तयार करा',
+  'Başlat': 'सुरू करा',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'या व्हिडिओचे स्वरूप चालत नाही. तो MP4 (H.264) मध्ये बदलून पुन्हा प्रयत्न करा.',
+  'Bu dosyada görüntü yok': 'या फाइलमध्ये व्हिडिओ नाही',
+  'Video okunamadı, dosya bozuk olabilir':
+      'व्हिडिओ वाचता आला नाही, फाइल खराब असू शकते',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'सर्व्हरवर जागा उरली नाही, थोड्या वेळाने पुन्हा प्रयत्न करा',
+  'Video bulunamadı': 'व्हिडिओ सापडला नाही',
 };

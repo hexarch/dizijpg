@@ -212,6 +212,70 @@ class OdaMesaj {
   }
 }
 
+/// Sunucudaki video hazırlığının durumu (MKV desteği, 4 Eyl 2026).
+///
+/// Yüklenen dosya ffprobe ile inceleniyor; MKV ise kabı MP4'e çevriliyor ve/veya
+/// sesi AAC'ye iniyor. İş ARKA PLANDA koşuyor, bu yüzden istemci bir "hazırlanıyor"
+/// hâli çizmek zorunda: sessiz beklemek bozuk görünürdü.
+class OdaHazirlik {
+  /// 'yok' | 'kuyrukta' | 'isleniyor' | 'hata'
+  final String durum;
+  final int yuzde;
+
+  /// Sunucunun MAKİNE hata anahtarı (çeviri istemcide).
+  final String? hata;
+  final String? videoKodek;
+  final String? sesKodek;
+
+  /// Bu videonun oynamayacağı platformlar: 'web' (H.265) · 'ios' (VP8/VP9/AV1).
+  final List<String> uyumsuz;
+
+  const OdaHazirlik({
+    this.durum = 'yok',
+    this.yuzde = 0,
+    this.hata,
+    this.videoKodek,
+    this.sesKodek,
+    this.uyumsuz = const [],
+  });
+
+  bool get suruyor => durum == 'kuyrukta' || durum == 'isleniyor';
+  bool get hataliMi => durum == 'hata';
+  bool get kuyrukta => durum == 'kuyrukta';
+
+  factory OdaHazirlik.json(Map<String, dynamic> d) => OdaHazirlik(
+    durum: (d['hazirlik_durum'] as String?) ?? 'yok',
+    yuzde: (d['hazirlik_yuzde'] as num?)?.toInt() ?? 0,
+    hata: d['hazirlik_hata'] as String?,
+    videoKodek: d['video_kodek'] as String?,
+    sesKodek: d['ses_kodek'] as String?,
+    uyumsuz: ((d['uyumsuz'] as List<dynamic>?) ?? const [])
+        .map((e) => e.toString())
+        .toList(),
+  );
+}
+
+/// Hazırlık hatasının çevrili karşılığı — sunucu ANAHTAR yollar, cümle burada.
+String odaHazirlikHatasi(String? anahtar) {
+  switch (anahtar) {
+    case 'VIDEO_KODEK_DESTEKSIZ':
+      // ÇIKIŞ YOLU ver: yalnız "desteklenmiyor" demek kullanıcıyı çıkmazda
+      // bırakır (misafir arama sebebiyle aynı disiplin).
+      return 'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.'
+          .c;
+    case 'VIDEO_GORUNTU_YOK':
+      return 'Bu dosyada görüntü yok'.c;
+    case 'VIDEO_OKUNAMADI':
+      return 'Video okunamadı, dosya bozuk olabilir'.c;
+    case 'DISK_YETERSIZ':
+      return 'Sunucuda yer kalmadı, biraz sonra tekrar dene'.c;
+    case 'VIDEO_YOK':
+      return 'Video bulunamadı'.c;
+    default:
+      return 'Video hazırlanamadı'.c;
+  }
+}
+
 /// Odanın tam anlık görüntüsü.
 class Oda {
   final int id;
@@ -227,6 +291,7 @@ class Oda {
   final int biter;
   final bool sahibiMiyim;
   final OdaDurum durum;
+  final OdaHazirlik hazirlik;
   final List<OdaUye> uyeler;
 
   const Oda({
@@ -238,6 +303,7 @@ class Oda {
     required this.sahibiMiyim,
     required this.durum,
     required this.uyeler,
+    this.hazirlik = const OdaHazirlik(),
     this.baslik,
     this.sahipAvatar,
     this.video,
@@ -265,6 +331,7 @@ class Oda {
     biter: (d['biter'] as num?)?.toInt() ?? 0,
     sahibiMiyim: d['sahibi_miyim'] == true,
     durum: OdaDurum.json(d, surum: (d['surum'] as num?)?.toInt() ?? 0),
+    hazirlik: OdaHazirlik.json(d),
     uyeler: ((d['uyeler'] as List<dynamic>?) ?? const [])
         .map((e) => OdaUye.json(e as Map<String, dynamic>))
         .toList(),
@@ -275,6 +342,7 @@ class Oda {
     String? videoAd,
     int? videoSureMs,
     OdaDurum? durum,
+    OdaHazirlik? hazirlik,
     List<OdaUye>? uyeler,
   }) => Oda(
     id: id,
@@ -290,6 +358,7 @@ class Oda {
     biter: biter,
     sahibiMiyim: sahibiMiyim,
     durum: durum ?? this.durum,
+    hazirlik: hazirlik ?? this.hazirlik,
     uyeler: uyeler ?? this.uyeler,
   );
 }
@@ -352,6 +421,10 @@ class OdaAkis {
   final List<OdaUye>? uyeler;
   final List<OdaMesaj> mesajlar;
 
+  /// Hazırlık durumu HER yanıtta gelir (`durum` gibi koşullu DEĞİL): ilerleme
+  /// yüzdesi sürüm artmadan da akmalı, yoksa çubuk %0da donmuş görünürdü.
+  final OdaHazirlik hazirlik;
+
   const OdaAkis({
     required this.sunucuZaman,
     required this.surum,
@@ -362,6 +435,7 @@ class OdaAkis {
     this.videoAd,
     this.videoSureMs,
     this.uyeler,
+    this.hazirlik = const OdaHazirlik(),
   });
 
   factory OdaAkis.json(Map<String, dynamic> d) {
@@ -375,6 +449,7 @@ class OdaAkis {
       video: ham?['video'] as String?,
       videoAd: ham?['video_ad'] as String?,
       videoSureMs: (ham?['video_sure_ms'] as num?)?.toInt(),
+      hazirlik: OdaHazirlik.json(d),
       uyeler: (d['uyeler'] as List<dynamic>?)
           ?.map((e) => OdaUye.json(e as Map<String, dynamic>))
           .toList(),
@@ -501,4 +576,9 @@ class OdaApi {
   static Future<void> ayril(int id) => Api.post('/odalar/$id/ayril', const {});
 
   static Future<void> kapat(int id) => Api.delete('/odalar/$id');
+
+  /// Sahip tetikler: H.265 videoyu tarayıcıda oynayacak H.264'e çevirir.
+  /// PAHALIDIR (2 saatlik filmde 20-40 dk) — bu yüzden otomatik değil.
+  static Future<void> videoCevir(int id) =>
+      Api.post('/odalar/$id/video-cevir', const {});
 }

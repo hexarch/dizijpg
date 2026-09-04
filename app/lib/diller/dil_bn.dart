@@ -1542,4 +1542,22 @@ const Map<String, String> cevirilerBn = {
   'Tekrar oynat': 'আবার চালান',
   '@{} seni izleme odasına davet etti': '@{} আপনাকে দেখার রুমে ডেকেছেন',
   '{} · {} davet bekliyor': '{} · {}টি আমন্ত্রণ অপেক্ষমাণ',
+  'Sırada bekliyor': 'সারিতে আছে',
+  'Hazırlanıyor · %{}': 'প্রস্তুত হচ্ছে · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'ভিডিওটি সব ডিভাইসে চলার মতো করে রূপান্তর করা হচ্ছে।',
+  'Başka video yükle': 'অন্য ভিডিও আপলোড করুন',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'আপনার ব্রাউজার এই ভিডিও চালাতে পারে না। ফোনে খুলুন।',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone এই ভিডিও চালাতে পারে না।',
+  'Tarayıcı için hazırla': 'ব্রাউজারের জন্য প্রস্তুত করুন',
+  'Başlat': 'শুরু করুন',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'এই ভিডিওর ফরম্যাট চালানো যায় না। MP4 (H.264)-এ রূপান্তর করে আবার চেষ্টা করুন।',
+  'Bu dosyada görüntü yok': 'এই ফাইলে ভিডিও নেই',
+  'Video okunamadı, dosya bozuk olabilir':
+      'ভিডিও পড়া যায়নি, ফাইলটি নষ্ট হতে পারে',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'সার্ভারে জায়গা নেই, একটু পরে আবার চেষ্টা করুন',
+  'Video bulunamadı': 'ভিডিও পাওয়া যায়নি',
 };

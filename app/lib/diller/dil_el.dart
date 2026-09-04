@@ -1582,4 +1582,23 @@ const Map<String, String> cevirilerEl = {
   '@{} seni izleme odasına davet etti':
       'Ο/Η @{} σε προσκάλεσε σε δωμάτιο προβολής',
   '{} · {} davet bekliyor': '{} · {} προσκλήσεις σε αναμονή',
+  'Sırada bekliyor': 'Σε αναμονή',
+  'Hazırlanıyor · %{}': 'Προετοιμασία · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Το βίντεο μετατρέπεται για να παίζει σε κάθε συσκευή.',
+  'Başka video yükle': 'Ανέβασε άλλο βίντεο',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Ο περιηγητής σου δεν μπορεί να παίξει αυτό το βίντεο. Άνοιξέ το στο κινητό.',
+  'Bu videoyu iPhone oynatamıyor.':
+      'Το iPhone δεν μπορεί να παίξει αυτό το βίντεο.',
+  'Tarayıcı için hazırla': 'Προετοιμασία για περιηγητή',
+  'Başlat': 'Ξεκίνα',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Η μορφή αυτού του βίντεο δεν μπορεί να παίξει. Μετάτρεψέ το σε MP4 (H.264) και δοκίμασε ξανά.',
+  'Bu dosyada görüntü yok': 'Σε αυτό το αρχείο δεν υπάρχει βίντεο',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Το βίντεο δεν διαβάστηκε, το αρχείο μπορεί να είναι κατεστραμμένο',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Ο διακομιστής δεν έχει άλλο χώρο, δοκίμασε ξανά σε λίγο',
+  'Video bulunamadı': 'Το βίντεο δεν βρέθηκε',
 };

@@ -1550,4 +1550,22 @@ const Map<String, String> cevirilerVi = {
   'Tekrar oynat': 'Phát lại',
   '@{} seni izleme odasına davet etti': '@{} đã mời bạn vào phòng xem chung',
   '{} · {} davet bekliyor': '{} · {} lời mời đang chờ',
+  'Sırada bekliyor': 'Đang xếp hàng',
+  'Hazırlanıyor · %{}': 'Đang chuẩn bị · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Video đang được chuyển đổi để chạy trên mọi thiết bị.',
+  'Başka video yükle': 'Tải lên video khác',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Trình duyệt không phát được video này. Hãy mở trên điện thoại.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone không phát được video này.',
+  'Tarayıcı için hazırla': 'Chuẩn bị cho trình duyệt',
+  'Başlat': 'Bắt đầu',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Không phát được định dạng của video này. Hãy chuyển sang MP4 (H.264) rồi thử lại.',
+  'Bu dosyada görüntü yok': 'Tệp này không có video',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Không đọc được video, tệp có thể bị hỏng',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Máy chủ hết dung lượng, hãy thử lại sau ít phút',
+  'Video bulunamadı': 'Không tìm thấy video',
 };

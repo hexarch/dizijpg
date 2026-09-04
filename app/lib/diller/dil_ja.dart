@@ -1475,4 +1475,21 @@ const Map<String, String> cevirilerJa = {
   'Tekrar oynat': 'もう一度再生',
   '@{} seni izleme odasına davet etti': '@{}さんが視聴ルームに招待しました',
   '{} · {} davet bekliyor': '{} · 招待 {} 件',
+  'Sırada bekliyor': '順番待ち',
+  'Hazırlanıyor · %{}': '準備中 · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'どの端末でも再生できるように動画を変換しています。',
+  'Başka video yükle': '別の動画をアップロード',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'このブラウザではこの動画を再生できません。スマホで開いてください。',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone ではこの動画を再生できません。',
+  'Tarayıcı için hazırla': 'ブラウザ用に準備',
+  'Başlat': '開始',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'この動画の形式は再生できません。MP4（H.264）に変換して、もう一度お試しください。',
+  'Bu dosyada görüntü yok': 'このファイルに動画がありません',
+  'Video okunamadı, dosya bozuk olabilir': '動画を読み取れませんでした。ファイルが壊れている可能性があります',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'サーバーの空き容量がありません。少ししてからお試しください',
+  'Video bulunamadı': '動画が見つかりません',
 };

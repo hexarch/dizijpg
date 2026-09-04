@@ -1559,4 +1559,22 @@ const Map<String, String> cevirilerSw = {
   '@{} seni izleme odasına davet etti':
       '@{} amekualika kwenye chumba cha kutazama',
   '{} · {} davet bekliyor': '{} · mialiko {} inasubiri',
+  'Sırada bekliyor': 'Kwenye foleni',
+  'Hazırlanıyor · %{}': 'Inaandaliwa · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Video inabadilishwa ili icheze kwenye kila kifaa.',
+  'Başka video yükle': 'Pakia video nyingine',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Kivinjari chako hakiwezi kucheza video hii. Ifungue kwenye simu.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone haiwezi kucheza video hii.',
+  'Tarayıcı için hazırla': 'Andaa kwa kivinjari',
+  'Başlat': 'Anza',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Muundo wa video hii hauwezi kuchezwa. Ibadilishe kuwa MP4 (H.264) kisha ujaribu tena.',
+  'Bu dosyada görüntü yok': 'Hakuna video kwenye faili hii',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Video haikusomeka, faili linaweza kuwa limeharibika',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Seva imeishiwa nafasi, jaribu tena baada ya muda mfupi',
+  'Video bulunamadı': 'Video haikupatikana',
 };

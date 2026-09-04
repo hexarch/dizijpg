@@ -1568,4 +1568,22 @@ const Map<String, String> cevirilerMy = {
   'Tekrar oynat': 'ပြန်ဖွင့်ရန်',
   '@{} seni izleme odasına davet etti': '@{} က ကြည့်ရှုခန်းသို့ ဖိတ်ခေါ်ထားသည်',
   '{} · {} davet bekliyor': '{} · ဖိတ်ကြားချက် {} ခု စောင့်ဆိုင်းနေသည်',
+  'Sırada bekliyor': 'တန်းစီစောင့်နေသည်',
+  'Hazırlanıyor · %{}': 'ပြင်ဆင်နေသည် · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'ဗီဒီယိုကို စက်တိုင်းတွင် ဖွင့်နိုင်အောင် ပြောင်းလဲနေသည်။',
+  'Başka video yükle': 'အခြားဗီဒီယို တင်ပါ',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'သင့်ဘရောက်ဇာက ဤဗီဒီယိုကို မဖွင့်နိုင်ပါ။ ဖုန်းတွင် ဖွင့်ပါ။',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone က ဤဗီဒီယိုကို မဖွင့်နိုင်ပါ။',
+  'Tarayıcı için hazırla': 'ဘရောက်ဇာအတွက် ပြင်ဆင်ပါ',
+  'Başlat': 'စတင်ပါ',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'ဤဗီဒီယို၏ ပုံစံကို မဖွင့်နိုင်ပါ။ MP4 (H.264) သို့ ပြောင်းပြီး ထပ်စမ်းပါ။',
+  'Bu dosyada görüntü yok': 'ဤဖိုင်တွင် ဗီဒီယိုမရှိပါ',
+  'Video okunamadı, dosya bozuk olabilir':
+      'ဗီဒီယိုကို မဖတ်နိုင်ပါ၊ ဖိုင်ပျက်နေနိုင်သည်',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'ဆာဗာတွင် နေရာမကျန်တော့ပါ၊ ခဏနေမှ ထပ်စမ်းပါ',
+  'Video bulunamadı': 'ဗီဒီယို ရှာမတွေ့ပါ',
 };

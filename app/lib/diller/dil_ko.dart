@@ -1477,4 +1477,21 @@ const Map<String, String> cevirilerKo = {
   'Tekrar oynat': '다시 재생',
   '@{} seni izleme odasına davet etti': '@{}님이 시청 방에 초대했습니다',
   '{} · {} davet bekliyor': '{} · 초대 {}건 대기 중',
+  'Sırada bekliyor': '대기 중',
+  'Hazırlanıyor · %{}': '준비 중 · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      '모든 기기에서 재생되도록 영상을 변환하고 있습니다.',
+  'Başka video yükle': '다른 영상 올리기',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      '브라우저에서 이 영상을 재생할 수 없습니다. 휴대폰에서 열어 주세요.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone에서는 이 영상을 재생할 수 없습니다.',
+  'Tarayıcı için hazırla': '브라우저용으로 준비',
+  'Başlat': '시작',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      '이 영상의 형식은 재생할 수 없습니다. MP4(H.264)로 변환한 뒤 다시 시도해 주세요.',
+  'Bu dosyada görüntü yok': '이 파일에는 영상이 없습니다',
+  'Video okunamadı, dosya bozuk olabilir': '영상을 읽지 못했습니다. 파일이 손상되었을 수 있습니다',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      '서버 공간이 부족합니다. 잠시 후 다시 시도해 주세요',
+  'Video bulunamadı': '영상을 찾을 수 없습니다',
 };

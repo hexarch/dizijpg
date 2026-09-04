@@ -206,4 +206,79 @@ void main() {
           'altında kalıyorsa SafeArea dolgusu yutulmuş demektir',
     );
   });
+
+  // =========================================================================
+  // TAM EKRAN BAYRAĞI (4 Eyl 2026) — "tam ekranda alttaki navigasyon barları
+  // kapanmalı". Yol kuralı değil DURUM: aynı `/oda/:id` yolunda çubuk hem
+  // görünür hem gizli olabiliyor.
+  // =========================================================================
+
+  test('KabukTamEkran: ayarla/sifirla ve gereksiz bildirim yok', () {
+    addTearDown(KabukTamEkran.sifirla);
+    var bildirim = 0;
+    void dinle() => bildirim++;
+    KabukTamEkran.acik.addListener(dinle);
+    addTearDown(() => KabukTamEkran.acik.removeListener(dinle));
+
+    KabukTamEkran.ayarla(true);
+    expect(KabukTamEkran.acik.value, isTrue);
+    // AYNI değeri ikinci kez yazmak yeniden çizim TETİKLEMEMELİ: kabuk tüm
+    // sekmelerin altında, boşuna build pahalı.
+    KabukTamEkran.ayarla(true);
+    expect(bildirim, 1);
+
+    KabukTamEkran.sifirla();
+    expect(KabukTamEkran.acik.value, isFalse);
+    expect(bildirim, 2);
+  });
+
+  testWidgets('MOBİL: tam ekran bayrağı çubuğu gizler, inince GERİ getirir', (
+    tester,
+  ) async {
+    addTearDown(KabukTamEkran.sifirla);
+    final r = await _uygulama(tester, ekran: const Size(390, 844));
+    r.go('/akis');
+    await _bekle(tester);
+    expect(
+      find.byType(NavigationBar),
+      findsOneWidget,
+      reason: 'başlangıçta çubuk duruyor',
+    );
+
+    KabukTamEkran.ayarla(true);
+    await _bekle(tester);
+    expect(
+      find.byType(NavigationBar),
+      findsNothing,
+      reason: 'tam ekranda alt gezinme çubuğu çizilmemeli',
+    );
+
+    KabukTamEkran.sifirla();
+    await _bekle(tester);
+    expect(
+      find.byType(NavigationBar),
+      findsOneWidget,
+      reason: 'tam ekrandan çıkınca çubuk GERİ gelmeli',
+    );
+  });
+
+  testWidgets('tam ekran bayrağı YOL kuralından BAĞIMSIZ çalışır', (
+    tester,
+  ) async {
+    // Yol kuralı (`kabukCubuguGizliMi`) tek başına yeterli olsaydı odayı
+    // listeye eklerdik; ama oda NORMAL hâlde çubuğu KORUMALI. İkisinin ayrı
+    // olduğunu kilitliyoruz.
+    expect(
+      kabukCubuguGizliMi('/oda/5'),
+      isFalse,
+      reason: 'oda yolu tek başına çubuğu gizlememeli',
+    );
+    addTearDown(KabukTamEkran.sifirla);
+    final r = await _uygulama(tester, ekran: const Size(390, 844));
+    r.go('/akis');
+    await _bekle(tester);
+    KabukTamEkran.ayarla(true);
+    await _bekle(tester);
+    expect(find.byType(NavigationBar), findsNothing);
+  });
 }

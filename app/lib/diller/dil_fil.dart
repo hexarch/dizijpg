@@ -1582,4 +1582,23 @@ const Map<String, String> cevirilerFil = {
   '@{} seni izleme odasına davet etti':
       'Ini-invite ka ni @{} sa isang panoorang room',
   '{} · {} davet bekliyor': '{} · {} imbitasyon ang naghihintay',
+  'Sırada bekliyor': 'Nasa pila',
+  'Hazırlanıyor · %{}': 'Inihahanda · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Kino-convert ang video para tumakbo sa lahat ng device.',
+  'Başka video yükle': 'Mag-upload ng ibang video',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Hindi kayang i-play ng browser mo ang video na ito. Buksan mo sa telepono.',
+  'Bu videoyu iPhone oynatamıyor.':
+      'Hindi kayang i-play ng iPhone ang video na ito.',
+  'Tarayıcı için hazırla': 'Ihanda para sa browser',
+  'Başlat': 'Simulan',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Hindi mapapatugtog ang format ng video na ito. I-convert mo sa MP4 (H.264) at subukan ulit.',
+  'Bu dosyada görüntü yok': 'Walang video sa file na ito',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Hindi nabasa ang video, baka sira ang file',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Wala nang espasyo ang server, subukan ulit maya-maya',
+  'Video bulunamadı': 'Hindi nakita ang video',
 };

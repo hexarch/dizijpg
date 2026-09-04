@@ -1569,4 +1569,22 @@ const Map<String, String> cevirilerPl = {
   '@{} seni izleme odasına davet etti':
       '@{} zaprosił(a) Cię do pokoju wspólnego oglądania',
   '{} · {} davet bekliyor': '{} · oczekujące zaproszenia: {}',
+  'Sırada bekliyor': 'W kolejce',
+  'Hazırlanıyor · %{}': 'Przygotowywanie · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Wideo jest konwertowane, żeby odtwarzało się na każdym urządzeniu.',
+  'Başka video yükle': 'Wgraj inne wideo',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Twoja przeglądarka nie odtworzy tego wideo. Otwórz je na telefonie.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone nie odtworzy tego wideo.',
+  'Tarayıcı için hazırla': 'Przygotuj dla przeglądarki',
+  'Başlat': 'Zacznij',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Formatu tego wideo nie da się odtworzyć. Przekonwertuj je na MP4 (H.264) i spróbuj ponownie.',
+  'Bu dosyada görüntü yok': 'W tym pliku nie ma wideo',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Nie udało się odczytać wideo, plik może być uszkodzony',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Na serwerze skończyło się miejsce, spróbuj za chwilę',
+  'Video bulunamadı': 'Nie znaleziono wideo',
 };

@@ -36,6 +36,8 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'
     show Clipboard, ClipboardData, SystemChrome, SystemUiMode;
@@ -45,6 +47,7 @@ import 'package:video_player/video_player.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../ekranlar/kabuk.dart' show KabukTamEkran;
 import '../ekranlar/ortak.dart';
 import '../tema.dart';
 import 'oda_api.dart';
@@ -70,6 +73,43 @@ const Duration _panelSuresi = Duration(milliseconds: 200);
 ///
 /// Karşılaştırma `<` (eşit DEĞİL): 600 dp'nin kendisi tablet sayılır.
 const double _telefonKisaKenar = 600;
+
+/// Kontroller dokunulmayınca bu süre sonra söner.
+///
+/// 3 saniye: YouTube ve sistem oynatıcılarının yerleşik değeri. Daha kısası
+/// (1-2 sn) kullanıcı düğmeye uzanırken kontrolleri elinden alır; daha uzunu
+/// "sadece video gözüksün" isteğini karşılamaz.
+const Duration kontrolSonmeSuresi = Duration(seconds: 3);
+
+/// Sönme/belirme geçişi. ui-ux-pro-max Animation: 150-300 ms; ani kaybolma
+/// kullanıcıya "bir şey bozuldu" hissi verir.
+const Duration kontrolSonmeGecisi = Duration(milliseconds: 200);
+
+/// Kontroller ŞU AN sönebilir mi — SAF kural, tek doğru.
+///
+/// Ayrı ve saf, çünkü asıl değer KENAR DURUMLARINDA: her biri atlanırsa
+/// gerçek bir sinir bozukluğu üretiyor ve hiçbiri widget testinde kolayca
+/// kurulamıyor (gerçek bir `VideoPlayerController` gerekirdi). `oda_senkron`
+/// ve `oda.js` ile aynı disiplin: kararı saf tut, kenarları testle kilitle.
+///
+/// SÖNMEYEN HÂLLER:
+///  · [videoHazir] değil — sönecek kontrol yok; "Video yükle" düğmesi
+///    kaybolursa ekranın tek çıkış yolu gider.
+///  · [oynuyor] değil — kullanıcı bilinçli duraklattı; o an ekranda aradığı
+///    şey zaten kontrollerdir.
+///  · [cubukSuruklemede] — parmağın altındaki ilerleme çubuğunu kaybetmek.
+///  · [yaziyor] — sohbete yazarken kontroller giderse, kullanıcı mesajı
+///    gönderdikten sonra ekrana ayrıca dokunmak zorunda kalır.
+///  · [yuklemeVar] — ilerleme çubuğu bir DURUM göstergesi; 5 GB yüklenirken
+///    kaybolmamalı.
+@visibleForTesting
+bool kontrolSonebilir({
+  required bool videoHazir,
+  required bool oynuyor,
+  required bool cubukSuruklemede,
+  required bool yaziyor,
+  required bool yuklemeVar,
+}) => videoHazir && oynuyor && !cubukSuruklemede && !yaziyor && !yuklemeVar;
 
 class OdaEkrani extends StatefulWidget {
   final int odaId;
@@ -179,6 +219,25 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   /// girer — çünkü orada gerçekten yeni bir niyet vardır.
   Orientation? _sonYon;
 
+  // ---- KONTROLLERİN KENDİLİĞİNDEN SÖNMESİ --------------------------------
+
+  /// Oynatma kontrolleri ve tepki şeridi şu an görünür mü.
+  ///
+  /// KULLANICI İSTEĞİ (4 Eyl 2026): *"ekrana bir süre tıklanmayınca da video
+  /// player şeyleri gitsin ileri sarma falan sadece video gözüksün"*.
+  bool _kontrolGorunur = true;
+
+  Timer? _sonmeSayaci;
+
+  /// İlerleme çubuğu ŞU AN sürükleniyor mu — sürüklerken sönmek, kullanıcının
+  /// elinin altındaki çubuğu kaybetmesi demek olurdu.
+  bool _cubukSuruklemede = false;
+
+  /// Sohbet yazı alanının odağı. Klavye açıkken kontroller sönmemeli:
+  /// kullanıcı yazarken video kontrollerini de kaybederse, mesajı gönderip
+  /// ekrana ayrıca dokunmak zorunda kalır.
+  final _metinOdak = FocusNode();
+
   /// `_cik()` sırasında PopScope'un programlı `pop`u yutmasını engeller.
   ///
   /// ⚠ `canPop: false` YALNIZ geri hareketini değil `Navigator.pop`u da
@@ -200,6 +259,16 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     OdaTercihi.yukle().then((_) {
       if (mounted) setState(() => _sohbetAcik = OdaTercihi.sohbetAcik.value);
     });
+    // Klavye açılıp kapanınca sönme kuralı değişir: yazarken sönmemeli,
+    // yazmayı bırakınca yeniden sönebilmeli.
+    _metinOdak.addListener(() {
+      if (!mounted) return;
+      if (_metinOdak.hasFocus) {
+        _kontrolleriGoster();
+      } else {
+        _sonmeyiKur();
+      }
+    });
     // İlk kare: o anki yönü İŞLE. Telefonu zaten yatay tutarken odaya giren
     // biri videoyu büyük görmek istiyordur; dikeye çevirince kendiliğinden
     // çıkacağı için bu bir tuzak değil.
@@ -215,11 +284,17 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     if (_tamEkran) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
+    // KABUK ÇUBUĞUNU KOŞULSUZ GERİ VER. `if (_tamEkran)` ile koşullamak
+    // yetmez: bayrak global ve açık kalırsa kullanıcı odadan çıktıktan sonra
+    // uygulamanın HİÇBİR yerinde gezinme çubuğu göremez.
+    KabukTamEkran.sifirla();
+    _sonmeSayaci?.cancel();
     _yoklama?.cancel();
     _kalp?.cancel();
     _yukleyici?.iptal();
     _oynatici?.dispose();
     _metin.dispose();
+    _metinOdak.dispose();
     _kaydirma.dispose();
     super.dispose();
   }
@@ -255,6 +330,9 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   void _tamEkraniAyarla(bool acik) {
     if (_tamEkran == acik) return;
     setState(() => _tamEkran = acik);
+    // UYGULAMANIN alt gezinme çubuğu (kabuk) da gizlensin: sistem çubuklarını
+    // saklayıp uygulamanınkini bırakmak "tam ekran"ı yarım bırakırdı.
+    KabukTamEkran.ayarla(acik);
     SystemChrome.setEnabledSystemUIMode(
       // `immersiveSticky`: çubuklar gizlenir, kenardan kaydırınca GEÇİCİ
       // görünür ve kendiliğinden geri kaybolur. `immersive` (sticky olmayan)
@@ -262,7 +340,49 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       // ekranın üstü aniden dolar.
       acik ? SystemUiMode.immersiveSticky : SystemUiMode.edgeToEdge,
     );
+    // Tam ekrana girerken/çıkarken kontroller görünsün ve sayaç yeniden
+    // başlasın: kullanıcı yeni düzeni bir kez görmeli.
+    _kontrolleriGoster();
   }
+
+  // -------------------------------------------------------------------------
+  // KONTROLLERİN SÖNMESİ
+  // -------------------------------------------------------------------------
+
+  /// Kontrolleri görünür yapar ve sönme sayacını sıfırdan başlatır.
+  void _kontrolleriGoster() {
+    if (!_kontrolGorunur) setState(() => _kontrolGorunur = true);
+    _sonmeyiKur();
+  }
+
+  /// Sönme sayacını kurar — sönmemesi gereken hâllerde hiç kurmaz.
+  ///
+  /// SÖNMEYEN HÂLLER ve gerekçeleri:
+  ///  · **Video duraklatılmış:** kullanıcı bilinçli durdurdu; o an ekranda
+  ///    aradığı şey zaten kontrollerdir.
+  ///  · **Çubuk sürükleniyor:** parmağın altındaki çubuğu kaybetmek.
+  ///  · **Sohbete yazılıyor (klavye açık):** yazarken kontrollerin gitmesi,
+  ///    mesajı gönderdikten sonra ekrana ayrıca dokunmayı zorunlu kılardı.
+  ///  · **Video henüz yok:** sönecek kontrol de yok; "Video yükle" düğmesinin
+  ///    kaybolması ekranı çıkışsız bırakırdı.
+  ///  · **Yükleme sürüyor:** ilerleme çubuğu bir DURUM göstergesidir, 5 GB
+  ///    yüklerken kaybolmamalı.
+  void _sonmeyiKur() {
+    _sonmeSayaci?.cancel();
+    if (!_sonebilirMi) return;
+    _sonmeSayaci = Timer(kontrolSonmeSuresi, () {
+      if (!mounted || !_sonebilirMi) return;
+      setState(() => _kontrolGorunur = false);
+    });
+  }
+
+  bool get _sonebilirMi => kontrolSonebilir(
+    videoHazir: _oynatici != null && _oynaticiHazir,
+    oynuyor: _oda?.durum.oynuyor ?? false,
+    cubukSuruklemede: _cubukSuruklemede,
+    yaziyor: _metinOdak.hasFocus,
+    yuklemeVar: _yuklemeDurumu != null,
+  );
 
   Future<void> _sohbetiAcKapa() async {
     final yeni = !_sohbetAcik;
@@ -361,6 +481,15 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       );
       _tur++;
       var degisti = false;
+      // HAZIRLIK her turda güncellenir (durumdan bağımsız): yüzde sürüm
+      // artmadan da ilerliyor. Değişmediyse setState çağırmayız — 1 sn'lik
+      // yoklamada her turda yeniden çizim boşuna iş olurdu.
+      if (akis.hazirlik.durum != _oda!.hazirlik.durum ||
+          akis.hazirlik.yuzde != _oda!.hazirlik.yuzde ||
+          akis.hazirlik.hata != _oda!.hazirlik.hata) {
+        setState(() => _oda = _oda!.kopya(hazirlik: akis.hazirlik));
+        degisti = true;
+      }
       if (akis.durum != null) {
         // Sunucu durumu YALNIZ sürüm değiştiyse gönderir; geldiyse kasıtlı
         // bir eylem olmuştur (oynat/duraklat/sar/video değişti).
@@ -374,6 +503,11 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         });
         await _videoyuKur(akis.video);
         _duzelt(kasitli: true);
+        // İZLEYİCİDE de kural işlesin: sahip DURAKLATTIYSA kontroller geri
+        // gelip kalmalı, yeniden OYNATTIYSA sönme sayacı baştan başlamalı.
+        // Bu satır olmasaydı izleyici, sahibin duraklattığı videoda sönmüş
+        // kontrollerle kalırdı.
+        _kontrolleriGoster();
         degisti = true;
       } else {
         _duzelt();
@@ -442,6 +576,13 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   // -------------------------------------------------------------------------
 
   Future<void> _videoyuKur(String? url) async {
+    // HAZIRLIK SÜRERKEN OYNATICI KURULMAZ (4 Eyl 2026). Sunucu dosyayı
+    // dönüştürüyor ve çıktıyı YENİ BİR ADA yazıyor; şu anki adrese oynatıcı
+    // kurmak (a) boşuna, (b) `initialize()` yarıda kalan dosyada ASILI
+    // kalabiliyor ve o sırada `_ilkYukle` yoklamayı hiç başlatamıyor — yani
+    // ilerleme çubuğu %0'da donuyordu. Hazırlık bitince sürüm artıyor ve
+    // oynatıcı yeni adresle normal yoldan kuruluyor.
+    if (_oda?.hazirlik.suruyor == true) return;
     if (url == null || url == _kuruluVideo) return;
     _kuruluVideo = url;
     final eski = _oynatici;
@@ -471,6 +612,8 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     // "Hazırım" bayrağı: sahip üye listesinde kimin tamponladığını görür.
     OdaApi.hazir(widget.odaId, true).catchError((_) {});
     _duzelt(kasitli: true);
+    // Video artık var: sönme kuralı bu andan itibaren geçerli.
+    _kontrolleriGoster();
   }
 
   /// Yerel oynatıcıyı sunucudaki duruma yaklaştırır.
@@ -610,6 +753,8 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     }
     await _durumYaz(oynuyor: yeni, konumMs: d.value.position.inMilliseconds);
     _kalbiKur(yeni);
+    // Duraklatınca sayaç durur (kontroller kalır), oynatınca yeniden kurulur.
+    _kontrolleriGoster();
   }
 
   Future<void> _atla(int saniye) async {
@@ -1102,16 +1247,18 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     return Stack(
       children: [
         Positioned.fill(
-          child: ColoredBox(
-            color: Colors.black,
-            child: Center(
-              child: AspectRatio(
-                aspectRatio: d != null && _oynaticiHazir
-                    ? d.value.aspectRatio
-                    : 16 / 9,
-                child: d != null && _oynaticiHazir
-                    ? VideoPlayer(d)
-                    : _videoYerine(oda),
+          child: _dokunmaKatmani(
+            cocuk: ColoredBox(
+              color: Colors.black,
+              child: Center(
+                child: AspectRatio(
+                  aspectRatio: d != null && _oynaticiHazir
+                      ? d.value.aspectRatio
+                      : 16 / 9,
+                  child: d != null && _oynaticiHazir
+                      ? VideoPlayer(d)
+                      : _videoYerine(oda),
+                ),
               ),
             ),
           ),
@@ -1121,37 +1268,74 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
             child: Stack(children: [for (final t in _ucusan) _ucusanCiz(t)]),
           ),
         ),
-        Positioned(top: 6, right: 6, child: _ustDugmeler(sohbetDugmesi: true)),
+        // Üst düğmeler de kontrollerle BİRLİKTE söner: "sadece video gözüksün"
+        // isteği köşede duran iki ikonu da kapsıyor. Geri gelmeleri için
+        // ekrana dokunmak yetiyor.
+        Positioned(
+          top: 6,
+          right: 6,
+          child: _sonebilir(_ustDugmeler(sohbetDugmesi: true)),
+        ),
         Positioned(
           left: 0,
           right: 0,
           bottom: 0,
-          child: DecoratedBox(
-            // Kontroller parlak bir karenin üstüne düşerse okunmaz; alttan
-            // yukarı koyulaşan ince bir perde onları her sahnede ayırır.
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.75),
-                  Colors.black.withValues(alpha: 0),
+          child: _sonebilir(
+            DecoratedBox(
+              // Kontroller parlak bir karenin üstüne düşerse okunmaz; alttan
+              // yukarı koyulaşan ince bir perde onları her sahnede ayırır.
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.75),
+                    Colors.black.withValues(alpha: 0),
+                  ],
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ..._uyumsuzSerit(oda),
+                  if (_yuklemeDurumu != null) _yuklemeCubugu(_yuklemeDurumu!),
+                  if (d != null && _oynaticiHazir) _kontroller(oda, d),
+                  _tepkiSeridi(),
                 ],
               ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_yuklemeDurumu != null) _yuklemeCubugu(_yuklemeDurumu!),
-                if (d != null && _oynaticiHazir) _kontroller(oda, d),
-                _tepkiSeridi(),
-              ],
             ),
           ),
         ),
       ],
     );
   }
+
+  /// Sönebilen katman: kontroller + tepki şeridi.
+  ///
+  /// `AnimatedOpacity` + `IgnorePointer` ikilisi bilinçli. Widget'ı ağaçtan
+  /// KALDIRMAK yerine saydamlaştırıyoruz çünkü kaldırmak video kutusunun
+  /// yüksekliğini değiştirir ve her sönmede sahne ZIPLAR. Saydamken dokunma
+  /// da yutulmamalı: `IgnorePointer` olmasaydı görünmeyen bir "10 sn ileri"
+  /// düğmesi kullanıcının parmağını yakalardı.
+  Widget _sonebilir(Widget cocuk) => IgnorePointer(
+    ignoring: !_kontrolGorunur,
+    child: AnimatedOpacity(
+      opacity: _kontrolGorunur ? 1 : 0,
+      duration: kontrolSonmeGecisi,
+      child: cocuk,
+    ),
+  );
+
+  /// Videonun üstündeki dokunma yakalayıcı.
+  ///
+  /// SÖNMÜŞKEN DOKUNMA YALNIZ KONTROLLERİ GERİ GETİRİR — oynatmayı
+  /// başlatmaz/durdurmaz. İzleyicide zaten kontrol yok; sahipte ise "videoyu
+  /// büyütmek için dokundum, film durdu" en can sıkıcı kaza olurdu.
+  Widget _dokunmaKatmani({required Widget cocuk}) => GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onTap: _kontrolleriGoster,
+    child: cocuk,
+  );
 
   /// Video köşesindeki ikon-only düğmeler: sohbeti gizle/göster + tam ekran.
   ///
@@ -1192,18 +1376,20 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
             // Zemin TAM GENİŞLİK ve siyah; video oranını koruyarak İÇİNE
             // sığar. Tavan devreye girince yanlarda siyah bant kalır
             // (letterbox) — kırpmaktansa bant: kadraj bozulmasın.
-            Container(
-              width: double.infinity,
-              color: Colors.black,
-              constraints: BoxConstraints(maxHeight: videoTavan),
-              alignment: Alignment.center,
-              child: AspectRatio(
-                aspectRatio: d != null && _oynaticiHazir
-                    ? d.value.aspectRatio
-                    : 16 / 9,
-                child: d != null && _oynaticiHazir
-                    ? VideoPlayer(d)
-                    : _videoYerine(oda),
+            _dokunmaKatmani(
+              cocuk: Container(
+                width: double.infinity,
+                color: Colors.black,
+                constraints: BoxConstraints(maxHeight: videoTavan),
+                alignment: Alignment.center,
+                child: AspectRatio(
+                  aspectRatio: d != null && _oynaticiHazir
+                      ? d.value.aspectRatio
+                      : 16 / 9,
+                  child: d != null && _oynaticiHazir
+                      ? VideoPlayer(d)
+                      : _videoYerine(oda),
+                ),
               ),
             ),
             // Uçuşan tepkiler videonun ÜSTÜNDE ama dokunmayı YUTMAZ
@@ -1220,13 +1406,17 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
             Positioned(
               right: 6,
               bottom: 6,
-              child: _ustDugmeler(sohbetDugmesi: sohbetDugmesi),
+              child: _sonebilir(_ustDugmeler(sohbetDugmesi: sohbetDugmesi)),
             ),
           ],
         ),
+        // Yükleme çubuğu SÖNMEZ: 5 GB yüklerken ilerlemeyi görmek gerekiyor
+        // (`_sonebilirMi` de bu hâlde sayacı hiç kurmuyor; burada ayrıca
+        // sarmalamıyoruz ki tam ekranda da aynı kural okunsun).
+        ..._uyumsuzSerit(oda),
         if (_yuklemeDurumu != null) _yuklemeCubugu(_yuklemeDurumu!),
-        if (d != null && _oynaticiHazir) _kontroller(oda, d),
-        _tepkiSeridi(),
+        if (d != null && _oynaticiHazir) _sonebilir(_kontroller(oda, d)),
+        _sonebilir(_tepkiSeridi()),
       ],
     );
   }
@@ -1235,6 +1425,11 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     if (_yuklemeDurumu != null) {
       return const Center(child: CircularProgressIndicator());
     }
+    // HAZIRLIK (MKV desteği): dosya sunucuda kabı/sesi düzeltilirken video
+    // henüz oynatılamaz. Sessiz bir spinner "bozuk" görünürdü — ne olduğunu
+    // ve ne kadar kaldığını SÖYLE.
+    if (oda.hazirlik.suruyor) return _hazirlikYerine(oda);
+    if (oda.hazirlik.hataliMi) return _hazirlikHatasi(oda);
     if (oda.video != null) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -1285,6 +1480,182 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  /// Sunucu videoyu hazırlarken gösterilen ekran.
+  ///
+  /// KUYRUKTA ile İŞLENİYOR ayrı yazılır: kuyruktaki bir iş için yüzde
+  /// göstermek yanlış olurdu (henüz başlamadı), "sırada" demek dürüst.
+  Widget _hazirlikYerine(Oda oda) {
+    final h = oda.hazirlik;
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 42,
+              height: 42,
+              child: CircularProgressIndicator(
+                // Kuyruktayken yüzde YOK: belirsiz gösterge dürüst olan.
+                value: h.kuyrukta ? null : (h.yuzde / 100).clamp(0.0, 1.0),
+                strokeWidth: 3,
+                color: DiziRenkler.sari,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              h.kuyrukta
+                  ? 'Sırada bekliyor'.c
+                  : 'Hazırlanıyor · %{}'.cf([h.yuzde]),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.85),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              // NE YAPILDIĞINI söyle: "hazırlanıyor" tek başına ne kadar
+              // süreceği hakkında hiçbir şey demez.
+              'Video, her cihazda oynayacak biçime çevriliyor.'.c,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white.withValues(alpha: 0.55),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Hazırlık başarısız — sebebi söyle, sahibe çıkış yolu ver.
+  Widget _hazirlikHatasi(Oda oda) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 40,
+              color: DiziRenkler.ilerlemeKirmizi,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              odaHazirlikHatasi(oda.hazirlik.hata),
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.85)),
+            ),
+            if (_sahipMiyim) ...[
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 44,
+                child: FilledButton.icon(
+                  onPressed: _videoSec,
+                  icon: const Icon(Icons.upload_outlined, size: 20),
+                  label: Text('Başka video yükle'.c),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Uyarı şeridini LİSTE olarak verir.
+  ///
+  /// Koşullu eleman (`if (x case final u?)`) burada `use_null_aware_elements`
+  /// uyarısı doğuruyor ve bu projede YENİ uyarı bırakmak yasak — aynı gerekçe
+  /// `Api.takipToggle` ve `OdaApi.olustur` içinde de yazılı.
+  List<Widget> _uyumsuzSerit(Oda oda) {
+    final u = _uyumsuzUyarisi(oda);
+    return u == null ? const [] : [u];
+  }
+
+  /// Bu cihazda oynatılamayan bir kodek varsa açık uyarı + sahibe çıkış yolu.
+  ///
+  /// H.265 telefonda oynar, tarayıcıda oynamaz; VP9 tersine iOS'ta oynamaz.
+  /// Kullanıcıya siyah bir ekran göstermektense SEBEBİ söylemek gerekir.
+  Widget? _uyumsuzUyarisi(Oda oda) {
+    final u = oda.hazirlik.uyumsuz;
+    final webSorunu = kIsWeb && u.contains('web');
+    final iosSorunu =
+        !kIsWeb &&
+        defaultTargetPlatform == TargetPlatform.iOS &&
+        u.contains('ios');
+    if (!webSorunu && !iosSorunu) return null;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      color: DiziRenkler.ilerlemeKirmizi.withValues(alpha: 0.15),
+      child: Row(
+        children: [
+          Icon(
+            Icons.info_outline,
+            size: 16,
+            color: DiziRenkler.ilerlemeKirmizi,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              webSorunu
+                  ? 'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.'.c
+                  : 'Bu videoyu iPhone oynatamıyor.'.c,
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+          if (webSorunu && _sahipMiyim)
+            TextButton(
+              onPressed: _tarayiciIcinHazirla,
+              child: Text('Tarayıcı için hazırla'.c),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Elle çevrim onayının metni — TEK PARÇA dizgi.
+  ///
+  /// Bitişik iki dizgi olarak yazılsaydı Dart onları birleştirip doğru anahtarı
+  /// arardı ama KAYNAKTA iki parça görünürdü; çeviri toplayıcı betikler o
+  /// dosyayı tarayınca yalnız son parçayı anahtar sanar ve 45 dile YANLIŞ
+  /// anahtar eklenir.
+  static const _cevrimUyarisi =
+      'Video tarayıcıda oynayacak biçime çevrilecek. Uzun sürebilir; bu sırada oda izlenemez.';
+
+  /// Sahip elle tetikler: H.265 -> H.264. PAHALI olduğu için otomatik değil,
+  /// ve süresi kullanıcıya SÖYLENİR — sessizce 30 dakika beklemesin.
+  Future<void> _tarayiciIcinHazirla() async {
+    final onay = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('Tarayıcı için hazırla'.c),
+        content: Text(_cevrimUyarisi.c),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(c, false),
+            child: Text('Vazgeç'.c),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(c, true),
+            child: Text('Başlat'.c),
+          ),
+        ],
+      ),
+    );
+    if (onay != true) return;
+    try {
+      await OdaApi.videoCevir(widget.odaId);
+      await _tamYenile();
+    } on ApiHata catch (e) {
+      _uyar(odaHataMetni(e));
+    }
   }
 
   Widget _yuklemeCubugu(OdaYuklemeDurumu p) {
@@ -1371,8 +1742,18 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                                 ? konum.toDouble().clamp(0, sure.toDouble())
                                 : 0,
                             max: sure > 0 ? sure.toDouble() : 1,
+                            // Sürüklerken sönme sayacı DURUR: parmağın
+                            // altındaki çubuğun kaybolması kabul edilemez.
+                            onChangeStart: (_) {
+                              _cubukSuruklemede = true;
+                              _kontrolleriGoster();
+                            },
                             onChanged: (v) => _sar(d, v.round()),
-                            onChangeEnd: (v) => _konumaSar(v.round()),
+                            onChangeEnd: (v) {
+                              _cubukSuruklemede = false;
+                              _konumaSar(v.round());
+                              _sonmeyiKur();
+                            },
                           )
                         // İZLEYİCİ: salt okunur çubuk. Slider verilseydi
                         // dokunan kişi kendi videosunu kaydırır ve bir sonraki
@@ -1652,6 +2033,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
           Expanded(
             child: TextField(
               controller: _metin,
+              focusNode: _metinOdak,
               minLines: 1,
               maxLines: 4,
               textInputAction: TextInputAction.send,

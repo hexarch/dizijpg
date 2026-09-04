@@ -1553,4 +1553,22 @@ const Map<String, String> cevirilerNb = {
   'Tekrar oynat': 'Spill av på nytt',
   '@{} seni izleme odasına davet etti': '@{} har invitert deg til et se-rom',
   '{} · {} davet bekliyor': '{} · {} invitasjoner venter',
+  'Sırada bekliyor': 'I kø',
+  'Hazırlanıyor · %{}': 'Forbereder · {} %',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Videoen konverteres så den spilles av på alle enheter.',
+  'Başka video yükle': 'Last opp en annen video',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Nettleseren din kan ikke spille av denne videoen. Åpne den på telefonen.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone kan ikke spille av denne videoen.',
+  'Tarayıcı için hazırla': 'Forbered for nettleser',
+  'Başlat': 'Start',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Formatet på denne videoen kan ikke spilles av. Konverter den til MP4 (H.264), og prøv igjen.',
+  'Bu dosyada görüntü yok': 'Det er ingen video i denne filen',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Videoen kunne ikke leses, filen kan være ødelagt',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Serveren er tom for plass, prøv igjen om litt',
+  'Video bulunamadı': 'Fant ikke videoen',
 };

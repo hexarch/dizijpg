@@ -1542,4 +1542,22 @@ const Map<String, String> cevirilerAz = {
   'Tekrar oynat': 'Yenidən oynat',
   '@{} seni izleme odasına davet etti': '@{} səni izləmə otağına dəvət etdi',
   '{} · {} davet bekliyor': '{} · {} dəvət gözləyir',
+  'Sırada bekliyor': 'Növbədədir',
+  'Hazırlanıyor · %{}': 'Hazırlanır · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Video hər cihazda oynasın deyə çevrilir.',
+  'Başka video yükle': 'Başqa video yüklə',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Brauzerin bu videonu oynada bilmir. Telefonda aç.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone bu videonu oynada bilmir.',
+  'Tarayıcı için hazırla': 'Brauzer üçün hazırla',
+  'Başlat': 'Başlat',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Bu videonun formatı oynadıla bilmir. Onu MP4 (H.264) formatına çevirib yenidən yoxla.',
+  'Bu dosyada görüntü yok': 'Bu faylda video yoxdur',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Video oxunmadı, fayl zədələnmiş ola bilər',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Serverdə yer qalmayıb, bir azdan yenidən yoxla',
+  'Video bulunamadı': 'Video tapılmadı',
 };

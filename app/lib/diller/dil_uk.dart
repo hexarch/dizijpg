@@ -1557,4 +1557,22 @@ const Map<String, String> cevirilerUk = {
   'Tekrar oynat': 'Відтворити знову',
   '@{} seni izleme odasına davet etti': '@{} запросив вас до кімнати перегляду',
   '{} · {} davet bekliyor': '{} · очікують запрошень: {}',
+  'Sırada bekliyor': 'У черзі',
+  'Hazırlanıyor · %{}': 'Підготовка · {} %',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Відео перетворюється, щоб відтворюватися на будь-якому пристрої.',
+  'Başka video yükle': 'Завантажити інше відео',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Браузер не може відтворити це відео. Відкрийте його на телефоні.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone не може відтворити це відео.',
+  'Tarayıcı için hazırla': 'Підготувати для браузера',
+  'Başlat': 'Почати',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Формат цього відео не відтворюється. Перетворіть його на MP4 (H.264) і спробуйте ще раз.',
+  'Bu dosyada görüntü yok': 'У цьому файлі немає відео',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Не вдалося прочитати відео, файл може бути пошкоджений',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'На сервері закінчилося місце, спробуйте трохи згодом',
+  'Video bulunamadı': 'Відео не знайдено',
 };

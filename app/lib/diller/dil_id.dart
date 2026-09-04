@@ -1552,4 +1552,22 @@ const Map<String, String> cevirilerId = {
   'Tekrar oynat': 'Putar ulang',
   '@{} seni izleme odasına davet etti': '@{} mengundangmu ke ruang nonton',
   '{} · {} davet bekliyor': '{} · {} undangan menunggu',
+  'Sırada bekliyor': 'Dalam antrean',
+  'Hazırlanıyor · %{}': 'Menyiapkan · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Video sedang dikonversi agar bisa diputar di semua perangkat.',
+  'Başka video yükle': 'Unggah video lain',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Browsermu tidak bisa memutar video ini. Buka di ponsel.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone tidak bisa memutar video ini.',
+  'Tarayıcı için hazırla': 'Siapkan untuk browser',
+  'Başlat': 'Mulai',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Format video ini tidak bisa diputar. Konversi ke MP4 (H.264) lalu coba lagi.',
+  'Bu dosyada görüntü yok': 'Tidak ada video di berkas ini',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Video tidak terbaca, berkasnya mungkin rusak',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Ruang server habis, coba lagi sebentar lagi',
+  'Video bulunamadı': 'Video tidak ditemukan',
 };

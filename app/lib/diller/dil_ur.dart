@@ -1551,4 +1551,22 @@ const Map<String, String> cevirilerUr = {
   '@{} seni izleme odasına davet etti':
       '@{} نے آپ کو دیکھنے کے کمرے میں مدعو کیا',
   '{} · {} davet bekliyor': '{} · {} دعوتیں زیرِ التوا',
+  'Sırada bekliyor': 'قطار میں',
+  'Hazırlanıyor · %{}': 'تیاری جاری · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'ویڈیو کو ہر ڈیوائس پر چلنے کے قابل بنایا جا رہا ہے۔',
+  'Başka video yükle': 'دوسری ویڈیو اپ لوڈ کریں',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'آپ کا براؤزر یہ ویڈیو نہیں چلا سکتا۔ اسے فون پر کھولیں۔',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone یہ ویڈیو نہیں چلا سکتا۔',
+  'Tarayıcı için hazırla': 'براؤزر کے لیے تیار کریں',
+  'Başlat': 'شروع کریں',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'اس ویڈیو کی شکل نہیں چل سکتی۔ اسے MP4 ‏(H.264) میں بدل کر دوبارہ کوشش کریں۔',
+  'Bu dosyada görüntü yok': 'اس فائل میں ویڈیو نہیں ہے',
+  'Video okunamadı, dosya bozuk olabilir':
+      'ویڈیو پڑھی نہیں جا سکی، فائل خراب ہو سکتی ہے',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'سرور پر جگہ نہیں بچی، تھوڑی دیر بعد کوشش کریں',
+  'Video bulunamadı': 'ویڈیو نہیں ملی',
 };

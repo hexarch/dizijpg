@@ -1551,4 +1551,22 @@ const Map<String, String> cevirilerKn = {
   '@{} seni izleme odasına davet etti':
       '@{} ನಿಮ್ಮನ್ನು ನೋಡುವ ಕೊಠಡಿಗೆ ಆಹ್ವಾನಿಸಿದರು',
   '{} · {} davet bekliyor': '{} · {} ಆಹ್ವಾನಗಳು ಬಾಕಿ',
+  'Sırada bekliyor': 'ಸರತಿಯಲ್ಲಿದೆ',
+  'Hazırlanıyor · %{}': 'ಸಿದ್ಧವಾಗುತ್ತಿದೆ · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'ಎಲ್ಲ ಸಾಧನಗಳಲ್ಲಿ ಪ್ಲೇ ಆಗುವಂತೆ ವೀಡಿಯೊ ಪರಿವರ್ತಿಸಲಾಗುತ್ತಿದೆ.',
+  'Başka video yükle': 'ಬೇರೆ ವೀಡಿಯೊ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'ನಿಮ್ಮ ಬ್ರೌಸರ್ ಈ ವೀಡಿಯೊ ಪ್ಲೇ ಮಾಡಲಾಗದು. ಫೋನಿನಲ್ಲಿ ತೆರೆಯಿರಿ.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone ಈ ವೀಡಿಯೊ ಪ್ಲೇ ಮಾಡಲಾಗದು.',
+  'Tarayıcı için hazırla': 'ಬ್ರೌಸರ್‌ಗಾಗಿ ಸಿದ್ಧಪಡಿಸಿ',
+  'Başlat': 'ಪ್ರಾರಂಭಿಸಿ',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'ಈ ವೀಡಿಯೊದ ಸ್ವರೂಪ ಪ್ಲೇ ಆಗದು. MP4 (H.264) ಗೆ ಪರಿವರ್ತಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+  'Bu dosyada görüntü yok': 'ಈ ಫೈಲಿನಲ್ಲಿ ವೀಡಿಯೊ ಇಲ್ಲ',
+  'Video okunamadı, dosya bozuk olabilir':
+      'ವೀಡಿಯೊ ಓದಲಾಗಲಿಲ್ಲ, ಫೈಲ್ ಹಾಳಾಗಿರಬಹುದು',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'ಸರ್ವರ್‌ನಲ್ಲಿ ಸ್ಥಳವಿಲ್ಲ, ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ',
+  'Video bulunamadı': 'ವೀಡಿಯೊ ಸಿಗಲಿಲ್ಲ',
 };

@@ -1562,4 +1562,23 @@ const Map<String, String> cevirilerHu = {
   'Tekrar oynat': 'Újralejátszás',
   '@{} seni izleme odasına davet etti': '@{} meghívott egy nézőszobába',
   '{} · {} davet bekliyor': '{} · {} meghívó vár',
+  'Sırada bekliyor': 'Sorban áll',
+  'Hazırlanıyor · %{}': 'Előkészítés · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'A videót átalakítjuk, hogy minden eszközön lejátszható legyen.',
+  'Başka video yükle': 'Másik videó feltöltése',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'A böngésződ nem tudja lejátszani ezt a videót. Nyisd meg telefonon.',
+  'Bu videoyu iPhone oynatamıyor.':
+      'Az iPhone nem tudja lejátszani ezt a videót.',
+  'Tarayıcı için hazırla': 'Előkészítés böngészőhöz',
+  'Başlat': 'Indítás',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Ennek a videónak a formátuma nem játszható le. Alakítsd át MP4-re (H.264), és próbáld újra.',
+  'Bu dosyada görüntü yok': 'Ebben a fájlban nincs videó',
+  'Video okunamadı, dosya bozuk olabilir':
+      'A videót nem sikerült beolvasni, a fájl sérült lehet',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'A szerveren elfogyott a hely, próbáld újra hamarosan',
+  'Video bulunamadı': 'A videó nem található',
 };

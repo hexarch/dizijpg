@@ -1555,4 +1555,22 @@ const Map<String, String> cevirilerSr = {
   'Tekrar oynat': 'Pusti ponovo',
   '@{} seni izleme odasına davet etti': '@{} te je pozvao u sobu za gledanje',
   '{} · {} davet bekliyor': '{} · {} pozivnica čeka',
+  'Sırada bekliyor': 'U redu čekanja',
+  'Hazırlanıyor · %{}': 'Priprema · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Video se konvertuje da bi radio na svakom uređaju.',
+  'Başka video yükle': 'Otpremi drugi video',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Tvoj pregledač ne može da pusti ovaj video. Otvori ga na telefonu.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone ne može da pusti ovaj video.',
+  'Tarayıcı için hazırla': 'Pripremi za pregledač',
+  'Başlat': 'Počni',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Format ovog videa ne može da se pusti. Konvertuj ga u MP4 (H.264) i pokušaj ponovo.',
+  'Bu dosyada görüntü yok': 'U ovom fajlu nema videa',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Video nije mogao da se pročita, fajl je možda oštećen',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Na serveru je nestalo mesta, pokušaj ponovo za koji trenutak',
+  'Video bulunamadı': 'Video nije pronađen',
 };

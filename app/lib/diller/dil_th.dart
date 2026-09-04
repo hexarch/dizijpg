@@ -1525,4 +1525,21 @@ const Map<String, String> cevirilerTh = {
   'Tekrar oynat': 'เล่นอีกครั้ง',
   '@{} seni izleme odasına davet etti': '@{} ชวนคุณเข้าห้องดูด้วยกัน',
   '{} · {} davet bekliyor': '{} · มีคำเชิญ {} รายการ',
+  'Sırada bekliyor': 'อยู่ในคิว',
+  'Hazırlanıyor · %{}': 'กำลังเตรียม · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'กำลังแปลงวิดีโอให้เล่นได้บนทุกอุปกรณ์',
+  'Başka video yükle': 'อัปโหลดวิดีโออื่น',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'เบราว์เซอร์เล่นวิดีโอนี้ไม่ได้ เปิดบนมือถือแทน',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone เล่นวิดีโอนี้ไม่ได้',
+  'Tarayıcı için hazırla': 'เตรียมสำหรับเบราว์เซอร์',
+  'Başlat': 'เริ่ม',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'รูปแบบของวิดีโอนี้เล่นไม่ได้ แปลงเป็น MP4 (H.264) แล้วลองใหม่',
+  'Bu dosyada görüntü yok': 'ไฟล์นี้ไม่มีวิดีโอ',
+  'Video okunamadı, dosya bozuk olabilir': 'อ่านวิดีโอไม่ได้ ไฟล์อาจเสียหาย',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'เซิร์ฟเวอร์ไม่มีพื้นที่แล้ว ลองใหม่อีกสักครู่',
+  'Video bulunamadı': 'ไม่พบวิดีโอ',
 };

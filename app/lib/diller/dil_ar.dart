@@ -1539,4 +1539,22 @@ const Map<String, String> cevirilerAr = {
   'Tekrar oynat': 'إعادة التشغيل',
   '@{} seni izleme odasına davet etti': 'دعاك @{} إلى غرفة مشاهدة',
   '{} · {} davet bekliyor': '{} · {} دعوة في الانتظار',
+  'Sırada bekliyor': 'في الانتظار',
+  'Hazırlanıyor · %{}': 'جارٍ التحضير · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'يجري تحويل الفيديو ليعمل على كل الأجهزة.',
+  'Başka video yükle': 'ارفع فيديو آخر',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'متصفحك لا يستطيع تشغيل هذا الفيديو. افتحه على الهاتف.',
+  'Bu videoyu iPhone oynatamıyor.': 'لا يستطيع iPhone تشغيل هذا الفيديو.',
+  'Tarayıcı için hazırla': 'تحضير للمتصفح',
+  'Başlat': 'ابدأ',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'لا يمكن تشغيل صيغة هذا الفيديو. حوّله إلى MP4 ‏(H.264) وحاول مرة أخرى.',
+  'Bu dosyada görüntü yok': 'لا يوجد فيديو في هذا الملف',
+  'Video okunamadı, dosya bozuk olabilir':
+      'تعذّرت قراءة الفيديو، قد يكون الملف تالفًا',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'لم تعد هناك مساحة على الخادم، حاول بعد قليل',
+  'Video bulunamadı': 'لم يُعثر على الفيديو',
 };

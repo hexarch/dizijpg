@@ -1548,4 +1548,22 @@ const Map<String, String> cevirilerPa = {
   '@{} seni izleme odasına davet etti':
       '@{} ਨੇ ਤੁਹਾਨੂੰ ਵੇਖਣ ਵਾਲੇ ਰੂਮ ਵਿੱਚ ਸੱਦਿਆ',
   '{} · {} davet bekliyor': '{} · {} ਸੱਦੇ ਬਾਕੀ',
+  'Sırada bekliyor': 'ਕਤਾਰ ਵਿੱਚ',
+  'Hazırlanıyor · %{}': 'ਤਿਆਰ ਹੋ ਰਿਹਾ ਹੈ · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'ਵੀਡੀਓ ਨੂੰ ਹਰ ਡਿਵਾਈਸ ਉੱਤੇ ਚੱਲਣਯੋਗ ਬਣਾਇਆ ਜਾ ਰਿਹਾ ਹੈ।',
+  'Başka video yükle': 'ਹੋਰ ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'ਤੁਹਾਡਾ ਬ੍ਰਾਊਜ਼ਰ ਇਹ ਵੀਡੀਓ ਨਹੀਂ ਚਲਾ ਸਕਦਾ। ਇਸਨੂੰ ਫ਼ੋਨ ਉੱਤੇ ਖੋਲ੍ਹੋ।',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone ਇਹ ਵੀਡੀਓ ਨਹੀਂ ਚਲਾ ਸਕਦਾ।',
+  'Tarayıcı için hazırla': 'ਬ੍ਰਾਊਜ਼ਰ ਲਈ ਤਿਆਰ ਕਰੋ',
+  'Başlat': 'ਸ਼ੁਰੂ ਕਰੋ',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'ਇਸ ਵੀਡੀਓ ਦਾ ਰੂਪ ਨਹੀਂ ਚੱਲ ਸਕਦਾ। ਇਸਨੂੰ MP4 (H.264) ਵਿੱਚ ਬਦਲ ਕੇ ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ।',
+  'Bu dosyada görüntü yok': 'ਇਸ ਫ਼ਾਈਲ ਵਿੱਚ ਵੀਡੀਓ ਨਹੀਂ ਹੈ',
+  'Video okunamadı, dosya bozuk olabilir':
+      'ਵੀਡੀਓ ਪੜ੍ਹੀ ਨਹੀਂ ਜਾ ਸਕੀ, ਫ਼ਾਈਲ ਖ਼ਰਾਬ ਹੋ ਸਕਦੀ ਹੈ',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'ਸਰਵਰ ਉੱਤੇ ਥਾਂ ਨਹੀਂ ਬਚੀ, ਥੋੜ੍ਹੀ ਦੇਰ ਬਾਅਦ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
+  'Video bulunamadı': 'ਵੀਡੀਓ ਨਹੀਂ ਮਿਲੀ',
 };

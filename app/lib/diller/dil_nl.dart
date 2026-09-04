@@ -1561,4 +1561,22 @@ const Map<String, String> cevirilerNl = {
   '@{} seni izleme odasına davet etti':
       '@{} heeft je uitgenodigd in een kijkkamer',
   '{} · {} davet bekliyor': '{} · {} uitnodigingen open',
+  'Sırada bekliyor': 'In de wachtrij',
+  'Hazırlanıyor · %{}': 'Voorbereiden · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'De video wordt omgezet zodat hij op elk apparaat speelt.',
+  'Başka video yükle': 'Andere video uploaden',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Je browser kan deze video niet afspelen. Open hem op je telefoon.',
+  'Bu videoyu iPhone oynatamıyor.': 'De iPhone kan deze video niet afspelen.',
+  'Tarayıcı için hazırla': 'Voor browser voorbereiden',
+  'Başlat': 'Starten',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Het formaat van deze video kan niet worden afgespeeld. Zet hem om naar MP4 (H.264) en probeer opnieuw.',
+  'Bu dosyada görüntü yok': 'In dit bestand zit geen video',
+  'Video okunamadı, dosya bozuk olabilir':
+      'De video kon niet worden gelezen, het bestand is misschien beschadigd',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'De server heeft geen ruimte meer, probeer het zo opnieuw',
+  'Video bulunamadı': 'Video niet gevonden',
 };

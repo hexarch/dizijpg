@@ -19,6 +19,7 @@ import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ceviri.dart';
+import 'package:dizijpg/ekranlar/kabuk.dart' show KabukTamEkran;
 import 'package:dizijpg/oda/oda_ekrani.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -106,7 +107,7 @@ const _dikey = Size(390, 780);
 const _yatay = Size(780, 390);
 
 /// Ekranı kur, ilk kareyi ve yoklamayı geçir.
-Future<void> _ac(WidgetTester t, {bool sahibiMiyim = true}) async {
+Future<void> _ac(WidgetTester t) async {
   await t.pumpWidget(_sar(const OdaEkrani(odaId: 5)));
   await t.pump();
   await t.pump(const Duration(milliseconds: 50));
@@ -336,7 +337,7 @@ void main() {
       await _ac(t);
       await t.pumpAndSettle();
       expect(
-        tester_hata(),
+        cizimHatasi(),
         isNull,
         reason: '${olcu.width}x${olcu.height} taştı',
       );
@@ -346,7 +347,7 @@ void main() {
         await t.tap(gizle);
         await t.pumpAndSettle();
         expect(
-          tester_hata(),
+          cizimHatasi(),
           isNull,
           reason: '${olcu.width}x${olcu.height} sohbet kapalıyken taştı',
         );
@@ -355,10 +356,164 @@ void main() {
       }
     }
   });
+
+  // =========================================================================
+  // 6. KABUK ÇUBUĞU + KONTROLLERİN SÖNMESİ (4 Eyl 2026)
+  //
+  // İstek: "tam ekranda alttaki navigasyon barları kapanmalı emojiler de
+  // gizlenmeli" ve "ekrana bir süre tıklanmayınca da video player şeyleri
+  // gitsin ileri sarma falan sadece video gözüksün"
+  // =========================================================================
+
+  testWidgets('tam ekran KABUK bayrağını kaldırır, çıkınca indirir', (t) async {
+    addTearDown(t.view.reset);
+    addTearDown(KabukTamEkran.sifirla);
+    _boyut(t, _dikey.width, _dikey.height);
+    await _ac(t);
+    expect(KabukTamEkran.acik.value, isFalse);
+
+    await t.tap(find.byIcon(Icons.fullscreen));
+    await t.pumpAndSettle();
+    expect(
+      KabukTamEkran.acik.value,
+      isTrue,
+      reason: 'alt gezinme çubuğu tam ekranda gizlenmeli',
+    );
+
+    await t.tap(find.byIcon(Icons.fullscreen_exit));
+    await t.pumpAndSettle();
+    expect(KabukTamEkran.acik.value, isFalse);
+  });
+
+  testWidgets('ekran SÖKÜLÜNCE kabuk bayrağı KOŞULSUZ iner', (t) async {
+    // Bayrak GLOBAL: açık kalırsa kullanıcı odadan çıkar ve uygulamanın
+    // hiçbir yerinde gezinme çubuğu göremez. Tam ekrandayken geri tuşuna
+    // basıp çıkma yolu da bunu tetiklemeli.
+    addTearDown(t.view.reset);
+    addTearDown(KabukTamEkran.sifirla);
+    _boyut(t, _dikey.width, _dikey.height);
+    await _ac(t);
+    await t.tap(find.byIcon(Icons.fullscreen));
+    await t.pumpAndSettle();
+    expect(KabukTamEkran.acik.value, isTrue);
+
+    // Ekranı ağaçtan kaldır (dispose).
+    await t.pumpWidget(_sar(const SizedBox.shrink()));
+    await t.pumpAndSettle();
+    expect(
+      KabukTamEkran.acik.value,
+      isFalse,
+      reason: 'dispose bayrağı koşulsuz indirmeli',
+    );
+  });
+
+  testWidgets('VİDEO YOKKEN kontroller SÖNMEZ ("Video yükle" kaybolmaz)', (
+    t,
+  ) async {
+    // Sönme kuralı yalnız gerçekten oynayan bir video varken işler. Video
+    // yokken sönseydi ekranın tek çıkış yolu (yükleme düğmesi) kaybolurdu.
+    addTearDown(t.view.reset);
+    addTearDown(KabukTamEkran.sifirla);
+    _boyut(t, _dikey.width, _dikey.height);
+    await _ac(t);
+    expect(find.text('Video yükle'.c), findsOneWidget);
+
+    // Sönme süresinin KATBEKAT üstünde bekle.
+    await t.pump(kontrolSonmeSuresi * 3);
+    await t.pump(kontrolSonmeGecisi);
+    expect(
+      find.text('Video yükle'.c),
+      findsOneWidget,
+      reason: 'video yokken hiçbir şey sönmemeli',
+    );
+    // Tepki şeridi de yerinde.
+    expect(find.text('🔥'), findsOneWidget);
+  });
+
+  test('kontrolSonebilir: yalnız OYNAYAN ve hazır videoda söner', () {
+    bool k({
+      bool videoHazir = true,
+      bool oynuyor = true,
+      bool cubukSuruklemede = false,
+      bool yaziyor = false,
+      bool yuklemeVar = false,
+    }) => kontrolSonebilir(
+      videoHazir: videoHazir,
+      oynuyor: oynuyor,
+      cubukSuruklemede: cubukSuruklemede,
+      yaziyor: yaziyor,
+      yuklemeVar: yuklemeVar,
+    );
+
+    // Temel hâl: video hazır ve oynuyor -> söner ("sadece video gözüksün").
+    expect(k(), isTrue);
+
+    // Her kenar durumu TEK BAŞINA sönmeyi durdurmalı.
+    expect(
+      k(videoHazir: false),
+      isFalse,
+      reason: 'video yokken "Video yükle" düğmesi kaybolmamalı',
+    );
+    expect(
+      k(oynuyor: false),
+      isFalse,
+      reason: 'duraklatan kullanıcı zaten kontrolleri arıyordur',
+    );
+    expect(
+      k(cubukSuruklemede: true),
+      isFalse,
+      reason: 'parmağın altındaki ilerleme çubuğu kaybolmamalı',
+    );
+    expect(
+      k(yaziyor: true),
+      isFalse,
+      reason:
+          'klavye açıkken sönmek, gönderdikten sonra ekrana ayrıca '
+          'dokunmayı zorunlu kılardı',
+    );
+    expect(
+      k(yuklemeVar: true),
+      isFalse,
+      reason: '5 GB yüklenirken ilerleme göstergesi kaybolmamalı',
+    );
+
+    // Birden çok engel aynı anda: yine sönmez.
+    expect(k(oynuyor: false, yaziyor: true), isFalse);
+  });
+
+  testWidgets('sönme süresi ve geçişi makul aralıkta', (t) async {
+    // ui-ux-pro-max Animation: 150-300 ms. Süre ise oynatıcı yerleşiği (3 sn);
+    // 1 sn kullanıcının düğmeye uzanmasına yetmez, 10 sn "sadece video
+    // gözüksün" isteğini karşılamaz.
+    expect(kontrolSonmeSuresi, const Duration(seconds: 3));
+    expect(kontrolSonmeGecisi.inMilliseconds, inInclusiveRange(150, 300));
+  });
+
+  testWidgets('tam ekranda tepki şeridi ve kontroller AYNI katmanda söner', (
+    t,
+  ) async {
+    // Kullanıcı "emojiler de gizlenmeli" dedi: tepki şeridi kontrollerle
+    // BİRLİKTE sönmeli, ayrı bir kuralı olmamalı. İkisinin de aynı
+    // `AnimatedOpacity` sarmalayıcısından geçtiğini kilitliyoruz.
+    addTearDown(t.view.reset);
+    addTearDown(KabukTamEkran.sifirla);
+    _boyut(t, _yatay.width, _yatay.height);
+    await _ac(t);
+    await t.pumpAndSettle();
+    expect(find.text('🔥'), findsWidgets);
+    expect(
+      find.ancestor(
+        of: find.text('🔥').first,
+        matching: find.byType(AnimatedOpacity),
+      ),
+      findsWidgets,
+      reason: 'tepki şeridi sönebilen katmanın içinde olmalı',
+    );
+  });
 }
 
 /// Çizim sırasında biriken Flutter hatasını alır (taşma dahil), yoksa null.
-Object? tester_hata() {
+Object? cizimHatasi() {
   final hata = TestWidgetsFlutterBinding.instance.takeException();
   return hata;
 }

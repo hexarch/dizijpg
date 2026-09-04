@@ -1548,4 +1548,22 @@ const Map<String, String> cevirilerCs = {
   '@{} seni izleme odasına davet etti':
       '@{} tě pozval(a) do sledovací místnosti',
   '{} · {} davet bekliyor': '{} · čeká {} pozvánek',
+  'Sırada bekliyor': 'Ve frontě',
+  'Hazırlanıyor · %{}': 'Připravuje se · {} %',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'Video se převádí, aby šlo přehrát na každém zařízení.',
+  'Başka video yükle': 'Nahrát jiné video',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'Tvůj prohlížeč tohle video nepřehraje. Otevři ho v telefonu.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone tohle video nepřehraje.',
+  'Tarayıcı için hazırla': 'Připravit pro prohlížeč',
+  'Başlat': 'Spustit',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'Formát tohoto videa nejde přehrát. Převeď ho na MP4 (H.264) a zkus to znovu.',
+  'Bu dosyada görüntü yok': 'V tomhle souboru není video',
+  'Video okunamadı, dosya bozuk olabilir':
+      'Video se nepodařilo přečíst, soubor může být poškozený',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'Na serveru došlo místo, zkus to za chvíli',
+  'Video bulunamadı': 'Video nenalezeno',
 };

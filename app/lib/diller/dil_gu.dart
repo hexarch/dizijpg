@@ -1539,4 +1539,22 @@ const Map<String, String> cevirilerGu = {
   '@{} seni izleme odasına davet etti':
       '@{} એ તમને જોવાના રૂમમાં આમંત્રણ આપ્યું',
   '{} · {} davet bekliyor': '{} · {} આમંત્રણ બાકી',
+  'Sırada bekliyor': 'કતારમાં છે',
+  'Hazırlanıyor · %{}': 'તૈયાર થઈ રહ્યું છે · {}%',
+  'Video, her cihazda oynayacak biçime çevriliyor.':
+      'વીડિયો દરેક ડિવાઇસ પર ચાલે એ માટે રૂપાંતરિત થઈ રહ્યો છે.',
+  'Başka video yükle': 'બીજો વીડિયો અપલોડ કરો',
+  'Bu videoyu tarayıcı oynatamıyor. Telefondan aç.':
+      'તમારું બ્રાઉઝર આ વીડિયો ચલાવી શકતું નથી. ફોન પર ખોલો.',
+  'Bu videoyu iPhone oynatamıyor.': 'iPhone આ વીડિયો ચલાવી શકતું નથી.',
+  'Tarayıcı için hazırla': 'બ્રાઉઝર માટે તૈયાર કરો',
+  'Başlat': 'શરૂ કરો',
+  'Bu videonun görüntü biçimi oynatılamıyor. MP4 (H.264) olarak çevirip yeniden dene.':
+      'આ વીડિયોનું ફોર્મેટ ચાલી શકતું નથી. તેને MP4 (H.264) માં ફેરવીને ફરી પ્રયાસ કરો.',
+  'Bu dosyada görüntü yok': 'આ ફાઇલમાં વીડિયો નથી',
+  'Video okunamadı, dosya bozuk olabilir':
+      'વીડિયો વાંચી શકાયો નહીં, ફાઇલ બગડેલી હોઈ શકે',
+  'Sunucuda yer kalmadı, biraz sonra tekrar dene':
+      'સર્વર પર જગ્યા બચી નથી, થોડી વારે ફરી પ્રયાસ કરો',
+  'Video bulunamadı': 'વીડિયો મળ્યો નહીં',
 };

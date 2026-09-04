@@ -243,6 +243,86 @@ test('girisKarari: kapasite dolu yeni üyeyi almaz', () => {
   assert.equal(k.kod, 'ODA_DOLU');
 });
 
+// ---------------------------------------------------------------------------
+// DAVET ZATEN YETKİDİR (4 Eyl 2026) — canlıda İKİ KEZ ısıran hata
+// ---------------------------------------------------------------------------
+// 1. tur: modalda davet satırı 403 aldı, düzeltme İSTEMCİYE yazıldı.
+// 2. tur: kullanıcı bu kez PUSH BİLDİRİMİNDEN girdi ve yine 403 aldı — çünkü
+// odaya giden her kapı (bildirim, bildirim listesi, derin bağlantı, geçmiş)
+// ayrı bir kapıydı. Kural artık TEK yerde: `girisKarari`.
+
+test('girisKarari: DAVETLİ ama katılmamış GİRER ve kabul yazılmasını ister', () => {
+  const k = girisKarari(acikOda(), 0, giris({ davetli: true, uye: false }));
+  assert.equal(k.tamam, true);
+  assert.equal(k.kabulGerek, true,
+    'çağıran daveti kabul yazmalı; yoksa kişi her girişte yeniden "üye değil" olur');
+});
+
+test('girisKarari: KATILMIŞ üyede kabul yazımı İSTENMEZ', () => {
+  // Yoklama saniyede bir buradan geçiyor; her turda yazma isteseydi
+  // 1 sn'lik tur her seferinde gereksiz bir UPDATE koşardı.
+  const k = girisKarari(acikOda(), 0, giris({ davetli: true, uye: true }));
+  assert.equal(k.tamam, true);
+  assert.ok(!k.kabulGerek);
+});
+
+test('girisKarari: DAVETLİYE kapasite yeniden sorulmaz', () => {
+  // Davet verilirken bekleyenler de sayılmıştı (POST /odalar/:id/davet), yani
+  // bu kişinin yeri ZATEN ayrıldı. Burada "oda dolu" demek çağrılan kişiyi
+  // kapıda çevirmek olurdu.
+  const k = girisKarari(acikOda(), 0, giris({
+    davetli: true, uye: false, uyeSayisi: ODA_AZAMI_UYE + 5,
+  }));
+  assert.equal(k.tamam, true);
+});
+
+test('girisKarari: davetli olsa da KAPALI oda ve ENGEL önce gelir', () => {
+  assert.equal(
+    girisKarari(acikOda({ kapandi: 5 }), 0, giris({ davetli: true })).kod, 'ODA_KAPANDI');
+  assert.equal(
+    girisKarari(acikOda(), 10_000, giris({ davetli: true })).kod, 'ODA_KAPANDI');
+  assert.equal(
+    girisKarari(acikOda(), 0, giris({ davetli: true, engelli: true })).kod, 'ENGELLI');
+});
+
+test('girisKarari: daveti OLMAYAN hâlâ giremez (yetki gevşemedi)', () => {
+  assert.equal(girisKarari(acikOda(), 0, giris({ davetli: false })).kod, 'DAVET_YOK');
+});
+
+test('bağlantı: odaKapisi kuralı KENDİ YAZMIYOR, girisKarari\'ye soruyor', () => {
+  // İLK YAZIMDA HATA TAM BURADAYDI: aynı kural iki yere yazılmıştı —
+  // `girisKarari` "davetli geçer" diyordu, `odaKapisi` ise elle
+  // `!uye.katildi -> 403` koşuyordu. İkisi ayrıştı ve kullanıcının gördüğü
+  // hata bu ayrışmaydı. Kapının kararı kendi başına vermediğini kilitliyoruz.
+  const s = oku('server.js');
+  const i = s.indexOf('async function odaKapisi');
+  assert.ok(i > 0, 'odaKapisi bulunamadı');
+  const govde = s.slice(i, s.indexOf('\n}', i));
+  assert.match(govde, /odaGirisKarari\(/,
+    'odaKapisi kararı girisKarari\'ye sormalı, kendi koşulunu yazmamalı');
+  assert.doesNotMatch(govde, /!\s*uye\.katildi/,
+    'katildi şartı elle yazılmış — kural yine ikiye ayrılmış demektir');
+});
+
+test('bağlantı: daveti kabul yazma İDEMPOTENT (yarışa kapalı)', () => {
+  // Kullanıcı bildirime iki kez dokunabilir; ekran açılırken hem /odalar/:id
+  // hem ilk yoklama gidebilir. `WHERE katildi IS NULL` + RETURNING satır
+  // kilidinde sıraya girer ve yalnız BİRİ eşleşir -> tek "katıldı" satırı.
+  const s = oku('server.js');
+  const i = s.indexOf('async function odaKapisi');
+  const govde = s.slice(i, s.indexOf('\n}', i));
+  assert.match(govde, /UPDATE oda_uyeler[\s\S]*?katildi IS NULL[\s\S]*?RETURNING/,
+    'kabul yazımı koşullu UPDATE + RETURNING ile yapılmalı');
+  assert.match(govde, /rowCount[\s\S]*?odaSistemMesaji/,
+    'sistem satırı YALNIZ gerçekten yazan istek için eklenmeli');
+  // Önden SELECT ile "yeni mi" diye bakmak yarışa açıktır; o kalıp burada
+  // olmasın. YORUMLAR AYIKLANIR: gövdedeki uyarı yorumu `yeniMi` sözcüğünü
+  // kasten anıyor ("oradaki kalıbı kopyalama") ve ham metinde arama yapmak
+  // o uyarıyı hatalı biçimde kod sanardı.
+  const kodsuz = govde.replace(/^\s*\/\/.*$/gm, '');
+  assert.doesNotMatch(kodsuz, /yeniMi/);
+});
+
 test('cevrimiciMi: eşik', () => {
   assert.equal(cevrimiciMi(1000, 1000 + CEVRIMICI_ESIK_MS), true);
   assert.equal(cevrimiciMi(1000, 1000 + CEVRIMICI_ESIK_MS + 1), false);
@@ -445,6 +525,103 @@ test('/sohbetler rozet sayısını veriyor ve tablo yoksa 0a DÜŞÜYOR', () => 
     'rozet sayısı BEKLEYEN davetlerden türetilmeli');
   assert.match(govde, /\.catch\(\(\) => \(\{ rows: \[\{ adet: 0 \}\] \}\)\)/,
     'oda tablosu yoksa /sohbetler 500 dönmemeli — en kritik ekran');
+});
+
+test('bağlantı: yükleme bitince hazırlık KUYRUĞA alınıyor', () => {
+  // Alınmazsa MKV eskisi gibi `.webm` adıyla diskte kalır ve tarayıcıda hiç
+  // açılmaz (4 Eyl 2026 kök sebebi).
+  const s = oku('server.js');
+  const i = s.indexOf("app.post('/oda-video/bitir'");
+  const govde = s.slice(i, s.indexOf('}));', i));
+  assert.match(govde, /odaHazirligaAl\(/);
+});
+
+test('bağlantı: hazırlık `bitir` ucunu BEKLETMİYOR', () => {
+  // Beklerse 5 GBlık bir işte nginx proxy_read_timeout (300s) dolar ve
+  // kullanıcı BAŞARILI yüklemeyi "başarısız" görür.
+  const s = oku('server.js');
+  const i = s.indexOf("app.post('/oda-video/bitir'");
+  const govde = s.slice(i, s.indexOf('}));', i));
+  assert.ok(!/await odaHazirlikCalistir/.test(govde),
+    'ffmpeg isteği bekletmemeli — kuyruğa alıp hemen dönmeli');
+});
+
+test('bağlantı: akış yanıtı hazırlık alanlarını taşıyor', () => {
+  // Yüzde `durum` bloğunun DIŞINDA olmalı: `durum` yalnız sürüm değişince
+  // gönderiliyor, oysa ilerleme sürüm artmadan da akmalı.
+  const s = oku('server.js');
+  const i = s.indexOf("app.get('/odalar/:id/akis'");
+  const govde = s.slice(i, s.indexOf('}));', i));
+  assert.match(govde, /odaHazirlikGovde\(oda\)/);
+  const durumBlok = govde.slice(govde.indexOf('durum: durumDegisti'),
+    govde.indexOf('} : null,'));
+  assert.ok(!/hazirlik_yuzde/.test(durumBlok),
+    'yüzde koşullu durum bloğunun içinde olmamalı — %0da donardı');
+});
+
+test('bağlantı: elle çevrim ucu YALNIZ sahip ve tek iş', () => {
+  const s = oku('server.js');
+  const i = s.indexOf("app.post('/odalar/:id/video-cevir'");
+  assert.ok(i > 0, 'video-cevir ucu olmalı');
+  const govde = s.slice(i, s.indexOf('}));', i));
+  assert.match(govde, /SAHIP_DEGIL/);
+  assert.match(govde, /HAZIRLIK_SURUYOR/, 'süren iş varken ikincisi başlatılmamalı');
+});
+
+test('bağlantı: kuyruğa giren iş KÜMEYE DUYURULUYOR', () => {
+  // 4 Eyl 2026, CANLIDA ÖLÇÜLDÜ: canlıda 4 işçi var ve nginx yüklemeyi
+  // herhangi birine veriyor. `odaHazirlikTetikle` ilk satırında `ISCI_GOREVLI`
+  // kapısı olduğu için, yükleme görevli OLMAYAN işçiye düştüğünde çağrı
+  // sessizce hiçbir şey yapıyordu; görevli işçi işten haberdar olmuyordu.
+  // Gerçek bir MKV yüklendiğinde iş 24 saniye sonra hâlâ "kuyrukta" görünüyor,
+  // kullanıcı %0'da donmuş ekrana bakıyordu — yalnız 5 dakikalık setInterval
+  // kurtarıyordu. Yayın kanalı olmadan bu hata GERİ GELİR.
+  const s = oku('server.js');
+  const i = s.indexOf('async function odaHazirligaAl');
+  assert.ok(i > 0, 'odaHazirligaAl bulunamadı');
+  const govde = s.slice(i, s.indexOf('\n}', i));
+  assert.match(govde, /odaHazirlikDuyur\(\)/,
+    'kuyruğa alma DUYURMALI — doğrudan tetikleme tek başına yetmiyor');
+  const j = s.indexOf('function odaHazirlikDuyur');
+  const duyur = s.slice(j, j + 400);
+  assert.match(duyur, /yayinla\('oda_hazirlik'/, 'kümeye yayın şart');
+  assert.match(duyur, /odaHazirlikTetikle\(\)/,
+    'kümesizken yayın no-op olduğu için doğrudan çağrı da kalmalı');
+});
+
+test('bağlantı: her işçi hazırlık duyurusuna ABONE', () => {
+  // Abonelik olmadan yayın kimseye ulaşmaz ve düzeltme işlevsiz kalır.
+  assert.match(oku('server.js'), /abone\('oda_hazirlik'/);
+});
+
+test('bağlantı: elle çevrim de DUYURUYOR', () => {
+  const s = oku('server.js');
+  const i = s.indexOf("app.post('/odalar/:id/video-cevir'");
+  const govde = s.slice(i, s.indexOf('}));', i));
+  assert.match(govde, /odaHazirlikDuyur\(\)/,
+    'video-cevir de görevli olmayan işçiye düşebilir');
+});
+
+test('bağlantı: güvenlik ağı 60 saniye (5 dakika DEĞİL)', () => {
+  // Beş dakika bekleyen bir güvenlik ağı görevini yapmıyor demektir:
+  // kullanıcı o süre boyunca "Sırada bekliyor / %0" görür.
+  assert.match(oku('server.js'), /setInterval\(odaHazirlikTetikle, 60_000\)/);
+});
+
+test('bağlantı: süpürge hazırlık ARA DOSYALARINI da topluyor', () => {
+  // Yarıda kalan ffmpeg 5 GBlık çöp bırakır.
+  const s = oku('server.js');
+  const i = s.indexOf('async function odalariSupur');
+  const govde = s.slice(i, i + 3000);
+  assert.match(govde, /\.hazirlik/);
+});
+
+test('bağlantı: zorla_cevir bayrağı şema + migrasyonda ve iş bitince düşüyor', () => {
+  for (const f of ['sema.sql', 'migrasyon-2026-09-04b.sql']) {
+    assert.match(oku(f), /zorla_cevir/, f);
+  }
+  assert.match(oku('server.js'), /zorla_cevir=false/,
+    'bayrak düşmezse her hazırlıkta yeniden x264 koşar');
 });
 
 test('bağlantı: Dart senkron modülü sunucudaki formülle aynı', () => {
