@@ -1518,4 +1518,13 @@ const Map<String, String> cevirilerZh = {
   'Renkler': '颜色',
   'Sık kullanılanlar': '常用',
   'Klavye': '键盘',
+  'Kullanıcı adını seç': '选择你的用户名',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      '由于你使用 Google 登录，我们为你生成了一个用户名。你的个人主页链接和 @提及都会用到它——现在就自己选一个吧。',
+  'Kontrol ediliyor...': '正在检查...',
+  '@{} müsait': '@{} 可用',
+  'Bu adı seç': '使用这个名字',
+  'Kullanıcı adın @{} oldu': '你的用户名现在是 @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      '之后可以在设置中更改；每次更改后需等待 90 天。',
 };

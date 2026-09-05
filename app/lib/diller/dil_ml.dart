@@ -1608,4 +1608,13 @@ const Map<String, String> cevirilerMl = {
   'Renkler': 'നിറങ്ങൾ',
   'Sık kullanılanlar': 'പതിവായി ഉപയോഗിച്ചവ',
   'Klavye': 'കീബോർഡ്',
+  'Kullanıcı adını seç': 'നിങ്ങളുടെ ഉപയോക്തൃനാമം തിരഞ്ഞെടുക്കുക',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'നിങ്ങൾ Google വഴി സൈൻ ഇൻ ചെയ്തതിനാൽ ഞങ്ങൾ നിങ്ങൾക്കായി ഒരു പേര് സൃഷ്ടിച്ചു. നിങ്ങളുടെ പ്രൊഫൈൽ ലിങ്കും പരാമർശങ്ങളും ഈ പേരാണ് ഉപയോഗിക്കുന്നത് — ഇപ്പോൾ സ്വന്തം പേര് തിരഞ്ഞെടുക്കുക.',
+  'Kontrol ediliyor...': 'പരിശോധിക്കുന്നു...',
+  '@{} müsait': '@{} ലഭ്യമാണ്',
+  'Bu adı seç': 'ഈ പേര് തിരഞ്ഞെടുക്കുക',
+  'Kullanıcı adın @{} oldu': 'നിങ്ങളുടെ ഉപയോക്തൃനാമം ഇപ്പോൾ @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'പിന്നീട് ക്രമീകരണങ്ങളിൽ നിന്ന് മാറ്റാം; ഓരോ മാറ്റത്തിനു ശേഷവും 90 ദിവസം കാത്തിരിക്കണം.',
 };

@@ -128,8 +128,9 @@ const kullaniciAdiKalanGun = alan(
   [...SABITLER, 'kullaniciAdiKalanGun'], 'kullaniciAdiKalanGun');
 const kullaniciAdiDegistir = alan(
   [...SABITLER, ...YASAK_SUZGEC,
-    'kullaniciAdiKalanGun', 'adRezerveMi', 'kullaniciAdiDegistir'],
+    'kullaniciAdiKalanGun', 'adRezerveMi', 'ilkAdSecimiUygun', 'kullaniciAdiDegistir'],
   'kullaniciAdiDegistir');
+const ilkAdSecimiUygun = alan(['ilkAdSecimiUygun'], 'ilkAdSecimiUygun');
 const KILIT_GUN = alan(SABITLER, 'KULLANICI_ADI_KILIT_GUN');
 const REZERV_GUN = alan(SABITLER, 'KULLANICI_ADI_REZERV_GUN');
 
@@ -321,6 +322,129 @@ test('kilit: süre dolmuşsa değişim GEÇER ve damga YENİLENİR', async () =>
   // geri dönüş DEĞİLSE ikinci parametre false gitmeli.
   assert.match(u, /kullanici_adi_degisim = CASE WHEN \$2 THEN kullanici_adi_degisim ELSE now\(\) END/);
   assert.ok(gunluk.includes('COMMIT'));
+});
+
+// ===========================================================================
+// 2b. İLK SEÇİM (karşılama adımı, 5 Eyl 2026) — kilitsiz, rezervsiz, damgasız
+// ===========================================================================
+// Kullanıcı isteği: "kullanıcı adlarını otomatik atıyoruz, onu kullanıcı
+// seçmeli." Google ile açılan hesabın adını sunucu türetiyor; karşılamadaki
+// seçim bir DEĞİŞİKLİK değil İLK SEÇİM: kilit takılmaz, damga yazılmaz,
+// üretilmiş ad rezerve edilmez. Pencere yalnız UYGUN hesaba açık — aksi hâlde
+// herkes "karşılama ucu"ndan 90 gün kilidini atlardı.
+
+const GOOGLE_BEN = {
+  ...BEN, kullanici_adi: 'ali.veli_3f2a', google_sub: 'g-123', karsilama_bitti: false,
+};
+
+test('ilk seçim: yalnız Google kökenli + adı değişmemiş + karşılaması bitmemiş hesap', () => {
+  assert.equal(ilkAdSecimiUygun(GOOGLE_BEN), true);
+  // E-postayla kayıt: adı kendi seçti, pencere yok.
+  assert.equal(ilkAdSecimiUygun({ ...GOOGLE_BEN, google_sub: null }), false);
+  // Misafir: ad seçme hakkı /auth/bagla'da.
+  assert.equal(ilkAdSecimiUygun({ ...GOOGLE_BEN, misafir: true }), false);
+  // Ayarlardan bir kez değiştirmiş: artık kilitli yol.
+  assert.equal(ilkAdSecimiUygun({
+    ...GOOGLE_BEN, kullanici_adi_degisim: '2026-09-01T00:00:00Z',
+  }), false);
+  // Karşılama bitti: pencere KAPANDI.
+  assert.equal(ilkAdSecimiUygun({ ...GOOGLE_BEN, karsilama_bitti: true }), false);
+  assert.equal(ilkAdSecimiUygun(null), false);
+  assert.equal(ilkAdSecimiUygun(undefined), false);
+});
+
+test('ilk seçim: uygun hesapta yazar; damga KORUNUR, rezerv YAZILMAZ', async () => {
+  let parametreler;
+  const { havuz, gunluk } = sahteHavuz(kurallar({
+    ben: GOOGLE_BEN,
+    guncelle: (par) => {
+      parametreler = par;
+      return { rows: [{
+        id: 7, kullanici_adi: 'ali', email: 'a@x.tr', misafir: false,
+        kullanici_adi_degisim: null,
+      }] };
+    },
+  }));
+  const s = await kullaniciAdiDegistir(havuz, 7, 'Ali ', undefined, { ilkSecim: true });
+  assert.equal(s.durum, 200, JSON.stringify(s));
+  assert.equal(s.ilk_secim, true);
+  assert.equal(s.onceki_ad, 'ali.veli_3f2a');
+  assert.equal(s.kullanici.kullanici_adi, 'ali');
+  // Kırpılıp küçültülerek yazıldı.
+  assert.equal(parametreler[0], 'ali');
+  // `CASE WHEN $2 THEN kullanici_adi_degisim` — $2 TRUE: damga yazılmadı,
+  // yani ayarlardan yapılacak İLK değişiklik de serbest kalır (e-posta
+  // kaydıyla eşit hak).
+  assert.equal(parametreler[1], true, 'ilk seçimde kilit damgası yazıldı');
+  // Sonraki kilit yok: kalan gün 0.
+  assert.equal(s.kalan_gun, 0);
+  // Üretilmiş ad rezerve EDİLMEDİ (tablo şişmesin, kimse ona dönmez).
+  assert.ok(!gunluk.some((q) => /^INSERT INTO kullanici_adi_rezervleri/.test(q)),
+    'ilk seçimde eski üretilmiş ad rezerve edildi');
+  assert.ok(!gunluk.some((q) => /^DELETE FROM kullanici_adi_rezervleri/.test(q)));
+  assert.ok(gunluk.includes('COMMIT'));
+  // Uygunluk sütunları FOR UPDATE seçiminde okunuyor (yarış: aynı anda iki istek).
+  const secim = gunluk.find((q) => /FOR UPDATE/.test(q));
+  assert.match(secim, /google_sub/);
+  assert.match(secim, /karsilama_bitti/);
+});
+
+test('ilk seçim: UYGUN OLMAYAN hesap 403 alır, hiçbir şey yazılmaz', async () => {
+  for (const ben of [
+    { ...GOOGLE_BEN, google_sub: null },            // e-posta kaydı
+    { ...GOOGLE_BEN, karsilama_bitti: true },       // pencere kapandı
+    { ...GOOGLE_BEN, kullanici_adi_degisim: new Date().toISOString() },
+  ]) {
+    const { havuz, gunluk, istemci } = sahteHavuz(kurallar({ ben }));
+    const s = await kullaniciAdiDegistir(havuz, 7, 'veli', undefined, { ilkSecim: true });
+    assert.equal(s.durum, 403);
+    assert.equal(s.kod, 'ILK_SECIM_YOK');
+    assert.ok(!gunluk.some((q) => /^UPDATE kullanicilar/.test(q)), 'uygun değilken yazdı');
+    assert.ok(gunluk.includes('ROLLBACK'));
+    assert.ok(istemci.birakildi);
+  }
+});
+
+test('ilk seçim: yasaklı ad ve kalıp dışı ad burada da reddedilir', async () => {
+  const { havuz } = sahteHavuz(kurallar({ ben: GOOGLE_BEN }));
+  assert.equal((await kullaniciAdiDegistir(havuz, 7, 'admin', undefined, { ilkSecim: true })).kod,
+    'AD_AYRILMIS');
+  assert.equal((await kullaniciAdiDegistir(havuz, 7, 'ab', undefined, { ilkSecim: true })).kod,
+    'AD_GECERSIZ');
+  assert.equal((await kullaniciAdiDegistir(havuz, 7, 'misafir_ab12', undefined, { ilkSecim: true })).kod,
+    'AD_AYRILMIS');
+});
+
+test('ilk seçim: OLAĞAN yol (seçenek yok) hâlâ damga yazar ve rezerv koyar', async () => {
+  let parametreler;
+  const { havuz, gunluk } = sahteHavuz(kurallar({
+    ben: GOOGLE_BEN, guncelle: (par) => { parametreler = par; return { rows: [{
+      id: 7, kullanici_adi: 'veli', email: 'a@x.tr', misafir: false,
+      kullanici_adi_degisim: new Date().toISOString(),
+    }] }; },
+  }));
+  const s = await kullaniciAdiDegistir(havuz, 7, 'veli');
+  assert.equal(s.durum, 200);
+  assert.equal(s.ilk_secim, false);
+  assert.equal(parametreler[1], false, 'olağan değişimde damga yazılmadı');
+  assert.ok(gunluk.some((q) => /^INSERT INTO kullanici_adi_rezervleri/.test(q)));
+});
+
+test('uçlar: /karsilama/kullanici-adi ilkSecim kipiyle çağırıyor; müsaitlik ucu uygunluk kapılı', () => {
+  const yaz = ucGovdesi('post', '/karsilama/kullanici-adi');
+  assert.match(yaz, /ilkSecim: true/);
+  assert.match(yaz, /ilkAdSecimLimiti/, 'hız limiti yok');
+  const oku = ucGovdesi('get', '/karsilama/kullanici-adi-musait');
+  assert.match(oku, /ilkAdSecimiUygun\(rows\[0\]\)/, 'müsaitlik ucu uygunluk kapısız');
+  assert.match(oku, /ilkAdMusaitLimiti/);
+  assert.match(oku, /KULLANICI_ADI_KALIBI\.test\(ad\)/);
+  assert.match(oku, /adRezerveMi\(havuz, ad, req\.kullanici\.id\)/);
+  // Karşılama GET'i istemciye "ad seçilmeli" bayrağını veriyor.
+  const kars = ucGovdesi('get', '/karsilama');
+  assert.match(kars, /ad_secilmeli: ilkAdSecimiUygun\(k\)/);
+  // Google yeni hesap yanıtı `ad_otomatik` taşıyor (istemci adımı buna açar).
+  const google = ucGovdesi('post', '/auth/google');
+  assert.match(google, /yeni: true, ad_otomatik: true/);
 });
 
 // ===========================================================================

@@ -1599,4 +1599,13 @@ const Map<String, String> cevirilerVi = {
   'Renkler': 'Màu sắc',
   'Sık kullanılanlar': 'Thường dùng',
   'Klavye': 'Bàn phím',
+  'Kullanıcı adını seç': 'Chọn tên người dùng của bạn',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Vì bạn đăng nhập bằng Google, chúng tôi đã tạo sẵn một tên cho bạn. Liên kết hồ sơ và các lượt nhắc đến dùng tên này — hãy tự chọn tên ngay bây giờ.',
+  'Kontrol ediliyor...': 'Đang kiểm tra...',
+  '@{} müsait': '@{} còn trống',
+  'Bu adı seç': 'Dùng tên này',
+  'Kullanıcı adın @{} oldu': 'Tên người dùng của bạn giờ là @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'Bạn có thể đổi sau trong Cài đặt; sau mỗi lần đổi phải chờ 90 ngày.',
 };

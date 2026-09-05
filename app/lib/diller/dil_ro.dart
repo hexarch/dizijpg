@@ -1645,4 +1645,13 @@ const Map<String, String> cevirilerRo = {
   'Renkler': 'Culori',
   'Sık kullanılanlar': 'Folosite frecvent',
   'Klavye': 'Tastatură',
+  'Kullanıcı adını seç': 'Alege-ți numele de utilizator',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Pentru că te-ai conectat cu Google, am generat un nume pentru tine. Linkul profilului și mențiunile îl folosesc — alege-l pe al tău acum.',
+  'Kontrol ediliyor...': 'Se verifică...',
+  '@{} müsait': '@{} este disponibil',
+  'Bu adı seç': 'Folosește acest nume',
+  'Kullanıcı adın @{} oldu': 'Numele tău de utilizator este acum @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'Îl poți schimba mai târziu din Setări; după fiecare schimbare urmează o așteptare de 90 de zile.',
 };

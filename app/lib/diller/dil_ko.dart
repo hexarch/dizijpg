@@ -1523,4 +1523,13 @@ const Map<String, String> cevirilerKo = {
   'Renkler': '색상',
   'Sık kullanılanlar': '자주 사용하는 이모지',
   'Klavye': '키보드',
+  'Kullanıcı adını seç': '사용자 이름을 선택하세요',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Google로 로그인했기 때문에 사용자 이름을 자동으로 만들었어요. 프로필 링크와 멘션에 이 이름이 쓰입니다. 지금 직접 골라 보세요.',
+  'Kontrol ediliyor...': '확인 중...',
+  '@{} müsait': '@{} 사용 가능',
+  'Bu adı seç': '이 이름 사용',
+  'Kullanıcı adın @{} oldu': '사용자 이름이 @{}(으)로 바뀌었어요',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      '나중에 설정에서 바꿀 수 있어요. 바꿀 때마다 90일을 기다려야 해요.',
 };

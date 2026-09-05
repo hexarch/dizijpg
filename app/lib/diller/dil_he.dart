@@ -1565,4 +1565,13 @@ const Map<String, String> cevirilerHe = {
   'Renkler': 'צבעים',
   'Sık kullanılanlar': 'בשימוש תדיר',
   'Klavye': 'מקלדת',
+  'Kullanıcı adını seç': 'בחר שם משתמש',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'מכיוון שנכנסת עם Google, יצרנו עבורך שם. קישור הפרופיל והאזכורים משתמשים בו — בחר שם משלך עכשיו.',
+  'Kontrol ediliyor...': 'בודק...',
+  '@{} müsait': '@{} פנוי',
+  'Bu adı seç': 'בחר בשם הזה',
+  'Kullanıcı adın @{} oldu': 'שם המשתמש שלך הוא עכשיו @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'תוכל לשנות אותו מאוחר יותר בהגדרות; אחרי כל שינוי יש המתנה של 90 יום.',
 };

@@ -1601,4 +1601,13 @@ const Map<String, String> cevirilerId = {
   'Renkler': 'Warna',
   'Sık kullanılanlar': 'Sering digunakan',
   'Klavye': 'Keyboard',
+  'Kullanıcı adını seç': 'Pilih nama penggunamu',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Karena kamu masuk dengan Google, kami membuatkan nama untukmu. Tautan profil dan sebutan memakai nama ini — pilih namamu sendiri sekarang.',
+  'Kontrol ediliyor...': 'Memeriksa...',
+  '@{} müsait': '@{} tersedia',
+  'Bu adı seç': 'Gunakan nama ini',
+  'Kullanıcı adın @{} oldu': 'Nama penggunamu sekarang @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'Kamu bisa mengubahnya nanti di Pengaturan; setiap perubahan diikuti masa tunggu 90 hari.',
 };

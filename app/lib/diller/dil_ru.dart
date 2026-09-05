@@ -1627,4 +1627,13 @@ const Map<String, String> cevirilerRu = {
   'Renkler': 'Цвета',
   'Sık kullanılanlar': 'Часто используемые',
   'Klavye': 'Клавиатура',
+  'Kullanıcı adını seç': 'Выбери имя пользователя',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Так как ты вошёл через Google, мы сгенерировали имя за тебя. Ссылка на профиль и упоминания используют его — выбери своё сейчас.',
+  'Kontrol ediliyor...': 'Проверяем...',
+  '@{} müsait': '@{} свободно',
+  'Bu adı seç': 'Выбрать это имя',
+  'Kullanıcı adın @{} oldu': 'Твоё имя пользователя теперь @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'Потом его можно изменить в Настройках; после каждого изменения нужно ждать 90 дней.',
 };

@@ -1520,4 +1520,13 @@ const Map<String, String> cevirilerJa = {
   'Renkler': 'カラー',
   'Sık kullanılanlar': 'よく使う絵文字',
   'Klavye': 'キーボード',
+  'Kullanıcı adını seç': 'ユーザー名を選ぶ',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Google でログインしたため、ユーザー名はこちらで自動生成しました。プロフィールのリンクやメンションにこの名前が使われます。今すぐ自分で選びましょう。',
+  'Kontrol ediliyor...': '確認中...',
+  '@{} müsait': '@{} は使用できます',
+  'Bu adı seç': 'この名前にする',
+  'Kullanıcı adın @{} oldu': 'ユーザー名が @{} になりました',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'あとから設定で変更できます。変更のたびに 90 日間の待機期間があります。',
 };

@@ -1633,4 +1633,13 @@ const Map<String, String> cevirilerFil = {
   'Renkler': 'Mga kulay',
   'Sık kullanılanlar': 'Madalas gamitin',
   'Klavye': 'Keyboard',
+  'Kullanıcı adını seç': 'Piliin ang iyong username',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Dahil nag-sign in ka gamit ang Google, gumawa kami ng pangalan para sa iyo. Ginagamit ito ng link ng profile mo at ng mga mention — pumili ng sarili mong pangalan ngayon.',
+  'Kontrol ediliyor...': 'Sinusuri...',
+  '@{} müsait': 'Available ang @{}',
+  'Bu adı seç': 'Gamitin ang pangalang ito',
+  'Kullanıcı adın @{} oldu': 'Ang username mo ay @{} na',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'Mababago mo ito sa Settings sa ibang pagkakataon; may 90 araw na paghihintay pagkatapos ng bawat pagbabago.',
 };

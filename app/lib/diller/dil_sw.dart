@@ -1608,4 +1608,13 @@ const Map<String, String> cevirilerSw = {
   'Renkler': 'Rangi',
   'Sık kullanılanlar': 'Zinazotumika mara kwa mara',
   'Klavye': 'Kibodi',
+  'Kullanıcı adını seç': 'Chagua jina lako la mtumiaji',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Kwa kuwa uliingia kwa Google, tulikutengenezea jina. Kiungo cha wasifu wako na kutajwa hutumia jina hili — chagua lako sasa.',
+  'Kontrol ediliyor...': 'Inakagua...',
+  '@{} müsait': '@{} linapatikana',
+  'Bu adı seç': 'Tumia jina hili',
+  'Kullanıcı adın @{} oldu': 'Jina lako la mtumiaji sasa ni @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'Unaweza kulibadilisha baadaye kwenye Mipangilio; kila mabadiliko hufuatwa na kusubiri siku 90.',
 };

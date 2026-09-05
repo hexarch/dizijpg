@@ -50,61 +50,89 @@ const _seriler = {
 };
 
 class _Istek {
-  _Istek(this.yol, this.govde);
+  _Istek(this.yol, this.govde, [this.sorgu = const {}]);
   final String yol;
   final Map<String, dynamic> govde;
+  final Map<String, String> sorgu;
 }
 
-http.Client _sahteIstemci({required List<_Istek> kayit, bool bitti = false}) =>
-    MockClient((istek) async {
-      final yol = istek.url.path;
-      Map<String, dynamic> govde = {};
-      if (istek.method == 'POST' && istek.body.isNotEmpty) {
-        govde = jsonDecode(istek.body) as Map<String, dynamic>;
-      }
-      kayit.add(_Istek(yol, govde));
-      http.Response cevap(Object g) => http.Response(
-        jsonEncode(g),
-        200,
-        headers: {'content-type': 'application/json'},
-      );
+/// Üretilmiş ad: Google girişinde sunucunun e-posta ön ekinden türettiği ad.
+const _uretilmisAd = 'ali.veli_3f2a';
 
-      if (yol == '/api/karsilama' && istek.method == 'GET') {
-        return cevap({
-          'bitti': bitti,
-          'dogum_gun': null,
-          'dogum_ay': null,
-          'dogum_yil': null,
-        });
-      }
-      if (yol == '/api/karsilama/seriler') return cevap(_seriler);
-      if (yol == '/api/tmdb/trending/movie/week') {
-        return cevap({
-          'results': [_yapim(550, 'Fight Club', film: true)],
-        });
-      }
-      if (yol == '/api/tmdb/discover/movie') {
-        return cevap({
-          'results': [_yapim(238, 'Baba', film: true)],
-        });
-      }
-      if (yol == '/api/tmdb/trending/tv/week') {
-        return cevap({
-          'results': [_yapim(1396, 'Breaking Bad')],
-        });
-      }
-      if (yol == '/api/tmdb/discover/tv') {
-        return cevap({
-          'results': [_yapim(1399, 'Game of Thrones')],
-        });
-      }
-      if (yol == '/api/tmdb/tv/1396/recommendations') {
-        return cevap({
-          'results': [_yapim(60059, 'Better Call Saul')],
-        });
-      }
-      return cevap(<String, dynamic>{});
+http.Client _sahteIstemci({
+  required List<_Istek> kayit,
+  bool bitti = false,
+  bool adSecilmeli = false,
+  bool musait = true,
+  int adKayitDurumu = 200,
+}) => MockClient((istek) async {
+  final yol = istek.url.path;
+  Map<String, dynamic> govde = {};
+  if (istek.method == 'POST' && istek.body.isNotEmpty) {
+    govde = jsonDecode(istek.body) as Map<String, dynamic>;
+  }
+  kayit.add(_Istek(yol, govde, istek.url.queryParameters));
+  http.Response cevap(Object g, [int durum = 200]) => http.Response(
+    jsonEncode(g),
+    durum,
+    headers: {'content-type': 'application/json'},
+  );
+
+  if (yol == '/api/karsilama' && istek.method == 'GET') {
+    return cevap({
+      'bitti': bitti,
+      'dogum_gun': null,
+      'dogum_ay': null,
+      'dogum_yil': null,
+      'ad_secilmeli': adSecilmeli,
+      'kullanici_adi': _uretilmisAd,
     });
+  }
+  if (yol == '/api/karsilama/kullanici-adi-musait') {
+    return cevap(
+      musait ? {'musait': true} : {'musait': false, 'kod': 'AD_ALINMIS'},
+    );
+  }
+  if (yol == '/api/karsilama/kullanici-adi') {
+    if (adKayitDurumu != 200) {
+      return cevap({
+        'kod': 'AD_ALINMIS',
+        'hata': 'Bu kullanıcı adı zaten alınmış',
+      }, adKayitDurumu);
+    }
+    return cevap({
+      'kullanici': {'id': 7, 'kullanici_adi': govde['kullanici_adi']},
+      'onceki_ad': _uretilmisAd,
+    });
+  }
+  if (yol == '/api/karsilama/seriler') return cevap(_seriler);
+  if (yol == '/api/tmdb/trending/movie/week') {
+    return cevap({
+      'results': [_yapim(550, 'Fight Club', film: true)],
+    });
+  }
+  if (yol == '/api/tmdb/discover/movie') {
+    return cevap({
+      'results': [_yapim(238, 'Baba', film: true)],
+    });
+  }
+  if (yol == '/api/tmdb/trending/tv/week') {
+    return cevap({
+      'results': [_yapim(1396, 'Breaking Bad')],
+    });
+  }
+  if (yol == '/api/tmdb/discover/tv') {
+    return cevap({
+      'results': [_yapim(1399, 'Game of Thrones')],
+    });
+  }
+  if (yol == '/api/tmdb/tv/1396/recommendations') {
+    return cevap({
+      'results': [_yapim(60059, 'Better Call Saul')],
+    });
+  }
+  return cevap(<String, dynamic>{});
+});
 
 class _Kurulum {
   _Kurulum(this.yonlendirici, this.kayit);
@@ -115,18 +143,35 @@ class _Kurulum {
   Iterable<_Istek> yollar(String yol) => kayit.where((i) => i.yol == yol);
 }
 
-Future<_Kurulum> _kur(WidgetTester tester, {bool bitti = false}) async {
+Future<_Kurulum> _kur(
+  WidgetTester tester, {
+  bool bitti = false,
+  bool adSecimi = false,
+  bool adSecilmeli = false,
+  bool musait = true,
+  int adKayitDurumu = 200,
+}) async {
   tester.view.physicalSize = const Size(520, 1400);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
 
-  SharedPreferences.setMockInitialValues({'token': 'sahte'});
+  SharedPreferences.setMockInitialValues({
+    'token': 'sahte',
+    'kullanici': jsonEncode({'id': 7, 'kullanici_adi': _uretilmisAd}),
+  });
   await Api.tokenYukle();
   final kayit = <_Istek>[];
-  Api.istemci = _sahteIstemci(kayit: kayit, bitti: bitti);
+  Api.istemci = _sahteIstemci(
+    kayit: kayit,
+    bitti: bitti,
+    adSecilmeli: adSecilmeli,
+    musait: musait,
+    adKayitDurumu: adKayitDurumu,
+  );
   final oturum = Oturum();
   await oturum.yukle();
   Oturum.karsilamaGerekli = true;
+  Oturum.adSecimiGerekli = adSecimi;
   final yonlendirici = yonlendiriciOlustur(oturum);
   await tester.pumpWidget(
     ChangeNotifierProvider<Oturum>.value(
@@ -163,7 +208,10 @@ Future<void> _dokun(
 }
 
 void main() {
-  tearDown(() => Oturum.karsilamaGerekli = false);
+  tearDown(() {
+    Oturum.karsilamaGerekli = false;
+    Oturum.adSecimiGerekli = false;
+  });
 
   test('ay uzunluğu: 29 Şubat yıl verilmediğinde de seçilebilir', () {
     expect(karsilamaAyGunSayisi(2, 2000), 29); // artık yıl
@@ -206,8 +254,14 @@ void main() {
     for (var i = 0; i < beklenen.length; i++) {
       expect(find.text('Adım ${i + 1} / 5'), findsOneWidget);
       expect(find.text(beklenen[i]), findsOneWidget, reason: beklenen[i]);
-      expect(find.text('Şimdilik geç'), findsOneWidget);
-      await _dokun(tester, find.text('Şimdilik geç'));
+      if (i == beklenen.length - 1) {
+        // Son adımda "geç" yok: tek çıkış "Hadi başlayalım".
+        expect(find.text('Şimdilik geç'), findsNothing);
+        await _dokun(tester, find.text('Hadi başlayalım'));
+      } else {
+        expect(find.text('Şimdilik geç'), findsOneWidget);
+        await _dokun(tester, find.text('Şimdilik geç'));
+      }
     }
     // Akış bitti: uygulama kullanılabilir, karşılama kapandı.
     expect(k.konum, '/kesfet');
@@ -397,5 +451,152 @@ void main() {
       k.yollar('/api/karsilama').where((i) => i.govde.isNotEmpty),
       isEmpty,
     );
+  });
+
+  // ===========================================================================
+  // KULLANICI ADI ADIMI (5 Eyl 2026) — yalnız adı sunucunun türettiği hesap
+  // ===========================================================================
+  // Kullanıcı isteği: "kullanıcı adlarını otomatik atıyoruz, onu kullanıcı
+  // seçmeli." Kilitlenenler: adım YALNIZ bayrakla açılır, alan üretilmiş adla
+  // dolu gelir, müsaitlik yazma bitince sorulur, seçim doğru uca gider ve
+  // oturumdaki ad güncellenir, çakışmada adımda kalınır, geçilebilir.
+
+  testWidgets('Google hesabı: akış "kullanıcı adını seç" ile başlar (6 adım)', (
+    tester,
+  ) async {
+    await _kur(tester, adSecimi: true);
+    expect(find.text('Kullanıcı adını seç'), findsOneWidget);
+    expect(find.text('Adım 1 / 6'), findsOneWidget);
+    // Alan üretilmiş adla DOLU: beğenen tek dokunuşla geçer.
+    final alan = tester.widget<TextField>(
+      find.byKey(const Key('karsilama_kullanici_adi')),
+    );
+    expect(alan.controller!.text, _uretilmisAd);
+    // Değişiklik yokken düğme "Devam et"; geçmek serbest.
+    expect(find.text('Devam et'), findsOneWidget);
+    expect(find.text('Şimdilik geç'), findsOneWidget);
+    // Sonuçlar önceden söyleniyor (ayarlardan değişim + 90 gün).
+    expect(find.textContaining('90 gün'), findsOneWidget);
+  });
+
+  testWidgets('e-posta kaydında (bayrak yok) ad adımı YOK', (tester) async {
+    await _kur(tester);
+    expect(find.text('Kullanıcı adını seç'), findsNothing);
+    expect(find.text('Adım 1 / 5'), findsOneWidget);
+  });
+
+  testWidgets('sunucu ad_secilmeli derse yerel bayrak olmadan da adım açılır', (
+    tester,
+  ) async {
+    await _kur(tester, adSecilmeli: true);
+    expect(find.text('Kullanıcı adını seç'), findsOneWidget);
+    expect(find.text('Adım 1 / 6'), findsOneWidget);
+  });
+
+  testWidgets(
+    'ad yazınca müsaitlik sorulur; seçim doğru uca gider, oturum güncellenir',
+    (tester) async {
+      final k = await _kur(tester, adSecimi: true);
+      final alan = find.byKey(const Key('karsilama_kullanici_adi'));
+      await tester.enterText(alan, 'Ali'); // büyük harf: küçültülerek gider
+      // Debounce 450 ms: hemen sorulmaz.
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(k.yollar('/api/karsilama/kullanici-adi-musait'), isEmpty);
+      expect(find.text('Kontrol ediliyor...'), findsOneWidget);
+      await _bekle(tester); // 480 ms
+      final musait = k.yollar('/api/karsilama/kullanici-adi-musait').toList();
+      expect(musait.length, 1, reason: 'müsaitlik tam bir kez sorulmalı');
+      expect(musait.single.sorgu['ad'], 'ali');
+      expect(find.text('@ali müsait'), findsOneWidget);
+      expect(find.text('Bu adı seç'), findsOneWidget);
+
+      await _dokun(tester, find.text('Bu adı seç'));
+      final yaz = k.yollar('/api/karsilama/kullanici-adi').toList();
+      expect(yaz.length, 1);
+      expect(yaz.single.govde, {'kullanici_adi': 'ali'});
+      // Ayarlardaki kilitli/rezervli uca GİTMEDİ.
+      expect(k.yollar('/api/profilim/kullanici-adi'), isEmpty);
+      // Sonraki adıma geçti, sonuç duyuruldu.
+      expect(find.text('Doğum tarihin ne zaman?'), findsOneWidget);
+      expect(find.text('Adım 2 / 6'), findsOneWidget);
+      expect(find.text('Kullanıcı adın @ali oldu'), findsOneWidget);
+      // Oturum nesnesi ve yerel kopya yeni adı taşıyor.
+      final prefs = await SharedPreferences.getInstance();
+      final kullanici =
+          jsonDecode(prefs.getString('kullanici')!) as Map<String, dynamic>;
+      expect(kullanici['kullanici_adi'], 'ali');
+    },
+  );
+
+  testWidgets('alınmış ad: uyarı alanın altında, düğme kilitli', (
+    tester,
+  ) async {
+    final k = await _kur(tester, adSecimi: true, musait: false);
+    await tester.enterText(
+      find.byKey(const Key('karsilama_kullanici_adi')),
+      'veli',
+    );
+    await _bekle(tester);
+    expect(k.yollar('/api/karsilama/kullanici-adi-musait').length, 1);
+    expect(find.text('Bu kullanıcı adı zaten alınmış'), findsOneWidget);
+    final dugme = tester.widget<FilledButton>(
+      find.byKey(const Key('karsilama_ilerle')),
+    );
+    expect(dugme.onPressed, isNull, reason: 'çakışan adla ilerlenmemeli');
+    // Geçmek yine serbest (akış kilitli değil), ad yazılmadan doğuma geçer.
+    await _dokun(tester, find.text('Şimdilik geç'));
+    expect(k.yollar('/api/karsilama/kullanici-adi'), isEmpty);
+    expect(find.text('Doğum tarihin ne zaman?'), findsOneWidget);
+  });
+
+  testWidgets('sunucu kaydı reddederse (yarış) adımda kalınır', (tester) async {
+    // Müsaitlik "boş" dedi ama yazarken başkası kaptı: sunucu 409.
+    final k = await _kur(tester, adSecimi: true, adKayitDurumu: 409);
+    await tester.enterText(
+      find.byKey(const Key('karsilama_kullanici_adi')),
+      'veli',
+    );
+    await _bekle(tester);
+    await _dokun(tester, find.text('Bu adı seç'));
+    expect(k.yollar('/api/karsilama/kullanici-adi').length, 1);
+    expect(find.text('Kullanıcı adını seç'), findsOneWidget);
+    expect(find.text('Adım 1 / 6'), findsOneWidget);
+    expect(find.text('Bu kullanıcı adı zaten alınmış'), findsOneWidget);
+    // Oturum ESKİ adı taşımaya devam ediyor.
+    final prefs = await SharedPreferences.getInstance();
+    final kullanici =
+        jsonDecode(prefs.getString('kullanici')!) as Map<String, dynamic>;
+    expect(kullanici['kullanici_adi'], _uretilmisAd);
+  });
+
+  testWidgets('kalıp dışı ad yazarken anında uyarır, müsaitlik SORULMAZ', (
+    tester,
+  ) async {
+    final k = await _kur(tester, adSecimi: true);
+    await tester.enterText(
+      find.byKey(const Key('karsilama_kullanici_adi')),
+      'ab',
+    );
+    await _bekle(tester);
+    expect(find.textContaining('3-20 karakter'), findsWidgets);
+    expect(k.yollar('/api/karsilama/kullanici-adi-musait'), isEmpty);
+    final dugme = tester.widget<FilledButton>(
+      find.byKey(const Key('karsilama_ilerle')),
+    );
+    expect(dugme.onPressed, isNull);
+  });
+
+  testWidgets('üretilmiş adı olduğu gibi bırakıp "Devam et": istek yok', (
+    tester,
+  ) async {
+    final k = await _kur(tester, adSecimi: true);
+    await _dokun(tester, find.text('Devam et'));
+    expect(k.yollar('/api/karsilama/kullanici-adi'), isEmpty);
+    expect(k.yollar('/api/karsilama/kullanici-adi-musait'), isEmpty);
+    expect(find.text('Doğum tarihin ne zaman?'), findsOneWidget);
+    expect(find.text('Adım 2 / 6'), findsOneWidget);
+    // Geri: ad adımına dönülebilir.
+    await _dokun(tester, find.byIcon(Icons.arrow_back));
+    expect(find.text('Kullanıcı adını seç'), findsOneWidget);
   });
 }

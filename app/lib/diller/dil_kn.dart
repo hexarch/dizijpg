@@ -1601,4 +1601,13 @@ const Map<String, String> cevirilerKn = {
   'Renkler': 'ಬಣ್ಣಗಳು',
   'Sık kullanılanlar': 'ಆಗಾಗ್ಗೆ ಬಳಸಿದವು',
   'Klavye': 'ಕೀಬೋರ್ಡ್',
+  'Kullanıcı adını seç': 'ನಿಮ್ಮ ಬಳಕೆದಾರ ಹೆಸರನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'ನೀವು Google ಮೂಲಕ ಸೈನ್ ಇನ್ ಮಾಡಿದ್ದರಿಂದ ನಿಮಗಾಗಿ ನಾವು ಒಂದು ಹೆಸರನ್ನು ರಚಿಸಿದ್ದೇವೆ. ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ ಲಿಂಕ್ ಮತ್ತು ಉಲ್ಲೇಖಗಳು ಈ ಹೆಸರನ್ನು ಬಳಸುತ್ತವೆ — ಈಗ ನಿಮ್ಮದೇ ಹೆಸರನ್ನು ಆರಿಸಿ.',
+  'Kontrol ediliyor...': 'ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ...',
+  '@{} müsait': '@{} ಲಭ್ಯವಿದೆ',
+  'Bu adı seç': 'ಈ ಹೆಸರನ್ನು ಆರಿಸಿ',
+  'Kullanıcı adın @{} oldu': 'ನಿಮ್ಮ ಬಳಕೆದಾರ ಹೆಸರು ಈಗ @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'ನಂತರ ಸೆಟ್ಟಿಂಗ್‌ಗಳಿಂದ ಬದಲಾಯಿಸಬಹುದು; ಪ್ರತಿ ಬದಲಾವಣೆಯ ನಂತರ 90 ದಿನ ಕಾಯಬೇಕು.',
 };

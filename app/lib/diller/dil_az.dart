@@ -1591,4 +1591,13 @@ const Map<String, String> cevirilerAz = {
   'Renkler': 'Rənglər',
   'Sık kullanılanlar': 'Tez-tez istifadə olunan',
   'Klavye': 'Klaviatura',
+  'Kullanıcı adını seç': 'İstifadəçi adını seç',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Google ilə daxil olduğun üçün adını biz yaratdıq. Profil linkin və qeyd olunmaların bu adla görünür — indi özün seç.',
+  'Kontrol ediliyor...': 'Yoxlanılır...',
+  '@{} müsait': '@{} boşdur',
+  'Bu adı seç': 'Bu adı seç',
+  'Kullanıcı adın @{} oldu': 'İstifadəçi adın artıq @{} oldu',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'Sonradan Ayarlardan dəyişə bilərsən; hər dəyişiklikdən sonra 90 gün gözləmək lazımdır.',
 };

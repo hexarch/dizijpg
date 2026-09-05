@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
+import '../push.dart';
 import '../tema.dart';
 import 'ortak.dart';
 
@@ -49,8 +53,39 @@ class KarsilamaEkrani extends StatefulWidget {
 /// `kullanicilar.karsilama_bitti`.
 const String karsilamaBittiAnahtari = 'karsilama_bitti';
 
-/// Toplam adım sayısı — göstergede ve testte kullanılır.
+/// TEMEL adım sayısı (kullanıcı adı adımı HARİÇ) — testte kullanılır.
+/// Gerçek toplam `_KarsilamaEkraniState._toplam`: Google ile açılan hesapta
+/// bir fazla (bkz. [KarsilamaAdimi.kullaniciAdi]).
 const int karsilamaAdimSayisi = 5;
+
+/// Karşılama adımları. Sıra `_sira`da kurulur; [kullaniciAdi] yalnız adı
+/// SUNUCUNUN türettiği hesaplarda listeye girer (e-postayla kayıt olan adını
+/// zaten formda seçti, misafir ise hesabını bağlarken seçer).
+enum KarsilamaAdimi { kullaniciAdi, dogum, aktarma, film, dizi, tanitim }
+
+/// Sunucudaki `KULLANICI_ADI_KALIBI` ile AYNI kural (kopyası ayarlar.dart'ta
+/// da var). İkisi ayrışırsa kullanıcı ya yazamadığı bir adı kaydeder ya
+/// yazdığı ad reddedilir.
+final RegExp kullaniciAdiKalibi = RegExp(
+  r'^(?!.*\.\.)[a-z0-9_][a-z0-9_.-]{1,18}[a-z0-9_]$',
+);
+
+/// Sunucunun MAKİNE KODUNU 45 dilli cümleye çevirir; tanınmayan kod null
+/// (çağıran sunucunun kendi metnine düşer). Türkçe metne göre dallanılmıyor:
+/// metin çevrildiği gün metne bakan kod sessizce kırılırdı.
+String? kullaniciAdiHataMetni(String? kod) => switch (kod) {
+  'AD_ALINMIS' => 'Bu kullanıcı adı zaten alınmış'.c,
+  'AD_REZERVE' => 'Bu kullanıcı adı şu an başka bir hesaba ayrılmış'.c,
+  'AD_AYRILMIS' => 'Bu kullanıcı adı sistem tarafından ayrılmış'.c,
+  'AD_GECERSIZ' =>
+    'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir'
+        .c,
+  'AD_AYNI' => 'Bu zaten senin kullanıcı adın'.c,
+  _ => null,
+};
+
+/// Canlı müsaitlik kontrolünün hâli (alanın altındaki yardımcı metin).
+enum _AdDurum { bos, ayni, kontrol, musait, dolu }
 
 /// Ay adları. `intl`in yerel ay adları KULLANILMADI: `DateFormat` yalnız
 /// `initializeDateFormatting` çağrılmış dillerde çalışır ve uygulama onu hiç
@@ -84,6 +119,35 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
   int _adim = 0;
   bool _kaydediyor = false;
 
+  // --- 0. adım (yalnız adı sunucunun türettiği hesap): kullanıcı adı ---
+  bool _adSecimi = Oturum.adSecimiGerekli;
+  final _adAlan = TextEditingController();
+  String _mevcutAd = '';
+
+  /// Alanın altındaki kırmızı yazı: sunucu çakışması ya da kalıp hatası.
+  /// Yalnız SnackBar'a değil alanın YANINA yazılır (hata sebebiyle bitişik).
+  String? _adHata;
+  _AdDurum _adDurum = _AdDurum.bos;
+  Timer? _adZamanlayici;
+
+  /// Geç gelen müsaitlik yanıtı taze girdiyi ezmesin: her kontrol bir sıra
+  /// numarası alır, yanıt geldiğinde numara eskimişse atılır.
+  int _adKontrolSira = 0;
+
+  /// Adım sırası. Kullanıcı adı adımı SIRANIN BAŞINA girer: adı seçtirmeden
+  /// film/dizi eklemek, kullanıcının "kim olduğu" belli olmadan içerik
+  /// toplamak demek olurdu.
+  List<KarsilamaAdimi> get _sira => [
+    if (_adSecimi) KarsilamaAdimi.kullaniciAdi,
+    KarsilamaAdimi.dogum,
+    KarsilamaAdimi.aktarma,
+    KarsilamaAdimi.film,
+    KarsilamaAdimi.dizi,
+    KarsilamaAdimi.tanitim,
+  ];
+  int get _toplam => _sira.length;
+  KarsilamaAdimi get _su => _sira[_adim];
+
   // --- 1. adım: doğum tarihi ---
   int? _gun;
   int? _ay;
@@ -101,7 +165,23 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
   @override
   void initState() {
     super.initState();
+    _mevcutAd =
+        (context.read<Oturum>().kullanici?['kullanici_adi'] as String?) ?? '';
+    // Alan üretilmiş adla DOLU başlar ve tamamı seçilidir: beğenen "Devam
+    // et"e basar, beğenmeyen yazmaya başlayınca eskisi silinir.
+    _adAlan.text = _mevcutAd;
+    _adAlan.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: _mevcutAd.length,
+    );
     _bittiMi();
+  }
+
+  @override
+  void dispose() {
+    _adZamanlayici?.cancel();
+    _adAlan.dispose();
+    super.dispose();
   }
 
   /// Akış zaten tamamlandıysa (başka cihazda/oturumda) hiç göstermeden geç.
@@ -118,6 +198,21 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
         _cik(kaydet: false);
         return;
       }
+      // Sunucu "ad seçilmeli" diyorsa (başka cihazda açılmış Google hesabı)
+      // adım yerel bayrak olmadan da açılır — ama yalnız kullanıcı henüz
+      // ilk adımdayken; akışın ortasında sıra kaydırmak yön duygusunu bozar.
+      if (mounted && d['ad_secilmeli'] == true && !_adSecimi && _adim == 0) {
+        final ad = (d['kullanici_adi'] as String?) ?? _mevcutAd;
+        setState(() {
+          _adSecimi = true;
+          _mevcutAd = ad;
+          _adAlan.text = ad;
+          _adAlan.selection = TextSelection(
+            baseOffset: 0,
+            extentOffset: ad.length,
+          );
+        });
+      }
       final gun = (d['dogum_gun'] as num?)?.toInt();
       final ay = (d['dogum_ay'] as num?)?.toInt();
       final yil = (d['dogum_yil'] as num?)?.toInt();
@@ -131,6 +226,115 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
       }
     } catch (_) {
       // Çevrimdışı/oturum hatası: akış olağan biçimde açılır.
+    }
+  }
+
+  /// Girdi ne kadar "gönderilebilir"? Sunucu da aynısını yapıyor: kırpar ve
+  /// küçültür. Kullanıcı "Ali" yazınca reddedilmiyor, `ali` kaydediliyor.
+  String get _aday => _adAlan.text.trim().toLowerCase();
+
+  /// Yazılan ad mevcut addan FARKLI ve kalıba uygun mu? (düğme metni için)
+  bool get _adDegisti =>
+      _aday.isNotEmpty &&
+      _aday != _mevcutAd &&
+      kullaniciAdiKalibi.hasMatch(_aday);
+
+  /// Birincil düğme kilidi: bilinen bir hata varken "Bu adı seç" basılamaz.
+  /// Boş alan ya da mevcut ad = değişiklik yok, geçilebilir.
+  bool get _adGonderilebilir {
+    final a = _aday;
+    if (a.isEmpty || a == _mevcutAd) return true;
+    return kullaniciAdiKalibi.hasMatch(a) && _adDurum != _AdDurum.dolu;
+  }
+
+  /// Her tuşta: kalıp anında, müsaitlik 450 ms sonra (yazma bitince).
+  void _adDegistiHandler(String _) {
+    _adZamanlayici?.cancel();
+    final aday = _aday;
+    final durum = aday.isEmpty
+        ? _AdDurum.bos
+        : aday == _mevcutAd
+        ? _AdDurum.ayni
+        : !kullaniciAdiKalibi.hasMatch(aday)
+        ? _AdDurum
+              .bos // kalıp hatası errorText'te canlı görünüyor
+        : _AdDurum.kontrol;
+    setState(() {
+      _adHata = null;
+      _adDurum = durum;
+    });
+    if (durum != _AdDurum.kontrol) return;
+    final sira = ++_adKontrolSira;
+    _adZamanlayici = Timer(
+      const Duration(milliseconds: 450),
+      () => _adMusaitMi(aday, sira),
+    );
+  }
+
+  Future<void> _adMusaitMi(String aday, int sira) async {
+    try {
+      final d =
+          await Api.get(
+                '/karsilama/kullanici-adi-musait?ad=${Uri.encodeQueryComponent(aday)}',
+              )
+              as Map<String, dynamic>;
+      if (!mounted || sira != _adKontrolSira) return;
+      setState(() {
+        if (d['musait'] == true) {
+          _adDurum = _AdDurum.musait;
+        } else {
+          _adDurum = _AdDurum.dolu;
+          _adHata =
+              kullaniciAdiHataMetni(d['kod'] as String?) ??
+              'Bu kullanıcı adı zaten alınmış'.c;
+        }
+      });
+    } catch (_) {
+      // Ağ yoksa canlı kontrol SESSİZCE düşer: gerçek hakem kaydetme isteği,
+      // kullanıcı orada açık bir hata görür.
+      if (mounted && sira == _adKontrolSira) {
+        setState(() => _adDurum = _AdDurum.bos);
+      }
+    }
+  }
+
+  /// Adı sunucuya yazar. false = adımda KAL (hata alanın altında).
+  Future<bool> _adKaydet() async {
+    final aday = _aday;
+    if (aday.isEmpty || aday == _mevcutAd) return true; // değişiklik yok
+    if (!kullaniciAdiKalibi.hasMatch(aday)) {
+      setState(() => _adHata = kullaniciAdiHataMetni('AD_GECERSIZ'));
+      return false;
+    }
+    try {
+      final d =
+          await Api.post('/karsilama/kullanici-adi', {'kullanici_adi': aday})
+              as Map<String, dynamic>;
+      final yeni =
+          ((d['kullanici'] as Map?)?['kullanici_adi'] as String?) ?? aday;
+      if (!mounted) return false;
+      // Oturum nesnesi de yeni adı taşısın: profil sekmesi, @bahsetmeler ve
+      // yerel kopya (prefs) eski üretilmiş adı göstermesin.
+      final oturum = context.read<Oturum>();
+      await oturum.girisYapildi({...?oturum.kullanici, 'kullanici_adi': yeni});
+      if (!mounted) return false;
+      setState(() {
+        _mevcutAd = yeni;
+        _adDurum = _AdDurum.ayni;
+      });
+      _uyar('Kullanıcı adın @{} oldu'.cf([yeni]));
+      return true;
+    } on ApiHata catch (e) {
+      if (!mounted) return false;
+      setState(() {
+        _adHata = kullaniciAdiHataMetni(e.makineKodu) ?? e.mesaj;
+        _adDurum = _AdDurum.dolu;
+      });
+      return false;
+    } catch (e) {
+      if (!mounted) return false;
+      setState(() => _adHata = e.toString());
+      return false;
     }
   }
 
@@ -170,18 +374,27 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
   /// ("Şimdilik geç").
   Future<void> _ilerle({bool kaydet = true}) async {
     if (_kaydediyor) return;
-    if (_adim >= karsilamaAdimSayisi - 1) {
+    if (_adim >= _toplam - 1) {
       await _cik();
       return;
     }
     setState(() => _kaydediyor = true);
     try {
       if (kaydet) {
-        if (_adim == 0) await _dogumKaydet();
-        if (_adim == 2 && _filmler.isNotEmpty) {
+        final su = _su;
+        if (su == KarsilamaAdimi.kullaniciAdi) {
+          // Ad yazılamadıysa İLERLEMEZ: çakışan adı geçip "sonra bakarız"
+          // demek, kullanıcının sessizce üretilmiş adla kalması demek olurdu.
+          if (!await _adKaydet()) {
+            if (mounted) setState(() => _kaydediyor = false);
+            return;
+          }
+        }
+        if (su == KarsilamaAdimi.dogum) await _dogumKaydet();
+        if (su == KarsilamaAdimi.film && _filmler.isNotEmpty) {
           await _durumKaydet('movie', _filmler);
         }
-        if (_adim == 3 && _diziler.isNotEmpty) {
+        if (su == KarsilamaAdimi.dizi && _diziler.isNotEmpty) {
           await _durumKaydet('tv', _diziler);
         }
       }
@@ -217,6 +430,12 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
       }).catchError((_) => <String, dynamic>{});
     }
     Oturum.karsilamaGerekli = false;
+    Oturum.adSecimiGerekli = false;
+    // BİLDİRİM İZNİ BURADA (5 Eyl 2026): emülatörde görüldü — sistemin
+    // "bildirim gönderilsin mi?" penceresi karşılamanın İLK adımının üstüne
+    // düşüyordu; kullanıcı daha uygulamayı görmeden bir izin kararı veriyor
+    // ve genelde reddediyordu. Akış bitince (ya da kapatılınca) sorulur.
+    pushBaslat();
     if (mounted) context.go('/kesfet');
   }
 
@@ -269,13 +488,13 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
 
   Widget _adimGostergesi() {
     return Semantics(
-      label: 'Adım {} / {}'.cf([_adim + 1, karsilamaAdimSayisi]),
+      label: 'Adım {} / {}'.cf([_adim + 1, _toplam]),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
-              for (var i = 0; i < karsilamaAdimSayisi; i++)
+              for (var i = 0; i < _toplam; i++)
                 Expanded(
                   child: Container(
                     height: 4,
@@ -292,7 +511,7 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Adım {} / {}'.cf([_adim + 1, karsilamaAdimSayisi]),
+            'Adım {} / {}'.cf([_adim + 1, _toplam]),
             style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
           ),
         ],
@@ -301,8 +520,17 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
   }
 
   Widget _icerik() {
-    switch (_adim) {
-      case 0:
+    switch (_su) {
+      case KarsilamaAdimi.kullaniciAdi:
+        return _KullaniciAdiAdimi(
+          alan: _adAlan,
+          mevcutAd: _mevcutAd,
+          durum: _adDurum,
+          hata: _adHata,
+          onDegisti: _adDegistiHandler,
+          onGonder: () => _ilerle(),
+        );
+      case KarsilamaAdimi.dogum:
         return _DogumAdimi(
           gun: _gun,
           ay: _ay,
@@ -315,28 +543,32 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
             _yilGizli = yilGizli;
           }),
         );
-      case 1:
+      case KarsilamaAdimi.aktarma:
         return const _AktarmaAdimi();
-      case 2:
+      case KarsilamaAdimi.film:
         return _FilmAdimi(
           secili: _filmler,
           isaretliSeriFilmleri: _isaretliSeriFilmleri,
           onDegisti: () => setState(() {}),
         );
-      case 3:
+      case KarsilamaAdimi.dizi:
         return _DiziAdimi(secili: _diziler, onDegisti: () => setState(() {}));
-      default:
+      case KarsilamaAdimi.tanitim:
         return const _TanitimAdimi();
     }
   }
 
   /// Birincil düğmenin metni adıma göre değişir; seçim varsa sayıyı gösterir.
   String _ilerleMetni() {
-    if (_adim == karsilamaAdimSayisi - 1) return 'Hadi başlayalım'.c;
-    if (_adim == 0 && _gun != null && _ay != null) return 'Kaydet ve devam'.c;
-    final sayi = _adim == 2
+    final su = _su;
+    if (su == KarsilamaAdimi.tanitim) return 'Hadi başlayalım'.c;
+    if (su == KarsilamaAdimi.kullaniciAdi && _adDegisti) return 'Bu adı seç'.c;
+    if (su == KarsilamaAdimi.dogum && _gun != null && _ay != null) {
+      return 'Kaydet ve devam'.c;
+    }
+    final sayi = su == KarsilamaAdimi.film
         ? _filmler.length + _isaretliSeriFilmleri.length
-        : _adim == 3
+        : su == KarsilamaAdimi.dizi
         ? _diziler.length
         : 0;
     if (sayi > 0) return '{} tanesini ekle'.cf([sayi]);
@@ -348,21 +580,25 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: Row(
         children: [
-          TextButton(
-            onPressed: _kaydediyor
-                ? null
-                : () => _adim >= karsilamaAdimSayisi - 1
-                      ? _cik()
-                      : _ilerle(kaydet: false),
-            style: TextButton.styleFrom(
-              minimumSize: const Size(64, 48),
-              foregroundColor: DiziRenkler.metin70,
+          // Son adımda "Şimdilik geç" YOK: "Hadi başlayalım" ile aynı işi
+          // yapıyordu ve kullanıcıya "bir şey atlıyorum" hissi veriyordu.
+          if (_su != KarsilamaAdimi.tanitim)
+            TextButton(
+              onPressed: _kaydediyor ? null : () => _ilerle(kaydet: false),
+              style: TextButton.styleFrom(
+                minimumSize: const Size(64, 48),
+                foregroundColor: DiziRenkler.metin70,
+              ),
+              child: Text('Şimdilik geç'.c),
             ),
-            child: Text('Şimdilik geç'.c),
-          ),
           const Spacer(),
           FilledButton(
-            onPressed: _kaydediyor ? null : () => _ilerle(),
+            key: const Key('karsilama_ilerle'),
+            onPressed:
+                _kaydediyor ||
+                    (_su == KarsilamaAdimi.kullaniciAdi && !_adGonderilebilir)
+                ? null
+                : () => _ilerle(),
             style: FilledButton.styleFrom(minimumSize: const Size(120, 48)),
             child: _kaydediyor
                 ? const SizedBox(
@@ -415,6 +651,141 @@ class _AdimBasligi extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 0. ADIM — KULLANICI ADI (yalnız adı sunucunun türettiği hesap)
+// ---------------------------------------------------------------------------
+// Kullanıcı isteği (5 Eyl 2026): "kullanıcı adlarını otomatik atıyoruz, onu
+// kullanıcı seçmeli." Google ile açılan hesabın adı e-posta ön ekinden
+// türetiliyordu (`ali.veli_3f2a`) ve kullanıcıya hiç sorulmuyordu.
+//
+// UX kararları (ui-ux-pro-max: Inline Validation, Submit Feedback, User
+// Freedom): kalıp hatası YAZARKEN, müsaitlik yazma bitince (450 ms) görünür;
+// hata alanın ALTINDA durur (SnackBar kaybolur); "Şimdilik geç" adı olduğu gibi
+// bırakır — akış kilitli değil, ama çakışan adla İLERİ gidilmez.
+
+class _KullaniciAdiAdimi extends StatelessWidget {
+  final TextEditingController alan;
+  final String mevcutAd;
+  final _AdDurum durum;
+  final String? hata;
+  final ValueChanged<String> onDegisti;
+  final VoidCallback onGonder;
+
+  const _KullaniciAdiAdimi({
+    required this.alan,
+    required this.mevcutAd,
+    required this.durum,
+    required this.hata,
+    required this.onDegisti,
+    required this.onGonder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final aday = alan.text.trim().toLowerCase();
+    // Yazarken canlı kalıp uyarısı; boş alanda uyarı YOK (kullanıcı daha bir
+    // şey yazmadan hata görmemeli).
+    final kalipHatasi =
+        aday.isNotEmpty &&
+            aday != mevcutAd &&
+            !kullaniciAdiKalibi.hasMatch(aday)
+        ? kullaniciAdiHataMetni('AD_GECERSIZ')
+        : null;
+    final (yardimci, yardimciRenk) = switch (durum) {
+      _AdDurum.ayni => (
+        'Kullanıcı adın: @{}'.cf([mevcutAd]),
+        DiziRenkler.metin54,
+      ),
+      _AdDurum.kontrol => ('Kontrol ediliyor...'.c, DiziRenkler.metin54),
+      _AdDurum.musait => ('@{} müsait'.cf([aday]), DiziRenkler.cevrimiciYesil),
+      _ => (
+        'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir'
+            .c,
+        DiziRenkler.metin54,
+      ),
+    };
+    final Widget? sonek = switch (durum) {
+      _AdDurum.kontrol => const Padding(
+        padding: EdgeInsets.all(14),
+        child: SizedBox(
+          width: 18,
+          height: 18,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      ),
+      _AdDurum.musait => Icon(
+        Icons.check_circle,
+        color: DiziRenkler.cevrimiciYesil,
+      ),
+      _ => null,
+    };
+    return ListView(
+      padding: const EdgeInsets.only(bottom: 24),
+      children: [
+        _AdimBasligi(
+          'Kullanıcı adını seç'.c,
+          'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.'
+              .c,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextField(
+                key: const Key('karsilama_kullanici_adi'),
+                controller: alan,
+                autofocus: true,
+                maxLength: 20,
+                autocorrect: false,
+                enableSuggestions: false,
+                textInputAction: TextInputAction.done,
+                onChanged: onDegisti,
+                onSubmitted: (_) => onGonder(),
+                decoration: InputDecoration(
+                  prefixText: '@',
+                  labelText: 'Kullanıcı adı'.c,
+                  hintText: mevcutAd,
+                  errorText: hata ?? kalipHatasi,
+                  errorMaxLines: 3,
+                  helperText: yardimci,
+                  helperMaxLines: 3,
+                  helperStyle: TextStyle(color: yardimciRenk),
+                  suffixIcon: sonek,
+                ),
+              ),
+              const SizedBox(height: 8),
+              // SONUÇLAR ÖNCEDEN: seçim şimdi serbest, sonrası 90 gün kilitli.
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 15,
+                    color: DiziRenkler.metin38,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.'
+                          .c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin54,
+                        fontSize: 12,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

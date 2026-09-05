@@ -1628,4 +1628,13 @@ const Map<String, String> cevirilerTa = {
   'Renkler': 'நிறங்கள்',
   'Sık kullanılanlar': 'அடிக்கடி பயன்படுத்தியவை',
   'Klavye': 'விசைப்பலகை',
+  'Kullanıcı adını seç': 'உங்கள் பயனர்பெயரைத் தேர்ந்தெடுங்கள்',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'நீங்கள் Google மூலம் உள்நுழைந்ததால், உங்களுக்காக ஒரு பெயரை நாங்கள் உருவாக்கினோம். உங்கள் சுயவிவர இணைப்பும் குறிப்பிடல்களும் இந்தப் பெயரைப் பயன்படுத்துகின்றன — இப்போது உங்கள் பெயரை நீங்களே தேர்ந்தெடுங்கள்.',
+  'Kontrol ediliyor...': 'சரிபார்க்கிறது...',
+  '@{} müsait': '@{} கிடைக்கிறது',
+  'Bu adı seç': 'இந்தப் பெயரைத் தேர்ந்தெடு',
+  'Kullanıcı adın @{} oldu': 'உங்கள் பயனர்பெயர் இப்போது @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'பின்னர் அமைப்புகளில் மாற்றலாம்; ஒவ்வொரு மாற்றத்திற்குப் பிறகும் 90 நாட்கள் காத்திருக்க வேண்டும்.',
 };

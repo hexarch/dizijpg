@@ -1607,4 +1607,13 @@ const Map<String, String> cevirilerFi = {
   'Renkler': 'Värit',
   'Sık kullanılanlar': 'Usein käytetyt',
   'Klavye': 'Näppäimistö',
+  'Kullanıcı adını seç': 'Valitse käyttäjänimesi',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Koska kirjauduit Googlella, loimme sinulle nimen. Profiilisi linkki ja maininnat käyttävät sitä – valitse oma nimesi nyt.',
+  'Kontrol ediliyor...': 'Tarkistetaan...',
+  '@{} müsait': '@{} on vapaa',
+  'Bu adı seç': 'Käytä tätä nimeä',
+  'Kullanıcı adın @{} oldu': 'Käyttäjänimesi on nyt @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'Voit muuttaa sen myöhemmin Asetuksista; jokaisen muutoksen jälkeen odotetaan 90 päivää.',
 };

@@ -1630,4 +1630,13 @@ const Map<String, String> cevirilerPt = {
   'Renkler': 'Cores',
   'Sık kullanılanlar': 'Usados com frequência',
   'Klavye': 'Teclado',
+  'Kullanıcı adını seç': 'Escolha seu nome de usuário',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Como você entrou com o Google, geramos um nome para você. O link do seu perfil e as menções usam esse nome; escolha o seu agora.',
+  'Kontrol ediliyor...': 'Verificando...',
+  '@{} müsait': '@{} está disponível',
+  'Bu adı seç': 'Usar este nome',
+  'Kullanıcı adın @{} oldu': 'Seu nome de usuário agora é @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'Você pode alterá-lo depois em Configurações; após cada alteração há uma espera de 90 dias.',
 };

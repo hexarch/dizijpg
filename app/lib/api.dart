@@ -875,6 +875,11 @@ class Oturum extends ChangeNotifier {
   /// (yalnız bu oturum için; uygulama yeniden başlayınca sıfırlanır).
   static bool karsilamaGerekli = false;
 
+  /// Adı SUNUCU türettiyse (Google ile açılan yeni hesap) karşılama akışı
+  /// "kullanıcı adını seç" adımıyla başlar. Yalnız bu oturum için;
+  /// sunucudaki karşılığı `GET /karsilama` → `ad_secilmeli`.
+  static bool adSecimiGerekli = false;
+
   bool get girisli => Api.girisli;
 
   Future<void> yukle() async {

@@ -1597,4 +1597,13 @@ const Map<String, String> cevirilerPa = {
   'Renkler': 'ਰੰਗ',
   'Sık kullanılanlar': 'ਅਕਸਰ ਵਰਤੇ ਗਏ',
   'Klavye': 'ਕੀਬੋਰਡ',
+  'Kullanıcı adını seç': 'ਆਪਣਾ ਯੂਜ਼ਰਨੇਮ ਚੁਣੋ',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'ਤੁਸੀਂ Google ਨਾਲ ਸਾਈਨ ਇਨ ਕੀਤਾ, ਇਸ ਲਈ ਅਸੀਂ ਤੁਹਾਡੇ ਲਈ ਇੱਕ ਨਾਮ ਬਣਾਇਆ। ਤੁਹਾਡੀ ਪ੍ਰੋਫ਼ਾਈਲ ਦਾ ਲਿੰਕ ਅਤੇ ਜ਼ਿਕਰ ਇਸੇ ਨਾਮ ਨਾਲ ਦਿਖਦੇ ਹਨ — ਹੁਣ ਆਪਣਾ ਨਾਮ ਖੁਦ ਚੁਣੋ।',
+  'Kontrol ediliyor...': 'ਜਾਂਚ ਹੋ ਰਹੀ ਹੈ...',
+  '@{} müsait': '@{} ਉਪਲਬਧ ਹੈ',
+  'Bu adı seç': 'ਇਹ ਨਾਮ ਚੁਣੋ',
+  'Kullanıcı adın @{} oldu': 'ਤੁਹਾਡਾ ਯੂਜ਼ਰਨੇਮ ਹੁਣ @{} ਹੈ',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'ਬਾਅਦ ਵਿੱਚ ਸੈਟਿੰਗਾਂ ਤੋਂ ਬਦਲ ਸਕਦੇ ਹੋ; ਹਰ ਬਦਲਾਅ ਤੋਂ ਬਾਅਦ 90 ਦਿਨ ਉਡੀਕ ਕਰਨੀ ਪੈਂਦੀ ਹੈ।',
 };

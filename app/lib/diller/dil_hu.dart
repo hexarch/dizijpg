@@ -1612,4 +1612,13 @@ const Map<String, String> cevirilerHu = {
   'Renkler': 'Színek',
   'Sık kullanılanlar': 'Gyakran használt',
   'Klavye': 'Billentyűzet',
+  'Kullanıcı adını seç': 'Válassz felhasználónevet',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Mivel Google-lel jelentkeztél be, mi generáltunk neked egy nevet. A profilod linkje és az említések ezt használják — válassz most sajátot.',
+  'Kontrol ediliyor...': 'Ellenőrzés...',
+  '@{} müsait': '@{} elérhető',
+  'Bu adı seç': 'Ezt a nevet választom',
+  'Kullanıcı adın @{} oldu': 'A felhasználóneved mostantól @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'Később a Beállításokban módosíthatod; minden módosítás után 90 napot kell várni.',
 };

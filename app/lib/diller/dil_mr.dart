@@ -1594,4 +1594,13 @@ const Map<String, String> cevirilerMr = {
   'Renkler': 'रंग',
   'Sık kullanılanlar': 'वारंवार वापरलेले',
   'Klavye': 'कीबोर्ड',
+  'Kullanıcı adını seç': 'तुमचे वापरकर्तानाव निवडा',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'तुम्ही Google ने साइन इन केल्यामुळे आम्ही तुमच्यासाठी एक नाव तयार केले. तुमच्या प्रोफाइलची लिंक आणि उल्लेख या नावाने दिसतात — आता स्वतःचे नाव निवडा.',
+  'Kontrol ediliyor...': 'तपासत आहे...',
+  '@{} müsait': '@{} उपलब्ध आहे',
+  'Bu adı seç': 'हे नाव निवडा',
+  'Kullanıcı adın @{} oldu': 'तुमचे वापरकर्तानाव आता @{} आहे',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'नंतर सेटिंग्जमधून बदलू शकता; प्रत्येक बदलानंतर ९० दिवस थांबावे लागते.',
 };

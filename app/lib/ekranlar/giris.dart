@@ -12,6 +12,7 @@ import '../google_kapisi.dart';
 import '../push.dart';
 import '../tema.dart';
 import 'iki_adim_sheet.dart';
+import 'karsilama.dart' show kullaniciAdiHataMetni, kullaniciAdiKalibi;
 import 'ortak.dart' show altGuvenli;
 
 /// Formun azami genişliği. Google'ın kendi düğmesi 400 px'ten geniş
@@ -41,6 +42,40 @@ class _GirisEkraniState extends State<GirisEkrani> {
   final _email = TextEditingController();
   final _kullaniciAdi = TextEditingController();
   final _sifre = TextEditingController();
+
+  /// KAYIT formunun alan altı hataları (5 Eyl 2026). Eskiden her şey
+  /// SnackBar'a gidiyordu: "Kullanıcı adı 3-20 karakter..." kayıp gidince
+  /// kullanıcı hangi alanın kusurlu olduğunu bilmiyordu; sunucu büyük harfi
+  /// reddettiği için "Ali" yazan herkes bu duruma düşüyordu. Şimdi ad
+  /// küçültülerek gider, kalıp yazarken denetlenir, hata alanın altında durur.
+  String? _emailHata;
+  String? _adHata;
+  String? _sifreHata;
+
+  /// Kayıtta gidecek ad: kırpılmış ve KÜÇÜLTÜLMÜŞ (sunucu kalıbı yalnız
+  /// küçük harf kabul ediyor; kullanıcıya bunu yazdırmak yerine biz yapıyoruz).
+  String get _adAday => _kullaniciAdi.text.trim().toLowerCase();
+
+  /// Gönderim öncesi yerel denetim; hata varsa alanlara yazar ve false döner.
+  /// Sunucu aynı kuralları yine uygular (buradaki yalnız daha iyi mesaj için).
+  bool _kayitGecerli() {
+    final email = _email.text.trim();
+    final emailHata = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)
+        ? null
+        : 'Geçerli bir e-posta adresi yaz'.c;
+    final adHata = kullaniciAdiKalibi.hasMatch(_adAday)
+        ? null
+        : kullaniciAdiHataMetni('AD_GECERSIZ');
+    final sifreHata = _sifre.text.length >= 6
+        ? null
+        : 'Şifre en az 6 karakter olmalı'.c;
+    setState(() {
+      _emailHata = emailHata;
+      _adHata = adHata;
+      _sifreHata = sifreHata;
+    });
+    return emailHata == null && adHata == null && sifreHata == null;
+  }
 
   late final GoogleKapisi _kapi;
   StreamSubscription<GoogleKimligi>? _googleAbonesi;
@@ -121,10 +156,14 @@ class _GirisEkraniState extends State<GirisEkrani> {
         : await Api.googleGiris(erisim: kimlik.erisimToken);
     if (!mounted) return;
     if (d['yeni'] == true) Oturum.karsilamaGerekli = true;
+    // Google yeni hesapta adı sunucu türetti (e-posta ön eki + sonek);
+    // karşılama, kullanıcıya adını SEÇTİREREK başlar.
+    if (d['ad_otomatik'] == true) Oturum.adSecimiGerekli = true;
     await context.read<Oturum>().girisYapildi(
       d['kullanici'] as Map<String, dynamic>,
     );
-    pushBaslat(); // push izni + token kaydı
+    // Yeni hesapta push izni karşılamanın sonunda (karsilama.dart `_cik`).
+    if (d['yeni'] != true) pushBaslat(); // push izni + token kaydı
   }
 
   /// Google girişinin HER başarısızlığı kullanıcıya söylenir: sessiz
@@ -278,16 +317,18 @@ class _GirisEkraniState extends State<GirisEkrani> {
     setState(() => _yukleniyor = true);
     try {
       if (_kayitModu) {
+        if (!_kayitGecerli()) return;
         final kullanici = await Api.kayit(
           _email.text.trim(),
-          _kullaniciAdi.text.trim(),
+          _adAday,
           _sifre.text,
         );
         if (!mounted) return;
-        // Yeni kayıt → karşılama akışı (router yönlendirir).
+        // Yeni kayıt → karşılama akışı (router yönlendirir). Push izni
+        // karşılamanın SONUNDA sorulur (karsilama.dart `_cik`), ilk adımın
+        // üstüne sistem penceresi düşmesin.
         Oturum.karsilamaGerekli = true;
         await context.read<Oturum>().girisYapildi(kullanici);
-        pushBaslat(); // push izni + token kaydı
         return;
       }
       final d = await Api.giris(_email.text.trim(), _sifre.text);
@@ -307,6 +348,19 @@ class _GirisEkraniState extends State<GirisEkrani> {
         d['kullanici'] as Map<String, dynamic>,
       );
       pushBaslat(); // push izni + token kaydı
+    } on ApiHata catch (e) {
+      if (!mounted) return;
+      // Kayıtta kullanıcı adı çakışması/yasağı ALANIN ALTINA yazılır (makine
+      // koduna göre; e-posta çakışması sunucudan tek mesajla geliyor, o
+      // SnackBar'da kalır — hangi alan olduğunu sunucu da bilmiyor).
+      final adMetni = _kayitModu ? kullaniciAdiHataMetni(e.makineKodu) : null;
+      if (adMetni != null) {
+        setState(() => _adHata = adMetni);
+        return;
+      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -354,21 +408,48 @@ class _GirisEkraniState extends State<GirisEkrani> {
                       style: TextStyle(color: DiziRenkler.metin54),
                     ),
                     const SizedBox(height: 36),
+                    // Klavye akışı: "ileri" tuşu sıradaki alana atlar, şifrede
+                    // "bitti" formu gönderir — parmağı klavyeden kaldırmadan.
                     TextField(
                       controller: _email,
                       keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      autocorrect: false,
+                      onChanged: _emailHata == null
+                          ? null
+                          : (_) => setState(() => _emailHata = null),
                       decoration: InputDecoration(
                         labelText: _kayitModu
                             ? 'E-posta'.c
                             : 'E-posta veya kullanıcı adı'.c,
+                        errorText: _kayitModu ? _emailHata : null,
                       ),
                     ),
                     if (_kayitModu) ...[
                       const SizedBox(height: 12),
                       TextField(
+                        key: const Key('kayit-kullanici-adi'),
                         controller: _kullaniciAdi,
+                        textInputAction: TextInputAction.next,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        maxLength: 20,
+                        onChanged: (_) => setState(() => _adHata = null),
                         decoration: InputDecoration(
-                          labelText: 'Kullanıcı adı (küçük harf)'.c,
+                          prefixText: '@',
+                          labelText: 'Kullanıcı adı'.c,
+                          // Yazarken canlı kalıp uyarısı; boş alanda YOK.
+                          errorText:
+                              _adHata ??
+                              (_adAday.isNotEmpty &&
+                                      !kullaniciAdiKalibi.hasMatch(_adAday)
+                                  ? kullaniciAdiHataMetni('AD_GECERSIZ')
+                                  : null),
+                          errorMaxLines: 3,
+                          helperText:
+                              'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir'
+                                  .c,
+                          helperMaxLines: 3,
                         ),
                       ),
                     ],
@@ -376,7 +457,18 @@ class _GirisEkraniState extends State<GirisEkrani> {
                     TextField(
                       controller: _sifre,
                       obscureText: true,
-                      decoration: InputDecoration(labelText: 'Şifre'.c),
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => _yukleniyor ? null : _gonder(),
+                      onChanged: _sifreHata == null
+                          ? null
+                          : (_) => setState(() => _sifreHata = null),
+                      decoration: InputDecoration(
+                        labelText: 'Şifre'.c,
+                        helperText: _kayitModu
+                            ? 'Şifre en az 6 karakter olmalı'.c
+                            : null,
+                        errorText: _kayitModu ? _sifreHata : null,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     FilledButton(
@@ -405,7 +497,10 @@ class _GirisEkraniState extends State<GirisEkrani> {
                         ),
                       ),
                     TextButton(
-                      onPressed: () => setState(() => _kayitModu = !_kayitModu),
+                      onPressed: () => setState(() {
+                        _kayitModu = !_kayitModu;
+                        _emailHata = _adHata = _sifreHata = null;
+                      }),
                       child: Text(
                         _kayitModu
                             ? 'Zaten hesabın var mı? Giriş yap'.c

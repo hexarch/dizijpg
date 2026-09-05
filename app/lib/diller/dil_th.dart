@@ -1572,4 +1572,13 @@ const Map<String, String> cevirilerTh = {
   'Renkler': 'สี',
   'Sık kullanılanlar': 'ใช้บ่อย',
   'Klavye': 'แป้นพิมพ์',
+  'Kullanıcı adını seç': 'เลือกชื่อผู้ใช้ของคุณ',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'เนื่องจากคุณเข้าสู่ระบบด้วย Google เราจึงสร้างชื่อให้คุณโดยอัตโนมัติ ลิงก์โปรไฟล์และการกล่าวถึงจะใช้ชื่อนี้ — เลือกชื่อของคุณเองตอนนี้เลย',
+  'Kontrol ediliyor...': 'กำลังตรวจสอบ...',
+  '@{} müsait': '@{} ใช้ได้',
+  'Bu adı seç': 'ใช้ชื่อนี้',
+  'Kullanıcı adın @{} oldu': 'ชื่อผู้ใช้ของคุณตอนนี้คือ @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'คุณเปลี่ยนได้ภายหลังในการตั้งค่า แต่ละครั้งที่เปลี่ยนต้องรอ 90 วัน',
 };

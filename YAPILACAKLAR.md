@@ -2,6 +2,52 @@
 > Güncelleme: 2026-09-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
 
+## 2026-09-05 — 👤 Kayıt akışı: KULLANICI ADINI KULLANICI SEÇİYOR + kayıt formu temizliği (1.128.0+195)
+
+Kullanıcı isteği: "emülatör aç, yeni kullanıcı kayıt akışını takip et, gözüne
+batan sorun var mı; en önemlisi kullanıcı adlarını otomatik atıyoruz, onu
+kullanıcı seçmeli."
+
+**BULGU.** Otomatik ad yalnız GOOGLE ile açılan hesapta vardı (e-posta ön eki +
+sonek, `ali.veli_3f2a`); e-posta kaydında ad zaten formdan seçiliyordu,
+misafir ise hesabını bağlarken seçiyor. Yani düzeltme Google akışına.
+
+**ÇÖZÜM.**
+- ✅🚀 Karşılamaya **"Kullanıcı adını seç" adımı** (yalnız adı sunucunun
+  türettiği hesapta; 6 adım olur). Alan üretilmiş adla dolu ve seçili gelir;
+  kalıp hatası yazarken, müsaitlik yazma bitince (450 ms, `GET
+  /karsilama/kullanici-adi-musait`) görünür; "Bu adı seç" → `POST
+  /karsilama/kullanici-adi`. Çakışmada adımda kalınır, "Şimdilik geç" adı
+  olduğu gibi bırakır. Oturum + prefs yeni adı taşır.
+- ✅🚀 Sunucuda **İLK SEÇİM kipi** (`kullaniciAdiDegistir(..., {ilkSecim})`):
+  90 gün kilidi YOK, damga YAZILMAZ, üretilmiş ad rezerve EDİLMEZ. Pencere
+  yalnız `ilkAdSecimiUygun` hesaba (google_sub + misafir değil + değişim NULL
+  + karşılama bitmemiş) — bitince kapanır (ILK_SECIM_YOK), ayarlardaki
+  kilitli/rezervli yol devreye girer. `/auth/google` yeni hesapta
+  `ad_otomatik:true`, `GET /karsilama` `ad_secilmeli` döner.
+- ✅🚀 **E-posta kayıt formu** (emülatörde görülen): "Ali" yazan herkes
+  sunucudan "3-20 karakter..." SnackBar'ı yiyordu (büyük harf reddi) →
+  ad KÜÇÜLTÜLEREK gider; @ öneki + kural yardımcı metni + 0/20 sayaç; e-posta /
+  ad / şifre hataları ALANIN ALTINDA (istek atılmadan); klavye "ileri" tuşu
+  sıradaki alana atlar, şifrede "bitti" formu gönderir; sunucu AD_* kodları
+  ad alanının altına düşer.
+- ✅🚀 **Bildirim izni** karşılamanın SONUNDA (`_cik`): sistem penceresi 1.
+  adımın üstüne düşüyordu. Son adımda "Şimdilik geç" kaldırıldı ("Hadi
+  başlayalım" ile aynıydı).
+
+Kanıt: `backend/test/kullanici_adi.test.js` +6 (71/71),
+`app/test/karsilama_akisi_test.dart` +8, `app/test/kayit_formu_test.dart` 5
+yeni; tüm paket 2.679 yeşil. Canlı uçtan uca curl (taze hesap → google_sub
+işareti → müsaitlik 5 durum → seçim → damga NULL, rezerv 0 → bitti → 403).
+Emülatörde (Medium_Phone_API_36.1) e-posta kaydı + 5 adım elle gezildi.
+7 yeni metin 45 dile eklendi.
+
+⬜ Sonraki: Google girişi emülatörde hesapsız denenemedi — telefonda gerçek
+Google hesabıyla bir kez gezilmeli (ad adımı + "Bu adı seç").
+⬜ Öneri: şifre alanına göster/gizle (suffixIcon'a düğme koyma tuzağı
+nedeniyle satır kardeşi olarak), misafir → e-posta bağlama ekranında da aynı
+canlı müsaitlik.
+
 ## 2026-09-05 — 🎬 Kırık fragman taraması + RESMİ fragman kuralı (1.127.0+194)
 
 Kullanıcı isteği: "bazı dizilerin fragmanları kırılmış onları sürekli tarayıp

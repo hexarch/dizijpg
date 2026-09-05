@@ -1584,4 +1584,13 @@ const Map<String, String> cevirilerFa = {
   'Renkler': 'رنگ‌ها',
   'Sık kullanılanlar': 'پرکاربرد',
   'Klavye': 'صفحه‌کلید',
+  'Kullanıcı adını seç': 'نام کاربری‌ات را انتخاب کن',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'چون با Google وارد شدی، ما یک نام برایت ساختیم. پیوند پروفایل و اشاره‌ها از این نام استفاده می‌کنند — حالا نام خودت را انتخاب کن.',
+  'Kontrol ediliyor...': 'در حال بررسی...',
+  '@{} müsait': '@{} در دسترس است',
+  'Bu adı seç': 'انتخاب این نام',
+  'Kullanıcı adın @{} oldu': 'نام کاربری‌ات اکنون @{} است',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'بعداً می‌توانی آن را از تنظیمات تغییر دهی؛ پس از هر تغییر ۹۰ روز باید صبر کنی.',
 };

@@ -1618,4 +1618,13 @@ const Map<String, String> cevirilerMy = {
   'Renkler': 'အရောင်များ',
   'Sık kullanılanlar': 'မကြာခဏသုံးသော',
   'Klavye': 'ကီးဘုတ်',
+  'Kullanıcı adını seç': 'သင့်အသုံးပြုသူအမည်ကို ရွေးပါ',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Google ဖြင့် ဝင်ရောက်ထားသောကြောင့် သင့်အတွက် အမည်တစ်ခုကို ကျွန်ုပ်တို့ ဖန်တီးပေးထားပါသည်။ သင့်ပရိုဖိုင်လင့်ခ်နှင့် ဖော်ပြချက်များတွင် ဤအမည်ကို သုံးပါသည် — ယခု ကိုယ်တိုင် ရွေးပါ။',
+  'Kontrol ediliyor...': 'စစ်ဆေးနေသည်...',
+  '@{} müsait': '@{} ရနိုင်ပါသည်',
+  'Bu adı seç': 'ဤအမည်ကို သုံးမည်',
+  'Kullanıcı adın @{} oldu': 'သင့်အသုံးပြုသူအမည်မှာ ယခု @{} ဖြစ်ပါသည်',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'နောက်ပိုင်း ဆက်တင်များတွင် ပြောင်းနိုင်သည်။ ပြောင်းလဲမှုတိုင်း ပြီးနောက် ရက် 90 စောင့်ရမည်။',
 };

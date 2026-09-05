@@ -1600,4 +1600,13 @@ const Map<String, String> cevirilerTe = {
   'Renkler': 'రంగులు',
   'Sık kullanılanlar': 'తరచుగా ఉపయోగించినవి',
   'Klavye': 'కీబోర్డ్',
+  'Kullanıcı adını seç': 'మీ యూజర్‌నేమ్‌ను ఎంచుకోండి',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'మీరు Google తో సైన్ ఇన్ చేసినందున మీ కోసం ఒక పేరును మేము సృష్టించాం. మీ ప్రొఫైల్ లింక్ మరియు మెన్షన్‌లు ఈ పేరుతో కనిపిస్తాయి — ఇప్పుడు మీ పేరును మీరే ఎంచుకోండి.',
+  'Kontrol ediliyor...': 'తనిఖీ చేస్తోంది...',
+  '@{} müsait': '@{} అందుబాటులో ఉంది',
+  'Bu adı seç': 'ఈ పేరును ఎంచుకోండి',
+  'Kullanıcı adın @{} oldu': 'మీ యూజర్‌నేమ్ ఇప్పుడు @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'తర్వాత సెట్టింగ్స్ నుంచి మార్చవచ్చు; ప్రతి మార్పు తర్వాత 90 రోజులు వేచి ఉండాలి.',
 };

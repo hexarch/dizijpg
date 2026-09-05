@@ -1603,4 +1603,13 @@ const Map<String, String> cevirilerDa = {
   'Renkler': 'Farver',
   'Sık kullanılanlar': 'Ofte brugt',
   'Klavye': 'Tastatur',
+  'Kullanıcı adını seç': 'Vælg dit brugernavn',
+  'Google ile giriş yaptığın için adını biz türettik. Profil bağlantın ve etiketlenmelerin bu adla görünür; şimdi kendin seç.':
+      'Da du loggede ind med Google, lavede vi et navn til dig. Dit profillink og omtaler bruger det – vælg dit eget nu.',
+  'Kontrol ediliyor...': 'Kontrollerer...',
+  '@{} müsait': '@{} er ledigt',
+  'Bu adı seç': 'Brug dette navn',
+  'Kullanıcı adın @{} oldu': 'Dit brugernavn er nu @{}',
+  'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
+      'Du kan ændre det senere i Indstillinger; efter hver ændring venter du 90 dage.',
 };
