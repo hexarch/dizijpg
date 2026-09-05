@@ -86,7 +86,20 @@ ardışık mesajlar gruplanmıyordu. Yapılan:
   kontrast ≥ 4,5:1 her temada), `hareketli_tepki_test` ortak haritaya
   uyarlandı, backend `sohbet_durum.test.js` +4. Tüm paket **2657 geçti**.
   11 yeni metin 45 dile (`scratchpad/ceviri_ekle.py`).
-- ⬜ Cihazda deneme (APK): panel açılış hızı, düşük donanımda patlama karesi.
+- ✅ **Galaxy S24'te (Android 16) denendi, 05:00:** büyük 😠 balonu Lottie
+  oynuyor; dokununca 18'li patlama akıcı, balon yeniden oynuyor; sohbet
+  listesi/balonlar/gruplama beklendiği gibi. İKİ BULGU:
+  (a) Emoji paneli: Noto animasyonlarının ilk karesi çoğu yüzde aynı nötr
+  surat (😀 🙂 😉 😊 ayırt edilemiyor) + 40 Lottie bir anda çözülürken
+  hücreler boş → panel SİSTEM GLİFİNE çevrildi (commit e91f453, web canlı
+  `main.bc31a96f01e0`); hareket mesajda/tepkide sürüyor.
+  (b) Panel açıkken `adb keyevent BACK` uygulamayı KAPATTI (aktivite finish;
+  çökme yok). Widget testi (`sohbet_geri_tusu_test`, kabuk içi
+  StatefulShellRoute + handlePopRoute) Flutter tarafında doğru: önce panel,
+  sonra sohbet kapanıyor. Cihazda tekrar denenmeden kapatılmadı — telefon
+  kilitlendi (keyguard), kilit açılınca panelsiz/panelli geri + tema seçici
+  denenecek. Şüphe: Android 16'da targetSdk 36 için öngörülü geri
+  varsayılan açık; manifestte `enableOnBackInvokedCallback` yok.
 - ⬜ Telegram'ın tam ekran efekti (❤️ 🎉 için özel Lottie efekt dosyası)
   bir sonraki tur; bugünkü glif patlaması her emojide çalışıyor.
 
