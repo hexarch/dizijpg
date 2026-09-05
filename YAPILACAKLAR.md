@@ -1,6 +1,28 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-05 — 🌐 Web'de dil öneki ADRES ÇUBUĞUNDA KALIYOR: /de, /de/icerik/tv/2098 (1.131.0+198) 🚀
+
+**Kullanıcı kararı:** "Tüm dillerde tüm sayfalar dil etiketiyle görünsün, web tarafında; Android'e
+karışmaya gerek yok." Bot ile insan aynı adreste aynı sayfayı görsün (bir önceki tur öneki düşürüp
+`/kesfet`e çeviriyordu — SEO açısından yarım çözümdü: paylaşılan bağlantı dili taşımıyor, dış
+bağlantı Türkçe adrese yazılıyor, CrUX/GSC verisi yanlış sayfada toplanıyordu).
+
+**Mekanizma (`app/lib/dil_onekli_adres.dart`):** go_router ayrıştırıcısı iki yönde sarıldı
+(`DilOnekliRotaAyristirici`, `main.dart`te `routerConfig` yerine dört parça). Gelen adres/`go()`
+konumunda önek DÜŞER (rota ağacı öneksiz, 45 dil için rota kopyası yok); adres çubuğuna yazılırken
+uygulama dili `tr` değilse önek EKLENİR (`dilOnekiEkle`): `/kesfet` → `/de` (kanonik dil ana sayfası
+`/de/kesfet` DEĞİL — sunucu ona 404+noindex döner), `/icerik/tv/2098` → `/de/icerik/tv/2098`, sorgu
+korunur. `currentConfiguration.uri` öneksiz kalır → `sohbet_olay`, `push`, `kabuk`, `giris_istem`
+okuyanları değişmedi. Yalnız web (`kIsWeb`); mobilde giden yön dokunmaz, gelen önek yine düşer.
+Dil kaynağı `Ceviri.dil.value` (kullanıcı seçimi > adres > cihaz; Türkçe seçmiş kullanıcı `/de/...`
+açarsa sayfa Türkçe ve adres öneksiz — sayfa ile adres yine tutarlı).
+**Test:** `dil_onekli_adres_cubugu_test.dart` (sahte rota ağacı, iki yön, tr, mobil).
+**Paylaşım bağlantıları BİLEREK öneksiz kaldı:** `/gonderi`, `/listeler`, `/kullanici` SSR'ı yalnız
+Türkçe; `/de/gonderi/1` bota 404 verir, önizleme kartı çıkmazdı.
+**Açık:** `/de/gozat` gibi keşif sayfaları insan tarafında önekli görünür ama SSR'ı yok (bot 404
++noindex); keşif hub'ını 46 dile açmak ayrı iş. Dil değişince adres çubuğu bir sonraki gezinmede güncellenir.
+
 ## 2026-09-05 — 🚨 Dil önekli adresler GERÇEK KULLANICIDA KIRIKTI: /de → giriş formu, /en/icerik → "Bağlantı geçersiz" (1.130.0+197) 🚀
 
 **Tetik:** SEO yöneticisi `https://dizijpg.com/de` → `/giris?donus=/de` yönlendirmesini yakaladı.

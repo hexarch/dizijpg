@@ -25,6 +25,7 @@ import 'spoiler_tercihi.dart';
 import 'surum_kapisi.dart';
 import 'tema.dart';
 import 'veri_tasarrufu.dart';
+import 'dil_onekli_adres.dart';
 import 'yonlendirme.dart';
 
 /// Web'de yatay rafların fareyle sürüklenebilmesi için (varsayılanda kapalı).
@@ -180,6 +181,12 @@ class _DiziJpgAppState extends State<DiziJpgApp> {
   late final GoRouter _yonlendirici = yonlendiriciOlustur(
     context.read<Oturum>(),
   );
+  // Web'de dil öneki adres çubuğunda kalsın (`/de/icerik/tv/2098`); gerekçe
+  // ve mekanizma `dil_onekli_adres.dart`. `routerConfig` yerine dört parça
+  // verilir ki ayrıştırıcı sarılabilsin; GoRouter örneği aynı, davranış aynı.
+  late final _ayristirici = DilOnekliRotaAyristirici(
+    _yonlendirici.routeInformationParser,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -205,7 +212,10 @@ class _DiziJpgAppState extends State<DiziJpgApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          routerConfig: _yonlendirici,
+          routeInformationProvider: _yonlendirici.routeInformationProvider,
+          routeInformationParser: _ayristirici,
+          routerDelegate: _yonlendirici.routerDelegate,
+          backButtonDispatcher: _yonlendirici.backButtonDispatcher,
           // Sürüm kapısı en dışta: zorunlu güncelleme ekranı her rotanın
           // üstünde durur ve geri tuşuyla kapatılamaz (bkz. surum_kapisi.dart).
           //
