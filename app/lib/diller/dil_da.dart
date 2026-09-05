@@ -1612,4 +1612,10 @@ const Map<String, String> cevirilerDa = {
   'Kullanıcı adın @{} oldu': 'Dit brugernavn er nu @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'Du kan ændre det senere i Indstillinger; efter hver ændring venter du 90 dage.',
+  'Değerlendirme': 'Bedømmelser',
+  'Değerlendirmeler ({})': 'Bedømmelser ({})',
+  'Henüz değerlendirme yok': 'Ingen bedømmelser endnu',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Bedømte serier og film vises her.',
+  'Değerlendirmeler yüklenemedi': 'Bedømmelserne kunne ikke indlæses',
 };

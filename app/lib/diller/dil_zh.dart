@@ -1527,4 +1527,9 @@ const Map<String, String> cevirilerZh = {
   'Kullanıcı adın @{} oldu': '你的用户名现在是 @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       '之后可以在设置中更改；每次更改后需等待 90 天。',
+  'Değerlendirme': '评分',
+  'Değerlendirmeler ({})': '评分 ({})',
+  'Henüz değerlendirme yok': '暂无评分',
+  'Puan verilen dizi ve filmler burada listelenir.': '已评分的剧集和电影会显示在这里。',
+  'Değerlendirmeler yüklenemedi': '无法加载评分',
 };

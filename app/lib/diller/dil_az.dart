@@ -1600,4 +1600,10 @@ const Map<String, String> cevirilerAz = {
   'Kullanıcı adın @{} oldu': 'İstifadəçi adın artıq @{} oldu',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'Sonradan Ayarlardan dəyişə bilərsən; hər dəyişiklikdən sonra 90 gün gözləmək lazımdır.',
+  'Değerlendirme': 'Qiymətləndirmələr',
+  'Değerlendirmeler ({})': 'Qiymətləndirmələr ({})',
+  'Henüz değerlendirme yok': 'Hələ qiymətləndirmə yoxdur',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Qiymətləndirilən serial və filmlər burada göstərilir.',
+  'Değerlendirmeler yüklenemedi': 'Qiymətləndirmələr yüklənmədi',
 };

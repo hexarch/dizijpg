@@ -1617,4 +1617,10 @@ const Map<String, String> cevirilerMl = {
   'Kullanıcı adın @{} oldu': 'നിങ്ങളുടെ ഉപയോക്തൃനാമം ഇപ്പോൾ @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'പിന്നീട് ക്രമീകരണങ്ങളിൽ നിന്ന് മാറ്റാം; ഓരോ മാറ്റത്തിനു ശേഷവും 90 ദിവസം കാത്തിരിക്കണം.',
+  'Değerlendirme': 'റേറ്റിംഗുകൾ',
+  'Değerlendirmeler ({})': 'റേറ്റിംഗുകൾ ({})',
+  'Henüz değerlendirme yok': 'ഇതുവരെ റേറ്റിംഗുകളില്ല',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'റേറ്റ് ചെയ്ത സീരീസുകളും സിനിമകളും ഇവിടെ കാണാം.',
+  'Değerlendirmeler yüklenemedi': 'റേറ്റിംഗുകൾ ലോഡ് ചെയ്യാനായില്ല',
 };

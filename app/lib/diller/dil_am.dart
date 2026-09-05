@@ -1553,4 +1553,10 @@ const Map<String, String> cevirilerAm = {
   'Kullanıcı adın @{} oldu': 'የተጠቃሚ ስምህ አሁን @{} ነው',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'በኋላ በቅንብሮች መቀየር ትችላለህ፤ ከእያንዳንዱ ለውጥ በኋላ 90 ቀን መጠበቅ ያስፈልጋል።',
+  'Değerlendirme': 'ደረጃዎች',
+  'Değerlendirmeler ({})': 'ደረጃዎች ({})',
+  'Henüz değerlendirme yok': 'እስካሁን ደረጃ የለም',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'ደረጃ የተሰጣቸው ተከታታዮች እና ፊልሞች እዚህ ይታያሉ።',
+  'Değerlendirmeler yüklenemedi': 'ደረጃዎችን መጫን አልተቻለም',
 };

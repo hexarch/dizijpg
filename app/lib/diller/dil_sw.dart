@@ -1617,4 +1617,10 @@ const Map<String, String> cevirilerSw = {
   'Kullanıcı adın @{} oldu': 'Jina lako la mtumiaji sasa ni @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'Unaweza kulibadilisha baadaye kwenye Mipangilio; kila mabadiliko hufuatwa na kusubiri siku 90.',
+  'Değerlendirme': 'Ukadiriaji',
+  'Değerlendirmeler ({})': 'Ukadiriaji ({})',
+  'Henüz değerlendirme yok': 'Bado hakuna ukadiriaji',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Vipindi na filamu zilizokadiriwa huonyeshwa hapa.',
+  'Değerlendirmeler yüklenemedi': 'Ukadiriaji haukuweza kupakiwa',
 };

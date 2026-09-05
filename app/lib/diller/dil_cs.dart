@@ -1606,4 +1606,10 @@ const Map<String, String> cevirilerCs = {
   'Kullanıcı adın @{} oldu': 'Tvé uživatelské jméno je nyní @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'Později ho můžeš změnit v Nastavení; po každé změně následuje 90denní čekání.',
+  'Değerlendirme': 'Hodnocení',
+  'Değerlendirmeler ({})': 'Hodnocení ({})',
+  'Henüz değerlendirme yok': 'Zatím žádná hodnocení',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Ohodnocené seriály a filmy se zobrazí zde.',
+  'Değerlendirmeler yüklenemedi': 'Hodnocení se nepodařilo načíst',
 };

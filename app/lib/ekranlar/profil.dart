@@ -12,8 +12,10 @@ import '../gonderi_olcu.dart';
 import '../gorsel_basliklari.dart';
 import '../icerik_deposu.dart';
 import '../onbellek.dart';
+import '../puan.dart';
 import '../seviye.dart';
 import '../spoiler_tercihi.dart';
+import '../tarih.dart';
 import '../tema.dart';
 import 'etiket.dart' show duzMetin;
 import 'favori_oyuncular.dart' show FavoriOyuncuKarti;
@@ -688,6 +690,16 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     );
   }
 
+  /// Şeritteki "Değerlendirme" sayacı: hangi diziye/filme kaç puan verdim.
+  void _puanlarAc(String kullaniciAdi, int? toplam) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: DiziRenkler.koyuGri,
+      builder: (_) => PuanlarSheet(kullaniciAdi: kullaniciAdi, toplam: toplam),
+    );
+  }
+
   /// Süre kırılımının alt listesi: "hangi diziyi/filmi kaç saat izledim".
   /// Modal (sayfa DEĞİL): kullanıcı profilden çıkmadan bakıp kapatıyor.
   void _sureDetayAc(String tur) {
@@ -1001,7 +1013,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                   ),
                   const SizedBox(height: 14),
                 ],
-                // Bölüm / film / dizi / yorum.
+                // Bölüm / film / dizi / değerlendirme.
                 //
                 // 21 Ağu 2026 (kullanıcı isteği): yuvarlak [StatMadalyon]
                 // düzeni BURADAN kalktı, yerine açık profildeki eşit sütunlu
@@ -1013,7 +1025,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                   bolumTap: () => context.push('/izlediklerim?tur=tv'),
                   filmTap: () => context.push('/izlediklerim?tur=movie'),
                   diziTap: () => context.push('/izlediklerim?tur=tv'),
-                  yorumTap: () => _yorumlarAc(kullaniciAdi),
+                  puanTap: () => _puanlarAc(kullaniciAdi, sayaclar.puan),
                 ),
                 const SizedBox(height: 10),
                 // Toplam ekran süresi (yıl/ay/gün) — DOKUNUNCA AÇILIR
@@ -1633,6 +1645,9 @@ class ProfilSayaclari {
   final int? dizi;
   final int? yorum;
 
+  /// Yapım düzeyi puan sayısı (5 Eyl 2026; şeritte "Değerlendirme").
+  final int? puan;
+
   const ProfilSayaclari({
     this.takipci,
     this.takip,
@@ -1642,6 +1657,7 @@ class ProfilSayaclari {
     this.film,
     this.dizi,
     this.yorum,
+    this.puan,
   });
 
   /// `GET /istatistiklerim` yanıtı (kendi profilim).
@@ -1654,6 +1670,7 @@ class ProfilSayaclari {
     film: _sayi(st, 'izlenen_film'),
     dizi: _sayi(st, 'takip_edilen_dizi'),
     yorum: _sayi(st, 'yorum_sayisi'),
+    puan: _sayi(st, 'puan_sayisi'),
   );
 
   /// `GET /profil/:kullaniciAdi` yanıtının `istatistik` alanı (açık profil).
@@ -1666,6 +1683,7 @@ class ProfilSayaclari {
     film: _sayi(st, 'film'),
     dizi: _sayi(st, 'dizi'),
     yorum: _sayi(st, 'yorum'),
+    puan: _sayi(st, 'puan'),
   );
 
   static int? _sayi(Map<String, dynamic>? m, String anahtar) =>
@@ -1745,15 +1763,20 @@ class ProfilTakipSatiri extends StatelessWidget {
   }
 }
 
-/// bölüm · film · dizi · yorum — AÇIK PROFİLİN biçimi: eşit dört sütun,
-/// üstte sarı kalın sayı, altında etiket. (Kendi profilimdeki yuvarlak
+/// bölüm · film · dizi · değerlendirme — AÇIK PROFİLİN biçimi: eşit dört
+/// sütun, üstte sarı kalın sayı, altında etiket. (Kendi profilimdeki yuvarlak
 /// [StatMadalyon] düzeninin yerini aldı — kullanıcı isteği, 21 Ağu 2026.)
+///
+/// Dördüncü sütun 5 Eyl 2026'da "Yorum"dan "Değerlendirme"ye döndü (kullanıcı
+/// isteği): yorumlar zaten şeridin hemen altında listeleniyor, sütun aynı
+/// şeyi ikinci kez sayıyordu. Değerlendirme sayacı ise başka hiçbir yerde
+/// yoktu; dokununca [PuanlarSheet] açılır (hangi yapıma kaç puan).
 class ProfilOlcumSatiri extends StatelessWidget {
   final ProfilSayaclari sayac;
   final VoidCallback? bolumTap;
   final VoidCallback? filmTap;
   final VoidCallback? diziTap;
-  final VoidCallback? yorumTap;
+  final VoidCallback? puanTap;
 
   const ProfilOlcumSatiri({
     super.key,
@@ -1761,7 +1784,7 @@ class ProfilOlcumSatiri extends StatelessWidget {
     this.bolumTap,
     this.filmTap,
     this.diziTap,
-    this.yorumTap,
+    this.puanTap,
   });
 
   @override
@@ -1784,9 +1807,9 @@ class ProfilOlcumSatiri extends StatelessWidget {
           onTap: diziTap,
         ),
         ProfilSayacSutunu(
-          deger: ProfilSayaclari.yaz(sayac.yorum),
-          etiket: 'Yorum'.c,
-          onTap: yorumTap,
+          deger: ProfilSayaclari.yaz(sayac.puan),
+          etiket: 'Değerlendirme'.c,
+          onTap: puanTap,
         ),
       ],
     );
@@ -3488,6 +3511,286 @@ class _SureYapimSatiriState extends State<SureYapimSatiri> {
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
                 color: DiziRenkler.sariMetin,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Profil şeridindeki "Değerlendirme" sütununun listesi: kullanıcının puan
+/// verdiği diziler/filmler ve verdiği puan (5 Eyl 2026, kullanıcı isteği —
+/// "yorum sütunu kalksın, zaten altta yorumlar var; oraya değerlendirme koy,
+/// tıklayınca hangi dizi filmlere kaç puan verdiği gözüksün").
+///
+/// Veri `GET /profil/:ad/puanlar` (sayfalı). Kendi profilim de aynı ucu
+/// kendi kullanıcı adıyla çağırır — iki ekran TEK sheet, kopya yok.
+///
+/// Puan, BAKAN kişinin ölçeğinde yazılır (`yildiza`): 100'lük ölçek seçmiş
+/// biri 85/100, 5'lik seçmiş biri 4/5 görür — uygulamanın her yerinde
+/// puanlar böyle gösteriliyor, burada da aynı kural.
+class PuanlarSheet extends StatefulWidget {
+  final String kullaniciAdi;
+
+  /// Şeritteki sayaç: başlık ilk sayfadan önce de "(12)" yazabilsin diye.
+  final int? toplam;
+  const PuanlarSheet({super.key, required this.kullaniciAdi, this.toplam});
+
+  @override
+  State<PuanlarSheet> createState() => _PuanlarSheetState();
+}
+
+class _PuanlarSheetState extends State<PuanlarSheet> {
+  final List<dynamic> _ogeler = [];
+  int _sayfa = 0;
+  int? _toplam;
+  bool _yukleniyor = true;
+  bool _gizli = false;
+  String? _hata;
+
+  @override
+  void initState() {
+    super.initState();
+    _toplam = widget.toplam;
+    _yukle();
+  }
+
+  Future<void> _yukle() async {
+    setState(() {
+      _yukleniyor = true;
+      _hata = null;
+    });
+    try {
+      final d = await Api.get(
+        '/profil/${Uri.encodeComponent(widget.kullaniciAdi)}/puanlar'
+        '?sayfa=$_sayfa',
+      );
+      if (!mounted) return;
+      setState(() {
+        _gizli = d['gizli'] == true;
+        _ogeler.addAll(d['ogeler'] as List<dynamic>? ?? const []);
+        _toplam = (d['toplam'] as num?)?.toInt() ?? _ogeler.length;
+        _yukleniyor = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      // Hata SESSİZ DEĞİL: kullanıcı mesajı görür ve tekrar deneyebilir.
+      setState(() {
+        _hata = e.toString();
+        _yukleniyor = false;
+      });
+    }
+  }
+
+  void _dahaFazla() {
+    _sayfa++;
+    _yukle();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget govde;
+    if (_hata != null && _ogeler.isEmpty) {
+      govde = HataGorunumu(
+        mesaj: 'Değerlendirmeler yüklenemedi'.c,
+        tekrar: _yukle,
+      );
+    } else if (_yukleniyor && _ogeler.isEmpty) {
+      govde = const Center(
+        child: CircularProgressIndicator(color: DiziRenkler.sari),
+      );
+    } else if (_ogeler.isEmpty) {
+      govde = BosDurum(
+        ikon: Icons.star_outline,
+        baslik: 'Henüz değerlendirme yok'.c,
+        // Gizli profilde ipucu VERİLMEZ: "puan verdikçe burada toplanır"
+        // demek, gizleyen kişinin puanı olmadığını ima ederdi.
+        ipucu: _gizli
+            ? null
+            : 'Puan verilen dizi ve filmler burada listelenir.'.c,
+      );
+    } else {
+      final toplam = _toplam ?? _ogeler.length;
+      govde = ListView.builder(
+        padding: EdgeInsets.fromLTRB(
+          14,
+          0,
+          14,
+          altGuvenli(context, ekstra: 20),
+        ),
+        itemCount: _ogeler.length + 1,
+        itemBuilder: (context, i) {
+          if (i == _ogeler.length) {
+            if (_ogeler.length >= toplam) return const SizedBox(height: 8);
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Center(
+                child: _yukleniyor
+                    ? const CircularProgressIndicator(color: DiziRenkler.sari)
+                    : TextButton(
+                        onPressed: _dahaFazla,
+                        child: Text('Daha fazla'.c),
+                      ),
+              ),
+            );
+          }
+          final o = _ogeler[i] as Map<String, dynamic>;
+          return PuanSatiri(
+            key: ValueKey('puan-${o['tur']}-${o['tmdb_id']}'),
+            tur: o['tur'] as String,
+            tmdbId: (o['tmdb_id'] as num).toInt(),
+            puan: o['puan'],
+            tarih: o['tarih'] as String?,
+          );
+        },
+      );
+    }
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.75,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Icon(Icons.star, color: DiziRenkler.sariMetin),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Değerlendirmeler ({})'.cf([
+                      _toplam ?? ProfilSayaclari.eksik,
+                    ]),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(child: govde),
+        ],
+      ),
+    );
+  }
+}
+
+/// [PuanlarSheet]'in bir satırı: poster + ad + tarih, sağda puan.
+/// Dokununca içerik sayfasına gider (modal kuralı: kart doğru derin sayfayı
+/// açar — skill md. 4).
+class PuanSatiri extends StatefulWidget {
+  final String tur;
+  final int tmdbId;
+
+  /// Sunucudaki KANONİK puan (1-100); ekranda bakanın ölçeğine çevrilir.
+  final Object? puan;
+  final String? tarih;
+
+  const PuanSatiri({
+    super.key,
+    required this.tur,
+    required this.tmdbId,
+    required this.puan,
+    this.tarih,
+  });
+
+  @override
+  State<PuanSatiri> createState() => _PuanSatiriState();
+}
+
+class _PuanSatiriState extends State<PuanSatiri> {
+  Map<String, dynamic>? _icerik;
+
+  @override
+  void initState() {
+    super.initState();
+    IcerikDeposu.getir(widget.tur, widget.tmdbId).then((d) {
+      if (mounted && d != null) setState(() => _icerik = d);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final poster = posterUrl(_icerik?['poster_path'] as String?, boyut: 'w185');
+    final ad = (_icerik?['name'] ?? _icerik?['title'] ?? '') as String;
+    final yil =
+        ((_icerik?['first_air_date'] ?? _icerik?['release_date']) as String?)
+            ?.split('-')
+            .first;
+    final alt = [
+      widget.tur == 'tv' ? 'Dizi'.c : 'Film'.c,
+      if (yil != null && yil.isNotEmpty) yil,
+      if (widget.tarih != null) tarihBicimle(widget.tarih),
+    ].join(' · ');
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: () => context.push('/icerik/${widget.tur}/${widget.tmdbId}'),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: SizedBox(
+                width: 36,
+                height: 54,
+                child: poster == null
+                    ? ColoredBox(color: DiziRenkler.kart)
+                    : CachedNetworkImage(
+                        imageUrl: poster,
+                        httpHeaders: gorselBasliklari(poster),
+                        fit: BoxFit.cover,
+                        errorWidget: (_, _, _) =>
+                            ColoredBox(color: DiziRenkler.kart),
+                      ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    ad.isEmpty ? '#${widget.tmdbId}' : ad,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: DiziRenkler.metin,
+                    ),
+                  ),
+                  Text(
+                    alt,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Ölçek değişince (Ayarlar) açık sheet de yeniden yazılsın.
+            ValueListenableBuilder<int>(
+              valueListenable: PuanOlcegi.deger,
+              builder: (_, olcek, _) => Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.star, size: 16, color: DiziRenkler.sariMetin),
+                  const SizedBox(width: 3),
+                  Text(
+                    '${yildiza(widget.puan, olcek: olcek)}/$olcek',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

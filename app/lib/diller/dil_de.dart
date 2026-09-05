@@ -1638,4 +1638,10 @@ const Map<String, String> cevirilerDe = {
   'Kullanıcı adın @{} oldu': 'Dein Benutzername ist jetzt @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'Du kannst ihn später in den Einstellungen ändern; nach jeder Änderung gilt eine Wartezeit von 90 Tagen.',
+  'Değerlendirme': 'Bewertungen',
+  'Değerlendirmeler ({})': 'Bewertungen ({})',
+  'Henüz değerlendirme yok': 'Noch keine Bewertungen',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Bewertete Serien und Filme erscheinen hier.',
+  'Değerlendirmeler yüklenemedi': 'Bewertungen konnten nicht geladen werden',
 };

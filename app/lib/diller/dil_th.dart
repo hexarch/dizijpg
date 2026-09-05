@@ -1581,4 +1581,10 @@ const Map<String, String> cevirilerTh = {
   'Kullanıcı adın @{} oldu': 'ชื่อผู้ใช้ของคุณตอนนี้คือ @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'คุณเปลี่ยนได้ภายหลังในการตั้งค่า แต่ละครั้งที่เปลี่ยนต้องรอ 90 วัน',
+  'Değerlendirme': 'คะแนน',
+  'Değerlendirmeler ({})': 'คะแนน ({})',
+  'Henüz değerlendirme yok': 'ยังไม่มีคะแนน',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'ซีรีส์และภาพยนตร์ที่ให้คะแนนแล้วจะแสดงที่นี่',
+  'Değerlendirmeler yüklenemedi': 'โหลดคะแนนไม่ได้',
 };

@@ -1593,4 +1593,10 @@ const Map<String, String> cevirilerFa = {
   'Kullanıcı adın @{} oldu': 'نام کاربری‌ات اکنون @{} است',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'بعداً می‌توانی آن را از تنظیمات تغییر دهی؛ پس از هر تغییر ۹۰ روز باید صبر کنی.',
+  'Değerlendirme': 'امتیازها',
+  'Değerlendirmeler ({})': 'امتیازها ({})',
+  'Henüz değerlendirme yok': 'هنوز امتیازی ثبت نشده',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'سریال‌ها و فیلم‌های امتیازداده‌شده اینجا نمایش داده می‌شوند.',
+  'Değerlendirmeler yüklenemedi': 'امتیازها بارگذاری نشد',
 };

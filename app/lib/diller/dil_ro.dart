@@ -1654,4 +1654,10 @@ const Map<String, String> cevirilerRo = {
   'Kullanıcı adın @{} oldu': 'Numele tău de utilizator este acum @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'Îl poți schimba mai târziu din Setări; după fiecare schimbare urmează o așteptare de 90 de zile.',
+  'Değerlendirme': 'Evaluări',
+  'Değerlendirmeler ({})': 'Evaluări ({})',
+  'Henüz değerlendirme yok': 'Nicio evaluare încă',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Serialele și filmele evaluate apar aici.',
+  'Değerlendirmeler yüklenemedi': 'Evaluările nu au putut fi încărcate',
 };

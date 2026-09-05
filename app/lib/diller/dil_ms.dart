@@ -1616,4 +1616,10 @@ const Map<String, String> cevirilerMs = {
   'Kullanıcı adın @{} oldu': 'Nama pengguna anda kini @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'Anda boleh menukarnya kemudian di Tetapan; setiap perubahan diikuti tempoh menunggu 90 hari.',
+  'Değerlendirme': 'Penilaian',
+  'Değerlendirmeler ({})': 'Penilaian ({})',
+  'Henüz değerlendirme yok': 'Belum ada penilaian',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Siri dan filem yang dinilai disenaraikan di sini.',
+  'Değerlendirmeler yüklenemedi': 'Penilaian tidak dapat dimuatkan',
 };

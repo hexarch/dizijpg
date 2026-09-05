@@ -1610,4 +1610,10 @@ const Map<String, String> cevirilerId = {
   'Kullanıcı adın @{} oldu': 'Nama penggunamu sekarang @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'Kamu bisa mengubahnya nanti di Pengaturan; setiap perubahan diikuti masa tunggu 90 hari.',
+  'Değerlendirme': 'Penilaian',
+  'Değerlendirmeler ({})': 'Penilaian ({})',
+  'Henüz değerlendirme yok': 'Belum ada penilaian',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Serial dan film yang dinilai tercantum di sini.',
+  'Değerlendirmeler yüklenemedi': 'Penilaian tidak dapat dimuat',
 };

@@ -1608,4 +1608,10 @@ const Map<String, String> cevirilerVi = {
   'Kullanıcı adın @{} oldu': 'Tên người dùng của bạn giờ là @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'Bạn có thể đổi sau trong Cài đặt; sau mỗi lần đổi phải chờ 90 ngày.',
+  'Değerlendirme': 'Đánh giá',
+  'Değerlendirmeler ({})': 'Đánh giá ({})',
+  'Henüz değerlendirme yok': 'Chưa có đánh giá',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Phim và series đã chấm điểm hiển thị ở đây.',
+  'Değerlendirmeler yüklenemedi': 'Không tải được đánh giá',
 };

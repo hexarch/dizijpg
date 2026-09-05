@@ -1610,4 +1610,10 @@ const Map<String, String> cevirilerKn = {
   'Kullanıcı adın @{} oldu': 'ನಿಮ್ಮ ಬಳಕೆದಾರ ಹೆಸರು ಈಗ @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'ನಂತರ ಸೆಟ್ಟಿಂಗ್‌ಗಳಿಂದ ಬದಲಾಯಿಸಬಹುದು; ಪ್ರತಿ ಬದಲಾವಣೆಯ ನಂತರ 90 ದಿನ ಕಾಯಬೇಕು.',
+  'Değerlendirme': 'ರೇಟಿಂಗ್‌ಗಳು',
+  'Değerlendirmeler ({})': 'ರೇಟಿಂಗ್‌ಗಳು ({})',
+  'Henüz değerlendirme yok': 'ಇನ್ನೂ ರೇಟಿಂಗ್‌ಗಳಿಲ್ಲ',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'ರೇಟ್ ಮಾಡಿದ ಧಾರಾವಾಹಿಗಳು ಮತ್ತು ಚಲನಚಿತ್ರಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.',
+  'Değerlendirmeler yüklenemedi': 'ರೇಟಿಂಗ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ',
 };

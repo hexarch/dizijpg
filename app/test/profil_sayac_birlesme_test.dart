@@ -22,6 +22,12 @@
 //  4. DOKUNMA EYLEMLERİ. Kendi profilimde takipçi/takip → liste, beğeni/
 //     görüntülenme/yorum → yorum modali. Açık profilde takipçi/takip → liste,
 //     beğeni/görüntülenme/yorum → "Yorumlar" sekmesi.
+//
+//  5 Eyl 2026 — DÖRDÜNCÜ SÜTUN "YORUM" → "DEĞERLENDİRME" (kullanıcı isteği:
+//  "yorum sütununu kaldır, zaten altta yorumlar var; oraya değerlendirme koy,
+//  tıklayınca hangi dizi filmlere kaç puan verdiği gözüksün"). Sütun her iki
+//  ekranda da [PuanlarSheet] açar; ziyaretçide `izlenenler_gizli` kilitler
+//  (puan "bunu izledim" demektir), sahibi her zaman açar.
 import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
@@ -54,6 +60,7 @@ const _kendiUc = {
   'izlenen_film': 66,
   'takip_edilen_dizi': 77,
   'yorum_sayisi': 88,
+  'puan_sayisi': 99,
   'tahmini_dakika': 90,
 };
 
@@ -68,6 +75,7 @@ const _acikUc = {
   'film': 66,
   'dizi': 77,
   'yorum': 88,
+  'puan': 99,
   'tahmini_dakika': 90,
 };
 
@@ -76,6 +84,7 @@ Map<String, dynamic> _acikProfil({
   bool takipcilerGizli = false,
   bool takipEdilenlerGizli = false,
   bool yorumlarGizli = false,
+  bool izlenenlerGizli = false,
   Map<String, dynamic> istatistik = _acikUc,
 }) => {
   'id': 42,
@@ -90,7 +99,7 @@ Map<String, dynamic> _acikProfil({
   'takip_ediyorum': false,
   'testci': false,
   'misafir': false,
-  'izlenenler_gizli': false,
+  'izlenenler_gizli': izlenenlerGizli,
   'yorumlar_gizli': yorumlarGizli,
   'yanitlar_gizli': false,
   'takipciler_gizli': takipcilerGizli,
@@ -125,6 +134,7 @@ void _kendiSunucu({Map<String, dynamic> istatistik = _kendiUc}) {
         'sosyal': <dynamic>[],
       });
     }
+    if (yol.endsWith('/puanlar')) return _json(_puanlarUc);
     if (yol.startsWith('/profil/')) {
       return _json({'yorumlar': <dynamic>[], 'icerikler': <String, dynamic>{}});
     }
@@ -132,9 +142,19 @@ void _kendiSunucu({Map<String, dynamic> istatistik = _kendiUc}) {
   });
 }
 
+/// `GET /profil/:ad/puanlar` — değerlendirme listesi (iki ekran da bunu çeker).
+const _puanlarUc = {
+  'gizli': false,
+  'toplam': 1,
+  'ogeler': [
+    {'tur': 'tv', 'tmdb_id': 1396, 'puan': 80, 'tarih': '2026-09-01T10:00:00Z'},
+  ],
+};
+
 void _acikSunucu(Map<String, dynamic> profil) {
   Api.istemci = MockClient((istek) async {
     final yol = istek.url.path.replaceFirst('/api', '');
+    if (yol.endsWith('/puanlar')) return _json(_puanlarUc);
     if (yol.startsWith('/profil/')) return _json(profil);
     return _json(const <String, dynamic>{});
   });
@@ -201,6 +221,7 @@ void main() {
         ('film', kendi.film, acik.film),
         ('dizi', kendi.dizi, acik.dizi),
         ('yorum', kendi.yorum, acik.yorum),
+        ('puan', kendi.puan, acik.puan),
       ]) {
         expect(a, b, reason: '$ad iki uçta da aynı sayıyı vermeli');
       }
@@ -212,6 +233,7 @@ void main() {
       expect(kendi.film, 66);
       expect(kendi.dizi, 77);
       expect(kendi.yorum, 88);
+      expect(kendi.puan, 99);
     });
 
     test('ÇAPRAZ ANAHTAR TUZAĞI: yanlış fabrika sessizce 0 vermez', () {
@@ -303,11 +325,19 @@ void main() {
       expect(_takipSayac(tester, 'beğeni').deger, '33');
       expect(_takipSayac(tester, 'görüntülenme').deger, '44');
 
-      // bölüm/film/dizi/yorum → AÇIK PROFİLİN sütun biçimi
+      // bölüm/film/dizi/değerlendirme → AÇIK PROFİLİN sütun biçimi
       expect(_sutun(tester, 'Bölüm').deger, '55');
       expect(_sutun(tester, 'Film').deger, '66');
       expect(_sutun(tester, 'Dizi').deger, '77');
-      expect(_sutun(tester, 'Yorum').deger, '88');
+      expect(_sutun(tester, 'Değerlendirme').deger, '99');
+      // "Yorum" sütunu KALKTI (5 Eyl 2026): yorumlar zaten hemen altta.
+      expect(
+        tester
+            .widgetList<ProfilSayacSutunu>(find.byType(ProfilSayacSutunu))
+            .where((w) => w.etiket == 'Yorum'),
+        isEmpty,
+        reason: 'yorum sütunu değerlendirmeyle değiştirildi',
+      );
 
       // Yuvarlak madalyon düzeni BURADAN kalktı.
       expect(
@@ -324,9 +354,35 @@ void main() {
       for (final e in ['takipçi', 'takip', 'beğeni', 'görüntülenme']) {
         expect(_takipSayac(tester, e).onTap, isNotNull, reason: e);
       }
-      for (final e in ['Bölüm', 'Film', 'Dizi', 'Yorum']) {
+      for (final e in ['Bölüm', 'Film', 'Dizi', 'Değerlendirme']) {
         expect(_sutun(tester, e).onTap, isNotNull, reason: e);
       }
+    });
+
+    testWidgets('Değerlendirmeye dokununca PUAN LİSTESİ açılır', (
+      tester,
+    ) async {
+      _kendiSunucu();
+      await _kur(tester, const ProfilEkrani());
+      expect(find.byType(PuanlarSheet), findsNothing);
+
+      final hedef = find
+          .byWidgetPredicate(
+            (w) => w is ProfilSayacSutunu && w.etiket == 'Değerlendirme',
+          )
+          .first;
+      await tester.ensureVisible(hedef);
+      await tester.pump();
+      await tester.tap(hedef);
+      for (var i = 0; i < 8; i++) {
+        await tester.pump(const Duration(milliseconds: 60));
+      }
+      expect(find.byType(PuanlarSheet), findsOneWidget);
+      // Liste GERÇEKTEN çizildi: sahte uçtaki tek satır + puan bakanın
+      // ölçeğinde (varsayılan 5'lik: 80/100 → 4/5).
+      expect(find.byType(PuanSatiri), findsOneWidget);
+      expect(find.text('4/5'), findsOneWidget);
+      expect(find.text('Değerlendirmeler (1)'), findsOneWidget);
     });
 
     testWidgets('beğeniye dokununca yorum modali AÇILIR', (tester) async {
@@ -370,7 +426,7 @@ void main() {
       expect(_sutun(tester, 'Bölüm').deger, ProfilSayaclari.eksik);
       // Gerçek sıfırlar sıfır kalır.
       expect(_takipSayac(tester, 'beğeni').deger, '0');
-      expect(_sutun(tester, 'Yorum').deger, '0');
+      expect(_sutun(tester, 'Değerlendirme').deger, ProfilSayaclari.eksik);
     });
   });
 
@@ -391,7 +447,7 @@ void main() {
       expect(_sutun(tester, 'Bölüm').deger, '55');
       expect(_sutun(tester, 'Film').deger, '66');
       expect(_sutun(tester, 'Dizi').deger, '77');
-      expect(_sutun(tester, 'Yorum').deger, '88');
+      expect(_sutun(tester, 'Değerlendirme').deger, '99');
 
       // Kutulu beğeni/görüntülenme şeridi gitti (kendi profilde 15 Ağu'da
       // gitmişti, açık profil geride kalmıştı).
@@ -425,7 +481,7 @@ void main() {
       expect(_takipSayac(tester, 'takip').onTap, isNotNull);
     });
 
-    testWidgets('yorum/beğeni/görüntülenme "Yorumlar" SEKMESİNE geçirir', (
+    testWidgets('beğeni/görüntülenme "Yorumlar" SEKMESİNE geçirir', (
       tester,
     ) async {
       _acikSunucu(_acikProfil());
@@ -436,9 +492,7 @@ void main() {
       );
 
       final hedef = find
-          .byWidgetPredicate(
-            (w) => w is ProfilSayacSutunu && w.etiket == 'Yorum',
-          )
+          .byWidgetPredicate((w) => w is TakipSayac && w.etiket == 'beğeni')
           .first;
       await tester.ensureVisible(hedef);
       await tester.pump();
@@ -449,6 +503,40 @@ void main() {
         1,
         reason: 'kendi profilimdeki yorum modalinin ziyaretçi karşılığı',
       );
+    });
+
+    testWidgets('Değerlendirme ziyaretçide de PUAN LİSTESİNİ açar', (
+      tester,
+    ) async {
+      _acikSunucu(_acikProfil());
+      await _kur(tester, const KullaniciProfilEkrani(kullaniciAdi: 'baskasi'));
+      final hedef = find
+          .byWidgetPredicate(
+            (w) => w is ProfilSayacSutunu && w.etiket == 'Değerlendirme',
+          )
+          .first;
+      await tester.ensureVisible(hedef);
+      await tester.pump();
+      await tester.tap(hedef);
+      for (var i = 0; i < 8; i++) {
+        await tester.pump(const Duration(milliseconds: 60));
+      }
+      expect(find.byType(PuanlarSheet), findsOneWidget);
+      expect(find.byType(PuanSatiri), findsOneWidget);
+      // Sekme DEĞİŞMEDİ: değerlendirme yorum sekmesine gitmez.
+      expect(
+        tester.widget<ProfilSekmeleri>(find.byType(ProfilSekmeleri)).secili,
+        0,
+      );
+    });
+
+    testWidgets('Değerlendirme SIFIRSA dokunmasız (boş sayfa vaat edilmez)', (
+      tester,
+    ) async {
+      _acikSunucu(_acikProfil(istatistik: {..._acikUc, 'puan': 0}));
+      await _kur(tester, const KullaniciProfilEkrani(kullaniciAdi: 'baskasi'));
+      expect(_sutun(tester, 'Değerlendirme').deger, '0');
+      expect(_sutun(tester, 'Değerlendirme').onTap, isNull);
     });
   });
 
@@ -484,22 +572,19 @@ void main() {
       expect(_takipSayac(tester, 'takipçi').onTap, isNotNull);
     });
 
-    testWidgets('yorumlar_gizli: yorum/beğeni/görüntülenme kilitli', (
-      tester,
-    ) async {
+    testWidgets('yorumlar_gizli: beğeni/görüntülenme kilitli', (tester) async {
       _acikSunucu(_acikProfil(yorumlarGizli: true));
       await _kur(tester, const KullaniciProfilEkrani(kullaniciAdi: 'baskasi'));
-      expect(_sutun(tester, 'Yorum').onTap, isNull);
       expect(_takipSayac(tester, 'beğeni').onTap, isNull);
       expect(_takipSayac(tester, 'görüntülenme').onTap, isNull);
       // Sayılar yine yazılır (sunucu ömür boyu toplamları gönderiyor).
-      expect(_sutun(tester, 'Yorum').deger, '88');
+      expect(_takipSayac(tester, 'beğeni').deger, '33');
+      // Değerlendirme YORUM gizliliğine bağlı DEĞİL (izlenenlere bağlı).
+      expect(_sutun(tester, 'Değerlendirme').onTap, isNotNull);
 
       // Ve dokunulsa bile sekme DEĞİŞMEZ.
       final hedef = find
-          .byWidgetPredicate(
-            (w) => w is ProfilSayacSutunu && w.etiket == 'Yorum',
-          )
+          .byWidgetPredicate((w) => w is TakipSayac && w.etiket == 'beğeni')
           .first;
       await tester.ensureVisible(hedef);
       await tester.pump();
@@ -511,6 +596,21 @@ void main() {
       );
     });
 
+    testWidgets('izlenenler_gizli: DEĞERLENDİRME kilitli, sayı yazılır', (
+      tester,
+    ) async {
+      _acikSunucu(_acikProfil(izlenenlerGizli: true));
+      await _kur(tester, const KullaniciProfilEkrani(kullaniciAdi: 'baskasi'));
+      expect(_sutun(tester, 'Değerlendirme').deger, '99');
+      expect(
+        _sutun(tester, 'Değerlendirme').onTap,
+        isNull,
+        reason: 'puan "bunu izledim" demektir; izlenenler gizliyse liste yok',
+      );
+      // Yorum tarafı bundan etkilenmez.
+      expect(_takipSayac(tester, 'beğeni').onTap, isNotNull);
+    });
+
     testWidgets('SAHİBİ kendi profiline bakınca kilit YOK', (tester) async {
       _acikSunucu(
         _acikProfil(
@@ -518,12 +618,14 @@ void main() {
           takipcilerGizli: true,
           takipEdilenlerGizli: true,
           yorumlarGizli: true,
+          izlenenlerGizli: true,
         ),
       );
       await _kur(tester, const KullaniciProfilEkrani(kullaniciAdi: 'baskasi'));
       expect(_takipSayac(tester, 'takipçi').onTap, isNotNull);
       expect(_takipSayac(tester, 'takip').onTap, isNotNull);
-      expect(_sutun(tester, 'Yorum').onTap, isNotNull);
+      expect(_takipSayac(tester, 'beğeni').onTap, isNotNull);
+      expect(_sutun(tester, 'Değerlendirme').onTap, isNotNull);
     });
   });
 

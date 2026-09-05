@@ -1642,4 +1642,10 @@ const Map<String, String> cevirilerFil = {
   'Kullanıcı adın @{} oldu': 'Ang username mo ay @{} na',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'Mababago mo ito sa Settings sa ibang pagkakataon; may 90 araw na paghihintay pagkatapos ng bawat pagbabago.',
+  'Değerlendirme': 'Mga rating',
+  'Değerlendirmeler ({})': 'Mga rating ({})',
+  'Henüz değerlendirme yok': 'Wala pang rating',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Makikita rito ang mga na-rate na palabas at pelikula.',
+  'Değerlendirmeler yüklenemedi': 'Hindi ma-load ang mga rating',
 };

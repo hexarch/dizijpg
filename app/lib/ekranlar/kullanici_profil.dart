@@ -20,6 +20,7 @@ import 'profil.dart'
         ProfilKimlikBasligi,
         ProfilOlcumSatiri,
         ProfilSayaclari,
+        PuanlarSheet,
         ProfilSekmeleri,
         ProfilTakipSatiri,
         ProfilYorumAkisi;
@@ -99,6 +100,16 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
   /// listesi yok; sunucunun profil yanıtında gönderdiği son 60 kayıt burada
   /// ızgara olarak açılır. Başlıktaki sayı yine GERÇEK toplamdır (şeritle
   /// aynı, kabul edilmiş kalıp).
+  void _puanlarSheet(int? toplam) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: DiziRenkler.koyuGri,
+      builder: (_) =>
+          PuanlarSheet(kullaniciAdi: widget.kullaniciAdi, toplam: toplam),
+    );
+  }
+
   void _izlenenSheet(String tur) {
     final izlenenler = (_profil?['izlenenler'] as List<dynamic>? ?? [])
         .where((o) => o['tur'] == tur)
@@ -302,7 +313,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                   // SOSYAL SATIRI BURADAN KALKTI (28 Ağu 2026): kimlik
                   // satırında, bayrağın yanında — iki ekran da AYNI bileşen.
                   const SizedBox(height: 16),
-                  // Bölüm / film / dizi / yorum — bu ekranın eşit sütunlu
+                  // Bölüm / film / dizi / değerlendirme — bu ekranın eşit sütunlu
                   // biçimi, artık kendi profilimde de aynısı çiziliyor.
                   // "Dizi" sütunu 21 Ağu 2026'da EKLENDİ (sunucu `dizi`yi
                   // zaten dönüyordu, ekran çizmiyordu); takipçi/takip buradan
@@ -325,7 +336,17 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                     filmTap: izlenenler.any((o) => o['tur'] == 'movie')
                         ? () => _izlenenSheet('movie')
                         : null,
-                    yorumTap: yorumSekmesi,
+                    // Değerlendirme (5 Eyl 2026): izlenenlerle AYNI gizlilik
+                    // kapısı — puan "bunu izledim" demektir. Sunucu gizli
+                    // profilde boş liste döner; sayaç yine yazılır ama boş bir
+                    // sayfa VAAT EDİLMEZ. Sıfırsa da dokunmasız (açılacak şey
+                    // yok). Sahibi her zaman açabilir.
+                    puanTap:
+                        (engelledim ||
+                            (!benMi && p['izlenenler_gizli'] == true) ||
+                            (sayaclar.puan ?? 0) == 0)
+                        ? null
+                        : () => _puanlarSheet(sayaclar.puan),
                   ),
                   // Toplam ekran süresi (kendi profildekiyle aynı biçim)
                   if (((st['tahmini_dakika'] as num?)?.toInt() ?? 0) > 0) ...[

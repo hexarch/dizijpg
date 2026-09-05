@@ -1617,4 +1617,10 @@ const Map<String, String> cevirilerBg = {
   'Kullanıcı adın @{} oldu': 'Потребителското ти име вече е @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'По-късно можеш да го промениш от Настройки; след всяка промяна се чака 90 дни.',
+  'Değerlendirme': 'Оценки',
+  'Değerlendirmeler ({})': 'Оценки ({})',
+  'Henüz değerlendirme yok': 'Все още няма оценки',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Оценените сериали и филми се показват тук.',
+  'Değerlendirmeler yüklenemedi': 'Оценките не можаха да се заредят',
 };

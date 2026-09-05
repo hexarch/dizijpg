@@ -1597,4 +1597,10 @@ const Map<String, String> cevirilerGu = {
   'Kullanıcı adın @{} oldu': 'તમારું યુઝરનેમ હવે @{} છે',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'પછીથી સેટિંગ્સમાંથી બદલી શકો છો; દરેક ફેરફાર પછી 90 દિવસ રાહ જોવી પડે છે.',
+  'Değerlendirme': 'રેટિંગ',
+  'Değerlendirmeler ({})': 'રેટિંગ ({})',
+  'Henüz değerlendirme yok': 'હજુ કોઈ રેટિંગ નથી',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'રેટ કરેલી શ્રેણીઓ અને ફિલ્મો અહીં દેખાશે.',
+  'Değerlendirmeler yüklenemedi': 'રેટિંગ લોડ થઈ શક્યા નહીં',
 };

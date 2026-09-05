@@ -1627,4 +1627,10 @@ const Map<String, String> cevirilerMy = {
   'Kullanıcı adın @{} oldu': 'သင့်အသုံးပြုသူအမည်မှာ ယခု @{} ဖြစ်ပါသည်',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'နောက်ပိုင်း ဆက်တင်များတွင် ပြောင်းနိုင်သည်။ ပြောင်းလဲမှုတိုင်း ပြီးနောက် ရက် 90 စောင့်ရမည်။',
+  'Değerlendirme': 'အဆင့်သတ်မှတ်ချက်များ',
+  'Değerlendirmeler ({})': 'အဆင့်သတ်မှတ်ချက်များ ({})',
+  'Henüz değerlendirme yok': 'အဆင့်သတ်မှတ်ချက် မရှိသေးပါ',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'အဆင့်သတ်မှတ်ထားသော ဇာတ်လမ်းတွဲနှင့် ရုပ်ရှင်များကို ဤနေရာတွင် ပြပါမည်။',
+  'Değerlendirmeler yüklenemedi': 'အဆင့်သတ်မှတ်ချက်များကို ဖွင့်မရပါ',
 };

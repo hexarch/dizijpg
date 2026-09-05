@@ -1532,4 +1532,10 @@ const Map<String, String> cevirilerKo = {
   'Kullanıcı adın @{} oldu': '사용자 이름이 @{}(으)로 바뀌었어요',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       '나중에 설정에서 바꿀 수 있어요. 바꿀 때마다 90일을 기다려야 해요.',
+  'Değerlendirme': '평점',
+  'Değerlendirmeler ({})': '평점 ({})',
+  'Henüz değerlendirme yok': '아직 평점이 없습니다',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      '평점을 남긴 드라마와 영화가 여기에 표시됩니다.',
+  'Değerlendirmeler yüklenemedi': '평점을 불러오지 못했습니다',
 };

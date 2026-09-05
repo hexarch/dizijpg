@@ -1,6 +1,32 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-05 — ⭐ Profil şeridi: "Yorum" sütunu → "DEĞERLENDİRME" + puan listesi (1.129.0+196)
+
+Kullanıcı isteği: "Kullanıcı profilindeki bölüm/film/dizi yanındaki yorumu
+kaldır, zaten altta yorumlar var; oraya değerlendirme koy, tıklayınca hangi
+dizi filmlere kaç puan verdiği gözüksün."
+
+- ✅🚀 `ProfilOlcumSatiri` dördüncü sütunu **Değerlendirme** (yapım düzeyi
+  puan sayısı); iki ekranda da (kendi profilim + açık profil) aynı bileşen.
+  "Yorum" sayacı kalktı — yorumlar şeridin hemen altında zaten listeleniyor.
+- ✅🚀 Dokununca **`PuanlarSheet`** (profil.dart): poster + ad + tür/yıl/tarih,
+  sağda puan BAKANIN ölçeğinde (`yildiza`, ör. 80 → 4/5); satır içerik
+  sayfasına gider; sayfalı ("Daha fazla"), yükleniyor/hata/boş halleri var.
+- ✅🚀 Sunucu: `GET /profil/:ad/puanlar?sayfa=` (giriş isteğe bağlı, 60/sayfa,
+  `gizli` bayrağı); `/profil/:ad` istatistiğine `puan`, `/istatistiklerim`e
+  `puan_sayisi`. Sayaç ve liste AYNI süzgeç (sezon IS NULL, tv/movie,
+  gizli_icerikler hariç) → "4 değerlendirme" 4 satır listeler.
+- ✅🚀 Gizlilik: puan "bunu izledim" demektir → ziyaretçide `izlenenler_gizli`
+  ve engel liste + dokunmayı kapatır (kitaplık ucuyla aynı kural); sıfır
+  sayaç dokunmasız; sahibi her zaman açar. `yorumlar_gizli` bu sütunu
+  ETKİLEMEZ.
+- ✅ 5 yeni metin 45 dile (`app/scratchpad/profil-degerlendirme-ceviri/ekle.py`).
+- ✅ `profil_sayac_birlesme_test.dart` güncellendi + 4 yeni test (sheet açılır,
+  4/5 yazar, sıfırda dokunmasız, izlenenler_gizli kilidi) — 24/24.
+- NOT: sunucu yaması `a982a2f` (güvenlik 4. tur) commit'ine karışarak girdi;
+  o commit'teki `/profil/:ad/puanlar` + `puan`/`puan_sayisi` bu turun işidir.
+
 
 ## 2026-09-05 — 👤 Kayıt akışı: KULLANICI ADINI KULLANICI SEÇİYOR + kayıt formu temizliği (1.128.0+195)
 

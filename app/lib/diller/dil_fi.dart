@@ -1616,4 +1616,10 @@ const Map<String, String> cevirilerFi = {
   'Kullanıcı adın @{} oldu': 'Käyttäjänimesi on nyt @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'Voit muuttaa sen myöhemmin Asetuksista; jokaisen muutoksen jälkeen odotetaan 90 päivää.',
+  'Değerlendirme': 'Arviot',
+  'Değerlendirmeler ({})': 'Arviot ({})',
+  'Henüz değerlendirme yok': 'Ei vielä arvioita',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'Arvioidut sarjat ja elokuvat näkyvät täällä.',
+  'Değerlendirmeler yüklenemedi': 'Arvioita ei voitu ladata',
 };

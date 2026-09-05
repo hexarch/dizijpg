@@ -1637,4 +1637,10 @@ const Map<String, String> cevirilerTa = {
   'Kullanıcı adın @{} oldu': 'உங்கள் பயனர்பெயர் இப்போது @{}',
   'Sonradan Ayarlar\'dan değiştirebilirsin; her değişiklikten sonra 90 gün beklenir.':
       'பின்னர் அமைப்புகளில் மாற்றலாம்; ஒவ்வொரு மாற்றத்திற்குப் பிறகும் 90 நாட்கள் காத்திருக்க வேண்டும்.',
+  'Değerlendirme': 'மதிப்பீடுகள்',
+  'Değerlendirmeler ({})': 'மதிப்பீடுகள் ({})',
+  'Henüz değerlendirme yok': 'இன்னும் மதிப்பீடுகள் இல்லை',
+  'Puan verilen dizi ve filmler burada listelenir.':
+      'மதிப்பிடப்பட்ட தொடர்களும் படங்களும் இங்கே காட்டப்படும்.',
+  'Değerlendirmeler yüklenemedi': 'மதிப்பீடுகளை ஏற்ற முடியவில்லை',
 };
