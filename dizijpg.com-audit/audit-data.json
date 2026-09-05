@@ -1,0 +1,356 @@
+{
+  "summary": {
+    "health_score": 70,
+    "business_type": "Publisher / catalog (TV & film tracking app, programmatic TMDB pages + user reviews)",
+    "top_findings": [
+      "Cloudflare returns 403 to answer-engine bots (OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Claude-SearchBot, MistralAI-User) while robots.txt declares Content-Signal search=yes",
+      "~1M episode URLs in 40+ low-resource languages are indexable template pages without episode title/summary (193-214 words)",
+      "Flutter payload 4.1 MB on desktop; on throttled mobile the engine has not loaded within 12 s (TBT 552 ms desktop)",
+      "Dynamic rendering by User-Agent is the single point of failure for indexing",
+      "Sub-sitemaps not edge-cached (DYNAMIC); uncompressed 3.2 MB / 10-27 s"
+    ],
+    "quick_wins": [
+      "Allow answer-engine bots in Cloudflare AI Crawl Control (keep training bots blocked)",
+      "Add og:image/twitter:image to SSR homepage and language homepages",
+      "Cut meta descriptions at sentence boundary instead of '…'",
+      "Fix translation leaks (sw company page Turkish fragment, untranslated genres, 'AI özeti' on /en)",
+      "Cloudflare Cache Rule for /sitemap*.xml (1h edge TTL)"
+    ]
+  },
+  "categories": [
+    {
+      "name": "Technical SEO",
+      "score": 78,
+      "what_works": [
+        "HTTPS+HSTS, CSP, security headers complete",
+        "301s for http/www/trailing slash/uppercase; canonical strips query",
+        "robots.txt served by Node; sensitive surfaces disallowed",
+        "Valid sitemap index, 187 children, lastmod",
+        "Bots get 404 for missing pages; SSR TTFB 0.30-0.41 s",
+        "hreflang 46 languages + x-default, reciprocal"
+      ],
+      "findings": [
+        {
+          "title": "Sitemap lists 1,316,781 URLs; episode family ~1.2M across 46 languages",
+          "severity": "High",
+          "description": "GSC memory: episode family ~4% indexed. User decision (5 Sep) keeps all 46 languages; monitor gap between submitted and indexed.",
+          "recommendation": "Apply content-based noindex gate (see Content #1) rather than language-based cuts; watch indexed/submitted ratio."
+        },
+        {
+          "title": "Dynamic rendering by User-Agent is the only path to indexable HTML",
+          "severity": "Medium",
+          "description": "Human UA receives 12.9 KB Flutter shell with generic title; bots receive SSR. nginx bot regex is a single point of failure (3 Sep regex bug dropped SEO tools to shell).",
+          "recommendation": "Add regression test for the UA matrix after every deploy; long-term serve SSR to everyone with Flutter hydrating on top."
+        },
+        {
+          "title": "Human UA gets HTTP 200 for non-existent paths (soft 404)",
+          "severity": "Medium",
+          "description": "/olmayan-sayfa-xyz123 returns 200 + shell for humans; Googlebot gets 404.",
+          "recommendation": "Return 404 status with the shell or an nginx 404 page for unknown routes."
+        },
+        {
+          "title": "Sub-sitemaps not cached at the edge",
+          "severity": "Medium",
+          "description": "cf-cache-status DYNAMIC; gzip 123 KB/1.0 s, uncompressed 3.2 MB/10-27 s.",
+          "recommendation": "Cloudflare Cache Rule: /sitemap*.xml eligible, 1h edge TTL."
+        },
+        {
+          "title": "No llms.txt",
+          "severity": "Low",
+          "description": "Bot UA 404, human UA shell 200. Optional; ignored by Google.",
+          "recommendation": "Optional: serve plain text on the SSR route."
+        },
+        {
+          "title": "document.title stays 'dizi.jpg' on every page in the Flutter app",
+          "severity": "Low",
+          "description": "Playwright: title unchanged after render on / and /icerik/tv/1405.",
+          "recommendation": "Set page title from Flutter router for bookmarks/sharing."
+        }
+      ]
+    },
+    {
+      "name": "Content Quality",
+      "score": 62,
+      "what_works": [
+        "Series/movie/person pages 400-950 words with plot, FAQ, dated user reviews, labelled AI summary",
+        "QRG content scorer 84-96, no filler/AI-pattern flags",
+        "Person pages already noindex when biography missing in that language"
+      ],
+      "findings": [
+        {
+          "title": "Episode pages in low-resource languages are template filler",
+          "severity": "High",
+          "description": "/sw, /am, /hi episode pages: no episode title or summary (no TMDB translation); 193-214 words all boilerplate; indexable and in sitemap (~1M URLs).",
+          "recommendation": "Content gate identical to person pages: if episode title OR summary missing in that language → noindex,follow and drop from sitemap. Not a language cut; tr/en/de unaffected."
+        },
+        {
+          "title": "Translation leaks",
+          "severity": "Medium",
+          "description": "/sw/sirket/4343 contains Turkish 'Öne çıkan yapımları:'; genres untranslated on sw/am series pages; '@dizi.jpg.ai dizi.jpg AI özeti' Turkish on /en.",
+          "recommendation": "Add leak scan across 46 languages for Turkish tokens; translate genre names."
+        },
+        {
+          "title": "Meta descriptions end mid-sentence with '…'",
+          "severity": "Medium",
+          "description": "e.g. '...Miami'de…', '...atom…'.",
+          "recommendation": "Truncate at sentence boundary."
+        },
+        {
+          "title": "Homepage H1 is brand only",
+          "severity": "Low",
+          "description": "H1 'dizi.jpg' while title carries the keyword.",
+          "recommendation": "H1: 'Dizi ve film takip uygulaması' variant."
+        },
+        {
+          "title": "/kesfet titled 'Ana Sayfa — dizi.jpg'",
+          "severity": "Low",
+          "description": "Concept collides with root page.",
+          "recommendation": "Title/H1 'Haftanın dizileri ve filmleri'."
+        },
+        {
+          "title": "E-E-A-T",
+          "severity": "Info",
+          "description": "Reviews carry username+date; AI summary labelled; provider source (JustWatch) credited. No about/contact page in SSR; Organization.sameAs only Play Store.",
+          "recommendation": "Add about page + social/App Store sameAs."
+        }
+      ]
+    },
+    {
+      "name": "On-Page SEO",
+      "score": 80,
+      "what_works": [
+        "Unique keyword-first titles per template",
+        "Single H1, logical H2s, BreadcrumbList",
+        "Strong internal linking: series→52 episodes+8 people+4 companies+8 similar"
+      ],
+      "findings": [
+        {
+          "title": "Meta descriptions truncated with '…'",
+          "severity": "Medium",
+          "description": "See Content.",
+          "recommendation": "Sentence-boundary cut."
+        },
+        {
+          "title": "/kesfet title duplicates homepage concept",
+          "severity": "Low",
+          "description": "'Ana Sayfa — dizi.jpg'.",
+          "recommendation": "Differentiate."
+        },
+        {
+          "title": "Homepage H1 brand-only",
+          "severity": "Low",
+          "description": "",
+          "recommendation": "Add keyword."
+        }
+      ]
+    },
+    {
+      "name": "Schema / Structured Data",
+      "score": 85,
+      "what_works": [
+        "TVSeries/Movie/TVEpisode→TVSeason→TVSeries/Person/Organization/BreadcrumbList/AggregateRating nested correctly in @graph",
+        "dateModified present"
+      ],
+      "findings": [
+        {
+          "title": "FAQPage on every template",
+          "severity": "Info",
+          "description": "Google retired FAQ rich results for all sites on 7 May 2026. No SERP benefit; no harm.",
+          "recommendation": "Do not remove; do not add new FAQPage for SERP reasons; keep <dl> FAQ text for GEO."
+        },
+        {
+          "title": "AggregateRating with ratingCount=3",
+          "severity": "Low",
+          "description": "Accurate but low counts may not be shown.",
+          "recommendation": "Emit aggregateRating only when ratingCount ≥ 5."
+        },
+        {
+          "title": "Organization.sameAs only Play Store",
+          "severity": "Low",
+          "description": "",
+          "recommendation": "Add social profiles + App Store once approved."
+        }
+      ]
+    },
+    {
+      "name": "Performance (CWV)",
+      "score": 55,
+      "what_works": [
+        "SSR TTFB 0.30-0.41 s for bots",
+        "CLS 0 on all measured pages",
+        "Inline splash screen gives FCP ~1 s on throttled mobile",
+        "GIS script async+defer"
+      ],
+      "findings": [
+        {
+          "title": "Flutter payload 4.1 MB; engine not loaded within 12 s on throttled mobile",
+          "severity": "High",
+          "description": "canvaskit.wasm 2.9 MB + skwasm.wasm 1.5 MB + main.dart.js. Desktop: load 4.7 s, 8 long tasks, TBT 552 ms. Mobile (4x CPU, 1.6 Mb/s): only 4 resources/37 KB after 12 s.",
+          "recommendation": "Ship a single renderer variant; deferred imports for login/chat/media editor/collage; re-measure with the same Playwright script."
+        },
+        {
+          "title": "No field data (CrUX) available",
+          "severity": "Medium",
+          "description": "PSI anonymous quota exhausted; no API key.",
+          "recommendation": "Create free Google API key; run /seo google for CrUX 25-week history."
+        }
+      ]
+    },
+    {
+      "name": "AI Search Readiness",
+      "score": 45,
+      "what_works": [
+        "Clean CSS-less SSR HTML with <dl> FAQs, dates, numbers, source attribution",
+        "Content-Signal declared in robots.txt"
+      ],
+      "findings": [
+        {
+          "title": "Answer-engine bots blocked with 403 at Cloudflare",
+          "severity": "Critical",
+          "description": "OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Claude-SearchBot, MistralAI-User → 403 'Your request was blocked' (server: cloudflare, no origin headers). robots.txt only disallows training bots and declares search=yes.",
+          "recommendation": "Cloudflare AI Crawl Control: allow answer/search bots; keep GPTBot/ClaudeBot/CCBot/Bytespider blocked. Verify with UA matrix → 200."
+        },
+        {
+          "title": "SSR homepage lacks og:image/twitter:image",
+          "severity": "Medium",
+          "description": "Shell has Icon-512; SSR homepage and language homepages do not.",
+          "recommendation": "Add og:image + summary_large_image."
+        },
+        {
+          "title": "No llms.txt",
+          "severity": "Low",
+          "description": "Optional.",
+          "recommendation": "Optional."
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "score": 85,
+      "what_works": [
+        "All SSR images have alt, width/height, loading=lazy",
+        "TMDB CDN sizes w185/w342/w780 appropriate"
+      ],
+      "findings": [
+        {
+          "title": "Homepage SSR has no og:image",
+          "severity": "Medium",
+          "description": "",
+          "recommendation": "Add."
+        }
+      ]
+    }
+  ],
+  "action_plan": {
+    "phases": [
+      {
+        "name": "Phase 1: Critical Fixes",
+        "timeframe": "Week 1",
+        "items": [
+          "Allow answer-engine bots in Cloudflare (verify UA matrix returns 200)",
+          "Episode-page content gate: noindex,follow + drop from sitemap when title/summary missing in that language",
+          "Cloudflare Cache Rule for /sitemap*.xml"
+        ]
+      },
+      {
+        "name": "Phase 2: High-Impact Improvements",
+        "timeframe": "Weeks 2-3",
+        "items": [
+          "Reduce Flutter payload: single renderer, deferred imports; re-measure",
+          "og:image on SSR homepage + language homepages",
+          "Sentence-boundary meta descriptions",
+          "Translation leak scan and fixes"
+        ]
+      },
+      {
+        "name": "Phase 3: Content & Authority",
+        "timeframe": "Month 2",
+        "items": [
+          "About/contact page in SSR; Organization.sameAs social + App Store",
+          "aggregateRating threshold ≥5",
+          "/kesfet and homepage H1 wording",
+          "Real 404 status for human UA"
+        ]
+      },
+      {
+        "name": "Phase 4: Monitoring & Iteration",
+        "timeframe": "Ongoing",
+        "items": [
+          "CrUX/GSC API keys → /seo google",
+          "/seo drift baseline then compare after each deploy",
+          "UA matrix + Playwright lab script after each deploy",
+          "Common Crawl backlink graph when download completes"
+        ]
+      }
+    ]
+  },
+  "lab_measurements": [
+    {
+      "url": "https://dizijpg.com/",
+      "device": "mobile-throttled",
+      "ttfb_ms": 366,
+      "fcp_ms": 1024,
+      "lcp_ms": 1640,
+      "cls": 0,
+      "tbt_ms": 0,
+      "transfer_kb": 37,
+      "resources": 4,
+      "note": "Flutter engine not loaded within 12 s"
+    },
+    {
+      "url": "https://dizijpg.com/",
+      "device": "desktop",
+      "ttfb_ms": 310,
+      "fcp_ms": 648,
+      "lcp_ms": 1280,
+      "cls": 0,
+      "tbt_ms": 552,
+      "long_tasks": 8,
+      "load_ms": 4762,
+      "transfer_kb": 4114,
+      "resources": 63
+    },
+    {
+      "url": "https://dizijpg.com/icerik/tv/1405",
+      "device": "mobile-throttled",
+      "ttfb_ms": 328,
+      "fcp_ms": 520,
+      "lcp_ms": 588,
+      "cls": 0,
+      "transfer_kb": 37,
+      "resources": 4
+    },
+    {
+      "url": "https://dizijpg.com/icerik/tv/1405",
+      "device": "desktop",
+      "ttfb_ms": 742,
+      "fcp_ms": 868,
+      "lcp_ms": 984,
+      "cls": 0,
+      "transfer_kb": 1631,
+      "resources": 5
+    }
+  ],
+  "sitemap": {
+    "total_urls": 1316781,
+    "children": 187,
+    "families": {
+      "bolum": "46 × ~26,200",
+      "icerik": "46 × 2,486",
+      "sirket": "46 × 227",
+      "kisi": "tr 3,554 + en 3,598",
+      "genel": 49
+    }
+  },
+  "artifacts": {
+    "findings_dir": "findings/",
+    "screenshots_dir": "screenshots/"
+  },
+  "backlinks": {
+    "source": "Common Crawl cc-main-2026-jan-feb-mar",
+    "pagerank": null,
+    "harmonic_centrality": null,
+    "hosts": null,
+    "note": "domain absent from graph; no recorded referring hosts in Jan-Mar 2026 crawl"
+  }
+}

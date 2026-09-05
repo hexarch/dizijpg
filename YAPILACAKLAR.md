@@ -9178,3 +9178,12 @@ Kimlik atlama / SQLi / komut enjeksiyonu / SSRF / yol geçişi YOK.
 - ⬜ Aday: ileride arka planda çağrılan başka uçlar (örn. push token
   yenileme) çıkarsa aynı listeye ekle; istemci tarafında `X-Arka-Plan`
   başlığı GEREKMEDİ (yol listesi yeterli).
+
+## 2026-09-06 — 🔎 SEO tam denetimi (70/100) + backend düzeltmeleri canlıda
+
+`/seo audit https://dizijpg.com` → rapor `dizijpg.com-audit/`. Aynı gün kapanan:
+meta açıklama cümle sınırında (…yok), ana sayfa og:image + anahtar kelimeli H1,
+/kesfet başlığı, şirket/yorum çeviri sızıntıları (46 dil `aiOzeti`), /llms.txt.
+Açık kalanlar SEO-YAPILACAKLAR.md §19.2'de: Cloudflare cevap botu 403'ü
+(panel), sitemap Cache Rule (panel), Flutter yükü/başlık, düşük kaynaklı dil
+bölüm sayfaları (tasarım kararı).

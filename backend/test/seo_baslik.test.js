@@ -39,8 +39,8 @@ const seoIcerikBasligi = alan(
   ['SEO_BASLIK_MAX', 'SEO_MARKA', 'seoPozitif', 'seoIcerikKunyesi', 'seoIcerikBasligi'],
   'seoIcerikBasligi');
 const seoIcerikAciklamasi = alan(
-  ['SEO_ACIKLAMA_MAX', 'seoMetin', 'seoPozitif', 'seoIcerikKunyesi', 'seoKirp',
-    'seoIcerikAciklamasi'], 'seoIcerikAciklamasi');
+  ['SEO_ACIKLAMA_MAX', 'SEO_KUYRUK_MIN', 'seoMetin', 'seoPozitif', 'seoIcerikKunyesi',
+    'seoKirp', 'seoIcerikAciklamasi'], 'seoIcerikAciklamasi');
 const seoKisiBasligi = alan(
   ['SEO_BASLIK_MAX', 'SEO_MARKA', 'seoKisiBasligi'], 'seoKisiBasligi');
 const seoOrtalamaPuan = alan(

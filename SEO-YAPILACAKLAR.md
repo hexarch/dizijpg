@@ -1812,3 +1812,44 @@ dönerse elde ne varsa o basılır — test paketi üç yolu da çalıştırıyo
 - **Ölçüm penceresi:** §17.5 md.4 aynen geçerli — **10 Eylül'de** keşif
   kuyruğu ve `bolum` panel indeks oranı okunacak. Kadro düzeltmesinin etkisi
   ayrıca `icerik` ailesinin ortalama konumunda (bugün 52) aranacak.
+
+## 19. 6 Eyl 2026 — `/seo audit` tam denetimi (70/100) ve aynı gün kapananlar
+
+Rapor: `dizijpg.com-audit/` (FULL-AUDIT-REPORT.md, ACTION-PLAN.md, findings/,
+audit-data.json, HTML rapor, ekran görüntüleri, `cwv_lab.py`).
+
+### 19.1 ✅ AYNI GÜN KAPANDI (backend, canlıda doğrulandı)
+- **Meta açıklama "…" ile bitmiyor.** `seoKirp` önce CÜMLE sınırında kırpar;
+  "Konu:" ve biyografi kuyruğu yalnız tam cümle olarak sığarsa eklenir.
+- **Ana sayfa + 45 dil ana sayfası SSR'ında `og:image`** (Icon-512) ve
+  `twitter:card=summary_large_image`; H1 artık marka değil başlığın anahtar
+  kelimeli gövdesi (`seoAnaH1`).
+- **/kesfet başlığı** "Ana Sayfa — dizi.jpg" → "Haftanın dizileri ve filmleri,
+  öne çıkan raflar — dizi.jpg"; kırıntı "Keşfet".
+- **Çeviri sızıntıları:** şirket açıklaması `kisiAcOne`/`acYorum` anahtarına
+  bağlandı (/sw/sirket Türkçe cümle gitti); yorum bloğundaki "dizi.jpg AI
+  özeti" etiketi 46 dile çevrildi (`aiOzeti`).
+- **/llms.txt** Node'dan servis (robots.txt ile aynı yol; nginx `location =
+  /llms.txt`, Dockerfile COPY). Bot UA'sında 404 yerine 200 text/plain.
+
+### 19.2 ⬜ AÇIK — panel/uygulama işi
+- **Cloudflare cevap botlarına 403 veriyor** (OAI-SearchBot, ChatGPT-User,
+  PerplexityBot, Perplexity-User, Claude-SearchBot, MistralAI-User). robots.txt
+  `Content-Signal: search=yes` diyor → çelişki. CF panel → AI Crawl Control:
+  cevap/arama botlarına izin, eğitim botları (GPTBot, ClaudeBot, CCBot,
+  Bytespider) kapalı kalsın. Doğrulama: UA matrisi curl → 200.
+- **Cloudflare Cache Rule** `/sitemap*.xml` → kenar önbelleği 1 saat (bugün
+  DYNAMIC; sıkıştırmasız 3,2 MB / 10–27 s).
+- **Flutter yükü:** main.dart.js 2,5 MB (br) + canvaskit 1,6 MB = 4,1 MB;
+  kısıtlı mobilde (4× CPU, 1,6 Mb/s) motor 12 s'de inmiyor; masaüstü TBT
+  552 ms. Deferred import ayrımı (sohbet, medya editörü, kolaj, giriş).
+- **Flutter `document.title`** her sayfada "dizi.jpg" kalıyor (yer imi/paylaşım).
+- **Düşük kaynaklı dillerde bölüm sayfaları** (sw, am, hi…): bölüm adı/özeti
+  yok, 193–214 kelime şablon, indekslenebilir ve haritada (~1 M URL). Kişi
+  sayfasının içerik kapısı (biyografi yoksa noindex) bölüme taşınabilir ama
+  harita ⊆ indekslenebilir kuralı gereği sitemap tarafı da aynı koşulu bilmeli
+  (DB'de dil bazlı çeviri varlığı yok) → tasarım kararı gerekiyor. 46 dil
+  haritası KULLANICI KARARI (5 Eyl), dil bazlı kesme önerilmiyor.
+- Tür adları TMDB çevirisi olmayan dillerde İngilizce kalıyor (sw/am).
+- CrUX/PSI API anahtarı yok → `/seo google` alan verisi çekemiyor.
+- Common Crawl grafiğinde alan adı yok = kayıtlı dış bağlantı 0.

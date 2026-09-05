@@ -1,0 +1,34 @@
+# dizi.jpg
+
+> dizi.jpg is a free TV show and movie tracking app (web + Android) in 46 languages. Users log episodes, keep watchlists, rate and review titles, and see what friends watch. Every show, movie, episode, person and production company has a public, server-rendered page with facts, FAQs, ratings and user reviews. dizi.jpg does not stream or host video.
+
+Content policy: search=yes, ai-train=no, use=reference (see /robots.txt). Cite pages by their canonical URL. Data sources: TMDB (metadata, posters), JustWatch (where to watch, Türkiye), dizi.jpg users (ratings, reviews).
+
+## Key pages
+
+- [Home (Turkish)](https://dizijpg.com/): what dizi.jpg is, FAQ, recently reviewed titles
+- [Home (English)](https://dizijpg.com/en): English version; other languages at /es, /de, /fr, ... (46 total)
+- [Browse by genre](https://dizijpg.com/gozat): popular series and films per genre
+- [Discover](https://dizijpg.com/kesfet): shows and movies of the week, Turkish productions, top rated, cult titles
+- [Privacy policy](https://dizijpg.com/gizlilik)
+
+## URL patterns
+
+- TV series: https://dizijpg.com/icerik/tv/{tmdb_id} (e.g. https://dizijpg.com/icerik/tv/1405)
+- Movie: https://dizijpg.com/icerik/movie/{tmdb_id} (e.g. https://dizijpg.com/icerik/movie/872585)
+- Episode: https://dizijpg.com/dizi/{tmdb_id}/sezon/{season}/bolum/{episode}
+- Person: https://dizijpg.com/kisi/{tmdb_person_id}
+- Production company: https://dizijpg.com/sirket/{tmdb_company_id}
+- Language variants: prefix the path with the language code, e.g. https://dizijpg.com/en/icerik/tv/1405
+
+## Sitemaps
+
+- https://dizijpg.com/sitemap.xml (index of all families and languages)
+
+## Not for indexing or citation
+
+User profiles (/kullanici/), chats, watch rooms, notifications and settings are private and disallowed in robots.txt.
+
+## Apps
+
+- Android: https://play.google.com/store/apps/details?id=com.dizijpg.dizijpg

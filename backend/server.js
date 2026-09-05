@@ -3015,7 +3015,7 @@ async function seoOzetZinciri(ozetDil, ozetEn, dil) {
 
 // Tek yorum/inceleme bloğu. `puan` verilirse başlıkta gösterilir — JSON-LD'deki
 // reviewRating ile sayfada GÖRÜNEN değer aynı olmalı (yapısal veri politikası).
-function seoYorumHtml({ kullanici_adi, metin, tarih, puan, tohum, ai: aiSutun }) {
+function seoYorumHtml({ kullanici_adi, metin, tarih, puan, tohum, ai: aiSutun, dil = 'tr' }) {
   const t = seoGun(tarih);
   // KİMLİK SÜTUNDA, ADDA DEĞİL (21 Ağu 2026 kuralı, migrasyon-2026-08-21d.sql).
   // Burada AI hesabı ADIYLA karşılaştırılıyordu (27 Ağu 2026'da temizlendi):
@@ -3024,7 +3024,9 @@ function seoYorumHtml({ kullanici_adi, metin, tarih, puan, tohum, ai: aiSutun })
   // test/yasakli_kullanici_adi.test.js. Sorgular `k.tohum` döndürüyor; `ai` sütunu da varsa o da
   // sayılır (tek hesap) — ikisi de yoksa normal kullanıcı.
   const ai = !!tohum || aiSutun === true;
-  const etiket = ai ? ' <small>dizi.jpg AI özeti</small>' : '';
+  // Etiket çevrilir (6 Eyl 2026): /en sayfasında "dizi.jpg AI özeti" Türkçe
+  // kalıyordu. Anahtar `aiOzeti`, 46 dilde (seo_dil.js).
+  const etiket = ai ? ` <small>${htmlKacir(seoDil(dil).aiOzeti)}</small>` : '';
   return `<article><h3>@${htmlKacir(kullanici_adi)}${etiket}`
     + `${puan ? ` — ${htmlKacir(seoYildiz(puan))}/5` : ''}</h3>`
     + `<p>${htmlKacir(seoMetin(metin))}</p>`
@@ -3525,11 +3527,11 @@ function seoDegerlendirmeGovdesi(seo, { incelemeBasligi, yorumBasligi, dil = 'tr
   // düzeltmeye geldiğimiz politika ihlalinin ta kendisi, sessiz hâli.
   const incelemeBlok = seo.incelemeler.length
     ? `\n<h2>${htmlKacir(incelemeBasligi)}</h2>\n`
-      + seo.incelemeler.map((r) => seoYorumHtml({ ...r, metin: r.metin ?? r.yorum }))
+      + seo.incelemeler.map((r) => seoYorumHtml({ ...r, metin: r.metin ?? r.yorum, dil }))
         .join('\n') : '';
   const yorumBlok = seo.yorumlar.length
     ? `\n<h2>${htmlKacir(yorumBasligi)}</h2>\n`
-      + seo.yorumlar.map(seoYorumHtml).join('\n') : '';
+      + seo.yorumlar.map((y) => seoYorumHtml({ ...y, dil })).join('\n') : '';
   return puanBlok + incelemeBlok + yorumBlok;
 }
 
@@ -3614,11 +3616,30 @@ function seoIcerikKunyesi({ tur, sezon, bolum, sure, dil = 'tr' }) {
   return seoPozitif(sure) ? [bic(t.dakikaSayi, { n: seoPozitif(sure) })] : [];
 }
 
-/** Metni `max` karakterde KELİME sınırında kırpar ve `…` ekler. */
+// Yarım (…) kuyruğun kabul edildiği en kısa uzunluk (bkz. seoIcerikAciklamasi).
+const SEO_KUYRUK_MIN = 50;
+
+/**
+ * Metni `max` karakterde kırpar. ÖNCE CÜMLE SINIRI (6 Eyl 2026 SEO denetimi):
+ * "…Miami'de…" gibi kesik kuyruklu snippet SERP'te tıklamayı düşürüyordu.
+ * Kesilen parçada `max`ın en az %45'ini dolduran bir cümle sonu (. ! ?) varsa
+ * orada TAM CÜMLEYLE biter, `…` eklenmez. Yoksa eski davranış: KELİME
+ * sınırında kırp ve `…` ekle (yarım kelime asla bırakılmaz).
+ */
 function seoKirp(metin, max) {
   const s = seoMetin(metin);
   if (s.length <= max) return s;
   const kesik = s.slice(0, max - 1);
+  // `\x29` = kapanış parantezi. Test yardımcısı `bildirimCek` ayraç sayarak
+  // fonksiyon sonunu bulur; karakter sınıfında çıplak yazılsa onu şaşırtırdı.
+  const cumle = kesik.search(/[.!?]["'»”\x29]?\s[^.!?]*$/);
+  if (cumle >= max * 0.45) {
+    const sonNokta = kesik.slice(0, cumle + 1);
+    // Kısaltma noktası — "Jr.", "Dr.", "vs." — cümle sonu sayılmaz.
+    if (!/\b(?:[A-ZÇĞİÖŞÜ][a-zçğıöşü]{0,2}|vs|vb|bkz|Jr|Sr|Dr|Mr|Mrs|Ms|St)\.$/.test(sonNokta)) {
+      return sonNokta.trim();
+    }
+  }
   const bosluk = kesik.lastIndexOf(' ');
   const govde = bosluk > max * 0.5 ? kesik.slice(0, bosluk) : kesik;
   return `${govde.replace(/[\s,;:.…-]+$/, '')}…`;
@@ -3713,14 +3734,24 @@ function seoIcerikAciklamasi({ ad, yil, tur, sezon, bolum, sure, ozet,
   // sitede AYNI metin, yönetmen adı ise sorgunun kendisi ("<film> yönetmeni").
   // `ekle` süzgeci sayesinde sığmıyorsa HİÇ yazılmaz — 155 tavanı korunur.
   // Sayfadaki görünür karşılığı künye satırı (`kunyeSatirlari`).
-  ekle(kunyeNiteligi ? `${kunyeNiteligi}.` : '');
+  // Ad zaten noktayla bitiyorsa ("James Manos Jr.") ikinci nokta basılmaz
+  // (6 Eyl 2026: canlıda "Jr.." görüldü).
+  ekle(kunyeNiteligi ? `${kunyeNiteligi}${/[.!?]$/.test(kunyeNiteligi) ? '' : '.'}` : '');
   const metin = parcalar.join(' ');
   // ' Konu: ' = 7 karakter (dile göre değişir; ölçü şablondan alınır). Kalan
   // yer 30'un altındaysa özet parçası HİÇ eklenmez: üç kelimelik bir kuyruk
   // okura bilgi vermez, yalnız `…` üretir.
   const kalan = SEO_ACIKLAMA_MAX - metin.length - (t.konuEki.length + 1);
   const oz = seoMetin(ozet);
-  return oz && kalan >= 30 ? `${metin} ${t.konuEki}${seoKirp(oz, kalan)}` : metin;
+  // KUYRUK KURALI (6 Eyl 2026 SEO denetimi): `seoKirp` önce cümle sınırında
+  // keser (o zaman `…` yok). Kesemediyse kelime sınırında `…` ile biter; bu
+  // yalnız kuyruk BİLGİ TAŞIYACAK kadar uzunsa (≥ SEO_KUYRUK_MIN) kabul edilir.
+  // "Konu: İkinci Dünya…" gibi üç kelimelik yarım kuyruk okura bir şey
+  // söylemez, yalnız `…` üretir — o durumda özet parçası HİÇ eklenmez.
+  if (!oz || kalan < 30) return metin;
+  const kuyruk = seoKirp(oz, kalan);
+  if (kuyruk.endsWith('…') && kuyruk.length < SEO_KUYRUK_MIN) return metin;
+  return `${metin} ${t.konuEki}${kuyruk}`;
 }
 
 /**
@@ -5074,7 +5105,12 @@ function seoKisiAciklamasi(ad, v, yapimlar, ekler = {}) {
   const metin = parcalar.join(' ');
   const kalan = SEO_ACIKLAMA_MAX - metin.length - 1;
   const biyo = seoMetin(biyografi);
-  return biyo && kalan >= 30 ? `${metin} ${seoKirp(biyo, kalan)}` : metin;
+  // Aynı kuyruk kuralı (6 Eyl 2026): tam cümle, ya da en az SEO_KUYRUK_MIN
+  // karakterlik bilgi taşıyan kelime-sınırlı kuyruk; aksi hâlde eklenmez.
+  if (!biyo || kalan < 30) return metin;
+  const kuyruk = seoKirp(biyo, kalan);
+  if (kuyruk.endsWith('…') && kuyruk.length < SEO_KUYRUK_MIN) return metin;
+  return `${metin} ${kuyruk}`;
 }
 
 /**
@@ -5418,14 +5454,17 @@ function seoSirketAciklamasi(ad, firma, yapimlar, ekler = {}) {
   // bitiyordu). 20 Ağu 2026: sabit üç yerine SIĞAN KADAR — uzun adlı üç yapım
   // tek başına 155'i aşabiliyor.
   for (let n = Math.min(3, yapimlar.length); n >= 1; n--) {
-    const c = `Öne çıkan yapımları: ${yapimlar.slice(0, n).map((y) => y.ad).join(', ')}.`;
+    // ÇEVİRİ (6 Eyl 2026): Türkçe dizgi 46 dilin şirket sayfasına sızıyordu
+    // (ölçüldü: /sw/sirket/4343 "Öne çıkan yapımları:"). Kişi sayfasıyla aynı
+    // anahtar (`kisiAcOne`), tr metni birebir aynı.
+    const c = bic(t.kisiAcOne, { l: yapimlar.slice(0, n).map((y) => y.ad).join(', ') });
     if (sigar(c) || n === 1) { if (sigar(c)) parcalar.push(c); break; }
   }
   // KOŞULLU KAPANIŞ (20 Ağu 2026): eski hâli her firmada "puanlarını ve
   // yorumlarını görebilirsin" diyordu; firma hakkında hiç yorum yokken bu
   // boş bir vaatti (aynı düzeltme `seoKisiAciklamasi`de de yapıldı).
   const c = seoPozitif(degerlendirmeAdet)
-    ? `dizi.jpg'de ${seoPozitif(degerlendirmeAdet)} kullanıcı yorumu ve incelemesi.` : '';
+    ? bic(t.acYorum, { n: seoPozitif(degerlendirmeAdet) }) : '';
   if (c && sigar(c)) parcalar.push(c);
   return parcalar.join(' ');
 }
@@ -6403,6 +6442,12 @@ function seoAnaSorulari(dil = 'tr') {
   ];
 }
 
+/** Ana sayfa H1'i: `anaBaslik`tan marka eki soyulur (bkz. /og/ana). */
+const seoAnaH1 = (baslik) => String(baslik || '')
+  .replace(/\s*\|\s*dizi\.jpg\s*$/i, '')
+  .replace(/^\s*dizi\.jpg\s*[—–-]\s*/i, '')
+  .trim() || 'dizi.jpg';
+
 app.get('/og/ana', sarici(async (_req, res) => {
   const dil = seoSsrDil();
   const t = seoDil(dil);
@@ -6428,8 +6473,16 @@ app.get('/og/ana', sarici(async (_req, res) => {
   }
   res.type('html').send(ogSayfa({
     baslik: t.anaBaslik,
-    h1: 'dizi.jpg',
+    // H1 (6 Eyl 2026 SEO denetimi): yalnız marka değil, başlığın anahtar
+    // kelimeli gövdesi. Marka eki her dilde ya "| dizi.jpg" (tr/en/es) ya
+    // "dizi.jpg — " (diğerleri) — ikisi de burada soyulur; ek yoksa olduğu
+    // gibi kalır. Marka <p> altındaki bağlantıda ve og:site_name'de zaten var.
+    h1: seoAnaH1(t.anaBaslik),
     aciklama: t.anaAciklama,
+    // og:image (6 Eyl 2026): içerik sayfaları TMDB afişi basıyor, ana sayfa ve
+    // 45 dil ana sayfası görselsiz kalıyordu (twitter:card=summary). Flutter
+    // kabuğundaki (index.html) genel kartla AYNI dosya.
+    gorsel: `${SITE_KOK}/icons/Icon-512.png`,
     url,
     canonical: url,
     tur: 'website',
@@ -6652,11 +6705,14 @@ function ogKesifUcu({ yol, tanimlar, baslik, h1, aciklama, kirintiAd, altMetin }
 app.get('/og/kesfet', ogKesifUcu({
   yol: '/kesfet',
   tanimlar: SEO_KESFET_RAFLARI,
-  baslik: 'Ana Sayfa — dizi.jpg',
-  h1: 'dizi.jpg Ana Sayfa',
+  // 6 Eyl 2026 SEO denetimi: "Ana Sayfa — dizi.jpg" kök sayfayla kavram
+  // çakışıyordu (iki "ana sayfa"). Başlık artık sayfanın içeriğini söylüyor;
+  // ana sayfadaki hub bağlantısının metniyle (`SEO_KESIF_HUB`) aynı.
+  baslik: 'Haftanın dizileri ve filmleri, öne çıkan raflar — dizi.jpg',
+  h1: 'Haftanın dizileri, filmleri ve öne çıkan raflar',
   aciklama: 'Haftanın dizileri ve filmleri, Türk yapımları, en yüksek puanlı '
-    + 've kült başlıklar — dizi.jpg ana sayfasının derlediği raflar.',
-  kirintiAd: 'Ana Sayfa',
+    + 've kült başlıklar — dizi.jpg\'nin her hafta derlediği raflar.',
+  kirintiAd: 'Keşfet',
   altMetin: 'dizi.jpg ana sayfası; haftanın öne çıkanlarından Türk '
     + 'yapımlarına, en yüksek puanlılardan kült başlıklara kadar derlenmiş '
     + 'raflar. Her başlığa tıklayıp puanları, incelemeleri ve kullanıcı '
@@ -7133,6 +7189,20 @@ app.get('/robots.txt', (_req, res) => {
   if (!robotsMetin) return res.status(404).type('text/plain').send('yok');
   res.set('Cache-Control', 'public, max-age=3600');
   res.type('text/plain').send(robotsMetin);
+});
+
+// llms.txt (6 Eyl 2026): cevap motorları için site özeti. robots.txt ile AYNI
+// gerekçe ve AYNI servis yolu (Node + nginx `location = /llms.txt`): Flutter
+// dağıtımı dosyayı silemez, depoda kaynağı var. İsteğe bağlı bir standart;
+// Google yok sayar, zararı yok. Yoksa 404 (SPA 200 HTML'ine DÜŞMEZ).
+const LLMS_YOL = path.join(import.meta.dirname, 'llms.txt');
+let llmsMetin = null;
+try { llmsMetin = fs.readFileSync(LLMS_YOL, 'utf8'); } catch { llmsMetin = null; }
+
+app.get('/llms.txt', (_req, res) => {
+  if (!llmsMetin) return res.status(404).type('text/plain').send('yok');
+  res.set('Cache-Control', 'public, max-age=86400');
+  res.type('text/plain; charset=utf-8').send(llmsMetin);
 });
 
 // Reklam satılmıyor. Flutter SPA bu yolu 200 HTML ile yakalamasın diye

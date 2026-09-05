@@ -75,6 +75,8 @@ COPY server.js veri_aktar.js dil_tespit.js mail_kutu.js emoji.js depolama.js sir
 # robots.txt: Node servis eder (GET /robots.txt). Imaja GIRMEZSE uc 404 doner
 # ve nginx eski statik dosyaya duser — sessiz ama yanlis davranis olur.
 COPY robots.txt ./
+# llms.txt: cevap motorlari icin site ozeti (6 Eyl 2026); robots.txt ile ayni servis yolu.
+COPY llms.txt ./
 # Panelin yerel üçüncü parti varlıkları (küre betiği + doku; denetim 2026-09-05 §2.2)
 COPY admin-varlik/ ./admin-varlik/
 # Kitaplık durumu geriye dönük düzeltme aracı (docker exec ... node araclar/...)

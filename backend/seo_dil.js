@@ -167,6 +167,7 @@ const SEO_DIL = {};
 // tr — TÜRKÇE (kanonik dil; çıktısı 29 Ağu 2026 öncesiyle BİREBİR AYNI olmalı)
 // ---------------------------------------------------------------------------
 SEO_DIL.tr = {
+  aiOzeti: 'dizi.jpg AI özeti',
   ayrac: ', ',
   ve: ' ve ',
   sssBaslik: 'Sık sorulan sorular',
@@ -408,6 +409,7 @@ SEO_DIL.tr = {
 // Sorgu kalıbı (ANAHTAR-KELIME-ENVANTERI §4.5): İngilizce FİİL-ÖNCE sorar —
 // "who directed X", "how long is X" — Türkçe'nin isim tamlamasıyla değil.
 SEO_DIL.en = {
+  aiOzeti: 'dizi.jpg AI summary',
   ayrac: ', ',
   ve: ' and ',
   sssBaslik: 'Frequently asked questions',
@@ -661,6 +663,7 @@ SEO_DIL.en = {
 // es — İSPANYOLCA
 // ---------------------------------------------------------------------------
 SEO_DIL.es = {
+  aiOzeti: 'Resumen de IA de dizi.jpg',
   ayrac: ', ', ve: ' y ', sssBaslik: 'Preguntas frecuentes',
   sezonSayi: '{n} temporadas', bolumSayi: '{n} episodios', dakikaSayi: '{n} minutos',
   sezonBolum: 'temporada {s} episodio {b}', sezonBolumB: 'Temporada {s} Episodio {b}',
@@ -821,6 +824,7 @@ SEO_DIL.es = {
 // Sorgu kalıbı (envanter §4.5): Almanca İSİM TAMLAMASI kurar — "Regisseur von X",
 // İngilizcenin fiil-önce sorusuyla değil.
 SEO_DIL.de = {
+  aiOzeti: 'dizi.jpg KI-Zusammenfassung',
   ayrac: ', ', ve: ' und ', sssBaslik: 'Häufige Fragen',
   sezonSayi: '{n} Staffeln', bolumSayi: '{n} Folgen', dakikaSayi: '{n} Minuten',
   sezonBolum: 'Staffel {s} Folge {b}', sezonBolumB: 'Staffel {s} Folge {b}',
@@ -980,6 +984,7 @@ SEO_DIL.de = {
 // fr — FRANSIZCA
 // ---------------------------------------------------------------------------
 SEO_DIL.fr = {
+  aiOzeti: 'Résumé IA de dizi.jpg',
   ayrac: ', ', ve: ' et ', sssBaslik: 'Questions fréquentes',
   sezonSayi: '{n} saisons', bolumSayi: '{n} épisodes', dakikaSayi: '{n} minutes',
   sezonBolum: 'saison {s} épisode {b}', sezonBolumB: 'Saison {s} Épisode {b}',
@@ -1135,6 +1140,7 @@ SEO_DIL.fr = {
 // it — İTALYANCA
 // ---------------------------------------------------------------------------
 SEO_DIL.it = {
+  aiOzeti: 'Riepilogo IA di dizi.jpg',
   ayrac: ', ', ve: ' e ', sssBaslik: 'Domande frequenti',
   sezonSayi: '{n} stagioni', bolumSayi: '{n} episodi', dakikaSayi: '{n} minuti',
   sezonBolum: 'stagione {s} episodio {b}', sezonBolumB: 'Stagione {s} Episodio {b}',
@@ -1287,6 +1293,7 @@ SEO_DIL.it = {
 // pt — PORTEKİZCE (pt-BR)
 // ---------------------------------------------------------------------------
 SEO_DIL.pt = {
+  aiOzeti: 'Resumo de IA do dizi.jpg',
   ayrac: ', ', ve: ' e ', sssBaslik: 'Perguntas frequentes',
   sezonSayi: '{n} temporadas', bolumSayi: '{n} episódios', dakikaSayi: '{n} minutos',
   sezonBolum: 'temporada {s} episódio {b}', sezonBolumB: 'Temporada {s} Episódio {b}',
@@ -1439,6 +1446,7 @@ SEO_DIL.pt = {
 // nl — FELEMENKÇE
 // ---------------------------------------------------------------------------
 SEO_DIL.nl = {
+  aiOzeti: 'dizi.jpg AI-samenvatting',
   ayrac: ', ', ve: ' en ', sssBaslik: 'Veelgestelde vragen',
   sezonSayi: '{n} seizoenen', bolumSayi: '{n} afleveringen', dakikaSayi: '{n} minuten',
   sezonBolum: 'seizoen {s} aflevering {b}', sezonBolumB: 'Seizoen {s} Aflevering {b}',
@@ -1593,6 +1601,7 @@ SEO_DIL.nl = {
 // ru — RUSÇA
 // ---------------------------------------------------------------------------
 SEO_DIL.ru = {
+  aiOzeti: 'ИИ-сводка dizi.jpg',
   ayrac: ', ', ve: ' и ', sssBaslik: 'Частые вопросы',
   sezonSayi: 'сезонов: {n}', bolumSayi: 'серий: {n}', dakikaSayi: '{n} минут',
   sezonBolum: 'сезон {s}, серия {b}', sezonBolumB: 'Сезон {s}, серия {b}',
@@ -1747,6 +1756,7 @@ SEO_DIL.ru = {
 // uk — UKRAYNACA
 // ---------------------------------------------------------------------------
 SEO_DIL.uk = {
+  aiOzeti: 'ШІ-огляд dizi.jpg',
   ayrac: ', ', ve: ' і ', sssBaslik: 'Часті запитання',
   sezonSayi: 'сезонів: {n}', bolumSayi: 'серій: {n}', dakikaSayi: '{n} хвилин',
   sezonBolum: 'сезон {s}, серія {b}', sezonBolumB: 'Сезон {s}, серія {b}',
@@ -1901,6 +1911,7 @@ SEO_DIL.uk = {
 // pl — LEHÇE
 // ---------------------------------------------------------------------------
 SEO_DIL.pl = {
+  aiOzeti: 'Podsumowanie AI dizi.jpg',
   ayrac: ', ', ve: ' i ', sssBaslik: 'Najczęstsze pytania',
   sezonSayi: 'sezony: {n}', bolumSayi: 'odcinki: {n}', dakikaSayi: '{n} minut',
   sezonBolum: 'sezon {s} odcinek {b}', sezonBolumB: 'Sezon {s} Odcinek {b}',
@@ -2054,6 +2065,7 @@ SEO_DIL.pl = {
 // cs — ÇEKÇE
 // ---------------------------------------------------------------------------
 SEO_DIL.cs = {
+  aiOzeti: 'AI shrnutí dizi.jpg',
   ayrac: ', ', ve: ' a ', sssBaslik: 'Časté dotazy',
   sezonSayi: 'sérií: {n}', bolumSayi: 'dílů: {n}', dakikaSayi: '{n} minut',
   sezonBolum: 'série {s} díl {b}', sezonBolumB: 'Série {s} Díl {b}',
@@ -2208,6 +2220,7 @@ SEO_DIL.cs = {
 // bg — BULGARCA
 // ---------------------------------------------------------------------------
 SEO_DIL.bg = {
+  aiOzeti: 'AI резюме на dizi.jpg',
   ayrac: ', ', ve: ' и ', sssBaslik: 'Често задавани въпроси',
   sezonSayi: '{n} сезона', bolumSayi: '{n} епизода', dakikaSayi: '{n} минути',
   sezonBolum: 'сезон {s} епизод {b}', sezonBolumB: 'Сезон {s} Епизод {b}',
@@ -2367,6 +2380,7 @@ SEO_DIL.bg = {
 // sr — SIRPÇA (Kiril; ICU yereli sr-RS varsayılan olarak Kiril basar)
 // ---------------------------------------------------------------------------
 SEO_DIL.sr = {
+  aiOzeti: 'AI резиме dizi.jpg',
   ayrac: ', ', ve: ' и ', sssBaslik: 'Честа питања',
   sezonSayi: '{n} сезона', bolumSayi: '{n} епизода', dakikaSayi: '{n} минута',
   sezonBolum: '{s}. сезона {b}. епизода', sezonBolumB: '{s}. Сезона {b}. Епизода',
@@ -2523,6 +2537,7 @@ SEO_DIL.sr = {
 // ---------------------------------------------------------------------------
 // Yunanca soru işareti ';' (ano teleia değil) — metinlerde bilinçli kullanıldı.
 SEO_DIL.el = {
+  aiOzeti: 'Περίληψη AI του dizi.jpg',
   ayrac: ', ', ve: ' και ', sssBaslik: 'Συχνές ερωτήσεις',
   sezonSayi: '{n} σεζόν', bolumSayi: '{n} επεισόδια', dakikaSayi: '{n} λεπτά',
   sezonBolum: 'σεζόν {s} επεισόδιο {b}', sezonBolumB: 'Σεζόν {s} Επεισόδιο {b}',
@@ -2683,6 +2698,7 @@ SEO_DIL.el = {
 // Macarcada tarih cümleye ekle bağlanır (-én/-án). Ek sayıya göre değişeceği
 // için tarih SONA "…: {t}" kalıbıyla alındı; böylece dilbilgisi kırılmıyor.
 SEO_DIL.hu = {
+  aiOzeti: 'dizi.jpg AI-összefoglaló',
   ayrac: ', ', ve: ' és ', sssBaslik: 'Gyakori kérdések',
   sezonSayi: '{n} évad', bolumSayi: '{n} rész', dakikaSayi: '{n} perc',
   sezonBolum: '{s}. évad {b}. rész', sezonBolumB: '{s}. évad {b}. rész',
@@ -2843,6 +2859,7 @@ SEO_DIL.hu = {
 // ro — ROMENCE
 // ---------------------------------------------------------------------------
 SEO_DIL.ro = {
+  aiOzeti: 'Rezumat AI dizi.jpg',
   ayrac: ', ', ve: ' și ', sssBaslik: 'Întrebări frecvente',
   sezonSayi: '{n} sezoane', bolumSayi: '{n} episoade', dakikaSayi: '{n} minute',
   sezonBolum: 'sezonul {s} episodul {b}', sezonBolumB: 'Sezonul {s} Episodul {b}',
@@ -3003,6 +3020,7 @@ SEO_DIL.ro = {
 // İsveççede meslek adlarının hepsi n-cinsi ("en skådespelare", "en medlem"),
 // bu yüzden `meslekBir` gerekmiyor: `kimMeslek` tek başına yetiyor.
 SEO_DIL.sv = {
+  aiOzeti: 'dizi.jpg AI-sammanfattning',
   ayrac: ', ', ve: ' och ', sssBaslik: 'Vanliga frågor',
   sezonSayi: '{n} säsonger', bolumSayi: '{n} avsnitt', dakikaSayi: '{n} minuter',
   sezonBolum: 'säsong {s} avsnitt {b}', sezonBolumB: 'Säsong {s} Avsnitt {b}',
@@ -3158,6 +3176,7 @@ SEO_DIL.sv = {
 // Danca belirsiz artikel KELİMEYE bağlı: "en skuespiller" ama "et medlem".
 // Bu yüzden `meslekBir` 12 anahtarlı nesne olarak veriliyor.
 SEO_DIL.da = {
+  aiOzeti: 'dizi.jpg AI-resumé',
   ayrac: ', ', ve: ' og ', sssBaslik: 'Ofte stillede spørgsmål',
   sezonSayi: '{n} sæsoner', bolumSayi: '{n} afsnit', dakikaSayi: '{n} minutter',
   sezonBolum: 'sæson {s} afsnit {b}', sezonBolumB: 'Sæson {s} Afsnit {b}',
@@ -3321,6 +3340,7 @@ SEO_DIL.da = {
 // ---------------------------------------------------------------------------
 // Dancadaki gibi artikel kelimeye bağlı: "en regissør" ama "et medlem".
 SEO_DIL.nb = {
+  aiOzeti: 'dizi.jpg AI-sammendrag',
   ayrac: ', ', ve: ' og ', sssBaslik: 'Ofte stilte spørsmål',
   sezonSayi: '{n} sesonger', bolumSayi: '{n} episoder', dakikaSayi: '{n} minutter',
   sezonBolum: 'sesong {s} episode {b}', sezonBolumB: 'Sesong {s} Episode {b}',
@@ -3486,6 +3506,7 @@ SEO_DIL.nb = {
 // dizer (`X 監督`, `X 興行収入`). Soru biçimi de doğal olduğunda kullanılıyor
 // ama anahtar kelime cümlede TUTULUYOR.
 SEO_DIL.ja = {
+  aiOzeti: 'dizi.jpg AI要約',
   ayrac: '、',
   ve: 'と',
   sssBaslik: 'よくある質問',
@@ -3725,6 +3746,7 @@ SEO_DIL.ja = {
 // ko — KORECE
 // ---------------------------------------------------------------------------
 SEO_DIL.ko = {
+  aiOzeti: 'dizi.jpg AI 요약',
   ayrac: ', ',
   ve: ' 및 ',
   sssBaslik: '자주 묻는 질문',
@@ -3964,6 +3986,7 @@ SEO_DIL.ko = {
 // zh — ÇİNCE (Basitleştirilmiş)
 // ---------------------------------------------------------------------------
 SEO_DIL.zh = {
+  aiOzeti: 'dizi.jpg AI 摘要',
   ayrac: '、',
   ve: '和',
   sssBaslik: '常见问题',
@@ -4203,6 +4226,7 @@ SEO_DIL.zh = {
 // th — TAYCA
 // ---------------------------------------------------------------------------
 SEO_DIL.th = {
+  aiOzeti: 'สรุปโดย AI ของ dizi.jpg',
   ayrac: ', ',
   ve: ' และ ',
   sssBaslik: 'คำถามที่พบบ่อย',
@@ -4442,6 +4466,7 @@ SEO_DIL.th = {
 // vi — VİETNAMCA
 // ---------------------------------------------------------------------------
 SEO_DIL.vi = {
+  aiOzeti: 'Tóm tắt AI của dizi.jpg',
   ayrac: ', ',
   ve: ' và ',
   sssBaslik: 'Câu hỏi thường gặp',
@@ -4681,6 +4706,7 @@ SEO_DIL.vi = {
 // id — ENDONEZCE
 // ---------------------------------------------------------------------------
 SEO_DIL.id = {
+  aiOzeti: 'Ringkasan AI dizi.jpg',
   ayrac: ', ',
   ve: ' dan ',
   sssBaslik: 'Pertanyaan yang sering diajukan',
@@ -4920,6 +4946,7 @@ SEO_DIL.id = {
 // ms — MALAYCA
 // ---------------------------------------------------------------------------
 SEO_DIL.ms = {
+  aiOzeti: 'Ringkasan AI dizi.jpg',
   ayrac: ', ',
   ve: ' dan ',
   sssBaslik: 'Soalan lazim',
@@ -5159,6 +5186,7 @@ SEO_DIL.ms = {
 // fil — FİLİPİNCE
 // ---------------------------------------------------------------------------
 SEO_DIL.fil = {
+  aiOzeti: 'Buod ng AI ng dizi.jpg',
   ayrac: ', ',
   ve: ' at ',
   sssBaslik: 'Mga madalas itanong',
@@ -5400,6 +5428,7 @@ SEO_DIL.fil = {
 // Emin olunmayan yerde SADE ve KISA cümle: süslü kalıp denenmedi.
 // Ayrac `၊` (küçük durak), cümle sonu `။`.
 SEO_DIL.my = {
+  aiOzeti: 'dizi.jpg AI အကျဉ်းချုပ်',
   ayrac: '၊ ',
   ve: ' နှင့် ',
   sssBaslik: 'အမေးများသောမေးခွန်းများ',
@@ -5639,6 +5668,7 @@ SEO_DIL.my = {
 // ar — ARAPÇA
 // ---------------------------------------------------------------------------
 SEO_DIL.ar = {
+  aiOzeti: 'ملخص dizi.jpg بالذكاء الاصطناعي',
   ayrac: '، ',
   ve: ' و',
   sssBaslik: 'الأسئلة الشائعة',
@@ -5878,6 +5908,7 @@ SEO_DIL.ar = {
 // he — İBRANİCE
 // ---------------------------------------------------------------------------
 SEO_DIL.he = {
+  aiOzeti: 'סיכום AI של dizi.jpg',
   ayrac: ', ',
   ve: ' ו',
   sssBaslik: 'שאלות נפוצות',
@@ -6117,6 +6148,7 @@ SEO_DIL.he = {
 // fa — FARSÇA
 // ---------------------------------------------------------------------------
 SEO_DIL.fa = {
+  aiOzeti: 'خلاصه هوش مصنوعی dizi.jpg',
   ayrac: '، ',
   ve: ' و ',
   sssBaslik: 'پرسش‌های پرتکرار',
@@ -6356,6 +6388,7 @@ SEO_DIL.fa = {
 // ur — URDUCA
 // ---------------------------------------------------------------------------
 SEO_DIL.ur = {
+  aiOzeti: 'dizi.jpg AI خلاصہ',
   ayrac: '، ',
   ve: ' اور ',
   sssBaslik: 'اکثر پوچھے جانے والے سوالات',
@@ -6595,6 +6628,7 @@ SEO_DIL.ur = {
 // hi — HİNTÇE
 // ---------------------------------------------------------------------------
 SEO_DIL.hi = {
+  aiOzeti: 'dizi.jpg AI सारांश',
   ayrac: ', ',
   ve: ' और ',
   sssBaslik: 'अक्सर पूछे जाने वाले सवाल',
@@ -6834,6 +6868,7 @@ SEO_DIL.hi = {
 // bn — BENGALCE
 // ---------------------------------------------------------------------------
 SEO_DIL.bn = {
+  aiOzeti: 'dizi.jpg AI সারসংক্ষেপ',
   ayrac: ', ',
   ve: ' এবং ',
   sssBaslik: 'সাধারণ জিজ্ঞাসা',
@@ -7075,6 +7110,7 @@ SEO_DIL.bn = {
 // Fince eklemeli: {ad} yabancı yapım adıdır ve sija-eki ALAMAZ. Ek her zaman
 // {ad}'ın ÖNÜNDEKİ cins isme (sarja / elokuva / tuotanto) takılır.
 SEO_DIL.fi = {
+  aiOzeti: 'dizi.jpg-tekoälytiivistelmä',
   ayrac: ', ', ve: ' ja ', sssBaslik: 'Usein kysytyt kysymykset',
   sezonSayi: '{n} tuotantokautta', bolumSayi: '{n} jaksoa',
   dakikaSayi: '{n} minuuttia',
@@ -7244,6 +7280,7 @@ SEO_DIL.fi = {
 // DİKKAT: Türkçeye çok yakın. Azerice biçimler kullanıldı: mövsüm (sezon
 // DEĞİL), epizod (bölüm DEĞİL), dəqiqə, rejissor, aktyor, hansı, neçə.
 SEO_DIL.az = {
+  aiOzeti: 'dizi.jpg AI xülasəsi',
   ayrac: ', ', ve: ' və ', sssBaslik: 'Tez-tez verilən suallar',
   sezonSayi: '{n} mövsüm', bolumSayi: '{n} epizod', dakikaSayi: '{n} dəqiqə',
   sezonBolum: 'mövsüm {s}, epizod {b}', sezonBolumB: 'Mövsüm {s}, Epizod {b}',
@@ -7416,6 +7453,7 @@ SEO_DIL.az = {
 // karşılığı Türkçe yazımıyla birebir aynı görünüyor ve Türkçe sızıntı
 // avcısını yanlış tetikliyordu.
 SEO_DIL.sw = {
+  aiOzeti: 'Muhtasari wa AI wa dizi.jpg',
   ayrac: ', ', ve: ' na ', sssBaslik: 'Maswali yanayoulizwa mara kwa mara',
   sezonSayi: 'misimu {n}', bolumSayi: 'vipindi {n}', dakikaSayi: 'dakika {n}',
   sezonBolum: 'msimu {s} kipindi {b}', sezonBolumB: 'Msimu {s} Kipindi {b}',
@@ -7581,6 +7619,7 @@ SEO_DIL.sw = {
 // ---------------------------------------------------------------------------
 // Cümleler bilinçli olarak KISA: süslü kalıp yerine doğru ve sade yapı.
 SEO_DIL.am = {
+  aiOzeti: 'የdizi.jpg AI ማጠቃለያ',
   ayrac: '፣ ', ve: ' እና ', sssBaslik: 'ተደጋግመው የሚጠየቁ ጥያቄዎች',
   sezonSayi: '{n} ወቅቶች', bolumSayi: '{n} ክፍሎች', dakikaSayi: '{n} ደቂቃ',
   sezonBolum: 'ወቅት {s} ክፍል {b}', sezonBolumB: 'ወቅት {s} ክፍል {b}',
@@ -7740,6 +7779,7 @@ SEO_DIL.am = {
 // ta — TAMİLCE
 // ---------------------------------------------------------------------------
 SEO_DIL.ta = {
+  aiOzeti: 'dizi.jpg AI சுருக்கம்',
   ayrac: ', ', ve: ' மற்றும் ', sssBaslik: 'அடிக்கடி கேட்கப்படும் கேள்விகள்',
   sezonSayi: '{n} பருவங்கள்', bolumSayi: '{n} அத்தியாயங்கள்',
   dakikaSayi: '{n} நிமிடங்கள்',
@@ -7914,6 +7954,7 @@ SEO_DIL.ta = {
 // te — TELUGUCA
 // ---------------------------------------------------------------------------
 SEO_DIL.te = {
+  aiOzeti: 'dizi.jpg AI సారాంశం',
   ayrac: ', ', ve: ' మరియు ', sssBaslik: 'తరచుగా అడిగే ప్రశ్నలు',
   sezonSayi: '{n} సీజన్‌లు', bolumSayi: '{n} ఎపిసోడ్‌లు',
   dakikaSayi: '{n} నిమిషాలు',
@@ -8078,6 +8119,7 @@ SEO_DIL.te = {
 // kn — KANNADACA
 // ---------------------------------------------------------------------------
 SEO_DIL.kn = {
+  aiOzeti: 'dizi.jpg AI ಸಾರಾಂಶ',
   ayrac: ', ', ve: ' ಮತ್ತು ', sssBaslik: 'ಪದೇ ಪದೇ ಕೇಳಲಾಗುವ ಪ್ರಶ್ನೆಗಳು',
   sezonSayi: '{n} ಸೀಸನ್‌ಗಳು', bolumSayi: '{n} ಸಂಚಿಕೆಗಳು',
   dakikaSayi: '{n} ನಿಮಿಷಗಳು',
@@ -8244,6 +8286,7 @@ SEO_DIL.kn = {
 // ml — MALAYALAMCA
 // ---------------------------------------------------------------------------
 SEO_DIL.ml = {
+  aiOzeti: 'dizi.jpg AI സംഗ്രഹം',
   ayrac: ', ', ve: ' കൂടാതെ ', sssBaslik: 'പതിവ് ചോദ്യങ്ങൾ',
   sezonSayi: '{n} സീസണുകൾ', bolumSayi: '{n} എപ്പിസോഡുകൾ',
   dakikaSayi: '{n} മിനിറ്റ്',
@@ -8419,6 +8462,7 @@ SEO_DIL.ml = {
 // "{ad} चित्रपटाचे दिग्दर्शक" gibi tür adı üzerinden), Türkçe bloktaki
 // "ek gerektirmeyen kalıp" disipliniyle aynı.
 SEO_DIL.mr = {
+  aiOzeti: 'dizi.jpg AI सारांश',
   ayrac: ', ', ve: ' आणि ', sssBaslik: 'नेहमीचे प्रश्न',
   sezonSayi: '{n} सीझन', bolumSayi: '{n} भाग', dakikaSayi: '{n} मिनिटे',
   sezonBolum: 'सीझन {s} भाग {b}', sezonBolumB: 'सीझन {s} भाग {b}',
@@ -8578,6 +8622,7 @@ SEO_DIL.mr = {
 // Sorgu kalıbı (§4.5): "X ના દિગ્દર્શક કોણ", "X ની કમાણી", "X ના સર્જક",
 // "X કઈ ચેનલ પર". Marathi ile aynı disiplin: `{ad}` ek almaz.
 SEO_DIL.gu = {
+  aiOzeti: 'dizi.jpg AI સારાંશ',
   ayrac: ', ', ve: ' અને ', sssBaslik: 'વારંવાર પુછાતા પ્રશ્નો',
   sezonSayi: '{n} સીઝન', bolumSayi: '{n} એપિસોડ', dakikaSayi: '{n} મિનિટ',
   sezonBolum: 'સીઝન {s} એપિસોડ {b}', sezonBolumB: 'સીઝન {s} એપિસોડ {b}',
@@ -8736,6 +8781,7 @@ SEO_DIL.gu = {
 // Sorgu kalıbı (§4.5): "X ਦਾ ਨਿਰਦੇਸ਼ਕ ਕੌਣ", "X ਦੀ ਕਮਾਈ", "X ਦਾ ਸਿਰਜਣਹਾਰ",
 // "X ਕਿਸ ਚੈਨਲ ਤੇ". `{ad}` ek almaz (mr/gu ile aynı disiplin).
 SEO_DIL.pa = {
+  aiOzeti: 'dizi.jpg AI ਸਾਰ',
   ayrac: ', ', ve: ' ਅਤੇ ', sssBaslik: 'ਆਮ ਸਵਾਲ',
   sezonSayi: '{n} ਸੀਜ਼ਨ', bolumSayi: '{n} ਐਪੀਸੋਡ', dakikaSayi: '{n} ਮਿੰਟ',
   sezonBolum: 'ਸੀਜ਼ਨ {s} ਐਪੀਸੋਡ {b}', sezonBolumB: 'ਸੀਜ਼ਨ {s} ਐਪੀਸੋਡ {b}',

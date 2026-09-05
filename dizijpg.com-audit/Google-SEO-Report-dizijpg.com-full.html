@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 18mm 25mm 18mm;
+    @bottom-center {
+      content: "Page " counter(page) " of " counter(pages);
+      font-size: 9pt;
+      color: #6b7280;
+      font-family: 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+    }
+    @bottom-left {
+      content: "Confidential";
+      font-size: 7pt;
+      color: #d6d3cc;
+      font-family: 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+    }
+    @bottom-right {
+      content: "dizijpg.com Google SEO Report";
+      font-size: 8pt;
+      color: #cbd5e1;
+      font-family: 'DejaVu Serif', 'Times New Roman', Georgia, serif;
+    }
+  }
+
+  @page :first {
+    margin: 0;
+    @bottom-left { content: none; }
+    @bottom-center { content: none; }
+    @bottom-right { content: none; }
+  }
+
+  @page toc {
+    @bottom-center {
+      content: counter(page);
+      font-size: 9pt;
+      color: #6b7280;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Times New Roman', 'DejaVu Serif', Georgia, serif;
+    font-size: 10pt;
+    line-height: 1.55;
+    color: #1e293b;
+    background: white;
+  }
+
+  /* ─── Title Page (Clean White) ─── */
+  .title-page {
+    page: first;
+    width: 210mm;
+    height: 297mm;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #1a1a2e;
+    position: relative;
+    padding: 50mm 30mm 40mm 30mm;
+    border-top: 6mm solid #1e3a5f;
+  }
+
+  .title-page .badge {
+    background: #f7f6f3;
+    border: 1px solid #d6d3cc;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 9pt;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 15mm;
+    color: #1e3a5f;
+  }
+
+  .title-page h1 {
+    font-size: 28pt;
+    font-weight: bold;
+    margin-bottom: 5mm;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    color: #1a1a2e;
+  }
+
+  .title-page .subtitle {
+    font-size: 13pt;
+    color: #6b7280;
+    margin-bottom: 12mm;
+    font-weight: 300;
+  }
+
+  .title-page .url {
+    font-size: 12pt;
+    color: #1e3a5f;
+    margin-bottom: 15mm;
+    padding: 4mm 8mm;
+    border: 1px solid #d6d3cc;
+    border-radius: 6px;
+    background: #faf9f7;
+  }
+
+  .title-page .score-box {
+    background: #faf9f7;
+    border: 2px solid #d6d3cc;
+    border-radius: 12px;
+    padding: 6mm 12mm;
+    margin-bottom: 15mm;
+  }
+
+  .title-page .score-number {
+    font-size: 42pt;
+    font-weight: bold;
+    color: #1e3a5f;
+    line-height: 1;
+  }
+
+  .title-page .score-label {
+    font-size: 10pt;
+    color: #6b7280;
+    margin-top: 2mm;
+  }
+
+  .title-page .meta {
+    font-size: 9pt;
+    color: #6b7280;
+    margin-top: 8mm;
+    padding-top: 5mm;
+    border-top: 1px solid #d6d3cc;
+  }
+
+  .title-page .meta span {
+    margin: 0 8px;
+  }
+
+  /* ─── Table of Contents ─── */
+  .toc-page {
+    page: toc;
+    page-break-before: always;
+  }
+
+  .toc-page h2 {
+    font-size: 18pt;
+    color: #1e3a5f;
+    margin-bottom: 8mm;
+    padding-bottom: 3mm;
+    border-bottom: 2px solid #1e3a5f;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .toc-list li {
+    padding: 2mm 0;
+    border-bottom: 1px solid #f1f5f9;
+    overflow: hidden;
+  }
+
+  .toc-list li.toc-section {
+    font-weight: bold;
+    font-size: 11pt;
+    padding-top: 4mm;
+    color: #0f172a;
+  }
+
+  .toc-list li.toc-sub {
+    padding-left: 8mm;
+    font-size: 9.5pt;
+    color: #475569;
+  }
+
+  .toc-score {
+    display: inline-block;
+    float: right;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 9pt;
+    font-weight: bold;
+    color: white;
+  }
+
+  .score-good { background: #2d6a4f; }
+  .score-warn { background: #d4740e; }
+  .score-bad { background: #c53030; }
+
+  /* ─── Section Styles ─── */
+  div.section {
+    page-break-before: always;
+  }
+
+  .section-header {
+    background: #faf9f7;
+    border-left: 4px solid #1e3a5f;
+    padding: 5mm 6mm;
+    margin-bottom: 6mm;
+    page-break-after: avoid;
+  }
+
+  .section-header h2 {
+    font-size: 16pt;
+    color: #0f172a;
+    margin-bottom: 1mm;
+  }
+
+  .section-header .section-score {
+    font-size: 12pt;
+    font-weight: bold;
+    float: right;
+    margin-top: -6mm;
+  }
+
+  h3 {
+    font-size: 12pt;
+    color: #1e3a5f;
+    margin-top: 6mm;
+    margin-bottom: 3mm;
+    padding-bottom: 1.5mm;
+    border-bottom: 1px solid #d6d3cc;
+    page-break-after: avoid;
+  }
+
+  h4 {
+    font-size: 10.5pt;
+    color: #334155;
+    margin-top: 4mm;
+    margin-bottom: 2mm;
+    page-break-after: avoid;
+  }
+
+  p {
+    margin-bottom: 3mm;
+    color: #334155;
+  }
+
+  .highlight {
+    background: #fef3c7;
+    border-left: 3px solid #d4740e;
+    padding: 3mm 4mm;
+    margin: 4mm 0;
+    font-size: 9.5pt;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .critical-box {
+    background: #fef2f2;
+    border-left: 3px solid #c53030;
+    padding: 3mm 4mm;
+    margin: 4mm 0;
+    font-size: 9.5pt;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .success-box {
+    background: #f0fdf4;
+    border-left: 3px solid #2d6a4f;
+    padding: 3mm 4mm;
+    margin: 4mm 0;
+    font-size: 9.5pt;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  /* ─── Tables ─── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 4mm 0 6mm 0;
+    font-size: 9pt;
+  }
+
+  thead th {
+    background: #f7f6f3;
+    color: #0f172a;
+    font-weight: bold;
+    padding: 3mm 4mm;
+    text-align: left;
+    border-bottom: 2px solid #d6d3cc;
+    font-size: 9pt;
+  }
+
+  tbody td {
+    padding: 2.5mm 3mm;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #fdfcfa;
+  }
+
+  .status-pass {
+    color: #2d6a4f;
+    font-weight: bold;
+  }
+
+  .status-fail {
+    color: #c53030;
+    font-weight: bold;
+  }
+
+  .status-warn {
+    color: #d4740e;
+    font-weight: bold;
+  }
+
+  .status-partial {
+    color: #4a5568;
+    font-weight: bold;
+  }
+
+  /* ─── Charts ─── */
+  .chart-container {
+    text-align: center;
+    margin: 4mm 0;
+  }
+
+  .chart-container img {
+    max-width: 100%;
+    max-height: 120mm;
+    height: auto;
+  }
+
+  .chart-caption {
+    font-size: 8.5pt;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 2mm;
+    text-align: center;
+  }
+
+  .chart-half {
+    display: inline-block;
+    width: 48%;
+    vertical-align: top;
+    text-align: center;
+    margin: 2mm 0;
+  }
+
+  .chart-half img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ─── Two column layout ─── */
+  .two-col {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    margin: 3mm 0;
+  }
+
+  .two-col .col {
+    display: table-cell;
+    vertical-align: top;
+    padding: 0 2mm;
+  }
+
+  .four-col {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    margin: 3mm 0;
+  }
+
+  .four-col .col {
+    display: table-cell;
+    vertical-align: top;
+    padding: 0 1.5mm;
+  }
+
+  /* ─── Metric Cards ─── */
+  .metric-card {
+    background: #faf9f7;
+    border: 1px solid #d6d3cc;
+    border-radius: 6px;
+    padding: 2.5mm 3mm;
+    text-align: center;
+    margin: 2mm 0;
+  }
+
+  .metric-card .value {
+    font-size: 14pt;
+    font-weight: bold;
+    line-height: 1.2;
+  }
+
+  .metric-card .label {
+    font-size: 7.5pt;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 1mm;
+  }
+
+  /* ─── Action Plan ─── */
+  .action-item {
+    background: #faf9f7;
+    border-radius: 4px;
+    padding: 3mm 4mm;
+    margin: 3mm 0;
+    border-left: 3px solid #cbd5e1;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .action-item.critical {
+    border-left-color: #c53030;
+    background: #fdf2f2;
+  }
+
+  .action-item.high {
+    border-left-color: #d4740e;
+    background: #fdf8ef;
+  }
+
+  .action-item.medium {
+    border-left-color: #1e3a5f;
+    background: #f0f4f8;
+  }
+
+  .action-item.low {
+    border-left-color: #94a3b8;
+  }
+
+  .action-item h4 {
+    margin-top: 0;
+    margin-bottom: 1.5mm;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .action-item .effort {
+    font-size: 8.5pt;
+    color: #64748b;
+    float: right;
+  }
+
+  .priority-tag {
+    display: inline-block;
+    padding: 0.5mm 3mm;
+    border-radius: 3px;
+    font-size: 8pt;
+    font-weight: bold;
+    color: white;
+    margin-right: 2mm;
+    vertical-align: middle;
+  }
+
+  .priority-critical { background: #c53030; }
+  .priority-high { background: #d4740e; }
+  .priority-medium { background: #1e3a5f; }
+  .priority-low { background: #94a3b8; }
+
+  /* ─── Code blocks ─── */
+  .code-block {
+    background: #1e293b;
+    color: #e2e8f0;
+    padding: 3mm 4mm;
+    border-radius: 4px;
+    font-family: 'DejaVu Sans Mono', monospace;
+    font-size: 8pt;
+    line-height: 1.6;
+    margin: 3mm 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  /* ─── Divider ─── */
+  .divider {
+    border: none;
+    border-top: 1px solid #d6d3cc;
+    margin: 5mm 0;
+  }
+
+  /* ─── Roadmap ─── */
+  .roadmap-phase {
+    background: #faf9f7;
+    border-radius: 6px;
+    padding: 4mm 5mm;
+    margin: 4mm 0;
+    border: 1px solid #d6d3cc;
+    /* allow page breaks to prevent white gaps */
+  }
+
+  .roadmap-phase h4 {
+    margin-top: 0;
+    border-bottom: none;
+    color: #1e3a5f;
+  }
+
+  .roadmap-phase ul {
+    margin: 2mm 0 0 5mm;
+    padding: 0;
+  }
+
+  .roadmap-phase li {
+    margin-bottom: 1.5mm;
+    font-size: 9.5pt;
+    color: #334155;
+  }
+
+  /* ─── Lists ─── */
+  ul {
+    margin-left: 5mm;
+    margin-bottom: 3mm;
+  }
+
+  li {
+    margin-bottom: 1.5mm;
+  }
+
+  /* ─── Data freshness ─── */
+  .data-freshness {
+    font-size: 8pt;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 4mm;
+    padding-top: 2mm;
+    border-top: 1px solid #d6d3cc;
+  }
+
+</style>
+</head>
+<body>
+
+<!-- ======================================================= TITLE PAGE === -->
+<div class="title-page">
+  <div class="badge">Full SEO Audit Report</div>
+  <h1>dizijpg.com</h1>
+  <div class="subtitle">Prepared by Claude SEO</div>
+  <div class="score-box">
+    <div class="score-number">70<span style="font-size: 20pt; color: #94a3b8;">/100</span></div>
+    <div class="score-label">SEO Health Score</div>
+  </div>
+  <div class="meta">
+    <span>September 06, 2026</span>
+    <span>Full Audit</span>
+  </div>
+</div>
+
+
+<!-- ======================================================= TABLE OF CONTENTS === -->
+<div class="toc-page">
+  <h2>Table of Contents</h2>
+  <ul class="toc-list">
+    <li class="toc-section"><span>1. Executive Summary</span></li>
+    <li class="toc-sub"><span>Key Metrics, Critical Issues &amp; Quick Wins</span></li>
+    <li class="toc-section"><span>2. Audit Categories</span></li>
+    <li class="toc-sub"><span>What Works</span></li>
+    <li class="toc-sub"><span>Findings by Severity</span></li>
+    <li class="toc-section"><span>3. Action Plan</span></li>
+    <li class="toc-sub"><span>Phased Roadmap</span></li>
+    <li class="toc-section"><span>4. Data Sources &amp; Methodology</span></li>
+  </ul>
+</div>
+
+
+<!-- ======================================================= 1. EXECUTIVE SUMMARY === -->
+<div class="section">
+  <div class="section-header">
+    <h2>1. Executive Summary</h2>
+  </div>
+
+  <p>This report presents a comprehensive SEO audit of <strong>dizijpg.com</strong> for a <strong>Publisher / catalog (TV &amp; film tracking app, programmatic TMDB pages + user reviews)</strong> site, generated on September 06, 2026. Findings combine technical, content, schema, performance, visual, and search-readiness evidence as available.</p>
+
+  <div class="two-col">
+    <div class="col">
+      <div class="metric-card">
+        <div class="value" style="color: #d4740e;">70/100</div>
+        <div class="label">SEO Health Score</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="critical-box">
+    <strong>Critical Issues Found:</strong>
+    <ol>
+      <li><strong>Info:</strong> Cloudflare returns 403 to answer-engine bots (OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Claude-SearchBot, MistralAI-User) while robots.txt declares Content-Signal search=yes</li>
+      <li><strong>Info:</strong> ~1M episode URLs in 40+ low-resource languages are indexable template pages without episode title/summary (193-214 words)</li>
+      <li><strong>Info:</strong> Flutter payload 4.1 MB on desktop; on throttled mobile the engine has not loaded within 12 s (TBT 552 ms desktop)</li>
+      <li><strong>Info:</strong> Dynamic rendering by User-Agent is the single point of failure for indexing</li>
+      <li><strong>Info:</strong> Sub-sitemaps not edge-cached (DYNAMIC); uncompressed 3.2 MB / 10-27 s</li>
+    </ol>
+  </div>
+
+  <div class="success-box">
+    <strong>Quick Wins:</strong>
+    <ol>
+      <li>Allow answer-engine bots in Cloudflare AI Crawl Control (keep training bots blocked)</li>
+      <li>Add og:image/twitter:image to SSR homepage and language homepages</li>
+      <li>Cut meta descriptions at sentence boundary instead of &#x27;…&#x27;</li>
+      <li>Fix translation leaks (sw company page Turkish fragment, untranslated genres, &#x27;AI özeti&#x27; on /en)</li>
+      <li>Cloudflare Cache Rule for /sitemap*.xml (1h edge TTL)</li>
+    </ol>
+  </div>
+
+</div>
+
+<!-- ======================================================= 2. AUDIT CATEGORIES === -->
+<div class="section">
+  <div class="section-header">
+    <h2>2. Audit Categories</h2>
+  </div>
+
+  <h3>2.1 Technical SEO</h3>
+  <p><strong>Score:</strong> <span class="status-warn">78/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>HTTPS+HSTS, CSP, security headers complete</li>
+    <li>301s for http/www/trailing slash/uppercase; canonical strips query</li>
+    <li>robots.txt served by Node; sensitive surfaces disallowed</li>
+    <li>Valid sitemap index, 187 children, lastmod</li>
+    <li>Bots get 404 for missing pages; SSR TTFB 0.30-0.41 s</li>
+    <li>hreflang 46 languages + x-default, reciprocal</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Sitemap lists 1,316,781 URLs; episode family ~1.2M across 46 languages <span class="status-warn">High</span></h4>
+    <p>GSC memory: episode family ~4% indexed. User decision (5 Sep) keeps all 46 languages; monitor gap between submitted and indexed.</p>
+    <p><strong>Recommendation:</strong> Apply content-based noindex gate (see Content #1) rather than language-based cuts; watch indexed/submitted ratio.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Dynamic rendering by User-Agent is the only path to indexable HTML <span class="status-warn">Medium</span></h4>
+    <p>Human UA receives 12.9 KB Flutter shell with generic title; bots receive SSR. nginx bot regex is a single point of failure (3 Sep regex bug dropped SEO tools to shell).</p>
+    <p><strong>Recommendation:</strong> Add regression test for the UA matrix after every deploy; long-term serve SSR to everyone with Flutter hydrating on top.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Human UA gets HTTP 200 for non-existent paths (soft 404) <span class="status-warn">Medium</span></h4>
+    <p>/olmayan-sayfa-xyz123 returns 200 + shell for humans; Googlebot gets 404.</p>
+    <p><strong>Recommendation:</strong> Return 404 status with the shell or an nginx 404 page for unknown routes.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Sub-sitemaps not cached at the edge <span class="status-warn">Medium</span></h4>
+    <p>cf-cache-status DYNAMIC; gzip 123 KB/1.0 s, uncompressed 3.2 MB/10-27 s.</p>
+    <p><strong>Recommendation:</strong> Cloudflare Cache Rule: /sitemap*.xml eligible, 1h edge TTL.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>No llms.txt <span class="status-warn">Low</span></h4>
+    <p>Bot UA 404, human UA shell 200. Optional; ignored by Google.</p>
+    <p><strong>Recommendation:</strong> Optional: serve plain text on the SSR route.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>document.title stays &#x27;dizi.jpg&#x27; on every page in the Flutter app <span class="status-warn">Low</span></h4>
+    <p>Playwright: title unchanged after render on / and /icerik/tv/1405.</p>
+    <p><strong>Recommendation:</strong> Set page title from Flutter router for bookmarks/sharing.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.2 Content Quality</h3>
+  <p><strong>Score:</strong> <span class="status-warn">62/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Series/movie/person pages 400-950 words with plot, FAQ, dated user reviews, labelled AI summary</li>
+    <li>QRG content scorer 84-96, no filler/AI-pattern flags</li>
+    <li>Person pages already noindex when biography missing in that language</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Episode pages in low-resource languages are template filler <span class="status-warn">High</span></h4>
+    <p>/sw, /am, /hi episode pages: no episode title or summary (no TMDB translation); 193-214 words all boilerplate; indexable and in sitemap (~1M URLs).</p>
+    <p><strong>Recommendation:</strong> Content gate identical to person pages: if episode title OR summary missing in that language → noindex,follow and drop from sitemap. Not a language cut; tr/en/de unaffected.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Translation leaks <span class="status-warn">Medium</span></h4>
+    <p>/sw/sirket/4343 contains Turkish &#x27;Öne çıkan yapımları:&#x27;; genres untranslated on sw/am series pages; &#x27;@dizi.jpg.ai dizi.jpg AI özeti&#x27; Turkish on /en.</p>
+    <p><strong>Recommendation:</strong> Add leak scan across 46 languages for Turkish tokens; translate genre names.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Meta descriptions end mid-sentence with &#x27;…&#x27; <span class="status-warn">Medium</span></h4>
+    <p>e.g. &#x27;...Miami&#x27;de…&#x27;, &#x27;...atom…&#x27;.</p>
+    <p><strong>Recommendation:</strong> Truncate at sentence boundary.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Homepage H1 is brand only <span class="status-warn">Low</span></h4>
+    <p>H1 &#x27;dizi.jpg&#x27; while title carries the keyword.</p>
+    <p><strong>Recommendation:</strong> H1: &#x27;Dizi ve film takip uygulaması&#x27; variant.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>/kesfet titled &#x27;Ana Sayfa — dizi.jpg&#x27; <span class="status-warn">Low</span></h4>
+    <p>Concept collides with root page.</p>
+    <p><strong>Recommendation:</strong> Title/H1 &#x27;Haftanın dizileri ve filmleri&#x27;.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>E-E-A-T <span class="status-warn">Info</span></h4>
+    <p>Reviews carry username+date; AI summary labelled; provider source (JustWatch) credited. No about/contact page in SSR; Organization.sameAs only Play Store.</p>
+    <p><strong>Recommendation:</strong> Add about page + social/App Store sameAs.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.3 On-Page SEO</h3>
+  <p><strong>Score:</strong> <span class="status-pass">80/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Unique keyword-first titles per template</li>
+    <li>Single H1, logical H2s, BreadcrumbList</li>
+    <li>Strong internal linking: series→52 episodes+8 people+4 companies+8 similar</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Meta descriptions truncated with &#x27;…&#x27; <span class="status-warn">Medium</span></h4>
+    <p>See Content.</p>
+    <p><strong>Recommendation:</strong> Sentence-boundary cut.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>/kesfet title duplicates homepage concept <span class="status-warn">Low</span></h4>
+    <p>&#x27;Ana Sayfa — dizi.jpg&#x27;.</p>
+    <p><strong>Recommendation:</strong> Differentiate.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Homepage H1 brand-only <span class="status-warn">Low</span></h4>
+    <p><strong>Recommendation:</strong> Add keyword.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.4 Schema / Structured Data</h3>
+  <p><strong>Score:</strong> <span class="status-pass">85/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>TVSeries/Movie/TVEpisode→TVSeason→TVSeries/Person/Organization/BreadcrumbList/AggregateRating nested correctly in @graph</li>
+    <li>dateModified present</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>FAQPage on every template <span class="status-warn">Info</span></h4>
+    <p>Google retired FAQ rich results for all sites on 7 May 2026. No SERP benefit; no harm.</p>
+    <p><strong>Recommendation:</strong> Do not remove; do not add new FAQPage for SERP reasons; keep &lt;dl&gt; FAQ text for GEO.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>AggregateRating with ratingCount=3 <span class="status-warn">Low</span></h4>
+    <p>Accurate but low counts may not be shown.</p>
+    <p><strong>Recommendation:</strong> Emit aggregateRating only when ratingCount ≥ 5.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>Organization.sameAs only Play Store <span class="status-warn">Low</span></h4>
+    <p><strong>Recommendation:</strong> Add social profiles + App Store once approved.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.5 Performance (CWV)</h3>
+  <p><strong>Score:</strong> <span class="status-warn">55/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>SSR TTFB 0.30-0.41 s for bots</li>
+    <li>CLS 0 on all measured pages</li>
+    <li>Inline splash screen gives FCP ~1 s on throttled mobile</li>
+    <li>GIS script async+defer</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Flutter payload 4.1 MB; engine not loaded within 12 s on throttled mobile <span class="status-warn">High</span></h4>
+    <p>canvaskit.wasm 2.9 MB + skwasm.wasm 1.5 MB + main.dart.js. Desktop: load 4.7 s, 8 long tasks, TBT 552 ms. Mobile (4x CPU, 1.6 Mb/s): only 4 resources/37 KB after 12 s.</p>
+    <p><strong>Recommendation:</strong> Ship a single renderer variant; deferred imports for login/chat/media editor/collage; re-measure with the same Playwright script.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>No field data (CrUX) available <span class="status-warn">Medium</span></h4>
+    <p>PSI anonymous quota exhausted; no API key.</p>
+    <p><strong>Recommendation:</strong> Create free Google API key; run /seo google for CrUX 25-week history.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.6 AI Search Readiness</h3>
+  <p><strong>Score:</strong> <span class="status-fail">45/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>Clean CSS-less SSR HTML with &lt;dl&gt; FAQs, dates, numbers, source attribution</li>
+    <li>Content-Signal declared in robots.txt</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Answer-engine bots blocked with 403 at Cloudflare <span class="status-warn">Critical</span></h4>
+    <p>OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Claude-SearchBot, MistralAI-User → 403 &#x27;Your request was blocked&#x27; (server: cloudflare, no origin headers). robots.txt only disallows training bots and declares search=yes.</p>
+    <p><strong>Recommendation:</strong> Cloudflare AI Crawl Control: allow answer/search bots; keep GPTBot/ClaudeBot/CCBot/Bytespider blocked. Verify with UA matrix → 200.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>SSR homepage lacks og:image/twitter:image <span class="status-warn">Medium</span></h4>
+    <p>Shell has Icon-512; SSR homepage and language homepages do not.</p>
+    <p><strong>Recommendation:</strong> Add og:image + summary_large_image.</p>
+  </div>
+  <div class="action-item medium">
+    <h4>No llms.txt <span class="status-warn">Low</span></h4>
+    <p>Optional.</p>
+    <p><strong>Recommendation:</strong> Optional.</p>
+  </div>
+  <hr class="divider">
+  <h3>2.7 Images</h3>
+  <p><strong>Score:</strong> <span class="status-pass">85/100</span></p>
+  <h4>What Works</h4>
+  <ul>
+    <li>All SSR images have alt, width/height, loading=lazy</li>
+    <li>TMDB CDN sizes w185/w342/w780 appropriate</li>
+  </ul>
+  <h4>Findings</h4>
+  <div class="action-item medium">
+    <h4>Homepage SSR has no og:image <span class="status-warn">Medium</span></h4>
+    <p><strong>Recommendation:</strong> Add.</p>
+  </div>
+  <hr class="divider">
+</div>
+
+<!-- ======================================================= 3. ACTION PLAN === -->
+<div class="section">
+  <div class="section-header">
+    <h2>3. Action Plan</h2>
+  </div>
+
+  <div class="roadmap-phase">
+    <h4>Phase 1: Critical Fixes <span class="effort">Week 1</span></h4>
+    <ul>
+      <li>Allow answer-engine bots in Cloudflare (verify UA matrix returns 200)</li>
+      <li>Episode-page content gate: noindex,follow + drop from sitemap when title/summary missing in that language</li>
+      <li>Cloudflare Cache Rule for /sitemap*.xml</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>Phase 2: High-Impact Improvements <span class="effort">Weeks 2-3</span></h4>
+    <ul>
+      <li>Reduce Flutter payload: single renderer, deferred imports; re-measure</li>
+      <li>og:image on SSR homepage + language homepages</li>
+      <li>Sentence-boundary meta descriptions</li>
+      <li>Translation leak scan and fixes</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>Phase 3: Content &amp; Authority <span class="effort">Month 2</span></h4>
+    <ul>
+      <li>About/contact page in SSR; Organization.sameAs social + App Store</li>
+      <li>aggregateRating threshold ≥5</li>
+      <li>/kesfet and homepage H1 wording</li>
+      <li>Real 404 status for human UA</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>Phase 4: Monitoring &amp; Iteration <span class="effort">Ongoing</span></h4>
+    <ul>
+      <li>CrUX/GSC API keys → /seo google</li>
+      <li>/seo drift baseline then compare after each deploy</li>
+      <li>UA matrix + Playwright lab script after each deploy</li>
+      <li>Common Crawl backlink graph when download completes</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ======================================================= DATA SOURCES & METHODOLOGY === -->
+<div class="section" style="text-align: center; padding-top: 15mm;">
+  <hr class="divider">
+  <h3 style="text-align: left;">Data Sources &amp; Methodology</h3>
+  <table>
+    <thead>
+      <tr><th>Source</th><th>Description</th><th>Update Frequency</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>PageSpeed Insights API</td>
+          <td>Lighthouse lab audit (mobile emulation, Moto G Power, slow 4G)</td>
+          <td>Real-time</td></tr>
+      <tr><td>Chrome UX Report (CrUX)</td>
+          <td>28-day rolling field data from real Chrome users</td>
+          <td>Daily ~04:00 UTC</td></tr>
+      <tr><td>CrUX History API</td>
+          <td>25-week p75 trend data per metric</td>
+          <td>Weekly</td></tr>
+      <tr><td>Google Search Console</td>
+          <td>Search Analytics (clicks, impressions, CTR, position)</td>
+          <td>2-3 day lag</td></tr>
+      <tr><td>URL Inspection API</td>
+          <td>Per-URL index status, coverage state, crawl info</td>
+          <td>Real-time (2,000/day)</td></tr>
+    </tbody>
+  </table>
+  <p style="color: #94a3b8; font-size: 9pt; margin-top: 5mm;">
+    Report generated by Claude SEO &mdash; Google SEO Intelligence Skill &mdash; September 06, 2026<br>
+    Methodology based on Google Web Vitals thresholds, Search Console documentation, and Lighthouse scoring algorithms.
+  </p>
+</div>
+
+</body>
+</html>
