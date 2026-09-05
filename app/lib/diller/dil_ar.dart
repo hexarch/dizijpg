@@ -1629,4 +1629,11 @@ const Map<String, String> cevirilerAr = {
   'Ses seviyesi': 'مستوى الصوت',
   'Fotoğraf çek': 'التقاط صورة',
   'Video çek': 'تسجيل فيديو',
+  'Kolaj': 'كولاج',
+  'Düzen': 'التخطيط',
+  'Boşluk': 'التباعد',
+  'Köşe': 'الزوايا',
+  'Kolaj oluşturulamadı': 'تعذّر إنشاء الكولاج',
+  'Kolaj en fazla {} fotoğraf alır': 'يتّسع الكولاج لـ {} صور كحدّ أقصى',
+  'Yer değiştirmek için iki fotoğrafa dokun': 'المس صورتين لتبديلهما',
 };

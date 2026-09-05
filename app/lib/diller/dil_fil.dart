@@ -1674,4 +1674,12 @@ const Map<String, String> cevirilerFil = {
   'Ses seviyesi': 'Lakas ng tunog',
   'Fotoğraf çek': 'Kumuha ng litrato',
   'Video çek': 'Mag-record ng video',
+  'Kolaj': 'Collage',
+  'Düzen': 'Layout',
+  'Boşluk': 'Espasyo',
+  'Köşe': 'Sulok',
+  'Kolaj oluşturulamadı': 'Hindi makagawa ng collage',
+  'Kolaj en fazla {} fotoğraf alır': 'Hanggang {} larawan ang kasya sa collage',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'I-tap ang dalawang larawan para magpalit',
 };

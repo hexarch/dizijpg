@@ -1686,4 +1686,12 @@ const Map<String, String> cevirilerRo = {
   'Ses seviyesi': 'Volum',
   'Fotoğraf çek': 'Fă o poză',
   'Video çek': 'Filmează',
+  'Kolaj': 'Colaj',
+  'Düzen': 'Aspect',
+  'Boşluk': 'Spațiere',
+  'Köşe': 'Colțuri',
+  'Kolaj oluşturulamadı': 'Colajul nu a putut fi creat',
+  'Kolaj en fazla {} fotoğraf alır': 'Un colaj cuprinde cel mult {} fotografii',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Atinge două fotografii pentru a le schimba',
 };

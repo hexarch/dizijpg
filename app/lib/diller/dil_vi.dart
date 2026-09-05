@@ -1640,4 +1640,11 @@ const Map<String, String> cevirilerVi = {
   'Ses seviyesi': 'Âm lượng',
   'Fotoğraf çek': 'Chụp ảnh',
   'Video çek': 'Quay video',
+  'Kolaj': 'Ảnh ghép',
+  'Düzen': 'Bố cục',
+  'Boşluk': 'Khoảng cách',
+  'Köşe': 'Góc',
+  'Kolaj oluşturulamadı': 'Không thể tạo ảnh ghép',
+  'Kolaj en fazla {} fotoğraf alır': 'Ảnh ghép chứa tối đa {} ảnh',
+  'Yer değiştirmek için iki fotoğrafa dokun': 'Chạm hai ảnh để đổi chỗ',
 };

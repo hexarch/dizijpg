@@ -1675,4 +1675,12 @@ const Map<String, String> cevirilerEl = {
   'Ses seviyesi': 'Ένταση',
   'Fotoğraf çek': 'Λήψη φωτογραφίας',
   'Video çek': 'Εγγραφή βίντεο',
+  'Kolaj': 'Κολάζ',
+  'Düzen': 'Διάταξη',
+  'Boşluk': 'Απόσταση',
+  'Köşe': 'Γωνίες',
+  'Kolaj oluşturulamadı': 'Το κολάζ δεν δημιουργήθηκε',
+  'Kolaj en fazla {} fotoğraf alır': 'Ένα κολάζ χωρά έως {} φωτογραφίες',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Πάτησε δύο φωτογραφίες για να τις ανταλλάξεις',
 };

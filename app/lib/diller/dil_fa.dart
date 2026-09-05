@@ -1625,4 +1625,11 @@ const Map<String, String> cevirilerFa = {
   'Ses seviyesi': 'میزان صدا',
   'Fotoğraf çek': 'گرفتن عکس',
   'Video çek': 'ضبط ویدیو',
+  'Kolaj': 'کلاژ',
+  'Düzen': 'چیدمان',
+  'Boşluk': 'فاصله',
+  'Köşe': 'گوشه‌ها',
+  'Kolaj oluşturulamadı': 'کلاژ ساخته نشد',
+  'Kolaj en fazla {} fotoğraf alır': 'کلاژ حداکثر {} عکس می‌گیرد',
+  'Yer değiştirmek için iki fotoğrafa dokun': 'برای جابه‌جایی روی دو عکس بزنید',
 };

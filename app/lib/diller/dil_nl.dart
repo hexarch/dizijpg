@@ -1651,4 +1651,12 @@ const Map<String, String> cevirilerNl = {
   'Ses seviyesi': 'Volume',
   'Fotoğraf çek': 'Foto maken',
   'Video çek': 'Video opnemen',
+  'Kolaj': 'Collage',
+  'Düzen': 'Indeling',
+  'Boşluk': 'Ruimte',
+  'Köşe': 'Hoeken',
+  'Kolaj oluşturulamadı': 'Collage kon niet worden gemaakt',
+  'Kolaj en fazla {} fotoğraf alır': 'Een collage bevat maximaal {} foto\'s',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Tik op twee foto\'s om ze te wisselen',
 };

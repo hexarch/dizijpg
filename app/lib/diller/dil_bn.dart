@@ -1632,4 +1632,12 @@ const Map<String, String> cevirilerBn = {
   'Ses seviyesi': 'ভলিউম',
   'Fotoğraf çek': 'ছবি তুলুন',
   'Video çek': 'ভিডিও রেকর্ড করুন',
+  'Kolaj': 'কোলাজ',
+  'Düzen': 'লেআউট',
+  'Boşluk': 'ফাঁক',
+  'Köşe': 'কোণ',
+  'Kolaj oluşturulamadı': 'কোলাজ তৈরি করা যায়নি',
+  'Kolaj en fazla {} fotoğraf alır': 'কোলাজে সর্বোচ্চ {} ছবি',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'অদলবদল করতে দুটি ছবিতে ট্যাপ করুন',
 };

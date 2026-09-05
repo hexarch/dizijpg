@@ -1613,4 +1613,11 @@ const Map<String, String> cevirilerTh = {
   'Ses seviyesi': 'ระดับเสียง',
   'Fotoğraf çek': 'ถ่ายภาพ',
   'Video çek': 'ถ่ายวิดีโอ',
+  'Kolaj': 'คอลลาจ',
+  'Düzen': 'เลย์เอาต์',
+  'Boşluk': 'ระยะห่าง',
+  'Köşe': 'มุม',
+  'Kolaj oluşturulamadı': 'สร้างคอลลาจไม่ได้',
+  'Kolaj en fazla {} fotoğraf alır': 'คอลลาจรับได้สูงสุด {} รูป',
+  'Yer değiştirmek için iki fotoğrafa dokun': 'แตะสองรูปเพื่อสลับตำแหน่ง',
 };

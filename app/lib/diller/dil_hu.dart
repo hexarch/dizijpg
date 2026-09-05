@@ -1653,4 +1653,11 @@ const Map<String, String> cevirilerHu = {
   'Ses seviyesi': 'Hangerő',
   'Fotoğraf çek': 'Fotó készítése',
   'Video çek': 'Videó felvétele',
+  'Kolaj': 'Kollázs',
+  'Düzen': 'Elrendezés',
+  'Boşluk': 'Térköz',
+  'Köşe': 'Sarkok',
+  'Kolaj oluşturulamadı': 'A kollázs nem készült el',
+  'Kolaj en fazla {} fotoğraf alır': 'Egy kollázs legfeljebb {} fotót fogad',
+  'Yer değiştirmek için iki fotoğrafa dokun': 'Érints meg két fotót a cseréhez',
 };

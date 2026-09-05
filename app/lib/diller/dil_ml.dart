@@ -1649,4 +1649,12 @@ const Map<String, String> cevirilerMl = {
   'Ses seviyesi': 'ശബ്ദ നില',
   'Fotoğraf çek': 'ഫോട്ടോ എടുക്കുക',
   'Video çek': 'വീഡിയോ റെക്കോർഡ്',
+  'Kolaj': 'കൊളാഷ്',
+  'Düzen': 'ലേഔട്ട്',
+  'Boşluk': 'അകലം',
+  'Köşe': 'മൂലകൾ',
+  'Kolaj oluşturulamadı': 'കൊളാഷ് സൃഷ്ടിക്കാനായില്ല',
+  'Kolaj en fazla {} fotoğraf alır': 'കൊളാഷിൽ പരമാവധി {} ഫോട്ടോകൾ',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'മാറ്റാൻ രണ്ട് ഫോട്ടോകളിൽ ടാപ്പ് ചെയ്യുക',
 };

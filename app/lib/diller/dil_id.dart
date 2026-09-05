@@ -1642,4 +1642,11 @@ const Map<String, String> cevirilerId = {
   'Ses seviyesi': 'Volume',
   'Fotoğraf çek': 'Ambil foto',
   'Video çek': 'Rekam video',
+  'Kolaj': 'Kolase',
+  'Düzen': 'Tata letak',
+  'Boşluk': 'Jarak',
+  'Köşe': 'Sudut',
+  'Kolaj oluşturulamadı': 'Kolase tidak dapat dibuat',
+  'Kolaj en fazla {} fotoğraf alır': 'Kolase memuat hingga {} foto',
+  'Yer değiştirmek için iki fotoğrafa dokun': 'Ketuk dua foto untuk menukarnya',
 };

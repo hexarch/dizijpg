@@ -1606,4 +1606,11 @@ const Map<String, String> cevirilerHe = {
   'Ses seviyesi': 'עוצמת קול',
   'Fotoğraf çek': 'צילום תמונה',
   'Video çek': 'הקלטת וידאו',
+  'Kolaj': 'קולאז\'',
+  'Düzen': 'פריסה',
+  'Boşluk': 'ריווח',
+  'Köşe': 'פינות',
+  'Kolaj oluşturulamadı': 'לא ניתן ליצור קולאז\'',
+  'Kolaj en fazla {} fotoğraf alır': 'קולאז\' מכיל עד {} תמונות',
+  'Yer değiştirmek için iki fotoğrafa dokun': 'הקישו על שתי תמונות להחלפה',
 };

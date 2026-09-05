@@ -1629,4 +1629,11 @@ const Map<String, String> cevirilerGu = {
   'Ses seviyesi': 'વોલ્યુમ',
   'Fotoğraf çek': 'ફોટો લો',
   'Video çek': 'વિડિઓ રેકોર્ડ કરો',
+  'Kolaj': 'કોલાજ',
+  'Düzen': 'લેઆઉટ',
+  'Boşluk': 'અંતર',
+  'Köşe': 'ખૂણા',
+  'Kolaj oluşturulamadı': 'કોલાજ બનાવી શકાયું નહીં',
+  'Kolaj en fazla {} fotoğraf alır': 'કોલાજમાં વધુમાં વધુ {} ફોટા',
+  'Yer değiştirmek için iki fotoğrafa dokun': 'બદલવા માટે બે ફોટા પર ટૅપ કરો',
 };

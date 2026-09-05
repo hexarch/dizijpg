@@ -1642,4 +1642,12 @@ const Map<String, String> cevirilerKn = {
   'Ses seviyesi': 'ಧ್ವನಿ ಮಟ್ಟ',
   'Fotoğraf çek': 'ಫೋಟೋ ತೆಗೆಯಿರಿ',
   'Video çek': 'ವಿಡಿಯೋ ರೆಕಾರ್ಡ್',
+  'Kolaj': 'ಕೊಲಾಜ್',
+  'Düzen': 'ವಿನ್ಯಾಸ',
+  'Boşluk': 'ಅಂತರ',
+  'Köşe': 'ಮೂಲೆಗಳು',
+  'Kolaj oluşturulamadı': 'ಕೊಲಾಜ್ ರಚಿಸಲಾಗಲಿಲ್ಲ',
+  'Kolaj en fazla {} fotoğraf alır': 'ಕೊಲಾಜ್‌ನಲ್ಲಿ ಗರಿಷ್ಠ {} ಫೋಟೋಗಳು',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'ಬದಲಿಸಲು ಎರಡು ಫೋಟೋಗಳನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ',
 };

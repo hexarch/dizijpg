@@ -1648,4 +1648,12 @@ const Map<String, String> cevirilerUk = {
   'Ses seviyesi': 'Гучність',
   'Fotoğraf çek': 'Зробити фото',
   'Video çek': 'Зняти відео',
+  'Kolaj': 'Колаж',
+  'Düzen': 'Макет',
+  'Boşluk': 'Відступ',
+  'Köşe': 'Кути',
+  'Kolaj oluşturulamadı': 'Не вдалося створити колаж',
+  'Kolaj en fazla {} fotoğraf alır': 'У колаж входить до {} фото',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Торкніться двох фото, щоб поміняти їх',
 };

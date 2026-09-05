@@ -10,6 +10,7 @@ import '../video_islem.dart';
 import '../yerel_gorsel.dart';
 import '../yerel_video.dart';
 import 'gorsel_duzenle.dart';
+import 'kolaj.dart';
 import 'ortak.dart';
 import 'video_duzenle.dart';
 
@@ -304,6 +305,77 @@ class _MedyaIncelemeEkraniState extends State<MedyaIncelemeEkrani> {
   /// Kamera açık — çift açılmayı engeller.
   bool _cekiliyor = false;
 
+  /// Kolaj ekranı açık — çift açılmayı engeller.
+  bool _kolajAciliyor = false;
+
+  /// Kolaja girebilecek öğeler: yalnız TEK KARELİ görseller (GIF/video hayır).
+  List<_Ogem> get _kolajAdaylari =>
+      _liste.where((o) => o.tur == MedyaTur.gorsel).toList();
+
+  /// KOLAJ (kullanıcı isteği, 5 Eyl 2026): en az iki fotoğraf varken açılır.
+  /// Kaynak fotoğraflar (en çok [kolajAzamiFoto]) tek bir JPEG'e dönüşür ve
+  /// LİSTEDE ONLARIN YERİNE geçer — Instagram Layout ile aynı sonuç: kolaj
+  /// gönderinin kendisidir. Kolaj öğesi sıradan bir görsel: kalemle
+  /// düzenlenebilir, sürüklenebilir, kaldırılabilir.
+  ///
+  /// Fotoğraflar `ImageProvider` olarak gider (bayt değil): 6 × 12 MP'yi
+  /// belleğe almak OOM demek; `ResizeImage` 1600 px'te çözer, 2048 px'lik
+  /// çıktıya yeter. Düzenlenmiş görselde düzenlenmiş baytlar kullanılır.
+  Future<void> _kolajAc() async {
+    if (_kolajAciliyor) return;
+    final adaylar = _kolajAdaylari;
+    if (adaylar.length < 2) return;
+    final kaynaklar = adaylar.take(kolajAzamiFoto).toList();
+    if (adaylar.length > kolajAzamiFoto) {
+      _uyar('Kolaj en fazla {} fotoğraf alır'.cf([kolajAzamiFoto]));
+    }
+    setState(() => _kolajAciliyor = true);
+    try {
+      final fotolar = <ImageProvider>[];
+      for (final o in kaynaklar) {
+        final duzenli = _duzenlenen[o.kimlik];
+        if (duzenli != null) {
+          fotolar.add(ResizeImage(MemoryImage(duzenli), width: 1600));
+        } else if (o.dosya.path.isEmpty) {
+          fotolar.add(
+            ResizeImage(MemoryImage(await o.dosya.readAsBytes()), width: 1600),
+          );
+        } else {
+          fotolar.add(yerelGorsel(o.dosya.path, genislik: 1600));
+        }
+      }
+      if (!mounted) return;
+      final bayt = await kolajOlustur(context, fotolar);
+      if (bayt == null || !mounted) return; // vazgeçti → liste aynen kalır
+      final png = gorselTuru(bayt) == GorselTur.png;
+      final yeni = _Ogem(
+        'm${_sayac++}',
+        XFile.fromData(
+          bayt,
+          mimeType: png ? 'image/png' : 'image/jpeg',
+          name: 'kolaj.${png ? 'png' : 'jpg'}',
+          length: bayt.length,
+        ),
+      )..tur = MedyaTur.gorsel;
+      setState(() {
+        final yer = _liste.indexOf(kaynaklar.first);
+        for (final o in kaynaklar) {
+          _liste.remove(o);
+          _duzenlenen.remove(o.kimlik);
+        }
+        _liste.insert(yer.clamp(0, _liste.length), yeni);
+        // Kolaj baytı `_duzenlenen`de durur: önizleme, küçük resim ve
+        // "İleri" (XFile.fromData) hepsi aynı haritadan okur.
+        _duzenlenen[yeni.kimlik] = bayt;
+        _odak = yeni;
+      });
+    } catch (_) {
+      _uyar('Kolaj oluşturulamadı'.c);
+    } finally {
+      if (mounted) setState(() => _kolajAciliyor = false);
+    }
+  }
+
   /// Şeritte sürükleyip bırakma (kullanıcı isteği: "medya sıralamasını
   /// değiştirme"). Çıktı sırası = şerit sırası = gönderideki karusel sırası.
   ///
@@ -506,7 +578,7 @@ class _MedyaIncelemeEkraniState extends State<MedyaIncelemeEkrani> {
           'Medya ekle'.c,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         ),
-        actions: [_ileriDugmesi()],
+        actions: [_kolajDugmesi(), _ileriDugmesi()],
       ),
       // SafeArea YOK: şerit ekranın dibine kadar aksın; sistem gezinme
       // çubuğu altında kalmaması alttaki dolguyla çözülür (pro-rules,
@@ -592,6 +664,7 @@ class _MedyaIncelemeEkraniState extends State<MedyaIncelemeEkrani> {
         duzenli: (o) =>
             _duzenlenen.containsKey(o.kimlik) ||
             _videoKirpma.containsKey(o.kimlik),
+        duzenliBayt: (o) => _duzenlenen[o.kimlik],
         cikar: _cikar,
         odakla: (o) => setState(() => _odak = o),
         sirala: _sirala,
@@ -604,6 +677,27 @@ class _MedyaIncelemeEkraniState extends State<MedyaIncelemeEkrani> {
       SizedBox(height: altGuvenli(context, ekstra: 0)),
     ],
   );
+
+  /// Üst çubuktaki kolaj düğmesi — yalnız ≥2 fotoğraf varken çizilir
+  /// (tek fotoğrafla kolaj anlamsız; pasif düğme göstermiyoruz).
+  Widget _kolajDugmesi() {
+    if (_kolajAdaylari.length < 2) return const SizedBox.shrink();
+    return IconButton(
+      key: const ValueKey('kolaj-dugmesi'),
+      tooltip: 'Kolaj'.c,
+      onPressed: _kolajAciliyor || _onaylaniyor ? null : _kolajAc,
+      icon: _kolajAciliyor
+          ? SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: DiziRenkler.sariMetin,
+              ),
+            )
+          : const Icon(Icons.dashboard_customize_outlined),
+    );
+  }
 
   Widget _ileriDugmesi() {
     final sayi = _liste.length;
@@ -705,6 +799,9 @@ class _Serit extends StatelessWidget {
   final int azami;
   final _Ogem? odak;
   final bool Function(_Ogem) duzenli;
+
+  /// Düzenlenmiş/kolaj baytları — küçük resim bunları gösterir.
+  final Uint8List? Function(_Ogem) duzenliBayt;
   final void Function(int) cikar;
   final void Function(_Ogem) odakla;
   final void Function(int, int) sirala;
@@ -722,6 +819,7 @@ class _Serit extends StatelessWidget {
     required this.azami,
     required this.odak,
     required this.duzenli,
+    required this.duzenliBayt,
     required this.cikar,
     required this.odakla,
     required this.sirala,
@@ -777,6 +875,7 @@ class _Serit extends StatelessWidget {
                     ogem: liste[i],
                     secili: liste[i] == odak,
                     duzenli: duzenli(liste[i]),
+                    bayt: duzenliBayt(liste[i]),
                     cikar: () => cikar(i),
                     odakla: () => odakla(liste[i]),
                   ),
@@ -915,6 +1014,7 @@ class _SeritKaresi extends StatelessWidget {
   final _Ogem ogem;
   final bool secili;
   final bool duzenli;
+  final Uint8List? bayt;
   final VoidCallback cikar;
   final VoidCallback odakla;
 
@@ -922,6 +1022,7 @@ class _SeritKaresi extends StatelessWidget {
     required this.ogem,
     required this.secili,
     required this.duzenli,
+    this.bayt,
     required this.cikar,
     required this.odakla,
   });
@@ -964,7 +1065,7 @@ class _SeritKaresi extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(9),
-                    child: _Kucuk(ogem: ogem),
+                    child: _Kucuk(ogem: ogem, bayt: bayt),
                   ),
                 ),
               ),
@@ -1033,7 +1134,12 @@ class _SeritKaresi extends StatelessWidget {
 /// zemin + `videocam` glifi hem dürüst hem bedava.
 class _Kucuk extends StatelessWidget {
   final _Ogem ogem;
-  const _Kucuk({required this.ogem});
+
+  /// Düzenlenmiş/kolaj baytları: varsa küçük resim BUNLARI gösterir
+  /// (kullanıcı ne göndereceğini şeritte de görür; kolaj öğesinin yolu
+  /// zaten yok, tek kaynağı bu).
+  final Uint8List? bayt;
+  const _Kucuk({required this.ogem, this.bayt});
 
   @override
   Widget build(BuildContext context) {
@@ -1041,6 +1147,17 @@ class _Kucuk extends StatelessWidget {
       return ColoredBox(
         color: DiziRenkler.kart,
         child: Icon(Icons.videocam, size: 22, color: DiziRenkler.metin70),
+      );
+    }
+    if (bayt != null) {
+      return Image(
+        // 60 dp karo, 3× piksel oranı → 180 px yeter; tam çözünürlük çözme.
+        image: ResizeImage(MemoryImage(bayt!), width: 180),
+        fit: BoxFit.cover,
+        width: 60,
+        height: 60,
+        gaplessPlayback: true,
+        errorBuilder: (_, _, _) => _yerTutucu(20),
       );
     }
     // Yolu olmayan dosya (bellek içi `XFile.fromData`) çizilemez: boş yollu

@@ -1683,4 +1683,12 @@ const Map<String, String> cevirilerEs = {
   'Ses seviyesi': 'Volumen',
   'Fotoğraf çek': 'Tomar foto',
   'Video çek': 'Grabar video',
+  'Kolaj': 'Collage',
+  'Düzen': 'Diseño',
+  'Boşluk': 'Espaciado',
+  'Köşe': 'Esquinas',
+  'Kolaj oluşturulamadı': 'No se pudo crear el collage',
+  'Kolaj en fazla {} fotoğraf alır': 'Un collage admite hasta {} fotos',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Toca dos fotos para intercambiarlas',
 };

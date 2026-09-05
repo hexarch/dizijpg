@@ -202,6 +202,25 @@ Future<Uint8List?> _pngKucult(Uint8List png, int hedefGenislik) async {
   }
 }
 
+/// Bir `ui.Image`i JPEG'e (kalite 92) kodlar — KOLAJ çıktısı için
+/// (`ekranlar/kolaj.dart`). Editörle aynı kodlayıcı, aynı kalite: kolaj da
+/// düzenlenmiş fotoğrafla aynı dosya özelliklerinde yüklenir.
+///
+/// NEDEN BURADA: JPEG kodlayıcı ertelenmiş parçada yaşıyor; ana pakete ikinci
+/// bir kodlayıcı taşımak (`package:image`) hem bağımlılık hem web paketi
+/// demekti. Kolaj ekranı bu fonksiyona `gorsel_duzenle.dart` sarmalayıcısı
+/// üzerinden (`loadLibrary` sonrası) ulaşır — SINIRIN KURALI korunur.
+Future<Uint8List?> gorseliJpegKodlaGovde(ui.Image gorsel) =>
+    ImageConverter.instance.uiImageToImageBytes(
+      gorsel,
+      configs: const ImageGenerationConfigs(
+        outputFormat: OutputFormat.jpg,
+        jpegQuality: 92,
+        maxOutputSize: Size.infinite,
+        cropToDrawingBounds: false,
+      ),
+    );
+
 /// Editörün ASIL GÖVDESİ: ekranı açar, çıktıyı doğrular, gerekirse küçültür.
 ///
 /// NEDEN `BuildContext` ALMIYOR: bu fonksiyon `loadLibrary()` beklendikten

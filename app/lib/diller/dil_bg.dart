@@ -1649,4 +1649,12 @@ const Map<String, String> cevirilerBg = {
   'Ses seviyesi': 'Сила на звука',
   'Fotoğraf çek': 'Снимай',
   'Video çek': 'Запиши видео',
+  'Kolaj': 'Колаж',
+  'Düzen': 'Подредба',
+  'Boşluk': 'Разстояние',
+  'Köşe': 'Ъгли',
+  'Kolaj oluşturulamadı': 'Колажът не можа да бъде създаден',
+  'Kolaj en fazla {} fotoğraf alır': 'Колажът включва до {} снимки',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Докосни две снимки, за да ги размениш',
 };

@@ -1659,4 +1659,12 @@ const Map<String, String> cevirilerMy = {
   'Ses seviyesi': 'အသံအတိုးအကျယ်',
   'Fotoğraf çek': 'ဓာတ်ပုံရိုက်',
   'Video çek': 'ဗီဒီယိုရိုက်',
+  'Kolaj': 'ကောလာ့ဂျ်',
+  'Düzen': 'အပြင်အဆင်',
+  'Boşluk': 'ကွာဟမှု',
+  'Köşe': 'ထောင့်များ',
+  'Kolaj oluşturulamadı': 'ကောလာ့ဂျ် ဖန်တီး၍မရပါ',
+  'Kolaj en fazla {} fotoğraf alır': 'ကောလာ့ဂျ်တွင် ဓာတ်ပုံ {} ပုံအထိ',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'နေရာလဲရန် ဓာတ်ပုံနှစ်ပုံကို တို့ပါ',
 };

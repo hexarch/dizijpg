@@ -1564,4 +1564,11 @@ const Map<String, String> cevirilerKo = {
   'Ses seviyesi': '음량',
   'Fotoğraf çek': '사진 촬영',
   'Video çek': '동영상 촬영',
+  'Kolaj': '콜라주',
+  'Düzen': '레이아웃',
+  'Boşluk': '간격',
+  'Köşe': '모서리',
+  'Kolaj oluşturulamadı': '콜라주를 만들 수 없습니다',
+  'Kolaj en fazla {} fotoğraf alır': '콜라주는 최대 {}장까지',
+  'Yer değiştirmek için iki fotoğrafa dokun': '두 사진을 탭하여 자리 바꾸기',
 };

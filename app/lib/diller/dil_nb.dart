@@ -1643,4 +1643,12 @@ const Map<String, String> cevirilerNb = {
   'Ses seviyesi': 'Volum',
   'Fotoğraf çek': 'Ta bilde',
   'Video çek': 'Ta opp video',
+  'Kolaj': 'Kollasj',
+  'Düzen': 'Oppsett',
+  'Boşluk': 'Avstand',
+  'Köşe': 'Hjørner',
+  'Kolaj oluşturulamadı': 'Kunne ikke lage kollasj',
+  'Kolaj en fazla {} fotoğraf alır': 'En kollasj tar opptil {} bilder',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Trykk på to bilder for å bytte plass',
 };

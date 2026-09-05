@@ -1,6 +1,27 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-05 — 🧩 KOLAJ: fotoğraflardan tek kare (1.133.0+200)
+
+**Kullanıcı:** "hâlâ fotoğraflardan kolaj oluşturma özelliği yok." Doğruydu — 1. aşama listesinde yoktu.
+
+- ✅ **`app/lib/ekranlar/kolaj.dart` (YENİ):** `kolajOlustur(context, List<ImageProvider>) → bayt?`
+  (`gorselDuzenle` sözleşmesi). 14 şablon (2-6 hücre; yan yana, üst-alt, büyük+küçükler, ızgaralar),
+  oran (1:1, 4:5, 3:4, 9:16, 16:9), boşluk (0-24), köşe (0-32), zemin (siyah/beyaz/sarı/koyu gri).
+  Hücrede iki parmakla yaklaştır/kaydır (`InteractiveViewer`), iki hücreye dokun → yer değiştir
+  (kadraj sıfırlanır). Seçim çerçevesi tuvalin DIŞINDA → çıktıya girmez.
+- ✅ **Çıktı:** `RepaintBoundary.toImage` uzun kenar 2048 px → JPEG q92 (ertelenmiş parçadaki
+  `ImageConverter`, yeni köprü `gorseliJpegKodla`); parça inemezse PNG'ye düşer. Fotoğraflar
+  `ResizeImage` 1600 px ile çözülür (6×12 MP OOM riski yok).
+- ✅ **İnceleme ekranı:** üst çubukta Kolaj düğmesi yalnız ≥2 tek kareli görsel varken (GIF/video
+  sayılmaz). Kolaj kaynak fotoğrafların **yerine** tek öğe olur (ilk kaynağın konumunda), baytı
+  `_duzenlenen`de → önizleme, küçük resim ve "İleri" aynı kaynaktan; kalemle yeniden düzenlenebilir.
+  7+ fotoğrafta ilk 6 girer, kullanıcı uyarılır. Küçük resimler artık düzenlenmiş baytı gösteriyor.
+- ✅ **Çeviri:** 7 yeni anahtar × 45 dil. **Kanıt:** `test/kolaj_test.dart` (12 test: şablon
+  geometrisi alan=1 + kesişim yok, şablon/oran/boşluk tuvali değiştirir, yer değiştirme, Tamam →
+  kodlayıcı baytı, PNG yedeği, X → null, düğme koşulu, yerine geçme, vazgeçme, 6 tavanı).
+- ⬜ Cihazda elle test: 3 fotoğrafla kolaj → yükle → akışta tek kare görünüyor mu.
+
 ## 2026-09-05 — 🎬 GÖNDERİ MEDYA EDİTÖRÜ 1. aşama: sıralama, kamera, ton/filtre/çıkartma, video hız·ses·filtre (1.132.0+199)
 
 **Kullanıcı isteği (özet):** "Gönderi paylaşırken fotoğraf ve video düzenleyebilme — CapCut/InShot/

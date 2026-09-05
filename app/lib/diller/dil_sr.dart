@@ -1645,4 +1645,12 @@ const Map<String, String> cevirilerSr = {
   'Ses seviyesi': 'Jačina zvuka',
   'Fotoğraf çek': 'Snimi fotografiju',
   'Video çek': 'Snimi video',
+  'Kolaj': 'Kolaž',
+  'Düzen': 'Raspored',
+  'Boşluk': 'Razmak',
+  'Köşe': 'Uglovi',
+  'Kolaj oluşturulamadı': 'Kolaž nije mogao da se napravi',
+  'Kolaj en fazla {} fotoğraf alır': 'Kolaž prima najviše {} fotografija',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Dodirni dve fotografije da ih zameniš',
 };

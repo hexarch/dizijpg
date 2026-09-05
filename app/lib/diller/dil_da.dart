@@ -1644,4 +1644,12 @@ const Map<String, String> cevirilerDa = {
   'Ses seviyesi': 'Lydstyrke',
   'Fotoğraf çek': 'Tag foto',
   'Video çek': 'Optag video',
+  'Kolaj': 'Kollage',
+  'Düzen': 'Layout',
+  'Boşluk': 'Afstand',
+  'Köşe': 'Hjørner',
+  'Kolaj oluşturulamadı': 'Kollagen kunne ikke oprettes',
+  'Kolaj en fazla {} fotoğraf alır': 'En kollage rummer op til {} fotos',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Tryk på to fotos for at bytte dem',
 };

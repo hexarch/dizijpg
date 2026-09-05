@@ -1669,4 +1669,12 @@ const Map<String, String> cevirilerTa = {
   'Ses seviyesi': 'ஒலி அளவு',
   'Fotoğraf çek': 'புகைப்படம் எடு',
   'Video çek': 'வீடியோ பதிவு',
+  'Kolaj': 'கொலாஜ்',
+  'Düzen': 'அமைப்பு',
+  'Boşluk': 'இடைவெளி',
+  'Köşe': 'மூலைகள்',
+  'Kolaj oluşturulamadı': 'கொலாஜை உருவாக்க முடியவில்லை',
+  'Kolaj en fazla {} fotoğraf alır': 'கொலாஜில் அதிகபட்சம் {} புகைப்படங்கள்',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'மாற்ற இரண்டு புகைப்படங்களைத் தட்டவும்',
 };

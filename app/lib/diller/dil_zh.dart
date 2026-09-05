@@ -1558,4 +1558,11 @@ const Map<String, String> cevirilerZh = {
   'Ses seviyesi': '音量',
   'Fotoğraf çek': '拍照',
   'Video çek': '录像',
+  'Kolaj': '拼图',
+  'Düzen': '布局',
+  'Boşluk': '间距',
+  'Köşe': '圆角',
+  'Kolaj oluşturulamadı': '无法创建拼图',
+  'Kolaj en fazla {} fotoğraf alır': '拼图最多包含 {} 张照片',
+  'Yer değiştirmek için iki fotoğrafa dokun': '点按两张照片以交换位置',
 };

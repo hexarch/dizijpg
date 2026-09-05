@@ -1560,4 +1560,11 @@ const Map<String, String> cevirilerJa = {
   'Ses seviyesi': '音量',
   'Fotoğraf çek': '写真を撮る',
   'Video çek': '動画を撮る',
+  'Kolaj': 'コラージュ',
+  'Düzen': 'レイアウト',
+  'Boşluk': '余白',
+  'Köşe': '角',
+  'Kolaj oluşturulamadı': 'コラージュを作成できませんでした',
+  'Kolaj en fazla {} fotoğraf alır': 'コラージュは最大{}枚まで',
+  'Yer değiştirmek için iki fotoğrafa dokun': '2枚の写真をタップして入れ替え',
 };

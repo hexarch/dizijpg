@@ -206,6 +206,9 @@ const {
   // Admin panel erişimi: virgülle ayrılmış IP listesi + isteğe bağlı gizli anahtar.
   ADMIN_IPLER = '',
   ADMIN_TOKEN = '',
+  // Listenin SICAK kaynağı (5 Eyl 2026): dosya yolu. Boşsa ADMIN_IPLER
+  // kullanılır. Gerekçe ve davranış: bkz. adminIpListesi.
+  ADMIN_IPLER_DOSYA = '',
 } = process.env;
 
 if (!DATABASE_URL || !JWT_SECRET || !TMDB_TOKEN) {
@@ -20629,9 +20632,61 @@ function fetchSiteIzinli(metot, secFetchSite) {
   return s === '' || s === 'same-origin' || s === 'none';
 }
 
+// ---------------------------------------------------------------------------
+// ADMIN IP LİSTESİNİN SICAK KAYNAĞI — ADMIN_IPLER_DOSYA (5 Eyl 2026)
+// ---------------------------------------------------------------------------
+// NEDEN: liste .env'den (ADMIN_IPLER) geliyordu ve yalnız AÇILIŞTA
+// okunuyordu. Yöneticinin ev IP'si günde 3-5 kez değişiyor (admin-ip.log,
+// 3-4 Eyl) ve her değişimde dizijpg-admin-ip.sh `docker-compose up -d api`
+// ile konteyneri YENİDEN YARATIYORDU. Her yaratma 10-30 sn'lik bir 502
+// penceresi demek; Googlebot bunlara denk geliyor: GSC "Sunucu hatası (5xx)"
+// kovası 37 URL, nginx error.log'da günde ~10 "connect() failed (111)"
+// demeti (5 Eyl ölçümü). Konteyner yaratmayı gerektiren TEK şey bu listeydi.
+//
+// ÇÖZÜM: liste bir DOSYADAN okunur (compose: `./admin-ip:/admin-ip:ro`);
+// betik dosyayı yazar, konteynere DOKUNMAZ. Dosya her istekte stat'lanmaz —
+// 2 sn'lik önbellek; admin uçları zaten seyrek. DİZİN bağlanır, dosya
+// değil: tek dosya bağlansaydı betiğin atomik `mv`si (yeni inode)
+// konteynerde ESKİ dosyayı bırakırdı.
+//
+// FAIL-CLOSED: dosya yoksa/okunamazsa env'deki ADMIN_IPLER geçerlidir
+// (yeniden başlatmada da aynı liste .env'de durur). Dosya varsa ama BOŞSA
+// liste boştur, kapı kapalıdır — env'e DÜŞÜLMEZ; boş dosya "kimse girmesin"
+// demektir, "eskiye dön" değil. Biçim: satır VEYA virgül ayraçlı, `#` yorum.
+function adminIpAyristir(metin) {
+  return String(metin || '')
+    .split(/[\n,]/)
+    .map((s) => s.replace(/#.*$/, '').trim())
+    .filter(Boolean);
+}
+const adminIpOnbellek = { zaman: 0, anahtar: '', liste: null };
+function adminIpListesi() {
+  if (!ADMIN_IPLER_DOSYA) return adminIpAyristir(ADMIN_IPLER);
+  const simdi = Date.now();
+  if (adminIpOnbellek.liste && simdi - adminIpOnbellek.zaman < 2000) {
+    return adminIpOnbellek.liste;
+  }
+  try {
+    const st = fs.statSync(ADMIN_IPLER_DOSYA);
+    // inode+mtime+boyut: atomik `mv` inode'u değiştirir, yerinde yazma
+    // mtime'ı; ikisi de yakalanır.
+    const anahtar = `${st.ino}:${st.mtimeMs}:${st.size}`;
+    if (!adminIpOnbellek.liste || anahtar !== adminIpOnbellek.anahtar) {
+      adminIpOnbellek.liste = adminIpAyristir(fs.readFileSync(ADMIN_IPLER_DOSYA, 'utf8'));
+      adminIpOnbellek.anahtar = anahtar;
+    }
+    adminIpOnbellek.zaman = simdi;
+    return adminIpOnbellek.liste;
+  } catch (e) {
+    adminIpOnbellek.liste = null;
+    adminIpOnbellek.anahtar = '';
+    return adminIpAyristir(ADMIN_IPLER);
+  }
+}
+
 function adminKisit(req, res, next) {
   const ip = gercekIp(req);
-  const izinli = ADMIN_IPLER.split(',').map((s) => s.trim()).filter(Boolean);
+  const izinli = adminIpListesi();
   const tokenGecerli =
     !!ADMIN_TOKEN && esitGizli(req.headers['x-admin-token'] || '', ADMIN_TOKEN);
   if (tokenGecerli) return next();

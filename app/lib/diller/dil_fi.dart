@@ -1648,4 +1648,12 @@ const Map<String, String> cevirilerFi = {
   'Ses seviyesi': 'Äänenvoimakkuus',
   'Fotoğraf çek': 'Ota kuva',
   'Video çek': 'Tallenna video',
+  'Kolaj': 'Kollaasi',
+  'Düzen': 'Asettelu',
+  'Boşluk': 'Väli',
+  'Köşe': 'Kulmat',
+  'Kolaj oluşturulamadı': 'Kollaasia ei voitu luoda',
+  'Kolaj en fazla {} fotoğraf alır': 'Kollaasiin mahtuu enintään {} kuvaa',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Napauta kahta kuvaa vaihtaaksesi ne',
 };

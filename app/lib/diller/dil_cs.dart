@@ -1638,4 +1638,12 @@ const Map<String, String> cevirilerCs = {
   'Ses seviyesi': 'Hlasitost',
   'Fotoğraf çek': 'Vyfotit',
   'Video çek': 'Natočit video',
+  'Kolaj': 'Koláž',
+  'Düzen': 'Rozložení',
+  'Boşluk': 'Mezera',
+  'Köşe': 'Rohy',
+  'Kolaj oluşturulamadı': 'Koláž se nepodařilo vytvořit',
+  'Kolaj en fazla {} fotoğraf alır': 'Koláž pojme až {} fotek',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Klepnutím na dvě fotky je prohodíte',
 };

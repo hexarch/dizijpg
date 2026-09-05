@@ -106,6 +106,13 @@ services:
       GSC_SA_YOL: /app/firebase-admin.json
       JWT_SECRET: ${JWT_SECRET}
       TMDB_TOKEN: ${TMDB_TOKEN}
+      # YouTube Data API v3 anahtari (5 Eyl 2026) — kirik fragman taramasi
+      # (fragman_tarama.js). BU SATIR OLMADAN betik oEmbed yoluna duser ve
+      # "gomme kapali" + "Turkiye'ye kapali" fragmanlari HIC goremez; olcumde
+      # 11 kirigin 4'u tam olarak bu sinifti (Lioness, FROM, Bleach, Demon
+      # Slayer — hepsi RESMI ama TR'ye kapali). TURN_SIR ile AYNI tuzak:
+      # .env'de degisken VAR ama compose aktarmazsa yetenek SESSIZCE kaybolur.
+      YOUTUBE_API_KEY: ${YOUTUBE_API_KEY:-}
       # Özel mesajların DURAĞAN şifrelemesi (AES-256-GCM, backend/kripto.js).
       # base64, 32 bayt: `openssl rand -base64 32`.
       # YOKSA API AÇILMAZ (bilinçli: sessizce düz metne düşmek en tehlikelisi).
@@ -175,8 +182,19 @@ services:
       # Boş kalırsa /admin ve /admin/* HERKESE 403 döner.
       ADMIN_IPLER: ${ADMIN_IPLER}
       ADMIN_TOKEN: ${ADMIN_TOKEN}
+      # SICAK IP listesi (5 Eyl 2026, GSC 5xx): dizijpg-admin-ip.sh artik
+      # konteyneri YENIDEN YARATMAZ, ./admin-ip/ipler.txt dosyasini yazar;
+      # Node dosyayi 2 sn'de bir yeniden okur (server.js: adminIpListesi).
+      # .env'deki ADMIN_IPLER yalniz dosya yokken / yeniden baslatmada yedek.
+      # Bu satir olmadan kod env'e duser ve betigin dosya yazmasi SESSIZCE
+      # etkisiz kalir (DISK_ESIK_GB tuzaginin aynisi).
+      ADMIN_IPLER_DOSYA: /admin-ip/ipler.txt
     volumes:
       - dizijpg_dosyalar:/veri
+      # Admin IP listesi dizini SALT-OKUNUR (yukaridaki ADMIN_IPLER_DOSYA).
+      # DIZIN baglanir, dosya degil: betik atomik `mv` ile yazar (yeni inode);
+      # tek dosya baglansaydi konteyner eski inode'a bakmaya devam ederdi.
+      - ./admin-ip:/admin-ip:ro
       # FCM servis hesabı: yoksa push sessizce kapanır (log: "FCM push kapalı").
       - ./firebase-admin.json:/app/firebase-admin.json:ro
       # Host'taki Maildir'ler SALT-OKUNUR: panel gelen maili gösterir ama

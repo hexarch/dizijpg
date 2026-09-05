@@ -1668,4 +1668,12 @@ const Map<String, String> cevirilerRu = {
   'Ses seviyesi': 'Громкость',
   'Fotoğraf çek': 'Сделать фото',
   'Video çek': 'Снять видео',
+  'Kolaj': 'Коллаж',
+  'Düzen': 'Макет',
+  'Boşluk': 'Отступ',
+  'Köşe': 'Углы',
+  'Kolaj oluşturulamadı': 'Не удалось создать коллаж',
+  'Kolaj en fazla {} fotoğraf alır': 'В коллаж входит до {} фото',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Нажмите на два фото, чтобы поменять их',
 };

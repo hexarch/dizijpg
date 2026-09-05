@@ -1638,4 +1638,11 @@ const Map<String, String> cevirilerPa = {
   'Ses seviyesi': 'ਆਵਾਜ਼ ਦਾ ਪੱਧਰ',
   'Fotoğraf çek': 'ਫੋਟੋ ਲਵੋ',
   'Video çek': 'ਵੀਡੀਓ ਰਿਕਾਰਡ ਕਰੋ',
+  'Kolaj': 'ਕੋਲਾਜ',
+  'Düzen': 'ਲੇਆਉਟ',
+  'Boşluk': 'ਵਿੱਥ',
+  'Köşe': 'ਕੋਨੇ',
+  'Kolaj oluşturulamadı': 'ਕੋਲਾਜ ਨਹੀਂ ਬਣ ਸਕਿਆ',
+  'Kolaj en fazla {} fotoğraf alır': 'ਕੋਲਾਜ ਵਿੱਚ ਵੱਧ ਤੋਂ ਵੱਧ {} ਫੋਟੋਆਂ',
+  'Yer değiştirmek için iki fotoğrafa dokun': 'ਬਦਲਣ ਲਈ ਦੋ ਫੋਟੋਆਂ \'ਤੇ ਟੈਪ ਕਰੋ',
 };

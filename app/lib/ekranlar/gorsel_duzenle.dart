@@ -328,6 +328,22 @@ Future<Uint8List?> gorselDuzenle(BuildContext context, Uint8List veri) async {
   return editor.gorselDuzenleGovde(gezgin, mesajci, veri, saydam: saydam);
 }
 
+/// Testler için: JPEG kodlayıcı yerine geçer.
+@visibleForTesting
+Future<Uint8List?> Function(ui.Image)? jpegKodlaSahte;
+
+/// `ui.Image` → JPEG baytları (kolaj çıktısı). Parça inemezse ya da kodlayıcı
+/// patlarsa `null` — çağıran PNG'ye düşer (`kolaj.dart`).
+Future<Uint8List?> gorseliJpegKodla(ui.Image gorsel) async {
+  if (jpegKodlaSahte != null) return jpegKodlaSahte!(gorsel);
+  try {
+    await _editoruYukle();
+    return await editor.gorseliJpegKodlaGovde(gorsel);
+  } catch (_) {
+    return null;
+  }
+}
+
 void _uyar(ScaffoldMessengerState mesajci, String metin) => mesajci
   ..clearSnackBars()
   ..showSnackBar(SnackBar(content: Text(metin)));

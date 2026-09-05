@@ -1635,4 +1635,11 @@ const Map<String, String> cevirilerMr = {
   'Ses seviyesi': 'आवाजाची पातळी',
   'Fotoğraf çek': 'फोटो काढा',
   'Video çek': 'व्हिडिओ रेकॉर्ड करा',
+  'Kolaj': 'कोलाज',
+  'Düzen': 'लेआउट',
+  'Boşluk': 'अंतर',
+  'Köşe': 'कोपरे',
+  'Kolaj oluşturulamadı': 'कोलाज तयार करता आले नाही',
+  'Kolaj en fazla {} fotoğraf alır': 'कोलाजमध्ये जास्तीत जास्त {} फोटो',
+  'Yer değiştirmek için iki fotoğrafa dokun': 'बदलण्यासाठी दोन फोटोंवर टॅप करा',
 };

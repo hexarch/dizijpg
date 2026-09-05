@@ -1632,4 +1632,12 @@ const Map<String, String> cevirilerAz = {
   'Ses seviyesi': 'Səs səviyyəsi',
   'Fotoğraf çek': 'Şəkil çək',
   'Video çek': 'Video çək',
+  'Kolaj': 'Kollaj',
+  'Düzen': 'Düzən',
+  'Boşluk': 'Boşluq',
+  'Köşe': 'Künclər',
+  'Kolaj oluşturulamadı': 'Kollaj yaradıla bilmədi',
+  'Kolaj en fazla {} fotoğraf alır': 'Kollaj ən çox {} foto alır',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Yerini dəyişmək üçün iki fotoya toxun',
 };

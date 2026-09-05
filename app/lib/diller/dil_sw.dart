@@ -1649,4 +1649,12 @@ const Map<String, String> cevirilerSw = {
   'Ses seviyesi': 'Kiwango cha sauti',
   'Fotoğraf çek': 'Piga picha',
   'Video çek': 'Rekodi video',
+  'Kolaj': 'Kolaji',
+  'Düzen': 'Mpangilio',
+  'Boşluk': 'Nafasi',
+  'Köşe': 'Pembe',
+  'Kolaj oluşturulamadı': 'Kolaji haikuweza kuundwa',
+  'Kolaj en fazla {} fotoğraf alır': 'Kolaji huchukua hadi picha {}',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Gusa picha mbili ili kuzibadilisha',
 };

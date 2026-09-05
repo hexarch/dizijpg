@@ -788,10 +788,25 @@ Canlı örnek `noindex,follow` (ince liste). Eşik metin uzunluğuna çekilmeden
 27 Ağu'da yanlarına altı cevap botu da eklendi (GEO-PLANI §3). Kilit:
 `backend/test/geo_bot_regex.test.js`.
 
-### 6.9 ⬜ 5xx kuyruğu
+### 6.9 🚀 5xx kuyruğu
 
 Kök neden (SSR süre bütçesi) 20 Ağu’da kapandı. GSC **34**, doğrulama başladı.  
-⬜ Doğrulama yeşil + 0. Yeni 5xx olursa `ssr_butce_asimi` logu.
+**5 Eyl — İKİNCİ kök neden bulundu ve kapandı (37 URL, hepsi bugün 200):**
+yöneticinin ev IP'si günde 3-5 kez değişiyor (`~/.dizijpg/admin-ip.log`) ve
+`dizijpg-admin-ip.sh` her seferinde `docker-compose up -d api` ile konteyneri
+YENİDEN YARATIYORDU → 10-30 sn 502 penceresi, nginx error.log'da günde ~10
+"connect() failed (111)" demeti, 4 Eyl 82 / 5 Eyl 46 adet 502. Üç katmanlı düzeltme:
+1. **Node sıcak liste** — `ADMIN_IPLER_DOSYA=/admin-ip/ipler.txt` (compose
+   `./admin-ip:/admin-ip:ro`), `adminIpListesi()` 2 sn önbellekle dosyayı okur;
+   betik dosyayı atomik yazar, konteynere DOKUNMAZ (test: `admin_ip_dosya.test.js`).
+2. **nginx 503 + Retry-After 120** — `error_page 502 504 = @bakim` (yalnız
+   nginx'in kendi ürettiği; Node 5xx'i olduğu gibi geçer). Kanıt: 5 Eyl 18:34
+   yenilemesinde panel isteği 502 yerine 503 aldı (access.log).
+3. `/register` → 301 `/giris` (404 kovasından çıktı).
+⬜ 12 Eyl: GSC 5xx doğrulaması yeşil + `grep " 502 " access.log` = 0.
+⬜ KANIT EKSİK: sıcak liste uçtan uca (IP değişince konteyner yenilenmeden
+   panelin açılması) ilk gerçek IP değişiminde `admin-ip.log`'dan okunacak —
+   satır "konteyner admin-ip/ipler.txt: … doğrulandı" olmalı, "yenileniyor" DEĞİL.
 
 ### 6.10 🚀 Isıtıcı + anahtar birleştirme
 

@@ -1637,4 +1637,12 @@ const Map<String, String> cevirilerHi = {
   'Ses seviyesi': 'आवाज़ का स्तर',
   'Fotoğraf çek': 'फ़ोटो लें',
   'Video çek': 'वीडियो रिकॉर्ड करें',
+  'Kolaj': 'कोलाज',
+  'Düzen': 'लेआउट',
+  'Boşluk': 'अंतर',
+  'Köşe': 'कोने',
+  'Kolaj oluşturulamadı': 'कोलाज नहीं बन सका',
+  'Kolaj en fazla {} fotoğraf alır': 'कोलाज में अधिकतम {} फ़ोटो',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'बदलने के लिए दो फ़ोटो पर टैप करें',
 };

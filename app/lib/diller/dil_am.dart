@@ -1585,4 +1585,11 @@ const Map<String, String> cevirilerAm = {
   'Ses seviyesi': 'የድምፅ መጠን',
   'Fotoğraf çek': 'ፎቶ አንሳ',
   'Video çek': 'ቪዲዮ ቅረጽ',
+  'Kolaj': 'ኮላዥ',
+  'Düzen': 'አቀማመጥ',
+  'Boşluk': 'ክፍተት',
+  'Köşe': 'ማዕዘኖች',
+  'Kolaj oluşturulamadı': 'ኮላዥ መፍጠር አልተቻለም',
+  'Kolaj en fazla {} fotoğraf alır': 'ኮላዥ እስከ {} ፎቶ ይይዛል',
+  'Yer değiştirmek için iki fotoğrafa dokun': 'ለመቀያየር ሁለት ፎቶዎችን ይንኩ',
 };

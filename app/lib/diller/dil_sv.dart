@@ -1655,4 +1655,12 @@ const Map<String, String> cevirilerSv = {
   'Ses seviyesi': 'Volym',
   'Fotoğraf çek': 'Ta foto',
   'Video çek': 'Spela in video',
+  'Kolaj': 'Kollage',
+  'Düzen': 'Layout',
+  'Boşluk': 'Avstånd',
+  'Köşe': 'Hörn',
+  'Kolaj oluşturulamadı': 'Kollaget kunde inte skapas',
+  'Kolaj en fazla {} fotoğraf alır': 'Ett kollage rymmer upp till {} foton',
+  'Yer değiştirmek için iki fotoğrafa dokun':
+      'Tryck på två foton för att byta plats',
 };
