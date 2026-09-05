@@ -8922,10 +8922,12 @@ Kimlik atlama / SQLi / komut enjeksiyonu / SSRF / yol geçişi YOK.
   kalan 8 orta = firebase-admin@12 zinciri (14 bilinçli ertelendi).
 - 🚀 **KAPANDI** yükleme/veri/oda/rol/efekt limitleri `hizLimitiMerkezi`;
   `x-powered-by` kapalı; Mac firebase-gizli 600.
-- ⬜ **KULLANICI KOŞACAK:** `ssh karanew 'bash -s' < backend/guvenlik-sertlestir-20260905.sh`
-  → postfix `smtpd_tls_auth_only`, dovecot `disable_plaintext_auth`, avahi
-  kapatma, nginx admin CSP'den unpkg çıkarma. (Oturumun SSH yazma izni
-  sınıflandırıcı tarafından engellendi; betik yedek alır + sınar + reload eder.)
+- 🚀 **KAPANDI (5 Eyl, kullanıcı koştu)** `guvenlik-sertlestir-20260905.sh`:
+  postfix `smtpd_tls_auth_only=yes`, dovecot `disable_plaintext_auth=yes`
+  (143'e TLS'siz LOGIN → LOGINDISABLED, kanıtlı), avahi kapalı (5353 yok),
+  nginx admin CSP'de unpkg yok (canlı başlık). Yedekler `/root/*.yedek-guvenlik-*`.
+  NOT: oturumun SSH ile sunucu yapılandırması değiştirmesi sınıflandırıcı
+  tarafından engelleniyor; okuma/scp/docker-compose up serbest.
 - ⬜ Aynı makinede `dopamall-redis` parolasız 0.0.0.0:6379 (başka proje;
   compose'da `127.0.0.1:` + requirepass).
 - ⬜ Sunucu dışı yedek yok (kullanıcıdan hedef bekliyor).
