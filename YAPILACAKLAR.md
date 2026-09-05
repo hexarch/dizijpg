@@ -20,6 +20,11 @@
 - ✅ **Çeviri:** 7 yeni anahtar × 45 dil. **Kanıt:** `test/kolaj_test.dart` (12 test: şablon
   geometrisi alan=1 + kesişim yok, şablon/oran/boşluk tuvali değiştirir, yer değiştirme, Tamam →
   kodlayıcı baytı, PNG yedeği, X → null, düğme koşulu, yerine geçme, vazgeçme, 6 tavanı).
+- 🚀 **Dağıtım (web, 5 Eyl ~21:00):** ritüel tam — `main.4f19182cdf50.dart.js` + parça
+  `main.dart.js_1.8a552f4c41fc.part.js` (eski `c3660db7640d`/`2056b0a17909` + `.br` silindi), SW
+  sökücü JS, `web_brotli.sh` %73, version.json 1.133.0+200, site+sağlık 200. `flutter test` **2729
+  yeşil**. APK `projeler/cikti/dizijpg-1.133.0-200.apk` (83,6 MB) kablosuz ADB ile Galaxy S24'e
+  (SM-S921B) kuruldu ve açıldı; Play'e yüklenmedi.
 - ⬜ Cihazda elle test: 3 fotoğrafla kolaj → yükle → akışta tek kare görünüyor mu.
 
 ## 2026-09-05 — 🎬 GÖNDERİ MEDYA EDİTÖRÜ 1. aşama: sıralama, kamera, ton/filtre/çıkartma, video hız·ses·filtre (1.132.0+199)
