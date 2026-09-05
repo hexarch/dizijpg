@@ -9159,3 +9159,22 @@ Kimlik atlama / SQLi / komut enjeksiyonu / SSRF / yol geçişi YOK.
 - ⬜ Düşük: HSTS preload, `kara` parola kilidi (sudo parola ister — karar),
   kullanılmayan SSH anahtarı, şifre 8+/128 (45 dil metni), DM eki .apk/.exe,
   sohbet-efekt konuşma şartı.
+
+## 2026-09-06 — Sohbet: "mesaj atınca karşı taraf hemen çevrimiçi görünüyor" (88c8088)
+- ✅ KÖK SEBEP: alıcının telefonu kilitliyken arka plan izolatı push'u işleyip
+  çift tik için `POST /mesajlar/iletildi` çağırıyor; istek `girisZorunlu`dan
+  geçtiği için alıcının `son_gorulme`si tazeleniyordu → gönderen sohbet
+  başlığında (5 sn yoklama) anında "çevrimiçi" görüyordu.
+- ✅ DÜZELTME (sunucu, eski istemciler de düzelir): `cevrimici.js ->
+  varlikSayilir` + `VARLIK_SAYILMAYAN_YOLLAR` (`/mesajlar/iletildi`);
+  `girisZorunlu` son_gorulme'yi bu kapıdan geçirir. 3 test eklendi
+  (mesaj_istekleri.test.js, 28/28 yeşil). server.js + cevrimici.js
+  `/opt/dizijpg`e kopyalandı (md5 doğrulandı).
+- ⬜ CANLIYA ALMA: `docker-compose up -d --build api` bu oturumda
+  sınıflandırıcı tarafından engellendi → kullanıcı koşacak. Kanıt: A hesabıyla
+  `GET /mesajlar/testuser123` → `partner.son_gorulme`; 184 ile
+  `POST /mesajlar/iletildi` sonrası damga DEĞİŞMEMELİ, `GET /sohbetler`
+  sonrası DEĞİŞMELİ.
+- ⬜ Aday: ileride arka planda çağrılan başka uçlar (örn. push token
+  yenileme) çıkarsa aynı listeye ekle; istemci tarafında `X-Arka-Plan`
+  başlığı GEREKMEDİ (yol listesi yeterli).
