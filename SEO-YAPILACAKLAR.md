@@ -1833,13 +1833,14 @@ audit-data.json, HTML rapor, ekran görüntüleri, `cwv_lab.py`).
   /llms.txt`, Dockerfile COPY). Bot UA'sında 404 yerine 200 text/plain.
 
 ### 19.2 ⬜ AÇIK — panel/uygulama işi
-- **Cloudflare cevap botlarına 403 veriyor** (OAI-SearchBot, ChatGPT-User,
-  PerplexityBot, Perplexity-User, Claude-SearchBot, MistralAI-User). robots.txt
-  `Content-Signal: search=yes` diyor → çelişki. CF panel → AI Crawl Control:
-  cevap/arama botlarına izin, eğitim botları (GPTBot, ClaudeBot, CCBot,
-  Bytespider) kapalı kalsın. Doğrulama: UA matrisi curl → 200.
-- **Cloudflare Cache Rule** `/sitemap*.xml` → kenar önbelleği 1 saat (bugün
-  DYNAMIC; sıkıştırmasız 3,2 MB / 10–27 s).
+- ~~Cloudflare cevap botlarına 403 veriyor~~ **GERİ ÇEKİLDİ (aynı gece):**
+  403, curl ile bot UA'sı TAKLİT edilince geliyor (doğrulanmamış IP). CF AI
+  Crawl Control tablosu: Claude-SearchBot 82.110 izinli/24 sa, OAI-SearchBot
+  318, ChatGPT-User 4; yalnız Bytespider + CCBot engelli (robots ile tutarlı).
+  Panelde değişiklik yapılmadı. KURAL: AI bot erişimini curl+UA ile ÖLÇME.
+- ✅ **Cloudflare Cache Rule `sitemap-kenar-onbellegi`** (aynı gece, panelden):
+  `http.request.uri.path wildcard "/sitemap*.xml"` → Eligible for cache, Edge
+  TTL = origin cache-control (max-age=3600). Doğrulandı: 1. istek MISS, 2. HIT.
 - **Flutter yükü:** main.dart.js 2,5 MB (br) + canvaskit 1,6 MB = 4,1 MB;
   kısıtlı mobilde (4× CPU, 1,6 Mb/s) motor 12 s'de inmiyor; masaüstü TBT
   552 ms. Deferred import ayrımı (sohbet, medya editörü, kolaj, giriş).

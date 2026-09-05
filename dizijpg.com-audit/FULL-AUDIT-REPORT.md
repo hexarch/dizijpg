@@ -1,6 +1,6 @@
 # dizijpg.com — Tam SEO Denetimi (6 Eylül 2026)
 
-**SEO Sağlık Puanı: 70/100** · İş türü: yayıncı/katalog (dizi-film takip uygulaması; TMDB veri tabanlı programatik sayfalar, kullanıcı yorumları) · Denetim yöntemi: bot UA'sıyla SSR çekimi + insan UA'sıyla Flutter kabuğu + Playwright laboratuvar ölçümü. GSC/CrUX/PSI API anahtarı yok; PSI anonim kotası doluydu.
+**SEO Sağlık Puanı: 70/100** (6 Eyl akşamı düzeltmeler + geri çekilen GEO bulgusu sonrası yeniden hesap: **~78/100**) · İş türü: yayıncı/katalog (dizi-film takip uygulaması; TMDB veri tabanlı programatik sayfalar, kullanıcı yorumları) · Denetim yöntemi: bot UA'sıyla SSR çekimi + insan UA'sıyla Flutter kabuğu + Playwright laboratuvar ölçümü. GSC/CrUX/PSI API anahtarı yok; PSI anonim kotası doluydu.
 
 | Kategori | Ağırlık | Puan |
 |---|---|---|
@@ -75,9 +75,11 @@ PDF üretimi WeasyPrint'in yerel kütüphaneleri (pango/cairo) kurulu olmadığ�
 | Şirket sayfası Türkçe sızıntı (sw) | ✅ `kisiAcOne`/`acYorum` anahtarı |
 | /en'de "dizi.jpg AI özeti" | ✅ `aiOzeti` 46 dil |
 | llms.txt yok | ✅ Node + nginx, 200 text/plain |
-| Cloudflare cevap botlarına 403 | ⬜ panel işi (AI Crawl Control) |
-| Sitemap kenar önbelleği | ⬜ panel işi (Cache Rule) |
+| Cloudflare cevap botlarına 403 | ❌ GERİ ÇEKİLDİ: ölçüm hatası (UA taklidi 403 aldı; gerçek botlar izinli, Claude-SearchBot 82k/gün). Panelde değişiklik YOK |
+| Sitemap kenar önbelleği | ✅ CF Cache Rule `sitemap-kenar-onbellegi` (MISS→HIT doğrulandı) |
 | Flutter yükü / document.title | ⬜ uygulama derlemesi gerekir |
 | Düşük kaynaklı dil bölüm sayfaları | ⬜ tasarım kararı (harita ⊆ indekslenebilir kısıtı) |
 | Tür adları çevirisiz (sw/am) | ⬜ |
 | aggregateRating eşiği, sameAs, insan UA 404 | ⬜ düşük öncelik |
+
+**GEO bulgusu düzeltmesi (6 Eyl 22:55):** "cevap botlarına 403" bulgusu geri çekildi; Cloudflare AI Crawl Control tablosu gerçek botların izinli olduğunu gösteriyor (Claude-SearchBot 82.110, OAI-SearchBot 318, ChatGPT-User 4 izinli istek / 24 saat). Ayrıntı findings/geo.md #1. AI arama hazırlığı puanı 45 → 75; sağlık puanı ~78.
