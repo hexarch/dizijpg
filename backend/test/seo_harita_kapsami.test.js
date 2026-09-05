@@ -471,14 +471,19 @@ test('dil başına site haritası AYNI kovadan üretilir (ek SQL YOK)', () => {
 // Bölüm haritası o an 5.176 URL'di (238 bin satır, fark edilmedi); talep dalı
 // açılınca 26.178'e çıktı ve aynı çarpan 1,2 MİLYON URL demeye başladı —
 // 25 Ağu'da yangına yol açan 79.463'ün 15 katı. Bu test o çarpanı kilitliyor.
-test('bölüm haritası DİL VARYANTI ALMIYOR (tr dışı yok)', () => {
+// 5 Eyl 2026: bölüm ailesine `en` AÇILDI (ülke kırılımı; gerekçe kaynakta).
+// Çarpan 46'dan 2'ye indiği için 1,2 milyon tehlikesi kalmadı; bu test artık
+// "bölüm dil almasın" değil, "bölüm de BEYAZ LİSTEYİ aşmasın" diye kilitliyor.
+test('bölüm haritası yalnız beyaz listedeki dilleri alıyor (46 çarpanı kapalı)', () => {
   // 3 Eyl 2026: `SEO_HARITA_DIL_BEYAZ` de çekiliyor — `SEO_HARITA_DILLERI`
   // artık ona bakıyor, listeden düşerse fonksiyon eval'de tanımsız referans verir.
   const diller = alan(
     ['SEO_HARITA_DILSIZ_AILE', 'SEO_HARITA_DIL_BEYAZ', 'SEO_HARITA_DILLERI'],
     'SEO_HARITA_DILLERI');
-  assert.deepEqual(diller('bolum'), ['tr'],
-    'bölüm ailesi dil varyantı alıyor — 26 bin URL × 46 dil = 1,2 milyon');
+  assert.deepEqual(diller('bolum'), ['tr', 'en'],
+    'bölüm ailesi tr+en dışında dil bildiriyor — 26 bin URL × dil sayısı');
+  assert.ok(diller('bolum').length <= 2,
+    'bölüm haritası çarpanı 2\'yi aştı — 29 Ağu yangını (1,2 milyon URL)');
   // Diğer üç aile dil varyantını KORUYOR — ama 3 Eyl 2026'dan beri yalnız
   // `tr+en` (bkz. bir sonraki test). Buradaki iddia "birden çok dil" olarak
   // KALIYOR: bu testin konusu bölümün SIFIRLANMASI, dil sayısı değil.
@@ -517,7 +522,8 @@ test('harita yalnız tr+en bildiriyor (44 dil dizinden çıktı)', () => {
     assert.deepEqual(diller(aile), ['tr', 'en'],
       `${aile} ailesi tr+en dışında dil bildiriyor — tarama bütçesi bölünüyor`);
   }
-  assert.deepEqual(diller('bolum'), ['tr'], '29 Ağu bölüm kararı bozuldu');
+  assert.deepEqual(diller('bolum'), ['tr', 'en'],
+    '5 Eyl bölüm kararı bozuldu (en harita açık, başka dil yok)');
   // Sıra ÖNEMSİZ değil: `SEO_DILLER.filter` kullanıldığı için liste kaynağın
   // sırasını korur. Beyaz listeyi `Set` olarak yazıp `[...set]` döndürmek
   // sırayı beyaz listeye bağlardı — kaynağı tek doğru yapan filtre budur.

@@ -1,6 +1,48 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+
+## 2026-09-05 — 🎬 Kırık fragman taraması + RESMİ fragman kuralı (1.127.0+194)
+
+Kullanıcı isteği: "bazı dizilerin fragmanları kırılmış onları sürekli tarayıp
+düzeltecek script yazmalıyız ve resmi fragman olmalılar".
+
+**KÖK SEBEP.** TMDB YouTube'a HİÇ SORMUYOR — topluluğun girdiği `key` alanını
+saklıyor. Video silinince/gizlenince/gömme kapatılınca/bölgeye kapatılınca
+TMDB satırı olduğu yerde kalıyor, uygulama siyah bir iframe gömüyor.
+
+**ÖLÇÜM (5 Eyl).** İlk canlı tarama: 1.501 yapım, 6.495 fragman kimliği.
+- iyi 5.786 · **bölge 114** · **yok 81** · **gömülemez 22** → ölçülenin %3,6'sı kırık
+- Türk dizileri en çok vurulanlar: Sıfır Bir (6/6 kırık), Kurtlar Vadisi: Pusu,
+  Arka Sokaklar, MasterChef Türkiye, Çocuklar Duymasın, Gibi, Seksenler
+- Popüler yapımlarda oran daha düşük (1.308 fragmanın 11'i) ama orada da
+  kırıkların ÇOĞU `official: false` — hayran yüklemesi, telif silmesi
+- "bölge" sınıfı yalnız YouTube Data API ile görünür: Westworld/HBO
+  `allowed:['US']`, Açlık Oyunları TR dahil 128 ülkede `blocked`
+
+**ÇÖZÜM — ÜÇ PARÇA.**
+- ✅🚀 `backend/fragman_tarama.js` — saatlik cron (kardeş konteyner). İki
+  aşama: TMDB'den fragman keşfi (400 yapım/koşu) + YouTube kontrolü
+  (2.000 kimlik/koşu). Anahtar varsa Data API v3 (50 kimlik/1 kota birimi,
+  gömülemez + bölge engelini de görür), yoksa oEmbed'e düşer.
+- ✅🚀 `backend/fragman_suzgec.js` + server.js — kırık kimlikler bellekte
+  tutulup (10 dk tazeleme) TMDB yanıtından ELENIR. Uygulama hiçbir şey
+  bilmez; `fragmanlariSec` bir sonrakini seçer. Önbelleğe HAM yazılır.
+- ✅🚀 `app/lib/tmdb_fragman.dart` — RESMİ KURALI: listede bir resmi fragman
+  varsa gayriresmiler TAMAMEN atılır. Hiç resmi yoksa `detay.dart` sezon
+  fragmanlarını arar (son sezon + 1. sezon); o da yoksa gayriresmi kalır
+  (popüler dizilerin ~%18'inde TMDB'de hiç resmi fragman yok).
+
+Migrasyon: `migrasyon-2026-09-05.sql` (fragman_durum / fragman_baglanti /
+fragman_icerik). Kanıt: `backend/test/fragman_suzgec.test.js` 20 test +
+`app/test/tmdb_fragman_test.dart` 6 yeni test; uçtan uca curl (Sıfır Bir
+`videos.results` 5 → 0).
+
+**AÇIK MADDE:** Cloudflare kenarı içerik detayını `s-maxage=604800` ile
+7 gün tutuyor. Yeni işaretlenen bir kırık, kenardaki eski kopya düşene kadar
+görünmeye devam eder. Tek seferlik çözüm: Cloudflare panelinden "Purge
+Everything". Kalıcı çözüm için CF API jetonu + hedefli purge gerekir.
+
 ## 2026-09-05 — 💬 Sohbet Telegram turu: hareketli emojiler, emoji efektleri, TAM temalar (1.126.0+193)
 
 Kullanıcı isteği: "sohbet kısmını komple tara, mobilde tam optimize; hareketli

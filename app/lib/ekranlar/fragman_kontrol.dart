@@ -300,6 +300,44 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
         ? 0.0
         : (widget.tampon.inMilliseconds / 1000).clamp(0, sureSn) / sureSn;
     final kumeGorunur = _krom || _kilitli;
+    return LayoutBuilder(
+      builder: (context, kisit) {
+        // KOMPAKT KİP (telefon kahramanı, 16:9 → ~200 dp): tam boy krom
+        // (üst şerit 56 + küme 64 + alt blok 144) 264 dp ister, kareye
+        // sığmaz — çubuk kümenin üstüne biniyordu (4 Eyl 2026, S24
+        // görüntüsü). 260 dp'nin altında ölçüler küçülür ve küme üst şerit
+        // ile alt blok ARASINA yerleşir.
+        final kompakt = kisit.maxHeight < 260;
+        final olcu = _Olcu(kompakt: kompakt, altBosluk: widget.altBosluk);
+        return _govde(
+          olcu: olcu,
+          kumeGorunur: kumeGorunur,
+          konumOran: konumOran,
+          tamponOran: tamponOran,
+          sureSn: sureSn,
+        );
+      },
+    );
+  }
+
+  Widget _govde({
+    required _Olcu olcu,
+    required bool kumeGorunur,
+    required double konumOran,
+    required double tamponOran,
+    required double sureSn,
+  }) {
+    final kume = AnimatedOpacity(
+      key: const ValueKey('fragman-kume'),
+      opacity: kumeGorunur && !_basili ? 1 : 0,
+      duration: _gecis,
+      child: AnimatedScale(
+        scale: kumeGorunur && !_basili ? 1 : 0.9,
+        duration: _gecis,
+        curve: Curves.easeOutBack,
+        child: Center(child: _ortaKume(olcu)),
+      ),
+    );
     return Focus(
       focusNode: _odak,
       onKeyEvent: _tus,
@@ -349,22 +387,24 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
               ),
             // Orta küme: −10 · oynat/duraklat · +10. Krom ile birlikte
             // kaybolur; basılı tutarken (2×) çekilir ki kare açık kalsın.
-            IgnorePointer(
-              ignoring: !kumeGorunur || _basili,
-              child: ExcludeSemantics(
-                child: AnimatedOpacity(
-                  key: const ValueKey('fragman-kume'),
-                  opacity: kumeGorunur && !_basili ? 1 : 0,
-                  duration: _gecis,
-                  child: AnimatedScale(
-                    scale: kumeGorunur && !_basili ? 1 : 0.9,
-                    duration: _gecis,
-                    curve: Curves.easeOutBack,
-                    child: Center(child: _ortaKume()),
-                  ),
+            // Kompaktta üst şerit ile alt blok arasına, geniş karede
+            // tam ortaya.
+            if (olcu.kompakt)
+              Positioned(
+                left: 0,
+                right: 0,
+                top: olcu.ustYukseklik,
+                bottom: olcu.altBlok,
+                child: IgnorePointer(
+                  ignoring: !kumeGorunur || _basili,
+                  child: ExcludeSemantics(child: kume),
                 ),
+              )
+            else
+              IgnorePointer(
+                ignoring: !kumeGorunur || _basili,
+                child: ExcludeSemantics(child: kume),
               ),
-            ),
             // Üst şerit: rozet + ad.
             Positioned(
               left: 0,
@@ -377,7 +417,10 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
                     key: const ValueKey('fragman-ust'),
                     opacity: _krom ? 1 : 0,
                     duration: _gecis,
-                    child: FragmanBaslikSeridi(baslik: widget.baslik),
+                    child: FragmanBaslikSeridi(
+                      baslik: widget.baslik,
+                      kompakt: olcu.kompakt,
+                    ),
                   ),
                 ),
               ),
@@ -407,15 +450,15 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(
                           8,
-                          28,
+                          olcu.altUstPay,
                           8,
-                          widget.altBosluk,
+                          olcu.altKenar,
                         ),
                         child: AnimatedSlide(
                           offset: _krom ? Offset.zero : const Offset(0, 0.3),
                           duration: _gecis,
                           curve: Curves.easeOut,
-                          child: _altSerit(konumOran, tamponOran, sureSn),
+                          child: _altSerit(olcu, konumOran, tamponOran, sureSn),
                         ),
                       ),
                     ),
@@ -498,7 +541,7 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
   }
 
   /// −10 · büyük oynat/duraklat/tekrar · +10.
-  Widget _ortaKume() {
+  Widget _ortaKume(_Olcu olcu) {
     final buyukSari = !widget.oynuyor || widget.bitti;
     final IconData buyukIkon;
     if (widget.bitti) {
@@ -511,13 +554,13 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _yuvarlak(Icons.replay_10, 44, () => _sar(-1), sari: false),
-        const SizedBox(width: 28),
+        _yuvarlak(Icons.replay_10, olcu.yanDugme, () => _sar(-1), sari: false),
+        SizedBox(width: olcu.kumeBosluk),
         AnimatedContainer(
           duration: _gecis,
           curve: Curves.easeOut,
-          width: 64,
-          height: 64,
+          width: olcu.buyukDugme,
+          height: olcu.buyukDugme,
           decoration: BoxDecoration(
             color: buyukSari ? DiziRenkler.sari : const Color(0x8A000000),
             shape: BoxShape.circle,
@@ -538,15 +581,15 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
                 child: Icon(
                   buyukIkon,
                   key: ValueKey(buyukIkon),
-                  size: 40,
+                  size: olcu.buyukDugme * 0.625,
                   color: buyukSari ? Colors.black : Colors.white,
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(width: 28),
-        _yuvarlak(Icons.forward_10, 44, () => _sar(1), sari: false),
+        SizedBox(width: olcu.kumeBosluk),
+        _yuvarlak(Icons.forward_10, olcu.yanDugme, () => _sar(1), sari: false),
       ],
     );
   }
@@ -569,7 +612,7 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
           height: boyut,
           child: Icon(
             ikon,
-            size: 26,
+            size: boyut * 0.59,
             color: sari ? Colors.black : Colors.white,
           ),
         ),
@@ -612,7 +655,12 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
   }
 
   /// Alt şerit: tam genişlik ilerleme çubuğu, altında düğme satırı.
-  Widget _altSerit(double konumOran, double tamponOran, double sureSn) {
+  Widget _altSerit(
+    _Olcu olcu,
+    double konumOran,
+    double tamponOran,
+    double sureSn,
+  ) {
     final ikiKat = widget.hiz >= 1.5;
     final tamEkran = widget.onTamEkran;
     return Column(
@@ -624,6 +672,7 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
             oynanan: konumOran,
             tampon: tamponOran,
             sureSn: sureSn,
+            yukseklik: olcu.cubukYukseklik,
             onSarma: sureSn <= 0 || widget.onSarma == null
                 ? null
                 : (oran) => widget.onSarma!(
@@ -651,17 +700,18 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
                       ? 'Duraklat'.c
                       : 'Oynat'.c,
                   widget.onOynatDuraklat,
+                  boyut: olcu.dugme,
                 ),
               ),
             ),
             Text(
               '${sureMetni(widget.konum)} / ${sureMetni(widget.sure)}',
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
-                fontSize: 12,
+                fontSize: olcu.kompakt ? 11 : 12,
                 fontWeight: FontWeight.w600,
-                fontFeatures: [FontFeature.tabularFigures()],
-                shadows: [Shadow(blurRadius: 4, color: Colors.black87)],
+                fontFeatures: const [FontFeature.tabularFigures()],
+                shadows: const [Shadow(blurRadius: 4, color: Colors.black87)],
               ),
             ),
             const Spacer(),
@@ -671,6 +721,7 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
               widget.onAltyazi,
               anahtar: const ValueKey('fragman-altyazi'),
               vurgu: widget.altyazi,
+              boyut: olcu.dugme,
             ),
             Semantics(
               button: true,
@@ -688,7 +739,8 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
                   ),
                 ),
                 style: IconButton.styleFrom(
-                  minimumSize: const Size(44, 44),
+                  minimumSize: Size(olcu.dugme, olcu.dugme),
+                  padding: EdgeInsets.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
               ),
@@ -697,6 +749,7 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
               widget.sessiz ? Icons.volume_off : Icons.volume_up,
               widget.sessiz ? 'Sesi aç'.c : 'Sesi kapat'.c,
               widget.onSessiz,
+              boyut: olcu.dugme,
             ),
             if (tamEkran != null)
               _ikon(
@@ -704,6 +757,7 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
                 widget.tamEkran ? 'Tam ekrandan çık'.c : 'Tam ekran'.c,
                 tamEkran,
                 anahtar: const ValueKey('fragman-tam-ekran'),
+                boyut: olcu.dugme,
               ),
           ],
         ),
@@ -717,6 +771,7 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
     VoidCallback onTap, {
     Key? anahtar,
     bool vurgu = false,
+    double boyut = 44,
   }) {
     return Semantics(
       button: true,
@@ -728,11 +783,12 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
         icon: Icon(
           ikon,
           color: vurgu ? DiziRenkler.sari : Colors.white,
-          size: 22,
+          size: boyut / 2,
           shadows: const [Shadow(blurRadius: 4, color: Colors.black87)],
         ),
         style: IconButton.styleFrom(
-          minimumSize: const Size(44, 44),
+          minimumSize: Size(boyut, boyut),
+          padding: EdgeInsets.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
       ),
@@ -740,12 +796,39 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
   }
 }
 
+/// Krom ölçüleri: geniş kare (web/masaüstü/tam ekran) ve kompakt kare
+/// (telefon kahramanı). Dokunma hedefleri kompaktta da ≥40 dp.
+class _Olcu {
+  final bool kompakt;
+  final double altBosluk;
+
+  const _Olcu({required this.kompakt, required this.altBosluk});
+
+  /// Üst şeridin kapladığı yükseklik (rozet satırı + gradyan payı).
+  double get ustYukseklik => kompakt ? 40 : 56;
+  double get buyukDugme => kompakt ? 52 : 64;
+  double get yanDugme => kompakt ? 38 : 44;
+  double get kumeBosluk => kompakt ? 18 : 28;
+  double get cubukYukseklik => kompakt ? 22 : 28;
+  double get dugme => kompakt ? 40 : 44;
+  double get altUstPay => kompakt ? 10 : 28;
+
+  /// Alt kenar payı: karışık kahramanın noktaları 44 dp'lik şeritte
+  /// alttan 16-28 dp'de durur; kompaktta çubuk 26 dp'den başlar ki
+  /// noktalarla çakışmadan 18 dp yukarı çekilsin.
+  double get altKenar => kompakt && altBosluk > 26 ? 26 : altBosluk;
+
+  /// Alt bloğun toplam yüksekliği (gradyan payı + çubuk + düğme satırı + kenar).
+  double get altBlok => altUstPay + cubukYukseklik + dugme + altKenar;
+}
+
 /// Üst şerit: sarı "FRAGMAN" rozeti + fragman adı. Kapakta ve oynatıcıda
 /// aynı parça — YouTube'un kırpılan başlığının yerini tutar.
 class FragmanBaslikSeridi extends StatelessWidget {
   final String? baslik;
+  final bool kompakt;
 
-  const FragmanBaslikSeridi({super.key, this.baslik});
+  const FragmanBaslikSeridi({super.key, this.baslik, this.kompakt = false});
 
   @override
   Widget build(BuildContext context) {
@@ -759,20 +842,22 @@ class FragmanBaslikSeridi extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 10, 12, 26),
+        padding: kompakt
+            ? const EdgeInsets.fromLTRB(10, 8, 10, 14)
+            : const EdgeInsets.fromLTRB(12, 10, 12, 26),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: DiziRenkler.sari,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 'Fragman'.c.toUpperCase(),
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.black,
-                  fontSize: 10,
+                  fontSize: kompakt ? 9 : 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.8,
                 ),
@@ -785,11 +870,13 @@ class FragmanBaslikSeridi extends StatelessWidget {
                   ad,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 13,
+                    fontSize: kompakt ? 12 : 13,
                     fontWeight: FontWeight.w600,
-                    shadows: [Shadow(blurRadius: 6, color: Colors.black87)],
+                    shadows: const [
+                      Shadow(blurRadius: 6, color: Colors.black87),
+                    ],
                   ),
                 ),
               ),
@@ -852,12 +939,14 @@ class _IlerlemeCubugu extends StatefulWidget {
   final double oynanan;
   final double tampon;
   final double sureSn;
+  final double yukseklik;
   final ValueChanged<double>? onSarma;
 
   const _IlerlemeCubugu({
     required this.oynanan,
     required this.tampon,
     required this.sureSn,
+    this.yukseklik = 28,
     this.onSarma,
   });
 
@@ -885,7 +974,7 @@ class _IlerlemeCubuguState extends State<_IlerlemeCubugu> {
         final w = kisit.maxWidth;
         final balonOran = _surukleOran;
         return SizedBox(
-          height: 28,
+          height: widget.yukseklik,
           child: MouseRegion(
             cursor: aktif ? SystemMouseCursors.click : MouseCursor.defer,
             onEnter: aktif ? (_) => setState(() => _uzerinde = true) : null,

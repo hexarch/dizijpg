@@ -1,0 +1,125 @@
+# dizi.jpg 1.125.0 (192) — Play sürüm notları
+# Play şablonundaki dil sırası: en-US, ar, de-DE, el-GR, es-ES, fr-FR, id,
+# it-IT, pt-BR, ru-RU, tr-TR
+# HER DİL 500 KARAKTERİN ALTINDA OLMALI (python len ile sayıldı).
+
+<en-US>
+Watch together is here.
+
+• Watch parties: upload a video, invite friends, watch in sync. When the host skips ahead, everyone skips with them.
+• Chat, emoji reactions and a live member list inside the room.
+• Fullscreen: rotate to go fullscreen, controls fade away, chat floats over the video.
+• Share control: let a friend play, pause and seek too.
+• MKV files now work — we convert them so they play with sound on your phone.
+• Rebuilt trailer player: cleaner controls, fullscreen, replay.
+</en-US>
+
+<ar>
+المشاهدة معًا وصلت.
+
+• غرف مشاهدة: ارفع فيديو، وادعُ أصدقاءك، وشاهدوا متزامنين. عندما يتقدم المضيف، يتقدم الجميع معه.
+• دردشة وتفاعلات وقائمة أعضاء مباشرة داخل الغرفة.
+• ملء الشاشة: أدر الهاتف لملء الشاشة، تختفي عناصر التحكم وتطفو الدردشة فوق الفيديو.
+• شارك التحكم: دع صديقًا يشغّل ويوقف ويتنقّل أيضًا.
+• ملفات MKV تعمل الآن — نحوّلها لتُشغَّل بالصوت على هاتفك.
+• مشغّل إعلانات جديد: تحكم أوضح، ملء شاشة، إعادة تشغيل.
+</ar>
+
+<de-DE>
+Gemeinsam schauen ist da.
+
+• Watch-Party: Video hochladen, Freunde einladen, synchron schauen. Spult der Gastgeber vor, spulen alle mit.
+• Chat, Reaktionen und Mitgliederliste im Raum.
+• Vollbild: Gerät drehen, Bedienelemente blenden aus, Chat schwebt über dem Video.
+• Steuerung teilen: Freunde dürfen auch spulen.
+• MKV läuft jetzt — wir wandeln es um, damit es Ton hat.
+• Neuer Trailer-Player: klarer, Vollbild, Wiederholen.
+</de-DE>
+
+<el-GR>
+Η κοινή παρακολούθηση ήρθε.
+
+• Δωμάτια: ανέβασε βίντεο, κάλεσε φίλους, δείτε συγχρονισμένα. Προχωρά ο οικοδεσπότης, προχωρούν όλοι.
+• Συνομιλία, αντιδράσεις και λίστα μελών.
+• Πλήρης οθόνη: γύρνα τη συσκευή, τα χειριστήρια σβήνουν, η συνομιλία επιπλέει.
+• Μοιράσου τον έλεγχο με φίλους.
+• Τα MKV παίζουν πλέον, με ήχο.
+• Νέο πρόγραμμα τρέιλερ: πλήρης οθόνη, επανάληψη.
+</el-GR>
+
+<es-ES>
+Ver juntos ya está aquí.
+
+• Salas: sube un vídeo, invita a amigos y ved sincronizados. Si el anfitrión avanza, avanzáis todos.
+• Chat, reacciones y lista de miembros.
+• Pantalla completa: gira el móvil, los controles se ocultan y el chat flota sobre el vídeo.
+• Comparte el control con tus amigos.
+• Los MKV ya funcionan, con sonido.
+• Reproductor de tráilers renovado.
+</es-ES>
+
+<fr-FR>
+Regarder ensemble est là.
+
+• Salles : envoie une vidéo, invite tes amis, regardez en même temps. L'hôte avance, tout le monde avance.
+• Chat, réactions et liste des membres.
+• Plein écran : tourne le téléphone, les commandes s'effacent, le chat flotte sur la vidéo.
+• Partage le contrôle avec tes amis.
+• Les MKV fonctionnent enfin, avec le son.
+• Nouveau lecteur de bandes-annonces.
+</fr-FR>
+
+<id>
+Nonton bareng sudah hadir.
+
+• Ruang nonton: unggah video, undang teman, tonton serentak. Saat tuan rumah melompat, semua ikut melompat.
+• Obrolan, reaksi emoji, dan daftar anggota di dalam ruang.
+• Layar penuh: putar ponsel, kontrol memudar, obrolan mengambang di atas video.
+• Bagikan kendali: biarkan teman memutar, menjeda, dan melompat juga.
+• Berkas MKV kini berfungsi — kami mengonversinya agar bersuara di ponselmu.
+• Pemutar trailer baru: kontrol lebih rapi, layar penuh, ulangi.
+</id>
+
+<it-IT>
+Guardare insieme è arrivato.
+
+• Stanze: carica un video, invita gli amici, guardate sincronizzati. Se l'host va avanti, andate avanti tutti.
+• Chat, reazioni e lista dei partecipanti.
+• Schermo intero: ruota il telefono, i comandi svaniscono, la chat galleggia sul video.
+• Condividi il controllo con gli amici.
+• Gli MKV ora funzionano, con l'audio.
+• Nuovo lettore dei trailer.
+</it-IT>
+
+<pt-BR>
+Assistir junto chegou.
+
+• Salas: envie um vídeo, convide amigos e assistam sincronizados. Se o anfitrião avança, todos avançam.
+• Chat, reações e lista de participantes dentro da sala.
+• Tela cheia: gire o celular, os controles somem e o chat flutua sobre o vídeo.
+• Compartilhe o controle: deixe um amigo reproduzir, pausar e avançar também.
+• Arquivos MKV agora funcionam — convertemos para que tenham som no celular.
+• Novo player de trailers: controles mais limpos, tela cheia e repetir.
+</pt-BR>
+
+<ru-RU>
+Совместный просмотр уже здесь.
+
+• Комнаты: загрузите видео, пригласите друзей и смотрите синхронно. Хозяин перематывает — перематывают все.
+• Чат, реакции и список участников прямо в комнате.
+• Полный экран: поверните телефон, элементы управления исчезают, чат плывёт поверх видео.
+• Поделитесь управлением: друг тоже сможет включать, ставить на паузу и перематывать.
+• Файлы MKV теперь работают — мы конвертируем их, чтобы был звук.
+• Новый плеер трейлеров: чистое управление, полный экран, повтор.
+</ru-RU>
+
+<tr-TR>
+Birlikte izleme geldi.
+
+• İzleme odaları: video yükle, arkadaşlarını davet et, aynı anda izleyin. Oda sahibi ileri sarınca herkeste sarılır.
+• Odada sohbet, emoji tepkileri ve canlı üye listesi.
+• Tam ekran: telefonu yan çevir, kontroller sönsün, sohbet videonun üstünde yüzsün.
+• Kontrolü paylaş: arkadaşın da oynatsın, durdursun, sarsın.
+• MKV dosyaları artık çalışıyor — telefonda sesli oynasın diye biz çeviriyoruz.
+• Yenilenen fragman oynatıcı: sade kontroller, tam ekran, tekrar oynat.
+</tr-TR>

@@ -26,7 +26,6 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:video_player/video_player.dart';
 
 http.Response _json(Object govde) => http.Response(
   jsonEncode(govde),

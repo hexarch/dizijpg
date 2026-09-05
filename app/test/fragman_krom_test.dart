@@ -413,4 +413,68 @@ void main() {
     expect(find.byKey(const ValueKey('fragman-krom')), findsNothing);
     expect(find.byKey(const ValueKey('fragman-kume')), findsNothing);
   });
+
+  testWidgets(
+    'KOMPAKT (telefon kahramanı 360×202): küme, çubuk ve şerit çakışmaz',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(360, 202));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: FragmanKontrol(
+              yukleniyor: false,
+              oynuyor: true,
+              sessiz: false,
+              baslik: 'Silo — Season 3 Official Trailer | Apple TV',
+              altBosluk: 44,
+              konum: const Duration(seconds: 10),
+              sure: const Duration(seconds: 60),
+              onOynatDuraklat: () {},
+              onSessiz: () {},
+              onAltyazi: () {},
+              onHiz: () {},
+              onGeri10: () {},
+              onIleri10: () {},
+              onBasili2x: (_) {},
+              onTamEkran: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final serit = tester.getRect(find.byType(FragmanBaslikSeridi));
+      final buyuk = tester.getRect(find.byKey(const ValueKey('fragman-buyuk')));
+      final cubuk = tester.getRect(
+        find.byKey(const ValueKey('fragman-ilerleme')),
+      );
+      final tamEkran = tester.getRect(
+        find.byKey(const ValueKey('fragman-tam-ekran')),
+      );
+      // Küme şeridin altında, çubuğun üstünde.
+      expect(buyuk.top, greaterThanOrEqualTo(serit.bottom - 8));
+      expect(buyuk.bottom, lessThanOrEqualTo(cubuk.top));
+      // Düğme satırı noktaların (alttan 16-28 dp) üstünde kalır.
+      expect(tamEkran.bottom, lessThanOrEqualTo(202 - 26 + 0.5));
+      // Dokunma hedefleri kompaktta da ≥ 40 dp.
+      expect(tamEkran.height, greaterThanOrEqualTo(40));
+      expect(tamEkran.width, greaterThanOrEqualTo(40));
+      // Çubuk ekranı taşmıyor, her şey kare içinde.
+      expect(cubuk.bottom, lessThan(202));
+      expect(find.byTooltip('Tam ekran'), findsOneWidget);
+    },
+  );
+
+  testWidgets('GENİŞ (720×405): küme tam ortada', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(720, 405));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(kur());
+    await tester.pump();
+    final buyuk = tester.getRect(find.byKey(const ValueKey('fragman-buyuk')));
+    expect(buyuk.center.dy, closeTo(405 / 2, 1));
+    expect(buyuk.height, 64);
+  });
 }

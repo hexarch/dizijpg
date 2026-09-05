@@ -433,7 +433,15 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
 }
 
 /// YouTube kromunu siler, `<video>`yu doldurur, zamanı kanala basar.
-/// Altyazı penceresi gizlenmez; çubuğun üstüne kaydırılır.
+///
+/// SINIF ADIYLA GİZLEME YETMİYOR (4 Eyl 2026, S24): YouTube'un yeni gömme
+/// arayüzü başlık/kanal/paylaş/"diğer videolar"/logo için başka sınıflar
+/// kullanıyor ve hepsi bizim kromun üstünden görünüyordu. Web'deki çare
+/// burada da uygulanır: oynatıcı kabı 140 px üstten/alttan TAŞIRILIR
+/// (`top:-140px; height:calc(100%+280px)`), belge `overflow:hidden` ile
+/// kırpar; `<video>` `object-fit:contain` ile dikeyde ortalanıp tam görünür,
+/// YouTube'un üst/alt şeritleri siyah bantta kesilir. Altyazı penceresi
+/// kırpılan banda düşmesin diye 200 px yukarı alınır.
 const _gizleJs = r'''
 (function(){
   var st = document.getElementById('fragman-css');
@@ -452,14 +460,35 @@ const _gizleJs = r'''
       '.ytp-overflow-panel,.ytp-menuitem,.annotation,.ytp-spinner,',
       '.ytp-pause-overlay-container,.ytp-suggestion-set',
       '{display:none!important;visibility:hidden!important;}',
-      'html,body,#player,#player-api,.html5-video-player,.html5-video-container',
+      'html,body{width:100%!important;height:100%!important;margin:0!important;',
+      'padding:0!important;overflow:hidden!important;background:#000!important;}',
+      '.html5-video-player,.html5-video-container',
       '{width:100%!important;height:100%!important;margin:0!important;',
       'padding:0!important;overflow:hidden!important;background:#000!important;}',
-      'video{width:100%!important;height:100%!important;object-fit:contain!important;}',
-      '.ytp-caption-window-container,.caption-window{bottom:72px!important;}',
-      '.ytp-caption-window-bottom{margin-bottom:56px!important;}'
+      '.html5-video-container{position:absolute!important;top:0!important;left:0!important;}',
+      'video{position:absolute!important;top:0!important;left:0!important;',
+      'width:100%!important;height:100%!important;object-fit:contain!important;}',
+      '.ytp-caption-window-container,.caption-window{bottom:200px!important;}',
+      '.ytp-caption-window-bottom{margin-bottom:0!important;}'
     ].join('');
     (document.head || document.documentElement).appendChild(st);
+  }
+  var kap = document.getElementById('player') ||
+    document.getElementById('player-api') ||
+    document.querySelector('.html5-video-player');
+  if (kap && kap.getAttribute('data-fragman-kirp') !== '1') {
+    kap.setAttribute('data-fragman-kirp', '1');
+    var k = kap.style;
+    k.setProperty('position', 'absolute', 'important');
+    k.setProperty('left', '0', 'important');
+    k.setProperty('right', '0', 'important');
+    k.setProperty('width', '100%', 'important');
+    k.setProperty('top', '-140px', 'important');
+    k.setProperty('height', 'calc(100% + 280px)', 'important');
+    k.setProperty('margin', '0', 'important');
+    k.setProperty('padding', '0', 'important');
+    k.setProperty('overflow', 'hidden', 'important');
+    k.setProperty('background', '#000', 'important');
   }
   function video(){ return document.querySelector('video'); }
   function player(){

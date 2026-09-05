@@ -4,12 +4,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../ceviri.dart';
 import '../hareketli_emoji.dart';
 import '../tema.dart';
-import 'tepki.dart';
 
 /// EMOJİ PANELİ (5 Eyl 2026): yazı kutusundaki gülen yüz düğmesi klavyenin
-/// yerine bu paneli açar (Telegram'ın emoji sekmesi). Bütün emojiler
-/// HAREKETLİ (Noto Animated, `hareketli_emoji.dart`), her biri panel açılınca
-/// BİR KEZ oynar, sonra ilk karede durur — 76 sonsuz döngü pil yakardı.
+/// yerine bu paneli açar (Telegram'ın emoji sekmesi). Liste hareketli emoji
+/// sözlüğüdür (`hareketli_emoji.dart`): buradan seçilen her emoji MESAJDA
+/// büyük Lottie olarak oynar.
+///
+/// PANELDE GLİF, LOTTIE DEĞİL (Galaxy S24'te görüldü, 5 Eyl): Noto
+/// animasyonlarının İLK KARESİ çoğu yüzde aynı nötr surattır (😀 🙂 😉 😊
+/// dördü de boş bakan sarı daire) — kullanıcı hangisini seçtiğini göremez.
+/// Ayrıca 40 görünür Lottie'yi bir anda çözmek hücreleri yarım saniye boş
+/// bırakıyordu. Sistem emoji fontu anında ve tanınır çizer; Telegram'ın
+/// emoji klavyesi de statiktir, hareket mesajda başlar.
 ///
 /// Üstte "Sık kullanılanlar": bu cihazda son seçilen 16 emoji
 /// (`SharedPreferences`, sohbetten bağımsız). Dokununca [onSec] çağrılır;
@@ -82,8 +88,10 @@ class _EmojiPaneliState extends State<EmojiPaneli> {
               borderRadius: BorderRadius.circular(12),
               onTap: () => widget.onSec(e),
               child: Center(
-                // 30 dp glif + 1,25 çarpanı = 37,5 dp; hücre ≥ 44 dp.
-                child: TepkiIkonu(e, boyut: 30, acilistaOynat: true),
+                child: Text(
+                  e,
+                  style: const TextStyle(fontSize: 28, height: 1.15),
+                ),
               ),
             ),
           );

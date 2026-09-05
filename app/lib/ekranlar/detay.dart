@@ -586,6 +586,13 @@ class _DetayEkraniState extends State<DetayEkrani>
   List<String> _kapaklar = const [];
   String? _hata;
 
+  /// SEZON FRAGMANLARI — yalnız dizi düzeyinde RESMİ fragman yokken dolar.
+  /// Ölçüm (5 Eyl 2026): popüler dizilerin ~%18'inde TMDB'de dizi düzeyinde
+  /// hiç resmi fragman yok (Breaking Bad, The Walking Dead, Rick and Morty).
+  /// O yapımlarda kahraman ya boş kalıyordu ya da kırılgan bir hayran
+  /// yüklemesiyle doluyordu; sezon fragmanı bu boşluğun asıl kaynağı.
+  List<TmdbFragman> _sezonFragmanlari = const [];
+
   /// Detay ucuna eklenen alt kaynaklar. `images` LİSTEYE SONRADAN EKLENDİ:
   /// sunucu bu parametre verilmezse kendi varsayılanını koyar, verilirse
   /// olduğu gibi kullanır — bu yüzden liste sunucudakiyle birebir aynı
@@ -629,6 +636,7 @@ class _DetayEkraniState extends State<DetayEkrani>
             ? sonuclar[2] as Map<String, dynamic>
             : null;
       });
+      _sezonFragmanlariniYukle();
       // İzleyen sayısı sayfayı bloke etmesin: ayrı ve sessizce yüklenir
       Api.get('/izleyenler/${widget.tur}/${widget.tmdbId}')
           .then((d) {
@@ -691,6 +699,48 @@ class _DetayEkraniState extends State<DetayEkrani>
         IgnorePointer(child: _karartma),
       ],
     );
+  }
+
+  /// Dizi düzeyinde resmi fragman YOKSA sezon fragmanlarını arar.
+  ///
+  /// ÜÇ KARAR:
+  ///  · YALNIZ GEREKİNCE: resmi fragman zaten varsa hiç istek atılmaz —
+  ///    yapımların ~%82'sinde bu kod hiç çalışmaz.
+  ///  · İKİ SEZON: son sezon (yeni yapımlarda fragman oraya asılıyor) ve
+  ///    1. sezon (klasiklerde "Season 1 Trailer" oraya asılıyor). Hepsini
+  ///    taramak 8-10 istek demekti; ikisi ölçümde vakaların hepsini yakaladı.
+  ///  · SAYFAYI BLOKE ETMEZ: `_yukle` beklemez, sonuç gelince `setState`.
+  ///    Kahraman önce kapaklarla çizilir, fragman gelince yerini alır —
+  ///    tersi, %18 için herkesin sayfasını yavaşlatmak olurdu.
+  Future<void> _sezonFragmanlariniYukle() async {
+    final c = _icerik;
+    if (c == null || widget.tur != 'tv') return;
+    if (resmiFragmanVar(c['videos'])) return;
+    final sonSezon = (c['number_of_seasons'] as num?)?.toInt() ?? 0;
+    final sezonlar = <int>{if (sonSezon >= 1) sonSezon, 1};
+    if (sezonlar.isEmpty) return;
+    try {
+      final yanitlar = await Future.wait([
+        for (final n in sezonlar)
+          Api.get(
+            '/tmdb/tv/${widget.tmdbId}/season/$n/videos'
+            '?${tmdbVideoDilParametre()}',
+          ).catchError((_) => <String, dynamic>{}),
+      ]);
+      if (!mounted) return;
+      var toplam = <TmdbFragman>[];
+      for (final y in yanitlar) {
+        toplam = fragmanlariBirlestir(
+          toplam,
+          fragmanlariSec(y, dil: Ceviri.dil.value),
+        );
+      }
+      if (toplam.isEmpty) return;
+      setState(() => _sezonFragmanlari = toplam);
+    } catch (_) {
+      // Sessiz: sezon fragmanı bir EKSTRA. Bulunamazsa kahraman kapaklarla
+      // çizilmeye devam eder, kullanıcıya gösterilecek bir hata yok.
+    }
   }
 
   Future<void> _benimYenile() async {
@@ -1070,7 +1120,10 @@ class _DetayEkraniState extends State<DetayEkrani>
     final arka = posterUrl(c['backdrop_path'] as String?, boyut: 'w1280');
     // Resmi fragmanlar (Trailer/Teaser) kapaklarla TEK kaydırıcıda karışır:
     // video, foto, video… Clip spoiler, seçilmez.
-    final videolar = fragmanlariSec(c['videos'], dil: Ceviri.dil.value);
+    final videolar = fragmanlariBirlestir(
+      fragmanlariSec(c['videos'], dil: Ceviri.dil.value),
+      _sezonFragmanlari,
+    );
     final karisik = karisikKahramanDiz(videolar, kapakUrlleri);
     final kadro = ((c['credits']?['cast'] as List<dynamic>?) ?? []);
     // Md. 49 — ekip ve yapım firmaları. İkisi de EKSİK gelebilir (TMDB'de

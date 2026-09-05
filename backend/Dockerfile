@@ -61,9 +61,17 @@ RUN npm ci --omit=dev
 # server.js VE veri_aktar.js onu import ediyor; imaja GIRMEZSE konteyner
 # "Cannot find module './dil_tespit.js'" ile acilista olur — kripto.js ile
 # AYNI tuzak. test/arama.test.js bu listeyi otomatik denetliyor.
+# fragman_suzgec.js: kirik YouTube fragmanlarini TMDB yanitindan eler.
+# server.js onu import ediyor; imaja GIRMEZSE konteyner "Cannot find module
+# './fragman_suzgec.js'" ile acilista olur — kripto.js ile AYNI tuzak.
+# fragman_tarama.js: kirik fragmanlari bulan cron betigi (kardes konteyner:
+# `dizijpg-kardes-kos.sh fragman node fragman_tarama.js`). isitici.js /
+# gsc_izle.js ile AYNI tuzak: imaja girmezse cron her saat "Cannot find
+# module" verir ve tarama HIC baslamaz. Ustelik is SESSIZ oldugu icin
+# (kirik yoksa ciktı tek satir) fark edilmesi haftalar alirdi.
 # NOT: servis hesabi anahtari BURAYA KOPYALANMAZ. Sir imaja girmez;
 # firebase-admin.json gibi calisma aninda `:ro` baglanir (docker-compose.yml).
-COPY server.js veri_aktar.js dil_tespit.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js sohbet_bakiyor.js sohbet_durum.js kripto.js kisi_izlenme.js iki_adim.js yasak.js medya_imza.js medya_xaccel.js dosya_ek.js disk.js arama.js gunluk.js onbellek_ttl.js isitici.js sure_doldur.js gsc_izle.js kume.js kume_ipc.js kume_yardimci.js mesaj_sifrele_geri_doldur.js cihaz_sinif.js gonderi_istatistik.js video_kare.js seo_dil.js gif.js oda.js video_hazirla.js admin.html ./
+COPY server.js veri_aktar.js dil_tespit.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js sohbet_bakiyor.js sohbet_durum.js kripto.js kisi_izlenme.js iki_adim.js yasak.js medya_imza.js medya_xaccel.js dosya_ek.js disk.js arama.js gunluk.js onbellek_ttl.js isitici.js sure_doldur.js gsc_izle.js kume.js kume_ipc.js kume_yardimci.js mesaj_sifrele_geri_doldur.js cihaz_sinif.js gonderi_istatistik.js video_kare.js seo_dil.js gif.js oda.js video_hazirla.js fragman_suzgec.js fragman_tarama.js admin.html ./
 # robots.txt: Node servis eder (GET /robots.txt). Imaja GIRMEZSE uc 404 doner
 # ve nginx eski statik dosyaya duser — sessiz ama yanlis davranis olur.
 COPY robots.txt ./

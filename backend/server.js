@@ -38,6 +38,7 @@ import geoip from 'geoip-lite';
 import admin from 'firebase-admin';
 import { disaAktar, iceAktar } from './veri_aktar.js';
 import { dilTespit } from './dil_tespit.js';
+import { KirikFragmanlar } from './fragman_suzgec.js';
 import {
   dizinOzet, turDagilimi, oksuzler, oksuzSil, yedekDurumu,
 } from './depolama.js';
@@ -249,6 +250,14 @@ const havuz = new pg.Pool({
 });
 console.log(`pg havuzu: işçi başına max=${HAVUZ_MAX} `
   + `(işçi ${ISCI_SAYISI} × ${HAVUZ_MAX} = ${ISCI_SAYISI * HAVUZ_MAX} ≤ 80)`);
+
+// KIRIK FRAGMAN SÜZGECİ (5 Eyl 2026). `fragman_tarama.js` hangi YouTube
+// kimliğinin oynamadığını `fragman_durum`a yazar; burası o listeyi bellekte
+// tutup TMDB yanıtlarından eler. Uygulama hiçbir şey bilmez: elinde yalnız
+// oynayan fragmanlar kalır ve `fragmanlariSec` bir sonrakini seçer.
+// TABLO YOKSA (migrasyon uygulanmadıysa) küme BOŞ kalır ve süzgeç hiçbir
+// şeyi elemez — yeni sürüm eski veritabanına karşı da ayağa kalkar.
+const kirikFragmanlar = new KirikFragmanlar(havuz).baslat();
 const app = express();
 
 // İstek başına TMDB dili: istemci X-Dil başlığıyla uygulama dilini gönderir,
@@ -1084,7 +1093,10 @@ async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZorla = nul
       [anahtar, ttlSn],
     );
   if (rows.length && (!secici || Number(rows[0].yas) < ttlCoz(ttlSn, rows[0].veri))) {
-    return rows[0].veri;
+    // Süzme SERVİS ANINDA: `tmdb_onbellek` HAM yanıtı saklar ve öyle kalır.
+    // Süzülmüş gövde yazsaydık, video geri geldiğinde (gizli→açık, bölge
+    // kısıtı kalktı) onu ancak TTL dolunca görürdük.
+    return kirikFragmanlar.suz(rows[0].veri);
   }
 
   // Geçici ağ hatalarına ve rate-limit'e (429) karşı yeniden dene.
@@ -1131,7 +1143,8 @@ async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZorla = nul
      ON CONFLICT (anahtar) DO UPDATE SET veri = $2, guncelleme = now()`,
     [anahtar, veri],
   );
-  return veri;
+  // Önbelleğe HAM yazıldı, çağırana SÜZÜLMÜŞ dönüyor — sıra bilerek böyle.
+  return kirikFragmanlar.suz(veri);
 }
 
 // Çok sayıda TMDB kaydını TEK sorguda önbellekten okur; yalnız eksik olanlar
@@ -1176,7 +1189,10 @@ async function tmdbTopluGetir(yollar, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZor
   const eksik = [];
   benzersiz.forEach((yol, i) => {
     const v = onbellek.get(anahtarlar[i]);
-    if (v !== undefined) sonuc.set(yol, v);
+    // Eksikler `tmdbGetir`e gidiyor, orada süzülüyor; ÖNBELLEKTEN DOĞRUDAN
+    // okunan bu dal ayrıca süzülmeli, yoksa toplu çağıran (akış/takvim)
+    // kırık fragmanı görmeye devam ederdi.
+    if (v !== undefined) sonuc.set(yol, kirikFragmanlar.suz(v));
     else eksik.push(yol);
   });
   // Eksikler: 8'li öbekler (tmdbGetir tek tek önbelleğe de yazar)
@@ -1211,7 +1227,7 @@ async function tmdbTopluGetir(yollar, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZor
     basarisiz.forEach((y, i) => {
       const v = bayatHarita.get(bayatAnahtarlar[i]);
       if (v !== undefined) {
-        sonuc.set(y, v);
+        sonuc.set(y, kirikFragmanlar.suz(v));
         sonuc.bayat++;
       } else {
         sonuc.eksik++;
@@ -8163,7 +8179,24 @@ const sitemapParcaLastmod = (sayfa, degisim) => {
 // SSR ve HREFLANG DEĞİŞMEDİ: `/en/dizi/1/sezon/1/bolum/1` hâlâ SSR alıyor ve
 // hâlâ hreflang halkasında. Değişen tek şey Google'a BİLDİRİLEN küme —
 // harita daralmak serbesttir, genişlemek denetim ister (harita ⊆ indexlenebilir).
-const SEO_HARITA_DILSIZ_AILE = new Set(['bolum']);
+//
+// 5 EYL 2026 — BÖLÜM AİLESİ `en` HARİTASI AÇILDI (küme boşaltıldı).
+// 29 Ağu kararının gerekçesi "46 dil × 26 bin = 1,2 milyon URL" idi; 3 Eyl'de
+// dil beyaz listesi tr+en'e indiğinden (`SEO_HARITA_DIL_BEYAZ`) çarpan artık
+// 2: bölüm haritası 26.230 → 52.460 satır. Ülke kırılımı (GSC, 4 Ağu–1 Eyl)
+// açmayı gerektirdi:
+//   · TR dışı 113 ülke 2.419 gösterim (%29) ve 3 tıklama; Avrupa 550/0.
+//     Yurt dışı gösterimin çoğu TÜRKÇE /kisi/ sayfası, konum 45-62 = değirmen.
+//   · /en/ 29 Ağu'da açıldı; 1 haftada en/kisi 637 gösterim, 0 tık, ama konum
+//     TR sayfalardan iyi (ABD 30, İngiltere 25, Hindistan 20).
+//   · TR'de tıklamanın %79'unu üreten aile BÖLÜM — yurt dışında o ailenin
+//     İngilizce yüzeyi HİÇ bildirilmiyordu (en/icerik 25 gösterim/9 sayfa).
+//     Yurt dışı tıklama gelecekse bölümden gelir; kişi ailesinden gelmez.
+// Denetim (genişleme şartı): `/en/dizi/246/sezon/1/bolum/1` canlıda
+// `<html lang="en">`, İngilizce başlık/h1, kanonik kendi URL'i, noindex yok.
+// GERİ ALMA: kümeye 'bolum' yaz — uç 404'e döner, dizin en-bolum'u düşürür.
+// Ölçüm ≥ 15 Eyl: GSC "Site Haritaları" satırında en-bolum ayrı görünür.
+const SEO_HARITA_DILSIZ_AILE = new Set([]);
 
 // ---------------------------------------------------------------------------
 // HARİTADA BİLDİRİLEN DİLLER: 46 → 2 (3 Eyl 2026, ÖLÇÜMLE)

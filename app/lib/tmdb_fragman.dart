@@ -5,11 +5,20 @@ import 'ceviri.dart';
 /// Yalnız `site=YouTube` ve `Trailer`/`Teaser` alınır — bölüm "Clip"leri
 /// (sahne kesitleri) spoiler'dır, kahraman alanı olmaz.
 class TmdbFragman {
-  const TmdbFragman({required this.youtubeId, this.ad, this.tur});
+  const TmdbFragman({
+    required this.youtubeId,
+    this.ad,
+    this.tur,
+    this.resmi = false,
+  });
 
   final String youtubeId;
   final String? ad;
   final String? tur;
+
+  /// TMDB `official` — yapımcının/dağıtımcının KENDİ kanalından yüklenmiş mi.
+  /// Seçimde belirleyicidir; bkz. [fragmanlariSec].
+  final bool resmi;
 }
 
 /// Kahraman kaydırıcısındaki bir kare: YouTube fragmanı veya kapak fotoğrafı.
@@ -137,7 +146,50 @@ String youtubeGommeUrl(
   return q.toString();
 }
 
+/// RESMİ FRAGMAN KURALI (5 Eyl 2026, kullanıcı isteği: "resmi fragman
+/// olmalılar"). Listede EN AZ BİR resmi fragman varsa gayriresmi olanların
+/// TAMAMI atılır — puanla geri sızmalarına da izin verilmez.
+///
+/// NEDEN BU KADAR SERT: 5 Eyl 2026'da TMDB'den 120 popüler yapımın 1.308
+/// Trailer/Teaser'ı tek tek YouTube'a soruldu. 11'i kırıktı ve **kırıkların
+/// çoğu `official: false`** idi — hayran yüklemesi, telif silmesi, kanal
+/// kapanması. Yani gayriresmi fragman yalnız kalitesiz değil, YAPISAL OLARAK
+/// KIRILGAN: bugün oynayan yarın silinir. Eski puanlama (resmi = +25) bunu
+/// yalnız bir tercih sayıyordu; Türkçe altyazılı bir hayran yüklemesi
+/// (iso == dil, +40) resmi İngilizce fragmanı GEÇEBİLİYORDU.
+///
+/// GAYRİRESMİ NEDEN TAMAMEN YASAKLANMADI: aynı ölçümde popüler yapımların
+/// ~%18'inde TMDB'de HİÇ resmi fragman yok (Breaking Bad, The Walking Dead,
+/// Rick and Morty dahil). Katı yasak o yapımların kahramanını boşaltırdı.
+/// Sıra şu: resmi (yapım düzeyi) → resmi (sezon düzeyi, `detay.dart` ikinci
+/// isteği) → gayriresmi. Canlılığı sunucu ayrıca süzüyor
+/// (`backend/fragman_suzgec.js`), yani buraya gelen liste zaten ölü
+/// kimliklerden arınmış oluyor.
+List<TmdbFragman> _resmiKurali(List<TmdbFragman> hepsi) {
+  if (!hepsi.any((f) => f.resmi)) return hepsi;
+  return [
+    for (final f in hepsi)
+      if (f.resmi) f,
+  ];
+}
+
+/// TMDB `videos` gövdesinde EN AZ BİR resmi Trailer/Teaser var mı?
+/// `detay.dart` buna bakarak sezon fragmanı isteğini yapıp yapmayacağına
+/// karar veriyor — yoksa fazladan istek atılmaz.
+bool resmiFragmanVar(dynamic videos) {
+  final ham = videos is Map ? videos['results'] : videos;
+  if (ham is! List) return false;
+  for (final satir in ham) {
+    if (satir is! Map) continue;
+    if (satir['official'] != true) continue;
+    if (_fragmanPuani(satir, 'tr') < 0) continue;
+    return true;
+  }
+  return false;
+}
+
 /// TMDB `videos` gövdesinden Trailer/Teaser listesi (puana göre, tekrarsız).
+/// Resmi fragman varsa gayriresmi olanlar HİÇ dönmez — bkz. [_resmiKurali].
 List<TmdbFragman> fragmanlariSec(dynamic videos, {String dil = 'tr'}) {
   final ham = videos is Map ? videos['results'] : videos;
   if (ham is! List) return const [];
@@ -155,13 +207,19 @@ List<TmdbFragman> fragmanlariSec(dynamic videos, {String dil = 'tr'}) {
         youtubeId: id,
         ad: satir['name'] as String?,
         tur: satir['type'] as String?,
+        resmi: satir['official'] == true,
       ),
     );
     puanlar.add(puan);
   }
   final sira = [for (var i = 0; i < adaylar.length; i++) i]
     ..sort((a, b) => puanlar[b].compareTo(puanlar[a]));
-  return [for (final i in sira.take(fragmanTavani)) adaylar[i]];
+  // Süzme SIRALAMADAN SONRA, tavandan ÖNCE: önce elenir, sonra ilk 5 alınır.
+  // Ters sırada yapılsaydı 5 gayriresmi aday tavanı doldurur, altıncıdaki
+  // resmi fragman hiç görünmezdi.
+  return _resmiKurali([
+    for (final i in sira) adaylar[i],
+  ]).take(fragmanTavani).toList();
 }
 
 /// En uygun tek fragman; yoksa null.
@@ -170,7 +228,13 @@ TmdbFragman? fragmanSec(dynamic videos, {String dil = 'tr'}) {
   return hepsi.isEmpty ? null : hepsi.first;
 }
 
-/// Bölüm listesi önde, sezondakiler tekrarsız eklenir.
+/// Bölüm/yapım listesi önde, sezondakiler tekrarsız eklenir.
+///
+/// RESMİ KURALI BİRLEŞTİRMEDEN SONRA uygulanır ve bu SIRA ÖNEMLİ: dizi
+/// düzeyinde yalnız gayriresmi fragman varken sezon düzeyinde resmi bir
+/// fragman bulunabiliyor (ölçüm: Rick and Morty 2. sezon, "Simpsons Couch
+/// Gag", official). Kural birleştirmeden ÖNCE uygulansaydı, gayriresmi
+/// yapım fragmanı listede kalır ve resmi sezon fragmanının önüne geçerdi.
 List<TmdbFragman> fragmanlariBirlestir(
   List<TmdbFragman> once,
   List<TmdbFragman> sonra,
@@ -179,9 +243,8 @@ List<TmdbFragman> fragmanlariBirlestir(
   final sonuc = [...once];
   for (final f in sonra) {
     if (ids.add(f.youtubeId)) sonuc.add(f);
-    if (sonuc.length >= fragmanTavani) break;
   }
-  return sonuc;
+  return _resmiKurali(sonuc).take(fragmanTavani).toList();
 }
 
 /// Video, foto, video, foto… Fazla olan tür sonda devam eder.
@@ -210,7 +273,14 @@ List<KahramanOge> karisikKahramanDiz(
   return sonuc;
 }
 
-/// Trailer > Teaser; resmi; kullanıcı dili > İngilizce. Diğer türler -1.
+/// Resmi > gayriresmi; Trailer > Teaser; kullanıcı dili > İngilizce.
+/// Diğer türler (Clip/Featurette/Behind the Scenes) -1 — spoiler, seçilmez.
+///
+/// RESMİLİK AĞIRLIĞI 1000: diğer bütün ölçütlerin TOPLAMINDAN (100 + 40 =
+/// 140) büyük olmalı, yoksa sıralama yine karışır. `_resmiKurali` gayriresmi
+/// olanları zaten atıyor; bu ağırlık, kuralın devre dışı kaldığı tek durumda
+/// (hiç resmi fragman yokken) sıralamanın anlamlı kalmasını sağlıyor ve
+/// ikisinin aynı yönde çalıştığını okuyana anlatıyor.
 int _fragmanPuani(Map<dynamic, dynamic> v, String dil) {
   if (v['site'] != 'YouTube') return -1;
   if (!youtubeIdGecerli(v['key'] as String?)) return -1;
@@ -221,7 +291,7 @@ int _fragmanPuani(Map<dynamic, dynamic> v, String dil) {
     _ => -1,
   };
   if (puan < 0) return -1;
-  if (v['official'] == true) puan += 25;
+  if (v['official'] == true) puan += 1000;
   final iso = v['iso_639_1'] as String? ?? '';
   if (iso == dil) {
     puan += 40;
