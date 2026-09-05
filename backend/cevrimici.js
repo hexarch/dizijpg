@@ -62,6 +62,33 @@ export function cevrimiciMi(sonGorulme, cevrimiciGizli, simdi = Date.now()) {
 }
 
 /**
+ * Bu istek kullanıcının VARLIĞINI (çevrimiçi olduğunu) gösterir mi?
+ *
+ * `girisZorunlu` her kimlikli istekte son_gorulme yazar. Ama bazı istekleri
+ * KULLANICI değil CİHAZ atar: telefon cebinde kilitliyken gelen bir mesaj
+ * push'unu arka plan izolatı işler ve gönderene çift tik için
+ * `POST /mesajlar/iletildi` çağırır. Bu da son_gorulme'yi tazeliyordu →
+ * biri sana mesaj yazdığı ANDA sen "çevrimiçi" görünüyordun (6 Eyl 2026
+ * bildirimi: "mesaj atınca hemen online gözüküyor ama kişi online değil").
+ * Üstelik gönderen bunu hemen görüyordu çünkü sohbet başlığı partner'ın
+ * son_gorulme'sini 5 sn'de bir yokluyor.
+ *
+ * Kural: alt satırdaki yollar ne olursa olsun varlık SAYILMAZ. Liste sunucu
+ * tarafında olduğu için yayındaki eski istemciler de düzelir (istemcinin
+ * başlık göndermesi gerekmez).
+ */
+export const VARLIK_SAYILMAYAN_YOLLAR = Object.freeze([
+  '/mesajlar/iletildi', // push teslim onayı — cihaz atar, kullanıcı değil
+]);
+
+export function varlikSayilir(yol) {
+  if (typeof yol !== 'string') return true;
+  // Sondaki eğik çizgi / sorgu farkı listeyi kaçırmasın.
+  const temiz = yol.split('?')[0].replace(/\/+$/, '') || '/';
+  return !VARLIK_SAYILMAYAN_YOLLAR.includes(temiz);
+}
+
+/**
  * Bir sohbet MESAJ İSTEĞİ mi?
  *
  *   ana liste  <=> listenin sahibi karşı tarafı TAKİP EDİYOR **ya da**

@@ -55,7 +55,7 @@ import {
   hedefDurum, yayinlanmisBolumler as yayinlanmisBolumlerSaf,
 } from './dizi_durum.js';
 import {
-  CEVRIMICI_ESIK_SN, sonGorulmeYazilmali, sohbetleriAyir, istekRozeti,
+  CEVRIMICI_ESIK_SN, sonGorulmeYazilmali, varlikSayilir, sohbetleriAyir, istekRozeti,
   sohbetIstekMi,
 } from './cevrimici.js';
 import {
@@ -1569,7 +1569,9 @@ async function girisZorunluHam(req, res, next) {
     });
   }
 
-  sonGorulmeGuncelle(req.kullanici.id);
+  // Cihazın kendi başına attığı istekler (push teslim onayı) kullanıcıyı
+  // çevrimiçi GÖSTERMEZ — gerekçe cevrimici.js -> varlikSayilir.
+  if (varlikSayilir(req.path)) sonGorulmeGuncelle(req.kullanici.id);
   cihazKaydet(req, req.kullanici.id);
   yasakSupurmeTetikle();
   next();

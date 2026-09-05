@@ -16,6 +16,8 @@ import {
   SON_GORULME_YAZMA_ARALIGI_MS,
   sonGorulmeYazilmali,
   cevrimiciMi,
+  varlikSayilir,
+  VARLIK_SAYILMAYAN_YOLLAR,
   sohbetIstekMi,
   sohbetleriAyir,
   istekRozeti,
@@ -280,4 +282,36 @@ test('ENGELLEME davranışı değişmedi: /sohbetler engelli filtresi eklemedi',
   assert.match(yardimci, /FROM engellemeler/);
   assert.match(yardimci, /engelleyen_id=\$1 AND engellenen_id=\$2/);
   assert.match(yardimci, /engelleyen_id=\$2 AND engellenen_id=\$1/);
+});
+
+// ------------------------------------------- varlık sayılmayan istekler
+
+test('push teslim onayı (/mesajlar/iletildi) kullanıcıyı çevrimiçi GÖSTERMEZ', () => {
+  // 6 Eyl 2026: "mesaj atınca karşı taraf hemen online gözüküyor ama değil".
+  // Alıcının telefonu kilitliyken arka plan izolatı push'u işleyip çift tik
+  // için bu ucu çağırıyor; istek girisZorunlu'dan geçtiği için son_gorulme
+  // tazeleniyordu. Cihazın attığı istek varlık sayılmaz.
+  assert.ok(VARLIK_SAYILMAYAN_YOLLAR.includes('/mesajlar/iletildi'));
+  assert.equal(varlikSayilir('/mesajlar/iletildi'), false);
+  assert.equal(varlikSayilir('/mesajlar/iletildi/'), false, 'sondaki eğik çizgi');
+  assert.equal(varlikSayilir('/mesajlar/iletildi?x=1'), false, 'sorgu dizesi');
+});
+
+test('kullanıcının kendi eylemleri varlık SAYILIR', () => {
+  for (const yol of ['/mesajlar', '/mesajlar/ali', '/sohbetler', '/akis', '/']) {
+    assert.equal(varlikSayilir(yol), true, yol);
+  }
+  // Bilinmeyen/garip girdi güvenli tarafa düşer: varlık sayılır (eski davranış).
+  assert.equal(varlikSayilir(undefined), true);
+  assert.equal(varlikSayilir(null), true);
+});
+
+test('girisZorunlu son_gorulme yazmayı varlikSayilir kapısından geçirir', () => {
+  // Kapı kaldırılırsa liste ölü koda döner ve hata sessizce geri gelir.
+  assert.match(
+    SERVER,
+    /if \(varlikSayilir\(req\.path\)\) sonGorulmeGuncelle\(req\.kullanici\.id\);/,
+  );
+  // Ucun kendisi hâlâ girisZorunlu arkasında (kimliksiz teslim onayı olmaz).
+  assert.match(SERVER, /app\.post\('\/mesajlar\/iletildi', girisZorunlu,/);
 });
