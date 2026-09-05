@@ -34,7 +34,14 @@ dizi filmlere öncelik verelim." Domates = Tomatometer (eleştirmen), patlamış
   parça `main.dart.js_1.8e5127cb07d9.part.js` (eski `4f19182cdf50`/`8a552f4c41fc` + `.br` silindi),
   SW sökücü, brotli %73, version.json 1.134.0+201. Curl: `/api/dis-puan/movie/278` dolu, `tv/1396`
   dolu, geçersiz id `{dis:null}`, `person` 400; SSR tr+en künye satırı doğrulandı.
-- ⬜ Cihazda elle bak: rozetler afişin yanında taşıyor mu (320 dp), dokununca IMDb açılıyor mu.
+- ✅ **Kullanıcı: "neden domates ve patlamış mısır işareti koymadın"** → kendi çizimimiz domates
+  (kırmızı taze / yeşil çürük, `DomatesIkonu`) ve patlamış mısır kovası (`PatlamisMisirIkonu`),
+  CustomPainter, 14 dp; RT'nin tescilli logosu DEĞİL. Web yeniden dağıtıldı: `main.3fc890e0bd37.dart.js`
+  + `main.dart.js_1.b611575efa29.part.js` (eski `578d9fedc7af`/`8e5127cb07d9` silindi).
+- ✅ Emülatörde (Medium_Phone_API_36.1, debug APK) Reacher sayfası: "IMDb 8,0 · 🍅 %95 Eleştirmen ·
+  🍿 %79 Seyirci · 75 Metacritic" TMDB satırının altında, 4. rozet ikinci satıra sarıyor, taşma yok.
+  TUZAK: `adb install -r` eski imzalı 1.129.0 üstüne SESSİZCE başarısız oldu → önce `adb uninstall`.
+- ⬜ Gerçek telefonda dokununca IMDb/RT sayfası açılıyor mu (emülatörde tarayıcı denenmedi).
 - ⬜ 7 Eyl+: `SELECT count(*) FILTER (WHERE bulundu), count(*) FROM dis_puanlar` — gece işi günde
   ~650 yazmalı; MDBList `x-ratelimit-remaining` 0'a düşüyorsa GECE_TAVAN'ı düşür.
 - ⬜ APK/AAB üretilmedi (Play'de 196 incelemede).

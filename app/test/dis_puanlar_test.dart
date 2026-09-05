@@ -11,7 +11,8 @@
 //  3) Adresi olan rozet dokununca kaynağı DIŞ tarayıcıda açar
 //     (`disBaglantiAc` ele geçirilir); adresi olmayan (Metacritic) düz metin.
 //  4) Etiketler çevrilir: en'de "Critics"/"Audience"; iki anahtar 45 dilde VAR.
-//  5) Taze (≥60 / fresh) domates kırmızı, çürük yeşil-gri nokta.
+//  5) Taze (≥60 / fresh) domates kırmızı, çürük yeşil; seyirci patlamış mısır
+//     simgesi (ikisi de kendi çizimimiz, logo değil).
 //  6) İçerik sayfası: `/dis-puan` yanıtı gelince rozetler TMDB satırının
 //     altında belirir; uç `{dis: null}` dönerse blok yok.
 //  7) Dokunma hedefi 44 dp (görünen rozet küçük olsa da).
@@ -145,29 +146,22 @@ void main() {
     );
   });
 
-  testWidgets('5) taze kırmızı, çürük yeşil-gri', (tester) async {
-    Color nokta() {
-      final c = tester
-          .widgetList<Container>(
-            find.descendant(
-              of: find.byKey(const Key('dis-rt-elestirmen')),
-              matching: find.byType(Container),
-            ),
-          )
-          .firstWhere(
-            (w) => (w.decoration as BoxDecoration?)?.shape == BoxShape.circle,
-          );
-      return (c.decoration! as BoxDecoration).color!;
-    }
-
-    await _yalniz(tester, const {'rt_elestirmen': 89, 'rt_taze': true});
-    expect(nokta(), const Color(0xFFFA320A));
-    await _yalniz(tester, const {'rt_elestirmen': 40, 'rt_taze': false});
-    expect(nokta(), const Color(0xFF6C9A3A));
-    // `rt_taze` gelmezse eşik 60
-    await _yalniz(tester, const {'rt_elestirmen': 60});
-    expect(nokta(), const Color(0xFFFA320A));
-  });
+  testWidgets(
+    '5) taze domates kırmızı, çürük yeşil; seyircide patlamış mısır',
+    (tester) async {
+      await _yalniz(tester, const {'rt_elestirmen': 89, 'rt_taze': true});
+      expect(find.byKey(const Key('domates-taze')), findsOneWidget);
+      expect(find.byKey(const Key('domates-curuk')), findsNothing);
+      await _yalniz(tester, const {'rt_elestirmen': 40, 'rt_taze': false});
+      expect(find.byKey(const Key('domates-curuk')), findsOneWidget);
+      // `rt_taze` gelmezse eşik 60
+      await _yalniz(tester, const {'rt_elestirmen': 60});
+      expect(find.byKey(const Key('domates-taze')), findsOneWidget);
+      await _yalniz(tester, const {'rt_seyirci': 97});
+      expect(find.byKey(const Key('patlamis-misir')), findsOneWidget);
+      expect(find.byType(DomatesIkonu), findsNothing);
+    },
+  );
 
   testWidgets('7) dokunma hedefi 44 dp', (tester) async {
     await _yalniz(tester, _tam);

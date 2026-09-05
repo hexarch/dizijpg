@@ -5,13 +5,15 @@
 //
 // GÖRÜNÜM: TMDB satırının ALTINDA bir Wrap; her kaynak bir rozet.
 //  · IMDb: sarı "IMDb" pulu + puan (0-10, bir ondalık, CLDR ondalık ayracı).
-//  · Eleştirmen (Tomatometer): kırmızı nokta (taze, ≥60) / yeşil-gri nokta
-//    (çürük) + yüzde + "Eleştirmen".
-//  · Seyirci (Popcornmeter): turuncu nokta + yüzde + "Seyirci".
+//  · Eleştirmen (Tomatometer): KENDİ ÇİZİMİMİZ domates — kırmızı (taze, ≥60)
+//    / yeşil-gri (çürük) + yüzde + "Eleştirmen".
+//  · Seyirci (Popcornmeter): KENDİ ÇİZİMİMİZ patlamış mısır kovası + yüzde +
+//    "Seyirci".
 //  · Metacritic: kendi renk şemasında (61+ yeşil, 40-60 sarı, <40 kırmızı)
 //    kare + sayı + "Metacritic".
 //  Marka LOGOLARI BİLEREK YOK: IMDb ve Rotten Tomatoes'un logoları tescilli;
-//  metin etiketi + renk yeter, kaynağa dokunarak gidilir.
+//  domates/patlamış mısır simgeleri bizim genel çizimlerimiz (CustomPainter),
+//  logo kopyası değil. Kaynağa dokunarak gidilir.
 //
 // YÜZDE BİÇİMİ CLDR'den: Türkçe "%96", İngilizce "96%", Farsça yerel rakam.
 // Yeni çevrilebilir dize yalnız iki tane: 'Eleştirmen' ve 'Seyirci'.
@@ -99,11 +101,7 @@ class DisPuanlar extends StatelessWidget {
           url: rtUrl,
           semantik: '${'Eleştirmen'.c} ${disYuzdeMetni(rtE.toInt())}',
           children: [
-            _Nokta(
-              (dis['rt_taze'] as bool? ?? rtE >= 60)
-                  ? const Color(0xFFFA320A)
-                  : const Color(0xFF6C9A3A),
-            ),
+            DomatesIkonu(taze: dis['rt_taze'] as bool? ?? rtE >= 60),
             const SizedBox(width: 5),
             _Deger(disYuzdeMetni(rtE.toInt())),
             const SizedBox(width: 4),
@@ -116,7 +114,7 @@ class DisPuanlar extends StatelessWidget {
           url: rtUrl,
           semantik: '${'Seyirci'.c} ${disYuzdeMetni(rtS.toInt())}',
           children: [
-            const _Nokta(Color(0xFFFFB300)),
+            const PatlamisMisirIkonu(),
             const SizedBox(width: 5),
             _Deger(disYuzdeMetni(rtS.toInt())),
             const SizedBox(width: 4),
@@ -219,15 +217,109 @@ Future<void> Function(String url) disBaglantiAc = (url) async {
   }
 };
 
-class _Nokta extends StatelessWidget {
-  const _Nokta(this.renk);
-  final Color renk;
+/// Kendi çizimimiz domates — Rotten Tomatoes'un tescilli logosu DEĞİL,
+/// genel bir domates: taze (kırmızı) / çürük (yeşil-gri) + yeşil sap.
+/// 14 dp; rozet metniyle aynı satırda durur.
+class DomatesIkonu extends StatelessWidget {
+  const DomatesIkonu({super.key, required this.taze, this.boyut = 14});
+
+  final bool taze;
+  final double boyut;
+
   @override
-  Widget build(BuildContext context) => Container(
-    width: 10,
-    height: 10,
-    decoration: BoxDecoration(color: renk, shape: BoxShape.circle),
+  Widget build(BuildContext context) => CustomPaint(
+    key: Key(taze ? 'domates-taze' : 'domates-curuk'),
+    size: Size(boyut, boyut),
+    painter: _DomatesBoyaci(taze: taze),
   );
+}
+
+class _DomatesBoyaci extends CustomPainter {
+  const _DomatesBoyaci({required this.taze});
+  final bool taze;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final govde = Paint()
+      ..color = taze ? const Color(0xFFFA320A) : const Color(0xFF7A8F3C);
+    // Gövde: hafif basık daire (domates yuvarlak ama basıktır)
+    canvas.drawOval(Rect.fromLTWH(0, h * 0.22, w, h * 0.78), govde);
+    // Parlama
+    canvas.drawCircle(
+      Offset(w * 0.32, h * 0.5),
+      w * 0.09,
+      Paint()..color = Colors.white.withValues(alpha: 0.55),
+    );
+    // Sap ve yapraklar (yeşil)
+    final yesil = Paint()..color = const Color(0xFF3E9B2F);
+    canvas.drawRect(Rect.fromLTWH(w * 0.46, 0, w * 0.08, h * 0.3), yesil);
+    final yaprak = Path()
+      ..moveTo(w * 0.5, h * 0.3)
+      ..quadraticBezierTo(w * 0.2, h * 0.1, w * 0.12, h * 0.34)
+      ..quadraticBezierTo(w * 0.35, h * 0.32, w * 0.5, h * 0.3)
+      ..quadraticBezierTo(w * 0.65, h * 0.32, w * 0.88, h * 0.34)
+      ..quadraticBezierTo(w * 0.8, h * 0.1, w * 0.5, h * 0.3)
+      ..close();
+    canvas.drawPath(yaprak, yesil);
+  }
+
+  @override
+  bool shouldRepaint(_DomatesBoyaci eski) => eski.taze != taze;
+}
+
+/// Kendi çizimimiz patlamış mısır: kırmızı-beyaz çizgili kova + üstte
+/// sarı-beyaz taneler. Seyirci puanının simgesi.
+class PatlamisMisirIkonu extends StatelessWidget {
+  const PatlamisMisirIkonu({super.key, this.boyut = 14});
+
+  final double boyut;
+
+  @override
+  Widget build(BuildContext context) => CustomPaint(
+    key: const Key('patlamis-misir'),
+    size: Size(boyut, boyut),
+    painter: const _PatlamisMisirBoyaci(),
+  );
+}
+
+class _PatlamisMisirBoyaci extends CustomPainter {
+  const _PatlamisMisirBoyaci();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    // Kova: alta doğru daralan yamuk, kırmızı-beyaz dikey şeritler
+    final kova = Path()
+      ..moveTo(w * 0.12, h * 0.42)
+      ..lineTo(w * 0.88, h * 0.42)
+      ..lineTo(w * 0.78, h)
+      ..lineTo(w * 0.22, h)
+      ..close();
+    canvas.save();
+    canvas.clipPath(kova);
+    canvas.drawRect(
+      Rect.fromLTWH(0, h * 0.42, w, h * 0.58),
+      Paint()..color = const Color(0xFFE53935),
+    );
+    final beyaz = Paint()..color = Colors.white;
+    for (final x in [0.27, 0.55]) {
+      canvas.drawRect(Rect.fromLTWH(w * x, h * 0.42, w * 0.14, h), beyaz);
+    }
+    canvas.restore();
+    // Taneler: sarı ve krem toplar
+    final sari = Paint()..color = const Color(0xFFFFC107);
+    final krem = Paint()..color = const Color(0xFFFFF3C4);
+    canvas.drawCircle(Offset(w * 0.5, h * 0.2), w * 0.2, sari);
+    canvas.drawCircle(Offset(w * 0.24, h * 0.34), w * 0.17, krem);
+    canvas.drawCircle(Offset(w * 0.76, h * 0.34), w * 0.17, krem);
+    canvas.drawCircle(Offset(w * 0.5, h * 0.4), w * 0.16, sari);
+  }
+
+  @override
+  bool shouldRepaint(_PatlamisMisirBoyaci eski) => false;
 }
 
 class _Deger extends StatelessWidget {
