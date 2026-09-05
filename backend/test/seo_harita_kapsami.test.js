@@ -471,62 +471,50 @@ test('dil başına site haritası AYNI kovadan üretilir (ek SQL YOK)', () => {
 // Bölüm haritası o an 5.176 URL'di (238 bin satır, fark edilmedi); talep dalı
 // açılınca 26.178'e çıktı ve aynı çarpan 1,2 MİLYON URL demeye başladı —
 // 25 Ağu'da yangına yol açan 79.463'ün 15 katı. Bu test o çarpanı kilitliyor.
-// 5 Eyl 2026: bölüm ailesine `en` AÇILDI (ülke kırılımı; gerekçe kaynakta).
-// Çarpan 46'dan 2'ye indiği için 1,2 milyon tehlikesi kalmadı; bu test artık
-// "bölüm dil almasın" değil, "bölüm de BEYAZ LİSTEYİ aşmasın" diye kilitliyor.
-test('bölüm haritası yalnız beyaz listedeki dilleri alıyor (46 çarpanı kapalı)', () => {
-  // 3 Eyl 2026: `SEO_HARITA_DIL_BEYAZ` de çekiliyor — `SEO_HARITA_DILLERI`
-  // artık ona bakıyor, listeden düşerse fonksiyon eval'de tanımsız referans verir.
+// 5 Eyl 2026 (KULLANICI KARARI): beyaz liste KALDIRILDI, dört aile de
+// `SEO_DILLER`in tamamında bildiriliyor. Bu test artık iki şeyi kilitler:
+//   1. dizin `SEO_HARITA_DILLERI(ad)` üzerinden üretiliyor (kural tek yerde),
+//   2. bölüm dâhil her aile AYNI dil listesini alıyor — bir aile sessizce
+//      dilsiz kalırsa ("bolum" 29 Ağu'daki gibi) burada kırmızıya döner.
+// Geri alma isteniyorsa (`SEO_HARITA_DIL_BEYAZ = new Set(['tr','en'])`)
+// beklentiyi de buna göre değiştir; 29 Ağu/3 Eyl gerekçeleri kaynakta duruyor.
+test('harita dört aileyi de SEO_DILLER\'in tamamında bildiriyor (5 Eyl kararı)', () => {
   const diller = alan(
-    ['SEO_HARITA_DILSIZ_AILE', 'SEO_HARITA_DIL_BEYAZ', 'SEO_HARITA_DILLERI'],
+    ['SEO_HARITA_DILSIZ_AILE', 'SEO_HARITA_DIL_BEYAZ', 'SEO_HARITA_AILE_DIL_BEYAZ', 'SEO_HARITA_DILLERI'],
     'SEO_HARITA_DILLERI');
-  assert.deepEqual(diller('bolum'), ['tr', 'en'],
-    'bölüm ailesi tr+en dışında dil bildiriyor — 26 bin URL × dil sayısı');
-  assert.ok(diller('bolum').length <= 2,
-    'bölüm haritası çarpanı 2\'yi aştı — 29 Ağu yangını (1,2 milyon URL)');
-  // Diğer üç aile dil varyantını KORUYOR — ama 3 Eyl 2026'dan beri yalnız
-  // `tr+en` (bkz. bir sonraki test). Buradaki iddia "birden çok dil" olarak
-  // KALIYOR: bu testin konusu bölümün SIFIRLANMASI, dil sayısı değil.
-  for (const aile of ['icerik', 'kisi', 'sirket']) {
-    assert.ok(diller(aile).length > 1, `${aile} ailesi dil varyantını kaybetti`);
-    assert.ok(diller(aile).includes('tr'));
+  const hepsi = diller('icerik');
+  assert.ok(hepsi.length >= 40, `dil listesi ${hepsi.length} — SEO_DILLER'in tamamı bekleniyordu`);
+  assert.equal(hepsi[0], 'tr', 'ilk dil tr olmalı (tr haritası öneksiz ad alır)');
+  assert.ok(hepsi.includes('en'));
+  for (const aile of ['bolum', 'sirket']) {
+    assert.deepEqual(diller(aile), hepsi, `${aile} ailesi diğerlerinden farklı dil listesi alıyor`);
+  }
+  // KİŞİ İSTİSNASI (5 Eyl, canlı örneklem): kişi sayfası çoğu dilde noindex
+  // (o dilde biyografi yok). Haritaya noindex URL girmesin diye yalnız tr+en.
+  assert.deepEqual(diller('kisi'), ['tr', 'en'],
+    'kişi ailesi tr+en dışında dil bildiriyor — o dillerde sayfa noindex, GSC hata üretir');
+  // Uç da aynı listeyi uygulamalı ve dört rota da aile adını geçirmeli.
+  assert.match(bildirimCek('sitemapAltHarita'), /SEO_HARITA_DILLERI\(aile\)\.includes\(dilHam\)/,
+    'uç aile bazlı dil listesini uygulamıyor — /sitemap-ja-kisi-1.xml 200 döner');
+  for (const [fn, ad] of [['sitemapVerisi', 'icerik'], ['sitemapKisiVerisi', 'kisi'], ['sitemapSirketVerisi', 'sirket']]) {
+    assert.match(KAYNAK, new RegExp(`sitemapAltHarita\\(${fn}, '[a-z]+', '0\\.[0-9]', '${ad}'\\)`),
+      `${ad} rotası aile adını geçirmiyor — uç süzgeci etkisiz`);
   }
   // Dizin bu listeyi kullanmalı — `SEO_DILLER`i doğrudan kullanırsa kural
   // yalnız yorumda kalır.
   const dizin = bolum("app.get('/sitemap.xml'", '// ---------- sitemap-genel.xml');
   assert.match(dizin, /SEO_HARITA_DILLERI\(ad\)\.map/,
     'dizin hâlâ TÜM dilleri her aileye uyguluyor');
-  // Uç de reddetmeli: dizinden çıkarmak tek başına yetmez (eski dizin kaydı
-  // ya da elle istek yine 1,2 milyon URL bildirirdi).
+  // Uç, dilsiz aile mekanizmasını KORUYOR (küme boş olsa da): geri alma
+  // gerekirse tek satırla çalışır.
   const f = bildirimCek('sitemapAltHarita');
   assert.match(f, /SEO_HARITA_DILSIZ_AILE\.has\(aile\)/,
-    'dilsiz aile dil önekiyle istendiğinde 404 dönmüyor');
+    'dilsiz aile süzgeci uçtan kaldırılmış — geri alma mekanizması yok');
   assert.match(KAYNAK,
     /sitemapAltHarita\(sitemapBolumVerisi, 'monthly', '0\.6', 'bolum'\)/,
     'bölüm rotası aile adını geçirmiyor — süzgeç etkisiz kalır');
-});
-
-// ===========================================================================
-// HARİTADA BİLDİRİLEN DİLLER: 46 → 2 (3 Eyl 2026) — TARAMA BÜTÇESİ
-// ===========================================================================
-// Yukarıdaki bölüm kararının aynısı, kalan üç aile için ve GSC ölçümüyle.
-// 28 günlük pencerede (1 Eyl'de biter) 44 dilin 132 alt haritası ~60 gösterim
-// ve SIFIR tıklama üretti; aynı dönemde tıklamaların %87'sini getiren bölüm
-// ailesi panel denetiminde %4 indeksliydi (11/250). Dizin 141 alt harita ilan
-// ettiği için Google 830.522 URL biliyordu. Bu test o çarpanı kilitler.
-test('harita yalnız tr+en bildiriyor (44 dil dizinden çıktı)', () => {
-  const diller = alan(
-    ['SEO_HARITA_DILSIZ_AILE', 'SEO_HARITA_DIL_BEYAZ', 'SEO_HARITA_DILLERI'],
-    'SEO_HARITA_DILLERI');
-  for (const aile of ['icerik', 'kisi', 'sirket']) {
-    assert.deepEqual(diller(aile), ['tr', 'en'],
-      `${aile} ailesi tr+en dışında dil bildiriyor — tarama bütçesi bölünüyor`);
-  }
-  assert.deepEqual(diller('bolum'), ['tr', 'en'],
-    '5 Eyl bölüm kararı bozuldu (en harita açık, başka dil yok)');
-  // Sıra ÖNEMSİZ değil: `SEO_DILLER.filter` kullanıldığı için liste kaynağın
-  // sırasını korur. Beyaz listeyi `Set` olarak yazıp `[...set]` döndürmek
-  // sırayı beyaz listeye bağlardı — kaynağı tek doğru yapan filtre budur.
-  assert.match(KAYNAK, /SEO_DILLER\.filter\(\(k\) => SEO_HARITA_DIL_BEYAZ\.has\(k\)\)/,
+  // Beyaz liste mekanizması kaynakta duruyor (null = hepsi); geri alma
+  // `new Set([...])` ile yapılır, listeyi ikinci bir yerde yazarak değil.
+  assert.match(KAYNAK, /SEO_DILLER\.filter\(\(k\) => beyaz\.has\(k\)\)/,
     'beyaz liste SEO_DILLER üzerinden süzülmüyor — dil listesi ikiye ayrıldı');
 });

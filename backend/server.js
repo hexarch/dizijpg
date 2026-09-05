@@ -8230,12 +8230,32 @@ const SEO_HARITA_DILSIZ_AILE = new Set([]);
 // (harita ⊆ indekslenebilir); genişlemek denetim ister.
 //
 // GERİ ALMA: bu kümeyi `null` yap — `SEO_DILLER`in tamamına döner.
-const SEO_HARITA_DIL_BEYAZ = new Set(['tr', 'en']);
-const SEO_HARITA_DILLERI = (aile) => (
-  SEO_HARITA_DILSIZ_AILE.has(aile)
-    ? ['tr']
-    : (SEO_HARITA_DIL_BEYAZ ? SEO_DILLER.filter((k) => SEO_HARITA_DIL_BEYAZ.has(k)) : SEO_DILLER)
-);
+//
+// 5 EYL 2026 — BEYAZ LİSTE KALDIRILDI, 46 DİLİN TAMAMI BİLDİRİLİYOR
+// (KULLANICI KARARI). Gerekçesi: tarama hızı sabit bütçe değil; origin'de
+// Googlebot 5–20 Ağu ~0 → 26 Ağu 306 → Eylül tabanı 475–990, harita
+// günlerinde 2.400–3.975. "Önce tr+en indekslensin, sonra açarız" beklemesi
+// kullanıcıya göre anlamsız; 3 Eyl'deki "44 dil = 60 gösterim/0 tık" ölçümü
+// ise haritaların yalnız 5 gün açık kaldığı bir pencereye dayanıyordu.
+// Sonuç: dizin 4 aile × 46 dil = 231 alt harita, ~1,48 milyon URL
+// (icerik 2.484 + bolum 26.230 + kisi 3.212 + sirket 227 = 32.153 × 46).
+// Ek DB sorgusu YOK (dil servis anında ekleniyor, bkz. sitemapAltHarita).
+// GERİ ALMA: `new Set(['tr', 'en'])` — 3 Eyl durumuna döner.
+const SEO_HARITA_DIL_BEYAZ = null;
+// AİLE BAZINDA İSTİSNA (5 Eyl 2026, canlıda ÖLÇÜLDÜ): kişi sayfası o dilde
+// ≥200 karakter biyografi ister (`kisiIndekslenir`), biyografi çoğu dilde
+// yok → sayfa `noindex`. Haritadan örneklem (10'ar URL): en 0 noindex,
+// de 4, fr 4, ru 5, es 7, pt 7, ja 11/12. Haritaya noindex URL koymak GSC'de
+// "Gönderilen URL noindex" hatasıdır (harita ⊆ indekslenebilir kuralı), bu
+// yüzden kişi ailesi yalnız tr+en'de bildirilir. İçerik/bölüm/firma aynı
+// örneklemde 0 noindex → 46 dil. Kişiyi başka dilde açmak için önce o dilde
+// sayfanın indekslenebilir olması gerekir, harita kararı değil sayfa kararı.
+const SEO_HARITA_AILE_DIL_BEYAZ = { kisi: new Set(['tr', 'en']) };
+const SEO_HARITA_DILLERI = (aile) => {
+  if (SEO_HARITA_DILSIZ_AILE.has(aile)) return ['tr'];
+  const beyaz = SEO_HARITA_AILE_DIL_BEYAZ[aile] || SEO_HARITA_DIL_BEYAZ;
+  return beyaz ? SEO_DILLER.filter((k) => beyaz.has(k)) : SEO_DILLER;
+};
 
 app.get('/sitemap.xml', sarici(async (_req, res) => {
   // Dört harita PARALEL ve BAĞIMSIZ okunur: biri düşse bile diğerleri dizinden
@@ -8405,8 +8425,11 @@ function sitemapAltHarita(veriOku, changefreq, priority, aile = '') {
     // Dilsiz aile (bugün: `bolum`) dil önekiyle İSTENSE BİLE 404 döner.
     // Dizinden çıkarmak tek başına yetmez: eski dizin kaydı ya da elle
     // istekle 1,2 milyon URL yine bildirilmiş olurdu.
+    // Aile bazlı dil beyaz listesi de burada uygulanır (5 Eyl): `/sitemap-ja-kisi-1.xml`
+    // dizinde yok ama istenirse 404 dönmeli, yoksa noindex URL'ler yine bildirilir.
     if (dilHam && (!seoDilVar(dilHam) || dilHam === 'tr'
-                   || SEO_HARITA_DILSIZ_AILE.has(aile))) {
+                   || SEO_HARITA_DILSIZ_AILE.has(aile)
+                   || (aile && !SEO_HARITA_DILLERI(aile).includes(dilHam)))) {
       return res.status(404).type('text/plain').send('yok');
     }
     const dil = dilHam || 'tr';
@@ -8431,7 +8454,7 @@ function sitemapDilliSatir(u, dil) {
 // Dil öneki İSTEĞE BAĞLI grup: `/sitemap-icerik-1.xml` (tr) ve
 // `/sitemap-en-icerik-1.xml` (en) AYNI uca düşer.
 app.get(/^\/sitemap-(?:([a-z]{2,3})-)?icerik-(\d+)\.xml$/,
-  sitemapAltHarita(sitemapVerisi, 'weekly', '0.8'));
+  sitemapAltHarita(sitemapVerisi, 'weekly', '0.8', 'icerik'));
 
 // Bölüm haritası. `priority` 0.6 (içerik sayfalarının 0.8'inin ALTINDA):
 // bölüm sayfası dizinin kendi sayfasından daha dar bir sorguya cevap verir ve
@@ -8446,12 +8469,12 @@ app.get(/^\/sitemap-(?:([a-z]{2,3})-)?bolum-(\d+)\.xml$/,
 // sayfası kadar dar bir sorguya cevap vermiyor. `changefreq` monthly:
 // filmografi yeni yapım eklendikçe değişir, biyografi neredeyse hiç.
 app.get(/^\/sitemap-(?:([a-z]{2,3})-)?kisi-(\d+)\.xml$/,
-  sitemapAltHarita(sitemapKisiVerisi, 'monthly', '0.6'));
+  sitemapAltHarita(sitemapKisiVerisi, 'monthly', '0.6', 'kisi'));
 
 // Firma haritası. `changefreq` weekly: sayfadaki liste TMDB `discover`
 // yanıtından geliyor ve firmanın yeni yapımıyla değişiyor (uçtaki TTL 6 saat).
 app.get(/^\/sitemap-(?:([a-z]{2,3})-)?sirket-(\d+)\.xml$/,
-  sitemapAltHarita(sitemapSirketVerisi, 'weekly', '0.6'));
+  sitemapAltHarita(sitemapSirketVerisi, 'weekly', '0.6', 'sirket'));
 
 // İstemci hata/çökme bildirimi (self-hosted; Firebase gerektirmez).
 // Anonim de kabul edilir; varsa kullanıcıyı iliştirir. Alanlar sınırlanır.
