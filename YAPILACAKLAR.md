@@ -100,6 +100,18 @@ ardışık mesajlar gruplanmıyordu. Yapılan:
   kilitlendi (keyguard), kilit açılınca panelsiz/panelli geri + tema seçici
   denenecek. Şüphe: Android 16'da targetSdk 36 için öngörülü geri
   varsayılan açık; manifestte `enableOnBackInvokedCallback` yok.
+- ✅ **Emülatörde (Medium Phone API 36 / Android 16, kullanıcı isteği) 03:35
+  TAMAM:** panelsiz geri → liste; panelli geri → panel kapanır, sohbet KALIR
+  (telefondaki çıkış tekrarlanmadı; o sırada başka bir Claude oturumu aynı
+  cihazlarda `pm clear`/`am start` koşuyordu + ekran kilitlendi — kod hatası
+  bulunamadı, ekran kilidi açılınca S24'te bir kez daha bakılır). Panel
+  glifleri net, "Sık kullanılanlar" satırı geliyor; panelden 😂 gönderildi,
+  büyük Lottie oynadı; Aşk teması (pembe gradyan + kalp deseni + koyu pembe
+  balon) açık uygulama temasında düzgün; tema kartları seçicide doğru.
+  TUZAK: emülatörde `animator_duration_scale=0` geliyor → Flutter
+  "hareketi azalt" sayar, patlama BİLEREK oynamaz; 1 yapınca çalıştı.
+  Emülatör paylaşımı TUZAĞI: iki oturum aynı emülatörü sürerse (pm clear,
+  giriş yazısı) test çöker — `ListAgents` + `SendMessage` ile koordine edildi.
 - ⬜ Telegram'ın tam ekran efekti (❤️ 🎉 için özel Lottie efekt dosyası)
   bir sonraki tur; bugünkü glif patlaması her emojide çalışıyor.
 
