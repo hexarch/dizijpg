@@ -110,7 +110,7 @@ import {
 // Türkçe dizgi olarak gömülü DEĞİL; tarih/sayı/ülke adı ICU'dan gelir.
 // KURAL: bir dil tabloda ya TAM vardır ya hiç yoktur — yarım çeviri yasak.
 import {
-  SEO_DILLER, seoDil, seoDilVar, seoDilliYol, seoDilAyir, seoSagAyrac,
+  SEO_DILLER, SEO_DIL_ADLARI, seoDil, seoDilVar, seoDilliYol, seoDilAyir, seoSagAyrac,
   seoTarih, seoSayi, seoOndalik, seoUlke, bic,
 } from './seo_dil.js';
 // Disk eşiği kapısı (güvenlik denetimi 2026-08-17 §3.1). Kotasız yükleme +
@@ -6418,9 +6418,13 @@ app.get('/og/ana', sarici(async (_req, res) => {
     // KEŞİF HUB'I YALNIZ TÜRKÇEDE: `/gozat` ve `/kesfet` SSR'ı Türkçedir ve
     // dil varyantı YOK (`SEO_DILLI_AILE` onları kapsamıyor). Başka dilde bu
     // bloğu basmak, olmayan çeviriye bağlantı vermek olurdu.
+    // + DİL LİSTESİ (5 Eyl 2026): 45 dil ana sayfasına giden tek `<a>`;
+    //   gerekçe `sitemapGenelDilAnaSayfalari` üstünde.
     govde: seoSssGovdesi(anaSorular, dil)
       + (dil === 'tr' ? seoBaglantiListesi(t.bsKesfeBasla, SEO_KESIF_HUB) : '')
-      + seoBaglantiListesi(t.bsSonYorumlanan, baglantilar),
+      + seoBaglantiListesi(t.bsSonYorumlanan, baglantilar)
+      + seoBaglantiListesi(t.anaDiller, SEO_DILLER.filter((k) => k !== dil)
+        .map((k) => ({ ad: SEO_DIL_ADLARI[k], yol: seoDilliYol('/', k) }))),
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
@@ -8353,10 +8357,36 @@ const SITEMAP_GENEL_YOLLAR = [
   },
 ];
 
+// 5 EYL 2026 — DİL ANA SAYFALARI (`/en`, `/es`, … 45 adet) HARİTAYA GİRDİ.
+// ÖLÇÜM (GSC URL denetimi, 5 Eyl): `/` "dizine eklendi, son tarama 3 Eyl";
+// `/en`, `/es`, `/de`, `/fr` "URL Google tarafından bilinmiyor" — yani
+// 29 Ağu'dan beri SSR'ı, başlığı ve açıklaması hazır sayfaları Google HİÇ
+// taramamış. İki sebep üst üste: (1) bu harita yalnız 4 Türkçe yolu
+// taşıyordu, dil haritaları ise sadece içerik/bölüm/kişi/firma ailelerini
+// bildiriyor — ana sayfa hiçbir haritada yoktu; (2) Türkçe kabukta `/en`e
+// giden tıklanabilir `<a>` yoktu, yalnız hreflang vardı ve Googlebot
+// hreflang'i keşif için kullanmıyor (o da aynı gün `/og/ana`ya eklendi).
+// Sonuç: "tv show tracker" / "app para seguir series" için sayfa var, dizin yok.
+//
+// ÜÇ KOŞUL (yukarıdaki kural) her dil için sağlanıyor: `/:dil` ana sayfası
+// SSR'lı (46 dilde canlıda 200 + `<html lang>` + çevrilmiş başlık ölçüldü),
+// robots.txt kapatmıyor, `noindex` dönmüyor (kişi ailesindeki biyografi
+// eşiği ana sayfada yok). Yalnız ana sayfa eklendi; `/en/gozat`,
+// `/en/kesfet`, `/es/gizlilik` canlıda 404+noindex döndüğü için EKLENMEDİ —
+// haritaya noindex/404 URL koymak GSC hatasıdır (harita ⊆ indekslenebilir).
+// Dil kümesi haritanın geri kalanıyla AYNI kaynaktan (`SEO_HARITA_DILLERI`),
+// böylece beyaz liste geri alınırsa ana sayfalar da onunla daralır.
+const sitemapGenelDilAnaSayfalari = () => SEO_HARITA_DILLERI('genel')
+  .filter((k) => k !== 'tr')
+  .map((k) => ({
+    yol: seoDilliYol('/', k), changefreq: 'daily', priority: '0.8',
+    indekslenir: () => true,
+  }));
+
 app.get('/sitemap-genel.xml', sarici(async (_req, res) => {
   // `/`, `/gozat`, `/kesfet`: TMDB listesi, bizde değişim damgası yok.
   // `/gizlilik`: politika metninin gerçek tarihi (`seoGizlilikIsoTarih`).
-  const satirlar = SITEMAP_GENEL_YOLLAR
+  const satirlar = [...SITEMAP_GENEL_YOLLAR, ...sitemapGenelDilAnaSayfalari()]
     .filter((s) => s.indekslenir())
     .map((s) => {
       const lm = typeof s.lastmod === 'function' ? s.lastmod() : s.lastmod;

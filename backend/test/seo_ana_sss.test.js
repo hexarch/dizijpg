@@ -105,7 +105,9 @@ test('GÖRÜNÜR METİN == JSON-LD', () => {
 test('/og/ana rotası SSS\'i gövdeye basıyor ve @graph\'a ekliyor', () => {
   const i = KAYNAK.indexOf("app.get('/og/ana'");
   assert.ok(i > 0, '/og/ana rotası bulunamadı');
-  const rota = KAYNAK.slice(i, i + 4000);
+  // 6000: 5 Eyl 2026'da gövdeye dil listesi eklenince 4000 JSON-LD çağrısını
+  // dışarıda bırakıyordu (ofset 3960). Rota sonu için yeterli ve güvenli pay.
+  const rota = KAYNAK.slice(i, i + 6000);
   assert.ok(rota.includes('const anaSorular = seoAnaSorulari(dil);'));
   assert.ok(rota.includes('seoSssGovdesi(anaSorular, dil)'),
     'görünür blok basılmalı (gizli JSON-LD SSS ihlaldir)');
