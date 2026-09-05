@@ -1659,4 +1659,6 @@ const Map<String, String> cevirilerNl = {
   'Kolaj en fazla {} fotoğraf alır': 'Een collage bevat maximaal {} foto\'s',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Tik op twee foto\'s om ze te wisselen',
+  'Eleştirmen': 'Critici',
+  'Seyirci': 'Publiek',
 };

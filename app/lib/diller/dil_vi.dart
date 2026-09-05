@@ -1647,4 +1647,6 @@ const Map<String, String> cevirilerVi = {
   'Kolaj oluşturulamadı': 'Không thể tạo ảnh ghép',
   'Kolaj en fazla {} fotoğraf alır': 'Ảnh ghép chứa tối đa {} ảnh',
   'Yer değiştirmek için iki fotoğrafa dokun': 'Chạm hai ảnh để đổi chỗ',
+  'Eleştirmen': 'Giới phê bình',
+  'Seyirci': 'Khán giả',
 };

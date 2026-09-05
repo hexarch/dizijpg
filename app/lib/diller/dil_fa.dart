@@ -1632,4 +1632,6 @@ const Map<String, String> cevirilerFa = {
   'Kolaj oluşturulamadı': 'کلاژ ساخته نشد',
   'Kolaj en fazla {} fotoğraf alır': 'کلاژ حداکثر {} عکس می‌گیرد',
   'Yer değiştirmek için iki fotoğrafa dokun': 'برای جابه‌جایی روی دو عکس بزنید',
+  'Eleştirmen': 'منتقدان',
+  'Seyirci': 'تماشاگران',
 };

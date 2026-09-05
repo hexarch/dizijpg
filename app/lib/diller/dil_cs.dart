@@ -1646,4 +1646,6 @@ const Map<String, String> cevirilerCs = {
   'Kolaj en fazla {} fotoğraf alır': 'Koláž pojme až {} fotek',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Klepnutím na dvě fotky je prohodíte',
+  'Eleştirmen': 'Kritici',
+  'Seyirci': 'Diváci',
 };

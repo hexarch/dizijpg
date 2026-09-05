@@ -1660,4 +1660,6 @@ const Map<String, String> cevirilerHu = {
   'Kolaj oluşturulamadı': 'A kollázs nem készült el',
   'Kolaj en fazla {} fotoğraf alır': 'Egy kollázs legfeljebb {} fotót fogad',
   'Yer değiştirmek için iki fotoğrafa dokun': 'Érints meg két fotót a cseréhez',
+  'Eleştirmen': 'Kritikusok',
+  'Seyirci': 'Közönség',
 };

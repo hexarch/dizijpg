@@ -1649,4 +1649,6 @@ const Map<String, String> cevirilerId = {
   'Kolaj oluşturulamadı': 'Kolase tidak dapat dibuat',
   'Kolaj en fazla {} fotoğraf alır': 'Kolase memuat hingga {} foto',
   'Yer değiştirmek için iki fotoğrafa dokun': 'Ketuk dua foto untuk menukarnya',
+  'Eleştirmen': 'Kritikus',
+  'Seyirci': 'Penonton',
 };

@@ -1678,4 +1678,6 @@ const Map<String, String> cevirilerDe = {
   'Kolaj en fazla {} fotoğraf alır': 'Eine Collage fasst bis zu {} Fotos',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Tippe auf zwei Fotos, um sie zu tauschen',
+  'Eleştirmen': 'Kritiker',
+  'Seyirci': 'Publikum',
 };

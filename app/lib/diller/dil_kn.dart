@@ -1650,4 +1650,6 @@ const Map<String, String> cevirilerKn = {
   'Kolaj en fazla {} fotoğraf alır': 'ಕೊಲಾಜ್‌ನಲ್ಲಿ ಗರಿಷ್ಠ {} ಫೋಟೋಗಳು',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'ಬದಲಿಸಲು ಎರಡು ಫೋಟೋಗಳನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ',
+  'Eleştirmen': 'ವಿಮರ್ಶಕರು',
+  'Seyirci': 'ಪ್ರೇಕ್ಷಕರು',
 };

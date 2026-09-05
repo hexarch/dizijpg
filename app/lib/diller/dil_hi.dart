@@ -1645,4 +1645,6 @@ const Map<String, String> cevirilerHi = {
   'Kolaj en fazla {} fotoğraf alır': 'कोलाज में अधिकतम {} फ़ोटो',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'बदलने के लिए दो फ़ोटो पर टैप करें',
+  'Eleştirmen': 'समीक्षक',
+  'Seyirci': 'दर्शक',
 };

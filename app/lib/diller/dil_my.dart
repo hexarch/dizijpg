@@ -1667,4 +1667,6 @@ const Map<String, String> cevirilerMy = {
   'Kolaj en fazla {} fotoğraf alır': 'ကောလာ့ဂျ်တွင် ဓာတ်ပုံ {} ပုံအထိ',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'နေရာလဲရန် ဓာတ်ပုံနှစ်ပုံကို တို့ပါ',
+  'Eleştirmen': 'ဝေဖန်သူများ',
+  'Seyirci': 'ပရိသတ်',
 };

@@ -1620,4 +1620,6 @@ const Map<String, String> cevirilerTh = {
   'Kolaj oluşturulamadı': 'สร้างคอลลาจไม่ได้',
   'Kolaj en fazla {} fotoğraf alır': 'คอลลาจรับได้สูงสุด {} รูป',
   'Yer değiştirmek için iki fotoğrafa dokun': 'แตะสองรูปเพื่อสลับตำแหน่ง',
+  'Eleştirmen': 'นักวิจารณ์',
+  'Seyirci': 'ผู้ชม',
 };

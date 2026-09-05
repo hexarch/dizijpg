@@ -1640,4 +1640,6 @@ const Map<String, String> cevirilerBn = {
   'Kolaj en fazla {} fotoğraf alır': 'কোলাজে সর্বোচ্চ {} ছবি',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'অদলবদল করতে দুটি ছবিতে ট্যাপ করুন',
+  'Eleştirmen': 'সমালোচক',
+  'Seyirci': 'দর্শক',
 };

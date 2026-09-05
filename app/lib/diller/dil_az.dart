@@ -1640,4 +1640,6 @@ const Map<String, String> cevirilerAz = {
   'Kolaj en fazla {} fotoğraf alır': 'Kollaj ən çox {} foto alır',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Yerini dəyişmək üçün iki fotoya toxun',
+  'Eleştirmen': 'Tənqidçilər',
+  'Seyirci': 'Tamaşaçılar',
 };

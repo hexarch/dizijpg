@@ -1567,4 +1567,6 @@ const Map<String, String> cevirilerJa = {
   'Kolaj oluşturulamadı': 'コラージュを作成できませんでした',
   'Kolaj en fazla {} fotoğraf alır': 'コラージュは最大{}枚まで',
   'Yer değiştirmek için iki fotoğrafa dokun': '2枚の写真をタップして入れ替え',
+  'Eleştirmen': '批評家',
+  'Seyirci': '観客',
 };

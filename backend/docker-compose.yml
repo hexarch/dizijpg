@@ -106,6 +106,9 @@ services:
       GSC_SA_YOL: /app/firebase-admin.json
       JWT_SECRET: ${JWT_SECRET}
       TMDB_TOKEN: ${TMDB_TOKEN}
+      # MDBList anahtari (6 Eyl 2026): IMDb / Rotten Tomatoes / Metacritic
+      # puanlari (dis_puan.js). Bos birakilirsa ozellik sessizce kapali.
+      MDBLIST_KEY: ${MDBLIST_KEY:-}
       # YouTube Data API v3 anahtari (5 Eyl 2026) — kirik fragman taramasi
       # (fragman_tarama.js). BU SATIR OLMADAN betik oEmbed yoluna duser ve
       # "gomme kapali" + "Turkiye'ye kapali" fragmanlari HIC goremez; olcumde

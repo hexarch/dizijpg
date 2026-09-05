@@ -1652,4 +1652,6 @@ const Map<String, String> cevirilerDa = {
   'Kolaj en fazla {} fotoğraf alır': 'En kollage rummer op til {} fotos',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Tryk på to fotos for at bytte dem',
+  'Eleştirmen': 'Kritikere',
+  'Seyirci': 'Publikum',
 };

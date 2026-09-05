@@ -1656,4 +1656,6 @@ const Map<String, String> cevirilerFi = {
   'Kolaj en fazla {} fotoğraf alır': 'Kollaasiin mahtuu enintään {} kuvaa',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Napauta kahta kuvaa vaihtaaksesi ne',
+  'Eleştirmen': 'Kriitikot',
+  'Seyirci': 'Yleisö',
 };

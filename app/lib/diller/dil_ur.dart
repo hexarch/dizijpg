@@ -1649,4 +1649,6 @@ const Map<String, String> cevirilerUr = {
   'Kolaj en fazla {} fotoğraf alır': 'کولاج میں زیادہ سے زیادہ {} تصاویر',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'جگہ بدلنے کے لیے دو تصاویر پر ٹیپ کریں',
+  'Eleştirmen': 'نقاد',
+  'Seyirci': 'ناظرین',
 };

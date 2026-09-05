@@ -1683,4 +1683,6 @@ const Map<String, String> cevirilerEl = {
   'Kolaj en fazla {} fotoğraf alır': 'Ένα κολάζ χωρά έως {} φωτογραφίες',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Πάτησε δύο φωτογραφίες για να τις ανταλλάξεις',
+  'Eleştirmen': 'Κριτικοί',
+  'Seyirci': 'Κοινό',
 };

@@ -1571,4 +1571,6 @@ const Map<String, String> cevirilerKo = {
   'Kolaj oluşturulamadı': '콜라주를 만들 수 없습니다',
   'Kolaj en fazla {} fotoğraf alır': '콜라주는 최대 {}장까지',
   'Yer değiştirmek için iki fotoğrafa dokun': '두 사진을 탭하여 자리 바꾸기',
+  'Eleştirmen': '평론가',
+  'Seyirci': '관객',
 };

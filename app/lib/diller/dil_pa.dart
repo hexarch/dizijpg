@@ -1645,4 +1645,6 @@ const Map<String, String> cevirilerPa = {
   'Kolaj oluşturulamadı': 'ਕੋਲਾਜ ਨਹੀਂ ਬਣ ਸਕਿਆ',
   'Kolaj en fazla {} fotoğraf alır': 'ਕੋਲਾਜ ਵਿੱਚ ਵੱਧ ਤੋਂ ਵੱਧ {} ਫੋਟੋਆਂ',
   'Yer değiştirmek için iki fotoğrafa dokun': 'ਬਦਲਣ ਲਈ ਦੋ ਫੋਟੋਆਂ \'ਤੇ ਟੈਪ ਕਰੋ',
+  'Eleştirmen': 'ਆਲੋਚਕ',
+  'Seyirci': 'ਦਰਸ਼ਕ',
 };

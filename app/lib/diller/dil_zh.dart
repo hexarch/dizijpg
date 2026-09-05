@@ -1565,4 +1565,6 @@ const Map<String, String> cevirilerZh = {
   'Kolaj oluşturulamadı': '无法创建拼图',
   'Kolaj en fazla {} fotoğraf alır': '拼图最多包含 {} 张照片',
   'Yer değiştirmek için iki fotoğrafa dokun': '点按两张照片以交换位置',
+  'Eleştirmen': '影评人',
+  'Seyirci': '观众',
 };

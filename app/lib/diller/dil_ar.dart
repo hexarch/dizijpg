@@ -1636,4 +1636,6 @@ const Map<String, String> cevirilerAr = {
   'Kolaj oluşturulamadı': 'تعذّر إنشاء الكولاج',
   'Kolaj en fazla {} fotoğraf alır': 'يتّسع الكولاج لـ {} صور كحدّ أقصى',
   'Yer değiştirmek için iki fotoğrafa dokun': 'المس صورتين لتبديلهما',
+  'Eleştirmen': 'النقّاد',
+  'Seyirci': 'الجمهور',
 };

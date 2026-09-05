@@ -10,6 +10,7 @@ import '../api.dart';
 import '../gorsel_basliklari.dart';
 import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
+import '../dis_puanlar.dart';
 import '../puan.dart';
 import '../tarih.dart';
 import '../tema.dart';
@@ -582,6 +583,11 @@ class _DetayEkraniState extends State<DetayEkrani>
   Map<String, dynamic>? _incelemeler;
   Map<String, dynamic>? _izleyenler;
 
+  /// IMDb / Rotten Tomatoes / Metacritic (dis_puanlar.dart). `/izleyenler`
+  /// gibi AYRI ve SESSİZ yüklenir: sunucu ilk kez MDBList'e çıkıyorsa
+  /// birkaç saniye sürebilir, sayfa onu beklemez.
+  Map<String, dynamic>? _dis;
+
   /// Başlıktaki kapak görselleri; ilki yapımın ANA kapağıdır (backdrop_path).
   List<String> _kapaklar = const [];
   String? _hata;
@@ -642,6 +648,14 @@ class _DetayEkraniState extends State<DetayEkrani>
           .then((d) {
             if (mounted) {
               setState(() => _izleyenler = d as Map<String, dynamic>);
+            }
+          })
+          .catchError((_) {});
+      Api.get('/dis-puan/${widget.tur}/${widget.tmdbId}')
+          .then((d) {
+            final dis = (d as Map<String, dynamic>?)?['dis'];
+            if (mounted && dis is Map<String, dynamic>) {
+              setState(() => _dis = dis);
             }
           })
           .catchError((_) {});
@@ -1420,6 +1434,12 @@ class _DetayEkraniState extends State<DetayEkrani>
                           ..._puanSatiriYani(),
                         ],
                       ),
+                    // Dış puanlar (IMDb / RT / Metacritic) — TMDB satırının
+                    // altında, yalnız sunucu en az bir puan verdiyse.
+                    if (disPuanVar(_dis)) ...[
+                      const SizedBox(height: 6),
+                      DisPuanlar(dis: _dis!),
+                    ],
                     // Sosyal kanıt: takip ettiklerin arasında kim izlemiş
                     if ((_izleyenler?['takip_sayi'] as num? ?? 0) > 0) ...[
                       const SizedBox(height: 12),

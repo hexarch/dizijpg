@@ -1,5 +1,43 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-06 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-06 — ⭐ DIŞ PUANLAR: IMDb · Rotten Tomatoes (domates + patlamış mısır) · Metacritic (1.134.0+201) 🚀
+
+**Kullanıcı:** "IMDb, tomato puanlarını ve patlamış mısır olan logo sitesinin puanlarını çekip hepsini
+dizi filmlerde gösterebilir miyiz? … günlük 1000 limit var, önce kullanıcıların izlediği takip ettiği
+dizi filmlere öncelik verelim." Domates = Tomatometer (eleştirmen), patlamış mısır = Popcornmeter
+(seyirci); ikisi de Rotten Tomatoes'un.
+
+- ✅ **Kaynak MDBList** (`backend/dis_puan.js` başlığı): IMDb'nin ücretsiz API'si yok (veri dosyaları
+  ticari dışı), RT'nin genel API'si hiç yok, OMDb seyirci puanı vermiyor + CC BY-NC. MDBList tek
+  istekte hepsini TMDB kimliğiyle döner (`/tmdb/movie|show/{id}`). Anahtar `.env: MDBLIST_KEY`
+  (compose'a eklendi); boşsa özellik sessizce kapalı.
+- ✅ **Tablo `dis_puanlar`** (migrasyon-2026-09-06.sql, canlıya uygulandı): yapım başına tek satır,
+  `bulundu=false` = MDBList'te yok (30 gün yeniden istenmez), `cekim` hem tazelik hem GÜNLÜK BÜTÇE
+  sayacı (UTC günü; DB sayacı → işçi kümesinde paylaşılır).
+- ✅ **Bütçe (günde 1.000):** gece işi `disPuanlariTazele` en çok 650 — kütüphane (durumlar ∪
+  izlemeler ∪ puanlar ∪ favoriler, canlıda 3.630 yapım) EN ÇOK KULLANICIDAN başlayarak, önce satırsızlar
+  sonra 14 günden bayatlar; kalan ~300 sayfa açılışındaki anlık çekime (`/dis-puan/:tur/:id`, satır
+  yoksa ve bütçe varsa çeker, 950'de durur). 429 gelirse o gün durur. ~5-6 günde kütüphane dolar.
+- ✅ **Uygulama:** `lib/dis_puanlar.dart` — TMDB satırının altında rozet Wrap'i: sarı "IMDb" pulu +
+  puan, kırmızı/yeşil nokta + %eleştirmen, turuncu nokta + %seyirci, Metacritic renkli kare. Sayılar
+  CLDR ile yerel ("9,3"/"%96" ↔ "9.3"/"96%"); dokununca kaynak sayfası dış tarayıcıda. Logo YOK
+  (tescilli marka). `/izleyenler` gibi ayrı ve sessiz yüklenir. 2 yeni anahtar × 45 dil
+  ('Eleştirmen', 'Seyirci').
+- ✅ **SSR:** künye satırına "IMDb 9,5 · Rotten Tomatoes %96 · Popcornmeter %97 · Metacritic 87"
+  (DB'den, bot bütçe yemez; JSON-LD'ye GİRMEZ — aggregateRating sitenin kendi puanıdır).
+- ✅ **Kanıt:** `backend/test/dis_puan.test.js` (9), `app/test/dis_puanlar_test.dart` (9: biçim tr/en,
+  eksik kaynak, dokunma, taze/çürük, 44 dp, sayfa entegrasyonu). `flutter test` 2737 yeşil; backend
+  2384/2385 (tek kırmızı `cihaz_dagilimi` adminKisit/ADMIN_IPLER testi — 5 Eyl admin-IP dosya
+  değişikliğinden kalma, bu turdan ÖNCE de kırmızıydı).
+- 🚀 **Dağıtım (6 Eyl ~01:30):** backend rebuild + web ritüeli tam — `main.578d9fedc7af.dart.js` +
+  parça `main.dart.js_1.8e5127cb07d9.part.js` (eski `4f19182cdf50`/`8a552f4c41fc` + `.br` silindi),
+  SW sökücü, brotli %73, version.json 1.134.0+201. Curl: `/api/dis-puan/movie/278` dolu, `tv/1396`
+  dolu, geçersiz id `{dis:null}`, `person` 400; SSR tr+en künye satırı doğrulandı.
+- ⬜ Cihazda elle bak: rozetler afişin yanında taşıyor mu (320 dp), dokununca IMDb açılıyor mu.
+- ⬜ 7 Eyl+: `SELECT count(*) FILTER (WHERE bulundu), count(*) FROM dis_puanlar` — gece işi günde
+  ~650 yazmalı; MDBList `x-ratelimit-remaining` 0'a düşüyorsa GECE_TAVAN'ı düşür.
+- ⬜ APK/AAB üretilmedi (Play'de 196 incelemede).
 
 ## 2026-09-05 — 🧩 KOLAJ: fotoğraflardan tek kare (1.133.0+200)
 

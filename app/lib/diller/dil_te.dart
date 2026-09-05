@@ -1649,4 +1649,6 @@ const Map<String, String> cevirilerTe = {
   'Kolaj en fazla {} fotoğraf alır': 'కొలాజ్‌లో గరిష్ఠంగా {} ఫోటోలు',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'మార్చడానికి రెండు ఫోటోలను నొక్కండి',
+  'Eleştirmen': 'విమర్శకులు',
+  'Seyirci': 'ప్రేక్షకులు',
 };

@@ -1657,4 +1657,6 @@ const Map<String, String> cevirilerSw = {
   'Kolaj en fazla {} fotoğraf alır': 'Kolaji huchukua hadi picha {}',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Gusa picha mbili ili kuzibadilisha',
+  'Eleştirmen': 'Wakosoaji',
+  'Seyirci': 'Watazamaji',
 };

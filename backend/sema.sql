@@ -1772,3 +1772,27 @@ CREATE TABLE IF NOT EXISTS fragman_icerik (
 );
 CREATE INDEX IF NOT EXISTS fragman_icerik_kuyruk
   ON fragman_icerik (son_tarama NULLS FIRST);
+
+-- ---------------------------------------------------------------------------
+-- DIŞ PUANLAR (6 Eyl 2026, migrasyon-2026-09-06.sql) — IMDb / Rotten
+-- Tomatoes (eleştirmen + seyirci) / Metacritic. Kaynak MDBList; gerekçe,
+-- günlük bütçe ve tazelik kuralları `dis_puan.js` başlığında.
+-- `bulundu=false` satırı "MDBList'te yok" işaretidir (30 gün yeniden
+-- istenmez). `cekim` hem tazelik hem GÜNLÜK BÜTÇE sayacıdır (UTC günü).
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS dis_puanlar (
+  tur TEXT NOT NULL CHECK (tur IN ('tv','movie')),
+  tmdb_id INT NOT NULL,
+  bulundu BOOLEAN NOT NULL DEFAULT false,
+  imdb_id TEXT,
+  imdb NUMERIC(3,1),
+  imdb_oy INT,
+  rt_elestirmen SMALLINT,
+  rt_taze BOOLEAN,
+  rt_seyirci SMALLINT,
+  metacritic SMALLINT,
+  rt_yol TEXT,
+  cekim TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (tur, tmdb_id)
+);
+CREATE INDEX IF NOT EXISTS idx_dis_puan_cekim ON dis_puanlar(cekim);

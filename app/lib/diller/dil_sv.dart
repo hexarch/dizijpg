@@ -1663,4 +1663,6 @@ const Map<String, String> cevirilerSv = {
   'Kolaj en fazla {} fotoğraf alır': 'Ett kollage rymmer upp till {} foton',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Tryck på två foton för att byta plats',
+  'Eleştirmen': 'Kritiker',
+  'Seyirci': 'Publik',
 };

@@ -1667,4 +1667,6 @@ const Map<String, String> cevirilerEn = {
   'Kolaj oluşturulamadı': 'Couldn\'t create collage',
   'Kolaj en fazla {} fotoğraf alır': 'A collage takes up to {} photos',
   'Yer değiştirmek için iki fotoğrafa dokun': 'Tap two photos to swap them',
+  'Eleştirmen': 'Critics',
+  'Seyirci': 'Audience',
 };

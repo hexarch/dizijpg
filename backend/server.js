@@ -40,6 +40,10 @@ import { disaAktar, iceAktar } from './veri_aktar.js';
 import { dilTespit } from './dil_tespit.js';
 import { KirikFragmanlar } from './fragman_suzgec.js';
 import {
+  disPuanAyikla, disPuanGorunum, disPuanKunye, disPuanKalan, disPuanBayatMi,
+  mdbTur, ANLIK_ZAMAN_ASIMI_MS, TAZELIK_GUN,
+} from './dis_puan.js';
+import {
   dizinOzet, turDagilimi, oksuzler, oksuzSil, yedekDurumu,
 } from './depolama.js';
 import { emojiSay, EMOJI_YEDEK } from './emoji.js';
@@ -209,6 +213,10 @@ const {
   // Listenin SICAK kaynağı (5 Eyl 2026): dosya yolu. Boşsa ADMIN_IPLER
   // kullanılır. Gerekçe ve davranış: bkz. adminIpListesi.
   ADMIN_IPLER_DOSYA = '',
+  // MDBList API anahtarı (6 Eyl 2026): IMDb / Rotten Tomatoes / Metacritic
+  // puanları. BOŞSA özellik sessizce kapalı: uç boş döner, gece işi koşmaz,
+  // SSR künyeye satır basmaz. Gerekçe ve bütçe: dis_puan.js başlığı.
+  MDBLIST_KEY = '',
 } = process.env;
 
 if (!DATABASE_URL || !JWT_SECRET || !TMDB_TOKEN) {
@@ -4555,12 +4563,16 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
     // `?append_to_response=credits,similar` diyordu ve uygulamanın yazdığı
     // TAZE satırı göremiyordu. Artık iki taraf da AYNI satırı okuyup tazeliyor.
     // TMDB + vitrin + indeks eşiği PARALEL: sıra toplamı bütçeyi yemesin.
-    const [v, seo, indexle] = await Promise.all([
+    // DIŞ PUAN (6 Eyl 2026) yalnız DB'den okunur (`canli:false`): bot
+    // isteği MDBList bütçesini yemesin ve SSR süre bütçesine ağ gecikmesi
+    // binmesin. Gece işi kütüphaneyi zaten dolduruyor.
+    const [v, seo, indexle, disPuanSatiri] = await Promise.all([
       tmdbGetir(
         icerikTmdbYolu(tur, tmdbId, String(istekBaglam.getStore()?.dil || 'tr')),
         ONBELLEK_TTL_SN.uzun),
       seoIcerikVerisi(tur, id).catch(() => SEO_BOS),
       ozgunIcerikVar(tur, id).catch(() => false),
+      disPuanGetir(tur, id, { canli: false }).catch(() => null),
     ]);
     const ad = v.name || v.title || 'dizi.jpg';
     const yil = String(v.first_air_date || v.release_date || '').slice(0, 4);
@@ -4677,6 +4689,11 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       turAdlari.length ? `${t.etTur}: ${turAdlari.join(t.ayrac)}` : '',
       yayinTarihi
         ? `${tur === 'tv' ? t.etIlkYayin : t.etVizyon}: ${yayinTarihi}` : '',
+      // "IMDb 9,3 · Rotten Tomatoes %96 · Popcornmeter %97 · Metacritic 87":
+      // marka adları çevrilmez, yalnız yüzde işaretinin yeri dile bağlı.
+      // JSON-LD'ye GİRMEZ: `aggregateRating` sitenin KENDİ puanıdır, üçüncü
+      // taraf puanını şemaya basmak yapılandırılmış veri politikasına aykırı.
+      disPuanKunye(disPuanSatiri, dil),
     ].filter(Boolean);
     const kunyeBlok = kunyeSatirlari.length
       ? `\n<p>${htmlKacir(kunyeSatirlari.join(' · '))}</p>` : '';
@@ -11143,6 +11160,161 @@ app.get('/incelemeler/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) 
     dagilim: dagilim.rows,
   });
 }));
+
+// ---------------------------------------------------------------------------
+// DIŞ PUANLAR — IMDb / Rotten Tomatoes / Metacritic (6 Eyl 2026)
+// ---------------------------------------------------------------------------
+// Kaynak MDBList; neden o, günlük 1.000 istek bütçesi ve tazelik kuralları
+// `dis_puan.js` başlığında. Burada yalnız ağ + DB var.
+//
+// İKİ YOL, TEK TABLO:
+//  · ANLIK: içerik sayfası açılınca `/dis-puan/:tur/:id` — satır varsa
+//    (bayat olsa bile) hemen döner; yoksa ve günlük bütçe izin veriyorsa
+//    MDBList'ten çekip yazar. Sayfa açılışını BLOKE ETMEZ: istemci bunu
+//    `/izleyenler` gibi ayrı ve sessiz ister.
+//  · GECE: `disPuanlariTazele` — kullanıcıların izlediği/takip ettiği/
+//    puanladığı/favorilediği yapımlar, EN ÇOK KULLANICIDAN başlayarak, önce
+//    hiç satırı olmayanlar sonra en bayatlar; günde en çok GECE_TAVAN istek.
+//    Kullanıcı isteği (5 Eyl): "önce kullanıcıların izlediği takip ettiği
+//    dizi filmlere öncelik verelim".
+const MDBLIST = 'https://api.mdblist.com';
+const DIS_PUAN_SUTUNLAR = `tur, tmdb_id, bulundu, imdb_id, imdb, imdb_oy,
+  rt_elestirmen, rt_taze, rt_seyirci, metacritic, rt_yol, cekim`;
+// Bugün (UTC) atılan istek sayısı — MDBList sayacı UTC gece yarısı sıfırlanır.
+const DIS_PUAN_BUGUN_SQL = `SELECT count(*)::int AS n FROM dis_puanlar
+  WHERE cekim >= date_trunc('day', now() AT TIME ZONE 'UTC') AT TIME ZONE 'UTC'`;
+
+async function disPuanBugunKullanilan() {
+  const { rows } = await havuz.query(DIS_PUAN_BUGUN_SQL);
+  return rows[0]?.n ?? 0;
+}
+
+/** MDBList'ten TEK yapım. 404/boş → `bulundu:false` satırı; ağ hatası → fırlatır. */
+async function disPuanCek(tur, tmdbId, zamanAsimiMs = ANLIK_ZAMAN_ASIMI_MS) {
+  const url = `${MDBLIST}/tmdb/${mdbTur(tur)}/${tmdbId}?apikey=${encodeURIComponent(MDBLIST_KEY)}`;
+  const cevap = await fetch(url, { signal: AbortSignal.timeout(zamanAsimiMs) });
+  // 429 = günlük kota bitti: satır YAZMA (sayaç şişmesin), üst katman durur.
+  if (cevap.status === 429) throw Object.assign(new Error('MDBList kota'), { kota: true });
+  if (cevap.status === 404) return disPuanAyikla(null);
+  if (!cevap.ok) throw new Error(`MDBList ${cevap.status}`);
+  const veri = await cevap.json();
+  // MDBList bulunamayanı bazen 200 + {"response": false} ile döner.
+  if (veri && veri.response === false) return disPuanAyikla(null);
+  return disPuanAyikla(veri);
+}
+
+async function disPuanYaz(tur, tmdbId, s) {
+  const { rows } = await havuz.query(
+    `INSERT INTO dis_puanlar (tur, tmdb_id, bulundu, imdb_id, imdb, imdb_oy,
+       rt_elestirmen, rt_taze, rt_seyirci, metacritic, rt_yol, cekim)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11, now())
+     ON CONFLICT (tur, tmdb_id) DO UPDATE SET
+       bulundu=EXCLUDED.bulundu, imdb_id=EXCLUDED.imdb_id, imdb=EXCLUDED.imdb,
+       imdb_oy=EXCLUDED.imdb_oy, rt_elestirmen=EXCLUDED.rt_elestirmen,
+       rt_taze=EXCLUDED.rt_taze, rt_seyirci=EXCLUDED.rt_seyirci,
+       metacritic=EXCLUDED.metacritic, rt_yol=EXCLUDED.rt_yol, cekim=now()
+     RETURNING ${DIS_PUAN_SUTUNLAR}`,
+    [tur, tmdbId, s.bulundu, s.imdb_id, s.imdb, s.imdb_oy, s.rt_elestirmen,
+      s.rt_taze, s.rt_seyirci, s.metacritic, s.rt_yol]);
+  return rows[0];
+}
+
+/**
+ * Yapımın dış puan SATIRI (DB biçimi; `disPuanGorunum` ile istemciye çevrilir).
+ * `canli:true` → satır yoksa ve bütçe varsa MDBList'ten çeker. Bayat satır
+ * anlık yolda TAZELENMEZ (gece işinin görevi): kullanıcıyı bekletmeye değmez.
+ * Anahtar yoksa daima null.
+ */
+async function disPuanGetir(tur, tmdbId, { canli = true } = {}) {
+  if (!MDBLIST_KEY || !gecerliTmdb(tmdbId) || !['tv', 'movie'].includes(tur)) return null;
+  const { rows } = await havuz.query(
+    `SELECT ${DIS_PUAN_SUTUNLAR} FROM dis_puanlar WHERE tur=$1 AND tmdb_id=$2`,
+    [tur, tmdbId]);
+  if (rows[0]) return rows[0];
+  if (!canli) return null;
+  const kalan = disPuanKalan(await disPuanBugunKullanilan(), 'anlik');
+  if (kalan <= 0) return null;
+  try {
+    const s = await disPuanCek(tur, tmdbId);
+    return await disPuanYaz(tur, tmdbId, s);
+  } catch (e) {
+    // Ağ/kota hatası: sayfa puansız açılır, gece işi ya da sonraki açılış dener.
+    if (!e.kota) console.error('dis puan (anlik):', e.message);
+    return null;
+  }
+}
+
+// HIZ LİMİTİ YOK — kardeş herkese açık okuma uçlarıyla (`/incelemeler/...`)
+// tutarlı; dış servise çıkış zaten günlük bütçeyle sınırlı ve satır varsa
+// tek küçük sorgu.
+app.get('/dis-puan/:tur/:tmdbId', sarici(async (req, res) => {
+  const tur = String(req.params.tur || '').toLowerCase();
+  const tmdbId = parseInt(req.params.tmdbId, 10);
+  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdbId)) {
+    return res.status(400).json({ hata: 'Geçersiz tur/tmdb_id' });
+  }
+  const satir = await disPuanGetir(tur, tmdbId);
+  // Satır DB'den geliyorsa 1 saat önbelleklenebilir; yoksa (bütçe bitti /
+  // ağ hatası) kısa tut ki bir sonraki açılış yeniden denesin.
+  res.set('Cache-Control', satir ? 'public, max-age=3600' : 'public, max-age=300');
+  res.json({ dis: disPuanGorunum(satir) });
+}));
+
+/**
+ * GECE İŞİ: kütüphanedeki yapımları kullanıcı sayısına göre sıralı tazeler.
+ * Sıra: hiç satırı olmayanlar (en çok kullanıcı önce) → bayatlar (en eski
+ * önce). Günlük pay GECE_TAVAN; kota (429) gelirse o gün durur.
+ * Kümede yalnız görevli işçi koşar (aşağıdaki ISCI_GOREVLI kapısı).
+ */
+async function disPuanlariTazele() {
+  if (!MDBLIST_KEY) return;
+  try {
+    const kalan = disPuanKalan(await disPuanBugunKullanilan(), 'gece');
+    if (kalan <= 0) return;
+    const { rows } = await havuz.query(
+      `WITH kut AS (
+         SELECT tur, tmdb_id, count(DISTINCT kullanici_id)::int AS kisi FROM (
+           SELECT kullanici_id, tur, tmdb_id FROM durumlar
+           UNION ALL SELECT kullanici_id, tur, tmdb_id FROM izlemeler
+           -- sezon/bolum AYRIMI YOK (bilerek): bu bir ÜYELİK kümesi, puan
+           -- toplamı değil — bölüm puanlayan da yapımla ilgileniyordur.
+           UNION ALL SELECT kullanici_id, tur, tmdb_id FROM puanlar WHERE tur IN ('tv','movie')
+           UNION ALL SELECT kullanici_id, tur, tmdb_id FROM favoriler WHERE tur IN ('tv','movie')
+         ) x GROUP BY tur, tmdb_id)
+       SELECT k.tur, k.tmdb_id, k.kisi, d.cekim, d.bulundu
+         FROM kut k LEFT JOIN dis_puanlar d ON d.tur=k.tur AND d.tmdb_id=k.tmdb_id
+        WHERE d.cekim IS NULL
+           OR (d.bulundu AND d.cekim < now() - interval '${TAZELIK_GUN} days')
+           OR (NOT d.bulundu AND d.cekim < now() - interval '30 days')
+        ORDER BY (d.cekim IS NULL) DESC, k.kisi DESC, d.cekim ASC NULLS FIRST
+        LIMIT $1`,
+      [kalan]);
+    let yazilan = 0;
+    for (const r of rows) {
+      if (!disPuanBayatMi(r)) continue;
+      try {
+        const s = await disPuanCek(r.tur, r.tmdb_id, 10000);
+        await disPuanYaz(r.tur, r.tmdb_id, s);
+        yazilan++;
+      } catch (e) {
+        if (e.kota) break; // günlük kota bitti — yarın devam
+        console.error('dis puan (gece):', r.tur, r.tmdb_id, e.message);
+      }
+      // MDBList'i darlamamak için istekler arası kısa nefes.
+      await new Promise((res) => setTimeout(res, 250));
+    }
+    if (yazilan) console.log(`dis puan (gece): ${yazilan}/${rows.length} yapım tazelendi`);
+  } catch (e) {
+    console.error('dis puan taramasi:', e.message);
+  }
+}
+if (ISCI_GOREVLI && MDBLIST_KEY) {
+  // Günde bir; açılıştan 12 dk sonra ilk tur (diğer açılış işleri — 1/3/5/9
+  // dk — bittikten sonra). Bütçe DB sayacıyla korunduğu için yeniden
+  // başlatmalar günlük payı katlamaz.
+  setInterval(disPuanlariTazele, 24 * 60 * 60 * 1000);
+  setTimeout(disPuanlariTazele, 12 * 60 * 1000);
+}
 
 // Bir SEZONUN bütün bölüm puanları TEK istekte: kullanıcının kendi puanı +
 // herkesin ortalaması/sayısı. N bölüm için N istek atılmasın diye sezon

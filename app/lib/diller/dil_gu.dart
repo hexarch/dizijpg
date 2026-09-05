@@ -1636,4 +1636,6 @@ const Map<String, String> cevirilerGu = {
   'Kolaj oluşturulamadı': 'કોલાજ બનાવી શકાયું નહીં',
   'Kolaj en fazla {} fotoğraf alır': 'કોલાજમાં વધુમાં વધુ {} ફોટા',
   'Yer değiştirmek için iki fotoğrafa dokun': 'બદલવા માટે બે ફોટા પર ટૅપ કરો',
+  'Eleştirmen': 'વિવેચકો',
+  'Seyirci': 'દર્શકો',
 };

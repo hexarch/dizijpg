@@ -1691,4 +1691,6 @@ const Map<String, String> cevirilerEs = {
   'Kolaj en fazla {} fotoğraf alır': 'Un collage admite hasta {} fotos',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Toca dos fotos para intercambiarlas',
+  'Eleştirmen': 'Crítica',
+  'Seyirci': 'Público',
 };

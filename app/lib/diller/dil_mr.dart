@@ -1642,4 +1642,6 @@ const Map<String, String> cevirilerMr = {
   'Kolaj oluşturulamadı': 'कोलाज तयार करता आले नाही',
   'Kolaj en fazla {} fotoğraf alır': 'कोलाजमध्ये जास्तीत जास्त {} फोटो',
   'Yer değiştirmek için iki fotoğrafa dokun': 'बदलण्यासाठी दोन फोटोंवर टॅप करा',
+  'Eleştirmen': 'समीक्षक',
+  'Seyirci': 'प्रेक्षक',
 };

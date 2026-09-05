@@ -1653,4 +1653,6 @@ const Map<String, String> cevirilerSr = {
   'Kolaj en fazla {} fotoğraf alır': 'Kolaž prima najviše {} fotografija',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Dodirni dve fotografije da ih zameniš',
+  'Eleştirmen': 'Kritičari',
+  'Seyirci': 'Publika',
 };

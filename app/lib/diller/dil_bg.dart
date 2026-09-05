@@ -1657,4 +1657,6 @@ const Map<String, String> cevirilerBg = {
   'Kolaj en fazla {} fotoğraf alır': 'Колажът включва до {} снимки',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Докосни две снимки, за да ги размениш',
+  'Eleştirmen': 'Критици',
+  'Seyirci': 'Зрители',
 };

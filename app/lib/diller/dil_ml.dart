@@ -1657,4 +1657,6 @@ const Map<String, String> cevirilerMl = {
   'Kolaj en fazla {} fotoğraf alır': 'കൊളാഷിൽ പരമാവധി {} ഫോട്ടോകൾ',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'മാറ്റാൻ രണ്ട് ഫോട്ടോകളിൽ ടാപ്പ് ചെയ്യുക',
+  'Eleştirmen': 'നിരൂപകർ',
+  'Seyirci': 'പ്രേക്ഷകർ',
 };

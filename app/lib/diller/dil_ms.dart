@@ -1655,4 +1655,6 @@ const Map<String, String> cevirilerMs = {
   'Kolaj oluşturulamadı': 'Kolaj tidak dapat dibuat',
   'Kolaj en fazla {} fotoğraf alır': 'Kolaj memuatkan sehingga {} foto',
   'Yer değiştirmek için iki fotoğrafa dokun': 'Ketik dua foto untuk menukarnya',
+  'Eleştirmen': 'Pengkritik',
+  'Seyirci': 'Penonton',
 };

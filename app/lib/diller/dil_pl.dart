@@ -1668,4 +1668,6 @@ const Map<String, String> cevirilerPl = {
   'Kolaj en fazla {} fotoğraf alır': 'Kolaż mieści do {} zdjęć',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'Dotknij dwóch zdjęć, aby je zamienić',
+  'Eleştirmen': 'Krytycy',
+  'Seyirci': 'Widzowie',
 };

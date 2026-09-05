@@ -1677,4 +1677,6 @@ const Map<String, String> cevirilerTa = {
   'Kolaj en fazla {} fotoğraf alır': 'கொலாஜில் அதிகபட்சம் {} புகைப்படங்கள்',
   'Yer değiştirmek için iki fotoğrafa dokun':
       'மாற்ற இரண்டு புகைப்படங்களைத் தட்டவும்',
+  'Eleştirmen': 'விமர்சகர்கள்',
+  'Seyirci': 'பார்வையாளர்கள்',
 };
