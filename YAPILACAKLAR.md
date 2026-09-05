@@ -1,6 +1,33 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-05 — 🚨 Dil önekli adresler GERÇEK KULLANICIDA KIRIKTI: /de → giriş formu, /en/icerik → "Bağlantı geçersiz" (1.130.0+197) 🚀
+
+**Tetik:** SEO yöneticisi `https://dizijpg.com/de` → `/giris?donus=/de` yönlendirmesini yakaladı.
+**Kök sebep (canlıda ölçüldü, ters testle kilitlendi):** 29 Ağu'daki `baslangicRotasi` önek düşürme
+düzeltmesi yalnız `initialLocation`u besliyordu; go_router web'de tarayıcının verdiği gerçek adresi
+(`/de`) platform rotası olarak alınca `initialLocation` YOK SAYILIYOR. Eşleşme `/de` ile yapılıyor →
+oturumsuz: giriş duvarı (`/giris?donus=%2Fde`), oturumlu: `errorBuilder` ("Bağlantı geçersiz").
+Yani 29 Ağu'dan beri Google'dan gelen yabancı dilli HER ziyaretçi kırık sayfa gördü; bot SSR aldığı
+için GSC'de görünmedi. Test geçiyordu çünkü testte platform rotası yok, `initialLocation` okunuyor.
+
+**Düzeltme:** `dilOnekiDusur(Uri)` + `redirect`in İLK satırı (giriş duvarından ve rota eşleşmesinden
+önce): `/de` → `/kesfet`, `/de/icerik/movie/559` → `/icerik/movie/559`, sorgu korunur. Dil seçimi
+`Ceviri.yukle(adres:)` ile zaten yönlendirmeden önce okunuyor, kaybolmuyor (canlıda /de Almanca Keşfet).
+Test: `yenileme_ayni_sayfa_test.dart` "dil önekli adres platform rotasıyken" grubu — `platformHedefi`
+ham URL'yi `findMatch`e verir (`baslangicRotasi` ATLANIR). Ters test: yönlendirme satırı kaldırılınca
+tam olarak yöneticinin gördüğü iki hata çıkıyor.
+
+**Dağıtım (web, 15:40):** ritüel tam — `--pwa-strategy=none --no-web-resources-cdn` → SW sökücü →
+`web_hashla` (`main.45b54d3cea29.dart.js` + parça `main.dart.js_1.d846898b6c3a.part.js`; ilk derleme `b1b834beb4dc` Api.surum sabiti 1.129.0 kalmış, `surum_esleme_test` yakaladı → düzeltilip yeniden dağıtıldı; eski
+`0548f0ba596f`/`45a7b6112f1a` sunucudan silindi) → scp → `web_brotli.sh` (176 dosya, %73) →
+version.json 1.130.0+197, bootstrap yeni hash, SW sökücü yerinde, site+sağlık 200. Tarayıcıda
+/de → Almanca Keşfet, /en/icerik/tv/2098 → İngilizce dizi sayfası doğrulandı.
+**Aynı gün nginx:** SEO araçları (Screaming.Frog, Ahrefs, Semrush, MJ12, Sitebulb, Lighthouse…) `og_bot`
+listesine eklendi → Google'ın gördüğü SSR'ı denetim araçları da görüyor. TUZAK: map regex'inde boşluk
+`nginx -t`yi düşürür (`Screaming.Frog` yazıldı).
+**Kalan:** APK/AAB 197 derlenmedi (yalnız web etkileniyor, mobil bu yolu kullanmaz).
+
 ## 2026-09-05 — 🌍 Dil ana sayfaları Google'a AÇILDI: sitemap + iç bağlantı + başlık/açıklama (backend, 210d070)
 
 **Tetik:** SEO yöneticisi "tv show tracker / app para seguir series için sayfa yok, indeks yok" dedi.

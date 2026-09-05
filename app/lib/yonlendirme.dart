@@ -194,6 +194,32 @@ String baslangicRotasi(Uri? adres) {
   return yol + (adres.hasQuery ? '?${adres.query}' : '');
 }
 
+/// Dil önekli adresi öneksiz uygulama rotasına çevirir; öneksizse null.
+///
+/// `/de/icerik/movie/559` → `/icerik/movie/559`, `/en` → `/kesfet`,
+/// `/es/icerik/tv/1396?tur=tv` → `/icerik/tv/1396?tur=tv`.
+///
+/// NEDEN [baslangicRotasi] YETMEDİ (5 Eyl 2026, CANLIDA ÖLÇÜLDÜ): go_router
+/// web'de `initialLocation`ı yalnız platform başlangıç rotası `/` ise kullanır;
+/// tarayıcı gerçek adresi (`/de`) verdiğinde `initialLocation` YOK SAYILIR ve
+/// eşleşme doğrudan `/de` ile yapılır. Sonuç: oturumlu ziyaretçi "Bağlantı
+/// geçersiz" ekranı, oturumsuz ziyaretçi `/giris?donus=/de` gördü — 29 Ağu'dan
+/// beri yabancı dilli HER arama ziyaretçisi kırık sayfaya düşüyordu (SEO
+/// yöneticisi `/de` ile yakaladı). `redirect` her konum için koşar; önek
+/// orada düşürülünce platformun verdiği adres de, `go()` ile gelen de aynı
+/// kapıdan geçer. Dil seçimi kaybolmaz: `Ceviri.yukle(adres:)` öneki
+/// yönlendirmeden ÖNCE okur.
+String? dilOnekiDusur(Uri adres) {
+  if (Ceviri.adresDiliKodu(adres) == null) return null;
+  final govde = adres.pathSegments
+      .where((s) => s.isNotEmpty)
+      .skip(1)
+      .map(Uri.encodeComponent)
+      .join('/');
+  final yol = govde.isEmpty ? '/kesfet' : '/$govde';
+  return yol + (adres.hasQuery ? '?${adres.query}' : '');
+}
+
 /// Yenilemeyle YENİDEN AÇILMAMASI gereken yollar (sesli/görüntülü arama).
 ///
 /// Kural "kullanıcı neredeyse orada aç" ise de bu iki adres bir SAYFA değil,
@@ -249,6 +275,11 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
     initialLocation: baslangic,
     refreshListenable: oturum,
     redirect: (context, state) {
+      // DİL ÖNEKİ İLK KAPIDA DÜŞER — giriş duvarından ve rota eşleşmesinden
+      // ÖNCE (gerekçe `dilOnekiDusur` üstünde). Aksi hâlde `/de` oturumsuzda
+      // `/giris?donus=/de`, oturumluda "Bağlantı geçersiz" olur.
+      final dilsiz = dilOnekiDusur(state.uri);
+      if (dilsiz != null) return dilsiz;
       final girisli = oturum.girisli;
       final konum = state.matchedLocation;
       final giriste = konum == '/giris';

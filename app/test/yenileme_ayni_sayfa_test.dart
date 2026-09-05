@@ -202,9 +202,113 @@ Future<String> yenilemeHedefi(
   return eslesme.uri.toString();
 }
 
+/// "Tarayıcı [url] adresinde ve go_router platform rotası olarak HAM adresi
+/// verdi" → uygulamanın açıldığı adres. [yenilemeHedefi]nden farkı:
+/// `baslangicRotasi` ATLANIR; eşleşme ham URL ile yapılır. Web'de gerçek
+/// akış budur: `initialLocation` yalnız platform rotası `/` iken okunur
+/// (bkz. `dilOnekiDusur` gerekçesi).
+Future<String> platformHedefi(
+  WidgetTester tester,
+  BuildContext baglam, {
+  required String url,
+  required bool girisli,
+}) async {
+  final oturum = await _oturumKur(girisli: girisli);
+  final y = yonlendiriciOlustur(
+    oturum,
+    tarayiciAdresi: Uri.parse('https://dizijpg.com$url'),
+  );
+  final eslesme = await y.configuration.redirect(
+    baglam,
+    y.configuration.findMatch(Uri.parse(url)),
+    redirectHistory: <RouteMatchList>[],
+  );
+  if (eslesme.isError) return 'HATA EKRANI (${eslesme.error?.message})';
+  return eslesme.uri.toString();
+}
+
 void main() {
   setUp(() {
     Oturum.karsilamaGerekli = false;
+  });
+
+  // -------------------------------------------------------------------------
+  // 0) DİL ÖNEKLİ ADRES, PLATFORM ROTASI OLARAK (5 Eyl 2026)
+  // -------------------------------------------------------------------------
+  // 29 Ağu'daki `baslangicRotasi` düzeltmesi testte geçip canlıda çalışmadı:
+  // go_router web'de tarayıcının verdiği `/de`yi `initialLocation` yerine
+  // kullanıyor. Bu grup o gerçek akışı ölçer — önek `redirect` içinde düşer.
+  group('dil önekli adres platform rotasıyken', () {
+    test('dilOnekiDusur: önek düşer, kök keşfete, sorgu korunur', () {
+      expect(
+        dilOnekiDusur(Uri.parse('https://dizijpg.com/de/icerik/movie/559')),
+        '/icerik/movie/559',
+      );
+      expect(dilOnekiDusur(Uri.parse('https://dizijpg.com/en')), '/kesfet');
+      expect(dilOnekiDusur(Uri.parse('https://dizijpg.com/en/')), '/kesfet');
+      expect(
+        dilOnekiDusur(
+          Uri.parse('https://dizijpg.com/es/icerik/tv/1396?tur=tv'),
+        ),
+        '/icerik/tv/1396?tur=tv',
+      );
+      // Öneksiz ve `tr`: DOKUNMA (null) — yoksa her istek sonsuz yönlenir.
+      expect(
+        dilOnekiDusur(Uri.parse('https://dizijpg.com/icerik/tv/1')),
+        isNull,
+      );
+      expect(dilOnekiDusur(Uri.parse('https://dizijpg.com/kesfet')), isNull);
+      expect(dilOnekiDusur(Uri.parse('https://dizijpg.com/')), isNull);
+      expect(dilOnekiDusur(Uri.parse('https://dizijpg.com/tr/kesfet')), isNull);
+    });
+
+    testWidgets('OTURUMSUZ: /de giriş formuna DEĞİL keşfete açılır', (
+      tester,
+    ) async {
+      final baglam = await _olcumBaglami(tester);
+      expect(
+        await platformHedefi(tester, baglam, url: '/de', girisli: false),
+        '/kesfet',
+        reason: 'SEO yöneticisinin gördüğü hata: /de → /giris?donus=/de',
+      );
+      expect(
+        await platformHedefi(
+          tester,
+          baglam,
+          url: '/de/icerik/movie/559',
+          girisli: false,
+        ),
+        '/icerik/movie/559',
+      );
+    });
+
+    testWidgets('OTURUMLU: dil önekli derin bağlantı hata ekranına düşmez', (
+      tester,
+    ) async {
+      final baglam = await _olcumBaglami(tester);
+      expect(
+        await platformHedefi(
+          tester,
+          baglam,
+          url: '/en/icerik/tv/2098',
+          girisli: true,
+        ),
+        '/icerik/tv/2098',
+      );
+      expect(
+        await platformHedefi(tester, baglam, url: '/ja', girisli: true),
+        '/kesfet',
+      );
+      expect(
+        await platformHedefi(
+          tester,
+          baglam,
+          url: '/es/dizi/1396/sezon/5/bolum/14?tur=tv',
+          girisli: true,
+        ),
+        '/dizi/1396/sezon/5/bolum/14?tur=tv',
+      );
+    });
   });
 
   // -------------------------------------------------------------------------
