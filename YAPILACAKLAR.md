@@ -54,6 +54,12 @@ DraftManager → kararlar proje verisi (`VideoKirpma`, `_duzenlenen` haritası);
   keskinlik/vinyet/gren (shader gerekir), yorumları kapatma/beğeni gizleme (**sunucu kolonu ister**).
 - ⬜ **3. aşama:** otomatik altyazı (sunucudaki `altyazi_uret.js` hattı zaten var; editörde düzenleme
   yüzeyi eksik), arka plan/nesne silme, ses temizleme, otomatik highlight.
+- 🚀 **Dağıtım (web, 5 Eyl 20:31):** ritüel tam — `--pwa-strategy=none --no-web-resources-cdn` →
+  SW sökücü → `web_hashla` (`main.c3660db7640d.dart.js` + parça `main.dart.js_1.2056b0a17909.part.js`,
+  eski `a2d86195bcca`/`0dfb1adf03ca` + `.br` sunucudan silindi) → scp → `web_brotli.sh` (176 dosya,
+  %73) → version.json 1.132.0+199, bootstrap yeni hash, SW sökücü JS, site+sağlık 200. Web
+  paketinde `pro_video_editor` 0 geçiş (stub sağlam). Sunucu/backend değişmedi.
+  **APK:** `projeler/cikti/dizijpg-1.132.0-199.apk` (83,6 MB) derlendi; Play'e yüklenmedi.
 - ⬜ **Cihazda elle test:** Android'de (a) şeritte uzun bas-sürükle, (b) kamera → foto/video listeye
   düşüyor, (c) 2x + %50 ses + Sinematik ile kodlanan MP4 oynuyor ve sunucu 200 veriyor,
   (d) çıkartma katmanı JPEG çıktısında görünüyor.
