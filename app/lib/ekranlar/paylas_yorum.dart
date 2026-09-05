@@ -710,70 +710,115 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
   /// Eski 84 dp'lik şerit "ne eklediğimi göremiyorum" sorununu ancak yarı
   /// çözüyordu; burada kare [_ekKaresi] dp ve gönderide nasıl görüneceğine
   /// yakın duruyor.
+  ///
+  /// SIRALANABİLİR (5 Eyl 2026, gönderi medya editörü): uzun basıp
+  /// sürükleyince karusel sırası değişir — `_ekler` sırası = gönderideki
+  /// `medya` dizisi sırası. İnceleme ekranındaki şeritle aynı jest.
   Widget _ekOnizleme({required double kenar}) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 4),
       child: SizedBox(
         height: kenar,
-        child: ListView.separated(
+        child: ReorderableListView.builder(
+          key: const ValueKey('ek-seridi'),
           scrollDirection: Axis.horizontal,
+          buildDefaultDragHandles: false,
+          proxyDecorator: (cocuk, _, _) =>
+              Material(color: Colors.transparent, child: cocuk),
+          // `onReorderItem`: hedef indeks çıkarılmış listeye göre gelir.
+          onReorderItem: (eski, yeni) =>
+              setState(() => _ekler.insert(yeni, _ekler.removeAt(eski))),
           itemCount: _ekler.length,
-          separatorBuilder: (_, _) => const SizedBox(width: 8),
           itemBuilder: (context, i) {
             final ek = _ekler[i];
             final video = ek['video'] == true;
             final url = dosyaUrl(ek['yol'] as String?);
-            return Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    width: kenar,
-                    height: kenar,
-                    color: DiziRenkler.kart,
-                    child: video || url == null
-                        ? Icon(
-                            video
-                                ? Icons.play_circle_outline
-                                : Icons.image_outlined,
-                            size: 34,
-                            color: DiziRenkler.metin38,
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: url,
-                            httpHeaders: gorselBasliklari(url),
-                            fit: BoxFit.cover,
-                          ),
-                  ),
-                ),
-                // Kaldırma düğmesi KARENİN İÇİNDE: `Positioned`ı Stack
-                // sınırının dışına taşırmak (negatif offset) onu Flutter'da
-                // TIKLANAMAZ yapar (ux md.2).
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Semantics(
-                    button: true,
-                    label: 'Kaldır'.c,
-                    child: Material(
-                      color: Colors.black54,
-                      shape: const CircleBorder(),
-                      child: InkWell(
-                        customBorder: const CircleBorder(),
-                        onTap: () => setState(() => _ekler.removeAt(i)),
-                        child: const Padding(
-                          padding: EdgeInsets.all(11),
-                          child: Icon(
-                            Icons.close,
-                            size: 18,
-                            color: Colors.white,
+            return ReorderableDelayedDragStartListener(
+              // Anahtar YOL: aynı dosya iki kez eklenemez (sunucu adı
+              // tekil), indeks olsaydı sürükleme sonrası kareler karışırdı.
+              key: ValueKey('ek-${ek['yol']}'),
+              index: i,
+              child: Padding(
+                padding: EdgeInsets.only(right: i == _ekler.length - 1 ? 0 : 8),
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: kenar,
+                        height: kenar,
+                        color: DiziRenkler.kart,
+                        child: video || url == null
+                            ? Icon(
+                                video
+                                    ? Icons.play_circle_outline
+                                    : Icons.image_outlined,
+                                size: 34,
+                                color: DiziRenkler.metin38,
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: url,
+                                httpHeaders: gorselBasliklari(url),
+                                fit: BoxFit.cover,
+                              ),
+                      ),
+                    ),
+                    // Kaldırma düğmesi KARENİN İÇİNDE: `Positioned`ı Stack
+                    // sınırının dışına taşırmak (negatif offset) onu
+                    // Flutter'da TIKLANAMAZ yapar (ux md.2).
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Semantics(
+                        button: true,
+                        label: 'Kaldır'.c,
+                        child: Material(
+                          color: Colors.black54,
+                          shape: const CircleBorder(),
+                          child: InkWell(
+                            customBorder: const CircleBorder(),
+                            onTap: () => setState(() => _ekler.removeAt(i)),
+                            child: const Padding(
+                              padding: EdgeInsets.all(11),
+                              child: Icon(
+                                Icons.close,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                    // Sıra numarası: çoklu gönderide "kaçıncı kare"
+                    // tek bakışta okunsun (karusel sırası).
+                    if (_ekler.length > 1)
+                      Positioned(
+                        left: 6,
+                        bottom: 6,
+                        child: IgnorePointer(
+                          child: Container(
+                            width: 22,
+                            height: 22,
+                            alignment: Alignment.center,
+                            decoration: const BoxDecoration(
+                              color: Colors.black87,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              '${i + 1}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-              ],
+              ),
             );
           },
         ),

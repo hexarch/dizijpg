@@ -98,6 +98,9 @@ class _ProVideoIsleyici implements VideoIsleyici {
     Duration? bas,
     Duration? bit,
     bool ses = true,
+    double sesSeviyesi = 1,
+    double hiz = 1,
+    List<List<double>> filtre = const [],
     double olcek = 1,
     int? bitHizi,
   }) async {
@@ -113,8 +116,16 @@ class _ProVideoIsleyici implements VideoIsleyici {
             video: EditorVideo.file(kaynak),
             startTime: bas,
             endTime: bit,
+            // `null` = dokunma. 1.0 vermek de zararsız ama paket o zaman
+            // ses parçasını gereksiz yere yeniden işleyebilir.
+            volume: ses && sesSeviyesi != 1 ? sesSeviyesi : null,
+            playbackSpeed: hiz != 1 ? hiz : null,
           ),
         ],
+        // Renk filtresi: 4×5 matrisler, kaydırma 0-255 (medya_filtreleri.dart
+        // biçimi = paketin `ApplyColorMatrix.kt` beklentisi). Süresiz
+        // filtreleri paket tek LUT'a indirir; sırayla vermek yeter.
+        colorFilters: [for (final m in filtre) ColorFilter(matrix: m)],
         enableAudio: ses,
         // ÖLÇEĞİ KENDİMİZ VERİYORUZ, preset'e bırakmıyoruz: `qualityConfig`
         // yolu `Size(1280,720)` kutusuna sığdırıyor ve 1080×1920 bir dikey

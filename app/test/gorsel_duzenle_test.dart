@@ -332,13 +332,40 @@ void main() {
     // JPEG kaybı gözle görülmez. Bunlar DÜŞÜRÜLMESİN.
     expect(c.imageGeneration.jpegQuality, 92);
     expect(c.imageGeneration.jpegChroma, JpegChroma.yuv444);
-    // G1 kapsamı: filtre/ton/sticker SEKMESİ YOK (çeviri borcu §3.4).
+    // G1 + G2 + G3 (5 Eyl 2026): kırp · ayarla · filtre · çiz · metin ·
+    // emoji · çıkartma. Sıra: kadraj → görüntü → katmanlar.
     expect(c.mainEditor.tools, [
       SubEditorMode.cropRotate,
+      SubEditorMode.tune,
+      SubEditorMode.filter,
       SubEditorMode.paint,
       SubEditorMode.text,
       SubEditorMode.emoji,
+      SubEditorMode.sticker,
     ]);
+    // Filtre listesi BİZİM setimiz (10 filtre), paketin 46'lık Instagram
+    // taklidi değil; ilki "Orijinal" ve matrissiz. Tek seçim.
+    final filtreler = c.filterEditor.filterList!;
+    expect(filtreler, hasLength(10));
+    expect(filtreler.first.name, 'Orijinal');
+    expect(filtreler.first.filters, isEmpty);
+    expect(filtreler.skip(1).every((f) => f.filters.isNotEmpty), isTrue);
+    expect(c.filterEditor.enableMultiSelection, isFalse);
+    // Ton ayarları: matrisle yapılabilen 8 kaydırıcı, hepsi çevrili etiket.
+    final ton = c.tuneEditor.tuneAdjustmentOptions!;
+    expect(ton.map((t) => t.id), [
+      'brightness',
+      'contrast',
+      'saturation',
+      'exposure',
+      'temperature',
+      'hue',
+      'tint',
+      'fade',
+    ]);
+    expect(ton.map((t) => t.label), contains('Parlaklık'));
+    // Çıkartma seçici bağlı (uygulamanın tepki seti).
+    expect(c.stickerEditor.builder, isNotNull);
     // Spoiler/yüz gizleme birinci sınıf: bulanıklaştır + pikselleştir açık.
     expect(c.paintEditor.tools, contains(PaintMode.blur));
     expect(c.paintEditor.tools, contains(PaintMode.pixelate));

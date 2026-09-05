@@ -6,6 +6,12 @@
 
 ---
 
+> **DURUM (5 Eyl 2026):** G1 + V1 canlıda (7-13 Ağu). **G2 (ton + filtre) ve G3 (çıkartma) bu
+> tarihte yapıldı**, V1 hız/ses seviyesi/renk filtresiyle genişledi; ayrıntı `YAPILACAKLAR.md`
+> "GÖNDERİ MEDYA EDİTÖRÜ 1. aşama". Filtreler paketin 46'lık setinden DEĞİL, kendi 10 filtremizden
+> (`app/lib/medya_filtreleri.dart`) — §3.4'teki çeviri maliyeti böyle 46'dan 10'a indi ve aynı
+> matrisler videoya da uygulanıyor.
+
 ## 0. Bir dakikada özet
 
 | # | İş | Nerede | Paket / yaklaşım | APK etkisi | Adam-gün | Öncelik |

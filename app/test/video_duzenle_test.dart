@@ -61,6 +61,9 @@ class _Is {
   final Duration? bas;
   final Duration? bit;
   final bool ses;
+  final double sesSeviyesi;
+  final double hiz;
+  final List<List<double>> filtre;
   final double olcek;
   final int? bitHizi;
   const _Is({
@@ -70,6 +73,9 @@ class _Is {
     required this.bas,
     required this.bit,
     required this.ses,
+    required this.sesSeviyesi,
+    required this.hiz,
+    required this.filtre,
     required this.olcek,
     required this.bitHizi,
   });
@@ -146,6 +152,9 @@ class _SahteMotor implements VideoIsleyici {
     Duration? bas,
     Duration? bit,
     bool ses = true,
+    double sesSeviyesi = 1,
+    double hiz = 1,
+    List<List<double>> filtre = const [],
     double olcek = 1,
     int? bitHizi,
   }) {
@@ -157,6 +166,9 @@ class _SahteMotor implements VideoIsleyici {
         bas: bas,
         bit: bit,
         ses: ses,
+        sesSeviyesi: sesSeviyesi,
+        hiz: hiz,
+        filtre: filtre,
         olcek: olcek,
         bitHizi: bitHizi,
       ),
@@ -1533,6 +1545,11 @@ void main() {
 
     testWidgets('ses düğmesi ≥44 dp ve etiketi okunur', (tester) async {
       await _ekranAc(tester, _SahteMotor());
+      // Ses düğmesi 5 Eyl 2026'dan beri "Ses" sekmesinde (bilgi satırında
+      // ikinci bir kopyası YOK — iki "Sesi kapat" metni dokunuşu belirsiz
+      // kılardı).
+      await tester.tap(find.byKey(const ValueKey('arac-ses')));
+      await tester.pumpAndSettle();
       final boy = tester.getSize(find.widgetWithText(TextButton, 'Sesi kapat'));
       expect(boy.height, greaterThanOrEqualTo(44));
       await tester.tap(find.text('Sesi kapat'));

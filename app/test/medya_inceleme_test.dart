@@ -695,6 +695,9 @@ class _SahteMotor implements VideoIsleyici {
     Duration? bas,
     Duration? bit,
     bool ses = true,
+    double sesSeviyesi = 1,
+    double hiz = 1,
+    List<List<double>> filtre = const [],
     double olcek = 1,
     int? bitHizi,
   }) async => hedef;

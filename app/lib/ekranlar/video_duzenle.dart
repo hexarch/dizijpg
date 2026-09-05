@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
 
 import '../ceviri.dart';
+import '../medya_filtreleri.dart';
 import '../tema.dart';
 import '../video_islem.dart';
 import '../yerel_video.dart';
@@ -186,7 +187,7 @@ Future<XFile?> videoHazirla(
     );
     // Kaba tahmin: yeniden kodlama gerçek zamanın ~0,5 katı (MEDYA-EDITOR-
     // PLANI §6.1). Yalnız "Bu biraz sürebilir" satırını göstermeye yarar.
-    final islenen = kirpma?.uzunluk ?? bilgi.sure;
+    final islenen = kirpma?.ciktiSuresi ?? bilgi.sure;
     tahminSure = Duration(milliseconds: islenen.inMilliseconds ~/ 2);
   } else if (girdiBayt > videoSikistirmaEsigiBayt || kodek.yenidenKodlaGerek) {
     // Üst veri okunamadı ama dosya büyük ya da kodek oynamıyor: kararı süre
@@ -228,6 +229,10 @@ Future<XFile?> videoHazirla(
         bas: kirpma?.bas,
         bit: kirpma?.bit,
         ses: !(kirpma?.sessiz ?? false),
+        sesSeviyesi: kirpma?.ses ?? 1,
+        hiz: kirpma?.hiz ?? 1,
+        // Kimlik → matrisler BURADA çözülür; motor filtre adlarını bilmez.
+        filtre: medyaFiltresi(kirpma?.filtre)?.matrisler ?? const [],
         olcek: karar.olcek,
         bitHizi: karar.bitHizi,
       ),
@@ -471,10 +476,26 @@ class VideoDuzenleEkrani extends StatefulWidget {
   State<VideoDuzenleEkrani> createState() => _VideoDuzenleEkraniState();
 }
 
+/// Alt araç çubuğundaki sekmeler (kullanıcı isteği: "alt bölümde düzenleme
+/// araçları — Kırp, Ses, Hız, Filtre").
+enum VideoArac { kes, hiz, ses, filtre }
+
 class _VideoDuzenleEkraniState extends State<VideoDuzenleEkrani> {
   late Duration _bas;
   late Duration _bit;
   late bool _sessiz;
+
+  /// Ses seviyesi 0..1 — kaydırıcı. [_sessiz] açıkken yok sayılır.
+  late double _ses;
+
+  /// Oynatma hızı ([videoHizSecenekleri]).
+  late double _hiz;
+
+  /// Renk filtresi kimliği; `null` = Orijinal.
+  String? _filtre;
+
+  /// Açık araç sekmesi. Kesme ilk sırada: en sık iş.
+  VideoArac _arac = VideoArac.kes;
 
   List<Uint8List> _kareler = const [];
   VideoPlayerController? _oynatici;
@@ -494,6 +515,9 @@ class _VideoDuzenleEkraniState extends State<VideoDuzenleEkrani> {
     _bit =
         widget.mevcut?.bit ?? (_toplam > widget.azami ? widget.azami : _toplam);
     _sessiz = widget.mevcut?.sessiz ?? false;
+    _ses = widget.mevcut?.ses ?? 1;
+    _hiz = widget.mevcut?.hiz ?? 1;
+    _filtre = widget.mevcut?.filtre;
     _kareleriYukle();
     _oynaticiHazirla();
   }
@@ -529,7 +553,10 @@ class _VideoDuzenleEkraniState extends State<VideoDuzenleEkrani> {
         await d.dispose();
         return;
       }
-      await d.setVolume(_sessiz ? 0 : 1);
+      await d.setVolume(_sessiz ? 0 : _ses);
+      // Hız önizlemede de uygulanır: kullanıcı 2x'in nasıl göründüğünü
+      // kodlamayı beklemeden görür.
+      if (_hiz != 1) await d.setPlaybackSpeed(_hiz);
       await d.seekTo(_bas);
       d.addListener(_oynaticiDinle);
       setState(() => _oynatici = d);
@@ -567,7 +594,24 @@ class _VideoDuzenleEkraniState extends State<VideoDuzenleEkrani> {
 
   void _sesDegistir() {
     setState(() => _sessiz = !_sessiz);
-    _oynatici?.setVolume(_sessiz ? 0 : 1);
+    _oynatici?.setVolume(_sessiz ? 0 : _ses);
+  }
+
+  /// Ses kaydırıcısı. Sıfıra çekmek "sessiz" ile AYNI sonucu verir ama
+  /// bayrağı değiştirmez: kullanıcı kaydırıcıyı geri açınca sesi bulur.
+  void _sesSeviyesi(double v) {
+    setState(() => _ses = v);
+    _oynatici?.setVolume(_sessiz ? 0 : v);
+  }
+
+  void _hizSec(double h) {
+    setState(() => _hiz = h);
+    final d = _oynatici;
+    if (d != null && d.value.isInitialized) d.setPlaybackSpeed(h);
+  }
+
+  void _filtreSec(String? kimlik) {
+    setState(() => _filtre = kimlik == orijinalFiltreKimligi ? null : kimlik);
   }
 
   /// Tutamak sürüklemesi. Sınırlar burada TEK yerde uygulanır:
@@ -611,10 +655,25 @@ class _VideoDuzenleEkraniState extends State<VideoDuzenleEkrani> {
   /// (`gorselDuzenle` ile aynı sözleşme: değişmemiş çıktıyı "düzenlendi"
   /// diye işaretlemek yalan olur).
   void _bitir() {
-    final degisti = _bas > Duration.zero || _bit < _toplam || _sessiz;
-    Navigator.of(
-      context,
-    ).pop(degisti ? VideoKirpma(bas: _bas, bit: _bit, sessiz: _sessiz) : null);
+    final degisti =
+        _bas > Duration.zero ||
+        _bit < _toplam ||
+        _sessiz ||
+        _ses != 1 ||
+        _hiz != 1 ||
+        _filtre != null;
+    Navigator.of(context).pop(
+      degisti
+          ? VideoKirpma(
+              bas: _bas,
+              bit: _bit,
+              sessiz: _sessiz,
+              ses: _ses,
+              hiz: _hiz,
+              filtre: _filtre,
+            )
+          : null,
+    );
   }
 
   @override
@@ -652,13 +711,10 @@ class _VideoDuzenleEkraniState extends State<VideoDuzenleEkrani> {
         children: [
           Expanded(child: _onizleme()),
           _bilgiSatiri(),
-          KirpmaSeridi(
-            kareler: _kareler,
-            toplam: _toplam,
-            bas: _bas,
-            bit: _bit,
-            tutamak: _tutamak,
-          ),
+          // Araç paneli SABİT yükseklikte: sekme değişince önizleme
+          // zıplamaz (CLS = 0; medya_inceleme.dart şerit kuralıyla aynı).
+          SizedBox(height: _panelBoy, child: _aracPaneli()),
+          _AracCubugu(secili: _arac, sec: (a) => setState(() => _arac = a)),
           // Alt tutamaklar sistem gezinme çubuğunun ALTINDA kalmasın:
           // `gorsel_kirp.dart:78-87`'de bizzat sahada bulunmuş hata.
           SizedBox(height: altGuvenli(context, ekstra: 8)),
@@ -677,13 +733,15 @@ class _VideoDuzenleEkraniState extends State<VideoDuzenleEkrani> {
         children: [
           if (hazir)
             Center(
-              child: AspectRatio(
-                aspectRatio: d.value.aspectRatio,
-                child: VideoPlayer(d),
+              child: _filtreli(
+                AspectRatio(
+                  aspectRatio: d.value.aspectRatio,
+                  child: VideoPlayer(d),
+                ),
               ),
             )
           else if (_kareler.isNotEmpty)
-            Image.memory(_kareler.first, fit: BoxFit.contain)
+            _filtreli(Image.memory(_kareler.first, fit: BoxFit.contain))
           else
             Center(
               child: SizedBox(
@@ -737,7 +795,11 @@ class _VideoDuzenleEkraniState extends State<VideoDuzenleEkrani> {
               children: [
                 Text(
                   '${videoSureMetni(_bas)} — ${videoSureMetni(_bit)}'
-                  '  ·  ${videoSureMetni(uzunluk)}',
+                  '  ·  ${videoSureMetni(uzunluk)}'
+                  // Hız değişmişse çıktının GERÇEK süresi de yazılır:
+                  // 2x'te 60 sn'lik kesit 30 sn oynar, kullanıcı bunu
+                  // kodlamadan önce görsün.
+                  '${_hiz == 1 ? '' : '  →  ${videoSureMetni(Duration(microseconds: (uzunluk.inMicroseconds / _hiz).round()))} (${videoHizMetni(_hiz)})'}',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -760,11 +822,336 @@ class _VideoDuzenleEkraniState extends State<VideoDuzenleEkrani> {
               ],
             ),
           ),
-          _SesDugmesi(sessiz: _sessiz, bas: _sesDegistir),
         ],
       ),
     );
   }
+}
+
+/// Araç panelinin sabit yüksekliği (kare şeridi 56 + 16 tutamak payı).
+const _panelBoy = _seritBoy + 16;
+
+extension on _VideoDuzenleEkraniState {
+  /// Seçili filtre varsa önizlemeyi onunla boyar. `ColorFiltered.matrix`
+  /// motorun kullandığı 4×5 matrisin BİREBİR aynısını alır — ekranda
+  /// görülen, kodlanan ile aynı.
+  Widget _filtreli(Widget cocuk) {
+    final f = medyaFiltresi(_filtre);
+    if (f == null) return cocuk;
+    return ColorFiltered(
+      colorFilter: ColorFilter.matrix(f.matris),
+      child: cocuk,
+    );
+  }
+
+  Widget _aracPaneli() => switch (_arac) {
+    VideoArac.kes => KirpmaSeridi(
+      kareler: _kareler,
+      toplam: _toplam,
+      bas: _bas,
+      bit: _bit,
+      tutamak: _tutamak,
+    ),
+    VideoArac.hiz => _HizPaneli(secili: _hiz, sec: _hizSec),
+    VideoArac.ses => _SesPaneli(
+      seviye: _ses,
+      sessiz: _sessiz,
+      degistir: _sesSeviyesi,
+      sessizDegistir: _sesDegistir,
+    ),
+    VideoArac.filtre => _FiltrePaneli(
+      secili: _filtre,
+      sec: _filtreSec,
+      kare: _kareler.isEmpty ? null : _kareler.first,
+    ),
+  };
+}
+
+/// Alt araç çubuğu: Kes · Hız · Ses · Filtre. İkon + metin birlikte
+/// (ikon tek başına "hız" ile "kes"i ayırt ettirmez); seçili sekme sarı ve
+/// `Semantics.selected` — renk tek gösterge değil.
+class _AracCubugu extends StatelessWidget {
+  final VideoArac secili;
+  final void Function(VideoArac) sec;
+  const _AracCubugu({required this.secili, required this.sec});
+
+  @override
+  Widget build(BuildContext context) {
+    final araclar = [
+      (VideoArac.kes, Icons.content_cut, 'Kes'.c),
+      (VideoArac.hiz, Icons.speed, 'Hız'.c),
+      (VideoArac.ses, Icons.volume_up, 'Ses'.c),
+      (VideoArac.filtre, Icons.auto_awesome_outlined, 'Filtre'.c),
+    ];
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: DiziRenkler.metin12)),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          for (final (arac, ikon, ad) in araclar)
+            Expanded(
+              child: Semantics(
+                button: true,
+                selected: arac == secili,
+                label: ad,
+                child: InkWell(
+                  key: ValueKey('arac-${arac.name}'),
+                  onTap: () => sec(arac),
+                  child: Padding(
+                    // 22 ikon + 4 + 12 metin + dolgu ≥ 44 dp.
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          ikon,
+                          size: 22,
+                          color: arac == secili
+                              ? DiziRenkler.sariMetin
+                              : DiziRenkler.metin70,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          ad,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: arac == secili
+                                ? FontWeight.w800
+                                : FontWeight.w600,
+                            color: arac == secili
+                                ? DiziRenkler.sariMetin
+                                : DiziRenkler.metin70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Hız seçenekleri: 0.25x … 4x, tek satır çip. Seçili çip DOLU sarı.
+class _HizPaneli extends StatelessWidget {
+  final double secili;
+  final void Function(double) sec;
+  const _HizPaneli({required this.secili, required this.sec});
+
+  @override
+  Widget build(BuildContext context) => ListView(
+    scrollDirection: Axis.horizontal,
+    padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
+    children: [
+      for (final h in videoHizSecenekleri) ...[
+        _Cip(
+          key: ValueKey('hiz-$h'),
+          etiket: videoHizMetni(h),
+          secili: h == secili,
+          bas: () => sec(h),
+        ),
+        const SizedBox(width: 8),
+      ],
+    ],
+  );
+}
+
+/// Ses paneli: solda "Sesi kapat/aç", sağda seviye kaydırıcısı + yüzde.
+///
+/// Kaydırıcı sessizken KİLİTLİ ve soluk: kapalı sesin seviyesini oynatmak
+/// hiçbir şey yapmaz, kullanıcıyı yanıltmayalım.
+class _SesPaneli extends StatelessWidget {
+  final double seviye;
+  final bool sessiz;
+  final void Function(double) degistir;
+  final VoidCallback sessizDegistir;
+  const _SesPaneli({
+    required this.seviye,
+    required this.sessiz,
+    required this.degistir,
+    required this.sessizDegistir,
+  });
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    child: Row(
+      children: [
+        _SesDugmesi(sessiz: sessiz, bas: sessizDegistir),
+        Expanded(
+          child: Semantics(
+            label: 'Ses seviyesi'.c,
+            child: Slider(
+              key: const ValueKey('ses-kaydirici'),
+              value: seviye,
+              onChanged: sessiz ? null : degistir,
+              activeColor: DiziRenkler.sari,
+              inactiveColor: DiziRenkler.metin12,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 44,
+          child: Text(
+            '%${(sessiz ? 0 : seviye * 100).round()}',
+            textAlign: TextAlign.end,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: sessiz ? DiziRenkler.metin38 : DiziRenkler.metin,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+/// Filtre şeridi: her filtre, ilk karenin o filtreyle boyanmış küçük hâli +
+/// adı. Kare yoksa (şerit çıkarılamadı) düz renkli kutu — ad yine okunur.
+class _FiltrePaneli extends StatelessWidget {
+  final String? secili;
+  final void Function(String?) sec;
+  final Uint8List? kare;
+  const _FiltrePaneli({
+    required this.secili,
+    required this.sec,
+    required this.kare,
+  });
+
+  @override
+  Widget build(BuildContext context) => ListView(
+    scrollDirection: Axis.horizontal,
+    padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
+    children: [
+      for (final f in medyaFiltreleri) ...[
+        _FiltreKaresi(
+          key: ValueKey('filtre-${f.kimlik}'),
+          filtre: f,
+          secili: f.orijinal ? secili == null : secili == f.kimlik,
+          kare: kare,
+          bas: () => sec(f.kimlik),
+        ),
+        const SizedBox(width: 8),
+      ],
+    ],
+  );
+}
+
+class _FiltreKaresi extends StatelessWidget {
+  final MedyaFiltresi filtre;
+  final bool secili;
+  final Uint8List? kare;
+  final VoidCallback bas;
+  const _FiltreKaresi({
+    super.key,
+    required this.filtre,
+    required this.secili,
+    required this.kare,
+    required this.bas,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Widget resim = kare == null
+        ? ColoredBox(color: DiziRenkler.kart)
+        : Image.memory(kare!, fit: BoxFit.cover, gaplessPlayback: true);
+    if (!filtre.orijinal) {
+      resim = ColorFiltered(
+        colorFilter: ColorFilter.matrix(filtre.matris),
+        child: resim,
+      );
+    }
+    return Semantics(
+      button: true,
+      selected: secili,
+      label: filtre.etiket,
+      child: GestureDetector(
+        onTap: bas,
+        child: SizedBox(
+          width: 60,
+          child: Column(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: secili
+                      ? Border.all(color: DiziRenkler.sari, width: 2)
+                      : null,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: resim,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                filtre.etiket,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: secili ? FontWeight.w800 : FontWeight.w500,
+                  color: secili ? DiziRenkler.sariMetin : DiziRenkler.metin70,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Seçilebilir çip (hız). 44 dp yüksek dokunma hedefi.
+class _Cip extends StatelessWidget {
+  final String etiket;
+  final bool secili;
+  final VoidCallback bas;
+  const _Cip({
+    super.key,
+    required this.etiket,
+    required this.secili,
+    required this.bas,
+  });
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    selected: secili,
+    label: etiket,
+    child: Material(
+      color: secili ? DiziRenkler.sari : DiziRenkler.kart,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: bas,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 44, minWidth: 56),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          alignment: Alignment.center,
+          child: Text(
+            etiket,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              // Sarı üstüne DAİMA siyah (tema.dart kuralı).
+              color: secili ? Colors.black : DiziRenkler.metin,
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 /// "Sesi kapat / Sesi aç" düğmesi. İkon + metin birlikte: ikon tek başına

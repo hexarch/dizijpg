@@ -57,6 +57,33 @@ Future<List<XFile>> Function(int azami)? sistemSeciciSahte;
 @visibleForTesting
 bool Function()? fotoSeciciAcSahte;
 
+/// Testler için: kamera yedeği. `null` = gerçek kamerayı aç.
+/// Parametre `true` → video çekimi, `false` → fotoğraf.
+@visibleForTesting
+Future<XFile?> Function(bool video)? kameraSahte;
+
+/// Kamerayı açar; kullanıcı vazgeçerse `null`.
+///
+/// FOTOĞRAF: `imageQuality: 92` + `maxWidth: 2560` — sohbetteki kamera
+/// yoluyla (`sohbet.dart:_kameraGonder`) aynı ayar; 12 MP ham JPEG'i olduğu
+/// gibi almak yükleme boyutunu üçe katlıyordu. VİDEO: sistem kamerası
+/// [videoAzamiGirdiSure] ile sınırlanır — daha uzununu zaten düzenleyici
+/// reddediyor, kullanıcı 11 dakika çekip "çok büyük" cevabı almasın.
+Future<XFile?> kameraAc({required bool video}) {
+  if (kameraSahte != null) return kameraSahte!(video);
+  final secici = ImagePicker();
+  return video
+      ? secici.pickVideo(
+          source: ImageSource.camera,
+          maxDuration: videoAzamiGirdiSure,
+        )
+      : secici.pickImage(
+          source: ImageSource.camera,
+          imageQuality: 92,
+          maxWidth: 2560,
+        );
+}
+
 /// Sistem seçicisini açar ve seçilen dosyaları döner (vazgeçilirse boş liste).
 ///
 /// ANDROID: [fotoSeciciyiAc] `useAndroidPhotoPicker = true` yapar, böylece
@@ -272,6 +299,64 @@ class _MedyaIncelemeEkraniState extends State<MedyaIncelemeEkrani> {
             : _liste[i >= _liste.length ? _liste.length - 1 : i];
       }
     });
+  }
+
+  /// Kamera açık — çift açılmayı engeller.
+  bool _cekiliyor = false;
+
+  /// Şeritte sürükleyip bırakma (kullanıcı isteği: "medya sıralamasını
+  /// değiştirme"). Çıktı sırası = şerit sırası = gönderideki karusel sırası.
+  ///
+  /// `onReorderItem` sözleşmesi: [yeni] ÇIKARILMIŞ listeye göre gelir
+  /// (eski `onReorder`daki "yeni > eski ise bir azalt" düzeltmesi gerekmez).
+  void _sirala(int eski, int yeni) {
+    setState(() => _liste.insert(yeni, _liste.removeAt(eski)));
+  }
+
+  /// Kamera karesi: fotoğraf mı video mu diye sorar, çekilen dosyayı
+  /// LİSTEYE katar (yüklemez — akış aynı: incele → düzenle → İleri).
+  ///
+  /// Web'de kare HİÇ ÇİZİLMEZ (masaüstü tarayıcıda "kamera" dosya seçici
+  /// açıyor, kullanıcıyı şaşırtır); sohbetteki kamera düğmesiyle aynı kural.
+  Future<void> _kamera() async {
+    if (_cekiliyor || _liste.length >= widget.azami) return;
+    final video = await showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (c) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: Text('Fotoğraf çek'.c),
+              onTap: () => Navigator.pop(c, false),
+            ),
+            ListTile(
+              leading: const Icon(Icons.videocam_outlined),
+              title: Text('Video çek'.c),
+              onTap: () => Navigator.pop(c, true),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+    if (video == null || !mounted) return;
+    setState(() => _cekiliyor = true);
+    try {
+      final dosya = await kameraAc(video: video);
+      if (!mounted || dosya == null) return;
+      _ekle([dosya]);
+    } catch (_) {
+      _uyar('Kamera açılamadı'.c);
+    } finally {
+      if (mounted) setState(() => _cekiliyor = false);
+    }
   }
 
   /// "Daha fazla ekle": sistem seçicisini KALAN kontenjanla yeniden açar.
@@ -509,8 +594,11 @@ class _MedyaIncelemeEkraniState extends State<MedyaIncelemeEkrani> {
             _videoKirpma.containsKey(o.kimlik),
         cikar: _cikar,
         odakla: (o) => setState(() => _odak = o),
+        sirala: _sirala,
         ekle: _liste.length >= widget.azami ? null : _dahaFazla,
         ekleniyor: _ekleniyor,
+        kamera: kIsWeb || _liste.length >= widget.azami ? null : _kamera,
+        cekiliyor: _cekiliyor,
       ),
       // Şerit sistem gezinme çubuğunun altında kalmasın.
       SizedBox(height: altGuvenli(context, ekstra: 0)),
@@ -603,8 +691,15 @@ class _SayiPulu extends StatelessWidget {
   );
 }
 
-/// Alttaki şerit: seçilenlerin küçük resimleri + çarpıyla kaldırma +
-/// "daha fazla ekle" karesi + sayaç.
+/// Alttaki şerit: seçilenlerin küçük resimleri (UZUN BASIP SÜRÜKLEYEREK
+/// sıralanır) + çarpıyla kaldırma + "daha fazla ekle" karesi + kamera
+/// karesi + sayaç.
+///
+/// SIRALAMA `ReorderableListView` ile, uzun basma tetikli
+/// (`ReorderableDelayedDragStartListener`): tek dokunuş ODAKLAR, uzun basış
+/// SÜRÜKLER — Instagram'ın çoklu seçim şeridiyle aynı jest. Varsayılan
+/// tutamak yok: 60 dp'lik karede ayrı bir tutamak ikonu çarpıyla çakışırdı.
+/// "+" ve kamera kareleri listenin DIŞINDA durur; sıralanabilir öğe değiller.
 class _Serit extends StatelessWidget {
   final List<_Ogem> liste;
   final int azami;
@@ -612,10 +707,15 @@ class _Serit extends StatelessWidget {
   final bool Function(_Ogem) duzenli;
   final void Function(int) cikar;
   final void Function(_Ogem) odakla;
+  final void Function(int, int) sirala;
 
   /// null → kontenjan dolu, "+" karesi çizilmez.
   final Future<void> Function()? ekle;
   final bool ekleniyor;
+
+  /// null → kamera karesi çizilmez (web ya da kontenjan dolu).
+  final Future<void> Function()? kamera;
+  final bool cekiliyor;
 
   const _Serit({
     required this.liste,
@@ -624,13 +724,15 @@ class _Serit extends StatelessWidget {
     required this.duzenli,
     required this.cikar,
     required this.odakla,
+    required this.sirala,
     required this.ekle,
     required this.ekleniyor,
+    required this.kamera,
+    required this.cekiliyor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final eklenebilir = ekle != null;
     return Container(
       height: _seritBoy,
       width: double.infinity,
@@ -638,23 +740,48 @@ class _Serit extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: ListView.separated(
+            child: ReorderableListView.builder(
+              key: const ValueKey('medya-seridi'),
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.fromLTRB(12, 12, 4, 12),
-              itemCount: liste.length + (eklenebilir ? 1 : 0),
-              separatorBuilder: (_, _) => const SizedBox(width: 8),
-              itemBuilder: (_, i) {
-                if (i >= liste.length) {
-                  return _EkleKaresi(bas: ekle!, mesgul: ekleniyor);
-                }
-                return _SeritKaresi(
-                  ogem: liste[i],
-                  secili: liste[i] == odak,
-                  duzenli: duzenli(liste[i]),
-                  cikar: () => cikar(i),
-                  odakla: () => odakla(liste[i]),
-                );
-              },
+              buildDefaultDragHandles: false,
+              onReorderItem: sirala,
+              // Sürüklenen kopya: Material'ın varsayılan yükselti gölgesi
+              // koyu zeminde gri leke bırakıyor; saydam sarmalayıcı yeter.
+              proxyDecorator: (cocuk, _, _) =>
+                  Material(color: Colors.transparent, child: cocuk),
+              itemCount: liste.length,
+              // "+" ve kamera kareleri LİSTEYLE BİRLİKTE kayar (footer):
+              // sabit dursalardı şeridin görünen alanını 136 dp yiyip dar
+              // telefonda üçüncü kareyi görüş dışına atıyorlardı (widget
+              // testinde yakalandı). Footer sıralanabilir öğe DEĞİLDİR.
+              footer: (ekle == null && kamera == null)
+                  ? null
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (ekle != null)
+                          _EkleKaresi(bas: ekle!, mesgul: ekleniyor),
+                        if (kamera != null)
+                          _KameraKaresi(bas: kamera!, mesgul: cekiliyor),
+                      ],
+                    ),
+              itemBuilder: (_, i) => ReorderableDelayedDragStartListener(
+                // Anahtar KİMLİK: indeks olsaydı sürükleme sonrası kareler
+                // birbirinin odak/rozet durumunu devralırdı.
+                key: ValueKey('serit-${liste[i].kimlik}'),
+                index: i,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: _SeritKaresi(
+                    ogem: liste[i],
+                    secili: liste[i] == odak,
+                    duzenli: duzenli(liste[i]),
+                    cikar: () => cikar(i),
+                    odakla: () => odakla(liste[i]),
+                  ),
+                ),
+              ),
             ),
           ),
           Padding(
@@ -718,6 +845,63 @@ class _EkleKaresi extends StatelessWidget {
                         ),
                       )
                     : Icon(Icons.add, size: 24, color: DiziRenkler.sariMetin),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Kamera karesi — "+" karesinin ikizi, kamera glifiyle.
+class _KameraKaresi extends StatelessWidget {
+  final Future<void> Function() bas;
+  final bool mesgul;
+
+  const _KameraKaresi({required this.bas, required this.mesgul});
+
+  @override
+  Widget build(BuildContext context) {
+    final etiket = 'Kamera'.c;
+    return SizedBox(
+      width: 68,
+      child: Semantics(
+        button: true,
+        enabled: !mesgul,
+        label: etiket,
+        child: Tooltip(
+          message: etiket,
+          child: Material(
+            color: DiziRenkler.sari.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(10),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: mesgul ? null : bas,
+              child: Container(
+                width: 60,
+                height: 60,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: DiziRenkler.sariMetin.withValues(alpha: 0.55),
+                  ),
+                ),
+                child: mesgul
+                    ? SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: DiziRenkler.sariMetin,
+                        ),
+                      )
+                    : Icon(
+                        Icons.photo_camera_outlined,
+                        size: 24,
+                        color: DiziRenkler.sariMetin,
+                      ),
               ),
             ),
           ),

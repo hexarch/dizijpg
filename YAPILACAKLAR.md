@@ -1,6 +1,63 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-05 — 🎬 GÖNDERİ MEDYA EDİTÖRÜ 1. aşama: sıralama, kamera, ton/filtre/çıkartma, video hız·ses·filtre (1.132.0+199)
+
+**Kullanıcı isteği (özet):** "Gönderi paylaşırken fotoğraf ve video düzenleyebilme — CapCut/InShot/
+Instagram referans, ama mevcut sisteme entegre modüller; birinci aşama: seçim, çoklu seçim, sıralama,
+kırpma, döndürme, parlaklık/kontrast, filtreler, video kesme, ses açma/kapatma, hız, önizleme, paylaşım."
+
+**Analiz sonucu (kod okundu, uydurulmadı):** iskeletin çoğu 7-13 Ağu'da kurulmuştu ve canlıdaydı —
+`medyaSec` (sistem seçici → inceleme ekranı), `gorselDuzenle` (pro_image_editor: kırp/döndür/yansıt,
+çizim, metin, emoji; ertelenmiş parça), `videoDuzenle`+`videoHazirla` (pro_video_editor: trim, sessiz,
+otomatik sıkıştırma, kodek kapısı, ilerleme+iptal), `PaylasYorumEkrani` (yazma → gerçek `AkisKarti`
+önizlemesi → `POST /yorumlar`). **Eksikler** bu turda kapatıldı; **sunucuya DOKUNULMADI** (veri modeli
+aynı: `yorumlar.medya TEXT[]`, sıra = dizi sırası).
+
+**Modül haritası (istekteki adlar → bizdeki dosyalar):** MediaPicker → `medya_inceleme.dart` ·
+PhotoEditor/FilterEngine/TextEditor/StickerEditor → `gorsel_duzenle_editor.dart` (ertelenmiş) ·
+VideoEditor/AudioEditor/TimelineEditor → `video_duzenle.dart` · MediaRenderer → `videoHazirla` +
+`video_islem_io.dart` · FilterEngine (ortak) → **`medya_filtreleri.dart` (YENİ, saf Dart)** ·
+DraftManager → kararlar proje verisi (`VideoKirpma`, `_duzenlenen` haritası); kalıcı taslak 2. aşama.
+
+- ✅ **Sıralama:** inceleme şeridi ve paylaşım ekranındaki ek şeridi `ReorderableListView`
+  (uzun bas + sürükle; tek dokunuş odaklar). "+" ve kamera kareleri şeridin **footer**'ında — sabit
+  dursalardı dar telefonda 3. kareyi görüş dışına atıyorlardı (widget testinde yakalandı).
+  Paylaşım şeridinde sıra numarası rozeti (çoklu gönderide karusel sırası).
+- ✅ **Kamera:** şeritte kamera karesi → "Fotoğraf çek / Video çek" → `ImagePicker` kamera kaynağı
+  (foto q92/2560 px — sohbetle aynı; video `videoAzamiGirdiSure` ile sınırlı). Web'de çizilmez.
+- ✅ **Foto — ton ayarı (G2):** `SubEditorMode.tune`, 8 kaydırıcı (parlaklık, kontrast, doygunluk,
+  pozlama, sıcaklık, renk tonu, ton, soluk). **Matrisle YAPILAMAYAN 4 ayar bilinçli YOK:** gölge/
+  parlak alan, keskinlik, vinyet, gren — piksel komşuluğu ister, paket sunmuyor; sahte kaydırıcı
+  konmadı (açık madde, aşağıda).
+- ✅ **Foto — filtre (G2):** paketin 46 Instagram taklidi DEĞİL, **kendi 10 filtremiz**
+  (Orijinal, Sıcak, Soğuk, Sinematik, Retro, Vintage, Siyah Beyaz, Canlı, Soluk, Analog) —
+  `medya_filtreleri.dart`; yoğunluk kaydırıcısı paketin kendisinde; tek seçim.
+- ✅ **Foto — çıkartma (G3):** `assets/tepkiler/` (79 Noto animasyonlu emoji) durağan Lottie katmanı
+  olarak; kompozisyon ÖNCE yüklenir (paketin sticker örneğindeki precache uyarısının Lottie karşılığı).
+- ✅ **Video — hız:** 0.25x…4x çipleri; önizleme `setPlaybackSpeed`; bilgi satırı çıktı süresini
+  yazar ("0:60 → 0:30 (2x)"). Motor: `VideoSegment.playbackSpeed`.
+- ✅ **Video — ses seviyesi:** kaydırıcı + yüzde; "Sesi kapat" düğmesi Ses sekmesine taşındı (bilgi
+  satırındaki kopyası kalktı — iki aynı metin dokunuşu belirsiz kılıyordu). Motor: `VideoSegment.volume`.
+- ✅ **Video — filtre:** aynı 10 filtre, `ColorFiltered` ile canlı önizleme; motor
+  `VideoRenderData.colorFilters` (4×5 matris, `ApplyColorMatrix.kt` ile birebir biçim — doğrulandı).
+- ✅ **Proje verisi:** `VideoKirpma` genişledi (`ses`, `hiz`, `filtre`, `ciktiSuresi`, `kopyala`);
+  karar dosyaya dokunmadan saklanır, ekran `mevcut` ile aynen açılır.
+- ✅ **Çeviri:** 26 yeni anahtar × 45 dil (`scratchpad/ceviri_ekle.py`).
+- ✅ **Kanıt:** `test/gonderi_medya_editor_test.dart` (YENİ, 17 test: matris birleştirme = sırayla
+  uygulama, gri kanal eşitliği, hız/ses/filtre kararı, `videoHazirla`→motor parametreleri, şerit
+  sürükleme sırası, kamera ekleme/vazgeçme/hata, paylaşım ekranında `medya` sırası) + 3 eski test
+  dosyası yeni imzaya uyarlandı. `flutter test` **2716 yeşil**, analyze 0 hata/uyarı.
+- ⬜ **2. aşama (planlı):** metin/çıkartmanın videoda zaman aralığı (paket `ImageLayer.startTime/
+  endTime` destekliyor), müzik ekleme (`VideoAudioTrack` hazır: seviye, fade, kesit), video bölme
+  (`splitVideo`), kalıcı taslak (metin+etiket+kararlar `shared_preferences`), gölge/parlak alan/
+  keskinlik/vinyet/gren (shader gerekir), yorumları kapatma/beğeni gizleme (**sunucu kolonu ister**).
+- ⬜ **3. aşama:** otomatik altyazı (sunucudaki `altyazi_uret.js` hattı zaten var; editörde düzenleme
+  yüzeyi eksik), arka plan/nesne silme, ses temizleme, otomatik highlight.
+- ⬜ **Cihazda elle test:** Android'de (a) şeritte uzun bas-sürükle, (b) kamera → foto/video listeye
+  düşüyor, (c) 2x + %50 ses + Sinematik ile kodlanan MP4 oynuyor ve sunucu 200 veriyor,
+  (d) çıkartma katmanı JPEG çıktısında görünüyor.
+
 ## 2026-09-05 — 🌐 Web'de dil öneki ADRES ÇUBUĞUNDA KALIYOR: /de, /de/icerik/tv/2098 (1.131.0+198) 🚀
 
 **Kullanıcı kararı:** "Tüm dillerde tüm sayfalar dil etiketiyle görünsün, web tarafında; Android'e

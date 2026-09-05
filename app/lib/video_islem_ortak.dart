@@ -619,35 +619,98 @@ class VideoBilgi {
   });
 }
 
-/// Kullanıcının trim ekranında verdiği karar. **Henüz işlenmemiştir**:
-/// gerçek kodlama "İleri"de tek bir yerde, ilerleme + iptal ile yapılır.
+/// Video hızı ön ayarları — arayüzdeki sırayla (CapCut/InShot ile aynı set).
+const List<double> videoHizSecenekleri = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4];
+
+/// Hız etiketi: `1x`, `0.5x`, `1.5x` (gereksiz sıfır yok).
+String videoHizMetni(double hiz) {
+  final s = hiz.toStringAsFixed(2);
+  return '${s.replaceFirst(RegExp(r'\.?0+$'), '')}x';
+}
+
+/// Kullanıcının video düzenleme ekranında verdiği karar. **Henüz
+/// işlenmemiştir**: gerçek kodlama "İleri"de tek bir yerde, ilerleme +
+/// iptal ile yapılır.
+///
+/// PROJE VERİSİ OLARAK SAKLANIR (kullanıcı isteği, 5 Eyl 2026: "düzenleme
+/// işlemleri orijinal medya dosyasını değiştirmemeli, işlem listesi olarak
+/// saklanmalı"): dosyaya dokunulmaz, yalnız bu nesne tutulur. Ekran tekrar
+/// açıldığında aynı kararla açılır ([mevcut] parametresi), kullanıcı kaldığı
+/// yerden devam eder.
 class VideoKirpma {
   final Duration bas;
   final Duration bit;
 
   /// Ses kapatıldı mı (paket tarafında `enableAudio: false`).
+  ///
+  /// [ses] ile ilişkisi: `sessiz == true` ses seviyesini geçersiz kılar.
+  /// Ayrı alan olarak KALDI ki 7 Ağu'dan beri var olan tek düğmelik
+  /// "Sesi kapat" davranışı ve testleri aynen çalışsın.
   final bool sessiz;
+
+  /// Ses seviyesi 0..1 (1 = orijinal). Yalnız [sessiz] false iken anlamlı.
+  final double ses;
+
+  /// Oynatma hızı ([videoHizSecenekleri]nden biri; 1 = değişmemiş).
+  final double hiz;
+
+  /// Renk filtresi kimliği (`medya_filtreleri.dart`); `null` = Orijinal.
+  final String? filtre;
 
   const VideoKirpma({
     required this.bas,
     required this.bit,
     this.sessiz = false,
-  });
+    this.ses = 1,
+    this.hiz = 1,
+    this.filtre,
+  }) : assert(ses >= 0 && ses <= 1, 'ses 0..1 olmalı'),
+       assert(hiz > 0, 'hiz pozitif olmalı');
 
+  /// Kaynaktan alınan kesitin uzunluğu (hız uygulanmadan).
   Duration get uzunluk => bit - bas;
+
+  /// Çıktının süresi: kesit ÷ hız. Hız 2x'te 60 sn'lik kesit 30 sn oynar.
+  Duration get ciktiSuresi =>
+      Duration(microseconds: (uzunluk.inMicroseconds / hiz).round());
+
+  /// Kodlayıcıya gidecek etkin ses seviyesi.
+  double get etkinSes => sessiz ? 0 : ses;
+
+  VideoKirpma kopyala({
+    Duration? bas,
+    Duration? bit,
+    bool? sessiz,
+    double? ses,
+    double? hiz,
+    String? filtre,
+    bool filtreyiSil = false,
+  }) => VideoKirpma(
+    bas: bas ?? this.bas,
+    bit: bit ?? this.bit,
+    sessiz: sessiz ?? this.sessiz,
+    ses: ses ?? this.ses,
+    hiz: hiz ?? this.hiz,
+    filtre: filtreyiSil ? null : (filtre ?? this.filtre),
+  );
 
   @override
   bool operator ==(Object other) =>
       other is VideoKirpma &&
       other.bas == bas &&
       other.bit == bit &&
-      other.sessiz == sessiz;
+      other.sessiz == sessiz &&
+      other.ses == ses &&
+      other.hiz == hiz &&
+      other.filtre == filtre;
 
   @override
-  int get hashCode => Object.hash(bas, bit, sessiz);
+  int get hashCode => Object.hash(bas, bit, sessiz, ses, hiz, filtre);
 
   @override
-  String toString() => 'VideoKirpma($bas-$bit, sessiz: $sessiz)';
+  String toString() =>
+      'VideoKirpma($bas-$bit, sessiz: $sessiz, ses: $ses, hiz: $hiz, '
+      'filtre: $filtre)';
 }
 
 /// Süre etiketi: 0:07, 1:23, 12:05…
@@ -680,6 +743,10 @@ abstract class VideoIsleyici {
   /// `null` = kullanıcı [iptal] etti. Çıktı belleğe DEĞİL dosyaya yazılır
   /// (100 MB'lık bir videoyu `Uint8List`e almak düşük segment Android'de
   /// OOM demek).
+  ///
+  /// [ses] false → ses parçası tümden atılır. [sesSeviyesi] 0..1, yalnız
+  /// [ses] true iken anlamlı (1 = dokunma). [hiz] oynatma hızı (1 = dokunma).
+  /// [filtre] sırayla uygulanacak 4×5 renk matrisleri (boş = filtre yok).
   Future<String?> isle({
     required String gorevKimlik,
     required String kaynak,
@@ -687,6 +754,9 @@ abstract class VideoIsleyici {
     Duration? bas,
     Duration? bit,
     bool ses = true,
+    double sesSeviyesi = 1,
+    double hiz = 1,
+    List<List<double>> filtre = const [],
     double olcek = 1,
     int? bitHizi,
   });

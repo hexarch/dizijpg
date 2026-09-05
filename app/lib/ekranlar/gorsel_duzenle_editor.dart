@@ -3,9 +3,12 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
 
 import '../ceviri.dart';
+import '../hareketli_emoji.dart';
+import '../medya_filtreleri.dart';
 import '../tema.dart';
 import 'gorsel_duzenle.dart';
 
@@ -318,15 +321,32 @@ ProImageEditorConfigs duzenleyiciYapilandirma({bool saydam = false}) {
     ),
     i18n: _i18n(),
     mainEditor: const MainEditorConfigs(
-      // G1 kapsamı: kırp/döndür/çevir, çizim (bulanıklaştır/pikselleştir
-      // dahil), metin, emoji. Filtre/ton (G2) ve sticker (G3) SONRA.
-      // Sıra bilinçli: kırpma en sık kullanılan iş, ilk sırada.
+      // G1 (7 Ağu): kırp/döndür/çevir, çizim (bulanıklaştır/pikselleştir
+      // dahil), metin, emoji. G2 + G3 (5 Eyl 2026, gönderi medya editörü):
+      // ton ayarı, filtre, çıkartma. Sıra Instagram/InShot ile aynı mantık:
+      // önce kadraj (kırp), sonra görüntü (ayarla/filtre), sonra katmanlar
+      // (çiz/metin/emoji/çıkartma).
       tools: [
         SubEditorMode.cropRotate,
+        SubEditorMode.tune,
+        SubEditorMode.filter,
         SubEditorMode.paint,
         SubEditorMode.text,
         SubEditorMode.emoji,
+        SubEditorMode.sticker,
       ],
+    ),
+    tuneEditor: TuneEditorConfigs(tuneAdjustmentOptions: tonAyarlari()),
+    filterEditor: FilterEditorConfigs(
+      // Tek filtre seçilir (Instagram gibi). Çoklu seçim filtreleri üst üste
+      // bindirir ve "hangisi açık" sorusunu belirsizleştirir.
+      enableMultiSelection: false,
+      filterList: filtreListesi(),
+    ),
+    stickerEditor: StickerEditorConfigs(
+      builder: cikartmaSeciciKur,
+      // 79 çıkartma; küçük görsel ekranda okunsun.
+      initWidth: 120,
     ),
     paintEditor: const PaintEditorConfigs(
       // SPOILER VE YÜZ GİZLEME bu üründe en katı kural — bulanıklaştır ve
@@ -387,6 +407,171 @@ ProImageEditorConfigs duzenleyiciYapilandirma({bool saydam = false}) {
             maxOutputSize: _azamiCikti,
           ),
   );
+}
+
+/// Ton ayarları (kullanıcı isteği: "her ayar kaydırma çubuğu ile").
+///
+/// Renk matrisiyle yapılabilenlerin TAMAMI açık: parlaklık, kontrast,
+/// doygunluk, pozlama, renk tonu, sıcaklık, ton, soluk. İstenen ama
+/// matrisle YAPILAMAYAN dördü (gölge/parlak alan, keskinlik, vinyet, gren)
+/// piksel komşuluğu ister — paketin bağımsız bulanıklaştırma editörü var,
+/// gerisi yok. Onlar YAPILACAKLAR'da açık madde; sahte bir kaydırıcı
+/// koymadık.
+///
+/// Etiketler çevrili; formüller paketin kendi `ColorFilterAddons`
+/// fonksiyonları (medya_filtreleri.dart ile aynı sayılar — foto ile video
+/// aynı görünür).
+List<TuneAdjustmentItem> tonAyarlari() => [
+  TuneAdjustmentItem(
+    id: 'brightness',
+    icon: Icons.brightness_4_outlined,
+    label: 'Parlaklık'.c,
+    min: -0.5,
+    max: 0.5,
+    labelMultiplier: 200,
+    toMatrix: ColorFilterAddons.brightness,
+  ),
+  TuneAdjustmentItem(
+    id: 'contrast',
+    icon: Icons.contrast,
+    label: 'Kontrast'.c,
+    min: -0.5,
+    max: 0.5,
+    labelMultiplier: 200,
+    toMatrix: ColorFilterAddons.contrast,
+  ),
+  TuneAdjustmentItem(
+    id: 'saturation',
+    icon: Icons.water_drop_outlined,
+    label: 'Doygunluk'.c,
+    min: -0.5,
+    max: 0.5,
+    labelMultiplier: 200,
+    toMatrix: ColorFilterAddons.saturation,
+  ),
+  TuneAdjustmentItem(
+    id: 'exposure',
+    icon: Icons.exposure,
+    label: 'Pozlama'.c,
+    min: -1,
+    max: 1,
+    toMatrix: ColorFilterAddons.exposure,
+  ),
+  TuneAdjustmentItem(
+    id: 'temperature',
+    icon: Icons.thermostat_outlined,
+    label: 'Sıcaklık'.c,
+    min: -0.5,
+    max: 0.5,
+    labelMultiplier: 200,
+    toMatrix: ColorFilterAddons.temperature,
+  ),
+  TuneAdjustmentItem(
+    id: 'hue',
+    icon: Icons.color_lens_outlined,
+    label: 'Renk tonu'.c,
+    min: -0.25,
+    max: 0.25,
+    divisions: 400,
+    labelMultiplier: 400,
+    toMatrix: ColorFilterAddons.hue,
+  ),
+  TuneAdjustmentItem(
+    id: 'tint',
+    icon: Icons.tonality_outlined,
+    label: 'Ton'.c,
+    min: -0.5,
+    max: 0.5,
+    labelMultiplier: 200,
+    toMatrix: ColorFilterAddons.tint,
+  ),
+  TuneAdjustmentItem(
+    id: 'fade',
+    icon: Icons.blur_off_outlined,
+    label: 'Soluk'.c,
+    min: -1,
+    max: 1,
+    toMatrix: ColorFilterAddons.fade,
+  ),
+];
+
+/// Filtre listesi — `medya_filtreleri.dart`teki on filtre, paketin
+/// modeline sarılmış. `name` ÇEVRİLİ ad taşır: paket bilinmeyen adı
+/// `getFilterI18n`den olduğu gibi geçirir, yani ekranda doğrudan bu yazılır.
+/// Yoğunluk kaydırıcısı paketin kendisinde (filtre seçilince çıkar).
+List<FilterModel> filtreListesi() => [
+  for (final f in medyaFiltreleri)
+    FilterModel(name: f.etiket, filters: f.matrisler),
+];
+
+/// Çıkartma seçici: uygulamanın kendi hareketli emoji seti
+/// (`assets/tepkiler/`, Noto Animated Emoji) — büyük, renkli, markaya özgü
+/// (MEDYA-EDITOR-PLANI §G3: "sıfır yeni varlık, rakiplerde olmayan dokunuş").
+///
+/// Katman DURAĞAN çizilir (`animate: false`): çıktı tek kare JPEG/PNG,
+/// hareket yok. Kompozisyon ÖNCE yüklenir, sonra katman eklenir — paket
+/// katmanı arka planda ekran görüntüsüyle dışa aktarıyor ve yüklenmemiş bir
+/// Lottie boş kare verirdi (paketin sticker örneğindeki `precacheImage`
+/// uyarısının Lottie karşılığı).
+Widget cikartmaSeciciKur(
+  void Function(WidgetLayer) katmanEkle,
+  ScrollController kaydirici,
+) => _CikartmaIzgarasi(katmanEkle: katmanEkle, kaydirici: kaydirici);
+
+class _CikartmaIzgarasi extends StatelessWidget {
+  final void Function(WidgetLayer) katmanEkle;
+  final ScrollController kaydirici;
+  const _CikartmaIzgarasi({required this.katmanEkle, required this.kaydirici});
+
+  @override
+  Widget build(BuildContext context) {
+    final dosyalar = hareketliEmojiDosyalari.entries.toList();
+    return ClipRRect(
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      child: GridView.builder(
+        controller: kaydirici,
+        padding: const EdgeInsets.all(12),
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 72,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+        ),
+        itemCount: dosyalar.length,
+        itemBuilder: (context, i) {
+          final yol = 'assets/tepkiler/${dosyalar[i].value}.json';
+          return Semantics(
+            button: true,
+            label: dosyalar[i].key,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () async {
+                final LottieComposition kompozisyon;
+                try {
+                  kompozisyon = await AssetLottie(yol).load();
+                } catch (_) {
+                  return; // bozuk varlık: hiçbir şey ekleme, çökme
+                }
+                katmanEkle(
+                  WidgetLayer(
+                    widget: Lottie(
+                      composition: kompozisyon,
+                      animate: false,
+                      fit: BoxFit.contain,
+                    ),
+                    exportConfigs: WidgetLayerExportConfigs(assetPath: yol),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: Lottie.asset(yol, animate: false, fit: BoxFit.contain),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
 /// Ekranda GÖRÜNEN her dize buradan geçer; görünmeyen hiçbir dize
@@ -466,6 +651,30 @@ I18n _i18n() => I18n(
     back: 'İptal'.c,
     done: 'Tamam'.c,
   ),
+  tuneEditor: I18nTuneEditor(
+    bottomNavigationBarText: 'Ayarla'.c,
+    back: 'İptal'.c,
+    done: 'Tamam'.c,
+    undo: 'Geri al'.c,
+    redo: 'Yinele'.c,
+    // Kaydırıcı etiketleri `tonAyarlari()`ndan geliyor; paket bu alanları
+    // yalnız kendi varsayılan listesinde kullanır. Yine de dolduruldu ki
+    // varsayılan listeye düşülürse İngilizce sızmasın.
+    brightness: 'Parlaklık'.c,
+    contrast: 'Kontrast'.c,
+    saturation: 'Doygunluk'.c,
+    exposure: 'Pozlama'.c,
+    hue: 'Renk tonu'.c,
+    temperature: 'Sıcaklık'.c,
+    fade: 'Soluk'.c,
+    tint: 'Ton'.c,
+  ),
+  filterEditor: I18nFilterEditor(
+    bottomNavigationBarText: 'Filtre'.c,
+    back: 'İptal'.c,
+    done: 'Tamam'.c,
+  ),
+  stickerEditor: I18nStickerEditor(bottomNavigationBarText: 'Çıkartma'.c),
   emojiEditor: I18nEmojiEditor(
     bottomNavigationBarText: 'Emoji'.c,
     search: 'Emoji ara...'.c,
