@@ -8909,3 +8909,26 @@ doğrulandı.
 Backend 2327 test · Flutter 2614 · analiz temiz. Canlı sunucuda gerçek
 H.264+AC3 MKV uçtan uca (çıktı h264+aac, moov başta) ve yetki tablosunun dokuz
 senaryosu curl ile doğrulandı.
+
+## 2026-09-05 — 🚀 Güvenlik denetimi (4. tur) — çoğu AYNI GÜN kapandı
+Rapor: `GUVENLIK-DENETIMI-2026-09-05.md` (§7 uygulananlar). KIRMIZI yok.
+Kimlik atlama / SQLi / komut enjeksiyonu / SSRF / yol geçişi YOK.
+- 🚀 **KAPANDI** Admin CSRF: `fetchSiteIzinli` + `adminKisit` (yazmada
+  `Sec-Fetch-Site` cross/same-site → 403, token muaf). Canlıda 403/200 kanıtlı,
+  `test/admin_csrf.test.js`.
+- 🚀 **KAPANDI** unpkg: globe.gl + doku `backend/admin-varlik/`, `GET
+  /api/admin/varlik/:ad` (beyaz liste), `integrity=sha384`. Dockerfile COPY.
+- 🚀 **KAPANDI** npm: 3 high → 0 (mailparser 3.9.20), `overrides.qs ^6.16.0`;
+  kalan 8 orta = firebase-admin@12 zinciri (14 bilinçli ertelendi).
+- 🚀 **KAPANDI** yükleme/veri/oda/rol/efekt limitleri `hizLimitiMerkezi`;
+  `x-powered-by` kapalı; Mac firebase-gizli 600.
+- ⬜ **KULLANICI KOŞACAK:** `ssh karanew 'bash -s' < backend/guvenlik-sertlestir-20260905.sh`
+  → postfix `smtpd_tls_auth_only`, dovecot `disable_plaintext_auth`, avahi
+  kapatma, nginx admin CSP'den unpkg çıkarma. (Oturumun SSH yazma izni
+  sınıflandırıcı tarafından engellendi; betik yedek alır + sınar + reload eder.)
+- ⬜ Aynı makinede `dopamall-redis` parolasız 0.0.0.0:6379 (başka proje;
+  compose'da `127.0.0.1:` + requirepass).
+- ⬜ Sunucu dışı yedek yok (kullanıcıdan hedef bekliyor).
+- ⬜ Düşük: HSTS preload, `kara` parola kilidi (sudo parola ister — karar),
+  kullanılmayan SSH anahtarı, şifre 8+/128 (45 dil metni), DM eki .apk/.exe,
+  sohbet-efekt konuşma şartı.

@@ -963,7 +963,7 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
 </main>
 </div>
 
-<script src="https://unpkg.com/globe.gl@2.34.4/dist/globe.gl.min.js"></script>
+<script src="/api/admin/varlik/globe.gl.min.js" integrity="sha384-boR1tzK+m2z3pM2fQMq+PoYI0pIQmU+zWj+z3Oy5czzi97itGHXoL/YTj4ypMFbq"></script>
 <script>
 const TOKEN = new URLSearchParams(location.search).get('token') || '';
 const TABAN = '/api/admin';
@@ -1208,7 +1208,7 @@ const TMDB_GORSEL='https://image.tmdb.org/t/p/w185';
 let globe;
 function globeKur(){
   globe = Globe()(document.getElementById('globe'))
-    .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+    .globeImageUrl('/api/admin/varlik/earth-night.jpg')
     .backgroundColor('rgba(0,0,0,0)')
     .atmosphereColor('#F5C518').atmosphereAltitude(0.16)
     .pointLat('lat').pointLng('lng').pointColor('renk').pointAltitude(0.012).pointRadius('r')
@@ -2983,7 +2983,7 @@ async function tik(){
 try{ if(typeof Globe==='function') globeKur(); else throw new Error('Globe yok'); }
 catch(e){ console.warn('Küre çizilemedi (engellenmiş olabilir):', e.message);
   const gs=document.getElementById('globe-sar');
-  if(gs) gs.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;font-size:13px;padding:16px;text-align:center">Harita yüklenemedi — tarayıcı unpkg.com\'u engelliyor olabilir (Brave Kalkanı). Panelin geri kalanı çalışır.</div>'; }
+  if(gs) gs.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;font-size:13px;padding:16px;text-align:center">Harita yüklenemedi (küre betiği /api/admin/varlik/ altından gelmedi ya da SRI uyuşmadı). Panelin geri kalanı çalışır.</div>'; }
 tik(); setInterval(tik,3000);
 // Mailler: rozet açılışta dolsun, dakikada bir tazelensin (ayrıştırma
 // önbellekli olduğundan tekrar maliyeti readdir+stat kadar).

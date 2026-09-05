@@ -18,5 +18,8 @@
     "mailparser": "^3.9.14",
     "nodemailer": "^9.0.5",
     "pg": "^8.13.0"
+  },
+  "overrides": {
+    "qs": "^6.16.0"
   }
 }

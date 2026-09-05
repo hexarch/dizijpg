@@ -280,6 +280,8 @@ const TMDB_DIL = {
 // nginx arkasındayız: req.ip gerçek istemci IP'sini (X-Forwarded-For) yansıtsın,
 // yoksa tüm kullanıcılar hız limitinde tek IP gibi görünür.
 app.set('trust proxy', 1);
+// Sürüm parmak izi sızdırmasın (denetim 2026-09-05 §3.1).
+app.disable('x-powered-by');
 
 // ---------------------------------------------------------------------------
 // ZARİF KAPANMA KAPISI + İSTEK KİMLİĞİ   (yapilacaklar2 B2 / C1)
@@ -1688,8 +1690,10 @@ function hizLimitiMerkezi(limit, anahtarUret) {
 // aç, her biriyle 100 MB yükle" kaçamağını kapatır.
 const MISAFIR_YUKLEME_SAAT = 5;   // misafir: 5 x 100 MB = 500 MB/saat
 const UYE_YUKLEME_SAAT = 40;      // bağlı hesap: bugünkü değer, DEĞİŞMEDİ
-const yuklemeLimitiUye = hizLimiti(UYE_YUKLEME_SAAT, (req) => `y:${req.kullanici.id}`);
-const yuklemeLimitiMisafir = hizLimiti(
+// KÜME GENELİ sayaç (denetim 2026-09-05 §2.9): işçi-başına sayaç 4 işçide
+// limiti fiilen 4 katına çıkarıyordu (misafir 5 → 20 × 100 MB/saat).
+const yuklemeLimitiUye = hizLimitiMerkezi(UYE_YUKLEME_SAAT, (req) => `y:${req.kullanici.id}`);
+const yuklemeLimitiMisafir = hizLimitiMerkezi(
   MISAFIR_YUKLEME_SAAT, (req) => `ym:${req.kullanici.id}`);
 // `req.misafir` girisZorunlu'da `kullaniciDurumu` önbelleğinden gelir (JWT'den
 // DEĞİL: token 90 gün yaşıyor, hesap bağlanınca misafirlik bayatlardı).
@@ -1844,7 +1848,7 @@ const sifirlamaIstekLimiti = hizLimitiMerkezi(5,
   (req) => `sf:${String(req.body?.email || '').toLowerCase()}`);
 /** Bir kod kaç YANLIŞ denemeden sonra tamamen iptal edilir. */
 const SIFIRLAMA_MAX_DENEME = 5;
-const veriLimiti = hizLimiti(6, (req) => `v:${req.kullanici.id}`);
+const veriLimiti = hizLimitiMerkezi(6, (req) => `v:${req.kullanici.id}`);
 const tmdbLimiti = hizLimiti(600, (req) => `t:${req.ip}`);
 const takvimLimiti = hizLimiti(60, (req) => `k:${req.kullanici.id}`);
 // Favori oyuncular / oyuncu izlenme oranı: ikisi de TMDB'ye dokunabiliyor
@@ -12650,7 +12654,7 @@ app.get('/istatistiklerim/izleme', girisZorunlu, takvimLimiti, sarici(async (req
 }));
 
 app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
-  const [bolum, film, dizi, yorum, sosyal, etkilesim, dakika] = await Promise.all([
+  const [bolum, film, dizi, yorum, sosyal, etkilesim, dakika, puan] = await Promise.all([
     havuz.query(
       `SELECT count(*)::int AS adet FROM izlemeler WHERE kullanici_id=$1 AND tur='tv'`,
       [req.kullanici.id]),
@@ -12679,9 +12683,19 @@ app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
           WHERE y.kullanici_id=$1) AS begeni`,
       [req.kullanici.id]),
     tahminiDakikaKirilim(req.kullanici.id),
+    // Değerlendirme sayacı (5 Eyl 2026): profil şeridindeki "Yorum" sütunu
+    // "Değerlendirme" oldu — yorumlar zaten hemen altta listeleniyor, sütun
+    // aynı şeyi ikinci kez sayıyordu. /puanlarim ile AYNI süzgeç: yalnız
+    // yapım düzeyi (sezon IS NULL) ve gerçekten puanlanmış satırlar.
+    havuz.query(
+      `SELECT count(*)::int AS adet FROM puanlar
+        WHERE kullanici_id=$1 AND sezon IS NULL AND puan IS NOT NULL
+          AND tur IN ('tv','movie')`,
+      [req.kullanici.id]),
   ]);
   res.json({
     izlenen_bolum: bolum.rows[0].adet,
+    puan_sayisi: puan.rows[0].adet,
     izlenen_film: film.rows[0].adet,
     takip_edilen_dizi: dizi.rows[0].adet,
     yorum_sayisi: yorum.rows[0].adet,
@@ -15414,7 +15428,7 @@ abone('sohbet_efekt', (v) => {
   const emoji = sohbetEfektEmoji(v.e);
   if (emoji) sohbetEfektYaz(efektler, v.a, emoji, v.z);
 });
-const sohbetEfektLimiti = hizLimiti(300, (req) => `se:${req.kullanici.id}`);
+const sohbetEfektLimiti = hizLimitiMerkezi(300, (req) => `se:${req.kullanici.id}`);
 app.post('/sohbet-efekt', girisZorunlu, sohbetEfektLimiti, sarici(async (req, res) => {
   const emoji = sohbetEfektEmoji(req.body?.emoji);
   if (!emoji) return res.status(400).json({ hata: 'Geçersiz emoji' });
@@ -16181,7 +16195,7 @@ const odaBaytButcesi = baytButcesi({
 const ODA_GECICI_DIZIN = path.join(MEDYA_DIZIN, '..', 'oda-gecici');
 fs.mkdirSync(ODA_GECICI_DIZIN, { recursive: true });
 
-const odaLimiti = hizLimiti(120, (req) => `od:${req.kullanici.id}`);
+const odaLimiti = hizLimitiMerkezi(120, (req) => `od:${req.kullanici.id}`);
 // Yoklama 1 sn'de bir çalışır: saatte 3600 tur + sekme değiştirme payı.
 const odaAkisLimiti = hizLimiti(6000, (req) => `oda:${req.kullanici.id}`);
 const odaMesajLimiti = hizLimiti(600, (req) => `om:${req.kullanici.id}`);
@@ -16190,7 +16204,7 @@ const odaMesajLimiti = hizLimiti(600, (req) => `om:${req.kullanici.id}`);
 const odaDurumLimiti = hizLimiti(2000, (req) => `odr:${req.kullanici.id}`);
 // Rol değişimi nadir bir yönetim eylemi: 60/saat bol bol yeter ve bir kazayla
 // (ya da kötü niyetle) sistem satırı yağmuru üretilmesini engeller.
-const odaRolLimiti = hizLimiti(60, (req) => `oro:${req.kullanici.id}`);
+const odaRolLimiti = hizLimitiMerkezi(60, (req) => `oro:${req.kullanici.id}`);
 const odaParcaLimiti = hizLimiti(4000, (req) => `op:${req.kullanici.id}`);
 
 /** `izleme_odalari` satırını istemcinin beklediği gövdeye çevirir. */
@@ -19420,6 +19434,57 @@ app.get('/profil/:kullaniciAdi/kitaplik/:durum', girisZorunlu, sarici(async (req
   res.json({ gizli: false, ogeler: rows });
 }));
 
+// ---------------------------------------------------------------------------
+// PROFİL > DEĞERLENDİRMELER (5 Eyl 2026, kullanıcı isteği)
+// ---------------------------------------------------------------------------
+// "Profildeki bölüm/film/dizi yanındaki YORUM sütununu kaldır, zaten altta
+// yorumlar var; oraya DEĞERLENDİRME koy, tıklayınca hangi dizi/filme kaç puan
+// verdiği gözüksün." Bu uç o listedir: yapım düzeyi (sezon IS NULL) puanlar,
+// en yeni önce, sayfalı.
+//
+// GİZLİLİK: kitaplık ucuyla AYNI kural. Puan "bunu izledim" demektir;
+// `izlenenler_gizli` diyen kullanıcının puanları ziyaretçiye açılmaz, engel
+// de kapatır. Sahibi her zaman görür. Tek tek gizlenen içerikler
+// (gizli_icerikler) ziyaretçi listesinden düşer — sayaç da aynı süzgeçle
+// sayıldığı için "12 değerlendirme" yazıp 11 listelemez.
+//
+// Giriş İSTEĞE BAĞLI (profil ucu gibi): açık profile giriş yapmadan da
+// bakılabiliyor, sayaç orada da tıklanabilir olmalı.
+const profilPuanLimiti = hizLimiti(240, (req) => `pp:${req.kullanici?.id || req.ip}`);
+const PROFIL_PUAN_SAYFA = 60;
+
+app.get('/profil/:kullaniciAdi/puanlar', girisIsteğeBagli, profilPuanLimiti, sarici(async (req, res) => {
+  const k = await havuz.query(
+    `SELECT id, izlenenler_gizli FROM kullanicilar WHERE kullanici_adi=$1`,
+    [req.params.kullaniciAdi]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const sahipId = k.rows[0].id;
+  const benId = req.kullanici?.id || 0;
+  const benMi = sahipId === benId;
+  const gizli = !benMi &&
+    (k.rows[0].izlenenler_gizli === true ||
+     (benId ? await engelliMi(benId, sahipId) : false));
+  if (gizli) return res.json({ gizli: true, toplam: 0, ogeler: [] });
+  const sayfa = Math.max(0, Math.min(200, parseInt(req.query.sayfa, 10) || 0));
+  const gizliFiltre = benMi ? '' : `AND NOT EXISTS (SELECT 1 FROM gizli_icerikler g
+       WHERE g.kullanici_id=$1 AND g.tur=p.tur AND g.tmdb_id=p.tmdb_id)`;
+  const [toplam, ogeler] = await Promise.all([
+    havuz.query(
+      `SELECT count(*)::int AS adet FROM puanlar p
+        WHERE p.kullanici_id=$1 AND p.sezon IS NULL AND p.puan IS NOT NULL
+          AND p.tur IN ('tv','movie') ${gizliFiltre}`,
+      [sahipId]),
+    havuz.query(
+      `SELECT p.tur, p.tmdb_id, p.puan, p.tarih FROM puanlar p
+        WHERE p.kullanici_id=$1 AND p.sezon IS NULL AND p.puan IS NOT NULL
+          AND p.tur IN ('tv','movie') ${gizliFiltre}
+        ORDER BY p.tarih DESC, p.tmdb_id DESC
+        LIMIT $2 OFFSET $3`,
+      [sahipId, PROFIL_PUAN_SAYFA, sayfa * PROFIL_PUAN_SAYFA]),
+  ]);
+  res.json({ gizli: false, toplam: toplam.rows[0].adet, ogeler: ogeler.rows });
+}));
+
 app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   const k = await havuz.query(
     // testci: kapalı test ekibi rozeti ("dizi.jpg aile üyesi"). Herkese açık
@@ -19484,6 +19549,7 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
       uyum: null,
       istatistik: {
         bolum: 0, film: 0, dizi: 0, takipci: 0, takip_edilen: 0, yorum: 0,
+        puan: 0,
         toplam_goruntulenme: 0, toplam_begeni: 0, tahmini_dakika: 0,
       },
       rozetler: [], listeler: [], incelemeler: [], yorumlar: [],
@@ -19532,6 +19598,11 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
          -- ÖMÜR BOYU toplamı, listeye bağlı değil — onlar dokunulmadı.
          (SELECT count(*)::int FROM yorumlar y
           WHERE y.kullanici_id=$1 ${yorumSuzgec} ${gizliFiltre('y')}) AS yorum,
+         -- Değerlendirme sayacı (5 Eyl 2026): LİSTEYLE (/profil/:ad/puanlar)
+         -- aynı süzgeç — yapım düzeyi puanlar, gizlenen içerikler hariç.
+         (SELECT count(*)::int FROM puanlar pn
+          WHERE pn.kullanici_id=$1 AND pn.sezon IS NULL AND pn.puan IS NOT NULL
+            AND pn.tur IN ('tv','movie') ${gizliFiltre('pn')}) AS puan,
          (SELECT COALESCE(sum(goruntulenme),0)::int FROM yorumlar
           WHERE kullanici_id=$1) AS toplam_goruntulenme,
          (SELECT count(*)::int FROM yorum_begeniler b
@@ -20511,14 +20582,55 @@ function ipEslesir(ip, kural) {
 // DEĞİL — query nginx/referer loglarına ve tarayıcı geçmişine sızardı) ve
 // sabit-zamanlı karşılaştırılır. IP artık spoof edilemez (bkz. gercekIp).
 // Liste artık CIDR de kabul eder (bkz. ipEslesir); öneksiz girdi tam eşitlik.
+// CSRF (denetim 2026-09-05 §2.1): IP kapısı, yöneticinin TARAYICISINI da
+// geçirir — beyaz listedeki IP'deyken açılan yabancı bir sayfa
+// `fetch('/api/admin/yedek-al', {method:'POST', mode:'no-cors'})` ile gövdesiz
+// yazma uçlarını tetikleyebilirdi (CORS yanıtı okumayı engeller, isteği değil).
+// Fetch Metadata ile kesilir: tarayıcı her isteğe `Sec-Fetch-Site` koyar;
+// `cross-site`/`same-site` (ör. mail.dizijpg.com) yazma isteği REDDEDİLİR.
+// Başlık yoksa (curl, betikler, eski tarayıcı) eski davranış — bu tuzak
+// tarayıcıya özgüdür, tarayıcı da başlığı her zaman gönderir.
+// Token'la gelen istek (X-Admin-Token) bu kapıdan muaf: yabancı sayfa token'ı
+// bilemez, bilse zaten her şeyi yapabilir.
+const YAZMA_METOTLARI = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+function fetchSiteIzinli(metot, secFetchSite) {
+  if (!YAZMA_METOTLARI.has(String(metot || '').toUpperCase())) return true;
+  const s = String(secFetchSite || '').trim().toLowerCase();
+  return s === '' || s === 'same-origin' || s === 'none';
+}
+
 function adminKisit(req, res, next) {
   const ip = gercekIp(req);
   const izinli = ADMIN_IPLER.split(',').map((s) => s.trim()).filter(Boolean);
   const tokenGecerli =
     !!ADMIN_TOKEN && esitGizli(req.headers['x-admin-token'] || '', ADMIN_TOKEN);
-  if (izinli.some((k) => ipEslesir(ip, k)) || tokenGecerli) return next();
+  if (tokenGecerli) return next();
+  if (izinli.some((k) => ipEslesir(ip, k))) {
+    if (!fetchSiteIzinli(req.method, req.headers['sec-fetch-site'])) {
+      return res.status(403).json({ hata: 'Siteler arası yazma isteği reddedildi' });
+    }
+    return next();
+  }
   return res.status(403).json({ hata: 'Erişim reddedildi' });
 }
+
+// Panelin üçüncü parti varlıkları (küre betiği + doku) ARTIK YERELDEN
+// (denetim 2026-09-05 §2.2): unpkg.com ele geçirilirse yönetici tarayıcısında
+// keyfi JS çalışırdı. Beyaz liste sabit; yol parametresi diske yansımaz.
+const ADMIN_VARLIK_DIZIN = path.join(process.cwd(), 'admin-varlik');
+const ADMIN_VARLIKLAR = new Map([
+  ['globe.gl.min.js', 'application/javascript; charset=utf-8'],
+  ['earth-night.jpg', 'image/jpeg'],
+]);
+app.get('/admin/varlik/:ad', adminKisit, (req, res) => {
+  const tur = ADMIN_VARLIKLAR.get(String(req.params.ad || ''));
+  if (!tur) return res.status(404).json({ hata: 'Varlık yok' });
+  res.setHeader('Content-Type', tur);
+  res.setHeader('Cache-Control', 'private, max-age=86400');
+  res.sendFile(path.join(ADMIN_VARLIK_DIZIN, req.params.ad), (e) => {
+    if (e && !res.headersSent) res.status(404).json({ hata: 'Varlık yok' });
+  });
+});
 
 const ADMIN_HTML = fs.existsSync('./admin.html')
   ? fs.readFileSync('./admin.html', 'utf8')
