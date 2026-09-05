@@ -8954,8 +8954,9 @@ Kimlik atlama / SQLi / komut enjeksiyonu / SSRF / yol geçişi YOK.
   nginx admin CSP'de unpkg yok (canlı başlık). Yedekler `/root/*.yedek-guvenlik-*`.
   NOT: oturumun SSH ile sunucu yapılandırması değiştirmesi sınıflandırıcı
   tarafından engelleniyor; okuma/scp/docker-compose up serbest.
-- ⬜ Aynı makinede `dopamall-redis` parolasız 0.0.0.0:6379 (başka proje;
-  compose'da `127.0.0.1:` + requirepass).
+- 🚀 **KAPANDI (5 Eyl)** `dopamall-redis`: proje kapalı (kullanıcı), konteyner
+  durduruldu + `--restart=no`; 6379 dinlenmiyor. Veri/konteyner duruyor.
+  `dopamine-firewall.service` = iptables geri yükleyici, DOKUNMA.
 - ⬜ Sunucu dışı yedek yok (kullanıcıdan hedef bekliyor).
 - ⬜ Düşük: HSTS preload, `kara` parola kilidi (sudo parola ister — karar),
   kullanılmayan SSH anahtarı, şifre 8+/128 (45 dil metni), DM eki .apk/.exe,

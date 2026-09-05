@@ -169,7 +169,7 @@ eşiği pratikte tutuyor. **Öneri:** yükleme/oda/efekt limitlerini de
 | §2.3 Posta düz-metin | **KAPATILDI, canlıda doğrulandı** (kullanıcı `guvenlik-sertlestir-20260905.sh`'i koştu) | `smtpd_tls_auth_only=yes`, `disable_plaintext_auth=yes`. Kanıt: 143'e TLS'siz `LOGIN` → `LOGINDISABLED` + "Plaintext authentication not allowed without SSL/TLS". Node relay mynetworks'ten kimliksiz gider, etkilenmedi. |
 | §2.4 avahi | **KAPATILDI** | `avahi-daemon` disable+stop; `ss -ulnp` 5353 dinleyen yok. INPUT DROP politikasına DOKUNULMADI (paylaşımlı makine). |
 | §2.2 nginx CSP | **KAPATILDI** | admin bloğu `script-src 'self' 'unsafe-inline'`, img-src'de unpkg yok (canlı başlıkta doğrulandı); kopya `nginx-dizijpg.com-20260905-csp.conf`. |
-| §2.5 Redis | **AÇIK — başka proje** | dopamall compose'unda `127.0.0.1:6379:6379` + `requirepass` gerekiyor; o projenin uygulaması da parola ister. Sahibine bırakıldı. |
+| §2.5 Redis | **KAPATILDI** (kullanıcı: "dopamall kapalı") | Bağlı istemci 0, 4 anahtar. `docker stop dopamall-redis` + `docker update --restart=no`; 6379 artık dinlenmiyor. Konteyner ve verisi duruyor (geri almak: `docker update --restart=unless-stopped dopamall-redis && docker start dopamall-redis`). `dopamine-firewall.service` adına rağmen makinenin iptables kurallarını geri yükleyen birimdir, DOKUNULMADI. |
 | §2.6 npm | **KAPATILDI** | `npm audit fix` → mailparser 3.9.20, html-to-text 10.0.1, deepmerge-ts 8.0.2; `overrides.qs ^6.16.0` → qs 6.16.0. Sonuç: **0 yüksek, 8 orta** (hepsi firebase-admin@12 zinciri; 14 bilinçli ertelendi). 2365/2365 test yeşil. |
 | §2.7 Dış yedek | **AÇIK** | hedef + kimlik bilgisi kullanıcıdan. |
 | §2.8 Konteyner root | **AÇIK (kabul edilmiş)** | değişiklik yok. |
