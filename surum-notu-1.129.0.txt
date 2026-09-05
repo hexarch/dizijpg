@@ -1,0 +1,114 @@
+# dizi.jpg 1.129.0 (196) — Play sürüm notları (192/1.125.0'dan bu yana: 193-196)
+# Play şablonundaki dil sırası: en-US, ar, de-DE, el-GR, es-ES, fr-FR, id,
+# it-IT, pt-BR, ru-RU, tr-TR
+# HER DİL 500 KARAKTERİN ALTINDA OLMALI (python len ile sayıldı).
+
+<en-US>
+Chat got a makeover.
+
+• Animated emojis and emoji effects in chat, full chat themes, grouped messages.
+• Pick your own username when signing up with Google.
+• Your profile now shows a ratings list: tap the Ratings count to see everything you've scored.
+• Broken trailers are filtered out, and official trailers come first.
+• Bug fixes and polish.
+</en-US>
+
+<ar>
+الدردشة بحلّة جديدة.
+
+• رموز تعبيرية متحركة وتأثيرات في الدردشة، سمات كاملة، ورسائل مجمّعة.
+• اختر اسم المستخدم بنفسك عند التسجيل عبر Google.
+• ملفك الشخصي يعرض الآن قائمة تقييماتك: اضغط على عدد التقييمات لرؤية كل ما قيّمته.
+• تُصفّى الإعلانات الترويجية المعطّلة، وتأتي الرسمية أولًا.
+• إصلاحات وتحسينات.
+</ar>
+
+<de-DE>
+Der Chat ist neu.
+
+• Animierte Emojis und Emoji-Effekte im Chat, komplette Chat-Themes, gruppierte Nachrichten.
+• Eigenen Nutzernamen wählen, wenn du dich mit Google anmeldest.
+• Dein Profil zeigt jetzt eine Bewertungsliste: tippe auf die Zahl der Bewertungen.
+• Kaputte Trailer werden ausgeblendet, offizielle Trailer kommen zuerst.
+• Fehlerbehebungen und Feinschliff.
+</de-DE>
+
+<el-GR>
+Η συνομιλία ανανεώθηκε.
+
+• Κινούμενα emoji και εφέ στη συνομιλία, πλήρη θέματα, ομαδοποιημένα μηνύματα.
+• Διάλεξε το δικό σου όνομα χρήστη όταν εγγράφεσαι με Google.
+• Το προφίλ σου δείχνει πλέον λίστα βαθμολογιών: πάτα τον αριθμό των βαθμολογιών.
+• Τα χαλασμένα τρέιλερ φιλτράρονται, τα επίσημα έρχονται πρώτα.
+• Διορθώσεις και βελτιώσεις.
+</el-GR>
+
+<es-ES>
+El chat se renueva.
+
+• Emojis animados y efectos en el chat, temas completos, mensajes agrupados.
+• Elige tu propio nombre de usuario al registrarte con Google.
+• Tu perfil ahora muestra una lista de puntuaciones: toca el número de puntuaciones.
+• Los tráilers rotos se filtran y los oficiales van primero.
+• Correcciones y mejoras.
+</es-ES>
+
+<fr-FR>
+Le chat fait peau neuve.
+
+• Emojis animés et effets dans le chat, thèmes complets, messages groupés.
+• Choisis ton nom d'utilisateur à l'inscription avec Google.
+• Ton profil affiche maintenant la liste de tes notes : touche le nombre de notes.
+• Les bandes-annonces cassées sont filtrées, les officielles passent en premier.
+• Corrections et finitions.
+</fr-FR>
+
+<id>
+Obrolan tampil baru.
+
+• Emoji bergerak dan efek emoji di obrolan, tema lengkap, pesan dikelompokkan.
+• Pilih nama penggunamu sendiri saat mendaftar dengan Google.
+• Profilmu kini menampilkan daftar nilai: ketuk jumlah nilai untuk melihat semuanya.
+• Trailer rusak disaring, trailer resmi tampil lebih dulu.
+• Perbaikan bug dan penyempurnaan.
+</id>
+
+<it-IT>
+La chat si rinnova.
+
+• Emoji animate ed effetti in chat, temi completi, messaggi raggruppati.
+• Scegli il tuo nome utente quando ti registri con Google.
+• Il profilo ora mostra la lista dei voti: tocca il numero dei voti.
+• I trailer rotti vengono filtrati, quelli ufficiali vengono prima.
+• Correzioni e rifiniture.
+</it-IT>
+
+<pt-BR>
+O chat ganhou cara nova.
+
+• Emojis animados e efeitos no chat, temas completos, mensagens agrupadas.
+• Escolha seu próprio nome de usuário ao se cadastrar com o Google.
+• Seu perfil agora mostra uma lista de avaliações: toque no número de avaliações.
+• Trailers quebrados são filtrados e os oficiais vêm primeiro.
+• Correções e ajustes.
+</pt-BR>
+
+<ru-RU>
+Чат обновился.
+
+• Анимированные эмодзи и эффекты в чате, полные темы, группировка сообщений.
+• Выбирайте своё имя пользователя при регистрации через Google.
+• В профиле теперь список оценок: нажмите на число оценок.
+• Битые трейлеры скрыты, официальные идут первыми.
+• Исправления и доработки.
+</ru-RU>
+
+<tr-TR>
+Sohbet yenilendi.
+
+• Sohbette hareketli emojiler ve emoji efektleri, tam temalar, gruplanmış mesajlar.
+• Google ile kayıt olurken kullanıcı adını kendin seç.
+• Profilinde artık puan listesi var: Değerlendirme sayısına dokun, puanladığın her şeyi gör.
+• Kırık fragmanlar ayıklanıyor, resmî fragman öne geliyor.
+• Hata düzeltmeleri ve ince ayarlar.
+</tr-TR>
