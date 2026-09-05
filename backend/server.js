@@ -8760,7 +8760,33 @@ async function adRezerveMi(sorgulayici, ad, benId = null) {
  * muafiyet olmadan "eski adına dönebilirsin" fiilen imkânsız olurdu, ve
  * damga güncellenseydi iki ad arasında sonsuz gidip gelme ödüllendirilirdi.
  */
-async function kullaniciAdiDegistir(havuzVeya, kullaniciId, istenen, simdi = Date.now()) {
+/**
+ * İLK AD SEÇİMİNE uygun hesap mı? (karşılama adımı, 5 Eyl 2026)
+ *
+ * Google ile açılan hesabın adını SUNUCU türetiyor (e-posta ön eki + sonek);
+ * kullanıcı hiç seçmedi. Karşılama akışındaki "kullanıcı adını seç" adımı bu
+ * hesaplar için bir DEĞİŞİKLİK değil İLK SEÇİMDİR: 90 gün kilidi takılmaz,
+ * eski (üretilmiş) ad rezerve edilmez, kilit damgası yazılmaz — e-postayla
+ * kayıt olan kullanıcının formda ad seçmesiyle aynı hak.
+ *
+ * Dört koşul birden: Google kökenli (`google_sub`), misafir değil, adı hiç
+ * değiştirmemiş (`kullanici_adi_degisim` NULL) ve karşılamayı bitirmemiş.
+ * Sonuncusu pencereyi KAPATIR: akış bittikten sonra ad değişimi
+ * `/profilim/kullanici-adi`nın kilitli/rezervli yolundan gider.
+ */
+function ilkAdSecimiUygun(k) {
+  return Boolean(k)
+    && Boolean(k.google_sub)
+    && k.misafir !== true
+    && !k.kullanici_adi_degisim
+    && k.karsilama_bitti !== true;
+}
+
+// `secenekler` imzada AÇILMIYOR ve varsayılanı YOK (`{ ilkSecim } = {}`
+// değil): test koşumu bildirimi kaynaktan ilk `{`den itibaren kesiyor
+// (kullanici_adi.test.js `blokAl`), imzadaki süslü parantez gövdeyi boşaltırdı.
+async function kullaniciAdiDegistir(havuzVeya, kullaniciId, istenen, simdi = Date.now(), secenekler) {
+  const ilkSecim = secenekler?.ilkSecim === true;
   const yeni = String(istenen ?? '').trim().toLowerCase();
   if (!KULLANICI_ADI_KALIBI.test(yeni)) {
     return { durum: 400, kod: 'AD_GECERSIZ', hata: KULLANICI_ADI_KURALI };
@@ -8781,7 +8807,7 @@ async function kullaniciAdiDegistir(havuzVeya, kullaniciId, istenen, simdi = Dat
     // FOR UPDATE: aynı hesaptan gelen iki eşzamanlı istek sıraya girsin,
     // ikisi birden "kilit yok" görüp iki kez değiştirmesin.
     const { rows: benSatir } = await istemci.query(
-      `SELECT kullanici_adi, kullanici_adi_degisim, misafir
+      `SELECT kullanici_adi, kullanici_adi_degisim, misafir, google_sub, karsilama_bitti
          FROM kullanicilar WHERE id = $1 FOR UPDATE`,
       [kullaniciId],
     );
@@ -8790,6 +8816,16 @@ async function kullaniciAdiDegistir(havuzVeya, kullaniciId, istenen, simdi = Dat
       return { durum: 404, kod: 'HESAP_YOK', hata: 'Hesap bulunamadı' };
     }
     const ben = benSatir[0];
+    // İLK SEÇİM yalnız uygun hesaba: aksi hâlde "karşılama ucu"ndan kilitsiz
+    // ve rezervsiz ad değiştirme yolu açılırdı (bkz. ilkAdSecimiUygun).
+    if (ilkSecim && !ilkAdSecimiUygun(ben)) {
+      await geriAl();
+      return {
+        durum: 403,
+        kod: 'ILK_SECIM_YOK',
+        hata: 'Kullanıcı adını ayarlardan değiştirebilirsin',
+      };
+    }
     // MİSAFİR HESAP: adı sunucu üretti, e-postaya bağlı değil ve hesap bir
     // dokunuşla açılıyor. Buradan ad seçmesine izin verilseydi, sıfır maliyetli
     // hesaplarla ad işgal etmenin (her hesap 2 ad) önü açılırdı. Seçme hakkı
@@ -8844,7 +8880,9 @@ async function kullaniciAdiDegistir(havuzVeya, kullaniciId, istenen, simdi = Dat
                   CASE WHEN $2 THEN kullanici_adi_degisim ELSE now() END
           WHERE id = $3
         RETURNING id, kullanici_adi, email, misafir, kullanici_adi_degisim`,
-        [yeni, geriDonus, kullaniciId],
+        // Geri dönüşte VE ilk seçimde damga yazılmaz: ilk seçim bir
+        // "değişiklik" değil, e-posta kaydındaki ad alanının gecikmiş hâli.
+        [yeni, geriDonus || ilkSecim, kullaniciId],
       );
       guncel = rows[0];
     } catch (e) {
@@ -8867,19 +8905,24 @@ async function kullaniciAdiDegistir(havuzVeya, kullaniciId, istenen, simdi = Dat
     // KULLANICI BAŞINA TEK REZERV: önce eskisi düşer, sonra bıraktığı ad
     // yazılır. `kullanici_adi_rezerv_sahip` kısmi tekil indeksi bunu
     // veritabanı seviyesinde de garanti eder (silme unutulursa 23505 gelir).
-    await istemci.query(
-      'DELETE FROM kullanici_adi_rezervleri WHERE kullanici_id = $1',
-      [kullaniciId],
-    );
-    await istemci.query(
-      `INSERT INTO kullanici_adi_rezervleri (kullanici_adi, kullanici_id, bitis)
-       VALUES ($1, $2, now() + ($3 || ' days')::interval)
-       ON CONFLICT (kullanici_adi) DO UPDATE
-         SET kullanici_id = EXCLUDED.kullanici_id,
-             bitis = EXCLUDED.bitis,
-             olusturma = now()`,
-      [ben.kullanici_adi, kullaniciId, String(KULLANICI_ADI_REZERV_GUN)],
-    );
+    // İLK SEÇİMDE REZERV YOK: bırakılan ad sunucunun ürettiği `ali.veli_3f2a`
+    // türü bir addır, kimse ona "geri dönmek" istemez; 90 gün kilitli tutmak
+    // yalnız tabloyu şişirirdi.
+    if (!ilkSecim) {
+      await istemci.query(
+        'DELETE FROM kullanici_adi_rezervleri WHERE kullanici_id = $1',
+        [kullaniciId],
+      );
+      await istemci.query(
+        `INSERT INTO kullanici_adi_rezervleri (kullanici_adi, kullanici_id, bitis)
+         VALUES ($1, $2, now() + ($3 || ' days')::interval)
+         ON CONFLICT (kullanici_adi) DO UPDATE
+           SET kullanici_id = EXCLUDED.kullanici_id,
+               bitis = EXCLUDED.bitis,
+               olusturma = now()`,
+        [ben.kullanici_adi, kullaniciId, String(KULLANICI_ADI_REZERV_GUN)],
+      );
+    }
     await istemci.query('COMMIT');
     acik = false;
     return {
@@ -8887,6 +8930,7 @@ async function kullaniciAdiDegistir(havuzVeya, kullaniciId, istenen, simdi = Dat
       kullanici: guncel,
       onceki_ad: ben.kullanici_adi,
       geri_donus: geriDonus,
+      ilk_secim: ilkSecim,
       kalan_gun: kullaniciAdiKalanGun(guncel.kullanici_adi_degisim, simdi),
     };
   } catch (e) {
@@ -9294,7 +9338,11 @@ app.post('/auth/google', authLimiti, sarici(async (req, res) => {
         [email, ad, await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10),
          bilgi.sub || null],
       );
-      return res.json({ token: jwtUret(rows[0]), kullanici: rows[0], yeni: true });
+      // `ad_otomatik`: adı biz türettik; istemci karşılamada "kullanıcı adını
+      // seç" adımını buna göre açar (bkz. ilkAdSecimiUygun).
+      return res.json({
+        token: jwtUret(rows[0]), kullanici: rows[0], yeni: true, ad_otomatik: true,
+      });
     } catch (e) {
       if (e.code !== '23505') throw e; // ad çakıştıysa yeniden dene
     }
@@ -22551,7 +22599,8 @@ const karsilamaLimiti = hizLimiti(120, (req) => `kr:${req.kullanici.id}`);
 // profil ucu (`/profil/:kullaniciAdi`) bu alanları HİÇ döndürmez.
 app.get('/karsilama', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
-    `SELECT karsilama_bitti, dogum_gun, dogum_ay, dogum_yil
+    `SELECT karsilama_bitti, dogum_gun, dogum_ay, dogum_yil,
+            kullanici_adi, kullanici_adi_degisim, misafir, google_sub
        FROM kullanicilar WHERE id=$1`,
     [req.kullanici.id],
   );
@@ -22562,6 +22611,9 @@ app.get('/karsilama', girisZorunlu, sarici(async (req, res) => {
     dogum_gun: k.dogum_gun ?? null,
     dogum_ay: k.dogum_ay ?? null,
     dogum_yil: k.dogum_yil ?? null,
+    // Adı sunucu türettiyse istemci "kullanıcı adını seç" adımını açar.
+    ad_secilmeli: ilkAdSecimiUygun(k),
+    kullanici_adi: k.kullanici_adi ?? null,
   });
 }));
 
@@ -22595,6 +22647,57 @@ app.post('/karsilama', girisZorunlu, karsilamaLimiti, sarici(async (req, res) =>
   res.set('Cache-Control', 'private, no-store');
   res.json({ durum: 'ok' });
 }));
+
+// ---------- karşılama: İLK kullanıcı adı seçimi (5 Eyl 2026) ----------
+// Kullanıcı isteği: "kullanıcı adlarını otomatik atıyoruz, onu kullanıcı
+// seçmeli." Google ile açılan hesabın adı e-posta ön ekinden türetiliyordu
+// ve kullanıcıya hiç sorulmuyordu. Bu iki uç karşılamanın ilk adımını besler.
+//
+// HIZ LİMİTLERİ: uçlar yalnız UYGUN hesapta iş yapar (Google kökenli, adı
+// değişmemiş, karşılama bitmemiş) — yani her hesap bu pencereyi bir kez
+// görür. Müsaitlik sorgusu yazarken canlı çalıştığı için değişimden gevşek.
+const ilkAdSecimLimiti = hizLimiti(30, (req) => `ka-ilk:${req.kullanici.id}`);
+const ilkAdMusaitLimiti = hizLimiti(120, (req) => `ka-musait:${req.kullanici.id}`);
+
+/** Canlı müsaitlik: `{ musait, kod }`. Kod, istemcinin 45 dilli cümlesi için. */
+app.get('/karsilama/kullanici-adi-musait', girisZorunlu, ilkAdMusaitLimiti,
+  sarici(async (req, res) => {
+    res.set('Cache-Control', 'private, no-store');
+    const { rows } = await havuz.query(
+      `SELECT kullanici_adi, kullanici_adi_degisim, misafir, google_sub, karsilama_bitti
+         FROM kullanicilar WHERE id = $1`,
+      [req.kullanici.id],
+    );
+    if (!ilkAdSecimiUygun(rows[0])) {
+      return res.status(403).json({ kod: 'ILK_SECIM_YOK', hata: 'Kullanıcı adını ayarlardan değiştirebilirsin' });
+    }
+    const ad = String(req.query.ad ?? '').trim().toLowerCase();
+    if (!KULLANICI_ADI_KALIBI.test(ad)) {
+      return res.json({ musait: false, kod: 'AD_GECERSIZ' });
+    }
+    if (ad === rows[0].kullanici_adi) return res.json({ musait: true, kod: 'AD_AYNI' });
+    if (yasakliKullaniciAdi(ad)) return res.json({ musait: false, kod: 'AD_AYRILMIS' });
+    const { rows: sahip } = await havuz.query(
+      'SELECT 1 FROM kullanicilar WHERE kullanici_adi = $1', [ad]);
+    if (sahip.length) return res.json({ musait: false, kod: 'AD_ALINMIS' });
+    if (await adRezerveMi(havuz, ad, req.kullanici.id)) {
+      return res.json({ musait: false, kod: 'AD_REZERVE' });
+    }
+    res.json({ musait: true });
+  }));
+
+/** İlk seçimi yazar. Kural motoru `kullaniciAdiDegistir` (ilkSecim kipi). */
+app.post('/karsilama/kullanici-adi', girisZorunlu, ilkAdSecimLimiti,
+  sarici(async (req, res) => {
+    const sonuc = await kullaniciAdiDegistir(
+      havuz, req.kullanici.id, req.body?.kullanici_adi, Date.now(), { ilkSecim: true });
+    if (sonuc.durum !== 200) {
+      const { durum, ...govde } = sonuc;
+      return res.status(durum).json(govde);
+    }
+    res.set('Cache-Control', 'private, no-store');
+    res.json({ kullanici: sonuc.kullanici, onceki_ad: sonuc.onceki_ad });
+  }));
 
 // ---------- doğum günü kutlaması (md. 36) ----------
 // İstemci: `app/lib/ekranlar/dogum_gunu.dart` (kabuk açılışında bir kez).

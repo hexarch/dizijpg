@@ -431,12 +431,17 @@ test('GİRİŞ yolu yasak süzgecine HİÇ uğramıyor (mevcut hesap giriş yapa
   assert.doesNotMatch(govde, /KULLANICI_ADI_KALIBI/);
 });
 
-test('süzgeç SADECE üç yeni-atama noktasında çağrılıyor (okuma yolları temiz)', () => {
+test('süzgeç SADECE yeni-atama noktalarında çağrılıyor (okuma yolları temiz)', () => {
   const cagri = KAYNAK.match(/yasakliKullaniciAdi\(/g) || [];
-  // 1 tanım + 3 çağrı. Dördüncü bir çağrı çıkarsa muhtemelen bir OKUMA yolunu
-  // doğrulamaya başlamışızdır ve mevcut kullanıcı kilitlenir.
-  assert.equal(cagri.length, 4,
+  // 1 tanım + 3 yazma noktası + 1 ADAY ön kontrolü (5 Eyl 2026:
+  // `GET /karsilama/kullanici-adi-musait`). Ön kontrol bir okuma yolu DEĞİL:
+  // henüz kimseye ait olmayan bir adayı sınıyor, mevcut kullanıcının adını
+  // değil. Altıncı bir çağrı çıkarsa muhtemelen bir OKUMA yolunu doğrulamaya
+  // başlamışızdır ve mevcut kullanıcı kilitlenir.
+  assert.equal(cagri.length, 5,
     `yasakliKullaniciAdi çağrı sayısı beklenenden farklı: ${cagri.length}`);
+  // Aday ön kontrolü kendi ucunda, mevcut adı süzmüyor (kanıt: `ad` yerel adayı).
+  assert.match(KAYNAK, /if \(yasakliKullaniciAdi\(ad\)\) return res\.json\(\{ musait: false/);
 });
 
 // ===========================================================================

@@ -262,10 +262,18 @@ void main() {
     await _kur(tester);
 
     final tmdb = _istenenler.where((u) => u.contains('/tmdb/')).toList();
-    // Ayrı bir /images isteği YOK; kapaklar detay yanıtına iliştirilmiş
-    expect(tmdb.length, 1);
-    expect(tmdb.single.contains('append_to_response='), isTrue);
-    expect(tmdb.single.contains('images'), isTrue);
+    // Ayrı bir /images isteği YOK; kapaklar detay yanıtına iliştirilmiş.
+    // SEZON FRAGMANI İSTEĞİ HARİÇ TUTULUYOR (5 Eyl 2026): dizi düzeyinde
+    // RESMİ fragman yoksa `detay.dart` sezon videolarını ayrıca istiyor.
+    // Bu istek KAPAĞI etkilemez (sayfa zıplamaz) ve sayfayı bloke etmez;
+    // bu testin konusu `/images`in ayrı istek OLMAMASI. Aşağıdaki iki test
+    // sezon isteğinin ne zaman atıldığını/atılmadığını ayrıca doğruluyor.
+    // Asıl iddia: /images AYRI istek değil.
+    expect(tmdb.any((u) => u.contains('/images')), isFalse);
+    final detay = tmdb.where((u) => !u.contains('/videos')).toList();
+    expect(detay.length, 1);
+    expect(detay.single.contains('append_to_response='), isTrue);
+    expect(detay.single.contains('images'), isTrue);
     // Sunucunun varsayılan ek verileri de korunmalı, yoksa kadro/fragman gider
     for (final alan in [
       'credits',
@@ -273,12 +281,12 @@ void main() {
       'recommendations',
       'external_ids',
     ]) {
-      expect(tmdb.single.contains(alan), isTrue, reason: '$alan düştü');
+      expect(detay.single.contains(alan), isTrue, reason: '$alan düştü');
     }
     // Yazısız kapak: üstüne dizi adı basılmış afişler gelmesin
-    expect(tmdb.single.contains('include_image_language=null'), isTrue);
+    expect(detay.single.contains('include_image_language=null'), isTrue);
     // TR dilinde resmi fragman çoğu zaman EN — İngilizce videolar da gelsin
-    expect(tmdb.single.contains('include_video_language='), isTrue);
+    expect(detay.single.contains('include_video_language='), isTrue);
     // Kapaklar ilk çizimde hazır → kaydırıcı sonradan belirmiyor
     expect(find.byType(AkisMedya), findsOneWidget);
     expect(find.text('1/2'), findsOneWidget);
@@ -330,5 +338,94 @@ void main() {
       }),
       ['/c.jpg'],
     );
+  });
+
+  // -------------------------------------------------------------------------
+  // SEZON FRAGMANI YEDEĞİ (5 Eyl 2026) — "resmi fragman olmalılar" isteğinin
+  // ikinci ayağı. Ölçüm: popüler dizilerin ~%18'inde TMDB'de dizi düzeyinde
+  // HİÇ resmi fragman yok (Breaking Bad, The Walking Dead, Rick and Morty).
+  // -------------------------------------------------------------------------
+
+  testWidgets('resmi fragman VARSA sezon isteği HİÇ atılmaz', (tester) async {
+    Api.istemci = MockClient((istek) async {
+      _istenenler.add(istek.url.toString());
+      final yol = istek.url.path.replaceFirst('/api', '');
+      final govde = yol.startsWith('/tmdb/')
+          ? jsonEncode({
+              ..._icerik(),
+              'videos': {
+                'results': [
+                  {
+                    'site': 'YouTube',
+                    'type': 'Trailer',
+                    'key': 'resmiKey12',
+                    'official': true,
+                    'iso_639_1': 'en',
+                  },
+                ],
+              },
+            })
+          : '{}';
+      return http.Response(
+        govde,
+        200,
+        headers: {'content-type': 'application/json; charset=utf-8'},
+      );
+    });
+    await _kur(tester);
+
+    // Yapımların ~%82'sinde bu dal hiç çalışmamalı: gereksiz istek yok.
+    expect(
+      _istenenler.where((u) => u.contains('/season/')),
+      isEmpty,
+      reason: 'resmi fragman varken sezon isteği atıldı',
+    );
+  });
+
+  testWidgets('resmi fragman YOKSA son sezon + 1. sezon istenir', (
+    tester,
+  ) async {
+    Api.istemci = MockClient((istek) async {
+      _istenenler.add(istek.url.toString());
+      final yol = istek.url.path.replaceFirst('/api', '');
+      if (!yol.startsWith('/tmdb/')) {
+        return http.Response(
+          '{}',
+          200,
+          headers: {'content-type': 'application/json; charset=utf-8'},
+        );
+      }
+      // Breaking Bad'in TMDB'deki GERÇEK durumu: tek fragman var ve o da
+      // gayriresmi bir Türkçe altyazılı hayran yüklemesi.
+      final govde = jsonEncode({
+        ..._icerik(),
+        'videos': {
+          'results': [
+            {
+              'site': 'YouTube',
+              'type': 'Trailer',
+              'key': 'hayranTr12',
+              'official': false,
+              'iso_639_1': 'tr',
+            },
+          ],
+        },
+      });
+      return http.Response(
+        govde,
+        200,
+        headers: {'content-type': 'application/json; charset=utf-8'},
+      );
+    });
+    await _kur(tester);
+    await tester.pumpAndSettle();
+
+    final sezon = _istenenler.where((u) => u.contains('/season/')).toList();
+    // Fikstürde `number_of_seasons: 5` → son sezon 5 ve 1. sezon.
+    expect(sezon.any((u) => u.contains('/season/5/videos')), isTrue);
+    expect(sezon.any((u) => u.contains('/season/1/videos')), isTrue);
+    // Hepsi değil YALNIZ İKİSİ: 8-10 sezonluk dizide her sezonu taramak
+    // sayfa başına 10 fazladan istek olurdu.
+    expect(sezon.length, 2);
   });
 }
