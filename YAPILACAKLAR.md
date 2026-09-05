@@ -1,6 +1,28 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-05 — 🌍 Dil ana sayfaları Google'a AÇILDI: sitemap + iç bağlantı + başlık/açıklama (backend, 210d070)
+
+**Tetik:** SEO yöneticisi "tv show tracker / app para seguir series için sayfa yok, indeks yok" dedi.
+**Ölçüm (GSC URL denetimi):** `/` dizinde (son tarama 3 Eyl); `/en`, `/es`, `/de`, `/fr`
+"URL Google tarafından bilinmiyor". Sayfalar 29 Ağu'dan beri SSR'lı, başlık+açıklama dolu;
+ama (1) sitemap-genel yalnız 4 Türkçe URL taşıyordu, dil haritalarında ana sayfa yoktu;
+(2) Türkçe kabuktan `/en`e giden `<a>` yoktu, yalnız hreflang (keşif sağlamaz).
+
+**Yapılan (canlı, 14:40):**
+- `sitemap-genel.xml` 4 → 49 URL: `SEO_HARITA_DILLERI('genel')` kümesinden 45 dil ana sayfası
+  (`sitemapGenelDilAnaSayfalari`). `/en/gozat`, `/en/kesfet`, `/es/gizlilik` 404+noindex → EKLENMEDİ.
+- `/og/ana` gövde sonuna "Diğer diller" listesi (endonim `SEO_DIL_ADLARI`, bulunulan dil düşer);
+  `anaDiller` anahtarı 46 dile eklendi.
+- tr/en/es `anaBaslik`/`anaAciklama`: hedef kelime ÖNDE, marka sonda
+  ("TV Show Tracker – Track Series & Movies You Watch | dizi.jpg",
+  "App para seguir series y películas – Gratis | dizi.jpg"); başlık ≤60, açıklama 120–160.
+- GSC: `sitemap-genel.xml` + `sitemap.xml` API ile yeniden gönderildi (PUT 204).
+- Test: `seo_dil_ana_sayfa.test.js`; `seo_ana_sss` kaynak penceresi 4000→6000 (ofset 3960'a dayanmıştı).
+
+**Bakılacak:** ≥12 Eyl GSC URL denetimi `/en` `/es` → "dizine eklendi" olmalı; `gsc_ulke.mjs` ile TR dışı tık.
+Diğer 43 dilin başlığı hâlâ "dizi.jpg — …" (marka önde); en/es sonucu görülünce aynı kalıba çekilebilir.
+
 ## 2026-09-05 — ⭐ Profil şeridi: "Yorum" sütunu → "DEĞERLENDİRME" + puan listesi (1.129.0+196)
 
 Kullanıcı isteği: "Kullanıcı profilindeki bölüm/film/dizi yanındaki yorumu
