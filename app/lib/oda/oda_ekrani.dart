@@ -196,6 +196,31 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   /// kumanda burada yaşar).
   OdaGommeDenetci? _gomme;
 
+  /// Gömme yüzeyinin KURULUM TURU — `ValueKey`in içinde.
+  ///
+  /// ===========================================================================
+  /// NEDEN NÖBETÇİ VAR (7 Eyl 2026, canlıda ölçüldü)
+  /// ===========================================================================
+  /// Odaya İLK girişte gömme yüzeyi bazen hiç kurulmuyor: platform görünümü
+  /// (iframe) oluşmuyor, dolayısıyla el sıkışması gönderilmiyor, YouTube hiç
+  /// cevap vermiyor ve ekranda sonsuza kadar dönen bir halka kalıyor.
+  /// Tarayıcıdan ölçüldü: 25 saniyede 0 postMessage, `contentWindow`a hiç
+  /// dokunulmamış — yani fabrikanın kapanışı hiç çalışmamış.
+  ///
+  /// AYNI ölçümde şu da tekrar tekrar doğrulandı: yüzey YENİDEN kurulduğunda
+  /// (tam ekrana geçmek gibi) HER SEFERİNDE çalışıyor. İlk karede video
+  /// alanının yüksekliği daha oturmamışken kurulan görünümün geri gelmemesi
+  /// en olası açıklama.
+  ///
+  /// Bu yüzden kök sebebi tahmin etmek yerine KANITLANMIŞ kurtarma yolu koda
+  /// alındı: yüzey 5 saniye içinde "hazırım" demezse tur artar, `ValueKey`
+  /// değişir, Flutter yüzeyi söküp yeniden kurar. En çok 3 deneme —
+  /// sonrasında sorun yüzeyde değil (ağ, engellenmiş gömme) demektir ve
+  /// sonsuz yeniden kurulum kullanıcıyı titreyen bir ekranla baş başa
+  /// bırakırdı.
+  int _gommeTur = 0;
+  Timer? _gommeNobetci;
+
   /// Programatik seek sürerken düzeltme YAPILMAZ: art arda gelen iki seek
   /// oynatıcıyı tampon boşaltma döngüsüne sokar.
   bool _sariyor = false;
@@ -398,6 +423,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     _yoklama?.cancel();
     _kalp?.cancel();
     _sarYakinsama?.cancel();
+    _gommeNobetci?.cancel();
     _yukleyici?.iptal();
     _oynatici?.sok();
     _metin.dispose();
@@ -813,6 +839,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         _gomme = g;
         _oynatici = g;
       });
+      _gommeNobetciyiKur();
       return;
     }
 
@@ -848,6 +875,23 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     _kontrolleriGoster();
   }
 
+  /// Yüzey haber vermezse onu yeniden kurar — gerekçe [_gommeTur] başlığında.
+  void _gommeNobetciyiKur() {
+    _gommeNobetci?.cancel();
+    var deneme = 0;
+    _gommeNobetci = Timer.periodic(const Duration(seconds: 5), (t) {
+      if (!mounted || _gomme == null || _oynaticiHazir) {
+        t.cancel();
+        return;
+      }
+      if (++deneme > 3) {
+        t.cancel();
+        return;
+      }
+      setState(() => _gommeTur++);
+    });
+  }
+
   /// Gömme oynatıcı hazır olduğunu bildirince bir kereye mahsus hizalar.
   ///
   /// Dosya yolunda bu iş `initialize()` sonrasında yapılıyor; gömmede "hazır"
@@ -857,6 +901,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     final g = _gomme;
     if (g == null || !mounted) return;
     if (g.value.isInitialized && !_oynaticiHazir) {
+      _gommeNobetci?.cancel();
       setState(() => _oynaticiHazir = true);
       OdaApi.hazir(widget.odaId, true).catchError((_) {});
       _duzelt(kasitli: true);
@@ -1930,7 +1975,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       return Stack(
         fit: StackFit.expand,
         children: [
-          OdaGommeYuzeyi(baglanti: b, denetci: g),
+          OdaGommeYuzeyi(key: ValueKey(_gommeTur), baglanti: b, denetci: g),
           // SESSİZ BAŞLAMA KAPISI: gömme oynatıcı sesli otomatik başlayamaz
           // (tarayıcı politikası, gerekçe `OdaGommeDenetci` başlığında).
           // Düğme hem jesti verir hem sesi açar; olmasaydı kullanıcı sessiz

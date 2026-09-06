@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.3+213) 🚀
+## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.4+214) 🚀
 
 **Tetik (kullanıcı):** *"bu birlikte izlemeye video upload yerine kullanıcıya tarayıcı açabilir
 miyiz? … tabi upload duracak … youtube gibi tüm platformların url'ini destekleyecek şekilde
@@ -84,6 +84,13 @@ takım **2.784 test yeşil**. Canlıda uçtan uca: YouTube/Vimeo kabul, ok.ru 40
   sonsuza kadar dönen bir halka kalıyordu. Tarayıcıdan ölçüldü: 20 saniyede 0 postMessage,
   0 yanıt, `contentWindow`a hiç dokunulmamış. Artık artan sayaç kullanılıyor; **aynı kalıp
   `ekranlar/fragman_gom_web.dart`ta da vardı, orada da düzeltildi.**
+* **Gömme yüzeyi İLK kurulumda bazen hiç doğmuyor** (1.143.4'te NÖBETÇİ eklendi): platform
+  görünümü oluşmuyor, el sıkışması gönderilmiyor, ekranda sonsuza kadar dönen halka kalıyor.
+  Tarayıcıdan ölçüldü: 25 sn'de 0 postMessage, `contentWindow`a hiç dokunulmamış (fabrikanın
+  kapanışı hiç çalışmamış). AYNI ölçümde yüzeyin YENİDEN kurulması (tam ekrana geçmek) HER
+  SEFERİNDE düzeltiyor. Kök sebep dışarıdan kanıtlanamadığı için kanıtlanmış kurtarma yolu koda
+  alındı: 5 saniyede "hazırım" gelmezse `ValueKey` değişir, yüzey yeniden kurulur (en çok 3
+  deneme — sonrası ağ/engelleme demektir, sonsuz yeniden kurulum ekranı titretirdi).
 * **Dağıtım sırası:** `web_hashla` sonrası canlı `index.html` bir süre ESKİ hash'i servis
   etmeye devam edebiliyor. Eski paketi silmeden ÖNCE `curl https://dizijpg.com/ | grep main.`
   ile yeni hash'i doğrula; gerekirse `docker-compose restart api`. Bu turda eski paket erken
