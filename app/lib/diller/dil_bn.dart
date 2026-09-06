@@ -1642,6 +1642,6 @@ const Map<String, String> cevirilerBn = {
       'অদলবদল করতে দুটি ছবিতে ট্যাপ করুন',
   'Eleştirmen': 'সমালোচক',
   'Seyirci': 'দর্শক',
-  '2027 Filmleri': '2027 সালের সিনেমা',
-  '2027 Dizileri': '2027 সালের সিরিজ',
+  "2027'de Vizyona Girecek Filmler": "2027 সালে আসছে যে সিনেমা",
+  "2027'de Başlayacak Diziler": "2027 সালে শুরু হচ্ছে যে সিরিজ",
 };

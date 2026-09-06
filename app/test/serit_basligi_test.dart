@@ -101,8 +101,8 @@ void main() {
         // 2027 rafları (6 Eyl 2026): başlığın içinde bir YIL var, yani
         // çeviriler "Vuoden 2027 elokuvat" / "Mga Pelikula ng 2027" gibi
         // Türkçesinden uzun olabiliyor.
-        '2027 Filmleri',
-        '2027 Dizileri',
+        "2027'de Vizyona Girecek Filmler",
+        "2027'de Başlayacak Diziler",
       ]) {
         final cevrilmis = anahtar.c;
         await tester.pumpWidget(

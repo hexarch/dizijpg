@@ -1651,6 +1651,6 @@ const Map<String, String> cevirilerId = {
   'Yer değiştirmek için iki fotoğrafa dokun': 'Ketuk dua foto untuk menukarnya',
   'Eleştirmen': 'Kritikus',
   'Seyirci': 'Penonton',
-  '2027 Filmleri': 'Film 2027',
-  '2027 Dizileri': 'Serial 2027',
+  "2027'de Vizyona Girecek Filmler": "Film yang tayang di 2027",
+  "2027'de Başlayacak Diziler": "Serial yang mulai di 2027",
 };

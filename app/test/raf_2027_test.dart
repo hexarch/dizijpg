@@ -69,18 +69,22 @@ void main() {
 
   test('2027 rafları listede VAR ve EN ALTTA (istek: "aşağılara ekle")', () {
     final basliklar = anaSayfaRaflari.map((r) => r.$1).toList();
-    expect(basliklar, contains('2027 Filmleri'));
-    expect(basliklar, contains('2027 Dizileri'));
+    expect(basliklar, contains("2027'de Vizyona Girecek Filmler"));
+    expect(basliklar, contains("2027'de Başlayacak Diziler"));
     expect(
       basliklar.sublist(basliklar.length - 2),
-      ['2027 Filmleri', '2027 Dizileri'],
+      ["2027'de Vizyona Girecek Filmler", "2027'de Başlayacak Diziler"],
       reason: 'raflar Ana Sayfa nın en altında olmalı',
     );
   });
 
   test('2027 sorgusu: yıl aralığı var, OY EŞİĞİ YOK', () {
-    final film = anaSayfaRaflari.firstWhere((r) => r.$1 == '2027 Filmleri');
-    final dizi = anaSayfaRaflari.firstWhere((r) => r.$1 == '2027 Dizileri');
+    final film = anaSayfaRaflari.firstWhere(
+      (r) => r.$1 == "2027'de Vizyona Girecek Filmler",
+    );
+    final dizi = anaSayfaRaflari.firstWhere(
+      (r) => r.$1 == "2027'de Başlayacak Diziler",
+    );
 
     expect(film.$3, 'movie');
     expect(film.$2, contains('primary_release_date.gte=2027-01-01'));
@@ -106,16 +110,28 @@ void main() {
   });
 
   test('rafların slug u kalıcı adres üretiyor', () {
-    expect(rafSlug('2027 Filmleri'), '2027-filmleri');
-    expect(rafSlug('2027 Dizileri'), '2027-dizileri');
-    expect(rafBul('2027-filmleri')?.$1, '2027 Filmleri');
-    expect(rafBul('2027-dizileri')?.$1, '2027 Dizileri');
+    expect(
+      rafSlug("2027'de Vizyona Girecek Filmler"),
+      '2027-de-vizyona-girecek-filmler',
+    );
+    expect(rafSlug("2027'de Başlayacak Diziler"), '2027-de-baslayacak-diziler');
+    expect(
+      rafBul('2027-de-vizyona-girecek-filmler')?.$1,
+      "2027'de Vizyona Girecek Filmler",
+    );
+    expect(
+      rafBul('2027-de-baslayacak-diziler')?.$1,
+      "2027'de Başlayacak Diziler",
+    );
   });
 
   test('başlıklar 45 dilin hepsinde çevrilmiş (Türkçe ye düşmüyor)', () async {
     for (final kod in Ceviri.diller.keys.where((k) => k != 'tr')) {
       await Ceviri.sec(kod);
-      for (final anahtar in ['2027 Filmleri', '2027 Dizileri']) {
+      for (final anahtar in [
+        "2027'de Vizyona Girecek Filmler",
+        "2027'de Başlayacak Diziler",
+      ]) {
         expect(
           anahtar.c,
           isNot(anahtar),
@@ -152,7 +168,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: KatalogListeEkrani(
-            baslik: '2027 Dizileri',
+            baslik: "2027'de Başlayacak Diziler",
             yol: '/tmdb/discover/tv?sort_by=popularity.desc',
             tur: 'tv',
           ),

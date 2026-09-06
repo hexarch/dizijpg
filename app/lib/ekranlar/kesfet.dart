@@ -85,19 +85,23 @@ const anaSayfaRaflari = <(String, String, String)>[
   // yazılmış, duyurulmamış küçük yapımları başa alıyor; popülerlik "Avengers:
   // Secret Wars, Shrek 5, Frozen III"ü öne çıkarıyor (ölçüldü, 6 Eyl 2026).
   //
-  // YIL SABİT: başlıktaki 2027 aynı zamanda kalıcı adresin (`/raf/2027-filmleri`)
-  // kaynağı. Yıl her 1 Ocak'ta otomatik kaysaydı paylaşılmış bağlantılar başka
-  // bir yılı gösterirdi. Yeni yıl geldiğinde raf ELDE güncellenir
-  // (YAPILACAKLAR.md'de not var).
+  // BAŞLIK "2027 Filmleri" DEĞİL: kullanıcı ilk sürümü görüp itiraz etti —
+  // "2027 Filmleri" okuyanı 2027'deymişiz sanmaya itiyor, oysa bunlar HENÜZ
+  // ÇIKMAMIŞ yapımlar. Başlık zamanı açıkça söylemeli.
+  //
+  // YIL SABİT: başlıktaki 2027 aynı zamanda kalıcı adresin
+  // (`/raf/2027-de-vizyona-girecek-filmler`) kaynağı. Yıl her 1 Ocak'ta
+  // otomatik kaysaydı paylaşılmış bağlantılar başka bir yılı gösterirdi.
+  // Yeni yıl geldiğinde raf ELDE güncellenir (YAPILACAKLAR.md'de not var).
   (
-    '2027 Filmleri',
+    "2027'de Vizyona Girecek Filmler",
     '/tmdb/discover/movie?sort_by=popularity.desc'
         '&primary_release_date.gte=2027-01-01'
         '&primary_release_date.lte=2027-12-31',
     'movie',
   ),
   (
-    '2027 Dizileri',
+    "2027'de Başlayacak Diziler",
     '/tmdb/discover/tv?sort_by=popularity.desc'
         '&first_air_date.gte=2027-01-01&first_air_date.lte=2027-12-31',
     'tv',

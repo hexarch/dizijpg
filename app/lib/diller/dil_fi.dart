@@ -1658,6 +1658,6 @@ const Map<String, String> cevirilerFi = {
       'Napauta kahta kuvaa vaihtaaksesi ne',
   'Eleştirmen': 'Kriitikot',
   'Seyirci': 'Yleisö',
-  '2027 Filmleri': 'Vuoden 2027 elokuvat',
-  '2027 Dizileri': 'Vuoden 2027 sarjat',
+  "2027'de Vizyona Girecek Filmler": "Vuonna 2027 tulevat elokuvat",
+  "2027'de Başlayacak Diziler": "Vuonna 2027 alkavat sarjat",
 };

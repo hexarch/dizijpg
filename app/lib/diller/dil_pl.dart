@@ -1670,6 +1670,6 @@ const Map<String, String> cevirilerPl = {
       'Dotknij dwóch zdjęć, aby je zamienić',
   'Eleştirmen': 'Krytycy',
   'Seyirci': 'Widzowie',
-  '2027 Filmleri': 'Filmy 2027',
-  '2027 Dizileri': 'Seriale 2027',
+  "2027'de Vizyona Girecek Filmler": "Filmy z premierą w 2027",
+  "2027'de Başlayacak Diziler": "Seriale z premierą w 2027",
 };

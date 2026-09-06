@@ -1659,6 +1659,6 @@ const Map<String, String> cevirilerMl = {
       'മാറ്റാൻ രണ്ട് ഫോട്ടോകളിൽ ടാപ്പ് ചെയ്യുക',
   'Eleştirmen': 'നിരൂപകർ',
   'Seyirci': 'പ്രേക്ഷകർ',
-  '2027 Filmleri': '2027 സിനിമകൾ',
-  '2027 Dizileri': '2027 പരമ്പരകൾ',
+  "2027'de Vizyona Girecek Filmler": "2027-ൽ എത്തുന്ന സിനിമകൾ",
+  "2027'de Başlayacak Diziler": "2027-ൽ തുടങ്ങുന്ന പരമ്പരകൾ",
 };

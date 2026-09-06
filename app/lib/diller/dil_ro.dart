@@ -1696,6 +1696,6 @@ const Map<String, String> cevirilerRo = {
       'Atinge două fotografii pentru a le schimba',
   'Eleştirmen': 'Critici',
   'Seyirci': 'Public',
-  '2027 Filmleri': 'Filme din 2027',
-  '2027 Dizileri': 'Seriale din 2027',
+  "2027'de Vizyona Girecek Filmler": "Filme care apar în 2027",
+  "2027'de Başlayacak Diziler": "Seriale care încep în 2027",
 };

@@ -1679,6 +1679,6 @@ const Map<String, String> cevirilerTa = {
       'மாற்ற இரண்டு புகைப்படங்களைத் தட்டவும்',
   'Eleştirmen': 'விமர்சகர்கள்',
   'Seyirci': 'பார்வையாளர்கள்',
-  '2027 Filmleri': '2027 திரைப்படங்கள்',
-  '2027 Dizileri': '2027 தொடர்கள்',
+  "2027'de Vizyona Girecek Filmler": "2027ல் வெளியாகும் திரைப்படங்கள்",
+  "2027'de Başlayacak Diziler": "2027ல் தொடங்கும் தொடர்கள்",
 };

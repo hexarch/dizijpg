@@ -9348,17 +9348,24 @@ Açık kalanlar SEO-YAPILACAKLAR.md §19.2'de: Cloudflare cevap botu 403'ü
 (panel), sitemap Cache Rule (panel), Flutter yükü/başlık, düşük kaynaklı dil
 bölüm sayfaları (tasarım kararı).
 
-## 2026-09-06 — Ana Sayfa: "2027'de vizyona girecek filmler ve diziler" rafları (1.139.0+206)
+## 2026-09-06 — Ana Sayfa: "2027'de vizyona girecek filmler ve diziler" rafları (1.140.0+207)
 
 Kullanıcı isteği: "2027 vizyona girecek filmler ve diziler listesi yap ana
 sayfada aşağılara ekle."
 
-- ✅ `kesfet.dart -> anaSayfaRaflari` sonuna İKİ raf: **2027 Filmleri**
-  (`discover/movie`, `primary_release_date` 2027-01-01…2027-12-31) ve
-  **2027 Dizileri** (`discover/tv`, `first_air_date` aynı aralık). İkisi de
-  `sort_by=popularity.desc`, **oy eşiği YOK** — vizyona girmemiş yapımın
-  `vote_count`u 0, eşik rafı boşaltırdı. Kalıcı adresler `/raf/2027-filmleri`
-  ve `/raf/2027-dizileri`.
+- ✅ `kesfet.dart -> anaSayfaRaflari` sonuna İKİ raf:
+  **2027'de Vizyona Girecek Filmler** (`discover/movie`,
+  `primary_release_date` 2027-01-01…2027-12-31) ve
+  **2027'de Başlayacak Diziler** (`discover/tv`, `first_air_date` aynı
+  aralık). İkisi de `sort_by=popularity.desc`, **oy eşiği YOK** — vizyona
+  girmemiş yapımın `vote_count`u 0, eşik rafı boşaltırdı. Kalıcı adresler
+  `/raf/2027-de-vizyona-girecek-filmler` ve `/raf/2027-de-baslayacak-diziler`.
+- 🩹 BAŞLIK DÜZELTMESİ (1.140.0+207, kullanıcı itirazı): ilk sürüm "2027
+  Filmleri / 2027 Dizileri" idi — "2027'deymişiz gibi okunuyor, oysa bunlar
+  daha çıkmadı". Başlık artık zamanı açıkça söylüyor; slug da değişti (ilk
+  adresler 30 dk yaşadı, kimseye dağıtılmadı). 45 dil yeniden yazıldı.
+  `seo_gizlilik.test.js` raf SAYACI güncellendi: başlıkta kesme işareti olan
+  kayıt server.js'te ÇİFT tırnaklı yazılıyor, eski regex onu saymıyordu.
 - ✅ Başlıklar 45 dile çevrildi (`dil_*.dart`), yıl her çeviride duruyor.
 - ✅ `posterliSuz` (api.dart): AFİŞSİZ TMDB kayıtları artık Keşfet şeritlerine
   ve "Tümünü gör" kataloğuna girmiyor. Kural yeni değil — `gozat.dart` ve

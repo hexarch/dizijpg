@@ -1685,6 +1685,6 @@ const Map<String, String> cevirilerEl = {
       'Πάτησε δύο φωτογραφίες για να τις ανταλλάξεις',
   'Eleştirmen': 'Κριτικοί',
   'Seyirci': 'Κοινό',
-  '2027 Filmleri': 'Ταινίες 2027',
-  '2027 Dizileri': 'Σειρές 2027',
+  "2027'de Vizyona Girecek Filmler": "Ταινίες που βγαίνουν το 2027",
+  "2027'de Başlayacak Diziler": "Σειρές που ξεκινούν το 2027",
 };

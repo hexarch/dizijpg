@@ -1642,6 +1642,6 @@ const Map<String, String> cevirilerAz = {
       'Yerini dəyişmək üçün iki fotoya toxun',
   'Eleştirmen': 'Tənqidçilər',
   'Seyirci': 'Tamaşaçılar',
-  '2027 Filmleri': '2027 Filmləri',
-  '2027 Dizileri': '2027 Serialları',
+  "2027'de Vizyona Girecek Filmler": "2027-də çıxacaq filmlər",
+  "2027'de Başlayacak Diziler": "2027-də başlayacaq seriallar",
 };

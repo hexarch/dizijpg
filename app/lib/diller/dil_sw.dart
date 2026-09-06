@@ -1659,6 +1659,6 @@ const Map<String, String> cevirilerSw = {
       'Gusa picha mbili ili kuzibadilisha',
   'Eleştirmen': 'Wakosoaji',
   'Seyirci': 'Watazamaji',
-  '2027 Filmleri': 'Filamu za 2027',
-  '2027 Dizileri': 'Mfululizo wa 2027',
+  "2027'de Vizyona Girecek Filmler": "Filamu zinazotoka 2027",
+  "2027'de Başlayacak Diziler": "Vipindi vinavyoanza 2027",
 };

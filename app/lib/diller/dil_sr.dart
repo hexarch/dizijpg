@@ -1655,6 +1655,6 @@ const Map<String, String> cevirilerSr = {
       'Dodirni dve fotografije da ih zameniš',
   'Eleştirmen': 'Kritičari',
   'Seyirci': 'Publika',
-  '2027 Filmleri': 'Филмови 2027',
-  '2027 Dizileri': 'Серије 2027',
+  "2027'de Vizyona Girecek Filmler": "Филмови који стижу 2027",
+  "2027'de Başlayacak Diziler": "Серије које почињу 2027",
 };

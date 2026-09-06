@@ -1615,6 +1615,6 @@ const Map<String, String> cevirilerHe = {
   'Yer değiştirmek için iki fotoğrafa dokun': 'הקישו על שתי תמונות להחלפה',
   'Eleştirmen': 'מבקרים',
   'Seyirci': 'קהל',
-  '2027 Filmleri': 'סרטי 2027',
-  '2027 Dizileri': 'סדרות 2027',
+  "2027'de Vizyona Girecek Filmler": "סרטים שיצאו ב-2027",
+  "2027'de Başlayacak Diziler": "סדרות שיתחילו ב-2027",
 };

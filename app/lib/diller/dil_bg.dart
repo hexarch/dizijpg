@@ -1659,6 +1659,6 @@ const Map<String, String> cevirilerBg = {
       'Докосни две снимки, за да ги размениш',
   'Eleştirmen': 'Критици',
   'Seyirci': 'Зрители',
-  '2027 Filmleri': 'Филми 2027',
-  '2027 Dizileri': 'Сериали 2027',
+  "2027'de Vizyona Girecek Filmler": "Филми, които излизат през 2027",
+  "2027'de Başlayacak Diziler": "Сериали, които започват през 2027",
 };

@@ -1573,6 +1573,6 @@ const Map<String, String> cevirilerKo = {
   'Yer değiştirmek için iki fotoğrafa dokun': '두 사진을 탭하여 자리 바꾸기',
   'Eleştirmen': '평론가',
   'Seyirci': '관객',
-  '2027 Filmleri': '2027년 영화',
-  '2027 Dizileri': '2027년 시리즈',
+  "2027'de Vizyona Girecek Filmler": "2027년 개봉 예정 영화",
+  "2027'de Başlayacak Diziler": "2027년 방영 시작 시리즈",
 };

@@ -1669,6 +1669,6 @@ const Map<String, String> cevirilerMy = {
       'နေရာလဲရန် ဓာတ်ပုံနှစ်ပုံကို တို့ပါ',
   'Eleştirmen': 'ဝေဖန်သူများ',
   'Seyirci': 'ပရိသတ်',
-  '2027 Filmleri': '2027 ရုပ်ရှင်များ',
-  '2027 Dizileri': '2027 ဇာတ်လမ်းတွဲများ',
+  "2027'de Vizyona Girecek Filmler": "2027 တွင် ရုံတင်မည့် ရုပ်ရှင်များ",
+  "2027'de Başlayacak Diziler": "2027 တွင် စတင်မည့် ဇာတ်လမ်းတွဲများ",
 };

@@ -1669,6 +1669,6 @@ const Map<String, String> cevirilerEn = {
   'Yer değiştirmek için iki fotoğrafa dokun': 'Tap two photos to swap them',
   'Eleştirmen': 'Critics',
   'Seyirci': 'Audience',
-  '2027 Filmleri': '2027 Movies',
-  '2027 Dizileri': '2027 Shows',
+  "2027'de Vizyona Girecek Filmler": "Movies Coming in 2027",
+  "2027'de Başlayacak Diziler": "Shows Starting in 2027",
 };

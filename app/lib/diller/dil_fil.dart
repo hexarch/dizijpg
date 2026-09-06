@@ -1684,6 +1684,6 @@ const Map<String, String> cevirilerFil = {
       'I-tap ang dalawang larawan para magpalit',
   'Eleştirmen': 'Mga kritiko',
   'Seyirci': 'Manonood',
-  '2027 Filmleri': 'Mga Pelikula ng 2027',
-  '2027 Dizileri': 'Mga Serye ng 2027',
+  "2027'de Vizyona Girecek Filmler": "Mga Pelikulang Lalabas sa 2027",
+  "2027'de Başlayacak Diziler": "Mga Seryeng Magsisimula sa 2027",
 };

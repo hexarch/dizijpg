@@ -477,7 +477,10 @@ test('CLOAKING KİLİDİ: Flutter rotaları oturumsuz açılmadıkça noindex', 
 test('keşif sayfaları İNCE olamaz: eşik gerçekten aşılabilir', () => {
   const oge = Number(/const SEO_KESIF_OGE = (\d+);/.exec(KAYNAK)[1]);
   const min = Number(/const SEO_KESIF_MIN = (\d+);/.exec(KAYNAK)[1]);
-  const raflar = (KAYNAK.match(/\{ baslik: '[^']+', tur: '(tv|movie)', yol:/g) || []).length;
+  // Başlıkta kesme işareti olabilir ("2027'de …") → o kayıt ÇİFT tırnaklı
+  // yazılıyor; sayaç iki yazımı da tanımalı, yoksa rafı sessizce saymaz.
+  const raflar =
+    (KAYNAK.match(/\{ baslik: (?:'[^']+'|"[^"]+"), tur: '(tv|movie)', yol:/g) || []).length;
   const katalog = (KAYNAK.match(/\{ baslik: '[^']+', tur: '(tv|movie)', genre: \d+ \}/g) || []).length;
   assert.ok(raflar >= 10, `/kesfet raf sayısı yetersiz: ${raflar}`);
   assert.ok(katalog >= 10, `/gozat tür sayısı yetersiz: ${katalog}`);
