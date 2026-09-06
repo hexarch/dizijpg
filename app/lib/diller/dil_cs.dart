@@ -1648,4 +1648,6 @@ const Map<String, String> cevirilerCs = {
       'Klepnutím na dvě fotky je prohodíte',
   'Eleştirmen': 'Kritici',
   'Seyirci': 'Diváci',
+  '2027 Filmleri': 'Filmy 2027',
+  '2027 Dizileri': 'Seriály 2027',
 };

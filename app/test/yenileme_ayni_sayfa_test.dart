@@ -117,7 +117,8 @@ http.Client _sahteIstemci() => MockClient((istek) async {
           'id': 1396,
           'name': 'Breaking Bad',
           'title': 'Breaking Bad',
-          'poster_path': null,
+          // Afişsiz kayıtlar süzülüyor (`posterliSuz`) — raf boş kalmasın.
+          'poster_path': '/p.jpg',
           'vote_average': 8.9,
         },
       ],

@@ -1649,4 +1649,6 @@ const Map<String, String> cevirilerVi = {
   'Yer değiştirmek için iki fotoğrafa dokun': 'Chạm hai ảnh để đổi chỗ',
   'Eleştirmen': 'Giới phê bình',
   'Seyirci': 'Khán giả',
+  '2027 Filmleri': 'Phim lẻ 2027',
+  '2027 Dizileri': 'Phim bộ 2027',
 };

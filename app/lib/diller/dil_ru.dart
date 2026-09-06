@@ -1678,4 +1678,6 @@ const Map<String, String> cevirilerRu = {
       'Нажмите на два фото, чтобы поменять их',
   'Eleştirmen': 'Критики',
   'Seyirci': 'Зрители',
+  '2027 Filmleri': 'Фильмы 2027',
+  '2027 Dizileri': 'Сериалы 2027',
 };

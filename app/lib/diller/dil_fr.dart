@@ -1679,4 +1679,6 @@ const Map<String, String> cevirilerFr = {
       'Touchez deux photos pour les échanger',
   'Eleştirmen': 'Critiques',
   'Seyirci': 'Public',
+  '2027 Filmleri': 'Films de 2027',
+  '2027 Dizileri': 'Séries de 2027',
 };

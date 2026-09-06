@@ -1654,4 +1654,6 @@ const Map<String, String> cevirilerDa = {
       'Tryk på to fotos for at bytte dem',
   'Eleştirmen': 'Kritikere',
   'Seyirci': 'Publikum',
+  '2027 Filmleri': 'Film 2027',
+  '2027 Dizileri': 'Serier 2027',
 };

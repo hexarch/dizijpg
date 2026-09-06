@@ -1634,4 +1634,6 @@ const Map<String, String> cevirilerFa = {
   'Yer değiştirmek için iki fotoğrafa dokun': 'برای جابه‌جایی روی دو عکس بزنید',
   'Eleştirmen': 'منتقدان',
   'Seyirci': 'تماشاگران',
+  '2027 Filmleri': 'فیلم‌های 2027',
+  '2027 Dizileri': 'سریال‌های 2027',
 };

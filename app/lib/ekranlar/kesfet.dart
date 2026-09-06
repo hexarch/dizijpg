@@ -75,6 +75,33 @@ const anaSayfaRaflari = <(String, String, String)>[
         '&vote_count.gte=100',
     'movie',
   ),
+  // --- 2027'de vizyona girecekler (6 Eyl 2026) ---
+  //
+  // OY EŞİĞİ YOK, diğer rafların aksine: henüz gösterime girmemiş yapımın oyu
+  // da yoktur (`vote_count: 0`). `vote_count.gte=100` gibi bir eşik bu iki rafı
+  // BOŞ döndürürdü — TMDB'de 2027 filmlerinin tamamı sıfır oylu.
+  //
+  // SIRALAMA POPÜLERLİK, TARİH DEĞİL: `primary_release_date.asc` 1 Ocak'a
+  // yazılmış, duyurulmamış küçük yapımları başa alıyor; popülerlik "Avengers:
+  // Secret Wars, Shrek 5, Frozen III"ü öne çıkarıyor (ölçüldü, 6 Eyl 2026).
+  //
+  // YIL SABİT: başlıktaki 2027 aynı zamanda kalıcı adresin (`/raf/2027-filmleri`)
+  // kaynağı. Yıl her 1 Ocak'ta otomatik kaysaydı paylaşılmış bağlantılar başka
+  // bir yılı gösterirdi. Yeni yıl geldiğinde raf ELDE güncellenir
+  // (YAPILACAKLAR.md'de not var).
+  (
+    '2027 Filmleri',
+    '/tmdb/discover/movie?sort_by=popularity.desc'
+        '&primary_release_date.gte=2027-01-01'
+        '&primary_release_date.lte=2027-12-31',
+    'movie',
+  ),
+  (
+    '2027 Dizileri',
+    '/tmdb/discover/tv?sort_by=popularity.desc'
+        '&first_air_date.gte=2027-01-01&first_air_date.lte=2027-12-31',
+    'tv',
+  ),
 ];
 
 /// "Sana Özel" rafının başlığı (çeviri anahtarı) ve tam sayfa adresi.
@@ -339,13 +366,17 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
       ];
       final sonuclar = await Future.wait(istekler);
       if (!mounted) return;
-      final onerilen =
-          (sonuclar.last['oneriler'] as List<dynamic>? ?? <dynamic>[]);
+      // Afişsiz kayıtlar SÜZÜLÜR (bkz. `posterliSuz`) ve süzülmüş hâli
+      // önbelleğe yazılır — SWR çiziminde de gri kutu görünmesin.
+      final onerilen = posterliSuz(
+        sonuclar.last['oneriler'] as List<dynamic>? ?? <dynamic>[],
+      );
       final bolumler = <String, List<dynamic>>{
         if (onerilen.isNotEmpty) sanaOzelBaslik: onerilen,
         for (var i = 0; i < anaSayfaRaflari.length; i++)
-          anaSayfaRaflari[i].$1:
-              (sonuclar[i]['results'] as List<dynamic>? ?? <dynamic>[]),
+          anaSayfaRaflari[i].$1: posterliSuz(
+            sonuclar[i]['results'] as List<dynamic>? ?? <dynamic>[],
+          ),
       };
       setState(() => _bolumler = bolumler);
       SharedPreferences.getInstance().then(

@@ -1662,4 +1662,6 @@ const Map<String, String> cevirilerHu = {
   'Yer değiştirmek için iki fotoğrafa dokun': 'Érints meg két fotót a cseréhez',
   'Eleştirmen': 'Kritikusok',
   'Seyirci': 'Közönség',
+  '2027 Filmleri': '2027-es filmek',
+  '2027 Dizileri': '2027-es sorozatok',
 };

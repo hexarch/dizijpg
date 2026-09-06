@@ -1638,4 +1638,6 @@ const Map<String, String> cevirilerGu = {
   'Yer değiştirmek için iki fotoğrafa dokun': 'બદલવા માટે બે ફોટા પર ટૅપ કરો',
   'Eleştirmen': 'વિવેચકો',
   'Seyirci': 'દર્શકો',
+  '2027 Filmleri': '2027ની ફિલ્મો',
+  '2027 Dizileri': '2027ની સિરીઝ',
 };

@@ -86,8 +86,9 @@ void main() {
     tester,
   ) async {
     _darEkran(tester);
-    // el/fil/my/ml en uzun çevirileri üreten diller.
-    for (final dil in ['el', 'fil', 'my', 'ml', 'pl']) {
+    // el/fil/my/ml en uzun çevirileri üreten diller; 'fi' 2027 raflarının
+    // en uzun karşılığını veriyor ("Vuoden 2027 elokuvat").
+    for (final dil in ['el', 'fil', 'my', 'ml', 'pl', 'fi']) {
       await _dilSec(dil);
       for (final anahtar in [
         'Haftanın Dizileri',
@@ -97,6 +98,11 @@ void main() {
         'En Çok İzlenen Filmler',
         'En Çok Kazanan Filmler',
         'Tüm Zamanların En İyileri',
+        // 2027 rafları (6 Eyl 2026): başlığın içinde bir YIL var, yani
+        // çeviriler "Vuoden 2027 elokuvat" / "Mga Pelikula ng 2027" gibi
+        // Türkçesinden uzun olabiliyor.
+        '2027 Filmleri',
+        '2027 Dizileri',
       ]) {
         final cevrilmis = anahtar.c;
         await tester.pumpWidget(

@@ -9347,3 +9347,36 @@ meta açıklama cümle sınırında (…yok), ana sayfa og:image + anahtar kelim
 Açık kalanlar SEO-YAPILACAKLAR.md §19.2'de: Cloudflare cevap botu 403'ü
 (panel), sitemap Cache Rule (panel), Flutter yükü/başlık, düşük kaynaklı dil
 bölüm sayfaları (tasarım kararı).
+
+## 2026-09-06 — Ana Sayfa: "2027'de vizyona girecek filmler ve diziler" rafları (1.139.0+206)
+
+Kullanıcı isteği: "2027 vizyona girecek filmler ve diziler listesi yap ana
+sayfada aşağılara ekle."
+
+- ✅ `kesfet.dart -> anaSayfaRaflari` sonuna İKİ raf: **2027 Filmleri**
+  (`discover/movie`, `primary_release_date` 2027-01-01…2027-12-31) ve
+  **2027 Dizileri** (`discover/tv`, `first_air_date` aynı aralık). İkisi de
+  `sort_by=popularity.desc`, **oy eşiği YOK** — vizyona girmemiş yapımın
+  `vote_count`u 0, eşik rafı boşaltırdı. Kalıcı adresler `/raf/2027-filmleri`
+  ve `/raf/2027-dizileri`.
+- ✅ Başlıklar 45 dile çevrildi (`dil_*.dart`), yıl her çeviride duruyor.
+- ✅ `posterliSuz` (api.dart): AFİŞSİZ TMDB kayıtları artık Keşfet şeritlerine
+  ve "Tümünü gör" kataloğuna girmiyor. Kural yeni değil — `gozat.dart` ve
+  botun keşif sayfası (`seoKesifBloklari`) zaten süzüyordu, Ana Sayfa
+  şeritleri tek istisnaydı. 2027 kataloğunda afişsiz oran yüksek
+  (ölçüm 6 Eyl: 2027 dizilerinin ilk sayfasında 12 kayıttan 5'i afişsiz).
+- ✅ `server.js -> SEO_KESFET_RAFLARI` aynı iki rafla güncellendi (bot ile
+  kullanıcı aynı sayfayı görmeli — SEO 3.1).
+- ✅ Testler: `app/test/raf_2027_test.dart` (sıra, sorgu, slug, 45 dil, afiş
+  süzgeci) + `serit_basligi_test.dart`e yeni başlıklar ve `fi` dili.
+- ✅ SÜZGECİN YAN ETKİSİ (aynı turda, canlıda yakalandı): `/raf/2027-dizileri`
+  20 kaydın 13'ü afişsiz olduğu için ekranda 7 kart kalıyor, ızgara ekranı
+  dolduramayınca KAYDIRMA doğmuyor ve 2. sayfa hiç istenmiyordu (88 sonucun
+  81'i erişilemez). `katalog_liste.dart -> _asgariDolgu = 20`: kaydırma
+  çubuğu doğana dek sayfalar kendiliğinden çekiliyor.
+- ⬜ **YILLIK BAKIM:** raf başlığındaki yıl SABİT (adres ondan üretiliyor).
+  2027 geçince rafı elle "2028 Filmleri/Dizileri"ne çevir — yeni başlık = yeni
+  çeviri anahtarı = 45 dil + yeni slug.
+- 🩹 Yan düzeltme: `Api.surum` 1.137.0+204'te kalmıştı (45115fc pubspec'i
+  1.138.0+205 yapmış, sabiti unutmuş) — `surum_esleme_test` kırmızıydı,
+  bu turda 1.139.0+206 ile eşitlendi.

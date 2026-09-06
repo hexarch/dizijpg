@@ -1651,4 +1651,6 @@ const Map<String, String> cevirilerUr = {
       'جگہ بدلنے کے لیے دو تصاویر پر ٹیپ کریں',
   'Eleştirmen': 'نقاد',
   'Seyirci': 'ناظرین',
+  '2027 Filmleri': '2027 کی فلمیں',
+  '2027 Dizileri': '2027 کی سیریز',
 };

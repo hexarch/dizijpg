@@ -6585,6 +6585,8 @@ const SEO_KESFET_RAFLARI = [
   { baslik: 'Tüm Zamanların En İyileri', tur: 'movie', yol: '/discover/movie?sort_by=vote_count.desc&vote_average.gte=8' },
   { baslik: 'Yeni Diziler', tur: 'tv', yol: '/discover/tv?sort_by=first_air_date.desc&vote_count.gte=20' },
   { baslik: 'Yeni Filmler', tur: 'movie', yol: '/discover/movie?sort_by=primary_release_date.desc&vote_count.gte=100' },
+  { baslik: '2027 Filmleri', tur: 'movie', yol: '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=2027-01-01&primary_release_date.lte=2027-12-31' },
+  { baslik: '2027 Dizileri', tur: 'tv', yol: '/discover/tv?sort_by=popularity.desc&first_air_date.gte=2027-01-01&first_air_date.lte=2027-12-31' },
 ];
 
 // /gozat = katalog. Flutter ekranı (gozat.dart) tür çipleriyle süzülen bir

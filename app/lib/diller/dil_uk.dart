@@ -1658,4 +1658,6 @@ const Map<String, String> cevirilerUk = {
       'Торкніться двох фото, щоб поміняти їх',
   'Eleştirmen': 'Критики',
   'Seyirci': 'Глядачі',
+  '2027 Filmleri': 'Фільми 2027',
+  '2027 Dizileri': 'Серіали 2027',
 };

@@ -1653,4 +1653,6 @@ const Map<String, String> cevirilerNb = {
       'Trykk på to bilder for å bytte plass',
   'Eleştirmen': 'Kritikere',
   'Seyirci': 'Publikum',
+  '2027 Filmleri': 'Filmer 2027',
+  '2027 Dizileri': 'Serier 2027',
 };

@@ -1567,4 +1567,6 @@ const Map<String, String> cevirilerZh = {
   'Yer değiştirmek için iki fotoğrafa dokun': '点按两张照片以交换位置',
   'Eleştirmen': '影评人',
   'Seyirci': '观众',
+  '2027 Filmleri': '2027 年电影',
+  '2027 Dizileri': '2027 年剧集',
 };

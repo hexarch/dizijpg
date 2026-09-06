@@ -1665,4 +1665,6 @@ const Map<String, String> cevirilerSv = {
       'Tryck på två foton för att byta plats',
   'Eleştirmen': 'Kritiker',
   'Seyirci': 'Publik',
+  '2027 Filmleri': 'Filmer 2027',
+  '2027 Dizileri': 'Serier 2027',
 };

@@ -50,6 +50,14 @@ class KatalogListeEkrani extends StatefulWidget {
 }
 
 class _KatalogListeEkraniState extends State<KatalogListeEkrani> {
+  /// Kaydırma çubuğu doğana kadar toplanacak asgari kart sayısı.
+  ///
+  /// TMDB sayfası 20 kayıt döner; afişsizler süzülünce bu sayı 7'ye kadar
+  /// düşebiliyor (ölçüm: `/raf/2027-dizileri`, 6 Eyl 2026). En geniş masaüstü
+  /// ızgarasında 6 sütun × 3 satır = 18 kart ekranı taşırır, yani 20 kart
+  /// kaydırmayı garanti eder ve bundan sonrasını kaydırma tetikler.
+  static const _asgariDolgu = 20;
+
   final List<dynamic> _icerikler = [];
   final _kaydirma = ScrollController();
   int _sayfa = 0;
@@ -91,11 +99,21 @@ class _KatalogListeEkraniState extends State<KatalogListeEkrani> {
       if (!mounted) return;
       setState(() {
         _sayfa++;
-        _icerikler.addAll(gelen);
+        // Afişsiz kayıtlar EKRANDAN elenir (bkz. `posterliSuz`) ama SON
+        // KARARI ham sayfa verir: baştan sona afişsiz bir sayfa "liste bitti"
+        // demek değildir, sonraki sayfa dolu gelebilir.
+        _icerikler.addAll(posterliSuz(gelen));
         // TMDB 500 sayfayı aşmaz; boş sayfa da sonu gösterir.
         if (gelen.isEmpty || _sayfa >= 25) _bitti = true;
         _yukluyor = false;
       });
+      // AFİŞ SÜZGECİNİN YAN ETKİSİ — sayfalama KAYDIRMAYA bağlı, ama ızgara
+      // ekranı doldurmazsa kaydırılacak bir şey de yoktur ve sonraki sayfa
+      // HİÇ istenmez. 2027 dizileri bunu canlıda gösterdi: 20 kaydın 13'ü
+      // afişsiz, ekranda 7 kart kaldı, 88 sonucun kalan 81'ine ulaşmanın
+      // yolu kapandı. Ekranı dolduracak kadar kart toplanana dek kendimiz
+      // devam ederiz.
+      if (_icerikler.length < _asgariDolgu && !_bitti) return _sonrakiSayfa();
     } catch (e) {
       if (!mounted) return;
       setState(() {

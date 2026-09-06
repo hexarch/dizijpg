@@ -1651,4 +1651,6 @@ const Map<String, String> cevirilerTe = {
       'మార్చడానికి రెండు ఫోటోలను నొక్కండి',
   'Eleştirmen': 'విమర్శకులు',
   'Seyirci': 'ప్రేక్షకులు',
+  '2027 Filmleri': '2027 సినిమాలు',
+  '2027 Dizileri': '2027 సిరీస్‌లు',
 };

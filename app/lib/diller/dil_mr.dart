@@ -1644,4 +1644,6 @@ const Map<String, String> cevirilerMr = {
   'Yer değiştirmek için iki fotoğrafa dokun': 'बदलण्यासाठी दोन फोटोंवर टॅप करा',
   'Eleştirmen': 'समीक्षक',
   'Seyirci': 'प्रेक्षक',
+  '2027 Filmleri': '2027 चे चित्रपट',
+  '2027 Dizileri': '2027 च्या मालिका',
 };

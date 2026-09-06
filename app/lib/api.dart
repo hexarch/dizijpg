@@ -21,6 +21,21 @@ const String apiTaban = 'https://dizijpg.com/api';
 String? posterUrl(String? yol, {String boyut = 'w342'}) =>
     yol == null ? null : 'https://image.tmdb.org/t/p/$boyut$yol';
 
+/// AFİŞİ OLMAYAN TMDB kayıtlarını eler (raf ve katalog listeleri için).
+///
+/// NEDEN: `PosterKarti` afiş yoksa gri bir film ikonu basar. Tek tük olduğunda
+/// zararsız, ama yan yana üç gri kutu kullanıcıya "veri gelmedi" diye okunur.
+/// 2027 rafları bunu görünür kıldı: TMDB'de yeni duyurulan yapımların büyük
+/// kısmı henüz afişsiz (6 Eyl 2026 ölçümü: 2027 dizilerinin ilk sayfasında
+/// 12 kaydın 5'i afişsiz).
+///
+/// YENİ BİR KURAL DEĞİL, EKSİK KALMIŞ BİR KURAL: aynı süzgeci tür ızgarası
+/// (`gozat.dart`) ve botun gördüğü keşif sayfası (`server.js` →
+/// `seoKesifBloklari`) ZATEN uyguluyordu; yalnız Ana Sayfa şeritleri
+/// dışarıda kalmıştı.
+List<dynamic> posterliSuz(List<dynamic> icerikler) =>
+    icerikler.where((r) => r is Map && r['poster_path'] != null).toList();
+
 /// Poster kartları için TMDB boyutunu KART GENİŞLİĞİ ve PİKSEL YOĞUNLUĞUNA
 /// göre seçer.
 ///
@@ -640,7 +655,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.137.0+204';
+  static const surum = '1.139.0+206';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

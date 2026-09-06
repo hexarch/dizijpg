@@ -1594,4 +1594,6 @@ const Map<String, String> cevirilerAm = {
   'Yer değiştirmek için iki fotoğrafa dokun': 'ለመቀያየር ሁለት ፎቶዎችን ይንኩ',
   'Eleştirmen': 'ተቺዎች',
   'Seyirci': 'ተመልካቾች',
+  '2027 Filmleri': 'የ2027 ፊልሞች',
+  '2027 Dizileri': 'የ2027 ተከታታዮች',
 };

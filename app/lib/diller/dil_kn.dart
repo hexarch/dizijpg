@@ -1652,4 +1652,6 @@ const Map<String, String> cevirilerKn = {
       'ಬದಲಿಸಲು ಎರಡು ಫೋಟೋಗಳನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ',
   'Eleştirmen': 'ವಿಮರ್ಶಕರು',
   'Seyirci': 'ಪ್ರೇಕ್ಷಕರು',
+  '2027 Filmleri': '2027ರ ಸಿನಿಮಾಗಳು',
+  '2027 Dizileri': '2027ರ ಸರಣಿಗಳು',
 };

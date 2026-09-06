@@ -1638,4 +1638,6 @@ const Map<String, String> cevirilerAr = {
   'Yer değiştirmek için iki fotoğrafa dokun': 'المس صورتين لتبديلهما',
   'Eleştirmen': 'النقّاد',
   'Seyirci': 'الجمهور',
+  '2027 Filmleri': 'أفلام 2027',
+  '2027 Dizileri': 'مسلسلات 2027',
 };

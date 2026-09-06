@@ -1569,4 +1569,6 @@ const Map<String, String> cevirilerJa = {
   'Yer değiştirmek için iki fotoğrafa dokun': '2枚の写真をタップして入れ替え',
   'Eleştirmen': '批評家',
   'Seyirci': '観客',
+  '2027 Filmleri': '2027年の映画',
+  '2027 Dizileri': '2027年のドラマ',
 };

@@ -41,7 +41,10 @@ Map<String, dynamic> _yapim(int id) => {
   'id': id,
   'name': 'Dizi $id',
   'title': 'Dizi $id',
-  'poster_path': null,
+  // AFİŞ ZORUNLU: Keşfet/katalog listeleri 6 Eyl 2026'dan beri afişsiz
+  // kayıtları eliyor (`posterliSuz`); `null` bırakılan sahte yapım
+  // ekrana hiç çizilmez ve test asıl ölçtüğü şeyi ölçemez.
+  'poster_path': '/p.jpg',
   'vote_average': 8.0,
   'vote_count': 1000 - id,
   'media_type': 'tv',

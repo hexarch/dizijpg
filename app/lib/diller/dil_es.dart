@@ -1693,4 +1693,6 @@ const Map<String, String> cevirilerEs = {
       'Toca dos fotos para intercambiarlas',
   'Eleştirmen': 'Crítica',
   'Seyirci': 'Público',
+  '2027 Filmleri': 'Películas de 2027',
+  '2027 Dizileri': 'Series de 2027',
 };

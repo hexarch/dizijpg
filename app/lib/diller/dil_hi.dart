@@ -1647,4 +1647,6 @@ const Map<String, String> cevirilerHi = {
       'बदलने के लिए दो फ़ोटो पर टैप करें',
   'Eleştirmen': 'समीक्षक',
   'Seyirci': 'दर्शक',
+  '2027 Filmleri': '2027 की फ़िल्में',
+  '2027 Dizileri': '2027 की सीरीज़',
 };
