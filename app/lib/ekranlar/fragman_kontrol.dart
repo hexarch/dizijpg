@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../ceviri.dart';
-import '../gorsel_basliklari.dart';
 import '../tema.dart';
+import 'youtube_kapak.dart';
 
 /// Fragman karesinin üstündeki bizim krom (YouTube'un hiçbir parçası görünmez).
 ///
@@ -482,24 +481,9 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
         fit: StackFit.expand,
         children: [
           if (kapak != null)
-            // Kapak YouTube'dan gelir (i.ytimg.com); `gorselBasliklari`
-            // TMDB dışı adreste null döner, başlık eklenmez.
-            CachedNetworkImage(
-              imageUrl: kapak,
-              httpHeaders: gorselBasliklari(kapak),
-              fit: BoxFit.cover,
-              fadeInDuration: Duration.zero,
-              errorWidget: (_, _, _) => yedek == null
-                  ? const ColoredBox(color: Colors.black)
-                  : CachedNetworkImage(
-                      imageUrl: yedek,
-                      httpHeaders: gorselBasliklari(yedek),
-                      fit: BoxFit.cover,
-                      fadeInDuration: Duration.zero,
-                      errorWidget: (_, _, _) =>
-                          const ColoredBox(color: Colors.black),
-                    ),
-            )
+            // Kapak YouTube'dan gelir (i.ytimg.com); istek başlıklarını ve
+            // maxres'in "kapak yok" yer tutucusunu YoutubeKapak ele alır.
+            YoutubeKapak(url: kapak, yedekUrl: yedek, fit: BoxFit.cover)
           else
             const ColoredBox(color: Colors.black),
           const ColoredBox(color: Color(0x80000000)),

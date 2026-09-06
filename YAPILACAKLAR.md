@@ -1,6 +1,40 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-06 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-06 — 🖼️ Fragman kapağı: maxres "video yok" yer tutucusu (1.141.0+208) 🚀
+
+**Tetik (kullanıcı):** *"the wire 2 sezon 10 bölüm trailer kırık"* → *"video var ama kapak
+fotoğrafı kırık o zaman"*.
+
+**Belirti:** `/dizi/1438/sezon/2/bolum/10` kahramanında fragman (`Hv3jf9DHFzk`) sorunsuz
+oynuyordu ama kapak yerinde 1280 piksele gerilmiş bulanık gri YouTube ikonu vardı.
+
+**Kök sebep:** `i.ytimg.com` olmayan bir `maxresdefault.jpg` için 404 döner AMA gövdesi
+GEÇERLİ bir JPEG'dir (120×90 gri "video yok" karesi, 1.097 bayt). Resim başarıyla çözüldüğü
+için `CachedNetworkImage`in `errorWidget`i HİÇ ateşlenmiyor, `hqdefault` yedeği hiç
+istenmiyordu. Tarayıcı ağ kaydı bunu doğruladı: tek istek `maxresdefault.jpg` -> 404, başka
+`ytimg` isteği yok.
+
+**Çözüm:** `lib/ekranlar/youtube_kapak.dart` — `YoutubeKapak`. Yedeğe düşme kararını DURUM
+KODU değil ÇÖZÜLEN GENİŞLİK verir: kare 120 piksel veya daha darsa yer tutucudur, `hqdefault`
+istenir; o da olmazsa siyah. Kapağı çizen iki yer (`fragman.dart` kahraman kapağı ve
+`fragman_kontrol.dart` yükleme ekranı) artık aynı bileşeni kullanıyor — ikisinde de iç içe
+`errorWidget` zinciri silindi.
+
+**Kanıt:** `test/youtube_kapak_test.dart` — 120 piksellik kare gelince `hqdefault`a düşüyor,
+1280 piksellik gerçek kapak gelince düşmüyor. (Görüntü kod çözme widget testinde askıda
+kaldığı için kareler `runAsync` içinde önceden üretiliyor; önbellek testler arasında
+boşaltılıyor, yoksa ikinci test birincinin karesini görür.)
+
+**NOT — fragman sağlık botu suçsuz:** `fragman_tarama.js` saatlik koşuyor ve sağlıklı
+(6 Eyl 14:20 turunda 953 kırık / 20.236 iyi). Bot VİDEONUN oynanabilirliğine bakar, kapak
+karesine değil — bu hata onun kapsamı dışındaydı.
+
+**AÇIK (bot kapsam boşluğu):** Bölüm sayfası, bölümde video yoksa O SEZONUN fragmanına
+düşüyor (`bolum.dart`), ama tarama yalnız 1. sezon + son sezonu ve yalnız dizi düzeyinde
+resmi fragman YOKKEN tarıyor. The Wire'ın 2. sezon fragmanı bu yüzden hiç taranmıyor.
+Bütün sezonları taramak ~55.000 fazladan istek demek; ara çözüm kararlaştırılmadı.
+
 ## 2026-09-06 — 🔽 Akış/Keşfet üst barı aşağı kaydırınca gizleniyor (1.138.0+205) 🚀
 
 **Tetik (kullanıcı):** *"uygulamada akışta aşağı kaydırınca yukarıdaki akış keşfet logo

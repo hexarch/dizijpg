@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -8,6 +7,7 @@ import '../tema.dart';
 import '../tmdb_fragman.dart';
 import 'fragman_gom.dart';
 import 'fragman_kontrol.dart';
+import 'youtube_kapak.dart';
 
 /// Dizi/film/bölüm kahramanındaki resmi fragman.
 ///
@@ -126,16 +126,13 @@ class _FragmanOynaticiState extends State<FragmanOynatici>
     return Stack(
       fit: StackFit.expand,
       children: [
-        CachedNetworkImage(
+        YoutubeKapak(
           // Adres SATIR İÇİNDE (WebP denetimi 500 karakter tarar; kapak
-          // i.ytimg.com'dan gelir). Önce maxres; 404 → hqdefault.
-          imageUrl: youtubeKapakUrl(widget.youtubeId, yuksek: true),
+          // i.ytimg.com'dan gelir). Önce maxres; yoksa hqdefault — kararı
+          // durum kodu DEĞİL çözülen boyut verir (bkz. youtube_kapak.dart).
+          url: youtubeKapakUrl(widget.youtubeId, yuksek: true),
+          yedekUrl: youtubeKapakUrl(widget.youtubeId),
           fit: BoxFit.cover,
-          errorWidget: (_, _, _) => CachedNetworkImage(
-            imageUrl: youtubeKapakUrl(widget.youtubeId),
-            fit: BoxFit.cover,
-            errorWidget: (_, _, _) => const ColoredBox(color: Colors.black),
-          ),
         ),
         const ColoredBox(color: Color(0x4D000000)),
         Positioned(
