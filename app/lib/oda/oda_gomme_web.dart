@@ -114,13 +114,33 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
     super.dispose();
   }
 
-  /// El sıkışma + olay aboneliği. Oynatıcı hazır olmadan gönderilen mesaj
-  /// KAYBOLUR, bu yüzden 400 ms'de bir 20 kez tekrarlanır (fragman
-  /// oynatıcısında ölçülmüş kalıp).
+  /// El sıkışma + olay aboneliği.
+  ///
+  /// ===========================================================================
+  /// NEDEN "HAZIR OLANA KADAR" ve NEDEN SABİT PENCERE DEĞİL
+  /// ===========================================================================
+  /// İlk yazımda bu döngü `initState`ten itibaren 400 ms × 20 = 8 saniye
+  /// koşuyordu. 7 Eyl 2026'da canlıda ölçülen sonuç: **odaya ilk girişte
+  /// oynatıcı hiç açılmıyordu.** Sebep, platform görünümünün (iframe)
+  /// uygulama açılış yükü altında 8 saniyeden GEÇ kurulmasıydı — sayaç
+  /// bitene kadar `_iframe` hâlâ null olduğu için `listening` mesajı hiç
+  /// gönderilmiyor, YouTube da hiç cevap vermiyordu. Tam ekrana girip çıkmak
+  /// yüzeyi yeniden kurduğu için orada çalışıyor görünüyordu; asıl akış
+  /// bozuktu.
+  ///
+  /// İki değişiklik: (1) yüzey KURULMADAN sayaç harcanmıyor, (2) döngü
+  /// oynatıcı "hazırım" diyene kadar sürüyor (tavan 60 sn). Bedeli 400 ms'de
+  /// bir postMessage — hazır olunca ilk turda duruyor.
   void _elSikismayiBaslat() {
     _elSikisma?.cancel();
-    var kalan = 20;
+    var kalan = 150;
     _elSikisma = Timer.periodic(const Duration(milliseconds: 400), (t) {
+      if (!mounted || widget.denetci.value.isInitialized) {
+        t.cancel();
+        return;
+      }
+      // Yüzey henüz kurulmadıysa TUR HARCANMAZ.
+      if (_iframe == null) return;
       if (_youtube) {
         _posta({'event': 'listening', 'id': _kimlik, 'channel': 'widget'});
         _ytKomut('addEventListener', ['onStateChange']);

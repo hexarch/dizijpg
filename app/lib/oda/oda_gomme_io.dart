@@ -118,15 +118,23 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
     );
   }
 
-  /// Sayfa bitince JS'i enjekte eder ve BİR SÜRE TEKRARLAR.
+  /// Sayfa bitince JS'i enjekte eder ve OYNATICI HAZIR DİYENE KADAR tekrarlar.
   ///
-  /// Tek sefer yetmiyor: YouTube gömmesi kendi oynatıcısını `onPageFinished`
-  /// sonrasında kuruyor, o ana kadar `<video>` DOM'da yok. 400 ms'de bir 20
-  /// tur (8 sn) deneniyor; ilk başarılı turda `hazir` bildirimi geliyor.
+  /// Tek sefer yetmiyor: gömme sayfası kendi oynatıcısını `onPageFinished`
+  /// sonrasında kuruyor, o ana kadar `<video>` DOM'da yok.
+  ///
+  /// SABİT PENCERE DEĞİL (7 Eyl 2026): web tarafında 8 saniyelik sabit pencere,
+  /// yavaş açılışta el sıkışmasını tamamen kaçırıp oynatıcıyı hiç açmamıştı.
+  /// Aynı hatayı burada da yapmamak için döngü "hazır" bildirimine kadar
+  /// sürüyor (tavan 60 sn); hazır olunca ilk turda duruyor.
   void _enjekteyiBaslat() {
     _kur?.cancel();
-    var kalan = 20;
+    var kalan = 150;
     _kur = Timer.periodic(const Duration(milliseconds: 400), (t) {
+      if (!mounted || widget.denetci.value.isInitialized) {
+        t.cancel();
+        return;
+      }
       _js(_enjekte);
       kalan--;
       if (kalan <= 0) t.cancel();

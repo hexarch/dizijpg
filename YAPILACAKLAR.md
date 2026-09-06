@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.0+210) 🚀
+## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.2+212) 🚀
 
 **Tetik (kullanıcı):** *"bu birlikte izlemeye video upload yerine kullanıcıya tarayıcı açabilir
 miyiz? … tabi upload duracak … youtube gibi tüm platformların url'ini destekleyecek şekilde
@@ -65,6 +65,21 @@ takım **2.784 test yeşil**. Canlıda uçtan uca: YouTube/Vimeo kabul, ok.ru 40
 * Modalda "çözüm değişmediyse setState atla" kestirmesi, kutu boşken de geçersiz adres
   yazılıyken de çözümü null bıraktığı için "Bu adres desteklenmiyor" uyarısını HİÇ
   göstermiyordu — widget testi yakaladı.
+* **Kaynak damgasında kaçırılan dolar işareti** (1.143.1'de düzeltildi): damga ekranda elle
+  kuruluyordu ve her oda için AYNI sabit metni üretiyordu. Sessiz sonuç: sahip bağlantıyı
+  değiştirdiğinde damga değişmiyor, oynatıcı yeniden kurulmuyor, oda ESKİ videoyu göstermeye
+  devam ediyordu. Damga artık `Oda.kaynakDamgasi` — modelde, testle kilitli.
+* **El sıkışması SABİT PENCEREYLE koşmamalı** (1.143.2'de düzeltildi): gömme yüzeyi
+  `initState`ten itibaren 400 ms × 20 = 8 saniye boyunca `listening` yolluyordu. Uygulama
+  açılış yükü altında platform görünümü (iframe) 8 saniyeden GEÇ kurulunca sayaç bitmiş
+  oluyor, `listening` HİÇ gönderilmiyor ve **odaya ilk girişte oynatıcı hiç açılmıyordu**.
+  Tam ekrana girip çıkmak yüzeyi yeniden kurduğu için orada çalışıyor görünüyordu — asıl akış
+  bozuktu. Artık yüzey kurulmadan tur harcanmıyor ve döngü "hazırım" bildirimine kadar
+  sürüyor (tavan 60 sn). Aynı disiplin mobil enjeksiyona da uygulandı.
+* **Dağıtım sırası:** `web_hashla` sonrası canlı `index.html` bir süre ESKİ hash'i servis
+  etmeye devam edebiliyor. Eski paketi silmeden ÖNCE `curl https://dizijpg.com/ | grep main.`
+  ile yeni hash'i doğrula; gerekirse `docker-compose restart api`. Bu turda eski paket erken
+  silindi ve site yalnız Cloudflare kenar önbelleği sayesinde kesintiye girmedi.
 
 ## 2026-09-06 — 📐 Masaüstünde yorum kartının düğmeleri hizaya girdi (1.142.0+209) 🚀
 
