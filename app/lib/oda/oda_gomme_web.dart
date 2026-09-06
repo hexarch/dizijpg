@@ -78,6 +78,17 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
   /// Artan sayaç bir sayfa oturumu içinde çakışamaz.
   static int _sonGorunum = 0;
 
+  /// iframe'in üstten ve alttan KIRPILAN payı (px).
+  ///
+  /// Çapraz kökenli iframe'e CSS işlemez: `controls=0` verilse bile YouTube'un
+  /// başlık şeridi (üst), duraklama kutusu, logo ve paylaş düğmesi (alt) bizim
+  /// kromumuzun üstünden sızıyor — 7 Eyl 2026'da canlıda görüldü. Kırpma,
+  /// fragman oynatıcısında ölçülmüş çözümün aynısı: iframe kabından
+  /// [_tasma] px daha yüksek kurulur ve kap `overflow:hidden` ile keser.
+  /// Video kısalmaz; 16:9 genişliğe göre çizilip dikeyde ortalandığı için
+  /// YouTube'un şeritleri siyah bantlara düşer ve kesilir.
+  static const _tasma = 140;
+
   bool get _youtube => widget.baglanti.saglayici == OdaSaglayici.youtube;
 
   @override
@@ -104,8 +115,9 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
         ..style.border = 'none'
         ..style.position = 'absolute'
         ..style.left = '0'
+        ..style.top = '-${_tasma}px'
         ..style.width = '100%'
-        ..style.height = '100%'
+        ..style.height = 'calc(100% + ${_tasma * 2}px)'
         ..allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'
         ..allowFullscreen = true;
       iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
@@ -313,6 +325,15 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
     }
   }
 
+  /// DOKUNUŞLAR FLUTTER'DA KALIR.
+  ///
+  /// iframe dokunuşu yutuyor ve altındaki YouTube kontrolleri tıklanabiliyor:
+  /// izleyici oradan duraklatırsa oda senkronu bozulur (düzeltici bir saniye
+  /// sonra geri alır, yani kullanıcı "video zıplıyor" görür). [IgnorePointer]
+  /// iframe'i dokunmaya kapatır; oynatmayı yalnız bizim kontrollerimiz
+  /// (ve sunucudaki oda durumu) sürer. Kalıp `ekranlar/fragman_gom_web.dart`
+  /// ile aynı.
   @override
-  Widget build(BuildContext context) => HtmlElementView(viewType: _gorunumTipi);
+  Widget build(BuildContext context) =>
+      IgnorePointer(child: HtmlElementView(viewType: _gorunumTipi));
 }

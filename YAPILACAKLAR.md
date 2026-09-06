@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.4+214) 🚀
+## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.5+215) 🚀
 
 **Tetik (kullanıcı):** *"bu birlikte izlemeye video upload yerine kullanıcıya tarayıcı açabilir
 miyiz? … tabi upload duracak … youtube gibi tüm platformların url'ini destekleyecek şekilde
@@ -91,6 +91,11 @@ takım **2.784 test yeşil**. Canlıda uçtan uca: YouTube/Vimeo kabul, ok.ru 40
   SEFERİNDE düzeltiyor. Kök sebep dışarıdan kanıtlanamadığı için kanıtlanmış kurtarma yolu koda
   alındı: 5 saniyede "hazırım" gelmezse `ValueKey` değişir, yüzey yeniden kurulur (en çok 3
   deneme — sonrası ağ/engelleme demektir, sonsuz yeniden kurulum ekranı titretirdi).
+* **YouTube kromu sızıyordu ve TIKLANABİLİYORDU** (1.143.5): `controls=0` verilse de başlık
+  şeridi, duraklama kutusu, logo ve paylaş düğmesi görünüyor; izleyici oradan duraklattığında
+  oda senkronu bozulup düzeltici bir saniye sonra geri alıyor, yani video "zıplıyor". Fragman
+  oynatıcısının ölçülmüş çözümü buraya da alındı: iframe kabından ±140 px taşırılıp
+  `overflow:hidden` ile kırpılıyor ve `IgnorePointer` ile dokunuşlar Flutter'da kalıyor.
 * **Dağıtım sırası:** `web_hashla` sonrası canlı `index.html` bir süre ESKİ hash'i servis
   etmeye devam edebiliyor. Eski paketi silmeden ÖNCE `curl https://dizijpg.com/ | grep main.`
   ile yeni hash'i doğrula; gerekirse `docker-compose restart api`. Bu turda eski paket erken
