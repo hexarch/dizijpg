@@ -2119,10 +2119,15 @@ class _DetayEkraniState extends State<DetayEkrani>
     );
   }
 
-  /// TMDB yazısının sağındaki rozetler (dizi.jpg dağılımı + izleyen sayısı
-  /// + dış puanlar: IMDb / domates / patlamış mısır / Metacritic — yalnız
-  /// simge + sayı, `dis_puanlar.dart`).
+  /// TMDB yazısının sağındaki rozetler: dış puanlar (IMDb / domates /
+  /// patlamış mısır / Metacritic — yalnız simge + sayı, `dis_puanlar.dart`),
+  /// sonra dizi.jpg dağılımı, en sonda izleyen sayısı.
   List<Widget> _puanSatiriYani() => [
+    // SIRA (kullanıcı, 6 Eyl): TMDB · IMDb · domates · patlamış mısır ·
+    // Metacritic · dizi.jpg · göz. Dış puanlar ÖNCE, dizi.jpg ve izleyen
+    // sayısı EN SONDA — mobilde tek satıra sığmayınca dizi.jpg ile göz ikinci
+    // satırda YAN YANA kalsın diye (araya dış puan girmesin).
+    for (final r in disPuanRozetleri(_dis)) ...[const SizedBox(width: 10), r],
     if (_incelemeler?['ortalama'] != null) ...[
       const SizedBox(width: 12),
       InkWell(
@@ -2196,9 +2201,6 @@ class _DetayEkraniState extends State<DetayEkrani>
         ),
       ),
     ],
-    // IMDb · domates · patlamış mısır · Metacritic — TMDB/dizi.jpg/izleyen
-    // rozetlerinin DEVAMINDA, aynı satırda (sığmazsa Wrap sarar).
-    for (final r in disPuanRozetleri(_dis)) ...[const SizedBox(width: 10), r],
   ];
 }
 

@@ -15,7 +15,8 @@
 //  5) Taze (≥60 / fresh) domates kırmızı, çürük yeşil; seyirci patlamış mısır
 //     simgesi (ikisi de kendi çizimimiz, logo değil).
 //  6) İçerik sayfası: `/dis-puan` yanıtı gelince rozetler TMDB puanıyla AYNI
-//     satırda, ondan sonra; uç `{dis: null}` dönerse rozet yok.
+//     satırda, ondan sonra; dizi.jpg ve izleyen sayısı (göz) EN SONDA;
+//     `{dis: null}` → rozet yok.
 //  7) Dokunma hedefi 44 dp (görünen rozet küçük olsa da).
 import 'dart:convert';
 
@@ -208,6 +209,15 @@ void main() {
         } else if (yol.startsWith('/dis-puan/')) {
           expect(yol, '/dis-puan/movie/278');
           govde = jsonEncode({'dis': dis});
+        } else if (yol.startsWith('/incelemeler/')) {
+          govde = jsonEncode({
+            'incelemeler': const <dynamic>[],
+            'ortalama': 8.6,
+            'adet': 12,
+            'dagilim': const <dynamic>[],
+          });
+        } else if (yol.startsWith('/izleyenler/')) {
+          govde = jsonEncode({'sayi': 28, 'takip_sayi': 0});
         }
         return http.Response(
           govde,
@@ -254,6 +264,24 @@ void main() {
       final imdb = tester.getCenter(find.byKey(const Key('dis-imdb')));
       expect((imdb.dy - tmdb.dy).abs(), lessThan(4), reason: 'aynı satır');
       expect(imdb.dx, greaterThan(tmdb.dx), reason: 'TMDB\'den sonra');
+      // SIRA (kullanıcı, 6 Eyl): … Metacritic · dizi.jpg · göz — dizi.jpg ve
+      // izleyen sayısı EN SONDA ki mobilde ikinci satırda yan yana kalsınlar.
+      // Wrap'te okuma sırası: önce satır (y), sonra x.
+      bool sonra(Offset a, Offset b) =>
+          a.dy > b.dy + 4 || (a.dy - b.dy).abs() <= 4 && a.dx > b.dx;
+      final meta = tester.getCenter(find.byKey(const Key('dis-metacritic')));
+      final dizijpg = tester.getCenter(find.textContaining('dizi.jpg'));
+      final goz = tester.getCenter(find.byIcon(Icons.visibility_outlined));
+      expect(
+        sonra(dizijpg, meta),
+        isTrue,
+        reason: 'dizi.jpg $dizijpg, meta $meta',
+      );
+      expect(
+        sonra(goz, dizijpg),
+        isTrue,
+        reason: 'göz $goz, dizi.jpg $dizijpg',
+      );
     });
 
     testWidgets('dis:null → rozet yok, sayfa açık', (tester) async {

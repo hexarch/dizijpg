@@ -46,6 +46,12 @@ dizi filmlere öncelik verelim." Domates = Tomatometer (eleştirmen), patlamış
   "★ 8.2 TMDB · 4.5 dizi.jpg · 👁 28 · IMDb 8,1 · 🍅 %92 · 🍿 %66 · [77]" TEK Wrap'te, sığmazsa sarar.
   Eleştirmen/Seyirci metni yalnız erişilebilirlik etiketinde. Emülatörde Silo sayfasıyla doğrulandı.
   Web: `main.cf415d1df216.dart.js` + `main.dart.js_1.32943e1a4689.part.js` (öncekiler silindi).
+- ✅ **Kullanıcı: "izleme en sonda olmalı … dizi.jpg de en sonda; mobilde ikisi tek satıra sığmadığı
+  için dizi.jpg ve izleme 2. sırada yan yana durmalılar"** → `_puanSatiriYani()` sırası: dış puanlar ·
+  dizi.jpg · göz. Emülatörde Silo: 1. satır "★ 8.2 TMDB · IMDb 8,1 · 🍅 %92 · 🍿 %66 · [77]", 2. satır
+  "4.5 dizi.jpg · 👁 28". Test sırayı kilitler (Wrap okuma sırası: y sonra x). Web:
+  `main.340ea7cf3c05.dart.js` (öncekiler silindi). TUZAK: dağıtım komutu 600 sn'de arka plana düşüp
+  bellek yüzünden öldürüldü (scp+brotli tek komutta) — adımları ayrı komutlarda koş.
 - ⬜ Gerçek telefonda dokununca IMDb/RT sayfası açılıyor mu (emülatörde tarayıcı denenmedi).
 - ⬜ 7 Eyl+: `SELECT count(*) FILTER (WHERE bulundu), count(*) FROM dis_puanlar` — gece işi günde
   ~650 yazmalı; MDBList `x-ratelimit-remaining` 0'a düşüyorsa GECE_TAVAN'ı düşür.
