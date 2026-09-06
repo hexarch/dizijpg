@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.5+215) 🚀
+## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.6+216) 🚀
 
 **Tetik (kullanıcı):** *"bu birlikte izlemeye video upload yerine kullanıcıya tarayıcı açabilir
 miyiz? … tabi upload duracak … youtube gibi tüm platformların url'ini destekleyecek şekilde
@@ -96,6 +96,15 @@ takım **2.784 test yeşil**. Canlıda uçtan uca: YouTube/Vimeo kabul, ok.ru 40
   oda senkronu bozulup düzeltici bir saniye sonra geri alıyor, yani video "zıplıyor". Fragman
   oynatıcısının ölçülmüş çözümü buraya da alındı: iframe kabından ±140 px taşırılıp
   `overflow:hidden` ile kırpılıyor ve `IgnorePointer` ile dokunuşlar Flutter'da kalıyor.
+* **Nöbetçinin kendisi hata üretiyordu** (1.143.6): 5 saniyelik nöbet YouTube'un soğuk
+  açılışından kısa; oynatıcı hazır olmadan yüzeyi söküyor, üç denemede üç kez öldürüyor ve pes
+  ediyordu. 12 saniyeye çıkarıldı, deneme 2'ye indi.
+* **Gelen mesajlarda KİMLİK SÜZGECİ kaldırıldı** (1.143.6): YouTube, bir kez el sıkışılmış
+  oynatıcıya yeni `listening` geldiğinde `alreadyInitialized` diyor ve `infoDelivery`
+  mesajlarını İLK el sıkışmasının kimliğiyle yollamaya devam ediyor. Yüzey yeniden kurulunca
+  bizim kimliğimiz artıyor, oynatıcınınki artmıyor → bütün mesajlar süzgeçte eleniyor,
+  "hazırım" hiç gelmiyordu. Odada aynı anda tek gömme yüzeyi olduğu için süzgece gerek yok
+  (fragman oynatıcısında tam ekranda iki oynatıcı yan yana yaşadığı için orada KALMALI).
 * **Dağıtım sırası:** `web_hashla` sonrası canlı `index.html` bir süre ESKİ hash'i servis
   etmeye devam edebiliyor. Eski paketi silmeden ÖNCE `curl https://dizijpg.com/ | grep main.`
   ile yeni hash'i doğrula; gerekirse `docker-compose restart api`. Bu turda eski paket erken

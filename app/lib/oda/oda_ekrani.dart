@@ -879,12 +879,17 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   void _gommeNobetciyiKur() {
     _gommeNobetci?.cancel();
     var deneme = 0;
-    _gommeNobetci = Timer.periodic(const Duration(seconds: 5), (t) {
+    // 12 SANİYE, 5 DEĞİL (7 Eyl 2026): 5 saniyelik nöbet YouTube'un soğuk
+    // açılışından KISA. Oynatıcı hazır olmadan yüzeyi söküyor, üç denemede üç
+    // kez öldürüyor ve sonunda pes ediyordu — yani nöbetçinin kendisi hatayı
+    // ÜRETİYORDU. El sıkışması zaten "hazırım" gelene kadar sürüyor; nöbetçi
+    // yalnız "yüzey hiç doğmadı" hâli için var, o yüzden acele etmemeli.
+    _gommeNobetci = Timer.periodic(const Duration(seconds: 12), (t) {
       if (!mounted || _gomme == null || _oynaticiHazir) {
         t.cancel();
         return;
       }
-      if (++deneme > 3) {
+      if (++deneme > 2) {
         t.cancel();
         return;
       }

@@ -267,9 +267,21 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
   }
 
   void _youtubeMesaji(Map<String, dynamic> g) {
-    // Tam ekranda iki yüzey yan yana yaşayabilir; kimliği bizim olmayanı at.
-    final kimlik = g['id'];
-    if (kimlik is num && kimlik.toInt() != _kimlik) return;
+    // ===========================================================================
+    // KİMLİK SÜZGECİ YOK — VE BU BİLİNÇLİ (7 Eyl 2026, canlıda ölçüldü)
+    // ===========================================================================
+    // Fragman oynatıcısı gelen mesajları `id` ile süzüyor, çünkü orada tam
+    // ekranda İKİ oynatıcı yan yana yaşayabiliyor. Odada öyle bir durum YOK:
+    // normal ve tam ekran düzenleri asla aynı anda ağaçta olmuyor, her an tek
+    // bir gömme yüzeyi var.
+    //
+    // Süzgeç burada ZARARLI: YouTube, bir kez el sıkışılmış oynatıcıya yeni
+    // `listening` geldiğinde `alreadyInitialized` diyor ve `infoDelivery`
+    // mesajlarını İLK el sıkışmasının kimliğiyle yollamaya devam ediyor. Yüzey
+    // yeniden kurulduğunda bizim kimliğimiz artıyor, oynatıcınınki artmıyor;
+    // sonuç: bütün mesajlar süzgeçte eleniyor, "hazırım" hiç gelmiyor ve ekran
+    // sonsuza kadar yükleniyor kalıyor. Canlıda tam bu yaşandı — elle
+    // `listening` yollandığında oynatıcı `alreadyInitialized` cevabı verdi.
     final olay = g['event'] as String?;
     final bilgi = g['info'];
     if (olay == 'onReady') {
