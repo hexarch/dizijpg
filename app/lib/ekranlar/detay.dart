@@ -1434,12 +1434,6 @@ class _DetayEkraniState extends State<DetayEkrani>
                           ..._puanSatiriYani(),
                         ],
                       ),
-                    // Dış puanlar (IMDb / RT / Metacritic) — TMDB satırının
-                    // altında, yalnız sunucu en az bir puan verdiyse.
-                    if (disPuanVar(_dis)) ...[
-                      const SizedBox(height: 6),
-                      DisPuanlar(dis: _dis!),
-                    ],
                     // Sosyal kanıt: takip ettiklerin arasında kim izlemiş
                     if ((_izleyenler?['takip_sayi'] as num? ?? 0) > 0) ...[
                       const SizedBox(height: 12),
@@ -2125,7 +2119,9 @@ class _DetayEkraniState extends State<DetayEkrani>
     );
   }
 
-  /// TMDB yazısının sağındaki rozetler (dizi.jpg dağılımı + izleyen sayısı).
+  /// TMDB yazısının sağındaki rozetler (dizi.jpg dağılımı + izleyen sayısı
+  /// + dış puanlar: IMDb / domates / patlamış mısır / Metacritic — yalnız
+  /// simge + sayı, `dis_puanlar.dart`).
   List<Widget> _puanSatiriYani() => [
     if (_incelemeler?['ortalama'] != null) ...[
       const SizedBox(width: 12),
@@ -2200,6 +2196,9 @@ class _DetayEkraniState extends State<DetayEkrani>
         ),
       ),
     ],
+    // IMDb · domates · patlamış mısır · Metacritic — TMDB/dizi.jpg/izleyen
+    // rozetlerinin DEVAMINDA, aynı satırda (sığmazsa Wrap sarar).
+    for (final r in disPuanRozetleri(_dis)) ...[const SizedBox(width: 10), r],
   ];
 }
 

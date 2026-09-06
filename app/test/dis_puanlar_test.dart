@@ -10,11 +10,12 @@
 //     blok yok, sayfa çökmez.
 //  3) Adresi olan rozet dokununca kaynağı DIŞ tarayıcıda açar
 //     (`disBaglantiAc` ele geçirilir); adresi olmayan (Metacritic) düz metin.
-//  4) Etiketler çevrilir: en'de "Critics"/"Audience"; iki anahtar 45 dilde VAR.
+//  4) Yazı etiketi YOK (kullanıcı: "sadece logoları olsun"); Eleştirmen/Seyirci
+//     yalnız erişilebilirlik etiketinde, çevrili (en: Critics/Audience), 45 dilde VAR.
 //  5) Taze (≥60 / fresh) domates kırmızı, çürük yeşil; seyirci patlamış mısır
 //     simgesi (ikisi de kendi çizimimiz, logo değil).
-//  6) İçerik sayfası: `/dis-puan` yanıtı gelince rozetler TMDB satırının
-//     altında belirir; uç `{dis: null}` dönerse blok yok.
+//  6) İçerik sayfası: `/dis-puan` yanıtı gelince rozetler TMDB puanıyla AYNI
+//     satırda, ondan sonra; uç `{dis: null}` dönerse rozet yok.
 //  7) Dokunma hedefi 44 dp (görünen rozet küçük olsa da).
 import 'dart:convert';
 
@@ -61,6 +62,15 @@ Future<void> _yalniz(
   await tester.pump();
 }
 
+/// Rozetin erişilebilirlik etiketi (Semantics widget'ından okunur).
+String _semantik(WidgetTester tester, Key k) => tester
+    .widgetList<Semantics>(
+      find.descendant(of: find.byKey(k), matching: find.byType(Semantics)),
+    )
+    .map((w) => w.properties.label)
+    .whereType<String>()
+    .first;
+
 String _metin(WidgetTester tester, Key k) => tester
     .widgetList<Text>(
       find.descendant(of: find.byKey(k), matching: find.byType(Text)),
@@ -80,16 +90,25 @@ void main() {
     expect(find.byKey(const Key('dis-rt-seyirci')), findsOneWidget);
     expect(find.byKey(const Key('dis-metacritic')), findsOneWidget);
     expect(_metin(tester, const Key('dis-imdb')), 'IMDb 9,3');
-    expect(_metin(tester, const Key('dis-rt-elestirmen')), '%89 Eleştirmen');
-    expect(_metin(tester, const Key('dis-rt-seyirci')), '%98 Seyirci');
-    expect(_metin(tester, const Key('dis-metacritic')), '82 Metacritic');
+    expect(_metin(tester, const Key('dis-rt-elestirmen')), '%89');
+    expect(_metin(tester, const Key('dis-rt-seyirci')), '%98');
+    expect(_metin(tester, const Key('dis-metacritic')), '82');
+    // Yazı etiketi YOK (kullanıcı kararı); yalnız erişilebilirlik etiketinde
+    expect(find.text('Eleştirmen'), findsNothing);
+    expect(find.text('Seyirci'), findsNothing);
+    expect(find.text('Metacritic'), findsNothing);
+    expect(_semantik(tester, const Key('dis-rt-elestirmen')), 'Eleştirmen %89');
   });
 
-  testWidgets('1/4) İngilizce biçim + çevrilmiş etiket', (tester) async {
+  testWidgets('1/4) İngilizce biçim + çevrilmiş erişilebilirlik etiketi', (
+    tester,
+  ) async {
     await _yalniz(tester, _tam, dil: 'en');
     expect(_metin(tester, const Key('dis-imdb')), 'IMDb 9.3');
-    expect(_metin(tester, const Key('dis-rt-elestirmen')), '89% Critics');
-    expect(_metin(tester, const Key('dis-rt-seyirci')), '98% Audience');
+    expect(_metin(tester, const Key('dis-rt-elestirmen')), '89%');
+    expect(_metin(tester, const Key('dis-rt-seyirci')), '98%');
+    expect(_semantik(tester, const Key('dis-rt-elestirmen')), 'Critics 89%');
+    expect(_semantik(tester, const Key('dis-rt-seyirci')), 'Audience 98%');
   });
 
   test('4) iki anahtar 45 dilde VAR', () {
@@ -224,19 +243,22 @@ void main() {
       }
     }
 
-    testWidgets('yanıt gelince rozetler TMDB satırının altında', (
+    testWidgets('yanıt gelince rozetler TMDB puanıyla AYNI satırda', (
       tester,
     ) async {
       await kur(tester, _tam);
-      expect(find.byKey(const Key('dis-puanlar')), findsOneWidget);
-      final tmdb = tester.getTopLeft(find.textContaining('TMDB'));
-      final dis = tester.getTopLeft(find.byKey(const Key('dis-puanlar')));
-      expect(dis.dy, greaterThan(tmdb.dy));
+      expect(find.byKey(const Key('dis-imdb')), findsOneWidget);
+      // Ayrı alt blok YOK: rozetler TMDB Wrap'inin içinde
+      expect(find.byKey(const Key('dis-puanlar')), findsNothing);
+      final tmdb = tester.getCenter(find.textContaining('TMDB'));
+      final imdb = tester.getCenter(find.byKey(const Key('dis-imdb')));
+      expect((imdb.dy - tmdb.dy).abs(), lessThan(4), reason: 'aynı satır');
+      expect(imdb.dx, greaterThan(tmdb.dx), reason: 'TMDB\'den sonra');
     });
 
-    testWidgets('dis:null → blok yok, sayfa açık', (tester) async {
+    testWidgets('dis:null → rozet yok, sayfa açık', (tester) async {
       await kur(tester, null);
-      expect(find.byKey(const Key('dis-puanlar')), findsNothing);
+      expect(find.byKey(const Key('dis-imdb')), findsNothing);
       expect(find.text('Esaretin Bedeli'), findsWidgets);
     });
   });

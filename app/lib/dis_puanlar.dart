@@ -3,14 +3,17 @@
 // çekip önbellekler (backend/dis_puan.js başlığı: neden MDBList, günlük 1.000
 // istek bütçesi, "önce kullanıcıların izlediği yapımlar" gece işi).
 //
-// GÖRÜNÜM: TMDB satırının ALTINDA bir Wrap; her kaynak bir rozet.
+// GÖRÜNÜM: TMDB satırının DEVAMINDA, aynı Wrap içinde ("★ 8.1 TMDB · 4.3
+// dizi.jpg · IMDb 8,0 · 🍅 %95 · 🍿 %79 · [75]"); YAZI YOK, yalnız simge + sayı
+// (kullanıcı kararı 6 Eyl: "yanlarına yazı yazmana gerek yok, TMDB puanının
+// yanından sıralamaya başla, sadece logoları olsun").
 //  · IMDb: sarı "IMDb" pulu + puan (0-10, bir ondalık, CLDR ondalık ayracı).
 //  · Eleştirmen (Tomatometer): KENDİ ÇİZİMİMİZ domates — kırmızı (taze, ≥60)
-//    / yeşil-gri (çürük) + yüzde + "Eleştirmen".
-//  · Seyirci (Popcornmeter): KENDİ ÇİZİMİMİZ patlamış mısır kovası + yüzde +
-//    "Seyirci".
+//    / yeşil-gri (çürük) + yüzde.
+//  · Seyirci (Popcornmeter): KENDİ ÇİZİMİMİZ patlamış mısır kovası + yüzde.
 //  · Metacritic: kendi renk şemasında (61+ yeşil, 40-60 sarı, <40 kırmızı)
-//    kare + sayı + "Metacritic".
+//    kare, sayı karenin içinde.
+//  "Eleştirmen"/"Seyirci" metinleri yalnız erişilebilirlik etiketinde.
 //  Marka LOGOLARI BİLEREK YOK: IMDb ve Rotten Tomatoes'un logoları tescilli;
 //  domates/patlamış mısır simgeleri bizim genel çizimlerimiz (CustomPainter),
 //  logo kopyası değil. Kaynağa dokunarak gidilir.
@@ -55,6 +58,96 @@ Color metacriticRengi(int n) {
   return const Color(0xFFFF0000);
 }
 
+/// TMDB satırının DEVAMINA eklenecek rozetler (kullanıcı, 6 Eyl: "yanlarına
+/// yazı yazmana gerek yok, TMDB puanının yanından sıralamaya başla, sadece
+/// logoları olsun"). Yalnız simge + sayı; etiket metni yalnız erişilebilirlik
+/// (Semantics) için. Çağıran bunları TMDB satırının Wrap'ine yayar.
+List<Widget> disPuanRozetleri(Map<String, dynamic>? dis) {
+  if (dis == null) return const [];
+  final imdb = dis['imdb'];
+  final rtE = dis['rt_elestirmen'];
+  final rtS = dis['rt_seyirci'];
+  final meta = dis['metacritic'];
+  final imdbUrl = dis['imdb_url'] as String?;
+  final rtUrl = dis['rt_url'] as String?;
+  return [
+    if (imdb is num)
+      _Rozet(
+        key: const Key('dis-imdb'),
+        url: imdbUrl,
+        semantik: 'IMDb ${disImdbMetni(imdb)}',
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+            decoration: BoxDecoration(
+              color: DiziRenkler.sari,
+              borderRadius: BorderRadius.circular(3),
+            ),
+            child: const Text(
+              'IMDb',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w900,
+                fontSize: 10,
+                letterSpacing: -0.2,
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          _Deger(disImdbMetni(imdb)),
+        ],
+      ),
+    if (rtE is num)
+      _Rozet(
+        key: const Key('dis-rt-elestirmen'),
+        url: rtUrl,
+        semantik: '${'Eleştirmen'.c} ${disYuzdeMetni(rtE.toInt())}',
+        children: [
+          DomatesIkonu(taze: dis['rt_taze'] as bool? ?? rtE >= 60, boyut: 16),
+          const SizedBox(width: 4),
+          _Deger(disYuzdeMetni(rtE.toInt())),
+        ],
+      ),
+    if (rtS is num)
+      _Rozet(
+        key: const Key('dis-rt-seyirci'),
+        url: rtUrl,
+        semantik: '${'Seyirci'.c} ${disYuzdeMetni(rtS.toInt())}',
+        children: [
+          const PatlamisMisirIkonu(boyut: 16),
+          const SizedBox(width: 4),
+          _Deger(disYuzdeMetni(rtS.toInt())),
+        ],
+      ),
+    if (meta is num)
+      _Rozet(
+        key: const Key('dis-metacritic'),
+        url: null,
+        semantik: 'Metacritic ${meta.toInt()}',
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: metacriticRengi(meta.toInt()),
+              borderRadius: BorderRadius.circular(3),
+            ),
+            child: Text(
+              '${meta.toInt()}',
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w800,
+                fontSize: 11,
+              ),
+            ),
+          ),
+        ],
+      ),
+  ];
+}
+
+/// Tek başına kullanım (test/önizleme): rozetleri kendi Wrap'inde çizer.
 class DisPuanlar extends StatelessWidget {
   const DisPuanlar({super.key, required this.dis});
 
@@ -62,98 +155,11 @@ class DisPuanlar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imdb = dis['imdb'];
-    final rtE = dis['rt_elestirmen'];
-    final rtS = dis['rt_seyirci'];
-    final meta = dis['metacritic'];
-    final imdbUrl = dis['imdb_url'] as String?;
-    final rtUrl = dis['rt_url'] as String?;
-    final rozetler = <Widget>[
-      if (imdb is num)
-        _Rozet(
-          key: const Key('dis-imdb'),
-          url: imdbUrl,
-          semantik: 'IMDb ${disImdbMetni(imdb)}',
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-              decoration: BoxDecoration(
-                color: DiziRenkler.sari,
-                borderRadius: BorderRadius.circular(3),
-              ),
-              child: const Text(
-                'IMDb',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 10,
-                  letterSpacing: -0.2,
-                ),
-              ),
-            ),
-            const SizedBox(width: 5),
-            _Deger(disImdbMetni(imdb)),
-          ],
-        ),
-      if (rtE is num)
-        _Rozet(
-          key: const Key('dis-rt-elestirmen'),
-          url: rtUrl,
-          semantik: '${'Eleştirmen'.c} ${disYuzdeMetni(rtE.toInt())}',
-          children: [
-            DomatesIkonu(taze: dis['rt_taze'] as bool? ?? rtE >= 60),
-            const SizedBox(width: 5),
-            _Deger(disYuzdeMetni(rtE.toInt())),
-            const SizedBox(width: 4),
-            _Etiket('Eleştirmen'.c),
-          ],
-        ),
-      if (rtS is num)
-        _Rozet(
-          key: const Key('dis-rt-seyirci'),
-          url: rtUrl,
-          semantik: '${'Seyirci'.c} ${disYuzdeMetni(rtS.toInt())}',
-          children: [
-            const PatlamisMisirIkonu(),
-            const SizedBox(width: 5),
-            _Deger(disYuzdeMetni(rtS.toInt())),
-            const SizedBox(width: 4),
-            _Etiket('Seyirci'.c),
-          ],
-        ),
-      if (meta is num)
-        _Rozet(
-          key: const Key('dis-metacritic'),
-          url: null,
-          semantik: 'Metacritic ${meta.toInt()}',
-          children: [
-            Container(
-              width: 18,
-              height: 18,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: metacriticRengi(meta.toInt()),
-                borderRadius: BorderRadius.circular(3),
-              ),
-              child: Text(
-                '${meta.toInt()}',
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 10,
-                ),
-              ),
-            ),
-            const SizedBox(width: 5),
-            _Etiket('Metacritic'),
-          ],
-        ),
-    ];
+    final rozetler = disPuanRozetleri(dis);
     if (rozetler.isEmpty) return const SizedBox.shrink();
     return Wrap(
       key: const Key('dis-puanlar'),
-      spacing: 8,
-      runSpacing: 2,
+      spacing: 12,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: rozetler,
     );
@@ -174,17 +180,14 @@ class _Rozet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final govde = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: DiziRenkler.kart,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: DiziRenkler.metin12),
-      ),
+    // Kutu/kenarlık YOK: TMDB satırındaki "★ 8.1 TMDB" ile aynı ağırlıkta,
+    // yalnız simge + sayı. Dokunma alanı yine 44 dp (SizedBox).
+    final govde = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
       child: Row(mainAxisSize: MainAxisSize.min, children: children),
     );
     final u = url;
-    // Görünen rozet ~26 dp; dokunma alanı 44 dp'ye SizedBox ile büyütülür
+    // Görünen rozet ~24 dp; dokunma alanı 44 dp'ye SizedBox ile büyütülür
     // (ikon değil, hedef büyür — dizijpg-ux-kontrol §2).
     return Semantics(
       label: semantik,
@@ -332,20 +335,6 @@ class _Deger extends StatelessWidget {
       color: DiziRenkler.metin,
       fontWeight: FontWeight.w800,
       fontSize: 12.5,
-    ),
-  );
-}
-
-class _Etiket extends StatelessWidget {
-  const _Etiket(this.metin);
-  final String metin;
-  @override
-  Widget build(BuildContext context) => Text(
-    metin,
-    style: TextStyle(
-      color: DiziRenkler.metin54,
-      fontWeight: FontWeight.w600,
-      fontSize: 11.5,
     ),
   );
 }
