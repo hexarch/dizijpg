@@ -58,17 +58,52 @@ test('sitemap-genel dil ana sayfalarını haritanın dil kümesinden bildiriyor'
 test('hedef anahtar kelime başlıkta ÖNDE, marka sonda; uzunluklar SERP sınırında', () => {
   // SEO yöneticisi (5 Eyl): "tv show tracker" ve "app para seguir series"
   // hedef; başlık marka ile değil kelimeyle başlamalı.
+  // 6 Eyl: aynı kural 46 DİLİN HEPSİNE genişletildi — o gün 43 dilin başlığı
+  // hâlâ "dizi.jpg — Serien- und Film-Tracker" gibi MARKA ÖNDE idi; yönetici
+  // "title/description ilgili dile ve hedef kelimelere göre ayarlanmalı,
+  // sadece marka adı var" dedi. Marka önde olunca SERP'te ilk 30 px'i kimsenin
+  // aramadığı bir kelime (dizi.jpg) yiyor; dil sayfası zaten indekslenmemişken
+  // tıklanma şansı da kalmıyordu.
   assert.match(SEO_DIL.en.anaBaslik, /^TV Show Tracker/);
   assert.match(SEO_DIL.es.anaBaslik, /^App para seguir series/);
   assert.match(SEO_DIL.tr.anaBaslik, /^Dizi ve Film Takip Uygulaması/);
-  for (const k of ['tr', 'en', 'es']) {
+  // GENİŞ YAZI: CJK ve Etiyopya yazısında bir karakter Latin harfinden ~2 kat
+  // geniş basılır; Google'ın sınırı PİKSEL. Aynı 60/120–160 aralığını
+  // dayatmak bu dillerde başlığı SERP'te kestirir, açıklamayı ise gereksiz
+  // uzatırdı.
+  const GENIS = new Set(['ja', 'ko', 'zh', 'am']);
+  for (const k of SEO_DILLER) {
     const b = SEO_DIL[k].anaBaslik;
     const a = SEO_DIL[k].anaAciklama;
+    const genis = GENIS.has(k);
     assert.match(b, /\| dizi\.jpg$/, `${k}: marka başlığın sonunda değil`);
-    assert.ok(b.length <= 60, `${k}: başlık ${b.length} > 60 karakter, SERP'te kesilir`);
-    assert.ok(a.length >= 120 && a.length <= 160, `${k}: açıklama ${a.length} karakter (120–160 bekleniyor)`);
+    assert.ok(!/^\s*dizi\.jpg/i.test(b), `${k}: başlık MARKA ile başlıyor, hedef kelimeyle başlamalı`);
+    assert.ok(b.length <= (genis ? 45 : 60), `${k}: başlık ${b.length} karakter, SERP'te kesilir`);
+    const alt = genis ? 50 : 115;
+    const ust = genis ? 110 : 160;
+    assert.ok(a.length >= alt && a.length <= ust,
+      `${k}: açıklama ${a.length} karakter (${alt}–${ust} bekleniyor)`);
+    // Açıklama da hedef kelimeyle açılmalı: marka adıyla başlayan açıklama
+    // snippet'in ilk satırını harcıyor.
+    assert.ok(!/^\s*dizi\.jpg/i.test(a), `${k}: açıklama marka adıyla başlıyor`);
   }
   assert.match(SEO_DIL.en.anaAciklama, /TV show tracker/i);
   assert.match(SEO_DIL.es.anaAciklama, /seguir series/i);
   assert.match(SEO_DIL.tr.anaAciklama, /dizi takip uygulaması/i);
+});
+
+test('her dilin ana başlığı ve açıklaması KENDİNE ÖZGÜ (kopyala-yapıştır yok)', () => {
+  // Yarım çeviri yasağının başlık ayağı: iki dil aynı başlığı taşıyorsa biri
+  // ya çevrilmemiş ya yanlış dile kopyalanmıştır (`de`/`nb`/`da` yakın diller
+  // olduğu için gözle fark edilmiyor).
+  const bas = new Map();
+  const acik = new Map();
+  for (const k of SEO_DILLER) {
+    const b = SEO_DIL[k].anaBaslik;
+    const a = SEO_DIL[k].anaAciklama;
+    assert.ok(!bas.has(b), `${k}: başlık ${bas.get(b)} ile birebir aynı`);
+    assert.ok(!acik.has(a), `${k}: açıklama ${acik.get(a)} ile birebir aynı`);
+    bas.set(b, k);
+    acik.set(a, k);
+  }
 });

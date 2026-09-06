@@ -1,6 +1,40 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-06 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-06 — 🌍 43 dilin ana sayfa başlığı/açıklaması hedef kelimeye çekildi (backend) 🚀
+
+**SEO yöneticisi (WhatsApp, 13:55):** "Dil sayfalarındaki title ve description ilgili dile ve hedef
+kelimelere göre ayarlanmalı abi. Sadece marka adı var."
+
+**Ölçüm (curl, Googlebot UA):** haklı — 5 Eyl'de yalnız `tr`/`en`/`es` düzeltilmişti
+(`TV Show Tracker – … | dizi.jpg`). Kalan **43 dilde başlık MARKA ile açılıyordu**:
+`dizi.jpg — Serien- und Film-Tracker`, `dizi.jpg — Suivi de séries et de films`,
+`dizi.jpg — трекер сериалов и фильмов`… SERP'te ilk sırayı kimsenin aramadığı bir marka adı
+yiyordu; açıklamalar da fiil-önce genel cümlelerdi ("Behalte den Überblick…"), hedef kelime
+(*Serien-Tracker*, *suivi de séries*, *трекер сериалов*) cümlenin ortasında ya da hiç yoktu.
+
+- ✅🚀 `backend/seo_dil.js`: 43 dilin `anaBaslik`/`anaAciklama`'sı yeniden yazıldı —
+  o dilin **arama kalıbı önde**, marka `| dizi.jpg` olarak sonda; açıklama "ücretsiz + her bölümü
+  kaydet + film listesi + puan/yorum + arkadaşlar" kalıbında ve o dilin kelimeleriyle.
+  Örnek: `Serien-Tracker App – Serien & Filme verfolgen | dizi.jpg`,
+  `Suivi de séries et films – Application gratuite | dizi.jpg`,
+  `Трекер сериалов и фильмов – бесплатно | dizi.jpg`, `追剧记录应用 – 剧集与电影追踪，免费 | dizi.jpg`.
+- ✅ H1 ve `og:title` bedavaya düzeldi: `seoAnaH1` marka ekini iki kalıptan da (`| dizi.jpg` ve
+  `dizi.jpg — `) soyuyordu; artık H1 `<h1>Serien-Tracker App – Serien & Filme verfolgen</h1>`.
+- ✅ Test (`seo_dil_ana_sayfa.test.js`): kural artık **46 dilin hepsine** uygulanıyor —
+  marka sonda, başlık marka ile başlamıyor, uzunluk SERP sınırında (Latin/Kiril/Arap yazısı
+  başlık ≤60 · açıklama 115–160; **geniş yazı** ja/ko/zh/am ≤45 · 50–110, çünkü Google'ın sınırı
+  piksel ve CJK karakteri ~2 kat geniş basılır). Ayrıca "iki dil aynı başlığı taşıyamaz" testi
+  (kopyala-yapıştır/çevrilmemiş dil yakalar).
+- ✅🚀 Dağıtım: `scp seo_dil.js` + `docker-compose up -d --build api`; canlıda **46/46** dil
+  Googlebot UA ile doğrulandı (hepsi kelime-önde, marka sonda).
+
+**Bakılacak:** ≥13 Eyl GSC — `/de` `/fr` `/ru` gösterim/tıklama; 5 Eyl'de açılan `/en` `/es`
+indekslenme durumu (`gsc_ulke.mjs`).
+
+**İlgisiz kalan hata:** `test/cihaz_dagilimi.test.js:224` düşüyor — `adminKisit` gövdesinde
+`ADMIN_IPLER` arıyor, oysa 5 Eyl'de sıcak liste (`adminIpListesi()`) geldi. Bu turda dokunulmadı.
+
 ## 2026-09-06 — ⭐ DIŞ PUANLAR: IMDb · Rotten Tomatoes (domates + patlamış mısır) · Metacritic (1.134.0+201) 🚀
 
 **Kullanıcı:** "IMDb, tomato puanlarını ve patlamış mısır olan logo sitesinin puanlarını çekip hepsini
