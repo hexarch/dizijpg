@@ -567,62 +567,82 @@ class _YorumKartiState extends State<YorumKarti> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // SAĞDAKİ DÜĞME GERÇEKTEN SAĞDA (6 Eyl 2026, kullanıcı bildirdi:
+                // *"masaüstü görünüşte ... silme tuşu en sağda olacağına
+                // ortada"*). SEBEP: kullanıcı adının `Flexible`'ı ile `Spacer`
+                // AYNI Row'un flex çocuklarıdır ve boş alanı YARI YARIYA
+                // paylaşırlar. Ad kısa olduğunda kendi payını KULLANMAZ; artan
+                // pay `MainAxisAlignment.start` yüzünden satırın SONUNA düşer ve
+                // düğmeyi sola iter (720 dp'lik masaüstü kolonunda ~175 px).
+                // Telefonda boş alan az olduğundan fark edilmiyordu.
+                //
+                // ÇÖZÜM: kimlik öbeği (avatar + ad + tarih + bölüm rozeti) TEK
+                // bir `Flexible`ın içinde kendi Row'una alındı — ad yine
+                // kısalabilir — ve artan alan `spaceBetween` ile ARAYA konur,
+                // sonuna değil. Aynı tuzak etkileşim satırında da vardı.
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    KullaniciAvatari(
-                      url: avatar,
-                      kullaniciAdi: yorum['kullanici_adi'] as String?,
-                      yaricap: 14,
-                      // GIF avatar dizi/film yorumlarında da OYNAR (md.13).
-                      hareketli: true,
-                    ),
-                    const SizedBox(width: 8),
-                    // Uzun kullanıcı adı rozeti/tarihi taşırmasın: kısalt
                     Flexible(
-                      child: InkWell(
-                        onTap: () => kullaniciyaGit(
-                          context,
-                          yorum['kullanici_adi'] as String,
-                        ),
-                        child: Text(
-                          '@${yorum['kullanici_adi']}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: DiziRenkler.sariMetin,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          KullaniciAvatari(
+                            url: avatar,
+                            kullaniciAdi: yorum['kullanici_adi'] as String?,
+                            yaricap: 14,
+                            // GIF avatar dizi/film yorumlarında da OYNAR (md.13).
+                            hareketli: true,
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          // Uzun kullanıcı adı rozeti/tarihi taşırmasın: kısalt
+                          Flexible(
+                            child: InkWell(
+                              onTap: () => kullaniciyaGit(
+                                context,
+                                yorum['kullanici_adi'] as String,
+                              ),
+                              child: Text(
+                                '@${yorum['kullanici_adi']}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  color: DiziRenkler.sariMetin,
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (yorum['kullanici_adi'] == aiKullaniciAdi) ...[
+                            const SizedBox(width: 6),
+                            Text(
+                              'dizi.jpg AI özeti'.c,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: DiziRenkler.sari,
+                              ),
+                            ),
+                          ],
+                          const SizedBox(width: 8),
+                          Text(
+                            tarih,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: DiziRenkler.gonderiEylem,
+                            ),
+                          ),
+                          // Bölüm yorumu dizi sayfasında da listelenir; hangi bölüme ait
+                          // olduğu tarihin yanındaki rozetten anlaşılır ve oraya götürür.
+                          if (widget.diziId != null && yorum['sezon'] != null)
+                            BolumRozeti(
+                              diziId: widget.diziId!,
+                              sezon: yorum['sezon'] as int,
+                              bolum: yorum['bolum'] as int,
+                            ),
+                        ],
                       ),
                     ),
-                    if (yorum['kullanici_adi'] == aiKullaniciAdi) ...[
-                      const SizedBox(width: 6),
-                      Text(
-                        'dizi.jpg AI özeti'.c,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: DiziRenkler.sari,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(width: 8),
-                    Text(
-                      tarih,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: DiziRenkler.gonderiEylem,
-                      ),
-                    ),
-                    // Bölüm yorumu dizi sayfasında da listelenir; hangi bölüme ait
-                    // olduğu tarihin yanındaki rozetten anlaşılır ve oraya götürür.
-                    if (widget.diziId != null && yorum['sezon'] != null)
-                      BolumRozeti(
-                        diziId: widget.diziId!,
-                        sezon: yorum['sezon'] as int,
-                        bolum: yorum['bolum'] as int,
-                      ),
-                    const Spacer(),
                     if (benim)
                       InkWell(
                         borderRadius: BorderRadius.circular(16),

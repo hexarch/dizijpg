@@ -212,10 +212,19 @@ class IstatistikGirisi extends StatelessWidget {
       key: Key('istatistik-giris-$gonderiId'),
       onTap: () => gonderiIstatistikAc(context, gonderiId),
       borderRadius: BorderRadius.circular(20),
+      // GENİŞLİĞİ İÇERİĞİ KADAR (6 Eyl 2026, kullanıcı bildirdi: *"beğeni ve
+      // yorum yap kısmı da en solda olacağına ortada"*). `alignment` verilmiş
+      // bir `Container` sınırlı kısıtta MÜMKÜN OLAN EN GENİŞ boyutu alır: giriş
+      // bir `Flexible` içinde durduğu için satırdaki boş alanın YARISINI
+      // kaplıyor, yazı o kutunun solunda kalıyor ve ARDINDAKİ beğeni/yorum
+      // düğmeleri satırın ortasına savruluyordu (masaüstünde ~165 px boşluk;
+      // telefonda pay küçük olduğu için görünmüyordu). `alignment` kaldırılınca
+      // kutu içeriği kadar kalır; dikey ortalama zaten Row'un kendi
+      // `crossAxisAlignment.center`ından geliyor, 44 dp'lik dokunma hedefi de
+      // `minHeight` kısıtıyla korunuyor.
       child: Container(
         constraints: const BoxConstraints(minHeight: dokunmaHedefi),
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        alignment: Alignment.centerLeft,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
