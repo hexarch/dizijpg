@@ -1,6 +1,48 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-07 — 📸 Haftalık Instagram gönderi üreticisi (araclar/haftalik_gonderi.py) ✅
+
+**Tetik (kullanıcı):** *"her pazartesi 09 da şu gönderileri instagram paylaşım formatında
+hazırlayacak … bu haftanın en çok izlendi olarak işaretlenen dizileri ilk 10 … en çok beğenilen
+oyuncusu / filmi / studiosu / yönetmeni … renklerimize ve themamıza ve telif haklarına uymayı
+unutma"*
+
+Beş gönderi de ONLUK LİSTE, 1080×1350 (Instagram dikey), PIL ile üretiliyor; her PNG'nin yanına Instagram
+açıklaması (.txt) yazılıyor. Çıktı: `projeler/cikti/instagram/<yyyy>-h<hafta>/`.
+Zamanlama `araclar/com.dizijpg.haftalikgonderi.plist` (launchd, pazartesi 09:00).
+
+**Pencere:** geçen TAMAMLANMIŞ ISO haftası (Pzt 00:00 → Paz 24:00, +03).
+
+**Ölçüt kararları (tahmin değil, canlı veriyle ölçüldü):**
+
+| Gönderi | Ölçüt | Neden |
+|---|---|---|
+| En çok izlenen 10 dizi | o diziden bölüm işaretleyen **tekil kişi** | Kullanıcılar arşivlerini toplu işaretliyor — tek dakikada 177 bölüm (TWD'nin tamamı) ölçüldü. Bölüm sayısı sıralasa "trend" birkaç kişinin geçmiş dökümü olurdu. |
+| En beğenilen 10 film | **Bayes** ortalaması (m=2) | Bir kullanıcı tek haftada 778 filme puan verdi (Letterboxd aktarımı); ham ortalama tek kişinin 100'lük puanlarını listenin başına taşırdı. |
+| Oyuncu / yönetmen / stüdyo | doğrudan beğeni (favori ×5, puan/100×4) **+** o hafta beğenilen yapımların künyesi **+** izlenen yapımların künyesi (izleyen kişi başına ×0,2) | Doğrudan beğeni tek başına onluk liste doldurmuyor: 26 kişi puanı, 33 kişi favorisi, **4 şirket puanı**. İzleme sinyali listeyi her hafta dolu tutuyor. |
+
+Dizi yönetmeni ×0,5, film yönetmeni ×1,2: eşit ağırlıkta ilk denemede listenin başına
+kimsenin tanımadığı bölüm yönetmenleri çıktı (Chris Long, John F. Showalter).
+`tohum` ve `yasakli` hesaplar hiçbir sayıma girmiyor.
+
+**Telif:** afişler TMDB'den, küçük ölçekte ve yapımı tanımlamak için; şirket LOGOSU
+kullanılmıyor (ticari marka) — stüdyo gönderisinde ad tipografiyle, ana görsel yapım
+afişlerinin kolajı. Platform (Netflix/Disney+) logosu hiçbir görsele girmiyor. Font Poppins
+(OFL). TMDB cümlesi açıklama metninde; kullanıcı kararıyla GÖRSELDE atıf satırı yok.
+
+**HİÇBİR SAYI YOK** (kullanıcı kuralı): kişi/oy/puan sayısı, "N yapımı beğenildi" gibi
+ifadeler ne görselde ne açıklamada geçer; sıralamanın nasıl hesaplandığı da yazılmaz.
+Onluk liste dolmazsa gönderi HİÇ üretilmez — dokuz kutuluk bir "ilk 10" verinin azlığını
+ilan eder.
+
+**Marka:** sol üstte gerçek logo (`logo.png`, uygulama ikonuyla aynı), tipografiyle
+"dizi.jpg" yazmak DEĞİL.
+
+**TUZAK — macOS TCC:** proje ~/Desktop altında; launchd'den başlatılan `/usr/bin/python3`
+Masaüstü'nü okuyamıyor (`Operation not permitted`) ve ajan SESSİZCE ölüyor. Tam Disk Erişimi'ne
+`/usr/bin/python3` eklenmeden zamanlama çalışmaz (plist başlığında adım adım).
+
 ## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.6+216) 🚀
 
 **Tetik (kullanıcı):** *"bu birlikte izlemeye video upload yerine kullanıcıya tarayıcı açabilir

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+dizi.jpg — haftalık Instagram gönderileri, HER PAZARTESİ 09:00.
+
+Kurulum:
+  cp araclar/com.dizijpg.haftalikgonderi.plist ~/Library/LaunchAgents/
+  launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.dizijpg.haftalikgonderi.plist
+Kaldırma:
+  launchctl bootout gui/$(id -u)/com.dizijpg.haftalikgonderi
+Elle tetikleme (test):
+  launchctl kickstart -p gui/$(id -u)/com.dizijpg.haftalikgonderi
+
+NEDEN launchd, cron DEĞİL: Mac pazartesi 09:00'da uykudaysa cron o çalıştırmayı
+TAMAMEN atlar; launchd `StartCalendarInterval`i kaçırılmış sayar ve makine
+uyanır uyanmaz koşturur. Gönderi 09:05'te üretilse de haftalık özet için sorun
+değil, hiç üretilmemesi sorundur.
+
+TEK KURULUM ADIMI — TAM DİSK ERİŞİMİ (macOS TCC):
+Proje ~/Desktop altında ve macOS, launchd'den başlatılan süreçlere Masaüstü'nü
+KAPATIR. İzin verilmezse ajan her pazartesi şu satırla sessizce ölür:
+  can't open file '.../haftalik_gonderi.py': [Errno 1] Operation not permitted
+Çözüm (bir kez): Sistem Ayarları → Gizlilik ve Güvenlik → Tam Disk Erişimi →
+"+" → Cmd+Shift+G → /usr/bin/python3 → ekle ve aç. Sonra:
+  launchctl kickstart -p gui/$(id -u)/com.dizijpg.haftalikgonderi
+ile dene; log ~/Library/Logs/dizijpg-haftalik-gonderi.log.
+
+BU BETİK BU MAKİNEDE ÇALIŞMALI (sunucuda değil): veriyi `ssh ... psql` ile
+çekiyor ve çıktıyı buradaki `cikti/instagram/` altına yazıyor; Instagram'a
+yükleme de zaten buradan yapılıyor (araclar/insta_kopru.mjs notu: Instagram
+veri merkezi IP'lerini engelliyor).
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.dizijpg.haftalikgonderi</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/bin/python3</string>
+    <string>/Users/wolf/Desktop/masaustuyedek/projeler/dizijpg/araclar/haftalik_gonderi.py</string>
+    <string>--post</string>
+    <string>hepsi</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/wolf/Desktop/masaustuyedek/projeler/dizijpg</string>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Weekday</key><integer>1</integer>
+    <key>Hour</key><integer>9</integer>
+    <key>Minute</key><integer>0</integer>
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>/Users/wolf/Library/Logs/dizijpg-haftalik-gonderi.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/wolf/Library/Logs/dizijpg-haftalik-gonderi.log</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin</string>
+    <key>LANG</key>
+    <string>tr_TR.UTF-8</string>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <false/>
+</dict>
+</plist>
