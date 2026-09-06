@@ -58,14 +58,33 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
   static int _sonKimlik = 0;
   late final int _kimlik;
 
+  /// Platform görünümü tipi için ARTAN SAYAÇ — `identityHashCode` DEĞİL.
+  ///
+  /// ===========================================================================
+  /// 7 EYL 2026'DA CANLIDA YAKALANAN SESSİZ HATA
+  /// ===========================================================================
+  /// Tip adı önce `identityHashCode(this)` ile üretiliyordu. Dart'ta bu sayı
+  /// nesnenin kimliğinden türer ve ESKİ NESNE TOPLANDIKTAN SONRA YENİSİNE AYNI
+  /// DEĞER DÜŞEBİLİR. Çakışma olduğunda motorun davranışı şu (engine
+  /// `content_manager.dart#registerFactory`): aynı tip zaten kayıtlıysa
+  /// **`false` döner ve ESKİ fabrikayı korur** — istisna atmaz, uyarı vermez.
+  ///
+  /// Sonuç: yeni State'in fabrikası hiç çağrılmıyor, dolayısıyla `_iframe`
+  /// SONSUZA KADAR null kalıyor; el sıkışması hiç gönderilmiyor, YouTube hiç
+  /// cevap vermiyor ve odada sonsuza kadar dönen bir yükleniyor halkası
+  /// kalıyordu. Tarayıcıdan ölçüldü: 20 saniyede 0 postMessage, 0 yanıt,
+  /// `contentWindow`a hiç dokunulmamış.
+  ///
+  /// Artan sayaç bir sayfa oturumu içinde çakışamaz.
+  static int _sonGorunum = 0;
+
   bool get _youtube => widget.baglanti.saglayici == OdaSaglayici.youtube;
 
   @override
   void initState() {
     super.initState();
     _kimlik = ++_sonKimlik;
-    _gorunumTipi =
-        'oda-${widget.baglanti.saglayici.name}-${identityHashCode(this)}';
+    _gorunumTipi = 'oda-${widget.baglanti.saglayici.name}-${++_sonGorunum}';
     ui_web.platformViewRegistry.registerViewFactory(_gorunumTipi, (int id) {
       final kap = web.HTMLDivElement()
         ..style.position = 'relative'

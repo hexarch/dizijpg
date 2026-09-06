@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.2+212) 🚀
+## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.3+213) 🚀
 
 **Tetik (kullanıcı):** *"bu birlikte izlemeye video upload yerine kullanıcıya tarayıcı açabilir
 miyiz? … tabi upload duracak … youtube gibi tüm platformların url'ini destekleyecek şekilde
@@ -76,6 +76,14 @@ takım **2.784 test yeşil**. Canlıda uçtan uca: YouTube/Vimeo kabul, ok.ru 40
   Tam ekrana girip çıkmak yüzeyi yeniden kurduğu için orada çalışıyor görünüyordu — asıl akış
   bozuktu. Artık yüzey kurulmadan tur harcanmıyor ve döngü "hazırım" bildirimine kadar
   sürüyor (tavan 60 sn). Aynı disiplin mobil enjeksiyona da uygulandı.
+* **Platform görünümü tipi `identityHashCode`dan TÜRETİLMEZ** (1.143.3'te düzeltildi — bu turun
+  en sinsi hatası): Dart'ta bu sayı nesne toplandıktan sonra YENİ nesneye tekrar düşebiliyor.
+  Motor (`content_manager.dart#registerFactory`) zaten kayıtlı bir tip için **`false` dönüp eski
+  fabrikayı koruyor — istisna atmıyor, uyarı vermiyor.** Sonuç: yeni State'in fabrikası hiç
+  çağrılmıyor, `_iframe` sonsuza kadar null kalıyor, el sıkışması hiç gönderilmiyor ve odada
+  sonsuza kadar dönen bir halka kalıyordu. Tarayıcıdan ölçüldü: 20 saniyede 0 postMessage,
+  0 yanıt, `contentWindow`a hiç dokunulmamış. Artık artan sayaç kullanılıyor; **aynı kalıp
+  `ekranlar/fragman_gom_web.dart`ta da vardı, orada da düzeltildi.**
 * **Dağıtım sırası:** `web_hashla` sonrası canlı `index.html` bir süre ESKİ hash'i servis
   etmeye devam edebiliyor. Eski paketi silmeden ÖNCE `curl https://dizijpg.com/ | grep main.`
   ile yeni hash'i doğrula; gerekirse `docker-compose restart api`. Bu turda eski paket erken

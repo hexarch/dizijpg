@@ -87,6 +87,9 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
   /// gelir, pencereye hiç dokunulmaz.
   static int _sonKimlik = 0;
   late final int _kimlik;
+
+  /// Platform görünümü tipi için artan sayaç (gerekçe [_gorunumTipi] atamasında).
+  static int _sonGorunum = 0;
   Duration _konum = Duration.zero;
   Duration _sure = Duration.zero;
   Duration _tampon = Duration.zero;
@@ -104,7 +107,13 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
     super.initState();
     _konum = widget.baslangic;
     _kimlik = ++_sonKimlik;
-    _gorunumTipi = 'yt-${widget.youtubeId}-${identityHashCode(this)}';
+    // ARTAN SAYAÇ, `identityHashCode` DEĞİL: eski nesne toplandıktan sonra aynı
+    // hash yeni nesneye düşebiliyor ve motor, zaten kayıtlı bir tip için
+    // `registerViewFactory`den sessizce `false` dönüp ESKİ fabrikayı koruyor
+    // (engine `content_manager.dart#registerFactory`). O durumda `_iframe`
+    // hiç dolmuyor ve oynatıcı sessizce ölü kalıyor — 7 Eyl 2026'da izleme
+    // odasının gömme yüzeyinde tam bu yaşandı, aynı kalıp burada da vardı.
+    _gorunumTipi = 'yt-${widget.youtubeId}-${++_sonGorunum}';
     ui_web.platformViewRegistry.registerViewFactory(_gorunumTipi, (int id) {
       final kap = web.HTMLDivElement()
         ..style.position = 'relative'
