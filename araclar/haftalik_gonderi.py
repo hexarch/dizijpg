@@ -72,9 +72,27 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 BURASI = os.path.dirname(os.path.abspath(__file__))
 PROJE = os.path.dirname(BURASI)                      # .../projeler/dizijpg
-CIKTI_KOK = os.path.join(os.path.dirname(PROJE), "cikti", "instagram")
-FONT_DIZIN = os.path.join(PROJE, "app", "assets", "fonts")
 ONBELLEK = os.path.expanduser("~/.cache/dizijpg-gonderi")
+
+# ÇALIŞMA KOPYASI (macOS TCC): proje ~/Desktop altında ve launchd'den başlayan
+# süreç Masaüstü'nü OKUYAMIYOR (ölçüldü 7 Eyl 2026: `desktop-oku:
+# PermissionError [Errno 1] Operation not permitted`, aynı ajan
+# ~/Library/Application Support'u okuyup ~/Pictures'a yazabiliyor). Tam Disk
+# Erişimi vermek de çözmedi: /usr/bin/python3 bir kabuk, gerçek ikili
+# Xcode.app içinde.
+# Bu yüzden `--kur` betiği + fontları + logoyu + TMDB anahtarını korumasız
+# alana kopyalar; zamanlanmış koşu ORADAN çalışır ve çıktıyı ~/Pictures'a yazar.
+CALISMA = os.path.expanduser("~/Library/Application Support/dizijpg/gonderi")
+CALISIYOR_KOPYADAN = os.path.abspath(BURASI) == os.path.abspath(CALISMA)
+
+if CALISIYOR_KOPYADAN:
+    FONT_DIZIN = os.path.join(CALISMA, "varliklar", "fonts")
+    LOGO = os.path.join(CALISMA, "varliklar", "logo.png")
+    CIKTI_KOK = os.path.expanduser("~/Pictures/dizi.jpg-gonderiler")
+else:
+    FONT_DIZIN = os.path.join(PROJE, "app", "assets", "fonts")
+    LOGO = os.path.join(PROJE, "logo.png")
+    CIKTI_KOK = os.path.join(os.path.dirname(PROJE), "cikti", "instagram")
 
 SUNUCU = os.environ.get("DIZIJPG_SUNUCU", "root@154.53.163.3")
 DB_KAP = os.environ.get("DIZIJPG_DB_KAP", "dizijpg-db")
@@ -106,6 +124,19 @@ bilgi = lambda m: print(f"{R['gri']}·{R['sif']} {m}")
 tamam = lambda m: print(f"{R['yes']}✓{R['sif']} {m}")
 uyari = lambda m: print(f"{R['sar']}!{R['sif']} {m}")
 hata = lambda m: print(f"{R['kir']}✗{R['sif']} {m}", file=sys.stderr)
+
+
+def haric(tur):
+    """Gönderilerden çıkarılacak TMDB kimlikleri (araclar/gonderi_haric.json).
+    Kullanıcının elle beslediği kara liste — skor havuzuna DEĞİL, yalnız
+    yayımlanan listeye uygulanır."""
+    yol = os.path.join(CALISMA if CALISIYOR_KOPYADAN else BURASI,
+                       "gonderi_haric.json")
+    try:
+        with open(yol, encoding="utf-8") as f:
+            return set(json.load(f).get(tur) or [])
+    except FileNotFoundError:
+        return set()
 
 
 def font(ad, boyut):
@@ -180,7 +211,11 @@ def tmdb_token():
     t = os.environ.get("TMDB_TOKEN")
     if t:
         return t
-    yol = os.path.join(PROJE, "backend", ".env")
+    yol = (os.path.join(CALISMA, "tmdb.token") if CALISIYOR_KOPYADAN
+           else os.path.join(PROJE, "backend", ".env"))
+    if CALISIYOR_KOPYADAN:
+        with open(yol, encoding="utf-8") as f:
+            return f.read().strip()
     with open(yol, encoding="utf-8") as f:
         for satir in f:
             if satir.startswith("TMDB_TOKEN="):
@@ -243,6 +278,20 @@ def hafta_araligi(baslangic=None):
     return b, b + dt.timedelta(days=6)
 
 
+# VERİ PENCERESİ (kullanıcı kararı, 7 Eyl 2026): sayım SON 30 GÜNE bakar,
+# görselde ise o haftanın tarih aralığı yazar. Gerekçe kullanıcının: liste her
+# hafta dolu ve güçlü görünsün, topluluğun küçüklüğü gönderiden okunmasın.
+# Tek haftalık pencere bazı listelerde 10'u zor dolduruyordu.
+VERI_GUN = 30
+
+
+def pencere(b, s):
+    """SQL'e giren tarih aralığı — bitiş haftanın sonu, başlangıç 30 gün öncesi."""
+    bitis = s + dt.timedelta(days=1)
+    return dict(b=(bitis - dt.timedelta(days=VERI_GUN)).isoformat(),
+                s=bitis.isoformat())
+
+
 def tarih_metni(b, s):
     if b.month == s.month:
         return f"{b.day}–{s.day} {AYLAR[s.month - 1]} {s.year}"
@@ -274,9 +323,6 @@ def tuval():
     d = ImageDraw.Draw(im)
     d.rectangle([0, 0, G, 6], fill=SARI)
     return im, d
-
-
-LOGO = os.path.join(PROJE, "logo.png")
 
 
 def logo_yaz(im, x, y, yukseklik=74):
@@ -502,7 +548,7 @@ def havuzlar(b, s):
     anahtar = (b, s)
     if anahtar in _HAVUZ:
         return _HAVUZ[anahtar]
-    ara = dict(b=b.isoformat(), s=(s + dt.timedelta(days=1)).isoformat())
+    ara = pencere(b, s)
     sinyal = sorgu(SQL_YAPIM_SINYAL.format(limit=KUNYE_LIMIT, **ara))
     oyuncu, yonetmen, sirket = {}, {}, {}
 
@@ -547,8 +593,11 @@ def havuzlar(b, s):
 def kisi_listesi(havuz, bolum, adet=10):
     """Skora göre sıralı kişiler. FOTOĞRAFSIZ kişi ATLANIR: ızgarada boş kutu
     olarak görünürdü."""
+    yasak = haric("person")
     cikti = []
     for kimlik, kayit in sorted(havuz.items(), key=lambda p: -p[1]["skor"]):
+        if kimlik in yasak:
+            continue
         kisi = tmdb(f"/person/{kimlik}", language="tr-TR")
         if not kisi.get("profile_path"):
             continue
@@ -565,8 +614,11 @@ def sirket_listesi(havuz, adet=10):
     """Şirketler; görsel olarak o hafta en çok beğenilen YAPIMININ afişi
     kullanılır. ŞİRKET LOGOSU KULLANILMIYOR (ticari marka — dosya başlığındaki
     3. kural)."""
+    yasak = haric("company")
     cikti, kullanilan = [], set()
     for kimlik, kayit in sorted(havuz.items(), key=lambda p: -p[1]["skor"]):
+        if kimlik in yasak:
+            continue
         # Aynı afiş iki kutuda görünmesin (ilk denemede Marvel Studios ile
         # Columbia Pictures aynı Örümcek-Adam afişini taşıyordu): şirketin
         # BAŞKA bir yapımı varsa o seçilir.
@@ -602,7 +654,7 @@ SELECT coalesce(json_agg(t), '[]') FROM (
     AND i.tarih <  timestamptz '{s} 00:00:00+03'
   GROUP BY i.tmdb_id
   ORDER BY kisi DESC, bolum DESC
-  LIMIT 10
+  LIMIT 14
 ) t;
 """
 
@@ -612,15 +664,19 @@ def veri_diziler(b, s):
     # arşivlerini toplu işaretliyor (ölçüm 7 Eyl 2026: tek dakikada 177 bölüm,
     # The Walking Dead'in tamamı). Bölüm sayısı sıralasaydı haftanın listesi
     # birkaç kişinin geçmiş dökümü olurdu. Bölüm sayısı yalnız eşitlik bozucu.
-    satirlar = sorgu(SQL_DIZILER.format(b=b.isoformat(),
-                                        s=(s + dt.timedelta(days=1)).isoformat()))
+    satirlar = sorgu(SQL_DIZILER.format(**pencere(b, s)))
+    yasak = haric("tv")
     cikti = []
     for r in satirlar:
+        if r["tmdb_id"] in yasak:
+            continue
         v = tmdb(f"/tv/{r['tmdb_id']}", language="tr-TR")
         afis = v.get("poster_path") or tmdb(f"/tv/{r['tmdb_id']}",
                                             language="en-US").get("poster_path")
         cikti.append({"tmdb_id": r["tmdb_id"], "afis": afis,
                       "ad": v.get("name") or v.get("original_name") or ""})
+        if len(cikti) == 10:
+            break
     return cikti
 
 
@@ -676,7 +732,7 @@ SELECT coalesce(json_agg(t), '[]') FROM (
          ((oy.kisi * oy.ort + {m} * genel.o) / (oy.kisi + {m}))::float8 AS bayes
     FROM oy, genel
    ORDER BY bayes DESC, oy.kisi DESC
-   LIMIT 14
+   LIMIT 30
 ) t;
 """
 
@@ -685,10 +741,12 @@ def veri_film(b, s, m=2):
     # BAYES ORTALAMASI: tek kişinin verdiği 100, üç kişinin verdiği 93'ü
     # geçmesin diye. Ölçüm (7 Eyl 2026): bir kullanıcı tek haftada 778 filme
     # puan verdi (Letterboxd aktarımı) — ham ortalama o hesabın listesi olurdu.
-    satirlar = sorgu(SQL_FILM.format(b=b.isoformat(),
-                                     s=(s + dt.timedelta(days=1)).isoformat(), m=m))
+    satirlar = sorgu(SQL_FILM.format(m=m, **pencere(b, s)))
+    yasak = haric("movie")
     cikti = []
     for r in satirlar:
+        if r["tmdb_id"] in yasak:
+            continue
         det = tmdb(f"/movie/{r['tmdb_id']}", language="tr-TR")
         if not det.get("poster_path"):
             continue
@@ -801,6 +859,28 @@ def uret(ad, b, s, kuru=False, cikti_dizin=None):
     return png
 
 
+def kur():
+    """Zamanlanmış koşu için korumasız alana çalışma kopyası yazar
+    (bkz. CALISMA sabitinin üstündeki TCC notu)."""
+    import glob as _glob
+    import shutil
+    varliklar = os.path.join(CALISMA, "varliklar")
+    os.makedirs(os.path.join(varliklar, "fonts"), exist_ok=True)
+    shutil.copy2(os.path.abspath(__file__),
+                 os.path.join(CALISMA, "haftalik_gonderi.py"))
+    shutil.copy2(os.path.join(BURASI, "gonderi_haric.json"),
+                 os.path.join(CALISMA, "gonderi_haric.json"))
+    shutil.copy2(LOGO, os.path.join(varliklar, "logo.png"))
+    for f in _glob.glob(os.path.join(FONT_DIZIN, "Poppins-*.ttf")):
+        shutil.copy2(f, os.path.join(varliklar, "fonts", os.path.basename(f)))
+    jeton = os.path.join(CALISMA, "tmdb.token")
+    with open(jeton, "w", encoding="utf-8") as f:
+        f.write(tmdb_token())
+    os.chmod(jeton, 0o600)
+    tamam(f"çalışma kopyası: {CALISMA}")
+    tamam(f"zamanlanmış çıktı: {os.path.expanduser('~/Pictures/dizi.jpg-gonderiler')}")
+
+
 def main():
     a = argparse.ArgumentParser(description="dizi.jpg haftalık Instagram gönderileri")
     a.add_argument("--hafta", help="ISO hafta içindeki bir tarih (YYYY-AA-GG); "
@@ -809,7 +889,13 @@ def main():
                    help="diziler | oyuncu | film | studyo | yonetmen | hepsi")
     a.add_argument("--cikti", help="çıktı klasörü (varsayılan cikti/instagram/<hafta>)")
     a.add_argument("--kuru", action="store_true", help="yalnız veri, görsel üretme")
+    a.add_argument("--kur", action="store_true",
+                   help="zamanlanmış koşu için çalışma kopyasını tazele")
     p = a.parse_args()
+
+    if p.kur:
+        kur()
+        return 0
 
     b, s = hafta_araligi(p.hafta)
     bilgi(f"hafta: {tarih_metni(b, s)}  ({b} → {s})")
