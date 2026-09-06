@@ -1,6 +1,50 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-06 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-06 — 🏷️ Dil sayfalarının BAŞLIĞI insanlara da doğru: kabuk + sekme (1.137.0+204) 🚀
+
+**Tetik (SEO danışmanı, 13:55):** "Dil sayfalarındaki title ve description ilgili dile ve hedef
+kelimelere göre ayarlanmalı, sadece marka adı var." Sabah backend'de 46 dilin başlığı kelime-önde
+yeniden yazılmıştı; danışman yine marka adı görüyordu ve `seo.jpeg` ekran görüntüsünü gönderdi
+(`https://dizijpg.com/de`, mobil Chrome, geçmiş kaydında başlık **dizi.jpg**).
+
+**Kök sebep — bot ile insan AYNI SAYFAYI görmüyordu.** nginx'teki `$og_bot` haritasındakiler Node'un
+SSR'ını alıyor (başlık doğru); haritada olmayan HERKES `@spa`da tek bir `/index.html` alıyordu ve o
+kabuğun `<title>`ı 46 dilde de "dizi.jpg", `<meta description>`ı 46 dilde de Türkçeydi. Ölçüldü:
+
+    curl -A "<mobil Chrome>" https://dizijpg.com/de   -> <title>dizi.jpg</title>
+    curl -A "Googlebot"      https://dizijpg.com/de   -> <title>Serien-Tracker App … | dizi.jpg</title>
+
+**1) Dil başına KABUK** — `araclar/web_dil_kabugu.mjs` (ritüelde 4c adımı, `web_hashla`dan sonra).
+`build/web/<dil>/index.html` kopyalarını üretir; metin `backend/seo_dil.js`ten okunur, yani BOTUN
+gördüğü metnin aynısı (elle kopya yok). Kök `index.html`in Türkçe başlığı/açıklaması da aynı yerden
+tazelenir. nginx `map $uri $dil_kabuk` + dil önekli `location` ile o kopyayı servis eder.
+`<base href="/">` KOPYADA DA "/" kalır; `/de/` yapılsaydı tarayıcı `/de/main.<hash>.dart.js` isterdi.
+**sub_filter DENENMEDİ ve DENENMEMELİ:** `brotli_static on` açık, gövde diskte önceden sıkışık.
+
+**2) 301 TUZAĞI (canlıda yakalandı).** Kabuklar dizin içinde durduğu için genel `try_files $uri $uri/`
+`/de`yi dizin sanıp `301 -> /de/` verdi; kanonik adres slaşsız. Dil öneklerine ayrı bir `location`
+açıldı, `$uri/` denemesi hiç yapılmıyor. Bu blok bota SSR'ı da geri veriyor (`@og`) — dizin var
+diye botlar da statik kabuğa düşecekti.
+
+**3) SEKME BAŞLIĞI uygulama içinde** — `lib/sayfa_basligi.dart` + `belge_basligi_web.dart`.
+**ÖĞRENİLMİŞ DERS:** `MaterialApp.title` / `onGenerateTitle` bu uygulamada `document.title`a
+ULAŞMIYOR. Ölçüm: `/en/icerik/tv/1396` açıldı, JS'ten `document.title='DAMGA'` yazıldı, 15 sn boyunca
+1,5 sn'de bir okundu — Flutter bir kez bile üzerine yazmadı. (İyi haber: kabuğun HTML başlığı bu
+yüzden ezilmiyor.) Başlık artık DOM'a doğrudan yazılıyor; `main.dart` `routerDelegate`i dinler.
+Ad ROTA ADRESİNE yazılır, ekran durumuna değil: A → B → geri akışında `dispose` yaklaşımı başlığı
+ana sayfaya düşürürdü. İçerik/kişi/bölüm ekranları kendi adlarını yazıyor
+(`Batman: The Animated Series (1992) | dizi.jpg`), adı bilinmeyen rotada dilin ana sayfa başlığı kalır.
+Mobilde `title: 'dizi.jpg'` KALDI — orada bu değer "son uygulamalar" etiketidir.
+
+**Doğrulama (canlı):** insan `/` `/de` `/en` `/ja` `/es` `/ar` `/fil` → kendi dilinde başlık +
+`<html lang>`; bot `/de` → SSR, `/en/icerik/tv/2098` → "Batman: The Animated Series (1992) cast";
+`/de` 200 (301 yok), `/de/gizli.env` 404, `/api/saglik` ok. Tarayıcıda `/de/icerik/tv/2098` sekmesi
+15 sn boyunca "Batman: The Animated Series (1992) | dizi.jpg". `flutter test` **2746 yeşil**.
+
+**Kalan:** APK/AAB 204 derlenmedi (yalnız web etkileniyor). Liste/gönderi/şirket sayfaları henüz
+kendi adını yazmıyor — o rotalarda dilin ana sayfa başlığı görünür.
+
 ## 2026-09-06 — 🌍 43 dilin ana sayfa başlığı/açıklaması hedef kelimeye çekildi (backend) 🚀
 
 **SEO yöneticisi (WhatsApp, 13:55):** "Dil sayfalarındaki title ve description ilgili dile ve hedef

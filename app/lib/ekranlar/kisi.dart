@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../api.dart';
+import '../sayfa_basligi.dart';
 import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
 import '../puan.dart';
@@ -257,6 +258,9 @@ class _KisiEkraniState extends State<KisiEkrani> with OlcekDinler<KisiEkrani> {
         _kisi = sonuclar[0] as Map<String, dynamic>;
         _isler = isler.take(60).toList();
       });
+      // Sekme başlığı (bkz. sayfa_basligi.dart). Anahtar rotanın yoluyla
+      // birebir: '/kisi/:id'.
+      SayfaBasligi.yaz('/kisi/${widget.kisiId}', _kisi!['name'] as String?);
     } catch (e) {
       if (!mounted) return;
       setState(() => _hata = e.toString());

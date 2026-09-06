@@ -12,6 +12,7 @@ import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
 import '../dis_puanlar.dart';
 import '../puan.dart';
+import '../sayfa_basligi.dart';
 import '../tarih.dart';
 import '../tema.dart';
 import '../tmdb_bolum_puan.dart';
@@ -642,6 +643,19 @@ class _DetayEkraniState extends State<DetayEkrani>
             ? sonuclar[2] as Map<String, dynamic>
             : null;
       });
+      // Sekme başlığı: "Breaking Bad (2008) | dizi.jpg". Adres anahtarı
+      // rotanın YOLUYLA birebir olmalı (bkz. sayfa_basligi.dart); dil öneki
+      // yönlendiriciye ulaşmadan ayrıldığı için buraya girmez.
+      final ad = (_icerik!['name'] ?? _icerik!['title']) as String?;
+      final yil =
+          ((_icerik!['first_air_date'] ?? _icerik!['release_date'] ?? '')
+                  as String)
+              .split('-')
+              .first;
+      SayfaBasligi.yaz(
+        '/icerik/${widget.tur}/${widget.tmdbId}',
+        ad == null ? null : (yil.isEmpty ? ad : '$ad ($yil)'),
+      );
       _sezonFragmanlariniYukle();
       // İzleyen sayısı sayfayı bloke etmesin: ayrı ve sessizce yüklenir
       Api.get('/izleyenler/${widget.tur}/${widget.tmdbId}')

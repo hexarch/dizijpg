@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../api.dart';
+import '../sayfa_basligi.dart';
 import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
 import '../kitaplik_durumu.dart';
@@ -102,6 +103,14 @@ class _BolumEkraniState extends State<BolumEkrani> {
           }
         }
       }
+      // Sekme başlığı: "S1B2 · Bölüm adı" (bkz. sayfa_basligi.dart).
+      // Anahtar rotanın yoluyla birebir: '/dizi/:id/sezon/:s/bolum/:b'.
+      final bolumAdi = b['name'] as String?;
+      SayfaBasligi.yaz(
+        '/dizi/${widget.tmdbId}/sezon/${widget.sezonNo}/bolum/${widget.bolumNo}',
+        'S${widget.sezonNo}B${widget.bolumNo}'
+            '${bolumAdi == null || bolumAdi.isEmpty ? '' : ' · $bolumAdi'}',
+      );
       setState(() {
         _izlenmeTarihi = izlenme;
         _bolum = b;

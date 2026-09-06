@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'altyazi.dart';
 import 'api.dart';
 import 'ceviri.dart';
+import 'sayfa_basligi.dart';
 import 'cihaz_kimlik.dart';
 import 'ekranlar/kabuk.dart' show KabukKatlama;
 import 'gorusme/arama_servisi.dart';
@@ -188,6 +189,39 @@ class _DiziJpgAppState extends State<DiziJpgApp> {
     _yonlendirici.routeInformationParser,
   );
 
+  // SEKME BAŞLIĞI (6 Eyl 2026) — `MaterialApp.title` DEĞİL, doğrudan DOM.
+  //
+  // NEDEN BURADAN: `Title` widget'ının kullandığı
+  // `SystemChrome.setApplicationSwitcherDescription` kanalı bu uygulamada
+  // `document.title`a hiç ulaşmıyor — canlıda ölçüldü (JS'ten damgalanan
+  // başlık 15 sn boyunca Flutter tarafından bir kez bile ezilmedi;
+  // ayrıntı `belge_basligi_web.dart`). Bu yüzden başlık `SayfaBasligi`
+  // üzerinden yazılır ve ROTAYI dinlemesi gerekir.
+  @override
+  void initState() {
+    super.initState();
+    _yonlendirici.routerDelegate.addListener(_basligiTazele);
+    Ceviri.dil.addListener(_basligiTazele);
+    // İlk kare öncesi `currentConfiguration` henüz eşleşmemiş olabilir.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _basligiTazele());
+  }
+
+  @override
+  void dispose() {
+    _yonlendirici.routerDelegate.removeListener(_basligiTazele);
+    Ceviri.dil.removeListener(_basligiTazele);
+    super.dispose();
+  }
+
+  /// Görünen rotanın yolu — dil öneki AYRILMIŞ hâli; `currentConfiguration`
+  /// öneksiz yaşar (bkz. `dil_onekli_adres.dart`).
+  void _basligiTazele() {
+    if (!mounted) return;
+    SayfaBasligi.rota(
+      _yonlendirici.routerDelegate.currentConfiguration.uri.path,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<String>(
@@ -201,6 +235,9 @@ class _DiziJpgAppState extends State<DiziJpgApp> {
         ekAnahtar: dil,
         olustur: (context, tema, anahtar) => MaterialApp.router(
           key: anahtar,
+          // Android'in "son uygulamalar" ETİKETİ. Sekme başlığı DEĞİL:
+          // web'de bu kanal document.title'a ulaşmıyor, orayı `SayfaBasligi`
+          // doğrudan yazar (bkz. yukarıdaki initState).
           title: 'dizi.jpg',
           debugShowCheckedModeBanner: false,
           scrollBehavior: FareKaydirma(),
