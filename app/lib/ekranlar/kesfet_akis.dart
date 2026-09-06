@@ -28,6 +28,7 @@ import 'akis.dart' show AkisGorunumSecici, AkisGorunumu, AkisKarti;
 import 'begenenler.dart';
 import 'etiket.dart';
 import 'gif_sec.dart';
+import 'gizlenen_ust_bar.dart';
 import 'giris_istem.dart';
 import 'medya_goster.dart';
 import 'medya_inceleme.dart';
@@ -168,7 +169,7 @@ class KesfetAkisEkrani extends StatefulWidget {
 }
 
 class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   /// Gönderiler. Sayfalar SONUNA eklenir, asla araya girmez → indeksler
   /// kaymaz (Reels'in açık listesi ve video görünürlük indeksleri bozulmaz).
   List<dynamic>? _liste;
@@ -178,6 +179,10 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
   final _kaydirma = ScrollController();
   final _sayfalama = KesfetSayfalama();
   bool _yukluyor = false;
+
+  /// Aşağı kaydırınca üst barı (Akış|Keşfet seçicisi) gizleyen defter —
+  /// Akış ekranıyla AYNI davranış (6 Eyl 2026, kullanıcı isteği).
+  late final _ustBar = UstBarGizleyici(vsync: this);
 
   /// Ekranda görünen VİDEOLU karolar (küme; sıra oynatmayı belirlemez).
   final List<int> _gorunurVideolar = [];
@@ -234,6 +239,7 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
     super.initState();
     _yukle();
     _kaydirma.addListener(() {
+      if (_kaydirma.hasClients) _ustBar.kaydirmaDegisti(_kaydirma.position);
       // Dibe 600px kala sıradaki sayfayı çek: kullanıcı beklemesin.
       if (_kaydirma.hasClients &&
           _kaydirma.position.pixels >=
@@ -246,6 +252,7 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
   @override
   void dispose() {
     _kaydirma.dispose();
+    _ustBar.dispose();
     super.dispose();
   }
 
@@ -333,6 +340,7 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
       _yukluyor = false;
     });
     if (_kaydirma.hasClients) _kaydirma.jumpTo(0);
+    _ustBar.goster();
     _yukle();
   }
 
@@ -469,28 +477,36 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
         ),
       );
     }
-    return Scaffold(
-      appBar: AppBar(
-        // Akış'takiyle AYNI seçici (21 Ağu 2026): Keşfet alt çubuktan çıkınca
-        // buradan Akış'a dönebilmenin görünür bir yolu kalmalıydı. Alt
-        // çubuktaki Akış hedefi de bu ekranda seçili görünüyor (kabuk.dart →
-        // hedefIndeksi), yani iki yol da aynı yere çıkar.
-        //
-        // LOGO YOK (Akış'ta var): bu ekranın üst barı 3 Ağu'dan beri logosuz
-        // ve `sira_secici_test` bu ekranı ÇIPLAK pump ediyor — `Image.asset`
-        // testte varlık yükleyemeyip gürültü üretirdi.
-        title: const AkisGorunumSecici(secili: AkisGorunumu.kesfet),
-        // Kullanıcı isteği (3 Ağu 2026): "keşfet yazısının en sağına
-        // koyabilirsin bu seçeneği". Bu ekranın kendi sıralamasını yönetir.
-        actions: [
-          SiraSecici(
-            anahtar: SiraTercihi.anahtarKesfet,
-            onDegisti: _siraDegisti,
+    // ÜST BAR AŞAĞI KAYDIRINCA GİZLENİR (6 Eyl 2026) — Akış ile aynı.
+    return AnimatedBuilder(
+      animation: _ustBar.animasyon,
+      child: govde,
+      builder: (context, cocuk) => Scaffold(
+        appBar: GizlenenUstBar(
+          gorunurluk: _ustBar.gorunurluk,
+          cocuk: AppBar(
+            // Akış'takiyle AYNI seçici (21 Ağu 2026): Keşfet alt çubuktan çıkınca
+            // buradan Akış'a dönebilmenin görünür bir yolu kalmalıydı. Alt
+            // çubuktaki Akış hedefi de bu ekranda seçili görünüyor (kabuk.dart →
+            // hedefIndeksi), yani iki yol da aynı yere çıkar.
+            //
+            // LOGO YOK (Akış'ta var): bu ekranın üst barı 3 Ağu'dan beri logosuz
+            // ve `sira_secici_test` bu ekranı ÇIPLAK pump ediyor — `Image.asset`
+            // testte varlık yükleyemeyip gürültü üretirdi.
+            title: const AkisGorunumSecici(secili: AkisGorunumu.kesfet),
+            // Kullanıcı isteği (3 Ağu 2026): "keşfet yazısının en sağına
+            // koyabilirsin bu seçeneği". Bu ekranın kendi sıralamasını yönetir.
+            actions: [
+              SiraSecici(
+                anahtar: SiraTercihi.anahtarKesfet,
+                onDegisti: _siraDegisti,
+              ),
+              const SizedBox(width: 4),
+            ],
           ),
-          const SizedBox(width: 4),
-        ],
+        ),
+        body: cocuk!,
       ),
-      body: govde,
     );
   }
 }

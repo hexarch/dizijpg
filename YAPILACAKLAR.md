@@ -1,6 +1,34 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-06 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-06 — 🔽 Akış/Keşfet üst barı aşağı kaydırınca gizleniyor (1.138.0+205) 🚀
+
+**Tetik (kullanıcı):** *"uygulamada akışta aşağı kaydırınca yukarıdaki akış keşfet logo
+gizlenmeli"*.
+
+**Ne yapıldı:** `lib/ekranlar/gizlenen_ust_bar.dart` — kaydırma yönünü dinleyip barın açıklık
+oranını (0..1) yürüten `UstBarGizleyici` + Scaffold'un `appBar` yuvasına giren `GizlenenUstBar`.
+Akış (logo + Akış|Keşfet + sıra/bildirim) ve Keşfet aynı davranışı paylaşıyor. Bar SOLMUYOR,
+`preferredSize` 0'a iniyor: gövde boşalan yeri gerçekten dolduruyor.
+
+**Neden SliverAppBar değil:** iki gövde de kendi kalıbında — Akış'ta `RefreshIndicator` +
+`OrtaKolon` içinde `ListView.builder`, Keşfet'te ölçülen kolona göre sütun hesaplayan
+`CustomScrollView`. Slivere çevirmek `OrtaKolon` genişlik kısıtını (masaüstü hizası) kırardı.
+
+**Titreme sigortası:** bar gizlenince gövde `kToolbarHeight` kadar uzuyor, yani `maxScrollExtent`
+de artıyor. Kıl payı kaydırılabilen listede gizle→uzat→göster→kısalt döngüsü olurdu; bu yüzden
+`maxScrollExtent < 3×kToolbarHeight` ise bar hiç gizlenmiyor. Tepede (≤8 px) ve başa dönüşte
+(`SekmeTekrar`, sıra değişimi) bar her zaman açık.
+
+**Durum çubuğu tuzağı:** Scaffold barın yüksekliğine `MediaQuery.padding.top` ekliyor. Sarmalayıcı
+o dolguyu elle çiziyor ve çocuğun kendi `SafeArea`sını `removePadding` ile susturuyor — yoksa dolgu
+iki kez sayılır. `ClipRect` dolgunun İÇİNDE: dışında olsaydı yukarı süzülen bar durum çubuğu
+şeridinin üstüne çizilirdi.
+
+**Kanıt:** `test/ust_bar_gizlenme_test.dart` — 4 saf karar testi + iki ekranın gerçek widget testi
+(bar yüksekliği 0'a iniyor, seçici `hitTestable` değil, yukarı kaydırınca geri geliyor). Tam takım
+2.752 test geçti.
+
 ## 2026-09-06 — 🔝 `<title>` kafanın başına: 2.452. bayt → 196. bayt (kabuk) 🚀
 
 **Tetik (SEO danışmanı, 18:09):** "title etiketi kodunun konumu çok aşağılarda, meta description

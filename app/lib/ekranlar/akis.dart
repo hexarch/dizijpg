@@ -19,6 +19,7 @@ import '../tema.dart';
 import 'begenenler.dart';
 import 'ek_etiket_seridi.dart';
 import 'etiket.dart';
+import 'gizlenen_ust_bar.dart';
 import 'gonderi_istatistik.dart' show gonderiIstatistikAc;
 import 'kabuk.dart' show SekmeTekrar, akisHedefi;
 import 'kesfet_akis.dart' show ReelsGorunumu, yanitlariAc;
@@ -214,7 +215,7 @@ class AkisEkrani extends StatefulWidget {
 }
 
 class _AkisEkraniState extends State<AkisEkrani>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   List<dynamic>? _akis;
   Map<String, dynamic> _icerikler = {};
   String? _hata;
@@ -223,6 +224,11 @@ class _AkisEkraniState extends State<AkisEkrani>
   bool _dahaVar = true;
   bool _yukluyor = false;
   final _kaydirma = ScrollController();
+
+  /// Aşağı kaydırınca üst barı (logo + Akış|Keşfet) gizleyen defter.
+  /// KULLANICI İSTEĞİ (6 Eyl 2026): "akışta aşağı kaydırınca yukarıdaki
+  /// akış keşfet logo gizlenmeli".
+  late final _ustBar = UstBarGizleyici(vsync: this);
 
   /// Aşağı-çekmeli yenileyicinin anahtarı. Alt çubuktan gelen "başa dön +
   /// yenile" bunu kullanır: `show()` hem çarkı gösterir hem `onRefresh`i
@@ -244,6 +250,7 @@ class _AkisEkraniState extends State<AkisEkrani>
     _onbellektenYukle();
     _yukle();
     _kaydirma.addListener(() {
+      _ustBar.kaydirmaDegisti(_kaydirma.position);
       if (_kaydirma.position.pixels >
           _kaydirma.position.maxScrollExtent - 400) {
         _devamYukle();
@@ -262,6 +269,8 @@ class _AkisEkraniState extends State<AkisEkrani>
   /// sonra yenileme çarkı iner.
   Future<void> _basaDonVeYenile() async {
     if (!mounted) return;
+    // Başa dönüyoruz: gizlenmiş üst bar da geri gelsin.
+    _ustBar.goster();
     if (_kaydirma.hasClients && _kaydirma.position.pixels > 0) {
       await _kaydirma.animateTo(
         0,
@@ -320,6 +329,7 @@ class _AkisEkraniState extends State<AkisEkrani>
     unawaited(_gorulduGonder()); // kalan id'leri gönder
     _gorulduZaman?.cancel();
     _kaydirma.dispose();
+    _ustBar.dispose();
     super.dispose();
   }
 
@@ -393,6 +403,7 @@ class _AkisEkraniState extends State<AkisEkrani>
       _dahaVar = true;
     });
     if (_kaydirma.hasClients) _kaydirma.jumpTo(0);
+    _ustBar.goster();
     _yukle();
   }
 
@@ -567,87 +578,104 @@ class _AkisEkraniState extends State<AkisEkrani>
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        // Başlık artık DÜZ YAZI DEĞİL, görünüm seçicisi: logo yerinde kalır,
-        // yanında "Akış | Keşfet" yan yana, çizgi seçili olanın altında
-        // (21 Ağu / 3 Eyl 2026 — bkz. [AkisGorunumSecici]).
-        title: Row(
-          children: [
-            Image.asset('assets/logo.png', height: 34),
-            const SizedBox(width: 10),
-            // Flexible: dar ekranda seçici taşmasın, kırpılsın.
-            const Flexible(child: AkisGorunumSecici(secili: AkisGorunumu.akis)),
-          ],
-        ),
-        actions: [
-          // Kronolojik / Önerilen — bu ekranın KENDİ sıralamasını yönetir.
-          SiraSecici(anahtar: SiraTercihi.anahtarAkis, onDegisti: _siraDegisti),
-          RozetliIkon(
-            ikon: Icons.notifications_none,
-            sayi: _bildirimSayi,
-            etiket: 'Bildirimler'.c,
-            onTap: () async {
-              await context.push('/bildirimler');
-              _rozetleriYukle();
-            },
-          ),
-          // MESAJLAR DÜĞMESİ KALDIRILDI (28 Ağu 2026, kullanıcı isteği:
-          // "akış ve ana sayfanın sağ yukarısında mesajlar butonu varya onu
-          // kaldır artık gerek yok aşağıda var zaten").
-          //
-          // Alt çubukta `/sohbetler` zaten bir hedef ve okunmamış rozeti de
-          // orada çiziliyor — üstteki düğme aynı yere giden ikinci bir giriş,
-          // aynı sayıyı iki yerde gösteriyordu.
-          //
-          // ⚠ [_rozetleriYukle] KALDIRILMADI ve KALDIRILAMAZ: mesaj sayısını
-          // `SohbetOlaylari.okunmamis`a yazan yer orası ve ALT ÇUBUĞUN rozeti
-          // (kabuk.dart) ile masaüstü gezinme adası o ortak kaynaktan
-          // besleniyor. Sadece düğme gitti, sayaç akmaya devam ediyor.
-          const SizedBox(width: 4),
-        ],
-      ),
-      // Arama çubuğu akıştan KALDIRILDI (kullanıcı isteği): arama Ana
-      // Sayfa'da (AramaCubugu) duruyor, akış yalnız gönderilere ayrıldı.
-      //
-      // PAYLAŞIM KUTUSU AKIŞ LİSTESİNİN İÇİNDE (29 Ağu 2026): kaydırınca
-      // yukarı kaçar, sabit durmaz. 28 Ağu'da listenin dışındaydı; "üst barın
-      // altında" ifadesi "sabit" diye okunmuştu, kullanıcı düzeltti.
-      //
-      // AMA liste YOKKEN (hata / yükleniyor / akış boş) kutu yine üstte sabit
-      // durur: akışı boş olan kullanıcı paylaşım yapamazsa kutunun varlık
-      // sebebi ortadan kalkar — ve orada kaydırılacak bir şey de yok.
-      body: _akisDolu
-          ? govde
-          : Column(
-              children: [
-                // MASAÜSTÜNDE KUTU DA AKIŞ KOLONUNA OTURUR (29 Ağu 2026, kullanıcı
-                // isteği: "web masaüstünde akıştaki yorum yap kısmı çok büyük onu
-                // doğru ortasında yerleştirsin").
-                //
-                // Kutu `Column`un doğrudan çocuğuydu, yani `Expanded(child: govde)`
-                // içindeki [OrtaKolon] sınırının DIŞINDA kalıyordu: kartlar 720
-                // dp'lik ortalanmış kolonda dururken kutu pencerenin tamamına
-                // (1400+ dp) yayılıyor, kenarları kartlarınkiyle tutmuyordu.
-                // Yeni kalıp UYDURULMADI — akışın kendi sarmalayıcısı aynen
-                // kullanıldı, böylece kutunun ve kartların sol/sağ kenarları
-                // birebir aynı hizada.
-                //
-                // Telefon BOZULMAZ: [OrtaKolon] sabit genişlik değil ÜST SINIR
-                // verir; pencere 720'nin altındayken kısıt bağlayıcı olmaz ve kutu
-                // eskisi gibi tam genişlikte kalır.
-                OrtaKolon(
-                  azami: masaustuKolonGenisligi,
-                  cocuk: PaylasKutusu(
-                    onPaylasildi: () {
-                      // Yeni yorum akışta görünsün: paylaşımdan SONRA tazele.
-                      _yukle();
-                    },
-                  ),
+    // Arama çubuğu akıştan KALDIRILDI (kullanıcı isteği): arama Ana
+    // Sayfa'da (AramaCubugu) duruyor, akış yalnız gönderilere ayrıldı.
+    //
+    // PAYLAŞIM KUTUSU AKIŞ LİSTESİNİN İÇİNDE (29 Ağu 2026): kaydırınca
+    // yukarı kaçar, sabit durmaz. 28 Ağu'da listenin dışındaydı; "üst barın
+    // altında" ifadesi "sabit" diye okunmuştu, kullanıcı düzeltti.
+    //
+    // AMA liste YOKKEN (hata / yükleniyor / akış boş) kutu yine üstte sabit
+    // durur: akışı boş olan kullanıcı paylaşım yapamazsa kutunun varlık
+    // sebebi ortadan kalkar — ve orada kaydırılacak bir şey de yok.
+    final Widget icerik = _akisDolu
+        ? govde
+        : Column(
+            children: [
+              // MASAÜSTÜNDE KUTU DA AKIŞ KOLONUNA OTURUR (29 Ağu 2026, kullanıcı
+              // isteği: "web masaüstünde akıştaki yorum yap kısmı çok büyük onu
+              // doğru ortasında yerleştirsin").
+              //
+              // Kutu `Column`un doğrudan çocuğuydu, yani `Expanded(child: govde)`
+              // içindeki [OrtaKolon] sınırının DIŞINDA kalıyordu: kartlar 720
+              // dp'lik ortalanmış kolonda dururken kutu pencerenin tamamına
+              // (1400+ dp) yayılıyor, kenarları kartlarınkiyle tutmuyordu.
+              // Yeni kalıp UYDURULMADI — akışın kendi sarmalayıcısı aynen
+              // kullanıldı, böylece kutunun ve kartların sol/sağ kenarları
+              // birebir aynı hizada.
+              //
+              // Telefon BOZULMAZ: [OrtaKolon] sabit genişlik değil ÜST SINIR
+              // verir; pencere 720'nin altındayken kısıt bağlayıcı olmaz ve kutu
+              // eskisi gibi tam genişlikte kalır.
+              OrtaKolon(
+                azami: masaustuKolonGenisligi,
+                cocuk: PaylasKutusu(
+                  onPaylasildi: () {
+                    // Yeni yorum akışta görünsün: paylaşımdan SONRA tazele.
+                    _yukle();
+                  },
                 ),
-                Expanded(child: govde),
+              ),
+              Expanded(child: govde),
+            ],
+          );
+
+    // ÜST BAR AŞAĞI KAYDIRINCA GİZLENİR (6 Eyl 2026, kullanıcı isteği).
+    // Gövde `child` olarak geçer: bar açılıp kapanırken her karede yalnız
+    // Scaffold + AppBar yeniden kurulur, liste ağacı DEĞİL.
+    return AnimatedBuilder(
+      animation: _ustBar.animasyon,
+      child: icerik,
+      builder: (context, cocuk) => Scaffold(
+        appBar: GizlenenUstBar(
+          gorunurluk: _ustBar.gorunurluk,
+          cocuk: AppBar(
+            // Başlık artık DÜZ YAZI DEĞİL, görünüm seçicisi: logo yerinde kalır,
+            // yanında "Akış | Keşfet" yan yana, çizgi seçili olanın altında
+            // (21 Ağu / 3 Eyl 2026 — bkz. [AkisGorunumSecici]).
+            title: Row(
+              children: [
+                Image.asset('assets/logo.png', height: 34),
+                const SizedBox(width: 10),
+                // Flexible: dar ekranda seçici taşmasın, kırpılsın.
+                const Flexible(
+                  child: AkisGorunumSecici(secili: AkisGorunumu.akis),
+                ),
               ],
             ),
+            actions: [
+              // Kronolojik / Önerilen — bu ekranın KENDİ sıralamasını yönetir.
+              SiraSecici(
+                anahtar: SiraTercihi.anahtarAkis,
+                onDegisti: _siraDegisti,
+              ),
+              RozetliIkon(
+                ikon: Icons.notifications_none,
+                sayi: _bildirimSayi,
+                etiket: 'Bildirimler'.c,
+                onTap: () async {
+                  await context.push('/bildirimler');
+                  _rozetleriYukle();
+                },
+              ),
+              // MESAJLAR DÜĞMESİ KALDIRILDI (28 Ağu 2026, kullanıcı isteği:
+              // "akış ve ana sayfanın sağ yukarısında mesajlar butonu varya onu
+              // kaldır artık gerek yok aşağıda var zaten").
+              //
+              // Alt çubukta `/sohbetler` zaten bir hedef ve okunmamış rozeti de
+              // orada çiziliyor — üstteki düğme aynı yere giden ikinci bir giriş,
+              // aynı sayıyı iki yerde gösteriyordu.
+              //
+              // ⚠ [_rozetleriYukle] KALDIRILMADI ve KALDIRILAMAZ: mesaj sayısını
+              // `SohbetOlaylari.okunmamis`a yazan yer orası ve ALT ÇUBUĞUN rozeti
+              // (kabuk.dart) ile masaüstü gezinme adası o ortak kaynaktan
+              // besleniyor. Sadece düğme gitti, sayaç akmaya devam ediyor.
+              const SizedBox(width: 4),
+            ],
+          ),
+        ),
+        body: cocuk!,
+      ),
     );
   }
 
