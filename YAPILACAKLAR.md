@@ -36,6 +36,43 @@ OLMAMALI — biri gevşek (loose) olduğu anda pay bölüşülür ve artan alan 
 `alignment` verilmiş `Container` de sınırlı kısıtta daima şişer; içerik kadar kalması isteniyorsa
 `alignment` verilmez.
 
+## 2026-09-06 — 🔁 Fragman taraması artık TÜM sezonları kapsıyor (backend) 🚀
+
+**Tetik (kullanıcı):** *"hepsinin taranmasını istiyorum istek sınırımız mı var?"*
+
+**Cevap: anlamlı bir sınır yok.** Ölçülen rakamlar (6 Eyl 2026):
+- YouTube Data API kotası koşu başına **2-5 birim**, günlük tavan 10.000 → günde ~70 birim,
+  yani tavanın **%0,7**'si. Kısıt burada değil.
+- TMDB'de yayımlanmış sabit hız sınırı yok; koşu zaten ~470-490 istek yapıyor ve 21-27 sn sürüyor,
+  koşu tavanı 45 dk.
+- Kütüphane: 8.091 dizi + 17.858 film. Önbellekteki 6.915 dizinin **ortalaması 3,47 sezon**
+  (toplam 24.029; 40+ sezonu olan yalnız 31 dizi var, en uzunu 787). Bütün sezonlar için
+  ~28.000 istek / 30 günlük tur = **günde ~940, saatlik koşuya ~39 istek**.
+
+**Ne değişti (`backend/fragman_tarama.js`, karar 6):** eski kural "dizi düzeyinde resmi fragman
+YOKSA, yalnız son sezon + 1. sezon" idi. İki varsayımı da yanlıştı:
+- Bölüm sayfası (`bolum.dart`), bölümün kendi videosu yoksa **o sezonun** fragmanına düşüyor —
+  dizi düzeyinde resmi fragman olsa bile, çünkü o fragman bölüm sayfasının birleşimine hiç girmiyor.
+- Düşülen sezon 1 ya da sonuncusu olmak zorunda değil: The Wire'ın 2. sezonu tam bu boşluktaydı.
+
+Artık `sezonNumaralari(detay)` TMDB'nin `seasons` DİZİSİNİ okuyor (`number_of_seasons` sayısını
+değil): numaralar boşluklu olabiliyor ve **0 = Özel Bölümler** de gerçek bir sezon.
+
+**Doğrulama (canlı, tv/1438):** tarama 7 bağ buldu — dizi düzeyi 2 (biri `bolge`: ABD dışına
+kapalı resmi fragman) + **5 sezonun 5'i** (S1-S5, hepsi `iyi`). Öncesinde The Wire'ın hiçbir
+sezonu taranmıyordu.
+
+**Dağıtım:** `/opt/dizijpg/fragman_tarama.js` güncellendi + `docker-compose up -d --build api`
+(kod imaja COPY'leniyor, scp tek başına yetmez), `/api/saglik` ok. Geriye dönük tarama için
+`fragman_icerik.son_tarama` tüm dizilerde 31 gün geriye çekildi (7.445 satır) → kuyruk önce
+hiç taranmamışları (~5.000), sonra dizileri işliyor; saatlik koşu ~385 yapım aldığı için
+tam kapsama **~1,5 günde** tamamlanıyor.
+
+**BİLEREK YAPILMADI — bölüm düzeyi videolar:** bölüm sayfası önce bölümün KENDİ videosunu
+istiyor; onları da taramak 660.765 bölüm (kütüphane geneli ~773.000) = **günde ~26.000 istek**
+ve `tmdb_onbellek`te ~773.000 yeni satır demek. Verim düşük (TMDB'de bölüm videosu çok seyrek),
+maliyet mevcut TMDB yükünün 2,4 katı. Ayrı bir karar olarak bırakıldı.
+
 ## 2026-09-06 — 🖼️ Fragman kapağı: maxres "video yok" yer tutucusu (1.141.0+208) 🚀
 
 **Tetik (kullanıcı):** *"the wire 2 sezon 10 bölüm trailer kırık"* → *"video var ama kapak

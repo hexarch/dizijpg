@@ -67,14 +67,19 @@
 //     üretseydik: tablo şişerdi, kullanıcı isteği bu satırlardan HİÇ
 //     faydalanamazdı ve ısıtıcı aynı veriyi ikinci kez çekerdi.
 //
-//  6) SEZON FRAGMANI YALNIZ GEREKİNCE TARANIR. TMDB'de dizi düzeyinde resmi
-//     fragmanı olmayan yapımlar var (ölçüm: popüler dizilerin ~%18'i —
-//     Breaking Bad, The Walking Dead, Rick and Morty dahil). Uygulama bu
-//     durumda sezon fragmanına düşüyor (`detay.dart`), o yüzden sezonun da
-//     canlılığı ölçülmeli. Ama HER dizinin HER sezonunu taramak 6.912
-//     dizi × ~8 sezon = 55.000 fazladan istek demekti; yalnız düşüşün
-//     GERÇEKTEN olacağı yapımlarda ve yalnız uygulamanın baktığı iki sezonda
-//     (son sezon + 1. sezon) taranıyor.
+//  6) DİZİNİN BÜTÜN SEZONLARI TARANIR (6 Eyl 2026'da genişletildi).
+//     Eskiden yalnız "dizi düzeyinde resmi fragman YOKSA, son sezon + 1.
+//     sezon" taranıyordu; gerekçe maliyetti. İKİ VARSAYIMI DA YANLIŞTI:
+//       · Bölüm sayfası (`bolum.dart`) bölümün kendi videosu yoksa O SEZONUN
+//         fragmanına düşüyor — dizi düzeyinde resmi fragman olsa BİLE, çünkü
+//         o fragman bölüm sayfasının birleşimine hiç girmiyor.
+//       · Düşülen sezon 1 ya da sonuncusu olmak zorunda değil: The Wire'ın
+//         2. sezonu tam da bu boşluğa düşmüştü.
+//     ÖLÇÜLEN MALİYET (6 Eyl 2026): kütüphanede 8.091 dizi, önbellekteki
+//     6.915 dizinin ortalaması 3,47 sezon → ~28.000 sezon isteği / 30 günlük
+//     tur = günde ~940, saatlik koşuya ~39 istek. Koşu zaten ~450 TMDB isteği
+//     yapıyor; sınır bu değil. (Bölüm DÜZEYİ ayrı bir mertebe: 773.000 bölüm
+//     = günde ~26.000 istek. Kasıtla taranmıyor.)
 //
 //  7) SİLİNEN BAĞ TEMİZLENİR, VİDEO SATIRI KALIR. TMDB bir fragmanı
 //     listeden çıkarırsa `fragman_baglanti` satırı silinir; `fragman_durum`
@@ -304,9 +309,28 @@ async function taranacakYapimlar(havuz, secim) {
 }
 
 /**
+ * Taranacak sezon numaraları.
+ *
+ * TMDB'nin `seasons` DİZİSİ gerçeği söyler, `number_of_seasons` sayısı değil:
+ * numaralar boşluklu olabilir (kaldırılan sezon) ve 0 = "Özel Bölümler" de
+ * gerçek bir sezondur — uygulamada bölümü açılabilir, dolayısıyla fragmanı da
+ * gösterilebilir. `1..number_of_seasons` saymak ikisini de kaçırırdı.
+ * `seasons` hiç gelmezse (kısıtlı/eksik yanıt) sayıya düşülür.
+ */
+function sezonNumaralari(detay) {
+  const ham = Array.isArray(detay?.seasons)
+    ? detay.seasons.map((s) => Number(s?.season_number))
+    : [];
+  const gecerli = [...new Set(ham.filter((n) => Number.isInteger(n) && n >= 0))];
+  if (gecerli.length > 0) return gecerli.sort((a, b) => a - b);
+  const n = Number(detay?.number_of_seasons) || 0;
+  return Array.from({ length: n }, (_, i) => i + 1);
+}
+
+/**
  * Tek yapımın fragmanlarını keşfeder.
  *
- * Dönüş: {tur, id, baglar: [{sezon, ...satir}], resmiVar}
+ * Dönüş: {tur, id, baglar: [{sezon, ...satir}]}
  * `baglar` BOŞ olabilir — o da bilgidir ("bu yapımın fragmanı yok").
  */
 async function yapimiKesfet(havuz, yapim, sayac) {
@@ -316,24 +340,19 @@ async function yapimiKesfet(havuz, yapim, sayac) {
   // "tarandı, fragmanı yok" diye 30 gün kuyruktan düşerdi.
   if (ustVeri == null) return null;
 
-  const ust = fragmanSatirlari(ustVeri).map((s) => ({ ...s, sezon: -1 }));
-  const resmiVar = ust.some((s) => s.resmi);
-  const baglar = [...ust];
+  const baglar = fragmanSatirlari(ustVeri).map((s) => ({ ...s, sezon: -1 }));
 
-  // Karar (6): sezon fragmanı YALNIZ dizi düzeyinde resmi fragman yoksa.
-  if (yapim.tur === 'tv' && !resmiVar) {
+  // Karar (6): dizinin BÜTÜN sezonları taranır — bölüm sayfası hangisine
+  // düşeceğini önceden bilemeyiz.
+  if (yapim.tur === 'tv') {
     const detay = await tmdbGetir(havuz, `/tv/${yapim.id}`, gun(7) / 1000, sayac);
-    const sonSezon = Number(detay?.number_of_seasons) || 0;
-    // Uygulamanın (detay.dart) baktığı iki sezon: son sezon ve 1. sezon.
-    // `Set` ikisi aynıysa tek istek yapar.
-    const sezonlar = [...new Set([sonSezon, 1].filter((n) => n >= 1))];
-    for (const s of sezonlar) {
+    for (const s of sezonNumaralari(detay)) {
       const veri = await tmdbGetir(havuz, videoYolu('tv', yapim.id, s), gun(7) / 1000, sayac);
       if (veri == null) continue;
       for (const satir of fragmanSatirlari(veri)) baglar.push({ ...satir, sezon: s });
     }
   }
-  return { ...yapim, baglar, resmiVar };
+  return { ...yapim, baglar };
 }
 
 /** Keşif sonucunu yazar: video satırları, bağlar, defter. */
