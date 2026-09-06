@@ -55,7 +55,15 @@ dizi filmlere öncelik verelim." Domates = Tomatometer (eleştirmen), patlamış
 - ⬜ Gerçek telefonda dokununca IMDb/RT sayfası açılıyor mu (emülatörde tarayıcı denenmedi).
 - ⬜ 7 Eyl+: `SELECT count(*) FILTER (WHERE bulundu), count(*) FROM dis_puanlar` — gece işi günde
   ~650 yazmalı; MDBList `x-ratelimit-remaining` 0'a düşüyorsa GECE_TAVAN'ı düşür.
-- ⬜ APK/AAB üretilmedi (Play'de 196 incelemede).
+- ✅ **201 (1.134.0) ÜRETİME İNCELEMEYE GÖNDERİLDİ (6 Eyl).** Öncesinde konsoldan doğrulandı: 196
+  (1.129.0) onaylanmış ve canlıydı (177 ülke, 172 yükleme), yayın özeti temizdi. 197-200 Play'e
+  gitmedi; 201 hepsini kapsıyor. AAB `cikti/dizijpg-1.134.0-201.aab` (112,2 MB, gerçek anahtarla
+  imzalı, DIZIJPG.RSA). Notlar ÖNCE basıldı (11/11, JS native setter, `surum-notu-1.134.0.txt`,
+  en uzunu de-DE/fr-FR 418) → kullanıcı AAB'yi sürükledi → `App bundle 201 (1.134.0), SDK 24→36` →
+  sürüm adı otomatik doldu → İleri → "Yayınlamaya hazır", cihaz kaybı 0, yükleme 24,8 MB (+65,9 KB),
+  güncelleme 2,95 MB → Kaydet → Genel bakışa git → "1 değişikliği incelemeye gönder" → başlık
+  **"İncelenmekte olan değişiklikler"** (doğrulandı). Hızlı kontroller ~14 dk, sonra inceleme (7 gün).
+- ⬜ Onay gelince: `/admin/surum-duyuru` hedef:herkes.
 
 ## 2026-09-05 — 🧩 KOLAJ: fotoğraflardan tek kare (1.133.0+200)
 

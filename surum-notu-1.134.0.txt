@@ -1,0 +1,103 @@
+# dizi.jpg 1.134.0 (201) — Play sürüm notları (196/1.129.0'dan bu yana: 197-201)
+# Play şablonundaki dil sırası: en-US, ar, de-DE, el-GR, es-ES, fr-FR, id,
+# it-IT, pt-BR, ru-RU, tr-TR
+# HER DİL 500 KARAKTERİN ALTINDA OLMALI (python len ile sayıldı).
+
+<en-US>
+Ratings from everywhere, in one place.
+
+• IMDb, Rotten Tomatoes (critics and audience) and Metacritic scores right next to the TMDB rating on every show and movie. Tap to open the source.
+• New media editor for posts: reorder photos, shoot with the camera, tone/filters/stickers, video speed, mute and filters.
+• Collage: combine up to 6 photos into one frame with 14 layouts.
+• Bug fixes and polish.
+</en-US>
+
+<ar>
+كل التقييمات في مكان واحد.
+
+• درجات IMDb وRotten Tomatoes (النقّاد والجمهور) وMetacritic بجانب تقييم TMDB في كل مسلسل وفيلم. اضغط لفتح المصدر.
+• محرّر وسائط جديد للمنشورات: ترتيب الصور، التصوير بالكاميرا، الدرجات/الفلاتر/الملصقات، سرعة الفيديو وكتم الصوت والفلاتر.
+• كولاج: اجمع حتى 6 صور في إطار واحد بـ14 تخطيطًا.
+• إصلاحات وتحسينات.
+</ar>
+
+<de-DE>
+Alle Bewertungen an einem Ort.
+
+• IMDb, Rotten Tomatoes (Kritiker und Publikum) und Metacritic direkt neben der TMDB-Bewertung bei jeder Serie und jedem Film. Antippen öffnet die Quelle.
+• Neuer Medieneditor für Beiträge: Fotos sortieren, mit der Kamera aufnehmen, Farbton/Filter/Sticker, Videotempo, Stummschalten und Filter.
+• Collage: bis zu 6 Fotos in einem Bild mit 14 Layouts.
+• Fehlerbehebungen und Feinschliff.
+</de-DE>
+
+<el-GR>
+Όλες οι βαθμολογίες σε ένα μέρος.
+
+• IMDb, Rotten Tomatoes (κριτικοί και κοινό) και Metacritic δίπλα στη βαθμολογία TMDB σε κάθε σειρά και ταινία. Πάτα για να ανοίξεις την πηγή.
+• Νέος επεξεργαστής μέσων για αναρτήσεις: σειρά φωτογραφιών, λήψη με κάμερα, τόνος/φίλτρα/αυτοκόλλητα, ταχύτητα βίντεο, σίγαση και φίλτρα.
+• Κολάζ: έως 6 φωτογραφίες σε ένα καρέ με 14 διατάξεις.
+• Διορθώσεις και βελτιώσεις.
+</el-GR>
+
+<es-ES>
+Todas las notas en un solo lugar.
+
+• IMDb, Rotten Tomatoes (crítica y público) y Metacritic junto a la nota de TMDB en cada serie y película. Toca para abrir la fuente.
+• Nuevo editor de medios para publicaciones: ordena fotos, dispara con la cámara, tono/filtros/stickers, velocidad de vídeo, silencio y filtros.
+• Collage: hasta 6 fotos en un solo marco con 14 diseños.
+• Correcciones y mejoras.
+</es-ES>
+
+<fr-FR>
+Toutes les notes au même endroit.
+
+• IMDb, Rotten Tomatoes (critiques et public) et Metacritic à côté de la note TMDB sur chaque série et film. Touche pour ouvrir la source.
+• Nouvel éditeur de médias pour les publications : réordonner les photos, prendre avec la caméra, tons/filtres/stickers, vitesse vidéo, sourdine et filtres.
+• Collage : jusqu'à 6 photos en un cadre, 14 mises en page.
+• Corrections et finitions.
+</fr-FR>
+
+<id>
+Semua nilai di satu tempat.
+
+• Skor IMDb, Rotten Tomatoes (kritikus dan penonton) dan Metacritic di samping nilai TMDB pada setiap serial dan film. Ketuk untuk membuka sumbernya.
+• Editor media baru untuk postingan: urutkan foto, ambil dengan kamera, tone/filter/stiker, kecepatan video, bisukan dan filter.
+• Kolase: gabungkan hingga 6 foto dalam satu bingkai dengan 14 tata letak.
+• Perbaikan bug dan penyempurnaan.
+</id>
+
+<it-IT>
+Tutti i voti in un unico posto.
+
+• IMDb, Rotten Tomatoes (critica e pubblico) e Metacritic accanto al voto TMDB su ogni serie e film. Tocca per aprire la fonte.
+• Nuovo editor media per i post: riordina le foto, scatta con la fotocamera, tono/filtri/sticker, velocità video, muto e filtri.
+• Collage: fino a 6 foto in un'unica immagine con 14 layout.
+• Correzioni e rifiniture.
+</it-IT>
+
+<pt-BR>
+Todas as notas em um só lugar.
+
+• IMDb, Rotten Tomatoes (crítica e público) e Metacritic ao lado da nota do TMDB em cada série e filme. Toque para abrir a fonte.
+• Novo editor de mídia para posts: reordene fotos, fotografe com a câmera, tom/filtros/figurinhas, velocidade do vídeo, mudo e filtros.
+• Colagem: até 6 fotos em um só quadro com 14 layouts.
+• Correções e ajustes.
+</pt-BR>
+
+<ru-RU>
+Все оценки в одном месте.
+
+• IMDb, Rotten Tomatoes (критики и зрители) и Metacritic рядом с оценкой TMDB у каждого сериала и фильма. Нажмите, чтобы открыть источник.
+• Новый редактор медиа для постов: порядок фото, съёмка камерой, тон/фильтры/стикеры, скорость видео, звук и фильтры.
+• Коллаж: до 6 фото в одном кадре, 14 раскладок.
+• Исправления и доработки.
+</ru-RU>
+
+<tr-TR>
+Bütün puanlar tek yerde.
+
+• Her dizi ve filmde TMDB puanının yanında IMDb, Rotten Tomatoes (eleştirmen ve seyirci) ve Metacritic puanları. Dokununca kaynağa gider.
+• Gönderiler için yeni medya editörü: fotoğrafları sırala, kamerayla çek, ton/filtre/çıkartma, video hızı, sessize alma ve filtreler.
+• Kolaj: 14 şablonla en çok 6 fotoğrafı tek karede birleştir.
+• Hata düzeltmeleri ve ince ayarlar.
+</tr-TR>
