@@ -1,6 +1,41 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-06 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-06 — 📐 Masaüstünde yorum kartının düğmeleri hizaya girdi (1.142.0+209) 🚀
+
+**Tetik (kullanıcı):** *"masaüstü görünüşte dizi yorum kısmına yapılan yorumlarda buttonlar
+kayık, mesela silme tuşu en sağda olacağına ortada; beğeni ve yorum yap kısmı da en solda
+olacağına ortada."*
+
+**İki ayrı Flutter tuzağı, aynı belirti.** İkisi de YALNIZ geniş ekranda görünüyordu; telefonda
+boş alan az olduğu için kimse fark etmemişti.
+
+1. **Başlık satırı (silme / üç nokta).** Kullanıcı adının `Flexible`'ı ile `Spacer` AYNI Row'un
+   flex çocuklarıdır ve boş alanı YARI YARIYA paylaşırlar. Ad kısa olduğunda payını KULLANMAZ;
+   artan pay `MainAxisAlignment.start` yüzünden satırın SONUNA düşer ve düğmeyi sola iter.
+   720 dp'lik masaüstü kolonunda ölçülen sapma: **187,75 dp**. Kimlik öbeği (avatar + ad +
+   tarih + bölüm rozeti) tek bir `Flexible` içinde kendi Row'una alındı, artan alan
+   `spaceBetween` ile ARAYA konuyor.
+2. **Etkileşim satırı (beğeni / yorum yap).** "İstatistikleri gör" girişindeki
+   `Container(alignment: centerLeft)` sınırlı kısıtta MÜMKÜN OLAN EN GENİŞ boyutu alır;
+   `Flexible` içindeyken satırın boş alanının yarısını yutuyor, yazı kutunun solunda kalıyor,
+   ardındaki beğeni/yorum düğmeleri ortaya savruluyordu (geniş kolonda ölçülen şişme:
+   **343,9 dp**). `alignment` kaldırıldı — dikey ortalama Row'un kendi
+   `crossAxisAlignment.center`ından, 44 dp'lik dokunma hedefi `minHeight` kısıtından geliyor.
+   Aynı giriş profil yorum kartında da kullanılıyor; orada da düzeldi.
+
+**Dosyalar:** `lib/ekranlar/yorumlar.dart`, `lib/ekranlar/gonderi_istatistik.dart`.
+
+**Kanıt:** `test/yorum_masaustu_hiza_test.dart` (6 test, 1440 dp pencere + 720 dp `OrtaKolon`).
+Eski kodda üç test düşüyor (187,75 dp / 186,75 dp kayma, 343,9 dp şişme), yenisinde hepsi
+geçiyor; tam takım **2.766 test yeşil**. Canlıda gözle de doğrulandı (GoT sayfası): çöp kutusu
+kartın sağ kenarında, "👁 136 · İstatistikleri gör · ♥ 6 · Yorum yap" öbeği kesintisiz solda.
+
+**TUZAK (bir daha yaşamamak için):** Bir Row'da `Spacer` kullanıyorsan başka `Flexible`
+OLMAMALI — biri gevşek (loose) olduğu anda pay bölüşülür ve artan alan satırın SONUNA düşer.
+`alignment` verilmiş `Container` de sınırlı kısıtta daima şişer; içerik kadar kalması isteniyorsa
+`alignment` verilmez.
+
 ## 2026-09-06 — 🖼️ Fragman kapağı: maxres "video yok" yer tutucusu (1.141.0+208) 🚀
 
 **Tetik (kullanıcı):** *"the wire 2 sezon 10 bölüm trailer kırık"* → *"video var ama kapak
