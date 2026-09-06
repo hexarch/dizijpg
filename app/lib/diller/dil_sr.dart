@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (sr).
 const Map<String, String> cevirilerSr = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'Налепите линк или отпремите видео, позовите пријатеље и гледајте заједно.',
   'Bağlantı yapıştır': 'Налепи линк',
   'Yapıştır': 'Налепи',
   'Video bağlantısı': 'Линк видеа',

@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (my).
 const Map<String, String> cevirilerMy = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'လင့်ခ်ကူးထည့်ပါ သို့မဟုတ် ဗီဒီယိုတင်ပါ၊ သူငယ်ချင်းများကိုဖိတ်ခေါ်ပြီး အတူကြည့်ပါ။',
   'Bağlantı yapıştır': 'လင့်ခ်ကူးထည့်ပါ',
   'Yapıştır': 'ကူးထည့်ပါ',
   'Video bağlantısı': 'ဗီဒီယိုလင့်ခ်',

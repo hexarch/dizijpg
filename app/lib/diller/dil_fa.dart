@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (fa).
 const Map<String, String> cevirilerFa = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'پیوندی بچسبانید یا ویدیویی بارگذاری کنید، دوستان را دعوت کنید و با هم تماشا کنید.',
   'Bağlantı yapıştır': 'چسباندن پیوند',
   'Yapıştır': 'چسباندن',
   'Video bağlantısı': 'پیوند ویدیو',

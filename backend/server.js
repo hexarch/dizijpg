@@ -16785,6 +16785,10 @@ app.post('/odalar', girisZorunlu, odaLimiti, sarici(async (req, res) => {
 app.get('/odalar', girisZorunlu, odaLimiti, sarici(async (req, res) => {
   const { rows } = await havuz.query(
     `SELECT o.id, o.kod, o.baslik, o.video, o.video_ad, o.video_kapak, o.biter,
+            -- KAYNAK KOLONLARI ŞART (7 Eyl 2026, canlı testte yakalandı):
+            -- seçilmezlerse aşağıdaki video_var ifadesi undefined okur ve
+            -- bağlantılı oda listede SESSİZCE boş görünür.
+            o.kaynak, o.baglanti_saglayici, o.baglanti_kimlik,
             o.sahip_id, k.kullanici_adi AS sahip_adi, k.avatar AS sahip_avatar,
             u.katildi, u.rol,
             (SELECT count(*)::int FROM oda_uyeler x

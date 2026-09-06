@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (sw).
 const Map<String, String> cevirilerSw = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'Bandika kiungo au pakia video, alika marafiki, na tazameni pamoja.',
   'Bağlantı yapıştır': 'Bandika kiungo',
   'Yapıştır': 'Bandika',
   'Video bağlantısı': 'Kiungo cha video',

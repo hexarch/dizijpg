@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (ta).
 const Map<String, String> cevirilerTa = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'இணைப்பை ஒட்டவும் அல்லது வீடியோவைப் பதிவேற்றவும், நண்பர்களை அழைத்து ஒன்றாகப் பாருங்கள்.',
   'Bağlantı yapıştır': 'இணைப்பை ஒட்டவும்',
   'Yapıştır': 'ஒட்டு',
   'Video bağlantısı': 'வீடியோ இணைப்பு',

@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (am).
 const Map<String, String> cevirilerAm = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'አገናኝ ይለጥፉ ወይም ቪዲዮ ይጫኑ፣ ጓደኞችዎን ይጋብዙ እና በአንድ ላይ ይመልከቱ።',
   'Bağlantı yapıştır': 'አገናኝ ለጥፍ',
   'Yapıştır': 'ለጥፍ',
   'Video bağlantısı': 'የቪዲዮ አገናኝ',

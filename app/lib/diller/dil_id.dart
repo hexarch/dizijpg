@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (id).
 const Map<String, String> cevirilerId = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'Tempel tautan atau unggah video, undang teman, dan tonton bersama.',
   'Bağlantı yapıştır': 'Tempel tautan',
   'Yapıştır': 'Tempel',
   'Video bağlantısı': 'Tautan video',

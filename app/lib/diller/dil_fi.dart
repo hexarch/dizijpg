@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (fi).
 const Map<String, String> cevirilerFi = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'Liitä linkki tai lataa video, kutsu kaverit ja katsokaa yhdessä.',
   'Bağlantı yapıştır': 'Liitä linkki',
   'Yapıştır': 'Liitä',
   'Video bağlantısı': 'Videolinkki',

@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (nb).
 const Map<String, String> cevirilerNb = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'Lim inn en lenke eller last opp en video, inviter venner, og se sammen.',
   'Bağlantı yapıştır': 'Lim inn lenke',
   'Yapıştır': 'Lim inn',
   'Video bağlantısı': 'Videolenke',

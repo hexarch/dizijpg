@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (ko).
 const Map<String, String> cevirilerKo = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      '링크를 붙여넣거나 동영상을 올리고, 친구를 초대해 함께 보세요.',
   'Bağlantı yapıştır': '링크 붙여넣기',
   'Yapıştır': '붙여넣기',
   'Video bağlantısı': '동영상 링크',

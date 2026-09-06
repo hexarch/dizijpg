@@ -200,7 +200,8 @@ class _OdaSheetState extends State<OdaSheetGovdesi> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Bir video yükle, arkadaşlarını davet et, aynı anda izleyin.'.c,
+                'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.'
+                    .c,
                 style: TextStyle(fontSize: 13, color: DiziRenkler.metin54),
               ),
               const SizedBox(height: 16),

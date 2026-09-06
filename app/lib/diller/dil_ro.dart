@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (ro).
 const Map<String, String> cevirilerRo = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'Lipește un link sau încarcă un videoclip, invită prieteni și priviți împreună.',
   'Bağlantı yapıştır': 'Lipește linkul',
   'Yapıştır': 'Lipește',
   'Video bağlantısı': 'Link video',

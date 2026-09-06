@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (fr).
 const Map<String, String> cevirilerFr = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'Collez un lien ou importez une vidéo, invitez vos amis et regardez ensemble.',
   'Bağlantı yapıştır': 'Coller le lien',
   'Yapıştır': 'Coller',
   'Video bağlantısı': 'Lien de la vidéo',

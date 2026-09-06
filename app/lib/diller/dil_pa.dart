@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (pa).
 const Map<String, String> cevirilerPa = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'ਲਿੰਕ ਪੇਸਟ ਕਰੋ ਜਾਂ ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ, ਦੋਸਤਾਂ ਨੂੰ ਸੱਦੋ ਅਤੇ ਇਕੱਠੇ ਦੇਖੋ।',
   'Bağlantı yapıştır': 'ਲਿੰਕ ਪੇਸਟ ਕਰੋ',
   'Yapıştır': 'ਪੇਸਟ ਕਰੋ',
   'Video bağlantısı': 'ਵੀਡੀਓ ਲਿੰਕ',

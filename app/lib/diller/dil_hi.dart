@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (hi).
 const Map<String, String> cevirilerHi = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'लिंक पेस्ट करें या वीडियो अपलोड करें, दोस्तों को बुलाएँ और साथ देखें।',
   'Bağlantı yapıştır': 'लिंक पेस्ट करें',
   'Yapıştır': 'पेस्ट करें',
   'Video bağlantısı': 'वीडियो लिंक',

@@ -947,3 +947,21 @@ test('uç: bağlantı YALNIZ sunucunun kendi çözümlemesini yazar', () => {
   assert.match(g, /odaLimiti/, 'hız limiti yok');
   assert.match(g, /durumYazabilir|YETKI_YOK/, 'yetki kontrolü yok');
 });
+
+
+test('uç: oda LİSTESİ kaynak kolonlarını SEÇİYOR (yoksa bağlantılı oda "boş" görünür)', () => {
+  // 7 Eyl 2026, canlı testte yakalandı: `video_var` ifadesi `r.kaynak` ve
+  // `r.baglanti_kimlik` okuyor ama SELECT listesinde yoklardı; ikisi de
+  // `undefined` geliyor, bağlantılı oda modalde SESSİZCE boş görünüyordu.
+  // Sorgu ile onu okuyan ifade AYRI yerlerde durduğu için ancak böyle bir
+  // test ikisini birbirine bağlar.
+  const s = oku('server.js');
+  const i = s.indexOf("app.get('/odalar', girisZorunlu");
+  assert.ok(i > 0, 'oda listesi ucu yok');
+  const g = s.slice(i, i + 2500);
+  for (const k of ['o.kaynak', 'o.baglanti_saglayici', 'o.baglanti_kimlik']) {
+    assert.ok(g.includes(k), `SELECT listesinde ${k} yok`);
+  }
+  assert.match(g, /video_var: !!r\.video \|\| \(r\.kaynak === 'baglanti'/,
+    'video_var kaynağa bakmıyor');
+});

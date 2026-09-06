@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (ms).
 const Map<String, String> cevirilerMs = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'Tampal pautan atau muat naik video, jemput rakan, dan tonton bersama.',
   'Bağlantı yapıştır': 'Tampal pautan',
   'Yapıştır': 'Tampal',
   'Video bağlantısı': 'Pautan video',

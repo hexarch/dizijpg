@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (bn).
 const Map<String, String> cevirilerBn = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'লিঙ্ক পেস্ট করুন বা ভিডিও আপলোড করুন, বন্ধুদের আমন্ত্রণ জানান, একসাথে দেখুন।',
   'Bağlantı yapıştır': 'লিঙ্ক পেস্ট করুন',
   'Yapıştır': 'পেস্ট',
   'Video bağlantısı': 'ভিডিও লিঙ্ক',

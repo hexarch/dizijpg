@@ -180,11 +180,17 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
     );
   }
 
+  /// DOKUNUŞLAR FLUTTER'DA KALIR (web yüzeyiyle aynı gerekçe).
+  ///
+  /// WebView dokunuşu yutuyor ve altındaki YouTube kontrolleri tıklanabiliyor:
+  /// izleyici oradan duraklatırsa oda senkronu bozulur ve düzeltici bir saniye
+  /// sonra geri alır — kullanıcı "video zıplıyor" görür. Oynatmayı yalnız
+  /// bizim kontrollerimiz ve sunucudaki oda durumu sürer.
   @override
   Widget build(BuildContext context) {
     final w = _web;
     if (w == null) return const ColoredBox(color: Colors.black);
-    return WebViewWidget(controller: w);
+    return IgnorePointer(child: WebViewWidget(controller: w));
   }
 }
 
@@ -256,10 +262,20 @@ const _enjekte = r'''
     var st = document.createElement('style');
     st.id = 'oda-css';
     st.textContent = [
-      '.ytp-chrome-top,.ytp-gradient-top,.ytp-chrome-bottom,',
-      '.ytp-gradient-bottom,.ytp-large-play-button,.ytp-pause-overlay,',
-      '.ytp-ce-element,.ytp-watermark,.ytp-show-cards-title,',
-      '.vp-title,.vp-controls,.vp-sidedock,.vp-overlay-cell',
+      '.ytp-chrome-top,.ytp-chrome-top-buttons,.ytp-gradient-top,',
+      '.ytp-chrome-bottom,.ytp-gradient-bottom,.ytp-large-play-button,',
+      '.ytp-pause-overlay,.ytp-pause-overlay-container,.ytp-ce-element,',
+      '.ytp-watermark,.ytp-show-cards-title,.ytp-cards-teaser,',
+      // BİTİŞ EKRANI (7 Eyl 2026, iOS'ta canlı görüldü): video bitince
+      // YouTube başlık + kanal + "tekrar oynat" + logo + paylaş kartını
+      // ortaya basıyor. Oynarken görünmediği için ilk turda kaçmıştı.
+      '.ytp-endscreen-content,.html5-endscreen,.ytp-player-content,',
+      '.ytp-title,.ytp-title-text,.ytp-title-channel,.ytp-title-link,',
+      '.ytp-youtube-button,.ytp-share-button,.ytp-copylink-button,',
+      '.ytp-watch-later-button,.ytp-cued-thumbnail-overlay,',
+      '.ytp-suggestion-set,.ytp-scroll-min,.branding-img-container,',
+      '.annotation,.ytp-spinner,',
+      '.vp-title,.vp-controls,.vp-sidedock,.vp-overlay-cell,.vp-outro',
       '{display:none!important;}',
       'html,body{margin:0!important;padding:0!important;overflow:hidden!important;background:#000!important;}',
       'video{position:absolute!important;top:0!important;left:0!important;',

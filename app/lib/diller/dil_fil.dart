@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (fil).
 const Map<String, String> cevirilerFil = {
+  'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
+      'Mag-paste ng link o mag-upload ng video, mag-imbita ng mga kaibigan, at manood nang sabay.',
   'Bağlantı yapıştır': 'I-paste ang link',
   'Yapıştır': 'I-paste',
   'Video bağlantısı': 'Link ng video',
