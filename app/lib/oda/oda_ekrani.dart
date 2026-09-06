@@ -787,7 +787,9 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     // GÖMME Mİ: YouTube/Vimeo gömme yüzeyi ister; doğrudan dosya adresi
     // (.mp4) yüklenen videoyla AYNI oynatıcıyı kullanır.
     final gommeMi = b != null && b.gommeMi;
-    final damga = b != null ? '\${b.saglayici.name}:\${b.kimlik}' : oda.video;
+    // Damga MODELDE (`Oda.kaynakDamgasi`): burada elle kurulduğunda 7 Eyl
+    // 2026'da sessiz bir hata verdi — gerekçe o getter'ın başlığında.
+    final damga = oda.kaynakDamgasi;
     if (damga == null || damga == _kuruluVideo) return;
     _kuruluVideo = damga;
 

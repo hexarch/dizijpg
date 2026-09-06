@@ -364,6 +364,23 @@ class Oda {
 
   bool get baglantiliMi => kaynak == 'baglanti';
 
+  /// Şu anki kaynağın KİMLİĞİ — "oynatıcı yeniden kurulmalı mı" kararı buna
+  /// bakar (`oda_ekrani._kaynagiKur`).
+  ///
+  /// EKRANDA DEĞİL BURADA, çünkü 7 Eyl 2026'da tam bu dizgi ekranın içinde
+  /// yanlış yazıldı (dolar işareti kaçırılmış, yani her oda için AYNI sabit
+  /// metin üretiliyordu) ve sonuç sessizdi: bağlantı değiştirildiğinde damga
+  /// değişmiyor, oynatıcı yeniden kurulmuyor, oda ESKİ videoyu göstermeye
+  /// devam ediyordu. Model üzerinde durunca tek satırlık bir testle
+  /// kilitlenebiliyor.
+  String? get kaynakDamgasi {
+    if (baglantiliMi) {
+      final b = baglanti;
+      return b == null ? null : '${b.saglayici.name}:${b.kimlik}';
+    }
+    return video;
+  }
+
   /// GÖVDE BEKLENMEDİK OLABİLİR ve bu ekranı ÇÖKERTMEMELİ: `as num` sert
   /// dönüşümü, eski bir sunucu ya da araya giren bir portal sayfası yüzünden
   /// alan eksik geldiğinde yakalanmayan bir `TypeError` fırlatıyordu (3 Eyl

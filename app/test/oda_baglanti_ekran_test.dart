@@ -16,6 +16,7 @@ import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ceviri.dart';
+import 'package:dizijpg/oda/oda_api.dart';
 import 'package:dizijpg/oda/oda_baglanti.dart';
 import 'package:dizijpg/oda/oda_baglanti_sheet.dart';
 import 'package:dizijpg/oda/oda_ekrani.dart';
@@ -194,6 +195,42 @@ void main() {
     // Zaman parametresi de KORUNUYOR — kırpmak sunucudaki çözümlemeyi
     // istemciye taşımak olurdu.
     expect(donen, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=42');
+  });
+
+  test('kaynak damgası: bağlantı değişince DEĞİŞİR', () {
+    // 7 Eyl 2026'da bu damga ekranın içinde elle kuruluyordu ve dolar işareti
+    // kaçırıldığı için HER ODADA aynı sabit metni üretiyordu. Sonuç sessizdi:
+    // sahip bağlantıyı değiştirdiğinde damga aynı kalıyor, oynatıcı yeniden
+    // kurulmuyor ve oda ESKİ videoyu göstermeye devam ediyordu.
+    Oda oda(Map<String, dynamic>? b, {String kaynak = 'baglanti'}) =>
+        Oda.json(_oda(kaynak: kaynak, baglanti: b));
+
+    final a = oda({
+      'saglayici': 'youtube',
+      'kimlik': 'dQw4w9WgXcQ',
+      'url': 'https://youtu.be/dQw4w9WgXcQ',
+    });
+    final c = oda({
+      'saglayici': 'youtube',
+      'kimlik': 'AAAAAAAAAAA',
+      'url': 'https://youtu.be/AAAAAAAAAAA',
+    });
+    final v = oda({
+      'saglayici': 'vimeo',
+      'kimlik': '76979871',
+      'url': 'https://vimeo.com/76979871',
+    });
+
+    expect(a.kaynakDamgasi, 'youtube:dQw4w9WgXcQ');
+    expect(a.kaynakDamgasi, isNot(c.kaynakDamgasi), reason: 'kimlik değişti');
+    expect(
+      a.kaynakDamgasi,
+      isNot(v.kaynakDamgasi),
+      reason: 'sağlayıcı değişti',
+    );
+    // Kaynağı olmayan oda damgasız: oynatıcı hiç kurulmaz.
+    expect(oda(null).kaynakDamgasi, isNull);
+    expect(oda(null, kaynak: 'yukleme').kaynakDamgasi, isNull);
   });
 
   testWidgets('bağlantılı odada boş durum ÇİZİLMİYOR', (t) async {
