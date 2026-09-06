@@ -1,6 +1,34 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-06 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-06 — 🔝 `<title>` kafanın başına: 2.452. bayt → 196. bayt (kabuk) 🚀
+
+**Tetik (SEO danışmanı, 18:09):** "title etiketi kodunun konumu çok aşağılarda, meta description
+üstüne alın." Kabukta başlık ikonların ve preload'ların ALTINDA, 62. satırdaydı ve açıklamadan
+SONRA geliyordu. (SSR sayfası — botun gördüğü — zaten doğru sıradaydı; bu düzeltme insanın aldığı
+kabuğu ona eşitliyor.)
+
+**Yeni sıra:** `charset` → `X-UA-Compatible` → `viewport` → `title` → `description`, sonra gerekçe
+açıklamaları, sonra `<base>` ve geri kalan her şey. `<base>` yalnız KENDİNDEN SONRAKİ göreli
+adresleri etkiler; üstteki beş satırın hiçbirinde adres yok.
+
+**ÖĞRENİLMİŞ DERS 1 — açıklamalar başlığın ÜSTÜNDE duramaz.** İlk denemede gerekçe metni
+etiketlerin üstüne yazıldı; başlık 62. satırdan kurtuldu ama **2.452. bayta** indi, yani sorunun
+kendisi geri geldi. Açıklamalar etiketlerin ALTINA taşındı → başlık **196. bayt**, kafanın 4. etiketi.
+
+**ÖĞRENİLMİŞ DERS 2 — yorumda etiket adı düz yazılırsa üretici onu gerçek sanıyor.** Açıklama
+metninde `title` etiketinin adı düz geçiyordu; `web_dil_kabugu.mjs`in deseni yorumdaki örneği
+yakalayıp yorumun ortasından gerçek kapanışa kadar her şeyi değiştirdi ve 46 kabuğun tamamı bozuldu
+(dağıtımdan ÖNCE yakalandı). Üretici artık yorumları maskeliyor (uzunluk korunur, konum kaymaz) ve
+eşleşmeyi yorumsuz metinde arayıp yazmayı asıl metinde aynı konuma yapıyor.
+
+**KAPI:** `web_dil_kabugu.mjs` dağıtımı durduruyor — başlık açıklamanın altındaysa, başlık 1.024.
+bayttan sonraysa ya da `charset` 1.024. bayttan sonraysa çıkış kodu 1.
+
+**Doğrulama (canlı):** 8 dilin kabuğunda `charset@42, title@196, desc@244-278`, tek `<title>`,
+yorumlar dengeli; tarayıcıda `/de/icerik/tv/2098` açılıyor ve sekme "Batman: The Animated Series
+(1992) | dizi.jpg". Uygulama sürümü DEĞİŞMEDİ (1.137.0+204) — yalnız kabuk HTML'i.
+
 ## 2026-09-06 — 🏷️ Dil sayfalarının BAŞLIĞI insanlara da doğru: kabuk + sekme (1.137.0+204) 🚀
 
 **Tetik (SEO danışmanı, 13:55):** "Dil sayfalarındaki title ve description ilgili dile ve hedef

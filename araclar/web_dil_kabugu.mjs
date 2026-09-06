@@ -43,6 +43,52 @@ if (!fs.existsSync(anaDosya)) {
 }
 const kabuk = fs.readFileSync(anaDosya, 'utf8');
 
+// HTML YORUMLARINI MASKELE — uzunluk KORUNUR, konumlar kaymaz.
+//
+// NEDEN (6 Eyl 2026, canlıdan önce yakalandı): index.html'e eklenen bir
+// açıklama metninde başlık etiketinin adı düz yazılıydı; aşağıdaki desen onu
+// GERÇEK etiket sanıp yorumun ortasından gerçek kapanışa kadar her şeyi
+// değiştirdi ve kabuk bozuldu. Artık hem kapı hem değiştirme YORUMSUZ metinde
+// arama yapar, yazma ise asıl metinde aynı konumdan yapılır.
+const yorumsuz = (html) =>
+  html.replace(/<!--[\s\S]*?-->/g, (y) => ' '.repeat(y.length));
+
+const kabukSade = yorumsuz(kabuk);
+
+// KAFA SIRASI KAPISI (6 Eylül 2026, SEO danışmanı: "<title> etiketi çok
+// aşağılarda, meta description'ın üstüne alın").
+//
+// Başlık etiketi bir zamanlar ikonların ve preload'ların ALTINDA, 62.
+// satırdaydı. Tarayıcı için fark etmez; ama HTML ayrıştırıcısı kafayı ilk
+// geçersiz elemanda kesebilir ve denetim araçlarının bir kısmı kafanın yalnız
+// ilk bölümünü okur. Sıra sessizce geri kaymasın diye dağıtım burada DURUR:
+// düzeltmenin bedeli iki satır, gerilemenin bedeli bir tur SEO tartışması.
+{
+  const iTitle = kabukSade.indexOf('<title>');
+  const iDesc = kabukSade.indexOf('<meta name="description"');
+  const iCharset = kabukSade.indexOf('<meta charset');
+  if (iTitle < 0 || iDesc < 0 || iCharset < 0) {
+    console.error('HATA: index.html kafasında charset/başlık/açıklama bulunamadı.');
+    process.exit(1);
+  }
+  if (iTitle > iDesc) {
+    console.error('HATA: başlık etiketi açıklamanın ALTINDA. Üstüne al.');
+    process.exit(1);
+  }
+  // Başlık kafanın ilk 1 KB'ında olmalı. Bugün 196. baytta (4. etiket);
+  // sınır bol tutuldu ki küçük eklemeler dağıtımı kırmasın, ama gerekçe
+  // açıklamaları başlığın ÜSTÜNE geri taşınırsa (2.400. bayt) yakalasın.
+  const SINIR = 1024;
+  if (iTitle > SINIR) {
+    console.error(`HATA: başlık ${iTitle}. baytta, sınır ${SINIR}. Kafanın başına al.`);
+    process.exit(1);
+  }
+  if (iCharset > 1024) {
+    console.error(`HATA: <meta charset> ${iCharset}. baytta; spec ilk 1024 baytı tarar.`);
+    process.exit(1);
+  }
+}
+
 // HTML öznitelik değeri kaçışı. Başlıklar `&` ve `"` taşıyabiliyor
 // ("Serien & Filme"), ham basılırsa etiket bozulur.
 const oz = (x) =>
@@ -101,8 +147,11 @@ function kabukUret(dil) {
   };
   let html = kabuk;
   for (const [ad, desen, uret] of KURALLAR) {
-    if (!desen.test(html)) throw new Error(`index.html: "${ad}" etiketi bulunamadı`);
-    html = html.replace(desen, uret(veri));
+    // Eşleşme YORUMSUZ metinde aranır (yorumdaki örnek etiket yakalanmasın),
+    // yazma asıl metinde AYNI konuma yapılır — maskeleme uzunluğu korur.
+    const m = desen.exec(yorumsuz(html));
+    if (!m) throw new Error(`index.html: "${ad}" etiketi bulunamadı`);
+    html = html.slice(0, m.index) + uret(veri) + html.slice(m.index + m[0].length);
   }
   return html;
 }

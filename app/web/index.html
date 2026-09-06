@@ -1,6 +1,46 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dizi.jpg</title>
+  <meta name="description" content="dizi.jpg — Dizi ve filmlerini takip et">
+
+  <!-- ============================================================
+       YUKARIDAKI BES SATIRIN GEREKCESI — aciklamalar BILEREK ALTTA.
+       ============================================================
+
+       SIRA (6 Eyl 2026, SEO danismani: "baslik etiketi cok asagilarda,
+       aciklamanin ustune alin"). Baslik eskiden ikonlarin ve preload'larin
+       ALTINDA, 62. satirda ve aciklamadan SONRA duruyordu. Tarayici icin fark
+       etmez; ama HTML ayristiricisi kafayi ilk gecersiz elemanda kesebilir ve
+       denetim araclarinin bir kismi kafanin yalniz ilk bolumunu okur. Ilk
+       birkac yuz bayta almak bedava bir guvence. SSR sayfasi (botun gordugu)
+       ZATEN bu siradaydi; bu duzeltme insanin aldigi kabugu ona esitler.
+       ACIKLAMALAR NEDEN ALTTA: gerekce metni etiketlerin USTUNDE dursaydi
+       baslik 2.400. bayta iniyordu, yani sorunun kendisi geri geliyordu.
+       Sira geri kayarsa araclar/web_dil_kabugu.mjs'teki kapi dagitimi durdurur.
+
+       BASLIK VE ACIKLAMA TOHUMDUR: araclar/web_dil_kabugu.mjs dagitimda
+       bunlari (og/twitter ve html lang ile birlikte) backend/seo_dil.js'ten
+       gelen dile ozel metinle degistirir ve /de/index.html gibi 45 kopya
+       uretir.
+
+       BU ACIKLAMADA ETIKET ADI DUZ YAZILMAZ: uretici etiketleri metinde arar;
+       yorumdaki bir ornek onu yanlis yere goturur — 6 Eyl'de tam olarak bu
+       oldu ve kabuk bozuldu. (Uretici artik yorumlari maskeliyor, ama kural
+       yine de gecerli.)
+
+       charset ILK: spec onu ilk 1024 bayt icinde arar.
+
+       VIEWPORT STATIK: acilis ekrani Flutter yuklenmeden ONCE boyaniyor; meta
+       olmadan mobil tarayici sayfayi 980 px genislik varsayip kucultur ve marka
+       minicik gorunur. Flutter motoru (FullPageEmbeddingStrategy
+       ._applyViewportMeta) acilista bu etiketi silip kendi user-scalable=no
+       surumunu koyuyor; ilk kareden sonra asagidaki betik yakinlastirmaya izin
+       veren degeri geri yaziyor. -->
+
   <!--
     If you are serving your web app in a path other than the root, change the
     href value below to reflect the base path you are serving from.
@@ -13,21 +53,12 @@
 
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
+
+    KONUM: baslik/aciklamanin ALTINDA. base yalnizca KENDINDEN SONRAKI goreli
+    adresleri etkiler; ustteki bes satirin hicbirinde adres yok.
   -->
   <base href="$FLUTTER_BASE_HREF">
 
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-
-  <!-- Viewport: STATİK olarak burada duruyor çünkü açılış ekranı Flutter
-       yüklenmeden ÖNCE boyanıyor; meta olmadan mobil tarayıcı sayfayı 980 px
-       genişlik varsayıp küçültür ve marka minicik görünür. Flutter motoru
-       (FullPageEmbeddingStrategy._applyViewportMeta) açılışta bu etiketi silip
-       kendi `user-scalable=no` sürümünü koyuyor; ilk kareden sonra aşağıdaki
-       betik yakınlaştırmaya izin veren değeri geri yazıyor. -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <meta name="description" content="dizi.jpg — Dizi ve filmlerini takip et">
   <meta name="theme-color" content="#F5C518">
 
   <!-- Site geneli link önizlemesi (fallback). İçerik/gönderi/kişi sayfaları
@@ -59,7 +90,6 @@
   <!-- Açılış logosu: FCP için erken keşif. Asıl dosya assets/logo.png ile aynı. -->
   <link rel="preload" as="image" href="logo.png">
 
-  <title>dizi.jpg</title>
   <link rel="manifest" href="manifest.json">
 
   <!-- Google ile giriş (GIS); istemci kimliği Dart tarafında da veriliyor.
