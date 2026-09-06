@@ -84,6 +84,7 @@ export const ODA_HATA_METNI = {
   YETKI_YOK: 'Bunu oda sahibi ve yetki verdiği kişiler yapabilir',
   KENDI_ROLUN: 'Kendi yetkini değiştiremezsin',
   ROL_GECERSIZ: 'Geçersiz yetki',
+  BAGLANTI_DESTEKSIZ: 'Bu adres desteklenmiyor',
 };
 
 /**
@@ -361,4 +362,147 @@ export function girisKarari(oda, simdi, d) {
 /** Üye çevrimiçi mi (son yoklaması eşiğin içinde mi). */
 export function cevrimiciMi(sonGorulme, simdi) {
   return simdi - (Number(sonGorulme) || 0) <= CEVRIMICI_ESIK_MS;
+}
+
+// ---------------------------------------------------------------------------
+// BAĞLANTI KAYNAĞI (7 Eyl 2026)
+// ---------------------------------------------------------------------------
+//
+// Kullanıcı isteği: *"video upload yerine kullanıcıya tarayıcı açabilir miyiz
+// … youtube gibi tüm platformların url'ini destekleyecek şekilde yapsak"*.
+// Yükleme DURUYOR; bu ikinci bir kaynak.
+//
+// ===========================================================================
+// BURASI İSTEMCİNİN İKİZİ DEĞİL, TEK OTORİTE
+// ===========================================================================
+// İstemci `app/lib/oda/oda_baglanti.dart` ile aynı çözümlemeyi yapıyor ve
+// sonucu gönderiyor — ama VERİTABANINA YAZILAN, buranın kendi sonucudur.
+// İstemcinin çözümlemesine güvenmek, `baglanti_saglayici='youtube'` diyip
+// `kimlik` alanına rastgele bir adres koyan bir isteğin gömme yüzeyimize
+// istediği sayfayı yükletmesi demekti (kendi sayfamızda üçüncü taraf iframe).
+//
+// ===========================================================================
+// LİSTE NEDEN KISA — 7 Eyl 2026'da ÖLÇÜLDÜ
+// ===========================================================================
+// Senkron için oynatıcı KONTROL edilebilmeli. Ölçüm (yerel sayfaya iframe
+// kurup komut yollayarak):
+//   · YouTube  : IFrame API çalışıyor (zaten üründe)
+//   · Vimeo    : getDuration -> 62, setCurrentTime onaylandı
+//   · Dailymotion: yeni `geo` oynatıcı yalnız `pes_listen_eid` yayıyor,
+//                  komutlara yanıt YOK (kontrol için hesaplı SDK gerekiyor)
+//   · OK.ru    : `{"event":"inited"}` yayıyor, 8 komut biçimine SIFIR yanıt
+//   · VK       : dış gömme `hash` istiyor, yapıştırılan adresten üretilemiyor
+// Son üçü kabul edilseydi "gömülür ama sahip sardığında kimse sarmaz" olurdu:
+// odanın tek varlık sebebi olan senkron SESSİZCE bozulurdu.
+
+/** Doğrudan oynatılabilir uzantılar — `<video>` bunları açabiliyor. */
+export const ODA_DOSYA_UZANTILARI = ['mp4', 'webm', 'm3u8', 'mov'];
+
+/** Desteklenen sağlayıcılar; `izleme_odalari.baglanti_saglayici` CHECK'i ile birebir. */
+export const ODA_SAGLAYICILAR = ['youtube', 'vimeo', 'dosya'];
+
+const YOUTUBE_KIMLIK = /^[A-Za-z0-9_-]{11}$/;
+const VIMEO_KIMLIK = /^\d{6,}$/;
+const VIMEO_GIZLI = /^[0-9a-f]{6,}$/;
+
+/**
+ * Bir adresi çözer.
+ *
+ * @returns {{saglayici:string, kimlik:string, url:string, gizli:string|null}|null}
+ *   null = desteklenmiyor (çağıran `BAGLANTI_DESTEKSIZ` döner).
+ */
+export function baglantiCoz(ham) {
+  if (typeof ham !== 'string') return null;
+  const metin = ham.trim();
+  if (!metin || metin.length > 2000) return null;
+  // Şemasız yapıştırma en sık kullanıcı davranışı ("youtu.be/..."). `http://`
+  // AÇIKÇA yazıldıysa reddedilir: sayfamız https, karışık içerik tarayıcıda
+  // SESSİZCE engellenir ve kullanıcı sebebini asla göremez.
+  const tam = metin.includes('://') ? metin : `https://${metin}`;
+  let u;
+  try {
+    u = new URL(tam);
+  } catch {
+    return null;
+  }
+  if (u.protocol !== 'https:' || !u.hostname) return null;
+
+  const host = u.hostname.toLowerCase().replace(/^www\./, '');
+  const yol = u.pathname.split('/').filter(Boolean);
+
+  // --- YouTube -------------------------------------------------------------
+  if (host === 'youtu.be' || host.endsWith('.youtu.be')) {
+    const id = yol[0] || '';
+    if (!YOUTUBE_KIMLIK.test(id)) return null;
+    return { saglayici: 'youtube', kimlik: id, url: `https://youtu.be/${id}`, gizli: null };
+  }
+  if (
+    host === 'youtube.com' || host === 'm.youtube.com' ||
+    host === 'music.youtube.com' || host === 'youtube-nocookie.com' ||
+    host.endsWith('.youtube.com') || host.endsWith('.youtube-nocookie.com')
+  ) {
+    const q = u.searchParams.get('v') || '';
+    if (YOUTUBE_KIMLIK.test(q)) {
+      return { saglayici: 'youtube', kimlik: q, url: `https://www.youtube.com/watch?v=${q}`, gizli: null };
+    }
+    if (yol.length >= 2 && ['embed', 'shorts', 'live', 'v'].includes(yol[0]) && YOUTUBE_KIMLIK.test(yol[1])) {
+      return { saglayici: 'youtube', kimlik: yol[1], url: `https://www.youtube.com/watch?v=${yol[1]}`, gizli: null };
+    }
+    return null;
+  }
+
+  // --- Vimeo ---------------------------------------------------------------
+  if (host === 'vimeo.com' || host === 'player.vimeo.com' || host.endsWith('.vimeo.com')) {
+    const sayilar = yol.filter((s) => VIMEO_KIMLIK.test(s));
+    if (!sayilar.length) return null;
+    const id = sayilar[sayilar.length - 1];
+    const sira = yol.indexOf(id);
+    // Gizli (unlisted) videonun anahtarı: `h=` sorgusu ya da id'den SONRAKİ
+    // onaltılık parça. Anahtarsız gömme 403 verir, yani düşürülemez.
+    let gizli = u.searchParams.get('h');
+    if (!gizli && sira >= 0 && yol[sira + 1] && VIMEO_GIZLI.test(yol[sira + 1])) {
+      gizli = yol[sira + 1];
+    }
+    return {
+      saglayici: 'vimeo',
+      kimlik: id,
+      url: gizli ? `https://vimeo.com/${id}/${gizli}` : `https://vimeo.com/${id}`,
+      gizli: gizli || null,
+    };
+  }
+
+  // --- Doğrudan dosya ------------------------------------------------------
+  const nokta = u.pathname.lastIndexOf('.');
+  const uzanti = nokta >= 0 ? u.pathname.slice(nokta + 1).toLowerCase() : '';
+  if (ODA_DOSYA_UZANTILARI.includes(uzanti)) {
+    // ÖZEL AĞ ADRESLERİ REDDEDİLİR. Sunucu bu adresi hiç istemiyor (dosyayı
+    // istemci çekiyor), ama kabul etmek uygulamayı bir iç ağ tarayıcısına
+    // çevirirdi: oda kuran kişi 10 kişiye `https://192.168.1.1/a.mp4`
+    // yükletip yanıt sürelerinden ağ haritası çıkarabilirdi.
+    if (ozelAgAdresi(u.hostname)) return null;
+    return { saglayici: 'dosya', kimlik: u.href, url: u.href, gizli: null };
+  }
+  return null;
+}
+
+/**
+ * Adres yerel/özel ağa mı bakıyor.
+ *
+ * Alan adı çözümlemesi YAPILMAZ (DNS yeniden bağlama bu kapıyı zaten aşar);
+ * amaç bariz olanı kapatmak, tam SSRF savunması değil — sunucu bu adrese
+ * hiçbir istek atmıyor.
+ */
+export function ozelAgAdresi(host) {
+  const h = String(host || '').toLowerCase();
+  if (h === 'localhost' || h.endsWith('.localhost') || h.endsWith('.local') || h.endsWith('.internal')) return true;
+  if (h === '[::1]' || h === '::1') return true;
+  const p = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (!p) return false;
+  const [a, b] = [Number(p[1]), Number(p[2])];
+  if (a === 10 || a === 127 || a === 0) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 100 && b >= 64 && b <= 127) return true;
+  return false;
 }

@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (pa).
 const Map<String, String> cevirilerPa = {
+  'Bağlantı yapıştır': 'ਲਿੰਕ ਪੇਸਟ ਕਰੋ',
+  'Yapıştır': 'ਪੇਸਟ ਕਰੋ',
+  'Video bağlantısı': 'ਵੀਡੀਓ ਲਿੰਕ',
+  'Odada aç': 'ਰੂਮ ਵਿੱਚ ਖੋਲ੍ਹੋ',
+  'Doğrudan video adresi': 'ਸਿੱਧਾ ਵੀਡੀਓ ਪਤਾ',
+  '{} videosu': '{} ਵੀਡੀਓ',
+  'Başka video seç': 'ਹੋਰ ਵੀਡੀਓ ਚੁਣੋ',
+  'Bu video adresi açılamadı': 'ਇਹ ਵੀਡੀਓ ਪਤਾ ਨਹੀਂ ਖੁੱਲ੍ਹ ਸਕਿਆ',
+  'Oda sahibi henüz video seçmedi': 'ਰੂਮ ਦੇ ਮਾਲਕ ਨੇ ਹਾਲੇ ਵੀਡੀਓ ਨਹੀਂ ਚੁਣੀ',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'ਵੀਡੀਓ ਲਿੰਕ ਪੇਸਟ ਕਰੋ ਜਾਂ ਫਾਈਲ ਅੱਪਲੋਡ ਕਰੋ',
+  '{} bir video bağlantısı ekledi': '{} ਨੇ ਵੀਡੀਓ ਲਿੰਕ ਜੋੜਿਆ',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'ਸਮਰਥਿਤ ਸਾਈਟਾਂ: {} · ਸਿੱਧਾ ਵੀਡੀਓ ਪਤਾ (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'ਇਹ ਪਤਾ ਸਮਰਥਿਤ ਨਹੀਂ ਹੈ। ਸਮਰਥਿਤ ਸਾਈਟਾਂ: {} · ਸਿੱਧਾ ਵੀਡੀਓ ਪਤਾ (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'ਇਹ ਪਤਾ ਸਮਰਥਿਤ ਨਹੀਂ ਹੈ। {} ਲਿੰਕ ਜਾਂ ਸਿੱਧਾ ਵੀਡੀਓ ਪਤਾ (.mp4) ਪੇਸਟ ਕਰੋ।',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · ਸਿੱਧਾ ਵੀਡੀਓ ਪਤਾ (.mp4) · ਜਾਂ ਵੱਧ ਤੋਂ ਵੱਧ {} GB ਫਾਈਲ',
+  '{} · doğrudan video adresi': '{} · ਸਿੱਧਾ ਵੀਡੀਓ ਪਤਾ',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'ਬ੍ਰਾਊਜ਼ਰ ਇਹ ਲਾਈਵ ਫਾਰਮੈਟ (m3u8) ਨਹੀਂ ਚਲਾ ਸਕਦਾ; ਇਹ ਫ਼ੋਨ ਐਪ ਵਿੱਚ ਖੁੱਲ੍ਹਦਾ ਹੈ।',
   'Yorumun bu sayfada görünecek': 'ਤੁਹਾਡੀ ਟਿੱਪਣੀ ਇਸ ਪੰਨੇ ਉੱਤੇ ਦਿਖੇਗੀ',
   'Hepsini gördün, baştan gösteriyoruz':
       'ਤੁਸੀਂ ਇਹ ਸਭ ਦੇਖਿਆ ਹੈ, ਅਸੀਂ ਤੁਹਾਨੂੰ ਸ਼ੁਰੂ ਤੋਂ ਦਿਖਾਉਂਦੇ ਹਾਂ',

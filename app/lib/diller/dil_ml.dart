@@ -1,5 +1,29 @@
 /// Otomatik üretilen çeviri haritası (ml).
 const Map<String, String> cevirilerMl = {
+  'Bağlantı yapıştır': 'ലിങ്ക് ഒട്ടിക്കുക',
+  'Yapıştır': 'ഒട്ടിക്കുക',
+  'Video bağlantısı': 'വീഡിയോ ലിങ്ക്',
+  'Odada aç': 'റൂമിൽ തുറക്കുക',
+  'Doğrudan video adresi': 'നേരിട്ടുള്ള വീഡിയോ വിലാസം',
+  '{} videosu': '{} വീഡിയോ',
+  'Başka video seç': 'മറ്റൊരു വീഡിയോ തിരഞ്ഞെടുക്കുക',
+  'Bu video adresi açılamadı': 'ഈ വീഡിയോ വിലാസം തുറക്കാനായില്ല',
+  'Oda sahibi henüz video seçmedi':
+      'റൂം ഉടമ ഇതുവരെ വീഡിയോ തിരഞ്ഞെടുത്തിട്ടില്ല',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'വീഡിയോ ലിങ്ക് ഒട്ടിക്കുക അല്ലെങ്കിൽ ഫയൽ അപ്‌ലോഡ് ചെയ്യുക',
+  '{} bir video bağlantısı ekledi': '{} ഒരു വീഡിയോ ലിങ്ക് ചേർത്തു',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'പിന്തുണയ്ക്കുന്ന സൈറ്റുകൾ: {} · നേരിട്ടുള്ള വീഡിയോ വിലാസം (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'ഈ വിലാസം പിന്തുണയ്ക്കുന്നില്ല. പിന്തുണയ്ക്കുന്ന സൈറ്റുകൾ: {} · നേരിട്ടുള്ള വീഡിയോ വിലാസം (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'ഈ വിലാസം പിന്തുണയ്ക്കുന്നില്ല. {} ലിങ്കോ നേരിട്ടുള്ള വീഡിയോ വിലാസമോ (.mp4) ഒട്ടിക്കുക.',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · നേരിട്ടുള്ള വീഡിയോ വിലാസം (.mp4) · അല്ലെങ്കിൽ പരമാവധി {} GB ഫയൽ',
+  '{} · doğrudan video adresi': '{} · നേരിട്ടുള്ള വീഡിയോ വിലാസം',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'ബ്രൗസറിന് ഈ ലൈവ് ഫോർമാറ്റ് (m3u8) പ്ലേ ചെയ്യാനാവില്ല; ഫോൺ ആപ്പിൽ തുറക്കും.',
   'Yorumun bu sayfada görünecek': 'നിങ്ങളുടെ കമന്റ് ഈ പേജിൽ കാണിക്കും',
   'Hepsini gördün, baştan gösteriyoruz':
       'നിങ്ങൾ എല്ലാം കണ്ടു, ഞങ്ങൾ ആദ്യം മുതൽ കാണിക്കുന്നു',

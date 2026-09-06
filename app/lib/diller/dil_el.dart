@@ -1,5 +1,30 @@
 /// Otomatik üretilen çeviri haritası (el).
 const Map<String, String> cevirilerEl = {
+  'Bağlantı yapıştır': 'Επικόλληση συνδέσμου',
+  'Yapıştır': 'Επικόλληση',
+  'Video bağlantısı': 'Σύνδεσμος βίντεο',
+  'Odada aç': 'Άνοιγμα στο δωμάτιο',
+  'Doğrudan video adresi': 'Άμεση διεύθυνση βίντεο',
+  '{} videosu': 'Βίντεο {}',
+  'Başka video seç': 'Επιλογή άλλου βίντεο',
+  'Bu video adresi açılamadı':
+      'Δεν ήταν δυνατό το άνοιγμα αυτής της διεύθυνσης βίντεο',
+  'Oda sahibi henüz video seçmedi':
+      'Ο ιδιοκτήτης του δωματίου δεν έχει επιλέξει βίντεο ακόμη',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Επικολλήστε σύνδεσμο βίντεο ή ανεβάστε αρχείο',
+  '{} bir video bağlantısı ekledi': 'Ο/Η {} πρόσθεσε σύνδεσμο βίντεο',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Υποστηριζόμενοι ιστότοποι: {} · άμεση διεύθυνση βίντεο (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Αυτή η διεύθυνση δεν υποστηρίζεται. Υποστηριζόμενοι ιστότοποι: {} · άμεση διεύθυνση βίντεο (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Αυτή η διεύθυνση δεν υποστηρίζεται. Επικολλήστε σύνδεσμο {} ή άμεση διεύθυνση βίντεο (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · άμεση διεύθυνση βίντεο (.mp4) · ή αρχείο έως {} GB',
+  '{} · doğrudan video adresi': '{} · Άμεση διεύθυνση βίντεο',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Το πρόγραμμα περιήγησης δεν αναπαράγει αυτή τη μορφή (m3u8)· ανοίγει στην εφαρμογή κινητού.',
   'Yorumun bu sayfada görünecek':
       'Το σχόλιό σου θα εμφανιστεί σε αυτή τη σελίδα',
   'Hepsini gördün, baştan gösteriyoruz':

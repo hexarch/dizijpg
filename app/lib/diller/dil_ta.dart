@@ -1,5 +1,29 @@
 /// Otomatik üretilen çeviri haritası (ta).
 const Map<String, String> cevirilerTa = {
+  'Bağlantı yapıştır': 'இணைப்பை ஒட்டவும்',
+  'Yapıştır': 'ஒட்டு',
+  'Video bağlantısı': 'வீடியோ இணைப்பு',
+  'Odada aç': 'அறையில் திற',
+  'Doğrudan video adresi': 'நேரடி வீடியோ முகவரி',
+  '{} videosu': '{} வீடியோ',
+  'Başka video seç': 'வேறு வீடியோவைத் தேர்ந்தெடுக்கவும்',
+  'Bu video adresi açılamadı': 'இந்த வீடியோ முகவரியைத் திறக்க முடியவில்லை',
+  'Oda sahibi henüz video seçmedi':
+      'அறை உரிமையாளர் இன்னும் வீடியோவைத் தேர்ந்தெடுக்கவில்லை',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'வீடியோ இணைப்பை ஒட்டவும் அல்லது கோப்பைப் பதிவேற்றவும்',
+  '{} bir video bağlantısı ekledi': '{} ஒரு வீடியோ இணைப்பைச் சேர்த்தார்',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'ஆதரிக்கப்படும் தளங்கள்: {} · நேரடி வீடியோ முகவரி (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'இந்த முகவரி ஆதரிக்கப்படவில்லை. ஆதரிக்கப்படும் தளங்கள்: {} · நேரடி வீடியோ முகவரி (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'இந்த முகவரி ஆதரிக்கப்படவில்லை. {} இணைப்பையோ நேரடி வீடியோ முகவரியையோ (.mp4) ஒட்டவும்.',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · நேரடி வீடியோ முகவரி (.mp4) · அல்லது அதிகபட்சம் {} GB கோப்பு',
+  '{} · doğrudan video adresi': '{} · நேரடி வீடியோ முகவரி',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'உலாவி இந்த நேரலை வடிவத்தை (m3u8) இயக்க முடியாது; இது தொலைபேசி செயலியில் திறக்கும்.',
   'Yorumun bu sayfada görünecek': 'உங்கள் கருத்து இந்தப் பக்கத்தில் தோன்றும்',
   'Hepsini gördün, baştan gösteriyoruz':
       'நீங்கள் அனைத்தையும் பார்த்தீர்கள், நாங்கள் உங்களுக்கு ஆரம்பத்தில் இருந்து காட்டுகிறோம்',

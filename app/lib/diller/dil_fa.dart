@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (fa).
 const Map<String, String> cevirilerFa = {
+  'Bağlantı yapıştır': 'چسباندن پیوند',
+  'Yapıştır': 'چسباندن',
+  'Video bağlantısı': 'پیوند ویدیو',
+  'Odada aç': 'باز کردن در اتاق',
+  'Doğrudan video adresi': 'نشانی مستقیم ویدیو',
+  '{} videosu': 'ویدیوی {}',
+  'Başka video seç': 'ویدیوی دیگری انتخاب کنید',
+  'Bu video adresi açılamadı': 'این نشانی ویدیو باز نشد',
+  'Oda sahibi henüz video seçmedi': 'صاحب اتاق هنوز ویدیویی انتخاب نکرده است',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'پیوند ویدیو را بچسبانید یا فایلی بارگذاری کنید',
+  '{} bir video bağlantısı ekledi': '{} یک پیوند ویدیو افزود',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'سایت‌های پشتیبانی‌شده: {} · نشانی مستقیم ویدیو (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'این نشانی پشتیبانی نمی‌شود. سایت‌های پشتیبانی‌شده: {} · نشانی مستقیم ویدیو (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'این نشانی پشتیبانی نمی‌شود. پیوند {} یا نشانی مستقیم ویدیو (.mp4) را بچسبانید.',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · نشانی مستقیم ویدیو (.mp4) · یا فایل تا {} گیگابایت',
+  '{} · doğrudan video adresi': '{} · نشانی مستقیم ویدیو',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'مرورگر این قالب پخش زنده (m3u8) را پخش نمی‌کند؛ در برنامه گوشی باز می‌شود.',
   'Yorumun bu sayfada görünecek': 'نظر شما در این صفحه نمایش داده می‌شود',
   'Hepsini gördün, baştan gösteriyoruz':
       'شما همه چیز را دیده اید، ما از ابتدا به شما نشان می دهیم',

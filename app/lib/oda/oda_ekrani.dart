@@ -56,6 +56,10 @@ import '../ekranlar/kabuk.dart' show KabukTamEkran;
 import '../ekranlar/ortak.dart';
 import '../tema.dart';
 import 'oda_api.dart';
+import 'oda_baglanti.dart';
+import 'oda_baglanti_sheet.dart';
+import 'oda_gomme.dart';
+import 'oda_oynatici.dart';
 import 'oda_senkron.dart';
 import 'oda_tercihi.dart';
 import 'oda_yukle.dart';
@@ -177,13 +181,58 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   int _tur = 0;
   bool _yoklamaUcuyor = false;
 
-  VideoPlayerController? _oynatici;
+  /// Ekranın gördüğü TEK oynatıcı arayüzü: altında ya `video_player`
+  /// (yüklenen dosya / doğrudan bağlantı) ya da gömme kumandası (YouTube,
+  /// Vimeo) var. Düzeltme merdiveni ikisini de aynı şekilde sürüyor —
+  /// gerekçe `oda_oynatici.dart` başlığında.
+  OdaOynatici? _oynatici;
   bool _oynaticiHazir = false;
+
+  /// Şu an kurulu olan kaynağın kimliği: dosyada video yolu, bağlantıda
+  /// `saglayici:kimlik`. Aynı kaynak ikinci kez kurulmasın diye tutuluyor.
   String? _kuruluVideo;
+
+  /// Bağlantı kipindeki gömme yüzeyinin kumandası (yüzey widget'ı ağaçta,
+  /// kumanda burada yaşar).
+  OdaGommeDenetci? _gomme;
 
   /// Programatik seek sürerken düzeltme YAPILMAZ: art arda gelen iki seek
   /// oynatıcıyı tampon boşaltma döngüsüne sokar.
   bool _sariyor = false;
+
+  /// GÖMME oynatıcıya en son ne zaman sarma yollandı (epoch ms).
+  ///
+  /// SARMA FIRTINASI KORUMASI (7 Eyl 2026, canlıda ölçüldü): gömme oynatıcı
+  /// herhangi bir sebeple başlayamazsa (otomatik oynatma engeli, ağ) konumu
+  /// 0'da kalır; düzeltici her turda "3 sn'den fazla geride" görür ve saniyede
+  /// bir, her seferinde İLERİ KAYMIŞ bir hedefe sarma yollar (65,5 → 68,5 →
+  /// 71,5 …). Ne yakınsar ne durur; iframe'i döver. Oynatıcı gerçekten
+  /// oynamaya başlayana kadar sarma 2 saniyede bire iniyor — duvar saati
+  /// matematiği zaten doğru hedefi veriyor, sık tekrarın hiçbir faydası yok.
+  int _sonGommeSarmasi = 0;
+
+  /// Sarma sürerken çubuğun/sayacın GÖSTERECEĞİ konum (yoksa null).
+  ///
+  /// `video_player` Android'de `seekTo`dan sonra ~0,3-1 saniye boyunca ESKİ
+  /// konumu bildirmeye devam ediyor. Çubuk doğrudan `position`a bağlı olduğu
+  /// için kullanıcı şunu görüyordu (6 Eyl 2026, ham ekran kaydından kare kare
+  /// ölçüldü): 0:24 → **0:34** → **0:24** (0,75 sn takılı) → 0:35. Yani
+  /// "ileri sardım, çubuk geri geldi, sonra tekrar ileri gitti".
+  ///
+  /// Çözüm oynatıcıya değil GÖSTERİME: sarma başlarken hedef buraya yazılır,
+  /// oynatıcının bildirdiği konum hedefe yaklaşınca (ya da tavan süre
+  /// dolunca) bırakılır. Arada sayaç hedefte durur, geri düşmez.
+  int? _sarHedefMs;
+  Timer? _sarYakinsama;
+
+  /// Oynatıcının bildirdiği konumun "hedefe vardı" sayılma payı. Sarma
+  /// sonrası ilk kareler nadiren tam hedefe oturur (en yakın anahtar kareye
+  /// düşülür); pay dar tutulursa sayaç tavan süre boyunca donuk kalır.
+  static const _sarYakinsamaPayiMs = 700;
+
+  /// Yakınsama beklemesinin tavanı: oynatıcı hiç yakınsamazsa (dosya sonu,
+  /// bozuk tampon) sayaç sonsuza kadar sahte bir değerde donmasın.
+  static const _sarYakinsamaTavani = Duration(seconds: 3);
 
   /// Uygulanan son hız — her turda `setPlaybackSpeed` çağırmamak için.
   double _uygulananHiz = 1.0;
@@ -348,8 +397,9 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     _sonmeSayaci?.cancel();
     _yoklama?.cancel();
     _kalp?.cancel();
+    _sarYakinsama?.cancel();
     _yukleyici?.iptal();
-    _oynatici?.dispose();
+    _oynatici?.sok();
     _metin.dispose();
     _metinOdak.dispose();
     _kaydirma.dispose();
@@ -550,7 +600,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         _oda = oda;
         _hata = null;
       });
-      await _videoyuKur(oda.video);
+      await _kaynagiKur(oda);
       _yoklamayiKur();
     } on ApiHata catch (e) {
       if (!mounted) return;
@@ -573,7 +623,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       final oda = await OdaApi.getir(widget.odaId);
       if (!mounted) return;
       setState(() => _oda = oda);
-      await _videoyuKur(oda.video);
+      await _kaynagiKur(oda);
       _duzelt();
     } on ApiHata catch (_) {
       /* sonraki yoklama zaten deneyecek */
@@ -635,9 +685,15 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
             video: akis.video,
             videoAd: akis.videoAd,
             videoSureMs: akis.videoSureMs,
+            kaynak: akis.kaynak,
+            baglanti: akis.baglanti,
+            // Bağlantıdan yüklemeye dönüldüyse eski bağlantı SİLİNMELİ:
+            // `kopya` null'ı "değiştirme" saydığı için ayrı bayrak şart —
+            // yoksa oda hem dosyayı hem eski gömmeyi taşırdı.
+            baglantiyiSil: akis.kaynak == 'yukleme' && akis.baglanti == null,
           );
         });
-        await _videoyuKur(akis.video);
+        await _kaynagiKur(_oda);
         _duzelt(kasitli: true);
         // İZLEYİCİDE de kural işlesin: sahip DURAKLATTIYSA kontroller geri
         // gelip kalmalı, yeniden OYNATTIYSA sönme sayacı baştan başlamalı.
@@ -680,7 +736,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       if (!mounted) return;
       if (e.makineKodu == OdaKod.odaKapandi || e.kod == 410) {
         _yoklama?.cancel();
-        _oynatici?.pause();
+        _oynatici?.duraklat();
         setState(() {
           _kapandi = true;
           _kalici = true;
@@ -694,7 +750,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         // (3 Eyl 2026, canlıda "mesajlarım gitmiyor" olarak bildirildi).
         // Yoklamayı da durduruyoruz: saniyede bir 403 almanın faydası yok.
         _yoklama?.cancel();
-        _oynatici?.pause();
+        _oynatici?.duraklat();
         setState(() {
           _kalici = true;
           _hata = odaHataMetni(e);
@@ -711,38 +767,76 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   // OYNATICI
   // -------------------------------------------------------------------------
 
-  Future<void> _videoyuKur(String? url) async {
+  /// Odanın KAYNAĞINI oynatıcıya bağlar (dosya ya da bağlantı).
+  ///
+  /// Tek giriş noktası: yükleme bitince de, yoklama kaynak değişimini görünce
+  /// de, ekran ilk açılırken de burası çağrılıyor. İki ayrı kurulum yolu
+  /// olsaydı biri `_kuruluVideo` damgasını yazmayı unutur ve oynatıcı her
+  /// yoklama turunda yeniden kurulurdu.
+  Future<void> _kaynagiKur(Oda? oda) async {
+    if (oda == null) return;
     // HAZIRLIK SÜRERKEN OYNATICI KURULMAZ (4 Eyl 2026). Sunucu dosyayı
     // dönüştürüyor ve çıktıyı YENİ BİR ADA yazıyor; şu anki adrese oynatıcı
     // kurmak (a) boşuna, (b) `initialize()` yarıda kalan dosyada ASILI
     // kalabiliyor ve o sırada `_ilkYukle` yoklamayı hiç başlatamıyor — yani
     // ilerleme çubuğu %0'da donuyordu. Hazırlık bitince sürüm artıyor ve
     // oynatıcı yeni adresle normal yoldan kuruluyor.
-    if (_oda?.hazirlik.suruyor == true) return;
-    if (url == null || url == _kuruluVideo) return;
-    _kuruluVideo = url;
+    if (oda.hazirlik.suruyor) return;
+
+    final b = oda.baglantiliMi ? oda.baglanti : null;
+    // GÖMME Mİ: YouTube/Vimeo gömme yüzeyi ister; doğrudan dosya adresi
+    // (.mp4) yüklenen videoyla AYNI oynatıcıyı kullanır.
+    final gommeMi = b != null && b.gommeMi;
+    final damga = b != null ? '\${b.saglayici.name}:\${b.kimlik}' : oda.video;
+    if (damga == null || damga == _kuruluVideo) return;
+    _kuruluVideo = damga;
+
     final eski = _oynatici;
     setState(() {
       _oynatici = null;
       _oynaticiHazir = false;
+      _gomme = null;
     });
-    await eski?.dispose();
-    final tam = dosyaUrl(url);
+    await eski?.sok();
+
+    if (gommeMi) {
+      // Gömme oynatıcı ASENKRON hazırlanır: yüzey ağaca girip iframe/WebView
+      // yüklenene kadar `isInitialized` false kalır. Ekran o sırada gömme
+      // yüzeyini ZATEN çiziyor (kara kutu + yükleniyor), yani beklemeye gerek
+      // yok — beklemek, yüzeyin hiç kurulmaması demekti (kilitlenme).
+      final g = OdaGommeDenetci();
+      g.addListener(_gommeDegisti);
+      if (!mounted) return;
+      setState(() {
+        _gomme = g;
+        _oynatici = g;
+      });
+      return;
+    }
+
+    // --- dosya yolu (yüklenen video ya da doğrudan adres) ---
+    final tam = b != null ? b.url : dosyaUrl(oda.video);
     if (tam == null) return;
     final d = VideoPlayerController.networkUrl(Uri.parse(tam));
     try {
       await d.initialize();
     } catch (_) {
       await d.dispose();
-      if (mounted) _uyar('Video açılamadı'.c);
+      if (mounted) {
+        // Doğrudan bağlantıda sebep genellikle karşı sunucunun CORS/Range
+        // başlıkları: kullanıcı "adres doğru ama açılmıyor" diyor. Kaynağa
+        // göre AYRI cümle, çünkü çıkış yolu da ayrı.
+        _uyar(b != null ? 'Bu video adresi açılamadı'.c : 'Video açılamadı'.c);
+      }
       return;
     }
     if (!mounted) {
       await d.dispose();
       return;
     }
+    final sarmal = OdaDosyaOynatici(d);
     setState(() {
-      _oynatici = d;
+      _oynatici = sarmal;
       _oynaticiHazir = true;
     });
     // "Hazırım" bayrağı: sahip üye listesinde kimin tamponladığını görür.
@@ -750,6 +844,22 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     _duzelt(kasitli: true);
     // Video artık var: sönme kuralı bu andan itibaren geçerli.
     _kontrolleriGoster();
+  }
+
+  /// Gömme oynatıcı hazır olduğunu bildirince bir kereye mahsus hizalar.
+  ///
+  /// Dosya yolunda bu iş `initialize()` sonrasında yapılıyor; gömmede "hazır"
+  /// anı ancak karşı taraftan haber gelince biliniyor. Bu kanca olmadan
+  /// izleyicinin videosu doğru yerden değil BAŞTAN başlardı.
+  void _gommeDegisti() {
+    final g = _gomme;
+    if (g == null || !mounted) return;
+    if (g.value.isInitialized && !_oynaticiHazir) {
+      setState(() => _oynaticiHazir = true);
+      OdaApi.hazir(widget.odaId, true).catchError((_) {});
+      _duzelt(kasitli: true);
+      _kontrolleriGoster();
+    }
   }
 
   /// Yerel oynatıcıyı sunucudaki duruma yaklaştırır.
@@ -771,9 +881,9 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     // oynatıcıda konum düzeltmesi anlamlı ama oynatma durumu yanlışsa
     // kullanıcı "video donmuş" görür.
     if (durum.oynuyor && !d.value.isPlaying) {
-      d.play();
+      d.oynat();
     } else if (!durum.oynuyor && d.value.isPlaying) {
-      d.pause();
+      d.duraklat();
     }
 
     final karar = duzeltmeKarari(yerel, beklenen, kasitli: kasitli);
@@ -796,21 +906,64 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     }
   }
 
-  void _hiziUygula(VideoPlayerController d, double hiz) {
+  void _hiziUygula(OdaOynatici d, double hiz) {
     if ((hiz - _uygulananHiz).abs() < 0.001) return;
     _uygulananHiz = hiz;
-    d.setPlaybackSpeed(hiz).catchError((_) {});
+    d.hizAyarla(hiz).catchError((_) {});
   }
 
-  Future<void> _sar(VideoPlayerController d, int hedefMs) async {
+  Future<void> _sar(OdaOynatici d, int hedefMs) async {
+    // Bkz. [_sonGommeSarmasi]: oynatıcı HENÜZ OYNAMIYORKEN sarmayı seyreltiyoruz.
+    if (_gomme != null && !d.value.isPlaying) {
+      final simdi = DateTime.now().millisecondsSinceEpoch;
+      if (simdi - _sonGommeSarmasi < 2000) return;
+      _sonGommeSarmasi = simdi;
+    }
     _sariyor = true;
+    _sarHedefiKur(d, hedefMs);
     try {
-      await d.seekTo(Duration(milliseconds: hedefMs));
+      await d.sar(Duration(milliseconds: hedefMs));
     } catch (_) {
       /* oynatıcı sökülmüş olabilir */
+      _sarHedefiBirak();
     } finally {
       _sariyor = false;
     }
+  }
+
+  /// Sarma hedefini gösterime kilitler ve oynatıcı yakınsayınca bırakır.
+  /// Gerekçe [_sarHedefMs] başlığında.
+  void _sarHedefiKur(OdaOynatici d, int hedefMs) {
+    _sarYakinsama?.cancel();
+    _sarHedefiYaz(hedefMs);
+    final baslangic = DateTime.now();
+    _sarYakinsama = Timer.periodic(const Duration(milliseconds: 50), (t) {
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
+      final fark = (d.value.position.inMilliseconds - hedefMs).abs();
+      final suresiDoldu =
+          DateTime.now().difference(baslangic) > _sarYakinsamaTavani;
+      if (fark > _sarYakinsamaPayiMs && !suresiDoldu) return;
+      t.cancel();
+      _sarHedefiBirak();
+    });
+  }
+
+  void _sarHedefiBirak() {
+    _sarYakinsama?.cancel();
+    _sarYakinsama = null;
+    _sarHedefiYaz(null);
+  }
+
+  void _sarHedefiYaz(int? deger) {
+    if (_sarHedefMs == deger) return;
+    if (!mounted) {
+      _sarHedefMs = deger;
+      return;
+    }
+    setState(() => _sarHedefMs = deger);
   }
 
   // -------------------------------------------------------------------------
@@ -890,9 +1043,9 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     if (d == null || !_oynaticiHazir) return;
     final yeni = !(_oda?.durum.oynuyor ?? false);
     if (yeni) {
-      await d.play();
+      await d.oynat();
     } else {
-      await d.pause();
+      await d.duraklat();
     }
     await _durumYaz(oynuyor: yeni, konumMs: d.value.position.inMilliseconds);
     _kalbiKur(yeni);
@@ -922,6 +1075,73 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   // VİDEO YÜKLEME (sahip)
   // -------------------------------------------------------------------------
 
+  /// Kaynak değiştirme: bağlantı mı, dosya mı.
+  ///
+  /// Doğrudan dosya seçiciyi açmak, bağlantı kipini KEŞFEDİLEMEZ kılardı:
+  /// odasında zaten video olan kullanıcı "değiştir" dediğinde yalnız yükleme
+  /// görür ve adres yapıştırabildiğini hiç öğrenmezdi.
+  Future<void> _kaynagiDegistir() async {
+    final secim = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      showDragHandle: true,
+      builder: (k) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.link),
+              title: Text('Bağlantı yapıştır'.c),
+              subtitle: Text(
+                '{} · doğrudan video adresi'.cf([
+                  odaDesteklenenPlatformlar.join(', '),
+                ]),
+                style: const TextStyle(fontSize: 11),
+              ),
+              onTap: () => Navigator.of(k).pop('baglanti'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.upload_outlined),
+              title: Text('Video yükle'.c),
+              subtitle: Text(
+                'En fazla {} GB · MP4 veya WebM'.cf([odaVideoAzamiGb]),
+                style: const TextStyle(fontSize: 11),
+              ),
+              onTap: () => Navigator.of(k).pop('dosya'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (!mounted || secim == null) return;
+    if (secim == 'baglanti') {
+      await _baglantiSor();
+    } else {
+      await _videoSec();
+    }
+  }
+
+  /// "Bağlantı yapıştır" akışı (7 Eyl 2026).
+  ///
+  /// Adres SUNUCUYA HAM gider; sağlayıcı çözümlemesini sunucu kendi yapar
+  /// (gerekçe `OdaApi.baglantiVer`). Başarıda tam yenileme yapılıyor çünkü
+  /// kaynak değişimi oynatıcıyı, boş durumu ve sistem mesajını birlikte
+  /// etkiliyor — tek tek yamamak üç ayrı yerin ayrışması demekti.
+  Future<void> _baglantiSor() async {
+    final adres = await odaBaglantiSheetAc(
+      context,
+      mevcut: _oda?.baglanti?.url,
+    );
+    if (adres == null || !mounted) return;
+    try {
+      await OdaApi.baglantiVer(widget.odaId, adres);
+      if (!mounted) return;
+      await _tamYenile();
+    } on ApiHata catch (e) {
+      if (mounted) _uyar(odaHataMetni(e));
+    }
+  }
+
   Future<void> _videoSec() async {
     FilePickerResult? secim;
     try {
@@ -948,7 +1168,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       _yuklemeDurumu = OdaYuklemeDurumu(gonderilen: 0, toplam: d.size);
     });
     try {
-      final sonuc = await y.yukle(
+      await y.yukle(
         akis: akis,
         boyut: d.size,
         ad: d.name,
@@ -961,7 +1181,8 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         _yukleyici = null;
         _yuklemeDurumu = null;
       });
-      await _videoyuKur(sonuc.video);
+      // Yükleme kaynağı değiştirdi (oda bağlantı kipindeyse yüklemeye döner):
+      // tam yenileme kaynak alanlarını da getirir, oynatıcıyı o kurar.
       await _tamYenile();
     } on OdaYuklemeIptal {
       if (mounted) {
@@ -1518,12 +1739,8 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
               color: Colors.black,
               child: Center(
                 child: AspectRatio(
-                  aspectRatio: d != null && _oynaticiHazir
-                      ? d.value.aspectRatio
-                      : 16 / 9,
-                  child: d != null && _oynaticiHazir
-                      ? VideoPlayer(d)
-                      : _videoYerine(oda),
+                  aspectRatio: _enBoy(d),
+                  child: _videoYuzeyi(oda, d),
                 ),
               ),
             ),
@@ -1652,12 +1869,8 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                 constraints: BoxConstraints(maxHeight: videoTavan),
                 alignment: Alignment.center,
                 child: AspectRatio(
-                  aspectRatio: d != null && _oynaticiHazir
-                      ? d.value.aspectRatio
-                      : 16 / 9,
-                  child: d != null && _oynaticiHazir
-                      ? VideoPlayer(d)
-                      : _videoYerine(oda),
+                  aspectRatio: _enBoy(d),
+                  child: _videoYuzeyi(oda, d),
                 ),
               ),
             ),
@@ -1688,6 +1901,73 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         _sonebilir(_tepkiSeridi()),
       ],
     );
+  }
+
+  /// Video kabının en-boy oranı.
+  ///
+  /// Gömmede oynatıcı BİZDE değil: gerçek kare oranını hiçbir zaman
+  /// öğrenemiyoruz (çapraz kökenli iframe ölçülemez). 16:9 sabit — YouTube ve
+  /// Vimeo zaten kendi içinde bant ekleyerek videoyu ortalıyor.
+  double _enBoy(OdaOynatici? d) {
+    if (_gomme != null) return 16 / 9;
+    if (d == null || !_oynaticiHazir) return 16 / 9;
+    final o = d.value.aspectRatio;
+    return o > 0 ? o : 16 / 9;
+  }
+
+  /// Video yüzeyi: dosyada `VideoPlayer`, bağlantıda gömme (iframe/WebView).
+  ///
+  /// GÖMME YÜZEYİ `_oynaticiHazir` BEKLEMEZ ve beklememeli: yüzey ağaca
+  /// girmeden iframe hiç kurulmaz, iframe kurulmadan "hazır" haberi hiç
+  /// gelmez. Hazırlığı beklemek kilitlenme demekti — bu yüzden gömme dalı
+  /// yüzeyi hemen çiziyor, yükleniyor göstergesi onun üstünde duruyor.
+  Widget _videoYuzeyi(Oda oda, OdaOynatici? d) {
+    final g = _gomme;
+    final b = oda.baglanti;
+    if (g != null && b != null) {
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          OdaGommeYuzeyi(baglanti: b, denetci: g),
+          // SESSİZ BAŞLAMA KAPISI: gömme oynatıcı sesli otomatik başlayamaz
+          // (tarayıcı politikası, gerekçe `OdaGommeDenetci` başlığında).
+          // Düğme hem jesti verir hem sesi açar; olmasaydı kullanıcı sessiz
+          // bir video izler ve sebebini ASLA öğrenemezdi.
+          ValueListenableBuilder<OdaOynaticiDeger>(
+            valueListenable: g,
+            builder: (context, deger, _) => deger.sessiz
+                ? Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: FilledButton.icon(
+                        onPressed: g.sesiAc,
+                        icon: const Icon(Icons.volume_off, size: 18),
+                        label: Text('Sesi aç'.c),
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+          if (!_oynaticiHazir)
+            const ColoredBox(
+              color: Colors.black,
+              child: Center(
+                child: SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: DiziRenkler.sari,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      );
+    }
+    if (d != null && _oynaticiHazir) return d.yuzey();
+    return _videoYerine(oda);
   }
 
   Widget _videoYerine(Oda oda) {
@@ -1721,24 +2001,51 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
             const SizedBox(height: 10),
             Text(
               _yonetebilirMiyim
-                  ? 'Bir video yükle, izlemeye başlayın'.c
-                  : 'Oda sahibi henüz video yüklemedi'.c,
+                  ? 'Bir video bağlantısı yapıştır ya da dosya yükle'.c
+                  : 'Oda sahibi henüz video seçmedi'.c,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white.withValues(alpha: 0.75)),
             ),
             if (_yonetebilirMiyim) ...[
               const SizedBox(height: 12),
-              SizedBox(
-                height: 44,
-                child: FilledButton.icon(
-                  onPressed: _videoSec,
-                  icon: const Icon(Icons.upload_outlined, size: 20),
-                  label: Text('Video yükle'.c),
-                ),
+              // BAĞLANTI ÖNDE (7 Eyl 2026): ücretsiz, anında ve her platformda
+              // çalışıyor; yükleme 5 GB'a kadar bekleme demek. Sık olan yol
+              // birincil düğme, ötekisi ikincil.
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: WrapAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 44,
+                    child: FilledButton.icon(
+                      onPressed: _baglantiSor,
+                      icon: const Icon(Icons.link, size: 20),
+                      label: Text('Bağlantı yapıştır'.c),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 44,
+                    child: OutlinedButton.icon(
+                      onPressed: _videoSec,
+                      icon: const Icon(Icons.upload_outlined, size: 20),
+                      label: Text('Video yükle'.c),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
+              // DESTEKLENEN SİTELER GÖRÜNÜR YERDE (kullanıcı isteği, 7 Eyl):
+              // "altına desteklenen siteler yazsak". Liste tek kaynaktan
+              // geliyor (`odaDesteklenenPlatformlar`) ki büyüdüğünde metin de
+              // kendiliğinden büyüsün.
               Text(
-                'En fazla {} GB · MP4 veya WebM'.cf([odaVideoAzamiGb]),
+                '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya'
+                    .cf([
+                      odaDesteklenenPlatformlar.join(', '),
+                      odaVideoAzamiGb,
+                    ]),
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 11,
                   color: Colors.white.withValues(alpha: 0.5),
@@ -1825,9 +2132,12 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
               SizedBox(
                 height: 44,
                 child: FilledButton.icon(
-                  onPressed: _videoSec,
-                  icon: const Icon(Icons.upload_outlined, size: 20),
-                  label: Text('Başka video yükle'.c),
+                  // BAĞLANTI DA SUNULUYOR: buraya düşen kullanıcının dosyası
+                  // zaten hazırlanamadı; ona yalnız "aynı şeyi tekrar dene"
+                  // demek çıkışsız bırakmak olurdu.
+                  onPressed: _kaynagiDegistir,
+                  icon: const Icon(Icons.swap_horiz, size: 20),
+                  label: Text('Başka video seç'.c),
                 ),
               ),
             ],
@@ -1982,12 +2292,15 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     );
   }
 
-  Widget _kontroller(Oda oda, VideoPlayerController d) {
-    return ValueListenableBuilder<VideoPlayerValue>(
+  Widget _kontroller(Oda oda, OdaOynatici d) {
+    return ValueListenableBuilder<OdaOynaticiDeger>(
       valueListenable: d,
       builder: (context, deger, _) {
         final sure = deger.duration.inMilliseconds;
-        final konum = deger.position.inMilliseconds
+        // Sarma sürerken oynatıcının bildirdiği DEĞİL, sarılan hedef konum
+        // gösterilir — yoksa çubuk "ileri → geri → ileri" yapıyor
+        // ([_sarHedefMs] başlığında ölçümü var).
+        final konum = (_sarHedefMs ?? deger.position.inMilliseconds)
             .clamp(0, math.max(sure, 1))
             .toInt();
         return Padding(
@@ -2076,7 +2389,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
                     SizedBox(
                       height: 44,
                       child: TextButton.icon(
-                        onPressed: _videoSec,
+                        onPressed: _kaynagiDegistir,
                         icon: const Icon(Icons.swap_horiz, size: 18),
                         label: Text('Videoyu değiştir'.c),
                       ),

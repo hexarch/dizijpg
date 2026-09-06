@@ -21,6 +21,7 @@ import {
   parcaKarari as odaParcaKarari, durumYazabilir as odaDurumYazabilir,
   rolAtamaKarari as odaRolAtamaKarari,
   girisKarari as odaGirisKarari, cevrimiciMi as odaCevrimiciMi,
+  baglantiCoz as odaBaglantiCoz,
 } from './oda.js';
 // İZLEME ODASI VİDEO HAZIRLAMA (4 Eyl 2026) — MKV desteği. Matroska ile WebM
 // AYNI sihirli baytları taşıdığı için MKV sessizce kabul edilip `.webm` diye
@@ -16501,6 +16502,7 @@ function odaGovde(o, uyeler, benimId, benimRol = null) {
     video_boyut: o.video_boyut == null ? null : Number(o.video_boyut),
     video_sure_ms: o.video_sure_ms == null ? null : Number(o.video_sure_ms),
     video_kapak: medyaImzali(o.video_kapak, MEDYA_IMZA_ANAHTARI),
+    ...odaKaynakGovde(o),
     oynuyor: o.oynuyor,
     konum_ms: Number(o.konum_ms),
     // İstemci duvar saati hesabı yapacak: epoch ms olarak gönderilir.
@@ -16515,6 +16517,27 @@ function odaGovde(o, uyeler, benimId, benimRol = null) {
     benim_rol: benimRol || (o.sahip_id === benimId ? 'sahip' : 'izleyici'),
     ...odaHazirlikGovde(o),
     uyeler,
+  };
+}
+
+/**
+ * KAYNAK alanları (7 Eyl 2026) — hem anlık görüntüde hem yoklamada AYNI.
+ *
+ * `kaynak` olmadan istemci "henüz bir şey seçilmedi" ile "bağlantı verildi"
+ * hâllerini ayıramaz (`video` ikisinde de NULL) ve boş duruma yanlış ekran
+ * çizerdi. Bağlantı alanları TEK NESNEDE gidiyor: dört alanın üçü dolu, biri
+ * boş gibi tutarsız bir hâl istemcide temsil edilemesin.
+ */
+function odaKaynakGovde(o) {
+  const kaynak = o.kaynak || 'yukleme';
+  return {
+    kaynak,
+    baglanti: kaynak === 'baglanti' && o.baglanti_saglayici ? {
+      saglayici: o.baglanti_saglayici,
+      kimlik: o.baglanti_kimlik,
+      url: o.baglanti_url,
+      gizli: o.baglanti_gizli || null,
+    } : null,
   };
 }
 
@@ -16669,6 +16692,11 @@ async function odaKapisi(req, res) {
   return { oda, uye };
 }
 
+/** Sağlayıcı kodunun görünen adı (oda listesindeki alt satır). */
+function odaSaglayiciAdi(kod) {
+  return { youtube: 'YouTube', vimeo: 'Vimeo', dosya: 'Video' }[kod] || null;
+}
+
 /** Sistem satırı (katıldı/ayrıldı/video yüklendi) — akışta ortada gri çizilir. */
 function odaSistemMesaji(odaId, kullaniciId, anahtar) {
   return havuz.query(
@@ -16777,8 +16805,12 @@ app.get('/odalar', girisZorunlu, odaLimiti, sarici(async (req, res) => {
       sahip_id: r.sahip_id,
       sahip: r.sahip_adi,
       sahip_avatar: r.sahip_avatar,
-      video_var: !!r.video,
-      video_ad: r.video_ad,
+      // "İzlenecek bir şey var mı" — bağlantı kipinde `video` NULL olduğu
+      // için tek başına ona bakmak, bağlantılı odayı listede "boş" gösterirdi.
+      video_var: !!r.video || (r.kaynak === 'baglanti' && !!r.baglanti_kimlik),
+      // Bağlantıda dosya adı yok: sağlayıcı adı ("YouTube") satırın altında
+      // ne izleneceğini söyleyen tek ipucu.
+      video_ad: r.video_ad || (r.baglanti_saglayici ? odaSaglayiciAdi(r.baglanti_saglayici) : null),
       video_kapak: medyaImzali(r.video_kapak, MEDYA_IMZA_ANAHTARI),
       biter: new Date(r.biter).getTime(),
       uye_sayisi: r.uye_sayisi,
@@ -16897,6 +16929,10 @@ app.get('/odalar/:id/akis', girisZorunlu, odaAkisLimiti, sarici(async (req, res)
       video: medyaImzali(oda.video, MEDYA_IMZA_ANAHTARI),
       video_ad: oda.video_ad,
       video_sure_ms: oda.video_sure_ms == null ? null : Number(oda.video_sure_ms),
+      // KAYNAK `durum`un İÇİNDE: kaynak değişimi (yükleme -> bağlantı) her
+      // zaman sürümü artırır, yani `durum` zaten gönderiliyor. Dışarı
+      // alınsaydı 1 sn'lik her tur bu dört alanı boşuna taşırdı.
+      ...odaKaynakGovde(oda),
     } : null,
     // HAZIRLIK durumu `durum`un DIŞINDA: `durum` yalnız sürüm değişince
     // gönderiliyor, oysa ilerleme yüzdesi sürüm artmadan da akmalı — yoksa
@@ -16952,6 +16988,66 @@ app.post('/odalar/:id/durum', girisZorunlu, odaDurumLimiti, sarici(async (req, r
     surum: Number(rows[0].surum),
     konum_zaman: new Date(rows[0].konum_zaman).getTime(),
     sunucu_zaman: Date.now(),
+  });
+}));
+
+// ---------- KAYNAK: BAĞLANTI (SAHİP + YETKİLİ) ----------
+// Kullanıcı isteği (7 Eyl 2026): "video upload yerine kullanıcıya tarayıcı
+// açabilir miyiz … tabi upload duracak". Yükleme aynen duruyor; bu ikinci
+// kaynak. Kimse 5 GB yüklemiyor, sunucu tek bayt taşımıyor.
+//
+// ===========================================================================
+// İSTEMCİNİN ÇÖZÜMLEMESİ KABUL EDİLMEZ
+// ===========================================================================
+// İstemci de aynı çözümlemeyi yapıyor (`oda_baglanti.dart`) ama gönderdiği
+// yalnız HAM ADRESTİR. Sağlayıcı/kimlik alanlarını istemciden alsaydık,
+// `{saglayici:'youtube', kimlik:'<istediğim sayfa>'}` yollayan bir istek
+// odadaki HERKESİN gömme yüzeyinde o sayfayı açtırırdı. Yazılan, aşağıdaki
+// `odaBaglantiCoz` sonucudur.
+app.post('/odalar/:id/baglanti', girisZorunlu, odaLimiti, sarici(async (req, res) => {
+  const kapi = await odaKapisi(req, res);
+  if (!kapi) return;
+  // Videoyu kim değiştirebilir: oynatmayı kim yönetiyorsa o. Ayrı bir kural
+  // koymak (ör. "yalnız sahip") yetkili kişinin oynatabildiği ama
+  // değiştiremediği tuhaf bir yarım yetki üretirdi.
+  if (!odaDurumYazabilir(kapi.oda, req.kullanici.id, kapi.uye.rol)) {
+    return res.status(403).json({
+      hata: ODA_HATA_METNI.YETKI_YOK, kod: 'YETKI_YOK',
+    });
+  }
+  const b = odaBaglantiCoz(req.body?.url);
+  if (!b) {
+    return res.status(400).json({
+      hata: ODA_HATA_METNI.BAGLANTI_DESTEKSIZ, kod: 'BAGLANTI_DESTEKSIZ',
+    });
+  }
+  // YÜKLENMİŞ DOSYA VARSA GİDER. Bırakılsaydı: (a) 5 GB disk 12 saat boyunca
+  // hiç izlenmeyecek bir dosyada dururdu, (b) `tek_kaynak_check` kısıtı zaten
+  // reddederdi, (c) süpürge sonra silse bile aradaki saatlerde disk baskısı
+  // gerçek olurdu.
+  odaVideosunuSil(kapi.oda);
+  const { rows } = await havuz.query(
+    `UPDATE izleme_odalari
+        SET kaynak='baglanti',
+            baglanti_saglayici=$2, baglanti_kimlik=$3,
+            baglanti_url=$4, baglanti_gizli=$5,
+            video=NULL, video_ad=NULL, video_boyut=NULL, video_kapak=NULL,
+            video_sure_ms=NULL, video_kodek=NULL, ses_kodek=NULL,
+            hazirlik_durum='yok', hazirlik_yuzde=0, hazirlik_hata=NULL,
+            zorla_cevir=false,
+            oynuyor=false, konum_ms=0, konum_zaman=now(), surum=surum+1
+      WHERE id=$1 RETURNING surum`,
+    [kapi.oda.id, b.saglayici, b.kimlik, b.url, b.gizli],
+  );
+  // Yarım kalmış bir yükleme varsa parçası da çöp olur.
+  const { rows: yy } = await havuz.query(
+    'DELETE FROM oda_yuklemeler WHERE oda_id=$1 RETURNING id', [kapi.oda.id]);
+  for (const y of yy) fs.unlink(odaParcaYolu(y.id), () => {});
+  await odaSistemMesaji(kapi.oda.id, req.kullanici.id, 'baglanti_verildi');
+  res.json({
+    surum: Number(rows[0].surum),
+    kaynak: 'baglanti',
+    baglanti: { saglayici: b.saglayici, kimlik: b.kimlik, url: b.url, gizli: b.gizli },
   });
 }));
 
@@ -17399,6 +17495,12 @@ app.post('/oda-video/bitir', girisZorunlu, odaLimiti, sarici(async (req, res) =>
   await havuz.query(
     `UPDATE izleme_odalari
         SET video=$2, video_ad=$3, video_boyut=$4, video_sure_ms=$5, video_kapak=$6,
+            -- KAYNAK GERİ DÖNER (7 Eyl 2026): oda bağlantı kipindeyken dosya
+            -- yüklenirse bağlantı alanları temizlenmeli, yoksa istemci hem
+            -- dosyayı hem eski gömmeyi taşıyan tutarsız bir oda görürdü
+            -- (ve tek_kaynak_check kısıtı yazmayı reddederdi).
+            kaynak='yukleme', baglanti_saglayici=NULL, baglanti_kimlik=NULL,
+            baglanti_url=NULL, baglanti_gizli=NULL,
             oynuyor=false, konum_ms=0, konum_zaman=now(), surum=surum+1
       WHERE id=$1`,
     [oda.id, yol, y.ad, y.boyut, sure, kapakVar ? `${yol}.jpg` : null],

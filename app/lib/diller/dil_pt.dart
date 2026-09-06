@@ -1,5 +1,29 @@
 /// Otomatik üretilen çeviri haritası (pt).
 const Map<String, String> cevirilerPt = {
+  'Bağlantı yapıştır': 'Colar link',
+  'Yapıştır': 'Colar',
+  'Video bağlantısı': 'Link do vídeo',
+  'Odada aç': 'Abrir na sala',
+  'Doğrudan video adresi': 'Endereço direto do vídeo',
+  '{} videosu': 'Vídeo do {}',
+  'Başka video seç': 'Escolher outro vídeo',
+  'Bu video adresi açılamadı': 'Não foi possível abrir este endereço de vídeo',
+  'Oda sahibi henüz video seçmedi':
+      'O dono da sala ainda não escolheu um vídeo',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Cole um link de vídeo ou envie um arquivo',
+  '{} bir video bağlantısı ekledi': '{} adicionou um link de vídeo',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Sites suportados: {} · endereço direto do vídeo (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Este endereço não é suportado. Sites suportados: {} · endereço direto do vídeo (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Este endereço não é suportado. Cole um link do {} ou um endereço direto de vídeo (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · endereço direto do vídeo (.mp4) · ou um arquivo de até {} GB',
+  '{} · doğrudan video adresi': '{} · Endereço direto do vídeo',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'O navegador não reproduz este formato ao vivo (m3u8); abre no app do celular.',
   'Yorumun bu sayfada görünecek': 'O teu comentário vai aparecer nesta página',
   'Hepsini gördün, baştan gösteriyoruz':
       'Você já viu de tudo, nós mostramos desde o início',

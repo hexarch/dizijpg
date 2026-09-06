@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (sv).
 const Map<String, String> cevirilerSv = {
+  'Bağlantı yapıştır': 'Klistra in länk',
+  'Yapıştır': 'Klistra in',
+  'Video bağlantısı': 'Videolänk',
+  'Odada aç': 'Öppna i rummet',
+  'Doğrudan video adresi': 'Direkt videoadress',
+  '{} videosu': '{}-video',
+  'Başka video seç': 'Välj en annan video',
+  'Bu video adresi açılamadı': 'Den här videoadressen kunde inte öppnas',
+  'Oda sahibi henüz video seçmedi': 'Rummets ägare har inte valt en video än',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Klistra in en videolänk eller ladda upp en fil',
+  '{} bir video bağlantısı ekledi': '{} lade till en videolänk',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Stödda webbplatser: {} · direkt videoadress (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Den här adressen stöds inte. Stödda webbplatser: {} · direkt videoadress (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Den här adressen stöds inte. Klistra in en {}-länk eller en direkt videoadress (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · direkt videoadress (.mp4) · eller en fil på upp till {} GB',
+  '{} · doğrudan video adresi': '{} · Direkt videoadress',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Webbläsaren kan inte spela detta liveformat (m3u8); det öppnas i telefonappen.',
   'Yorumun bu sayfada görünecek': 'Din kommentar visas på den här sidan',
   'Hepsini gördün, baştan gösteriyoruz':
       'Du har sett allt, vi visar dig från början',

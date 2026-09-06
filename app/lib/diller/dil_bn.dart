@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (bn).
 const Map<String, String> cevirilerBn = {
+  'Bağlantı yapıştır': 'লিঙ্ক পেস্ট করুন',
+  'Yapıştır': 'পেস্ট',
+  'Video bağlantısı': 'ভিডিও লিঙ্ক',
+  'Odada aç': 'রুমে খুলুন',
+  'Doğrudan video adresi': 'সরাসরি ভিডিও ঠিকানা',
+  '{} videosu': '{} ভিডিও',
+  'Başka video seç': 'অন্য ভিডিও বাছুন',
+  'Bu video adresi açılamadı': 'এই ভিডিও ঠিকানা খোলা যায়নি',
+  'Oda sahibi henüz video seçmedi': 'রুমের মালিক এখনও ভিডিও বাছেননি',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'ভিডিও লিঙ্ক পেস্ট করুন বা ফাইল আপলোড করুন',
+  '{} bir video bağlantısı ekledi': '{} একটি ভিডিও লিঙ্ক যোগ করেছেন',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'সমর্থিত সাইট: {} · সরাসরি ভিডিও ঠিকানা (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'এই ঠিকানা সমর্থিত নয়। সমর্থিত সাইট: {} · সরাসরি ভিডিও ঠিকানা (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'এই ঠিকানা সমর্থিত নয়। {} লিঙ্ক বা সরাসরি ভিডিও ঠিকানা (.mp4) পেস্ট করুন।',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · সরাসরি ভিডিও ঠিকানা (.mp4) · বা সর্বোচ্চ {} GB ফাইল',
+  '{} · doğrudan video adresi': '{} · সরাসরি ভিডিও ঠিকানা',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'ব্রাউজার এই লাইভ ফরম্যাট (m3u8) চালাতে পারে না; ফোন অ্যাপে খুলবে।',
   'Yorumun bu sayfada görünecek': 'তোমার মন্তব্য এই পাতায় দেখা যাবে',
   'Hepsini gördün, baştan gösteriyoruz':
       'আপনি এটি সব দেখেছেন, আমরা আপনাকে শুরু থেকে দেখাই',

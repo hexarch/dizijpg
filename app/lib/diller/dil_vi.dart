@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (vi).
 const Map<String, String> cevirilerVi = {
+  'Bağlantı yapıştır': 'Dán liên kết',
+  'Yapıştır': 'Dán',
+  'Video bağlantısı': 'Liên kết video',
+  'Odada aç': 'Mở trong phòng',
+  'Doğrudan video adresi': 'Địa chỉ video trực tiếp',
+  '{} videosu': 'Video {}',
+  'Başka video seç': 'Chọn video khác',
+  'Bu video adresi açılamadı': 'Không thể mở địa chỉ video này',
+  'Oda sahibi henüz video seçmedi': 'Chủ phòng chưa chọn video',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Dán liên kết video hoặc tải tệp lên',
+  '{} bir video bağlantısı ekledi': '{} đã thêm một liên kết video',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Trang được hỗ trợ: {} · địa chỉ video trực tiếp (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Địa chỉ này không được hỗ trợ. Trang được hỗ trợ: {} · địa chỉ video trực tiếp (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Địa chỉ này không được hỗ trợ. Dán liên kết {} hoặc địa chỉ video trực tiếp (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · địa chỉ video trực tiếp (.mp4) · hoặc tệp tối đa {} GB',
+  '{} · doğrudan video adresi': '{} · Địa chỉ video trực tiếp',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Trình duyệt không phát được định dạng phát trực tiếp này (m3u8); sẽ mở trong ứng dụng điện thoại.',
   'Yorumun bu sayfada görünecek': 'Bình luận của bạn sẽ hiện trên trang này',
   'Hepsini gördün, baştan gösteriyoruz':
       'Bạn đã thấy tất cả, chúng tôi chỉ cho bạn từ đầu',

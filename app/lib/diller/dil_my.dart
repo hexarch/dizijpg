@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (my).
 const Map<String, String> cevirilerMy = {
+  'Bağlantı yapıştır': 'လင့်ခ်ကူးထည့်ပါ',
+  'Yapıştır': 'ကူးထည့်ပါ',
+  'Video bağlantısı': 'ဗီဒီယိုလင့်ခ်',
+  'Odada aç': 'အခန်းထဲတွင်ဖွင့်ပါ',
+  'Doğrudan video adresi': 'တိုက်ရိုက်ဗီဒီယိုလိပ်စာ',
+  '{} videosu': '{} ဗီဒီယို',
+  'Başka video seç': 'အခြားဗီဒီယိုရွေးပါ',
+  'Bu video adresi açılamadı': 'ဤဗီဒီယိုလိပ်စာကိုမဖွင့်နိုင်ပါ',
+  'Oda sahibi henüz video seçmedi': 'အခန်းပိုင်ရှင်ကဗီဒီယိုမရွေးရသေးပါ',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'ဗီဒီယိုလင့်ခ်ကူးထည့်ပါ သို့မဟုတ် ဖိုင်တင်ပါ',
+  '{} bir video bağlantısı ekledi': '{} က ဗီဒီယိုလင့်ခ်ထည့်လိုက်သည်',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'ပံ့ပိုးထားသောဆိုက်များ: {} · တိုက်ရိုက်ဗီဒီယိုလိပ်စာ (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'ဤလိပ်စာကိုမပံ့ပိုးပါ။ ပံ့ပိုးထားသောဆိုက်များ: {} · တိုက်ရိုက်ဗီဒီယိုလိပ်စာ (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'ဤလိပ်စာကိုမပံ့ပိုးပါ။ {} လင့်ခ် သို့မဟုတ် တိုက်ရိုက်ဗီဒီယိုလိပ်စာ (.mp4) ကူးထည့်ပါ။',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · တိုက်ရိုက်ဗီဒီယိုလိပ်စာ (.mp4) · သို့မဟုတ် {} GB အထိဖိုင်',
+  '{} · doğrudan video adresi': '{} · တိုက်ရိုက်ဗီဒီယိုလိပ်စာ',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'ဤတိုက်ရိုက်ဖော်မတ် (m3u8) ကို ဘရောက်ဇာမဖွင့်နိုင်ပါ၊ ဖုန်းအက်ပ်တွင်ဖွင့်ပါမည်။',
   'Yorumun bu sayfada görünecek': 'သင့်မှတ်ချက်ကို ဤစာမျက်နှာတွင် တွေ့ရပါမည်',
   'Hepsini gördün, baştan gösteriyoruz':
       'အားလုံးမြင်ပြီးပြီ၊ ငါတို့အစကတည်းက မင်းကိုပြမယ်။',

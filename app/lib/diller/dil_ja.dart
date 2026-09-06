@@ -1,5 +1,27 @@
 /// Otomatik üretilen çeviri haritası (ja).
 const Map<String, String> cevirilerJa = {
+  'Bağlantı yapıştır': 'リンクを貼り付け',
+  'Yapıştır': '貼り付け',
+  'Video bağlantısı': '動画のリンク',
+  'Odada aç': 'ルームで開く',
+  'Doğrudan video adresi': '動画の直接アドレス',
+  '{} videosu': '{} の動画',
+  'Başka video seç': '別の動画を選ぶ',
+  'Bu video adresi açılamadı': 'この動画アドレスを開けませんでした',
+  'Oda sahibi henüz video seçmedi': 'ルームのオーナーはまだ動画を選んでいません',
+  'Bir video bağlantısı yapıştır ya da dosya yükle': '動画リンクを貼るか、ファイルをアップロード',
+  '{} bir video bağlantısı ekledi': '{} が動画リンクを追加しました',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      '対応サイト: {} · 動画の直接アドレス (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'このアドレスには対応していません。 対応サイト: {} · 動画の直接アドレス (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'このアドレスには対応していません。 {} のリンクか、動画の直接アドレス (.mp4) を貼り付けてください。',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · 動画の直接アドレス (.mp4) · または最大 {} GB のファイル',
+  '{} · doğrudan video adresi': '{} · 動画の直接アドレス',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'ブラウザーはこのライブ形式 (m3u8) を再生できません。スマホアプリで開きます。',
   'Yorumun bu sayfada görünecek': 'あなたのコメントはこのページに表示されます',
   'Hepsini gördün, baştan gösteriyoruz': 'あなたはすべてを見ました、私たちは最初からあなたに見せます',
   'Aktarılacak tanınan veri bulunamadı.': 'インポートできるデータが見つかりませんでした。',

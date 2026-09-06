@@ -1664,6 +1664,27 @@ CREATE INDEX IF NOT EXISTS izleme_odalari_hazirlik
   ON izleme_odalari (hazirlik_durum, olusturuldu)
   WHERE hazirlik_durum IN ('kuyrukta', 'isleniyor');
 
+-- BAĞLANTI KAYNAĞI (7 Eyl 2026, migrasyon-2026-09-07.sql) — yükleme yerine
+-- adres yapıştırma. Gerekçeler migrasyon dosyasında; kısaca: kaynak ayrı bir
+-- kolon çünkü "video NULL" hem "henüz seçilmedi" hem "bağlantı verildi"
+-- demektir, ve saglayici CHECKli çünkü değeri gömme yüzeyine adres oluyor.
+ALTER TABLE izleme_odalari
+  ADD COLUMN IF NOT EXISTS kaynak TEXT NOT NULL DEFAULT 'yukleme';
+ALTER TABLE izleme_odalari ADD COLUMN IF NOT EXISTS baglanti_url TEXT;
+ALTER TABLE izleme_odalari ADD COLUMN IF NOT EXISTS baglanti_saglayici TEXT;
+ALTER TABLE izleme_odalari ADD COLUMN IF NOT EXISTS baglanti_kimlik TEXT;
+ALTER TABLE izleme_odalari ADD COLUMN IF NOT EXISTS baglanti_gizli TEXT;
+ALTER TABLE izleme_odalari DROP CONSTRAINT IF EXISTS izleme_odalari_kaynak_check;
+ALTER TABLE izleme_odalari ADD CONSTRAINT izleme_odalari_kaynak_check
+  CHECK (kaynak IN ('yukleme', 'baglanti'));
+ALTER TABLE izleme_odalari DROP CONSTRAINT IF EXISTS izleme_odalari_saglayici_check;
+ALTER TABLE izleme_odalari ADD CONSTRAINT izleme_odalari_saglayici_check
+  CHECK (baglanti_saglayici IS NULL
+         OR baglanti_saglayici IN ('youtube', 'vimeo', 'dosya'));
+ALTER TABLE izleme_odalari DROP CONSTRAINT IF EXISTS izleme_odalari_tek_kaynak_check;
+ALTER TABLE izleme_odalari ADD CONSTRAINT izleme_odalari_tek_kaynak_check
+  CHECK (kaynak = 'yukleme' OR video IS NULL);
+
 -- ===========================================================================
 --
 -- HANGİ ÖLÇÜLEN HATAYI ÇÖZÜYOR

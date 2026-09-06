@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (uk).
 const Map<String, String> cevirilerUk = {
+  'Bağlantı yapıştır': 'Вставити посилання',
+  'Yapıştır': 'Вставити',
+  'Video bağlantısı': 'Посилання на відео',
+  'Odada aç': 'Відкрити в кімнаті',
+  'Doğrudan video adresi': 'Пряма адреса відео',
+  '{} videosu': 'Відео {}',
+  'Başka video seç': 'Вибрати інше відео',
+  'Bu video adresi açılamadı': 'Не вдалося відкрити цю адресу відео',
+  'Oda sahibi henüz video seçmedi': 'Власник кімнати ще не вибрав відео',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Вставте посилання на відео або завантажте файл',
+  '{} bir video bağlantısı ekledi': '{} додав(ла) посилання на відео',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Підтримувані сайти: {} · пряма адреса відео (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Ця адреса не підтримується. Підтримувані сайти: {} · пряма адреса відео (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Ця адреса не підтримується. Вставте посилання {} або пряму адресу відео (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · пряма адреса відео (.mp4) · або файл до {} ГБ',
+  '{} · doğrudan video adresi': '{} · Пряма адреса відео',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Браузер не відтворює цей формат (m3u8); він відкриється в застосунку на телефоні.',
   'Yorumun bu sayfada görünecek': 'Твій коментар з’явиться на цій сторінці',
   'Hepsini gördün, baştan gösteriyoruz':
       'Ви бачили все, ми показуємо вам з самого початку',

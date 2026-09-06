@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (sw).
 const Map<String, String> cevirilerSw = {
+  'Bağlantı yapıştır': 'Bandika kiungo',
+  'Yapıştır': 'Bandika',
+  'Video bağlantısı': 'Kiungo cha video',
+  'Odada aç': 'Fungua kwenye chumba',
+  'Doğrudan video adresi': 'Anwani ya moja kwa moja ya video',
+  '{} videosu': 'Video ya {}',
+  'Başka video seç': 'Chagua video nyingine',
+  'Bu video adresi açılamadı': 'Anwani hii ya video haikuweza kufunguliwa',
+  'Oda sahibi henüz video seçmedi': 'Mmiliki wa chumba bado hajachagua video',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Bandika kiungo cha video au pakia faili',
+  '{} bir video bağlantısı ekledi': '{} ameongeza kiungo cha video',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Tovuti zinazotumika: {} · anwani ya moja kwa moja ya video (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Anwani hii haitumiki. Tovuti zinazotumika: {} · anwani ya moja kwa moja ya video (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Anwani hii haitumiki. Bandika kiungo cha {} au anwani ya moja kwa moja ya video (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · anwani ya moja kwa moja ya video (.mp4) · au faili hadi GB {}',
+  '{} · doğrudan video adresi': '{} · Anwani ya moja kwa moja ya video',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Kivinjari hakiwezi kucheza umbizo hili la moja kwa moja (m3u8); linafunguka kwenye programu ya simu.',
   'Yorumun bu sayfada görünecek': 'Maoni yako yataonekana kwenye ukurasa huu',
   'Hepsini gördün, baştan gösteriyoruz':
       'Umeona yote, tunakuonyesha tangu mwanzo',

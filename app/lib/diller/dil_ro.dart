@@ -1,5 +1,29 @@
 /// Otomatik üretilen çeviri haritası (ro).
 const Map<String, String> cevirilerRo = {
+  'Bağlantı yapıştır': 'Lipește linkul',
+  'Yapıştır': 'Lipește',
+  'Video bağlantısı': 'Link video',
+  'Odada aç': 'Deschide în cameră',
+  'Doğrudan video adresi': 'Adresă video directă',
+  '{} videosu': 'Videoclip {}',
+  'Başka video seç': 'Alege alt videoclip',
+  'Bu video adresi açılamadı': 'Această adresă video nu a putut fi deschisă',
+  'Oda sahibi henüz video seçmedi':
+      'Proprietarul camerei nu a ales încă un videoclip',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Lipește un link video sau încarcă un fișier',
+  '{} bir video bağlantısı ekledi': '{} a adăugat un link video',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Site-uri acceptate: {} · adresă video directă (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Această adresă nu este acceptată. Site-uri acceptate: {} · adresă video directă (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Această adresă nu este acceptată. Lipește un link {} sau o adresă video directă (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · adresă video directă (.mp4) · sau un fișier de până la {} GB',
+  '{} · doğrudan video adresi': '{} · Adresă video directă',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Browserul nu poate reda acest format live (m3u8); se deschide în aplicația de telefon.',
   'Yorumun bu sayfada görünecek': 'Comentariul tău va apărea pe această pagină',
   'Hepsini gördün, baştan gösteriyoruz':
       'Le-ai văzut pe toate, îți arătăm de la început',

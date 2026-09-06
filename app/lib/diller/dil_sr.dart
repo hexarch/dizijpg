@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (sr).
 const Map<String, String> cevirilerSr = {
+  'Bağlantı yapıştır': 'Налепи линк',
+  'Yapıştır': 'Налепи',
+  'Video bağlantısı': 'Линк видеа',
+  'Odada aç': 'Отвори у соби',
+  'Doğrudan video adresi': 'Директна адреса видеа',
+  '{} videosu': '{} видео',
+  'Başka video seç': 'Изабери други видео',
+  'Bu video adresi açılamadı': 'Ова адреса видеа није могла да се отвори',
+  'Oda sahibi henüz video seçmedi': 'Власник собе још није изабрао видео',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Налепите линк видеа или отпремите фајл',
+  '{} bir video bağlantısı ekledi': '{} је додао/ла линк видеа',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Подржани сајтови: {} · директна адреса видеа (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Ова адреса није подржана. Подржани сајтови: {} · директна адреса видеа (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Ова адреса није подржана. Налепите {} линк или директну адресу видеа (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · директна адреса видеа (.mp4) · или фајл до {} GB',
+  '{} · doğrudan video adresi': '{} · Директна адреса видеа',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Прегледач не може да пусти овај формат (m3u8); отвара се у апликацији на телефону.',
   'Yorumun bu sayfada görünecek':
       'Tvoj komentar će se pojaviti na ovoj stranici',
   'Hepsini gördün, baştan gösteriyoruz':

@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (ru).
 const Map<String, String> cevirilerRu = {
+  'Bağlantı yapıştır': 'Вставить ссылку',
+  'Yapıştır': 'Вставить',
+  'Video bağlantısı': 'Ссылка на видео',
+  'Odada aç': 'Открыть в комнате',
+  'Doğrudan video adresi': 'Прямой адрес видео',
+  '{} videosu': 'Видео {}',
+  'Başka video seç': 'Выбрать другое видео',
+  'Bu video adresi açılamadı': 'Не удалось открыть этот адрес видео',
+  'Oda sahibi henüz video seçmedi': 'Владелец комнаты ещё не выбрал видео',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Вставьте ссылку на видео или загрузите файл',
+  '{} bir video bağlantısı ekledi': '{} добавил(а) ссылку на видео',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Поддерживаемые сайты: {} · прямой адрес видео (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Этот адрес не поддерживается. Поддерживаемые сайты: {} · прямой адрес видео (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Этот адрес не поддерживается. Вставьте ссылку {} или прямой адрес видео (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · прямой адрес видео (.mp4) · или файл до {} ГБ',
+  '{} · doğrudan video adresi': '{} · Прямой адрес видео',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Браузер не воспроизводит этот формат (m3u8); он открывается в приложении на телефоне.',
   'Yorumun bu sayfada görünecek': 'Твой комментарий появится на этой странице',
   'Hepsini gördün, baştan gösteriyoruz':
       'Вы все это видели, мы покажем вам с самого начала',

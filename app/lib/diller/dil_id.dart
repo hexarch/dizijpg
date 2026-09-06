@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (id).
 const Map<String, String> cevirilerId = {
+  'Bağlantı yapıştır': 'Tempel tautan',
+  'Yapıştır': 'Tempel',
+  'Video bağlantısı': 'Tautan video',
+  'Odada aç': 'Buka di ruang',
+  'Doğrudan video adresi': 'Alamat video langsung',
+  '{} videosu': 'Video {}',
+  'Başka video seç': 'Pilih video lain',
+  'Bu video adresi açılamadı': 'Alamat video ini tidak dapat dibuka',
+  'Oda sahibi henüz video seçmedi': 'Pemilik ruang belum memilih video',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Tempel tautan video atau unggah berkas',
+  '{} bir video bağlantısı ekledi': '{} menambahkan tautan video',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Situs yang didukung: {} · alamat video langsung (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Alamat ini tidak didukung. Situs yang didukung: {} · alamat video langsung (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Alamat ini tidak didukung. Tempel tautan {} atau alamat video langsung (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · alamat video langsung (.mp4) · atau berkas hingga {} GB',
+  '{} · doğrudan video adresi': '{} · Alamat video langsung',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Peramban tidak bisa memutar format siaran ini (m3u8); dibuka di aplikasi ponsel.',
   'Yorumun bu sayfada görünecek': 'Komentarmu akan muncul di halaman ini',
   'Hepsini gördün, baştan gösteriyoruz':
       'Anda telah melihat semuanya, kami tunjukkan dari awal',

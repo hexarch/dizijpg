@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (cs).
 const Map<String, String> cevirilerCs = {
+  'Bağlantı yapıştır': 'Vložit odkaz',
+  'Yapıştır': 'Vložit',
+  'Video bağlantısı': 'Odkaz na video',
+  'Odada aç': 'Otevřít v místnosti',
+  'Doğrudan video adresi': 'Přímá adresa videa',
+  '{} videosu': 'Video z {}',
+  'Başka video seç': 'Vybrat jiné video',
+  'Bu video adresi açılamadı': 'Tuto adresu videa se nepodařilo otevřít',
+  'Oda sahibi henüz video seçmedi': 'Vlastník místnosti zatím nevybral video',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Vložte odkaz na video nebo nahrajte soubor',
+  '{} bir video bağlantısı ekledi': '{} přidal(a) odkaz na video',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Podporované weby: {} · přímá adresa videa (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Tato adresa není podporována. Podporované weby: {} · přímá adresa videa (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Tato adresa není podporována. Vložte odkaz {} nebo přímou adresu videa (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · přímá adresa videa (.mp4) · nebo soubor do {} GB',
+  '{} · doğrudan video adresi': '{} · Přímá adresa videa',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Prohlížeč tento formát živého vysílání (m3u8) nepřehraje; otevře se v mobilní aplikaci.',
   'Yorumun bu sayfada görünecek': 'Tvůj komentář se zobrazí na této stránce',
   'Hepsini gördün, baştan gösteriyoruz':
       'Viděli jste to všechno, ukážeme vám to od začátku',

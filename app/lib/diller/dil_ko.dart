@@ -1,5 +1,27 @@
 /// Otomatik üretilen çeviri haritası (ko).
 const Map<String, String> cevirilerKo = {
+  'Bağlantı yapıştır': '링크 붙여넣기',
+  'Yapıştır': '붙여넣기',
+  'Video bağlantısı': '동영상 링크',
+  'Odada aç': '방에서 열기',
+  'Doğrudan video adresi': '직접 동영상 주소',
+  '{} videosu': '{} 동영상',
+  'Başka video seç': '다른 동영상 선택',
+  'Bu video adresi açılamadı': '이 동영상 주소를 열 수 없습니다',
+  'Oda sahibi henüz video seçmedi': '방장이 아직 동영상을 고르지 않았습니다',
+  'Bir video bağlantısı yapıştır ya da dosya yükle': '동영상 링크를 붙여넣거나 파일을 업로드하세요',
+  '{} bir video bağlantısı ekledi': '{}님이 동영상 링크를 추가했습니다',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      '지원 사이트: {} · 직접 동영상 주소 (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      '이 주소는 지원되지 않습니다. 지원 사이트: {} · 직접 동영상 주소 (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      '이 주소는 지원되지 않습니다. {} 링크나 직접 동영상 주소(.mp4)를 붙여넣으세요.',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · 직접 동영상 주소(.mp4) · 또는 최대 {} GB 파일',
+  '{} · doğrudan video adresi': '{} · 직접 동영상 주소',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      '브라우저는 이 라이브 형식(m3u8)을 재생할 수 없습니다. 휴대폰 앱에서 열립니다.',
   'Yorumun bu sayfada görünecek': '내 댓글이 이 페이지에 표시됩니다',
   'Hepsini gördün, baştan gösteriyoruz': '당신은 모든 것을 보았습니다. 우리는 처음부터 당신에게 보여줍니다',
   'Aktarılacak tanınan veri bulunamadı.': '가져올 수 있는 데이터를 찾지 못했어요.',

@@ -21,6 +21,7 @@ import {
   kodUret, kodNormalle, beklenenKonum, baslikTemizle, mesajTemizle,
   tepkiGecerli, boyutKontrol, parcaKarari, durumYazabilir, girisKarari,
   cevrimiciMi, rolVerebilir, rolAtamaKarari, ROLLER, VERILEBILIR_ROLLER,
+  baglantiCoz, ozelAgAdresi, ODA_SAGLAYICILAR, ODA_DOSYA_UZANTILARI,
 } from '../oda.js';
 
 const KOK = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -845,4 +846,104 @@ test('adaylar ucu hız limitli', () => {
   const s = oku('server.js');
   const i = s.indexOf("app.get('/odalar/:id/davet-adaylari'");
   assert.match(s.slice(i, i + 160), /odaLimiti/, 'hız limiti yok');
+});
+
+// ===========================================================================
+// BAĞLANTI KAYNAĞI (7 Eyl 2026)
+// ===========================================================================
+// İstemcideki eşi `app/test/oda_baglanti_test.dart` — AYNI adresler orada da
+// sınanır. İki taraf ayrışırsa kullanıcı "bağlantı kabul edildi ama oynatıcı
+// açılmadı" görür; bu iki dosya o sessiz hatayı birlikte kapatıyor.
+
+test('baglantiCoz: YouTube\'un her biçimi aynı kimliğe düşer', () => {
+  const id = 'dQw4w9WgXcQ';
+  for (const adres of [
+    `https://www.youtube.com/watch?v=${id}`,
+    `https://youtube.com/watch?v=${id}&t=42s`,
+    `https://m.youtube.com/watch?v=${id}`,
+    `https://youtu.be/${id}`,
+    `https://www.youtube.com/embed/${id}`,
+    `https://www.youtube.com/shorts/${id}`,
+    `https://www.youtube.com/live/${id}`,
+    `youtu.be/${id}`,
+  ]) {
+    const b = baglantiCoz(adres);
+    assert.ok(b, `çözülemedi: ${adres}`);
+    assert.equal(b.saglayici, 'youtube', adres);
+    assert.equal(b.kimlik, id, adres);
+  }
+});
+
+test('baglantiCoz: Vimeo gizli anahtarı korur (onsuz gömme 403)', () => {
+  assert.equal(baglantiCoz('https://vimeo.com/76979871').gizli, null);
+  assert.equal(baglantiCoz('https://vimeo.com/76979871/a1b2c3d4e5').gizli, 'a1b2c3d4e5');
+  assert.equal(baglantiCoz('https://player.vimeo.com/video/76979871?h=ff00aa').gizli, 'ff00aa');
+  assert.equal(baglantiCoz('https://vimeo.com/76979871').kimlik, '76979871');
+  assert.equal(baglantiCoz('https://vimeo.com/dizijpg'), null, 'kullanıcı sayfası video değil');
+});
+
+test('baglantiCoz: doğrudan dosyada sorgu dizesi KORUNUR', () => {
+  // İmzalı CDN adresinde `?token=` atılırsa dosya 403 olur.
+  const b = baglantiCoz('https://cdn.example.com/a/film.mp4?token=xyz');
+  assert.equal(b.saglayici, 'dosya');
+  assert.match(b.url, /token=xyz/);
+  // Hiçbir tarayıcının açamadığı kaplar reddedilir — kabul edip sonra
+  // "oynatılamadı" demek, baştan reddetmekten kötü.
+  assert.equal(baglantiCoz('https://x.com/film.mkv'), null);
+  assert.equal(baglantiCoz('https://x.com/film.avi'), null);
+});
+
+test('baglantiCoz: ölçümde kontrol edilemeyen platformlar REDDEDİLİR', () => {
+  // 7 Eyl 2026 ölçümü — gerekçe `oda.js` başlığında. Kabul edilirlerse
+  // sahip sardığında izleyicide hiçbir şey olmaz: senkron sessizce bozulur.
+  for (const adres of [
+    'https://ok.ru/video/9677965493527',
+    'https://vk.com/video-1_2',
+    'https://www.dailymotion.com/video/xb4m4t2',
+    'https://www.netflix.com/watch/80100172',
+  ]) assert.equal(baglantiCoz(adres), null, adres);
+});
+
+test('baglantiCoz: http, boş ve bozuk girdi reddedilir', () => {
+  // https şart: karışık içerik tarayıcıda SESSİZCE engellenir.
+  assert.equal(baglantiCoz('http://youtu.be/dQw4w9WgXcQ'), null);
+  assert.equal(baglantiCoz('http://x.com/a.mp4'), null);
+  for (const kotu of ['', '   ', 'merhaba dünya', 'https://', 'javascript:alert(1)', null, 42, 'a'.repeat(3000)]) {
+    assert.equal(baglantiCoz(kotu), null, String(kotu).slice(0, 20));
+  }
+});
+
+test('baglantiCoz: özel ağ adresleri reddedilir (iç ağ taraması)', () => {
+  for (const h of [
+    'https://192.168.1.1/a.mp4', 'https://10.0.0.5/a.mp4',
+    'https://127.0.0.1/a.mp4', 'https://172.16.0.1/a.mp4',
+    'https://169.254.169.254/a.mp4', 'https://localhost/a.mp4',
+    'https://yonlendirici.local/a.mp4',
+  ]) assert.equal(baglantiCoz(h), null, h);
+  assert.equal(ozelAgAdresi('8.8.8.8'), false);
+  assert.equal(ozelAgAdresi('172.32.0.1'), false, '172.32 ÖZEL DEĞİL (16-31 aralığı)');
+  assert.equal(ozelAgAdresi('172.16.0.1'), true);
+});
+
+test('şema: bağlantı kolonları migrasyonda ve saglayici CHECK ile sınırlı', () => {
+  const m = oku('migrasyon-2026-09-07.sql');
+  for (const k of ['kaynak', 'baglanti_url', 'baglanti_saglayici', 'baglanti_kimlik', 'baglanti_gizli']) {
+    assert.match(m, new RegExp(`ADD COLUMN IF NOT EXISTS ${k}`), `${k} kolonu yok`);
+  }
+  // CHECK olmadan istemci `baglanti_saglayici`ya istediğini yazdırabilirdi.
+  for (const s of ODA_SAGLAYICILAR) assert.match(m, new RegExp(`'${s}'`), `${s} CHECK'te yok`);
+});
+
+test('uç: bağlantı YALNIZ sunucunun kendi çözümlemesini yazar', () => {
+  const s = oku('server.js');
+  const i = s.indexOf("app.post('/odalar/:id/baglanti'");
+  assert.ok(i > 0, 'bağlantı ucu yok');
+  const g = s.slice(i, i + 3000);
+  // server.js `baglantiCoz`u `odaBaglantiCoz` takma adıyla alıyor.
+  assert.match(g, /odaBaglantiCoz\(/, 'sunucu kendi çözümlemesini yapmıyor');
+  // İstemcinin gönderdiği sağlayıcı/kimlik ASLA doğrudan yazılmamalı.
+  assert.ok(!/govde\.saglayici|body\.saglayici|req\.body\.kimlik/.test(g),
+    'istemcinin çözümlemesi doğrudan kullanılıyor');
+  assert.match(g, /odaLimiti/, 'hız limiti yok');
+  assert.match(g, /durumYazabilir|YETKI_YOK/, 'yetki kontrolü yok');
 });

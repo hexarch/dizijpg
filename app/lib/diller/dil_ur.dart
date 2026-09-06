@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (ur).
 const Map<String, String> cevirilerUr = {
+  'Bağlantı yapıştır': 'لنک پیسٹ کریں',
+  'Yapıştır': 'پیسٹ کریں',
+  'Video bağlantısı': 'ویڈیو لنک',
+  'Odada aç': 'روم میں کھولیں',
+  'Doğrudan video adresi': 'براہ راست ویڈیو ایڈریس',
+  '{} videosu': '{} ویڈیو',
+  'Başka video seç': 'دوسری ویڈیو منتخب کریں',
+  'Bu video adresi açılamadı': 'یہ ویڈیو ایڈریس نہیں کھل سکا',
+  'Oda sahibi henüz video seçmedi': 'روم کے مالک نے ابھی ویڈیو منتخب نہیں کی',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'ویڈیو لنک پیسٹ کریں یا فائل اپ لوڈ کریں',
+  '{} bir video bağlantısı ekledi': '{} نے ویڈیو لنک شامل کیا',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'معاون سائٹس: {} · براہ راست ویڈیو ایڈریس (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'یہ ایڈریس تعاون یافتہ نہیں ہے۔ معاون سائٹس: {} · براہ راست ویڈیو ایڈریس (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'یہ ایڈریس تعاون یافتہ نہیں ہے۔ {} لنک یا براہ راست ویڈیو ایڈریس (.mp4) پیسٹ کریں۔',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · براہ راست ویڈیو ایڈریس (.mp4) · یا زیادہ سے زیادہ {} GB فائل',
+  '{} · doğrudan video adresi': '{} · براہ راست ویڈیو ایڈریس',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'براؤزر یہ لائیو فارمیٹ (m3u8) نہیں چلا سکتا؛ یہ فون ایپ میں کھلے گا۔',
   'Yorumun bu sayfada görünecek': 'آپ کا تبصرہ اس صفحے پر نظر آئے گا',
   'Hepsini gördün, baştan gösteriyoruz':
       'آپ نے یہ سب دیکھا ہے، ہم آپ کو شروع سے دکھاتے ہیں۔',

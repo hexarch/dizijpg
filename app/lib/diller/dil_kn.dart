@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (kn).
 const Map<String, String> cevirilerKn = {
+  'Bağlantı yapıştır': 'ಲಿಂಕ್ ಅಂಟಿಸಿ',
+  'Yapıştır': 'ಅಂಟಿಸಿ',
+  'Video bağlantısı': 'ವಿಡಿಯೊ ಲಿಂಕ್',
+  'Odada aç': 'ಕೋಣೆಯಲ್ಲಿ ತೆರೆಯಿರಿ',
+  'Doğrudan video adresi': 'ನೇರ ವಿಡಿಯೊ ವಿಳಾಸ',
+  '{} videosu': '{} ವಿಡಿಯೊ',
+  'Başka video seç': 'ಬೇರೆ ವಿಡಿಯೊ ಆರಿಸಿ',
+  'Bu video adresi açılamadı': 'ಈ ವಿಡಿಯೊ ವಿಳಾಸವನ್ನು ತೆರೆಯಲಾಗಲಿಲ್ಲ',
+  'Oda sahibi henüz video seçmedi': 'ಕೋಣೆಯ ಮಾಲೀಕರು ಇನ್ನೂ ವಿಡಿಯೊ ಆರಿಸಿಲ್ಲ',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'ವಿಡಿಯೊ ಲಿಂಕ್ ಅಂಟಿಸಿ ಅಥವಾ ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+  '{} bir video bağlantısı ekledi': '{} ವಿಡಿಯೊ ಲಿಂಕ್ ಸೇರಿಸಿದರು',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'ಬೆಂಬಲಿತ ತಾಣಗಳು: {} · ನೇರ ವಿಡಿಯೊ ವಿಳಾಸ (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'ಈ ವಿಳಾಸಕ್ಕೆ ಬೆಂಬಲವಿಲ್ಲ. ಬೆಂಬಲಿತ ತಾಣಗಳು: {} · ನೇರ ವಿಡಿಯೊ ವಿಳಾಸ (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'ಈ ವಿಳಾಸಕ್ಕೆ ಬೆಂಬಲವಿಲ್ಲ. {} ಲಿಂಕ್ ಅಥವಾ ನೇರ ವಿಡಿಯೊ ವಿಳಾಸ (.mp4) ಅಂಟಿಸಿ.',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · ನೇರ ವಿಡಿಯೊ ವಿಳಾಸ (.mp4) · ಅಥವಾ ಗರಿಷ್ಠ {} GB ಫೈಲ್',
+  '{} · doğrudan video adresi': '{} · ನೇರ ವಿಡಿಯೊ ವಿಳಾಸ',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'ಬ್ರೌಸರ್ ಈ ಲೈವ್ ಸ್ವರೂಪವನ್ನು (m3u8) ಪ್ಲೇ ಮಾಡಲಾಗದು; ಫೋನ್ ಆ್ಯಪ್‌ನಲ್ಲಿ ತೆರೆಯುತ್ತದೆ.',
   'Yorumun bu sayfada görünecek': 'ನಿಮ್ಮ ಕಾಮೆಂಟ್ ಈ ಪುಟದಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ',
   'Hepsini gördün, baştan gösteriyoruz':
       'ನೀವು ಎಲ್ಲವನ್ನೂ ನೋಡಿದ್ದೀರಿ, ನಾವು ನಿಮಗೆ ಮೊದಲಿನಿಂದಲೂ ತೋರಿಸುತ್ತೇವೆ',

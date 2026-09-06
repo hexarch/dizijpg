@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (th).
 const Map<String, String> cevirilerTh = {
+  'Bağlantı yapıştır': 'วางลิงก์',
+  'Yapıştır': 'วาง',
+  'Video bağlantısı': 'ลิงก์วิดีโอ',
+  'Odada aç': 'เปิดในห้อง',
+  'Doğrudan video adresi': 'ที่อยู่วิดีโอโดยตรง',
+  '{} videosu': 'วิดีโอ {}',
+  'Başka video seç': 'เลือกวิดีโออื่น',
+  'Bu video adresi açılamadı': 'ไม่สามารถเปิดที่อยู่วิดีโอนี้ได้',
+  'Oda sahibi henüz video seçmedi': 'เจ้าของห้องยังไม่ได้เลือกวิดีโอ',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'วางลิงก์วิดีโอหรืออัปโหลดไฟล์',
+  '{} bir video bağlantısı ekledi': '{} เพิ่มลิงก์วิดีโอ',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'เว็บไซต์ที่รองรับ: {} · ที่อยู่วิดีโอโดยตรง (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'ไม่รองรับที่อยู่นี้ เว็บไซต์ที่รองรับ: {} · ที่อยู่วิดีโอโดยตรง (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'ไม่รองรับที่อยู่นี้ วางลิงก์ {} หรือที่อยู่วิดีโอโดยตรง (.mp4)',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · ที่อยู่วิดีโอโดยตรง (.mp4) · หรือไฟล์ไม่เกิน {} GB',
+  '{} · doğrudan video adresi': '{} · ที่อยู่วิดีโอโดยตรง',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'เบราว์เซอร์เล่นรูปแบบสตรีมนี้ (m3u8) ไม่ได้ จะเปิดในแอปบนมือถือ',
   'Yorumun bu sayfada görünecek': 'ความคิดเห็นของคุณจะแสดงในหน้านี้',
   'Hepsini gördün, baştan gösteriyoruz':
       'คุณได้เห็นมาหมดแล้ว เราแสดงให้คุณเห็นตั้งแต่ต้น',

@@ -1,5 +1,70 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-06 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.0+210) 🚀
+
+**Tetik (kullanıcı):** *"bu birlikte izlemeye video upload yerine kullanıcıya tarayıcı açabilir
+miyiz? … tabi upload duracak … youtube gibi tüm platformların url'ini destekleyecek şekilde
+yapsak ve altına desteklenen siteler yazsak ne olur?"*
+
+Yükleme AYNEN duruyor; bu ikinci bir kaynak. Kullanıcı adres yapıştırıyor, kimse 5 GB
+yüklemiyor, sunucu tek bayt taşımıyor, disk hiç dolmuyor.
+
+**"Tüm platformlar" OLMUYOR — ölçüldü, tahmin edilmedi.** Senkron için oynatıcıyı KONTROL
+edebilmek şart; yalnız gömülebilen ama kontrol edilemeyen bir platform, sahip 10 sn sardığında
+izleyicide hiçbir şey yapmaz, yani odanın tek varlık sebebini SESSİZCE bozar. Yerel bir sayfaya
+iframe'ler kurulup her platforma komut yollandı (7 Eyl 2026):
+
+| Platform | Ölçüm | Karar |
+|---|---|---|
+| YouTube | IFrame API — `seekTo`/`playVideo` çalışıyor | ✅ |
+| Vimeo | `getDuration` → 62, `setCurrentTime` onaylandı | ✅ |
+| Doğrudan `.mp4`/`.webm`/`.m3u8` | kendi oynatıcımız | ✅ |
+| Dailymotion | yeni `geo` oynatıcı yalnız `pes_listen_eid` yayıyor, komutlara yanıt YOK | ❌ |
+| OK.ru | `{"event":"inited"}` yayıyor, 8 komut biçimine SIFIR yanıt | ❌ |
+| VK | dış gömme `hash` istiyor, yapıştırılan adresten üretilemiyor | ❌ |
+
+**Mimari.** Ekran artık `VideoPlayerController` değil `OdaOynatici` arayüzü sürüyor
+(`oda_oynatici.dart`): altında ya `video_player` (yüklenen dosya VE doğrudan adres) ya gömme
+kumandası var. Senkron merdiveni (`oda_senkron.dart`) HİÇ değişmedi — kaynağı bilmiyor.
+Web'de gömme çapraz kökenli iframe olduğu için sağlayıcının `postMessage` protokolü
+konuşuluyor (`oda_gomme_web.dart`); mobilde WebView gömme sayfasının KENDİSİNİ yüklediği için
+`document.querySelector('video')` doğrudan sürülüyor (`oda_gomme_io.dart`) — orada sağlayıcıya
+göre dallanma yok.
+
+**Güvenlik.** İstemcinin çözümlemesi KABUL EDİLMİYOR: uca yalnız ham adres gidiyor, sağlayıcı/
+kimlik alanlarını sunucu kendi `oda.js#baglantiCoz` ile üretiyor (uydurma bir gövde, odadaki
+herkesin gömme yüzeyinde istediği sayfayı açtırabilirdi — canlıda kanıtlandı: `saglayici` ve
+`kimlik` gönderen istek yok sayıldı). Özel ağ adresleri (`192.168.*`, `127.*`, `169.254.*` …)
+reddediliyor; `http://` reddediliyor (karışık içerik tarayıcıda SESSİZCE engellenirdi).
+`izleme_odalari_tek_kaynak_check` kısıtı bağlantı kipinde `video`nun dolu kalmasını imkânsız
+kılıyor.
+
+**Ses.** Gömme oynatıcı SESSİZ başlıyor ve videonun üstünde "Sesi aç" düğmesi çiziliyor:
+tarayıcı, jest olmadan sesli oynatmayı engelliyor ve çapraz kökenli iframe'de bizim
+uygulamamıza yapılan dokunuş jest sayılmıyor — sesli başlatmayı denemek, izleyicinin videosunun
+HİÇ açılmaması demekti.
+
+**Dosyalar:** `lib/oda/oda_baglanti.dart` (saf çözümleyici), `oda_baglanti_sheet.dart`,
+`oda_oynatici.dart`, `oda_gomme_{web,io,yok}.dart`, `oda_ekrani.dart`, `oda_api.dart`;
+`backend/oda.js`, `server.js` (`POST /odalar/:id/baglanti`), `migrasyon-2026-09-07.sql`,
+`sema.sql`, nginx CSP (`frame-src` += `player.vimeo.com`, `media-src` += `https:`).
+
+**Kanıt:** 14 saf test (`oda_baglanti_test.dart`) + 4 widget testi
+(`oda_baglanti_ekran_test.dart`) + 7 sunucu testi (`backend/test/oda.test.js`, 94/94); tam
+takım **2.784 test yeşil**. Canlıda uçtan uca: YouTube/Vimeo kabul, ok.ru 400
+`BAGLANTI_DESTEKSIZ`, iç ağ adresi 400, istemcinin uydurduğu sağlayıcı yok sayıldı.
+
+**TUZAKLAR:**
+* CSP `media-src` `'self' blob: data:` idi — doğrudan `.mp4` adresi sessizce engellenirdi.
+  `frame-src`e Vimeo eklenmeden gömme boş iframe olurdu. İkisi de nginx'te 10+ yerde tekrar
+  ediyor, hepsi güncellendi.
+* `flutter test` VM'de koşuyor ve `dart.library.io` DOĞRU olduğu için gömme yüzeyi WebView
+  dalını seçiyor; `WebViewController` orada assert atıyordu. `_otomatikTest` koruması eklendi
+  (kalıp `ekranlar/fragman_gom_io.dart`tan).
+* Modalda "çözüm değişmediyse setState atla" kestirmesi, kutu boşken de geçersiz adres
+  yazılıyken de çözümü null bıraktığı için "Bu adres desteklenmiyor" uyarısını HİÇ
+  göstermiyordu — widget testi yakaladı.
 
 ## 2026-09-06 — 📐 Masaüstünde yorum kartının düğmeleri hizaya girdi (1.142.0+209) 🚀
 

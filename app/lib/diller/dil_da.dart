@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (da).
 const Map<String, String> cevirilerDa = {
+  'Bağlantı yapıştır': 'Indsæt link',
+  'Yapıştır': 'Indsæt',
+  'Video bağlantısı': 'Videolink',
+  'Odada aç': 'Åbn i rummet',
+  'Doğrudan video adresi': 'Direkte videoadresse',
+  '{} videosu': '{}-video',
+  'Başka video seç': 'Vælg en anden video',
+  'Bu video adresi açılamadı': 'Denne videoadresse kunne ikke åbnes',
+  'Oda sahibi henüz video seçmedi': 'Rumejeren har ikke valgt en video endnu',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Indsæt et videolink, eller upload en fil',
+  '{} bir video bağlantısı ekledi': '{} tilføjede et videolink',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Understøttede sites: {} · direkte videoadresse (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Denne adresse understøttes ikke. Understøttede sites: {} · direkte videoadresse (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Denne adresse understøttes ikke. Indsæt et {}-link eller en direkte videoadresse (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · direkte videoadresse (.mp4) · eller fil på højst {} GB',
+  '{} · doğrudan video adresi': '{} · Direkte videoadresse',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Browseren kan ikke afspille dette live-format (m3u8); det åbnes i telefonappen.',
   'Yorumun bu sayfada görünecek': 'Din kommentar vises på denne side',
   'Hepsini gördün, baştan gösteriyoruz':
       'Du har set det hele, vi viser dig fra begyndelsen',

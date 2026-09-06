@@ -1,5 +1,27 @@
 /// Otomatik üretilen çeviri haritası (zh).
 const Map<String, String> cevirilerZh = {
+  'Bağlantı yapıştır': '粘贴链接',
+  'Yapıştır': '粘贴',
+  'Video bağlantısı': '视频链接',
+  'Odada aç': '在房间中打开',
+  'Doğrudan video adresi': '直接视频地址',
+  '{} videosu': '{} 视频',
+  'Başka video seç': '选择其他视频',
+  'Bu video adresi açılamadı': '无法打开此视频地址',
+  'Oda sahibi henüz video seçmedi': '房主还没有选择视频',
+  'Bir video bağlantısı yapıştır ya da dosya yükle': '粘贴视频链接或上传文件',
+  '{} bir video bağlantısı ekledi': '{} 添加了一个视频链接',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      '支持的网站：{} · 直接视频地址（.mp4、.webm）',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      '不支持此地址。 支持的网站：{} · 直接视频地址（.mp4、.webm）',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      '不支持此地址。 请粘贴 {} 链接或直接视频地址（.mp4）。',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · 直接视频地址（.mp4）· 或最大 {} GB 的文件',
+  '{} · doğrudan video adresi': '{} · 直接视频地址',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      '浏览器无法播放此直播格式（m3u8），将在手机应用中打开。',
   'Yorumun bu sayfada görünecek': '你的评论会显示在这个页面上',
   'Hepsini gördün, baştan gösteriyoruz': '您已经看到了这一切，我们从头开始向您展示',
   'Aktarılacak tanınan veri bulunamadı.': '未找到可导入的有效数据。',

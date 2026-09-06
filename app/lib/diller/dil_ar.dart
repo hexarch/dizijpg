@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (ar).
 const Map<String, String> cevirilerAr = {
+  'Bağlantı yapıştır': 'الصق الرابط',
+  'Yapıştır': 'لصق',
+  'Video bağlantısı': 'رابط الفيديو',
+  'Odada aç': 'افتح في الغرفة',
+  'Doğrudan video adresi': 'رابط فيديو مباشر',
+  '{} videosu': 'فيديو {}',
+  'Başka video seç': 'اختر فيديو آخر',
+  'Bu video adresi açılamadı': 'تعذّر فتح رابط الفيديو هذا',
+  'Oda sahibi henüz video seçmedi': 'لم يختر صاحب الغرفة فيديو بعد',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'الصق رابط فيديو أو ارفع ملفًا',
+  '{} bir video bağlantısı ekledi': 'أضاف {} رابط فيديو',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'المواقع المدعومة: {} · رابط فيديو مباشر (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'هذا الرابط غير مدعوم. المواقع المدعومة: {} · رابط فيديو مباشر (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'هذا الرابط غير مدعوم. الصق رابط {} أو رابط فيديو مباشر (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · رابط فيديو مباشر (.mp4) · أو ملف حتى {} غيغابايت',
+  '{} · doğrudan video adresi': '{} · رابط فيديو مباشر',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'لا يستطيع المتصفح تشغيل صيغة البث هذه (m3u8)؛ افتحها في تطبيق الهاتف.',
   'Yorumun bu sayfada görünecek': 'سيظهر تعليقك في هذه الصفحة',
   'Hepsini gördün, baştan gösteriyoruz': 'لقد رأيت كل شيء، نعرض لك من البداية',
   'Aktarılacak tanınan veri bulunamadı.':

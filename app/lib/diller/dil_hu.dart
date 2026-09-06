@@ -1,5 +1,29 @@
 /// Otomatik üretilen çeviri haritası (hu).
 const Map<String, String> cevirilerHu = {
+  'Bağlantı yapıştır': 'Link beillesztése',
+  'Yapıştır': 'Beillesztés',
+  'Video bağlantısı': 'Videó link',
+  'Odada aç': 'Megnyitás a szobában',
+  'Doğrudan video adresi': 'Közvetlen videócím',
+  '{} videosu': '{} videó',
+  'Başka video seç': 'Másik videó választása',
+  'Bu video adresi açılamadı': 'Ez a videócím nem nyitható meg',
+  'Oda sahibi henüz video seçmedi':
+      'A szoba tulajdonosa még nem választott videót',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Illessz be egy videólinket, vagy tölts fel fájlt',
+  '{} bir video bağlantısı ekledi': '{} hozzáadott egy videólinket',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Támogatott oldalak: {} · közvetlen videócím (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Ez a cím nem támogatott. Támogatott oldalak: {} · közvetlen videócím (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Ez a cím nem támogatott. Illessz be egy {} linket vagy közvetlen videócímet (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · közvetlen videócím (.mp4) · vagy legfeljebb {} GB fájl',
+  '{} · doğrudan video adresi': '{} · Közvetlen videócím',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'A böngésző nem tudja lejátszani ezt az élő formátumot (m3u8); a mobilalkalmazásban nyílik meg.',
   'Yorumun bu sayfada görünecek': 'A hozzászólásod ezen az oldalon jelenik meg',
   'Hepsini gördün, baştan gösteriyoruz':
       'Te mindent láttál, mi megmutatjuk az elejétől',

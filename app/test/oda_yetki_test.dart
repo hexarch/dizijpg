@@ -169,14 +169,17 @@ void main() {
     _sunucu(benimRol: 'yetkili');
     await _ac(t);
     expect(find.text('Video yükle'.c), findsOneWidget);
-    expect(find.text('Bir video yükle, izlemeye başlayın'.c), findsOneWidget);
+    expect(
+      find.text('Bir video bağlantısı yapıştır ya da dosya yükle'.c),
+      findsOneWidget,
+    );
   });
 
   testWidgets('İZLEYİCİ: yükleme düğmesini GÖRMEZ', (t) async {
     _sunucu(benimRol: 'izleyici');
     await _ac(t);
     expect(find.text('Video yükle'.c), findsNothing);
-    expect(find.text('Oda sahibi henüz video yüklemedi'.c), findsOneWidget);
+    expect(find.text('Oda sahibi henüz video seçmedi'.c), findsOneWidget);
   });
 
   testWidgets('rol menüsü YALNIZ sahipte açılır', (t) async {

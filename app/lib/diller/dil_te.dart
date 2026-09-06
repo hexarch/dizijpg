@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (te).
 const Map<String, String> cevirilerTe = {
+  'Bağlantı yapıştır': 'లింక్ అతికించండి',
+  'Yapıştır': 'అతికించండి',
+  'Video bağlantısı': 'వీడియో లింక్',
+  'Odada aç': 'గదిలో తెరవండి',
+  'Doğrudan video adresi': 'ప్రత్యక్ష వీడియో చిరునామా',
+  '{} videosu': '{} వీడియో',
+  'Başka video seç': 'మరో వీడియో ఎంచుకోండి',
+  'Bu video adresi açılamadı': 'ఈ వీడియో చిరునామాను తెరవలేకపోయాం',
+  'Oda sahibi henüz video seçmedi': 'గది యజమాని ఇంకా వీడియో ఎంచుకోలేదు',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'వీడియో లింక్ అతికించండి లేదా ఫైల్ అప్‌లోడ్ చేయండి',
+  '{} bir video bağlantısı ekledi': '{} ఒక వీడియో లింక్ జోడించారు',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'మద్దతు ఉన్న సైట్‌లు: {} · ప్రత్యక్ష వీడియో చిరునామా (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'ఈ చిరునామాకు మద్దతు లేదు. మద్దతు ఉన్న సైట్‌లు: {} · ప్రత్యక్ష వీడియో చిరునామా (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'ఈ చిరునామాకు మద్దతు లేదు. {} లింక్ లేదా ప్రత్యక్ష వీడియో చిరునామా (.mp4) అతికించండి.',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · ప్రత్యక్ష వీడియో చిరునామా (.mp4) · లేదా గరిష్ఠంగా {} GB ఫైల్',
+  '{} · doğrudan video adresi': '{} · ప్రత్యక్ష వీడియో చిరునామా',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'బ్రౌజర్ ఈ లైవ్ ఫార్మాట్‌ను (m3u8) ప్లే చేయలేదు; ఇది ఫోన్ యాప్‌లో తెరుచుకుంటుంది.',
   'Yorumun bu sayfada görünecek': 'మీ వ్యాఖ్య ఈ పేజీలో కనిపిస్తుంది',
   'Hepsini gördün, baştan gösteriyoruz':
       'మీరు అన్నింటినీ చూశారు, మేము మీకు మొదటి నుండి చూపిస్తాము',

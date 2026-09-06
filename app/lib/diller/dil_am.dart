@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (am).
 const Map<String, String> cevirilerAm = {
+  'Bağlantı yapıştır': 'አገናኝ ለጥፍ',
+  'Yapıştır': 'ለጥፍ',
+  'Video bağlantısı': 'የቪዲዮ አገናኝ',
+  'Odada aç': 'በክፍሉ ውስጥ ክፈት',
+  'Doğrudan video adresi': 'ቀጥተኛ የቪዲዮ አድራሻ',
+  '{} videosu': '{} ቪዲዮ',
+  'Başka video seç': 'ሌላ ቪዲዮ ይምረጡ',
+  'Bu video adresi açılamadı': 'ይህ የቪዲዮ አድራሻ ሊከፈት አልቻለም',
+  'Oda sahibi henüz video seçmedi': 'የክፍሉ ባለቤት ገና ቪዲዮ አልመረጠም',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'የቪዲዮ አገናኝ ይለጥፉ ወይም ፋይል ይጫኑ',
+  '{} bir video bağlantısı ekledi': '{} የቪዲዮ አገናኝ አከለ',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'የሚደገፉ ጣቢያዎች፦ {} · ቀጥተኛ የቪዲዮ አድራሻ (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'ይህ አድራሻ አይደገፍም። የሚደገፉ ጣቢያዎች፦ {} · ቀጥተኛ የቪዲዮ አድራሻ (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'ይህ አድራሻ አይደገፍም። {} አገናኝ ወይም ቀጥተኛ የቪዲዮ አድራሻ (.mp4) ይለጥፉ።',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · ቀጥተኛ የቪዲዮ አድራሻ (.mp4) · ወይም ቢበዛ {} ጊባ ፋይል',
+  '{} · doğrudan video adresi': '{} · ቀጥተኛ የቪዲዮ አድራሻ',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'ይህን የቀጥታ ስርጭት ቅርጸት (m3u8) አሳሹ ማጫወት አይችልም፤ በስልክ መተግበሪያ ይከፈታል።',
   'Yorumun bu sayfada görünecek': 'አስተያየትህ በዚህ ገጽ ላይ ይታያል',
   'Hepsini gördün, baştan gösteriyoruz': 'ሁሉንም አይተዋል፣ ከመጀመሪያው እናሳይዎታለን።',
   'Aktarılacak tanınan veri bulunamadı.': 'ለማስገባት የሚታወቅ ዳታ አልተገኘም።',

@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (gu).
 const Map<String, String> cevirilerGu = {
+  'Bağlantı yapıştır': 'લિંક પેસ્ટ કરો',
+  'Yapıştır': 'પેસ્ટ કરો',
+  'Video bağlantısı': 'વિડિયો લિંક',
+  'Odada aç': 'રૂમમાં ખોલો',
+  'Doğrudan video adresi': 'સીધું વિડિયો સરનામું',
+  '{} videosu': '{} વિડિયો',
+  'Başka video seç': 'બીજો વિડિયો પસંદ કરો',
+  'Bu video adresi açılamadı': 'આ વિડિયો સરનામું ખોલી શકાયું નહીં',
+  'Oda sahibi henüz video seçmedi': 'રૂમના માલિકે હજી વિડિયો પસંદ કર્યો નથી',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'વિડિયો લિંક પેસ્ટ કરો અથવા ફાઇલ અપલોડ કરો',
+  '{} bir video bağlantısı ekledi': '{} એ વિડિયો લિંક ઉમેરી',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'સમર્થિત સાઇટ્સ: {} · સીધું વિડિયો સરનામું (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'આ સરનામું સમર્થિત નથી. સમર્થિત સાઇટ્સ: {} · સીધું વિડિયો સરનામું (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'આ સરનામું સમર્થિત નથી. {} લિંક અથવા સીધું વિડિયો સરનામું (.mp4) પેસ્ટ કરો.',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · સીધું વિડિયો સરનામું (.mp4) · અથવા વધુમાં વધુ {} GB ફાઇલ',
+  '{} · doğrudan video adresi': '{} · સીધું વિડિયો સરનામું',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'બ્રાઉઝર આ લાઇવ ફોર્મેટ (m3u8) ચલાવી શકતું નથી; તે ફોન એપમાં ખૂલે છે.',
   'Yorumun bu sayfada görünecek': 'તમારી ટિપ્પણી આ પેજ પર દેખાશે',
   'Hepsini gördün, baştan gösteriyoruz':
       'તમે તે બધું જોયું છે, અમે તમને શરૂઆતથી જ બતાવીએ છીએ',

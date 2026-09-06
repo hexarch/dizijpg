@@ -1,5 +1,29 @@
 /// Otomatik üretilen çeviri haritası (nl).
 const Map<String, String> cevirilerNl = {
+  'Bağlantı yapıştır': 'Link plakken',
+  'Yapıştır': 'Plakken',
+  'Video bağlantısı': 'Videolink',
+  'Odada aç': 'Openen in de room',
+  'Doğrudan video adresi': 'Direct videoadres',
+  '{} videosu': '{}-video',
+  'Başka video seç': 'Kies een andere video',
+  'Bu video adresi açılamadı': 'Dit videoadres kon niet worden geopend',
+  'Oda sahibi henüz video seçmedi':
+      'De roomeigenaar heeft nog geen video gekozen',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Plak een videolink of upload een bestand',
+  '{} bir video bağlantısı ekledi': '{} heeft een videolink toegevoegd',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Ondersteunde sites: {} · direct videoadres (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Dit adres wordt niet ondersteund. Ondersteunde sites: {} · direct videoadres (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Dit adres wordt niet ondersteund. Plak een {}-link of een direct videoadres (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · direct videoadres (.mp4) · of een bestand tot {} GB',
+  '{} · doğrudan video adresi': '{} · Direct videoadres',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'De browser kan dit liveformaat (m3u8) niet afspelen; het opent in de telefoon-app.',
   'Yorumun bu sayfada görünecek': 'Je reactie verschijnt op deze pagina',
   'Hepsini gördün, baştan gösteriyoruz':
       'Je hebt het allemaal gezien, we laten het je vanaf het begin zien',

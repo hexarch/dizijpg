@@ -1,5 +1,29 @@
 /// Otomatik üretilen çeviri haritası (mr).
 const Map<String, String> cevirilerMr = {
+  'Bağlantı yapıştır': 'लिंक पेस्ट करा',
+  'Yapıştır': 'पेस्ट करा',
+  'Video bağlantısı': 'व्हिडिओ लिंक',
+  'Odada aç': 'रूममध्ये उघडा',
+  'Doğrudan video adresi': 'थेट व्हिडिओ पत्ता',
+  '{} videosu': '{} व्हिडिओ',
+  'Başka video seç': 'दुसरा व्हिडिओ निवडा',
+  'Bu video adresi açılamadı': 'हा व्हिडिओ पत्ता उघडता आला नाही',
+  'Oda sahibi henüz video seçmedi':
+      'रूमच्या मालकाने अद्याप व्हिडिओ निवडलेला नाही',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'व्हिडिओ लिंक पेस्ट करा किंवा फाइल अपलोड करा',
+  '{} bir video bağlantısı ekledi': '{} ने व्हिडिओ लिंक जोडली',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'समर्थित साइट्स: {} · थेट व्हिडिओ पत्ता (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'हा पत्ता समर्थित नाही. समर्थित साइट्स: {} · थेट व्हिडिओ पत्ता (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'हा पत्ता समर्थित नाही. {} लिंक किंवा थेट व्हिडिओ पत्ता (.mp4) पेस्ट करा.',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · थेट व्हिडिओ पत्ता (.mp4) · किंवा जास्तीत जास्त {} GB फाइल',
+  '{} · doğrudan video adresi': '{} · थेट व्हिडिओ पत्ता',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'ब्राउझर हा लाइव्ह फॉरमॅट (m3u8) चालवू शकत नाही; तो फोन अ‍ॅपमध्ये उघडतो.',
   'Yorumun bu sayfada görünecek': 'तुमची टिप्पणी या पानावर दिसेल',
   'Hepsini gördün, baştan gösteriyoruz':
       'तुम्ही हे सर्व पाहिले आहे, आम्ही तुम्हाला सुरुवातीपासून दाखवतो',

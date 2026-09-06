@@ -10,6 +10,7 @@ library;
 
 import '../api.dart';
 import '../ceviri.dart';
+import 'oda_baglanti.dart';
 import 'oda_senkron.dart';
 
 /// Sunucunun makine hata kodları. **Çevrilmez, sabittir.**
@@ -33,6 +34,7 @@ class OdaKod {
   static const videoCokBuyuk = 'VIDEO_COK_BUYUK';
   static const turGecersiz = 'TUR_GECERSIZ';
   static const ofsetUyusmaz = 'OFSET_UYUSMAZ';
+  static const baglantiDesteksiz = 'BAGLANTI_DESTEKSIZ';
 }
 
 /// Bir hata kodunun kullanıcıya gösterilecek çevrili karşılığı.
@@ -81,6 +83,11 @@ String odaHataMetni(ApiHata e) {
       return 'Video en fazla {} GB olabilir'.cf([odaVideoAzamiGb]);
     case OdaKod.turGecersiz:
       return 'Yalnızca MP4 veya WebM izlenebilir'.c;
+    case OdaKod.baglantiDesteksiz:
+      // ÇIKIŞ YOLU: yalnız "desteklenmiyor" demek kullanıcıyı çıkmazda
+      // bırakır. Hangi platformların çalıştığı cümlenin İÇİNDE.
+      return 'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.'
+          .cf([odaDesteklenenPlatformlar.join(', ')]);
     default:
       return e.mesaj.c;
   }
@@ -223,6 +230,8 @@ class OdaMesaj {
         return '{} odadan ayrıldı'.cf([kim]);
       case 'video_yuklendi':
         return '{} bir video yükledi'.cf([kim]);
+      case 'baglanti_verildi':
+        return '{} bir video bağlantısı ekledi'.cf([kim]);
       case 'yetki_verildi':
         return '{} artık videoyu yönetebilir'.cf([kim]);
       case 'yetki_alindi':
@@ -309,6 +318,14 @@ class Oda {
   final String? videoAd;
   final int? videoSureMs;
   final String? videoKapak;
+
+  /// 'yukleme' | 'baglanti'. **Boş odayı bağlantılı odadan bu ayırır**:
+  /// ikisinde de [video] null olduğu için tek başına video alanına bakmak
+  /// yetmiyor (7 Eyl 2026).
+  final String kaynak;
+
+  /// Bağlantı kipindeki kaynak; yükleme kipinde null.
+  final OdaBaglanti? baglanti;
   final int biter;
   final bool sahibiMiyim;
 
@@ -337,7 +354,15 @@ class Oda {
     this.videoAd,
     this.videoSureMs,
     this.videoKapak,
+    this.kaynak = 'yukleme',
+    this.baglanti,
   });
+
+  /// Oynatılacak bir şey var mı (dosya YA DA bağlantı)? Boş durum kararı
+  /// TEK YERDE: üç ekran ayrı ayrı sorsaydı biri güncellenip öteki kalırdı.
+  bool get kaynakVar => baglantiliMi ? baglanti != null : video != null;
+
+  bool get baglantiliMi => kaynak == 'baglanti';
 
   /// GÖVDE BEKLENMEDİK OLABİLİR ve bu ekranı ÇÖKERTMEMELİ: `as num` sert
   /// dönüşümü, eski bir sunucu ya da araya giren bir portal sayfası yüzünden
@@ -355,6 +380,10 @@ class Oda {
     videoAd: d['video_ad'] as String?,
     videoSureMs: (d['video_sure_ms'] as num?)?.toInt(),
     videoKapak: d['video_kapak'] as String?,
+    // Eski sunucu `kaynak` göndermez: yükleme varsayılır ve bugünkü davranış
+    // aynen sürer (`benim_rol` ile aynı geriye uyum disiplini).
+    kaynak: (d['kaynak'] as String?) ?? 'yukleme',
+    baglanti: OdaBaglanti.jsonCoz(d['baglanti'] as Map<String, dynamic>?),
     biter: (d['biter'] as num?)?.toInt() ?? 0,
     sahibiMiyim: d['sahibi_miyim'] == true,
     // Eski sunucu `benim_rol` göndermez: `sahibi_miyim`den TÜRET. Yoksa
@@ -378,6 +407,11 @@ class Oda {
     OdaHazirlik? hazirlik,
     List<OdaUye>? uyeler,
     String? benimRol,
+    String? kaynak,
+    OdaBaglanti? baglanti,
+    // Bağlantıdan yüklemeye dönerken `baglanti`yı NULL'a çekmek gerekiyor;
+    // `baglanti: null` "değiştirme" demek olduğu için ayrı bayrak şart.
+    bool baglantiyiSil = false,
   }) => Oda(
     id: id,
     kod: kod,
@@ -389,6 +423,8 @@ class Oda {
     videoAd: videoAd ?? this.videoAd,
     videoSureMs: videoSureMs ?? this.videoSureMs,
     videoKapak: videoKapak,
+    kaynak: kaynak ?? this.kaynak,
+    baglanti: baglantiyiSil ? null : (baglanti ?? this.baglanti),
     biter: biter,
     sahibiMiyim: sahibiMiyim,
     benimRol: benimRol ?? this.benimRol,
@@ -453,6 +489,13 @@ class OdaAkis {
   final String? video;
   final String? videoAd;
   final int? videoSureMs;
+
+  /// Kaynak alanları `durum`un İÇİNDE gelir (sunucu tarafında da öyle):
+  /// kaynak değişimi her zaman sürümü artırır, yani `durum` zaten
+  /// gönderiliyor. Dışarı alınsaydı 1 sn'lik her tur bunları boşuna taşırdı.
+  /// Durum değişmediyse null — çağıran mevcut kaynağı korur.
+  final String? kaynak;
+  final OdaBaglanti? baglanti;
   final List<OdaUye>? uyeler;
   final List<OdaMesaj> mesajlar;
 
@@ -475,6 +518,8 @@ class OdaAkis {
     this.video,
     this.videoAd,
     this.videoSureMs,
+    this.kaynak,
+    this.baglanti,
     this.uyeler,
     this.hazirlik = const OdaHazirlik(),
     this.benimRol,
@@ -491,6 +536,8 @@ class OdaAkis {
       video: ham?['video'] as String?,
       videoAd: ham?['video_ad'] as String?,
       videoSureMs: (ham?['video_sure_ms'] as num?)?.toInt(),
+      kaynak: ham?['kaynak'] as String?,
+      baglanti: OdaBaglanti.jsonCoz(ham?['baglanti'] as Map<String, dynamic>?),
       hazirlik: OdaHazirlik.json(d),
       benimRol: d['benim_rol'] as String?,
       uyeler: (d['uyeler'] as List<dynamic>?)
@@ -694,6 +741,15 @@ class OdaApi {
         .map((e) => OdaUye.json(e as Map<String, dynamic>))
         .toList();
   }
+
+  /// Odanın kaynağını BAĞLANTIYA çevirir (7 Eyl 2026).
+  ///
+  /// Yalnız HAM ADRES gönderilir. Sağlayıcı/kimlik çözümlemesini sunucu
+  /// KENDİ yapar ve kaydettiği kendi sonucudur: istemcinin çözümlemesi kabul
+  /// edilseydi, uydurma bir gövde odadaki herkesin gömme yüzeyinde istediği
+  /// sayfayı açtırırdı (gerekçe `backend/server.js` bağlantı ucunda).
+  static Future<void> baglantiVer(int id, String url) =>
+      Api.post('/odalar/\$id/baglanti', {'url': url});
 
   static Future<void> hazir(int id, bool hazirMi) =>
       Api.post('/odalar/$id/hazir', {'hazir': hazirMi});

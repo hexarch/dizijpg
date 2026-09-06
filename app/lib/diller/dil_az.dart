@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (az).
 const Map<String, String> cevirilerAz = {
+  'Bağlantı yapıştır': 'Linki yapışdır',
+  'Yapıştır': 'Yapışdır',
+  'Video bağlantısı': 'Video linki',
+  'Odada aç': 'Otaqda aç',
+  'Doğrudan video adresi': 'Birbaşa video ünvanı',
+  '{} videosu': '{} videosu',
+  'Başka video seç': 'Başqa video seç',
+  'Bu video adresi açılamadı': 'Bu video ünvanı açıla bilmədi',
+  'Oda sahibi henüz video seçmedi': 'Otaq sahibi hələ video seçməyib',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Video linki yapışdır və ya fayl yüklə',
+  '{} bir video bağlantısı ekledi': '{} bir video linki əlavə etdi',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Dəstəklənən saytlar: {} · birbaşa video ünvanı (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Bu ünvan dəstəklənmir. Dəstəklənən saytlar: {} · birbaşa video ünvanı (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Bu ünvan dəstəklənmir. {} linki və ya birbaşa video ünvanı (.mp4) yapışdır.',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · birbaşa video ünvanı (.mp4) · və ya ən çox {} GB fayl',
+  '{} · doğrudan video adresi': '{} · Birbaşa video ünvanı',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Brauzer bu canlı yayım formatını (m3u8) oynada bilmir; telefon tətbiqində açılır.',
   'Yorumun bu sayfada görünecek': 'Şərhin bu səhifədə görünəcək',
   'Hepsini gördün, baştan gösteriyoruz':
       'Siz hər şeyi görmüsünüz, biz sizə əvvəldən göstəririk',

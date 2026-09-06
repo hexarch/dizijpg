@@ -1,5 +1,29 @@
 /// Otomatik üretilen çeviri haritası (bg).
 const Map<String, String> cevirilerBg = {
+  'Bağlantı yapıştır': 'Поставете връзка',
+  'Yapıştır': 'Постави',
+  'Video bağlantısı': 'Връзка към видео',
+  'Odada aç': 'Отвори в стаята',
+  'Doğrudan video adresi': 'Директен видео адрес',
+  '{} videosu': 'Видео от {}',
+  'Başka video seç': 'Избери друго видео',
+  'Bu video adresi açılamadı': 'Този видео адрес не можа да се отвори',
+  'Oda sahibi henüz video seçmedi':
+      'Собственикът на стаята още не е избрал видео',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Поставете видео връзка или качете файл',
+  '{} bir video bağlantısı ekledi': '{} добави видео връзка',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Поддържани сайтове: {} · директен видео адрес (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Този адрес не се поддържа. Поддържани сайтове: {} · директен видео адрес (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Този адрес не се поддържа. Поставете {} връзка или директен видео адрес (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · директен видео адрес (.mp4) · или файл до {} ГБ',
+  '{} · doğrudan video adresi': '{} · Директен видео адрес',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Браузърът не може да възпроизведе този формат (m3u8); отваря се в мобилното приложение.',
   'Yorumun bu sayfada görünecek': 'Коментарът ти ще се появи на тази страница',
   'Hepsini gördün, baştan gösteriyoruz':
       'Вие сте видели всичко, ние ви показваме от самото начало',

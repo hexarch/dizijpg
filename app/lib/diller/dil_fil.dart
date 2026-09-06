@@ -1,5 +1,29 @@
 /// Otomatik üretilen çeviri haritası (fil).
 const Map<String, String> cevirilerFil = {
+  'Bağlantı yapıştır': 'I-paste ang link',
+  'Yapıştır': 'I-paste',
+  'Video bağlantısı': 'Link ng video',
+  'Odada aç': 'Buksan sa room',
+  'Doğrudan video adresi': 'Direktang address ng video',
+  '{} videosu': '{} video',
+  'Başka video seç': 'Pumili ng ibang video',
+  'Bu video adresi açılamadı': 'Hindi mabuksan ang address ng video na ito',
+  'Oda sahibi henüz video seçmedi':
+      'Wala pang napipiling video ang may-ari ng room',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Mag-paste ng video link o mag-upload ng file',
+  '{} bir video bağlantısı ekledi': 'Nagdagdag si {} ng video link',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Mga suportadong site: {} · direktang address ng video (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Hindi suportado ang address na ito. Mga suportadong site: {} · direktang address ng video (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Hindi suportado ang address na ito. Mag-paste ng {} link o direktang address ng video (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · direktang address ng video (.mp4) · o file na hanggang {} GB',
+  '{} · doğrudan video adresi': '{} · Direktang address ng video',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Hindi kayang i-play ng browser ang live format na ito (m3u8); bubukas ito sa phone app.',
   'Yorumun bu sayfada görünecek': 'Lalabas ang komento mo sa page na ito',
   'Hepsini gördün, baştan gösteriyoruz':
       'Nakita mo na ang lahat, ipinakita namin sa iyo mula sa simula',

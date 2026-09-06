@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (he).
 const Map<String, String> cevirilerHe = {
+  'Bağlantı yapıştır': 'הדבק קישור',
+  'Yapıştır': 'הדבק',
+  'Video bağlantısı': 'קישור לסרטון',
+  'Odada aç': 'פתח בחדר',
+  'Doğrudan video adresi': 'כתובת וידאו ישירה',
+  '{} videosu': 'סרטון {}',
+  'Başka video seç': 'בחר סרטון אחר',
+  'Bu video adresi açılamadı': 'לא ניתן לפתוח כתובת וידאו זו',
+  'Oda sahibi henüz video seçmedi': 'בעל החדר עדיין לא בחר סרטון',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'הדבק קישור לסרטון או העלה קובץ',
+  '{} bir video bağlantısı ekledi': '{} הוסיף קישור לסרטון',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'אתרים נתמכים: {} · כתובת וידאו ישירה (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'הכתובת הזו אינה נתמכת. אתרים נתמכים: {} · כתובת וידאו ישירה (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'הכתובת הזו אינה נתמכת. הדבק קישור {} או כתובת וידאו ישירה (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · כתובת וידאו ישירה (.mp4) · או קובץ עד {} GB',
+  '{} · doğrudan video adresi': '{} · כתובת וידאו ישירה',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'הדפדפן אינו יכול לנגן פורמט שידור חי זה (m3u8); הוא נפתח באפליקציית הטלפון.',
   'Yorumun bu sayfada görünecek': 'התגובה שלך תופיע בעמוד הזה',
   'Hepsini gördün, baştan gösteriyoruz': 'ראית הכל, אנחנו מראים לך מההתחלה',
   'Aktarılacak tanınan veri bulunamadı.': 'לא נמצאו נתונים מזוהים לייבוא.',

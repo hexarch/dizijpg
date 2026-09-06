@@ -1,5 +1,29 @@
 /// Otomatik üretilen çeviri haritası (fi).
 const Map<String, String> cevirilerFi = {
+  'Bağlantı yapıştır': 'Liitä linkki',
+  'Yapıştır': 'Liitä',
+  'Video bağlantısı': 'Videolinkki',
+  'Odada aç': 'Avaa huoneessa',
+  'Doğrudan video adresi': 'Suora video-osoite',
+  '{} videosu': '{}-video',
+  'Başka video seç': 'Valitse toinen video',
+  'Bu video adresi açılamadı': 'Tätä video-osoitetta ei voitu avata',
+  'Oda sahibi henüz video seçmedi':
+      'Huoneen omistaja ei ole vielä valinnut videota',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Liitä videolinkki tai lataa tiedosto',
+  '{} bir video bağlantısı ekledi': '{} lisäsi videolinkin',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Tuetut sivustot: {} · suora video-osoite (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Tätä osoitetta ei tueta. Tuetut sivustot: {} · suora video-osoite (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'Tätä osoitetta ei tueta. Liitä {}-linkki tai suora video-osoite (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · suora video-osoite (.mp4) · tai enintään {} Gt:n tiedosto',
+  '{} · doğrudan video adresi': '{} · Suora video-osoite',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Selain ei toista tätä suoratoistomuotoa (m3u8); se avautuu puhelinsovelluksessa.',
   'Yorumun bu sayfada görünecek': 'Kommenttisi näkyy tällä sivulla',
   'Hepsini gördün, baştan gösteriyoruz':
       'Olet nähnyt kaiken, näytämme sinulle alusta alkaen',

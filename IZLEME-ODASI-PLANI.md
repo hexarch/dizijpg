@@ -193,3 +193,92 @@ o diziyi yorum metnine de yazma.
 alınıyordu. Token 90 gün yaşıyor: adını değiştiren kullanıcı odasını üç ay eski
 adıyla görürdü. Ad artık üye listesinden, yani DB'den okunuyor
 (`test/kullanici_adi.test.js` bu okumayı zaten kilitliyormuş).
+
+---
+
+## 7. 3. TUR — BAĞLANTI KAYNAĞI (7 Eyl 2026, CANLI)
+
+**Kullanıcı isteği (birebir):** *"bu birlikte izlemeye video upload yerine kullanıcıya
+tarayıcı açabilir miyiz? … tabi upload duracak … youtube gibi tüm platformların url'ini
+destekleyecek şekilde yapsak ve altına desteklenen siteler yazsak ne olur?"*
+
+Yükleme AYNEN duruyor. Bu ikinci bir kaynak: adres yapıştırılıyor, sunucu tek bayt taşımıyor.
+
+### 7.1 Liste neden kısa — ölçüm, tahmin değil
+
+Senkron için oynatıcı KONTROL edilebilmeli. Yalnız gömülebilen ama kontrol edilemeyen bir
+platform, sahip 10 sn sardığında izleyicide hiçbir şey yapmaz: odanın tek varlık sebebi olan
+senkronu SESSİZCE bozar. Yerel bir sayfaya iframe kurulup her platforma komut yollandı:
+
+| Platform | Ölçüm | Karar |
+|---|---|---|
+| YouTube | IFrame API — `seekTo`/`playVideo` | ✅ |
+| Vimeo | `getDuration` → 62, `setCurrentTime` onaylandı | ✅ |
+| Doğrudan dosya (`.mp4`/`.webm`/`.m3u8`/`.mov`) | kendi oynatıcımız | ✅ |
+| Dailymotion | yeni `geo` oynatıcı YALNIZ `pes_listen_eid` yayıyor; play/command/func biçimlerinin hiçbirine yanıt yok. Kontrol, hesap gerektiren SDK + player id istiyor | ❌ |
+| OK.ru | `{"event":"inited"}` yayıyor, 8 komut biçimine (belgelenen `{call:{func}}` dahil, `?api=1` ve `listening` el sıkışmasıyla) SIFIR yanıt | ❌ |
+| VK | dış gömme `hash` parametresi istiyor; yapıştırılan `vk.com/video-1_2` adresinden üretilemiyor | ❌ |
+
+Dailymotion ve OK.ru ileride YALNIZ MOBİLDE mümkün (WebView'de `<video>` öğesine doğrudan
+erişiliyor) — ama o zaman "web'den giren senkron olamaz" gibi platforma bağlı bir liste doğar.
+Ayrı bir turun konusu.
+
+### 7.2 Oynatıcı soyutlaması
+
+Ekran artık `VideoPlayerController` değil `OdaOynatici` sürüyor (`app/lib/oda/oda_oynatici.dart`):
+
+* `OdaDosyaOynatici` — `video_player`. **Yüklenen dosya VE doğrudan adres** ikisi de bunu
+  kullanır; doğrudan adres için yeni oynatıcı kodu yazılmadı, yalnız URL değişti.
+* `OdaGommeDenetci` — YouTube/Vimeo. Gerçek oynatıcı bizim süreçte değil; bu bir uzaktan
+  kumanda. Yüzey widget'ı (`oda_gomme_web.dart` / `oda_gomme_io.dart`) komutu iletiyor ve
+  durumu geri bildiriyor.
+
+`oda_senkron.dart` HİÇ değişmedi: düzeltme merdiveni kaynağı bilmiyor.
+
+**Web ile mobil neden farklı:** web'de gömme çapraz kökenli bir iframe — içine ne CSS ne JS
+işler, tek yol sağlayıcının `postMessage` protokolü (iki ayrı çevirmen). Mobilde WebView gömme
+sayfasının KENDİSİNİ yüklüyor, yani `document.querySelector('video')` elimizde: orada
+sağlayıcıya göre dallanma YOK.
+
+### 7.3 Güvenlik kararları
+
+* **İstemcinin çözümlemesi kabul edilmez.** Uca yalnız ham adres gider; `saglayici`/`kimlik`
+  sunucunun kendi `oda.js#baglantiCoz` sonucudur. Aksi hâlde uydurma bir gövde, odadaki
+  HERKESİN gömme yüzeyinde istediği sayfayı açtırırdı. Canlıda doğrulandı.
+* **Özel ağ adresleri reddedilir** (`192.168.*`, `10.*`, `127.*`, `172.16-31.*`, `169.254.*`,
+  `localhost`, `.local`). Sunucu bu adrese istek atmıyor ama kabul etmek, uygulamayı bir iç ağ
+  tarayıcısına çevirirdi: oda sahibi 10 kişiye yükletip yanıt sürelerinden ağ haritası
+  çıkarabilirdi.
+* **`http://` reddedilir.** Sayfamız https; karışık içerik tarayıcıda SESSİZCE engellenir ve
+  kullanıcı sebebini asla göremezdi.
+* **`izleme_odalari_tek_kaynak_check`**: bağlantı kipinde `video` NULL olmak zorunda. Doluysa
+  hem `ozelMedyaYukle` o dosyayı özel kümede tutmaya devam eder hem süpürge var olmayan bir
+  dosyayı silmeye çalışırdı.
+
+### 7.4 Ses: gömme SESSİZ başlar
+
+Tarayıcı, kullanıcı jesti olmadan sesli oynatmayı engelliyor ve çapraz kökenli iframe'de bizim
+uygulamamıza yapılan dokunuş o iframe için jest SAYILMIYOR. Sesli başlatmayı denemek,
+izleyicinin videosunun hiç açılmaması demekti — üstelik hata bile vermeden. Gömme daima sessiz
+başlıyor, videonun üstünde "Sesi aç" düğmesi duruyor: dokunuş hem jesti veriyor hem sesi
+açıyor. Yüklenen dosyada bu sorun yok (aynı köken), orada ses açık.
+
+### 7.5 nginx CSP (atlanırsa SESSİZ bozulur)
+
+* `frame-src` += `https://player.vimeo.com` — yoksa Vimeo gömmesi BOŞ iframe olur.
+* `media-src` += `https:` — yoksa doğrudan `.mp4` adresi engellenir (`'self' blob: data:` idi).
+
+Başlık nginx yapılandırmasında 10'dan fazla yerde tekrar ediyor; hepsi güncellendi
+(`backend/nginx-dizijpg.com-20260907-baglanti.conf`).
+
+### 7.6 Bu turda yakalanan tuzaklar
+
+* **`flutter test` gömme yüzeyinde çöküyordu.** VM'de `dart.library.io` doğru olduğu için
+  koşullu içe aktarma WebView dalını seçiyor, `WebViewController` orada assert atıyor.
+  `_otomatikTest` koruması eklendi (kalıp `ekranlar/fragman_gom_io.dart`tan).
+* **Modalda "çözüm değişmediyse setState atla" kestirmesi.** Kutu boşken de geçersiz adres
+  yazılıyken de çözüm null olduğu için erken dönülüyor, "Bu adres desteklenmiyor" uyarısı HİÇ
+  görünmüyordu. Alt satır çözüme DEĞİL girdinin boşluğuna da bakıyor; girdi değişimi tek başına
+  yeniden çizim sebebi.
+* **Oda listesinde `video_var: !!r.video`.** Bağlantı kipinde `video` NULL olduğu için
+  bağlantılı oda listede "boş" görünüyordu; kaynak da sorulmalı.

@@ -1,5 +1,28 @@
 /// Otomatik üretilen çeviri haritası (en).
 const Map<String, String> cevirilerEn = {
+  'Bağlantı yapıştır': 'Paste link',
+  'Yapıştır': 'Paste',
+  'Video bağlantısı': 'Video link',
+  'Odada aç': 'Open in room',
+  'Doğrudan video adresi': 'Direct video address',
+  '{} videosu': '{} video',
+  'Başka video seç': 'Choose another video',
+  'Bu video adresi açılamadı': 'This video address could not be opened',
+  'Oda sahibi henüz video seçmedi': 'The room owner hasn\'t chosen a video yet',
+  'Bir video bağlantısı yapıştır ya da dosya yükle':
+      'Paste a video link or upload a file',
+  '{} bir video bağlantısı ekledi': '{} added a video link',
+  'Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'Supported sites: {} · direct video address (.mp4, .webm)',
+  'Bu adres desteklenmiyor. Desteklenen siteler: {} · doğrudan video adresi (.mp4, .webm)':
+      'This address isn\'t supported. Supported sites: {} · direct video address (.mp4, .webm)',
+  'Bu adres desteklenmiyor. {} bağlantısı ya da doğrudan bir video adresi (.mp4) yapıştır.':
+      'This address isn\'t supported. Paste a {} link or a direct video address (.mp4).',
+  '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya':
+      '{} · direct video address (.mp4) · or a file up to {} GB',
+  '{} · doğrudan video adresi': '{} · Direct video address',
+  'Bu canlı yayın biçimini (m3u8) tarayıcı oynatamaz; telefon uygulamasında açılır.':
+      'Browsers can\'t play this live format (m3u8); it opens in the phone app.',
   'Yorumun bu sayfada görünecek': 'Your comment will appear on this page',
   'Hepsini gördün, baştan gösteriyoruz':
       'You’ve seen it all, we show you from the beginning',

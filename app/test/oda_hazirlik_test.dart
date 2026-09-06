@@ -185,7 +185,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text('Başka video yükle'.c), findsOneWidget);
+    expect(find.text('Başka video seç'.c), findsOneWidget);
   });
 
   testWidgets('HATA: izleyiciye yükleme düğmesi ÇİZİLMEZ', (t) async {
@@ -195,7 +195,7 @@ void main() {
       find.text('Video okunamadı, dosya bozuk olabilir'.c),
       findsOneWidget,
     );
-    expect(find.text('Başka video yükle'.c), findsNothing);
+    expect(find.text('Başka video seç'.c), findsNothing);
   });
 
   testWidgets('hazırlık bitince yer tutucu kalkar (oynatıcı kurulur)', (
@@ -228,7 +228,10 @@ void main() {
     _sunucu(_oda(video: '/medya/o5-a.mp4', durum: 'isleniyor', yuzde: 5));
     await _ac(t);
     expect(find.text('Video yükle'.c), findsNothing);
-    expect(find.text('Bir video yükle, izlemeye başlayın'.c), findsNothing);
+    expect(
+      find.text('Bir video bağlantısı yapıştır ya da dosya yükle'.c),
+      findsNothing,
+    );
   });
 
   testWidgets('uyumsuz kodek uyarısı MOBİLDE web için GÖSTERİLMEZ', (t) async {

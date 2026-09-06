@@ -254,8 +254,21 @@ void main() {
     await t.pump();
     await t.pump(const Duration(milliseconds: 50));
     expect(find.text('Video yükle'.c), findsOneWidget);
-    expect(find.text('Bir video yükle, izlemeye başlayın'.c), findsOneWidget);
-    expect(find.text('En fazla {} GB · MP4 veya WebM'.cf([5])), findsOneWidget);
+    expect(
+      find.text('Bir video bağlantısı yapıştır ya da dosya yükle'.c),
+      findsOneWidget,
+    );
+    // 7 Eyl 2026: boş durumda tek satır var ve iki kaynağı birden anlatıyor
+    // (bağlantı + dosya). Ayrı bir "5 GB" satırı yok.
+    expect(
+      find.text(
+        '{} · doğrudan video adresi (.mp4) · ya da en fazla {} GB dosya'.cf([
+          'YouTube, Vimeo',
+          5,
+        ]),
+      ),
+      findsOneWidget,
+    );
     // Oda kodu başlıkta ve kopyalanabilir.
     expect(find.text('AB2CD3'), findsOneWidget);
   });
@@ -268,7 +281,7 @@ void main() {
     // KONTROL TEK ELDE: izleyiciye yükleme/oynatma hiç ÇİZİLMEZ. Çizilip
     // devre dışı bırakılsaydı kullanıcı "bozuk" sanardı.
     expect(find.text('Video yükle'.c), findsNothing);
-    expect(find.text('Oda sahibi henüz video yüklemedi'.c), findsOneWidget);
+    expect(find.text('Oda sahibi henüz video seçmedi'.c), findsOneWidget);
     expect(find.byIcon(Icons.forward_10), findsNothing);
     expect(find.byIcon(Icons.replay_10), findsNothing);
     // Sahibi kapatma değil AYRILMA seçeneği görür.
