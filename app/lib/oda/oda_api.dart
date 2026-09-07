@@ -765,8 +765,15 @@ class OdaApi {
   /// KENDİ yapar ve kaydettiği kendi sonucudur: istemcinin çözümlemesi kabul
   /// edilseydi, uydurma bir gövde odadaki herkesin gömme yüzeyinde istediği
   /// sayfayı açtırırdı (gerekçe `backend/server.js` bağlantı ucunda).
+  ///
+  /// KAÇIŞLI `$` HATASI (7 Eyl 2026, canlıda telefonda yakalandı): yol
+  /// `'/odalar/\$id/baglanti'` yazılmıştı, yani Dart bunu DEĞİŞMEZ metin
+  /// olarak gönderiyordu. Sunucu `:id` yerine "$id" görüp 400 "Geçersiz id"
+  /// döndürüyor, kullanıcı da bunu yapıştırdığı YouTube adresine ait bir hata
+  /// sanıyordu ("linki yapıştırdım ama geçersiz dedi"). Adres ve çözümleyiciler
+  /// baştan beri doğruydu; tek kusur bir ters bölüydü.
   static Future<void> baglantiVer(int id, String url) =>
-      Api.post('/odalar/\$id/baglanti', {'url': url});
+      Api.post('/odalar/$id/baglanti', {'url': url});
 
   static Future<void> hazir(int id, bool hazirMi) =>
       Api.post('/odalar/$id/hazir', {'hazir': hazirMi});

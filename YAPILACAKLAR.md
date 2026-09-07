@@ -1,6 +1,31 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-07 — 🔗 Odaya YouTube bağlantısı "geçersiz" diyordu: kaçışlı `$` ✅
+
+**Tetik (kullanıcı, birebir):** *"apk kurdum ve https://youtu.be/l6UtZ-u9CyM?si=…
+linki yapıştırdım oda açmak için ama geçersiz dedi"*.
+
+**Kök sebep:** `OdaApi.baglantiVer` yolu `'/odalar/\$id/baglanti'` yazılmıştı.
+Dart'ta `\$` KAÇIŞTIR: enterpolasyon çalışmıyor, adres harfi harfine
+`/odalar/$id/baglanti` gidiyordu. Sunucu `:id` yerine `"$id"` görüp
+**400 "Geçersiz id"** döndürüyor, kullanıcı da bunu yapıştırdığı YouTube
+adresine ait bir hata sanıyordu. Canlıda iki curl ile kanıtlandı: doğru yol 200
++ `kaynak: baglanti`, uygulamanın gönderdiği yol 400 "Geçersiz id".
+Adres çözümleyicilerinin **ikisi de doğruydu** (istemci ve sunucu, `?si=` dahil).
+
+**Mevcut test neden yakalamadı:** `oda_baglanti_ekran_test.dart`in sahte sunucusu
+`yol.endsWith('/baglanti')` diye bakıyor — bozuk adres de bu koşulu geçiyor.
+Ayrıca o test yalnız sheet'in DÖNÜŞ değerini sınıyordu, `OdaApi.baglantiVer` hiç
+çağrılmıyordu.
+
+**Ne yapıldı:** tek karakter (`\$` → `$`) + `test/oda_api_yollari_test.dart`:
+`OdaApi`nin id alan 12 ucunun her biri çağrılıp giden adresin TAM metni
+kilitlendi. Test eski kodla kırmızıya döndüğü doğrulandı
+(*"giden: /odalar/$id/baglanti"*).
+
+Sürüm 1.144.1+220 — web canlıda, APK/AAB `cikti/` altında.
+
 ## 2026-09-07 — 🎬 Başkasının "İzlediği Diziler/Filmler" listesi 60'ta bitiyordu ✅
 
 **Tetik (kullanıcı, birebir):** *"1000 tane film izlemiş birisinin profilini ziyaret ettim
