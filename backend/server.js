@@ -7075,6 +7075,11 @@ const BOT_ROTALARI = [
     yol: '/kullanici/:ad/kitaplik/:durum',
     desen: /^\/kullanici\/[^/]+\/kitaplik\/[a-z]+$/,
   },
+  // İzlediği diziler/filmlerin tam listesi (7 Eyl 2026)
+  {
+    yol: '/kullanici/:ad/izlenenler/:tur',
+    desen: /^\/kullanici\/[^/]+\/izlenenler\/(tv|movie)$/,
+  },
   { yol: '/kisi-ara', desen: /^\/kisi-ara$/ },
   { yol: '/bildirimler', desen: /^\/bildirimler$/ },
   // Sürüm tanıtım sayfası (2 Eyl 2026): bildirimdeki "dizi.jpg X yayında"
@@ -19817,6 +19822,89 @@ app.get('/profil/:kullaniciAdi/kitaplik/:durum', girisZorunlu, sarici(async (req
       ORDER BY s.sira ASC NULLS FIRST, d.guncelleme DESC`,
     [sahipId, durum]);
   res.json({ gizli: false, ogeler: rows });
+}));
+
+// ---------------------------------------------------------------------------
+// PROFİL > İZLEDİKLERİ — SAYFALI (7 Eyl 2026, kullanıcı bildirimi)
+// ---------------------------------------------------------------------------
+// Bildirim birebir: *"1000 tane film izlemiş birisinin profilini ziyaret ettim,
+// izlediği filmler kısmına tıkladığımda ilk 100 film falan gözüküyordu, daha
+// sonrasında aşağıya kaydırılmıyordu"*.
+//
+// NE OLUYORDU: `/profil/:ad` yanıtındaki `izlenenler` dizisi tür başına 60
+// satırla KIRPILI (profil şeridinin kapağı için yeterli); ziyaretçi ızgarası da
+// yalnız o diziyi çiziyordu. Başlık "İzlediği Filmler (451)" diyor, ızgarada 60
+// afiş var ve devamını getirecek İSTEK YOKTU — liste bitmiş gibi duruyordu.
+// Sahibinin kendi ekranı (`/izlediklerim?tur=`) 2000'lik pencereyi çektiği için
+// hata YALNIZ başkasının profilinde görünüyordu.
+//
+// SIRA PROFİLDEKİ ÖNEKİN AYNISI: sorgu `/profil/:ad`teki `izlenenler`
+// sorgusunun `tur_sira` penceresi kaydırılmış hâli — aynı `ozet/sirali/numarali`
+// merdiveni, aynı `IZLENEN_PENCERE` tavanı, aynı elle sıra kuralı. Böylece
+// 2. sayfa 1. sayfanın DEVAMI olur; ayrı bir ORDER BY yazsaydık ilk 60 tekrar
+// eder ya da atlanırdı.
+//
+// GİZLİLİK: kitaplık ucuyla AYNI kural (izlenenler_gizli + çift yönlü engel +
+// tek tek gizlenen içerikler). Oturum İSTEĞE BAĞLI, çünkü kırpılmamış hâlini
+// beslediği `/profil/:ad` ucu da isteğe bağlı: oturumsuz ziyaretçiye profilde
+// 60 afiş gösterip "tümü" sayfasında 401 vermek tutarsız olurdu.
+const IZLENEN_SAYFA = 60;
+app.get('/profil/:kullaniciAdi/izlenenler', girisIsteğeBagli, sarici(async (req, res) => {
+  const tur = String(req.query.tur || '');
+  if (tur !== 'tv' && tur !== 'movie') {
+    return res.status(400).json({ hata: 'Geçersiz tür' });
+  }
+  const ofset = Math.min(50000, Math.max(0, parseInt(req.query.ofset, 10) || 0));
+  const k = await havuz.query(
+    'SELECT id, izlenenler_gizli FROM kullanicilar WHERE kullanici_adi=$1',
+    [req.params.kullaniciAdi]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const id = k.rows[0].id;
+  const benId = req.kullanici?.id || 0;
+  const benMi = benId === id;
+  const gizli = !benMi &&
+    (k.rows[0].izlenenler_gizli === true ||
+     (benId ? await engelliMi(benId, id) : false));
+  if (gizli) return res.json({ gizli: true, toplam: 0, sayfa_boyu: IZLENEN_SAYFA, ogeler: [] });
+  const gizliFiltre = benMi ? '' :
+    `AND NOT EXISTS (SELECT 1 FROM gizli_icerikler g
+       WHERE g.kullanici_id=$1 AND g.tur=izlemeler.tur AND g.tmdb_id=izlemeler.tmdb_id)`;
+  // `toplam`da ::int ŞART: count() bigint döndürür, node-pg int8'i METİN
+  // yapar ("451"). İstemci sayıyı `as num` ile okuduğu için metin gelince
+  // null'a düşer ve başlıktaki gerçek toplam kaybolurdu — 7 Eyl 2026'da
+  // canlıda yakalandı (dış puanlarda görülen NUMERIC tuzağının aynısı).
+  const { rows } = await havuz.query(
+    `WITH ozet AS (
+       SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
+         FROM izlemeler
+        WHERE kullanici_id=$1 AND tur=$2 ${gizliFiltre}
+        GROUP BY tur, tmdb_id
+     ), sirali AS (
+       SELECT o.*, s.sira, (count(*) OVER ())::int AS toplam
+         FROM ozet o
+         LEFT JOIN kitaplik_sirasi s
+                ON s.kullanici_id=$1 AND s.liste = 'izlenen_' || o.tur
+               AND s.tur=o.tur AND s.tmdb_id=o.tmdb_id
+     ), numarali AS (
+       SELECT *,
+              row_number() OVER (
+                ORDER BY (CASE WHEN toplam > $3 THEN NULL ELSE sira END)
+                         ASC NULLS FIRST, son DESC, tmdb_id DESC) AS tur_sira
+         FROM sirali
+     )
+     SELECT tur, tmdb_id, sayi, toplam FROM numarali
+      WHERE tur_sira > $4 AND tur_sira <= $5
+      ORDER BY tur_sira ASC`,
+    [id, tur, IZLENEN_PENCERE, ofset, ofset + IZLENEN_SAYFA]);
+  res.json({
+    gizli: false,
+    // `toplam` pencereden BAĞIMSIZ gerçek sayı (count(*) OVER ()); sayfa boşsa
+    // (ofset listenin sonunu aştıysa) satır da yok, o yüzden 0 döner —
+    // istemci toplamı ilk sayfadan öğrendiği için sorun olmaz.
+    toplam: rows[0]?.toplam ?? 0,
+    sayfa_boyu: IZLENEN_SAYFA,
+    ogeler: rows.map(({ tur, tmdb_id, sayi }) => ({ tur, tmdb_id, sayi })),
+  });
 }));
 
 // ---------------------------------------------------------------------------

@@ -1,6 +1,38 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-07 — 🎬 Başkasının "İzlediği Diziler/Filmler" listesi 60'ta bitiyordu ✅
+
+**Tetik (kullanıcı, birebir):** *"1000 tane film izlemiş birisinin profilini ziyaret ettim
+izlediği filmler kısmına tıkladığımda ilk 100 film falan gozukuyordu daha sonrasında aşağıya
+kaydırılmıyordu"* + *"o listede liste gorunumune geçiş yok ama kendi profilimdeki diziler
+filmler kısmında liste gorunumune geçebiliyorum"*.
+
+**Kök sebep:** sayaç/başlık dokunuşu bir ALT SAYFA açıyor ve o alt sayfa yalnız `/profil/:ad`
+yanıtındaki `izlenenler` dizisini çiziyordu — tür başına **60** kayıtla kırpılı (profil şeridinin
+kapağı için yeterli). Devamını isteyen bir çağrı YOKTU: başlık "İzlediği Filmler (451)" derken
+ızgara 60'ta sessizce bitiyordu. Alt sayfanın AppBar'ı olmadığı için görünüm anahtarı da
+(afiş ⇄ satır, 1 Eyl'den beri sahibinin ekranında var) oraya hiç konamamıştı.
+Canlıda ölçüldü (`emma.watches`): `istatistik.film = 451`, `izlenenler` = 60 film + 60 dizi.
+
+**Ne yapıldı:**
+- **Backend** `GET /profil/:ad/izlenenler?tur=tv|movie&ofset=N` — 60'ar sayfa, sırası profil
+  şeridinin ÖNEKİNİN devamı (aynı `ozet/sirali/numarali` merdiveni, aynı `IZLENEN_PENCERE`
+  tavanı, aynı elle sıra kuralı). Gizlilik kitaplık ucuyla birebir: `izlenenler_gizli`,
+  çift yönlü engel, tek tek gizlenen içerikler. Oturum isteğe bağlı (`/profil/:ad` gibi).
+- **Yeni ekran** `lib/ekranlar/kullanici_izlenenler.dart` → `/kullanici/:ad/izlenenler/:tur`:
+  alt sayfa değil TAM SAYFA, sonsuz kaydırma, AppBar'da `ListeGorunumuDugmesi`, salt okunur
+  (sürükle-bırak/"en üste taşı" yok).
+- `IcerikSatiri.kisisel` bayrağı: satırdaki puan/kalp/emoji/son izleme BAKANIN verisidir
+  (`PuanFavoriDeposu`); başkasının listesinde "bu kullanıcı 9 vermiş" diye okunurdu → kapatıldı.
+  Sahibinden gelen ilerleme çubuğu (`izlenenSayi`) kalır.
+- Kitaplık paylaşım sayfası (`/kullanici/:ad/kitaplik/:durum`) de aynı görünüm anahtarını aldı —
+  altı kitaplık listesi tek tercihi paylaşıyor, paylaşılan kopyası da o ailenin üyesi.
+
+**Kanıt:** `test/kullanici_izlenenler_sayfali_test.dart` (6 madde: ilk sayfa + gerçek toplam,
+dibe kaydırınca 2. sayfa, son sayfada istek kesilir, görünüm anahtarı, ziyaretçinin puanı
+basılmaz, gizli listede kilit) + güncellenen `kullanici_profil_izlenen_tiklama_test.dart`.
+
 ## 2026-09-07 — 📸 Haftalık Instagram gönderi üreticisi (araclar/haftalik_gonderi.py) ✅
 
 **Tetik (kullanıcı):** *"her pazartesi 09 da şu gönderileri instagram paylaşım formatında

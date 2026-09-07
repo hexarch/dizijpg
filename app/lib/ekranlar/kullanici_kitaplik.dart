@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../liste_gorunumu.dart';
+import '../puan_favori_deposu.dart';
 import '../tema.dart';
+import 'icerik_satiri.dart';
 import 'ortak.dart';
 
 /// `/kullanici/:ad/kitaplik/:durum` — bir kullanıcının kitaplık listesinin
@@ -47,6 +50,9 @@ class _KullaniciKitaplikEkraniState extends State<KullaniciKitaplikEkrani> {
   @override
   void initState() {
     super.initState();
+    // Satır görünümü açıksa puan/kalp deposu gerekir ([IcerikSatiri] satır
+    // başına istek atmaz, tek toplu depodan okur).
+    if (ListeGorunumu.satir.value) PuanFavoriDeposu.yukle();
     _yukle();
   }
 
@@ -69,7 +75,12 @@ class _KullaniciKitaplikEkraniState extends State<KullaniciKitaplikEkrani> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ValueListenableBuilder<bool>(
+    valueListenable: ListeGorunumu.satir,
+    builder: (context, _, _) => _govde(context),
+  );
+
+  Widget _govde(BuildContext context) {
     Widget govde;
     if (_hata != null) {
       govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
@@ -78,7 +89,7 @@ class _KullaniciKitaplikEkraniState extends State<KullaniciKitaplikEkrani> {
         padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
         gridDelegate: const PosterIzgarasi(satirBoslugu: 14, bosluk: 10),
         itemCount: 9,
-        itemBuilder: (_, __) => const IskeletKutu(genislik: double.infinity),
+        itemBuilder: (_, _) => const IskeletKutu(genislik: double.infinity),
       );
     } else if (_gizli) {
       govde = BosDurum(
@@ -91,6 +102,27 @@ class _KullaniciKitaplikEkraniState extends State<KullaniciKitaplikEkrani> {
         ikon: Icons.video_library_outlined,
         baslik: 'Bu listede henüz içerik yok'.c,
       );
+    } else if (ListeGorunumu.satir.value) {
+      // SATIR GÖRÜNÜMÜ (7 Eyl 2026): altı kitaplık listesinin görünüm tercihi
+      // TEK anahtar ([ListeGorunumu]); paylaşılan salt okunur kopyası da o
+      // ailenin üyesi ve tercihi yok saymamalı.
+      govde = ListView.separated(
+        padding: EdgeInsets.fromLTRB(12, 4, 12, altGuvenli(context)),
+        itemCount: _ogeler!.length,
+        separatorBuilder: (_, _) =>
+            Divider(height: 1, thickness: 1, color: DiziRenkler.metin12),
+        itemBuilder: (context, i) {
+          final o = _ogeler![i] as Map<String, dynamic>;
+          return IcerikSatiri(
+            key: ValueKey('satir-${o['tur']}:${o['tmdb_id']}'),
+            tur: o['tur'] as String,
+            tmdbId: (o['tmdb_id'] as num).toInt(),
+            // Puan/kalp/emoji/son izleme BENİM verim; başkasının listesinde
+            // sahibininmiş gibi okunurdu (bkz. [IcerikSatiri.kisisel]).
+            kisisel: false,
+          );
+        },
+      );
     } else {
       govde = GridView.builder(
         padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
@@ -101,8 +133,8 @@ class _KullaniciKitaplikEkraniState extends State<KullaniciKitaplikEkrani> {
           return MiniIcerik(
             key: ValueKey('${o['tur']}:${o['tmdb_id']}'),
             tmdbId: (o['tmdb_id'] as num).toInt(),
-            tur: o['tur'] as String,
             genislik: double.infinity,
+            tur: o['tur'] as String,
           );
         },
       );
@@ -132,6 +164,12 @@ class _KullaniciKitaplikEkraniState extends State<KullaniciKitaplikEkrani> {
             ),
           ],
         ),
+        actions: [
+          // GÖRÜNÜM ANAHTARI — sahibinin kitaplık ekranındakiyle AYNI düğme ve
+          // AYNI (cihazda kalıcı) tercih.
+          if (!_gizli && (_ogeler?.isNotEmpty ?? false))
+            const ListeGorunumuDugmesi(),
+        ],
       ),
       // PC'de ızgara ortalanmış ve [masaustuIcerikGenisligi] ile sınırlı —
       // kitaplık ekranıyla aynı (madde 26); mobilde kısıt bağlamaz.

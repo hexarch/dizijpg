@@ -54,12 +54,23 @@ class IcerikSatiri extends StatefulWidget {
   /// Sağ uçta çizilecek ek eylem (sıralama kipinde "en üste taşı").
   final Widget? sonEk;
 
+  /// İKİNCİ SATIRDAKİ KİŞİSEL SÜSLER (puan · emoji · kalp · son izleme).
+  ///
+  /// NEDEN KAPATILABİLİR (7 Eyl 2026): bu dördü [PuanFavoriDeposu]'ndan, yani
+  /// BAKAN kişinin kendi verisinden okunur. Kendi kitaplığımda doğru bilgidir;
+  /// BAŞKASININ izlediklerini gezerken aynı yıldız "bu kullanıcı 9 vermiş" diye
+  /// okunur ve yalan söyler. Salt okunur ziyaretçi listelerinde ([KullaniciIzlenenlerEkrani])
+  /// `false` verilir; satırda sahibine ait tek bilgi, sunucudan gelen
+  /// [izlenenSayi] ile çizilen ilerleme çubuğu kalır.
+  final bool kisisel;
+
   const IcerikSatiri({
     super.key,
     required this.tur,
     required this.tmdbId,
     this.izlenenSayi,
     this.sonEk,
+    this.kisisel = true,
   });
 
   @override
@@ -179,108 +190,111 @@ class _IcerikSatiriState extends State<IcerikSatiri> {
                   // PUAN + KALP. Depo değişince (satır görünümü açılırken
                   // tazelenir) kendini yeniler; ölçek değişirse de doğru
                   // yazsın diye [PuanOlcegi] ayrıca dinlenir.
-                  ValueListenableBuilder<int>(
-                    valueListenable: PuanFavoriDeposu.surum,
-                    builder: (context, _, _) => ValueListenableBuilder<int>(
-                      valueListenable: PuanOlcegi.deger,
-                      builder: (context, olcek, _) {
-                        final dbPuan = PuanFavoriDeposu.puan(
-                          widget.tur,
-                          widget.tmdbId,
-                        );
-                        final favori = PuanFavoriDeposu.favoriMi(
-                          widget.tur,
-                          widget.tmdbId,
-                        );
-                        final emoji = PuanFavoriDeposu.emoji(
-                          widget.tur,
-                          widget.tmdbId,
-                        );
-                        final izleme = PuanFavoriDeposu.sonIzleme(
-                          widget.tur,
-                          widget.tmdbId,
-                        );
-                        // Hiçbiri yoksa ikinci satır HİÇ çizilmez.
-                        // (Satır yüksekliğini afiş belirlediği için liste
-                        // düzeni bozulmaz — yalnız boş bir şerit basılmaz.)
-                        if (dbPuan == null &&
-                            !favori &&
-                            emoji == null &&
-                            izleme == null) {
-                          return const SizedBox.shrink();
-                        }
-                        return Wrap(
-                          spacing: 8,
-                          runSpacing: 2,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            if (dbPuan != null)
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.star,
-                                    size: 15,
-                                    color: DiziRenkler.sariMetin,
-                                  ),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    '${yildiza(dbPuan, olcek: olcek)}/$olcek',
-                                    style: TextStyle(
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.w700,
+                  // `kisisel: false` (başkasının listesi) iken HİÇ dinlenmez:
+                  // depo benim verimdir, orada çizmek yanıltıcı olurdu.
+                  if (widget.kisisel)
+                    ValueListenableBuilder<int>(
+                      valueListenable: PuanFavoriDeposu.surum,
+                      builder: (context, _, _) => ValueListenableBuilder<int>(
+                        valueListenable: PuanOlcegi.deger,
+                        builder: (context, olcek, _) {
+                          final dbPuan = PuanFavoriDeposu.puan(
+                            widget.tur,
+                            widget.tmdbId,
+                          );
+                          final favori = PuanFavoriDeposu.favoriMi(
+                            widget.tur,
+                            widget.tmdbId,
+                          );
+                          final emoji = PuanFavoriDeposu.emoji(
+                            widget.tur,
+                            widget.tmdbId,
+                          );
+                          final izleme = PuanFavoriDeposu.sonIzleme(
+                            widget.tur,
+                            widget.tmdbId,
+                          );
+                          // Hiçbiri yoksa ikinci satır HİÇ çizilmez.
+                          // (Satır yüksekliğini afiş belirlediği için liste
+                          // düzeni bozulmaz — yalnız boş bir şerit basılmaz.)
+                          if (dbPuan == null &&
+                              !favori &&
+                              emoji == null &&
+                              izleme == null) {
+                            return const SizedBox.shrink();
+                          }
+                          return Wrap(
+                            spacing: 8,
+                            runSpacing: 2,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              if (dbPuan != null)
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      size: 15,
                                       color: DiziRenkler.sariMetin,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            // EN ÇOK VERDİĞİN EMOJİ — projedeki tek tepki
-                            // çizeri [TepkiIkonu] (Lottie, VARSAYILAN DURAĞAN:
-                            // uzun listede 578 animasyon dönmez).
-                            if (emoji != null)
-                              Semantics(
-                                // Yeni metin anahtarı AÇMADAN: 'Tepki verdin'
-                                // 45 dilde ZATEN var ve etiket olarak birebir
-                                // bunu anlatıyor.
-                                label: 'Tepki verdin'.c,
-                                child: TepkiIkonu(emoji, boyut: 15),
-                              ),
-                            if (favori)
-                              Semantics(
-                                label: 'Favori'.c,
-                                child: const Icon(
-                                  Icons.favorite,
-                                  size: 15,
-                                  color: Colors.redAccent,
+                                    const SizedBox(width: 3),
+                                    Text(
+                                      '${yildiza(dbPuan, olcek: olcek)}/$olcek',
+                                      style: TextStyle(
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w700,
+                                        color: DiziRenkler.sariMetin,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            // SON İZLEME. Sayısal biçim ([tarihSayi]) ve YIL
-                            // DAİMA: dar satırda "20 Ocak 2008" yer yer, yıl
-                            // ise yıllara yayılmış bir kitaplıkta ayırt edici.
-                            if (izleme != null)
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.event_available_outlined,
-                                    size: 14,
-                                    color: DiziRenkler.metin38,
+                              // EN ÇOK VERDİĞİN EMOJİ — projedeki tek tepki
+                              // çizeri [TepkiIkonu] (Lottie, VARSAYILAN DURAĞAN:
+                              // uzun listede 578 animasyon dönmez).
+                              if (emoji != null)
+                                Semantics(
+                                  // Yeni metin anahtarı AÇMADAN: 'Tepki verdin'
+                                  // 45 dilde ZATEN var ve etiket olarak birebir
+                                  // bunu anlatıyor.
+                                  label: 'Tepki verdin'.c,
+                                  child: TepkiIkonu(emoji, boyut: 15),
+                                ),
+                              if (favori)
+                                Semantics(
+                                  label: 'Favori'.c,
+                                  child: const Icon(
+                                    Icons.favorite,
+                                    size: 15,
+                                    color: Colors.redAccent,
                                   ),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    tarihSayi(izleme, hepYil: true),
-                                    style: TextStyle(
-                                      fontSize: 12,
+                                ),
+                              // SON İZLEME. Sayısal biçim ([tarihSayi]) ve YIL
+                              // DAİMA: dar satırda "20 Ocak 2008" yer yer, yıl
+                              // ise yıllara yayılmış bir kitaplıkta ayırt edici.
+                              if (izleme != null)
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.event_available_outlined,
+                                      size: 14,
                                       color: DiziRenkler.metin38,
                                     ),
-                                  ),
-                                ],
-                              ),
-                          ],
-                        );
-                      },
+                                    const SizedBox(width: 3),
+                                    Text(
+                                      tarihSayi(izleme, hepYil: true),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: DiziRenkler.metin38,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                            ],
+                          );
+                        },
+                      ),
                     ),
-                  ),
                   ..._ilerleme(),
                 ],
               ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/detay.dart';
+import 'package:dizijpg/ekranlar/kullanici_izlenenler.dart';
 import 'package:dizijpg/ekranlar/kullanici_profil.dart';
 import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:dizijpg/tema.dart';
@@ -24,9 +25,15 @@ import 'package:visibility_detector/visibility_detector.dart';
 ///     bu zaten çalışıyordu, regresyona karşı kilitli.
 ///  2) Sayaçlar (Bölüm/Dizi/Film) ve şerit BAŞLIKLARI ziyaretçi profilinde
 ///     ölüydü (kendi profildeki `/izlediklerim` ucu ziyaretçiye kapalı);
-///     artık izlenenler ızgara alt sayfasını açarlar. Aynı şikâyet kendi
+///     artık izlediklerinin TAM listesini açarlar. Aynı şikâyet kendi
 ///     profil sayaçları için de gelmişti ve onTap eklenerek çözülmüştü —
 ///     bu, ziyaretçi tarafındaki karşılığıdır.
+///
+/// GÜNCELLEME (7 Eyl 2026): hedef bir alt sayfa DEĞİL, [KullaniciIzlenenlerEkrani]
+/// tam sayfası. Alt sayfa profil yanıtındaki kırpılmış diziyi (tür başına 60)
+/// çizdiği için 451 filmi olan kullanıcının listesi 60'ta sessizce bitiyordu
+/// ("aşağıya kaydırılmıyordu") ve AppBar'ı olmadığı için görünüm anahtarı
+/// (afiş ⇄ satır) oraya hiç konamamıştı.
 const double _g = 600, _y = 1400;
 
 http.Response _json(Object govde) => http.Response(
@@ -38,6 +45,24 @@ http.Response _json(Object govde) => http.Response(
 void _sunucu() {
   Api.istemci = MockClient((istek) async {
     final yol = istek.url.path;
+    // İzlediklerinin TAM listesi (7 Eyl 2026): profil yanıtındaki kırpılmış
+    // dizinin yerine geçen sayfalı uç. `startsWith('/api/profil/')` dalından
+    // ÖNCE gelmeli, yoksa profil gövdesi döner.
+    if (yol == '/api/profil/alcelik/izlenenler') {
+      final tur = istek.url.queryParameters['tur'];
+      final ofset = int.parse(istek.url.queryParameters['ofset'] ?? '0');
+      return _json({
+        'gizli': false,
+        'toplam': tur == 'tv' ? 42 : 17,
+        'sayfa_boyu': 60,
+        'ogeler': ofset > 0
+            ? <dynamic>[]
+            : [
+                if (tur == 'tv') {'tur': 'tv', 'tmdb_id': 100, 'sayi': 3},
+                if (tur == 'movie') {'tur': 'movie', 'tmdb_id': 200},
+              ],
+      });
+    }
     if (yol.startsWith('/api/profil/')) {
       return _json({
         'kullanici_adi': 'alcelik',
@@ -182,7 +207,9 @@ void main() {
     );
   });
 
-  testWidgets('şerit BAŞLIĞI izlenenler alt sayfasını açar', (tester) async {
+  testWidgets('şerit BAŞLIĞI izlediklerinin TAM sayfasını açar', (
+    tester,
+  ) async {
     ekran(tester);
     await _uygulama(tester);
 
@@ -192,20 +219,23 @@ void main() {
     await _bekle(tester, 10);
 
     expect(tester.takeException(), isNull);
-    // Alt sayfada gerçek toplam (42) başlıkta, karo ızgarada.
+    // ALT SAYFA DEĞİL TAM SAYFA (7 Eyl 2026): alt sayfa profil yanıtındaki
+    // kırpılmış 60 kayıtta bitiyordu ve AppBar'ı olmadığı için görünüm
+    // anahtarı konamıyordu.
+    expect(find.byType(KullaniciIzlenenlerEkrani), findsOneWidget);
+    // Başlıkta gerçek toplam (42) ve AppBar'da görünüm anahtarı.
     expect(find.textContaining('42'), findsWidgets);
-    final sheetKaro = find.byKey(const ValueKey('sheet-tv-100'));
-    expect(sheetKaro, findsOneWidget);
+    expect(find.byKey(const Key('satir-kipi')), findsOneWidget);
 
-    // Izgaradaki karo da detay açmalı.
-    await tester.tap(sheetKaro, warnIfMissed: true);
+    // Sayfadaki karo da detay açmalı.
+    final karo = find.byKey(const ValueKey('izl-tv-100'));
+    expect(karo, findsOneWidget);
+    await tester.tap(karo, warnIfMissed: true);
     await _bekle(tester, 20);
     expect(find.byType(DetayEkrani), findsOneWidget);
   });
 
-  testWidgets('DİZİ ve BÖLÜM sayaçları izlenenler alt sayfasını açar', (
-    tester,
-  ) async {
+  testWidgets('DİZİ ve BÖLÜM sayaçları izlediği dizileri açar', (tester) async {
     ekran(tester);
     await _uygulama(tester);
 
@@ -213,17 +243,20 @@ void main() {
     await _gorunur(tester, sayac);
     await tester.tap(sayac, warnIfMissed: true);
     await _bekle(tester, 10);
-    expect(find.byKey(const ValueKey('sheet-tv-100')), findsOneWidget);
+    expect(find.byKey(const ValueKey('izl-tv-100')), findsOneWidget);
 
-    // Kapat, Bölüm sayacı da aynı sayfayı açmalı.
-    await tester.tapAt(const Offset(300, 60));
+    // Geri dön; Bölüm sayacı da aynı sayfayı açmalı.
+    final yonlendirici = GoRouter.of(
+      tester.element(find.byType(KullaniciIzlenenlerEkrani)),
+    );
+    yonlendirici.pop();
     await _bekle(tester, 10);
     await tester.tap(find.text('Bölüm'), warnIfMissed: true);
     await _bekle(tester, 10);
-    expect(find.byKey(const ValueKey('sheet-tv-100')), findsOneWidget);
+    expect(find.byKey(const ValueKey('izl-tv-100')), findsOneWidget);
   });
 
-  testWidgets('FİLM sayacı film ızgarasını açar', (tester) async {
+  testWidgets('FİLM sayacı izlediği filmleri açar', (tester) async {
     ekran(tester);
     await _uygulama(tester);
 
@@ -231,7 +264,7 @@ void main() {
     await _gorunur(tester, sayac);
     await tester.tap(sayac, warnIfMissed: true);
     await _bekle(tester, 10);
-    expect(find.byKey(const ValueKey('sheet-movie-200')), findsOneWidget);
-    expect(find.byKey(const ValueKey('sheet-tv-100')), findsNothing);
+    expect(find.byKey(const ValueKey('izl-movie-200')), findsOneWidget);
+    expect(find.byKey(const ValueKey('izl-tv-100')), findsNothing);
   });
 }

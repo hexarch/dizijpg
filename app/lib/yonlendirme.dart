@@ -41,6 +41,7 @@ import 'ekranlar/kisi_yapimlar.dart';
 import 'ekranlar/sirket.dart';
 import 'ekranlar/liste.dart';
 import 'ekranlar/kitaplik_liste.dart';
+import 'ekranlar/kullanici_izlenenler.dart';
 import 'ekranlar/kullanici_kitaplik.dart';
 import 'ekranlar/kullanici_profil.dart';
 import 'ekranlar/ortak.dart' show kabugaDon, kabukIcindeMi;
@@ -417,6 +418,17 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
                     builder: (_, s) => KullaniciKitaplikEkrani(
                       kullaniciAdi: s.pathParameters['ad']!,
                       durum: s.pathParameters['durum']!,
+                    ),
+                  ),
+                  // İzlediği diziler/filmlerin TAM (sayfalı) listesi —
+                  // profildeki sayaç ve şerit başlığı buraya götürür. 7 Eyl
+                  // 2026'ya kadar bir alt sayfaydı ve profil yanıtındaki
+                  // kırpılmış 60 kayıtta bitiyordu (bkz. kullanici_izlenenler.dart).
+                  GoRoute(
+                    path: 'izlenenler/:tur',
+                    builder: (_, s) => KullaniciIzlenenlerEkrani(
+                      kullaniciAdi: s.pathParameters['ad']!,
+                      tur: s.pathParameters['tur'] == 'tv' ? 'tv' : 'movie',
                     ),
                   ),
                 ],

@@ -110,22 +110,17 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
     );
   }
 
-  void _izlenenSheet(String tur) {
-    final izlenenler = (_profil?['izlenenler'] as List<dynamic>? ?? [])
-        .where((o) => o['tur'] == tur)
-        .toList();
-    if (izlenenler.isEmpty) return;
-    final st = _profil!['istatistik'] as Map<String, dynamic>;
-    final toplam = ((tur == 'tv' ? st['dizi'] : st['film']) as num?)?.toInt();
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: DiziRenkler.koyuGri,
-      builder: (_) => _IzlenenlerSheet(
-        tur: tur,
-        ogeler: izlenenler,
-        toplam: toplam ?? izlenenler.length,
-      ),
+  /// İzlediği diziler/filmlerin TAM listesi — [KullaniciIzlenenlerEkrani].
+  ///
+  /// ALT SAYFA DEĞİL TAM SAYFA (7 Eyl 2026, kullanıcı bildirimi): alt sayfa
+  /// profil yanıtındaki KIRPILMIŞ diziyi (tür başına 60) çiziyordu, yani 451
+  /// filmi olan kullanıcının listesi 60'ta sessizce bitiyordu; ayrıca AppBar'ı
+  /// olmadığı için sahibinin ekranındaki görünüm anahtarı (afiş ⇄ satır) oraya
+  /// hiç konamamıştı. Yeni sayfa sunucudan 60'ar sayfa çeker ve o düğmeyi
+  /// taşır — gerekçenin tamamı `kullanici_izlenenler.dart`ta.
+  void _izlenenSayfa(String tur) {
+    context.push(
+      '/kullanici/${Uri.encodeComponent(widget.kullaniciAdi)}/izlenenler/$tur',
     );
   }
 
@@ -328,13 +323,13 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                     // onTap eklenerek çözülmüştü). Veri yoksa (gizli/engelli)
                     // sayaç dokunmasızdır — boş sayfa vaat edilmez.
                     bolumTap: izlenenler.any((o) => o['tur'] == 'tv')
-                        ? () => _izlenenSheet('tv')
+                        ? () => _izlenenSayfa('tv')
                         : null,
                     diziTap: izlenenler.any((o) => o['tur'] == 'tv')
-                        ? () => _izlenenSheet('tv')
+                        ? () => _izlenenSayfa('tv')
                         : null,
                     filmTap: izlenenler.any((o) => o['tur'] == 'movie')
-                        ? () => _izlenenSheet('movie')
+                        ? () => _izlenenSayfa('movie')
                         : null,
                     // Değerlendirme (5 Eyl 2026): izlenenlerle AYNI gizlilik
                     // kapısı — puan "bunu izledim" demektir. Sunucu gizli
@@ -533,7 +528,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         InkWell(
                           key: ValueKey('izlenen-baslik-${grup.$5}'),
                           borderRadius: BorderRadius.circular(8),
-                          onTap: () => _izlenenSheet(grup.$5),
+                          onTap: () => _izlenenSayfa(grup.$5),
                           child: Row(
                             children: [
                               Icon(
@@ -1686,93 +1681,6 @@ class _YorumDetayModal extends StatelessWidget {
                 style: TextStyle(fontSize: 11, color: DiziRenkler.gonderiEylem),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Ziyaretçinin izlediği dizi/filmlerin ızgara alt sayfası.
-///
-/// [ogeler] profil yanıtındaki son 60 kayıttır; [toplam] gerçek sayı olduğu
-/// için başlık şeritle aynı sayıyı söyler. Karolar [MiniIcerik] olduğundan
-/// dokununca içerik detayına gidilir (alt sayfa altta açık kalır, geri
-/// dönünce liste kaldığı yerdedir).
-class _IzlenenlerSheet extends StatelessWidget {
-  final String tur;
-  final List<dynamic> ogeler;
-  final int toplam;
-
-  const _IzlenenlerSheet({
-    required this.tur,
-    required this.ogeler,
-    required this.toplam,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final baslik =
-        (tur == 'tv' ? 'İzlediği Diziler ({})' : 'İzlediği Filmler ({})').cf([
-          toplam,
-        ]);
-    return DraggableScrollableSheet(
-      expand: false,
-      initialChildSize: 0.7,
-      minChildSize: 0.4,
-      maxChildSize: 0.92,
-      builder: (context, kontrol) => Column(
-        children: [
-          const SizedBox(height: 12),
-          Container(
-            width: 36,
-            height: 4,
-            decoration: BoxDecoration(
-              color: DiziRenkler.metin24,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 14),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Icon(
-                  tur == 'tv' ? Icons.tv_outlined : Icons.movie_outlined,
-                  size: 19,
-                  color: DiziRenkler.sariMetin,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    baslik,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: GridView.builder(
-              controller: kontrol,
-              padding: EdgeInsets.fromLTRB(16, 8, 16, altGuvenli(context)),
-              gridDelegate: const PosterIzgarasi(satirBoslugu: 16, bosluk: 12),
-              itemCount: ogeler.length,
-              itemBuilder: (context, i) {
-                final o = ogeler[i] as Map<String, dynamic>;
-                return MiniIcerik(
-                  key: ValueKey('sheet-${o['tur']}-${o['tmdb_id']}'),
-                  tmdbId: (o['tmdb_id'] as num).toInt(),
-                  tur: o['tur'] as String,
-                  genislik: double.infinity,
-                  izlenenSayi: (o['sayi'] as num?)?.toInt(),
-                );
-              },
-            ),
           ),
         ],
       ),
