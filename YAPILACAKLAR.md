@@ -1,5 +1,42 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-08 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-08 — 🎬 Yönetim panelinde İZLEME ODALARI: kim şu an birlikte izliyor 🚀
+
+**Tetik (kullanıcı, birebir):** *"dizi jpg admin panelinde canlı izleme yapanları
+da görmek istiyorum birlikte izle odalarını"*.
+
+**Neden gerekti:** birlikte izleme 3 Eyl'de canlıya alındı ama panelde HİÇ yoktu.
+Kaç oda açık, kim ŞU AN içeride, ne izleniyor (yüklenen dosya mı, yapıştırılan
+bağlantı mı), video hazırlama kuyruğunda takılan var mı — hiçbiri görünmüyordu.
+Odalar 12 saatte silindiği için (`odalariSupur`) olay bittikten SONRA bakmak da
+mümkün değil: görünüm CANLI olmak zorundaydı.
+
+**Ne eklendi**
+- `GET /admin/odalar?durum=acik|kapali|tumu` — açık odalar, her satırda ŞU AN
+  içeride olanların ADI (`oda_uyeler.son_gorulme > now()-15sn`, eşik `oda.js`
+  `CEVRIMICI_ESIK_MS` ile aynı), kaynak, oynatma durumu, üye/davet/mesaj sayısı.
+- `GET /admin/oda/:id` — üye tablosu (rol, izliyor/ayrıldı/davetli-girmedi, katılma
+  anı, son yoklama, davet eden), sohbet SAYIMI, yüklemelerin ilerlemesi.
+- `GET /admin/ozet` → `odaAcik` + `odaIzleyici`: Canlı Panel'de "İzleme Odası"
+  kartı ve sol menüde yeşil rozet (rozet ODA değil KİŞİ sayar).
+- Panelde yeni sayfa: **Topluluk › İzleme Odaları** (10 sn'de bir tazelenir).
+
+**Zaman kodu panelde İLERLER:** sunucu `konum_ms`+`konum_zaman`+`hiz` gönderiyor,
+panel saniyede bir `oda.js#beklenenKonum` ile aynı hesabı yapıyor. 10 sn'lik
+tazelemeye bıraksaydık oynayan oda panelde DONMUŞ görünürdü. Yönetici makinesinin
+saati kaymışsa `sunucu_zaman` farkı düzeltiyor.
+
+**GİZLİLİK — bilerek çizildi:** oda sohbeti en çok 12 kişilik ÖZEL sohbettir;
+uçlar mesaj METNİ DÖNDÜRMEZ, yalnız sayım/zaman döner. Bu, DM'lerdeki kararın
+(`GET /admin/mesaj-sikayet/:id`) aynısı: içerik ancak ŞİKAYET üzerinden okunur.
+İzlenen KAYNAK (dosya adı / bağlantı adresi) sohbet değil odanın kendisidir ve
+moderasyonun asıl sorusudur — o gösterilir.
+
+**Kanıt (canlı):** test hesabıyla oda açıldı → YouTube bağlantısı verildi →
+oynatıldı → yoklama sürerken panelde `● oynuyor`, `🟢 testuser123`, zaman kodu
+2:26 → 2:29 ilerledi; detay modalinde üye "izliyor" göründü. Uç matrisi:
+`durum=kapali/tumu/abc` 200, `oda/999999` 404, `oda/abc` 400. Test odası silindi.
 
 ## 2026-09-07 — 🔗 Odaya YouTube bağlantısı "geçersiz" diyordu: kaçışlı `$` ✅
 

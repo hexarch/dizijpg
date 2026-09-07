@@ -154,6 +154,32 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .ulke-bar{flex:1;height:6px;background:var(--panel2);border-radius:3px;overflow:hidden}
 .ulke-bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--mor),var(--mavi));border-radius:3px}
 #spark{width:100%;height:60px;display:block}
+/* İzleme odaları (8 Eyl 2026) */
+.oda-satir{display:flex;gap:14px;align-items:flex-start;padding:13px 16px;
+  border-bottom:1px solid rgba(36,36,47,.6);cursor:pointer;transition:.12s}
+.oda-satir:hover{background:rgba(255,255,255,.03)}
+.oda-satir:focus-visible{outline:2px solid var(--sari);outline-offset:-2px}
+.oda-sol{flex:1;min-width:0}
+.oda-ust{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.oda-ad{font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis}
+.oda-kod{font-family:'JetBrains Mono';font-size:11px;color:var(--sari);
+  background:rgba(245,197,24,.12);border-radius:6px;padding:2px 7px;letter-spacing:1px}
+.oda-alt{font-size:12px;color:var(--soluk);margin-top:3px;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.oda-kisi{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.oda-etiket{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;
+  font-size:11px;font-weight:600;background:var(--panel2);color:var(--soluk)}
+.oda-etiket.canli{background:rgba(52,211,153,.15);color:var(--yesil)}
+.oda-etiket.durdu{background:rgba(245,197,24,.13);color:var(--sari)}
+.oda-etiket.hata{background:rgba(248,113,113,.15);color:var(--kirmizi)}
+.oda-etiket.bos{background:rgba(90,90,104,.2);color:var(--soluk2)}
+.oda-sag{flex:none;text-align:right;font-family:'JetBrains Mono';font-size:12px}
+.oda-sag .kck{font-family:'Inter',system-ui,sans-serif}
+.oda-bilgi{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;
+  background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.oda-bilgi div span{display:block;font-size:11px;color:var(--soluk2)}
+.oda-bilgi div b{font-size:13px;font-weight:700;word-break:break-word}
+@media(max-width:640px){.oda-satir{flex-direction:column;gap:6px}.oda-sag{text-align:left}}
 .uyari-kutu{margin:0 24px 16px;padding:12px 16px;border-radius:12px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:#fca5a5;font-size:13px}
 
 /* Mailler */
@@ -371,6 +397,39 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
     </div>
   </div>
 </section>
+
+<!-- İZLEME ODALARI (8 Eyl 2026) — "canlı izleme yapanları da görmek istiyorum".
+     Sayfa CANLI: 10 sn'de bir liste tazelenir, zaman kodu SANİYEDE BİR kendi
+     saatiyle ilerler (yoksa oda oynarken panel donmuş görünürdü). Sohbet METNİ
+     GÖSTERİLMEZ — gerekçe backend'de `GET /admin/odalar` başlığında. -->
+<section id="s-odalar" class="sayfa gizli">
+  <div class="panel" style="margin-bottom:16px">
+    <div class="arac" style="border-bottom:none">
+      <label class="kck" for="oda-durum">Odalar</label>
+      <select id="oda-durum" onchange="odalariYukle()">
+        <option value="acik" selected>açık odalar</option>
+        <option value="kapali">kapanmış (son 10 dk)</option>
+        <option value="tumu">tümü</option>
+      </select>
+      <button class="btn" onclick="odalariYukle()">Yenile ↻</button>
+      <span class="kck" id="oda-durum-yazi"></span>
+    </div>
+  </div>
+  <div class="kucuk-kartlar" id="oda-kartlar" style="padding:0 0 16px"></div>
+  <div class="panel">
+    <h3>🎬 Odalar <span class="sag" id="oda-sayi">—</span></h3>
+    <div id="oda-liste"></div>
+  </div>
+</section>
+
+<!-- ODA DETAY MODALI -->
+<div id="oda-modal" class="mdl-perde gizli" onclick="if(event.target===this)odaModalKapat()">
+  <div class="panel mdl-kutu">
+    <h3>🎬 <span id="oda-baslik">—</span>
+      <span class="sag"><button class="btn" onclick="odaModalKapat()">Kapat ✕</button></span></h3>
+    <div id="oda-icerik" style="padding:16px"></div>
+  </div>
+</div>
 
 <!-- KULLANICI DETAY MODALI -->
 <div id="k-modal" class="mdl-perde gizli" onclick="if(event.target===this)modalKapat()">
@@ -993,6 +1052,7 @@ const MODULLER=[
     {k:'hareketler', ad:'Hareketler',   i:'🔀', rozet:'cev-rozet', yesil:1, yukle:()=>hareketleriYukle()},
     {k:'kullanicilar',ad:'Kullanıcılar',i:'👥', yukle:()=>kullanicilariYukle()},
     {k:'yorumlar',   ad:'Gönderiler',   i:'💬', yukle:()=>yorumlariYukle()},
+    {k:'odalar',     ad:'İzleme Odaları',i:'🎬', rozet:'oda-rozet', yesil:1, yukle:()=>odalariYukle()},
   ]},
   {ad:'Moderasyon', sayfalar:[
     {k:'sikayetler', ad:'Şikayetler',   i:'🚩', rozet:'sik-rozet', yukle:()=>sikayetleriYukle()},
@@ -1148,11 +1208,11 @@ function modalTekGoster(id){
   MODAL_IDLER.forEach(s=>$(s).classList.toggle('gizli',s!==id));
   // Mail / geri bildirim / mesaj modalleri bu yığının parçası değil ama
   // ALTTA kalırlarsa iki modal üst üste görünür — kapat.
-  ['#gb-modal','#m-modal','#msj-modal'].forEach(s=>{const e=$(s); if(e) e.classList.add('gizli');});
+  ['#gb-modal','#m-modal','#msj-modal','#oda-modal'].forEach(s=>{const e=$(s); if(e) e.classList.add('gizli');});
 }
 addEventListener('keydown',e=>{
   if(e.key!=='Escape') return;
-  const acik=['#g-modal','#i-modal','#k-modal','#gb-modal','#m-modal','#ban-modal','#msj-modal']
+  const acik=['#g-modal','#i-modal','#k-modal','#gb-modal','#m-modal','#ban-modal','#msj-modal','#oda-modal']
     .find(s=>$(s) && !$(s).classList.contains('gizli'));
   if(!acik) return;
   if(MODAL_IDLER.includes(acik)) modalKapat(); else $(acik).classList.add('gizli');
@@ -1258,6 +1318,7 @@ function kartlar(d){
   const K=[
     {e:'Kullanıcılar',v:d.kullanici,a:d.misafir+' misafir',i:'👤',vurgu:1},
     {e:'Çevrimiçi',v:d.cevrimici??'—',a:'son 3 dk içinde',i:'🟢',vurgu:d.cevrimici>0},
+    {e:'İzleme Odası',v:d.odaAcik??'—',a:(d.odaIzleyici??0)+' kişi şu an izliyor',i:'🎬',vurgu:d.odaIzleyici>0},
     {e:'Toplam İstek',v:d.istekToplam.toLocaleString('tr'),a:anlik+'/dk şu an',i:'⚡'},
     {e:'Hata (24s)',v:d.hata24,a:d.hataToplam+' toplam',i:'🐞',uyari:d.hata24>0},
     {e:'Yeni Şikayet',v:d.sikayetYeni,a:d.sikayetToplam+' toplam',i:'🚩',uyari:d.sikayetYeni>0},
@@ -1280,6 +1341,9 @@ function kartlar(d){
   // herkese açık arşive HİÇ girmez (yalnız kendilerinde görünür).
   const gz=$('#gif-rozet'); if(gz){ gz.textContent=d.gifBekleyen??0; gz.classList.toggle('gizli',!d.gifBekleyen); }
   const cz=$('#cev-rozet'); cz.textContent=d.cevrimici??0; cz.classList.toggle('gizli',!d.cevrimici);
+  // İzleme odası rozeti: KİŞİ sayısı (oda sayısı değil) — "şu an kaç kişi
+  // birlikte izliyor" sorusu menüden okunsun.
+  const oz=$('#oda-rozet'); if(oz){ oz.textContent=d.odaIzleyici??0; oz.classList.toggle('gizli',!d.odaIzleyici); }
   ulkeler(d.ulkeler);
   spark(d.istekSeri);
 }
@@ -1505,6 +1569,196 @@ async function icerikDetay(tur,tmdbId){
 }
 // Sekme açıkken 15 sn'de bir tazele
 setInterval(()=>{ if(!$('#s-hareketler').classList.contains('gizli')) hareketleriYukle(); },15000);
+
+/* ---- İZLEME ODALARI (8 Eyl 2026) ----------------------------------------
+   "canlı izleme yapanları da görmek istiyorum, birlikte izle odalarını".
+   Üç şey aynı anda görünmeli: kaç oda açık, KİM şu an içeride, NE izleniyor.
+
+   ZAMAN KODU PANELDE İLERLER: sunucu `konum_ms` + `konum_zaman` + `hiz`
+   gönderiyor (oda.js `beklenenKonum` ile aynı hesap). Liste 10 sn'de bir
+   tazeleniyor; zaman kodunu da 10 sn'de bir yazsaydık oynayan bir oda panelde
+   DONMUŞ görünürdü — saniyede bir yerel saatle ilerletiliyor.
+   ODA_SAAT_FARKI: yönetici makinesinin saati kaymış olabilir; sunucunun
+   bildirdiği ana göre düzeltilir (yoksa zaman kodu dakikalarca ileri/geri
+   başlardı).                                                                */
+let ODA_SAAT_FARKI=0, ODA_TIK=null, ODA_ACIK_ID=null;
+const odaSure = ms => {
+  const sn=Math.max(0,Math.floor(ms/1000)), s=Math.floor(sn/3600), d=Math.floor(sn%3600/60), k=sn%60;
+  const iki=n=>String(n).padStart(2,'0');
+  return s?`${s}:${iki(d)}:${iki(k)}`:`${d}:${iki(k)}`;
+};
+/* Kalan süre ("2s 14dk sonra biter"). `zaman()` GEÇMİŞ içindir, bu GELECEK. */
+const odaKalan = ts => {
+  const f=Math.max(0,(ts-Date.now())/1000);
+  return f<60?`${Math.floor(f)}sn`:f<3600?`${Math.floor(f/60)}dk`:`${Math.floor(f/3600)}s ${Math.floor(f%3600/60)}dk`;
+};
+function odaKonumlariTazele(){
+  const simdi=Date.now()+ODA_SAAT_FARKI;
+  document.querySelectorAll('[data-oda-kon]').forEach(el=>{
+    const taban=+el.dataset.ms||0, hiz=+el.dataset.hiz||1;
+    const zaman=+el.dataset.zaman||simdi, sure=+el.dataset.sure||0;
+    let v = el.dataset.oynuyor==='1' ? taban+Math.max(0,simdi-zaman)*hiz : taban;
+    if(sure>0) v=Math.min(v,sure);
+    el.textContent = odaSure(v)+(sure>0?' / '+odaSure(sure):'');
+  });
+}
+function odaTikKur(){ if(!ODA_TIK) ODA_TIK=setInterval(odaKonumlariTazele,1000); }
+/* Zaman kodu kabı — veriyi data- ile taşır ki tazeleme DOM'u yeniden
+   kurmadan yalnız metni değiştirsin. */
+const odaKonEl = (o,ek='') => `<span class="mono" data-oda-kon="1" ${ek}
+  data-ms="${Number(o.konum_simdi)||0}" data-zaman="${Number(o.sunucu_zaman)||Date.now()}"
+  data-hiz="${Number(o.hiz)||1}" data-sure="${Number(o.video_sure_ms)||0}"
+  data-oynuyor="${o.oynuyor?1:0}">${odaSure(Number(o.konum_simdi)||0)}</span>`;
+
+const ODA_HAZIRLIK={kuyrukta:'hazırlık kuyrukta',isleniyor:'hazırlanıyor',hata:'hazırlık HATASI'};
+function odaKaynakYazi(o){
+  if(o.kaynak==='baglanti' && o.baglanti){
+    const u=String(o.baglanti.url||'');
+    const ad=`${esc(o.baglanti.saglayici)}${o.baglanti.kimlik?' · '+esc(o.baglanti.kimlik):''}`;
+    // Yalnız https bağlantı çapa olur: `javascript:` benzeri bir değer panelde
+    // TIKLANABİLİR olmamalı (sunucu doğruluyor, panel yine de güvenmiyor).
+    return /^https:\/\//.test(u)
+      ? `<a class="bag" href="${esc(u)}" target="_blank" rel="noopener noreferrer"
+           onclick="event.stopPropagation()" title="${esc(u)}">${ad} ↗</a>`
+      : ad;
+  }
+  if(o.video_var) return `${esc(o.video_ad||'(adsız video)')} <span class="kck">${bytFmt(o.video_boyut)}</span>`;
+  return '<span class="kck">video seçilmedi</span>';
+}
+function odaDurumEtiket(o){
+  if(o.kapandi || o.biter<=Date.now()) return '<span class="oda-etiket bos">kapandı</span>';
+  if(o.hazirlik_durum==='hata') return '<span class="oda-etiket hata">hazırlık hatası</span>';
+  if(o.hazirlik_durum==='kuyrukta'||o.hazirlik_durum==='isleniyor')
+    return `<span class="oda-etiket durdu">${esc(ODA_HAZIRLIK[o.hazirlik_durum])}${o.hazirlik_yuzde?' %'+o.hazirlik_yuzde:''}</span>`;
+  return o.oynuyor
+    ? '<span class="oda-etiket canli">● oynuyor</span>'
+    : '<span class="oda-etiket durdu">⏸ duraklatıldı</span>';
+}
+async function odalariYukle(){
+  const durum=$('#oda-durum').value;
+  try{
+    const d=await api('/odalar?durum='+encodeURIComponent(durum));
+    ODA_SAAT_FARKI=(d.sunucu_zaman||Date.now())-Date.now();
+    const z=d.ozet||{};
+    $('#oda-kartlar').innerHTML=[
+      {e:'Açık Oda',v:z.oda??0,a:(z.oynayan??0)+' tanesi oynuyor',i:'🎬',vurgu:(z.oda??0)>0},
+      {e:'Şu An İzleyen',v:z.izleyici??0,a:'son '+(d.esik_sn||15)+' sn içinde yoklama',i:'👁️',vurgu:(z.izleyici??0)>0},
+      {e:'Odalardaki Üye',v:z.uye??0,a:(z.davet??0)+' bekleyen davet',i:'👥'},
+    ].map(k=>`<div class="kart ${k.vurgu?'vurgu':''}">
+        <div class="ikon">${k.i}</div><div class="etk">${k.e}</div>
+        <div class="deg">${k.v}</div><div class="alt">${esc(k.a)}</div></div>`).join('');
+    $('#oda-sayi').textContent=d.odalar.length+' oda';
+    $('#oda-durum-yazi').textContent = durum==='kapali'
+      ? 'Kapanan odalar 10 dakikada bir SİLİNİYOR — burada yalnız son temizlikten kalanlar görünür.'
+      : '10 saniyede bir tazelenir · sohbet metni gösterilmez';
+    $('#oda-liste').innerHTML = d.odalar.map(o=>{
+      const kisiler=(o.izleyenler||[]).map(a=>
+        `<span class="oda-etiket canli">🟢 ${esc(a)}</span>`).join('')
+        || '<span class="oda-etiket bos">şu an kimse izlemiyor</span>';
+      return `<div class="oda-satir" role="button" tabindex="0"
+          onclick="odaDetay(${o.id})" onkeydown="if(event.key==='Enter')odaDetay(${o.id})">
+        <div class="oda-sol">
+          <div class="oda-ust">
+            <span class="oda-kod">${esc(o.kod)}</span>
+            <span class="oda-ad">${esc(o.baslik||'(başlıksız oda)')}</span>
+            ${odaDurumEtiket(o)}
+          </div>
+          <div class="oda-alt">${kAd(o.sahip)} · ${odaKaynakYazi(o)}</div>
+          <div class="oda-kisi">${kisiler}</div>
+        </div>
+        <div class="oda-sag">
+          ${odaKonEl(o)}
+          <div class="kck">${o.cevrimici}/${o.katilan} içeride${o.davet?' · '+o.davet+' davetli':''}</div>
+          <div class="kck">💬 ${o.mesaj} · ${o.kapandi?'kapandı':odaKalan(o.biter)+' kaldı'}</div>
+        </div>
+      </div>`;
+    }).join('') || `<div class="bos">${durum==='acik'?'Şu an açık oda yok':'Kayıt yok'}</div>`;
+    odaTikKur(); odaKonumlariTazele();
+  }catch(e){ $('#oda-liste').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>'; }
+}
+setInterval(()=>{ if(!$('#s-odalar').classList.contains('gizli')) odalariYukle(); },10000);
+
+/* Oda detayı. Sohbet METNİ YOK — yalnız sayım (gerekçe: backend
+   `GET /admin/odalar` başlığı, DM'lerdeki kararla aynı çizgi). */
+function odaModalKapat(){ ODA_ACIK_ID=null; $('#oda-modal').classList.add('gizli'); }
+async function odaDetay(id, sessiz=false){
+  ODA_ACIK_ID=id;
+  $('#oda-modal').classList.remove('gizli');
+  if(!sessiz){
+    $('#oda-baslik').textContent='Oda #'+Number(id);
+    $('#oda-icerik').innerHTML='<div class="bos">Yükleniyor…</div>';
+  }
+  try{
+    const d=await api('/oda/'+Number(id));
+    const o=d.oda;
+    ODA_SAAT_FARKI=(d.sunucu_zaman||Date.now())-Date.now();
+    $('#oda-baslik').innerHTML=`${esc(o.baslik||'(başlıksız oda)')}
+      <span class="oda-kod">${esc(o.kod)}</span> ${odaDurumEtiket(o)}`;
+    const ic=[];
+    ic.push(`<div class="oda-bilgi">
+      <div><span>Sahip</span><b>${kAd(o.sahip)}</b></div>
+      <div><span>Kaynak</span><b>${odaKaynakYazi(o)}</b></div>
+      <div><span>Konum</span><b>${odaKonEl(o)} ${o.hiz!==1?`<span class="kck">×${o.hiz}</span>`:''}</b></div>
+      <div><span>Açıldı</span><b>${esc(new Date(o.olusturuldu).toLocaleString('tr'))}</b></div>
+      <div><span>${o.kapandi?'Kapandı':'Biter'}</span><b>${o.kapandi
+        ? esc(new Date(o.kapandi).toLocaleString('tr'))
+        : odaKalan(o.biter)+' sonra'}</b></div>
+      <div><span>Video</span><b>${o.video_var
+        ? bytFmt(o.video_boyut)+(o.video_kodek?` · ${esc(o.video_kodek)}/${esc(o.ses_kodek||'?')}`:'')
+        : '—'}</b></div>
+      <div><span>Hazırlık</span><b>${esc(o.hazirlik_durum)}${o.hazirlik_yuzde?' %'+o.hazirlik_yuzde:''}${
+        o.hazirlik_hata?` <span class="kck">${esc(o.hazirlik_hata)}</span>`:''}</b></div>
+      <div><span>Sürüm</span><b class="mono">${o.surum}</b></div>
+    </div>`);
+    const ROL={sahip:'sahip',yetkili:'yetkili',izleyici:'izleyici'};
+    ic.push(`<div style="margin-top:14px"><b style="font-size:12px">Üyeler (${d.uyeler.length})</b>
+      <div style="overflow:auto;margin-top:6px"><table><tr>
+        <th>Kişi</th><th>Rol</th><th>Durum</th><th>Katıldı</th><th>Son yoklama</th><th>Davet eden</th></tr>
+      ${d.uyeler.map(u=>`<tr>
+        <td>${kAd(u.ad)}${u.yasakli?' <span class="etiket e-yeni">yasaklı</span>':''}</td>
+        <td>${esc(ROL[u.rol]||u.rol)}</td>
+        <td>${u.cevrimici
+          ? '<span class="oda-etiket canli">🟢 izliyor</span>'
+          : u.katildi
+            ? '<span class="oda-etiket bos">ayrıldı</span>'
+            : '<span class="oda-etiket durdu">davetli, girmedi</span>'}
+          ${u.hazir?' <span class="kck">hazır</span>':''}</td>
+        <td class="mono">${u.katildi?esc(new Date(u.katildi).toLocaleString('tr')):'—'}</td>
+        <td class="mono">${u.katildi?zaman(u.son_gorulme)+' önce':'—'}</td>
+        <td>${u.davet_eden?kAd(u.davet_eden):'<span class="kck">—</span>'}</td>
+      </tr>`).join('')}</table></div></div>`);
+    const so=d.sohbet||{};
+    ic.push(`<div style="margin-top:14px"><b style="font-size:12px">Sohbet hareketi</b>
+      <div class="kck" style="margin:3px 0 6px">Mesaj METNİ panelde GÖSTERİLMEZ (oda sohbeti özeldir;
+        DM'lerde olduğu gibi içerik ancak şikayet üzerinden incelenir). Buradaki veriler yalnız sayımdır.</div>
+      <div class="oda-bilgi">
+        <div><span>Mesaj</span><b>${so.mesaj||0}</b></div>
+        <div><span>Tepki</span><b>${so.tepki||0}</b></div>
+        <div><span>Sistem satırı</span><b>${so.sistem||0}</b></div>
+        <div><span>Son mesaj</span><b>${so.son?zaman(so.son)+' önce':'—'}</b></div>
+      </div>
+      ${(so.tepkiler||[]).length?`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${
+        so.tepkiler.map(t=>`<span class="oda-etiket">${esc(t.tepki)} ${t.sayi}</span>`).join('')}</div>`:''}
+      ${(so.kisiler||[]).length?`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${
+        so.kisiler.map(k=>`<span class="oda-etiket">${esc(k.ad)} · ${k.sayi}</span>`).join('')}</div>`:''}
+    </div>`);
+    if((d.yuklemeler||[]).length){
+      ic.push(`<div style="margin-top:14px"><b style="font-size:12px">Yüklemeler (${d.yuklemeler.length})</b>
+        <div style="overflow:auto;margin-top:6px"><table><tr>
+          <th>Dosya</th><th>Yükleyen</th><th>İlerleme</th><th>Güncellendi</th></tr>
+        ${d.yuklemeler.map(y=>`<tr>
+          <td>${esc(y.ad||'(adsız)')}</td>
+          <td>${kAd(y.kullanici_adi)}</td>
+          <td class="mono">${bytFmt(y.ofset)} / ${bytFmt(y.boyut)}
+            <span class="kck">%${y.boyut?Math.floor(y.ofset/y.boyut*100):0}</span></td>
+          <td class="mono">${zaman(y.guncellendi)} önce</td>
+        </tr>`).join('')}</table></div></div>`);
+    }
+    $('#oda-icerik').innerHTML=ic.join('');
+    odaTikKur(); odaKonumlariTazele();
+  }catch(e){ $('#oda-icerik').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>'; }
+}
+setInterval(()=>{ if(ODA_ACIK_ID && !$('#oda-modal').classList.contains('gizli')) odaDetay(ODA_ACIK_ID,true); },10000);
 
 let SON_KULLANICI=null;
 async function kullaniciDetay(ad){

@@ -21,7 +21,8 @@ import {
   parcaKarari as odaParcaKarari, durumYazabilir as odaDurumYazabilir,
   rolAtamaKarari as odaRolAtamaKarari,
   girisKarari as odaGirisKarari, cevrimiciMi as odaCevrimiciMi,
-  baglantiCoz as odaBaglantiCoz,
+  baglantiCoz as odaBaglantiCoz, beklenenKonum as odaBeklenenKonum,
+  CEVRIMICI_ESIK_MS as ODA_CEVRIMICI_ESIK_MS,
 } from './oda.js';
 // İZLEME ODASI VİDEO HAZIRLAMA (4 Eyl 2026) — MKV desteği. Matroska ile WebM
 // AYNI sihirli baytları taşıdığı için MKV sessizce kabul edilip `.webm` diye
@@ -21176,6 +21177,27 @@ app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
     // görünür), yani rozet bir "unutma" alarmıdır.
     havuz.query("SELECT count(*)::int n FROM gifler WHERE durum='bekliyor'"),
   ]);
+  // İZLEME ODASI (8 Eyl 2026) — "şu an kaç oda açık, kaç kişi izliyor".
+  // Bu uç 3 saniyede bir çalışıyor: sorgu TEK ve indeksli (`izleme_odalari_biter`
+  // + `oda_uyeler` birincil anahtarı). try/catch ZORUNLU değil ama var: odalar
+  // migrasyonu uygulanmamış bir veritabanında bu sorgu "relation does not exist"
+  // atar ve PANELİN TAMAMI karartırdı — sayaç eksik göstermek, paneli
+  // kaybetmekten iyidir.
+  let odaSayac = null;
+  try {
+    const { rows } = await havuz.query(
+      `SELECT count(DISTINCT o.id)::int AS acik,
+              count(DISTINCT u.kullanici_id) FILTER (
+                WHERE u.katildi IS NOT NULL
+                  AND u.son_gorulme > now() - make_interval(secs => $1))::int AS izleyici
+         FROM izleme_odalari o
+         LEFT JOIN oda_uyeler u ON u.oda_id = o.id
+        WHERE o.kapandi IS NULL AND o.biter > now()`,
+      [ODA_CEVRIMICI_ESIK_MS / 1000]);
+    odaSayac = rows[0];
+  } catch (e) {
+    if (!/does not exist/i.test(e.message)) throw e;
+  }
   const IST = await istekVerisi(); // kümede birleşik, kümesizken yerel halka
   const simdiDk = Math.floor(Date.now() / 60000);
   const seri = [];
@@ -21198,6 +21220,8 @@ app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
     sikayetYeni: sy.rows[0].n,
     sikayetToplam: sT.rows[0].n,
     gifBekleyen: gf.rows[0].n,
+    odaAcik: odaSayac ? odaSayac.acik : null,
+    odaIzleyici: odaSayac ? odaSayac.izleyici : null,
     istekToplam: IST.toplam,
     istekSeri: seri,
     ulkeler,
@@ -23224,6 +23248,244 @@ app.get('/admin/icerik/:tur/:tmdbId', adminKisit, sarici(async (req, res) => {
     durumlar: durumlar.rows,
     izleyenler: izleyenler.rows,
     gonderiler: gonderiler.rows,
+  });
+}));
+
+// ---------- İZLEME ODALARI: MODERASYON GÖRÜNÜMÜ (8 Eyl 2026) ----------
+//
+// Kullanıcı isteği: *"canlı izleme yapanları da görmek istiyorum, birlikte
+// izle odalarını"*. 3 Eyl'de canlıya alınan birlikte izleme panelde HİÇ
+// yoktu: kaç oda açık, kim ŞU AN izliyor, ne izleniyor (yüklenen dosya mı,
+// yapıştırılan bağlantı mı), video hazırlama kuyruğunda takılan var mı —
+// hiçbiri görünmüyordu. Odalar 12 saatte silindiği için (`odalariSupur`)
+// olay bittikten SONRA bakmak da mümkün değil; bu yüzden görünüm CANLI.
+//
+// GİZLİLİK — `GET /admin/mesaj-sikayet/:id` başlığındaki kararla AYNI çizgi:
+// oda sohbeti en çok 12 kişilik ÖZEL bir sohbettir ve bu uçlar mesaj METNİ
+// DÖNDÜRMEZ. Yalnız SAYIM ve ZAMAN döner (kaç mesaj, hangi tepkiden kaç tane,
+// son ne zaman) — "oda ölü mü, hareketli mi" sorusu bunlarla cevaplanır.
+// Metin gerekiyorsa yol bellidir ve değişmedi: kullanıcı şikayet eder.
+// İzlenen KAYNAK (dosya adı / bağlantı adresi) sohbet değil odanın KENDİSİDİR
+// ve moderasyonun asıl sorusudur ("ne yayınlanıyor") — o gösterilir.
+
+/** Listede dönen azami oda. Aynı anda açık oda sayısı bunun çok altında. */
+const ADMIN_ODA_LIMIT = 60;
+
+/** Çevrimiçi eşiği SANİYE olarak — SQL `make_interval` bunu ister. */
+const ADMIN_ODA_ESIK_SN = ODA_CEVRIMICI_ESIK_MS / 1000;
+
+/**
+ * Panelin oda gövdesi. `odaGovde`den AYRI: orada video İMZALI yolla gider ve
+ * "sahibi_miyim/benim_rol" hesaplanır — ikisi de panelde anlamsız, imzalı yol
+ * ise gereksiz bir sızıntı yüzeyi. Burada konum HAM alanlarla gider
+ * (`konum_ms` + `konum_zaman` + `hiz`): panel saniyede bir kendi saatiyle
+ * ilerletir, yoksa zaman kodu 10 sn'de bir zıplardı.
+ */
+function adminOdaGovde(o) {
+  return {
+    id: Number(o.id),
+    kod: o.kod,
+    baslik: o.baslik,
+    sahip_id: o.sahip_id,
+    sahip: o.sahip_adi,
+    kaynak: o.kaynak || 'yukleme',
+    baglanti: o.kaynak === 'baglanti' && o.baglanti_saglayici ? {
+      saglayici: o.baglanti_saglayici,
+      kimlik: o.baglanti_kimlik,
+      url: o.baglanti_url,
+    } : null,
+    video_var: !!o.video_var,
+    video_ad: o.video_ad,
+    video_boyut: o.video_boyut == null ? null : Number(o.video_boyut),
+    video_sure_ms: o.video_sure_ms == null ? null : Number(o.video_sure_ms),
+    video_kodek: o.video_kodek || null,
+    ses_kodek: o.ses_kodek || null,
+    hazirlik_durum: o.hazirlik_durum || 'yok',
+    hazirlik_yuzde: Number(o.hazirlik_yuzde) || 0,
+    hazirlik_hata: o.hazirlik_hata || null,
+    oynuyor: o.oynuyor,
+    konum_ms: Number(o.konum_ms),
+    konum_zaman: new Date(o.konum_zaman).getTime(),
+    // Sunucunun O ANDA hesapladığı konum: panel kendi hesabını buna göre
+    // kurar ve saat farkı olan bir yönetici makinesinde bile doğru başlar.
+    konum_simdi: odaBeklenenKonum({
+      oynuyor: o.oynuyor,
+      konum_ms: Number(o.konum_ms),
+      konum_zaman: new Date(o.konum_zaman).getTime(),
+      hiz: Number(o.hiz),
+    }, Date.now(), o.video_sure_ms == null ? null : Number(o.video_sure_ms)),
+    hiz: Number(o.hiz),
+    surum: Number(o.surum),
+    olusturuldu: new Date(o.olusturuldu).getTime(),
+    biter: new Date(o.biter).getTime(),
+    kapandi: o.kapandi ? new Date(o.kapandi).getTime() : null,
+    sunucu_zaman: Date.now(),
+  };
+}
+
+// Açık odalar + ŞU AN içeride olanlar. `durum=kapali` penceresi DARDIR:
+// `odalariSupur` 10 dakikada bir kapanmış/süresi dolmuş odaları SİLİYOR,
+// yani orada en fazla son 10 dakikanın kalıntısı görünür (bu bir eksiklik
+// değil, tasarım: oda verisi kalıcı tutulmuyor).
+app.get('/admin/odalar', adminKisit, sarici(async (req, res) => {
+  const durum = ['acik', 'kapali', 'tumu'].includes(req.query.durum)
+    ? req.query.durum : 'acik';
+  const kosul = durum === 'acik' ? 'o.kapandi IS NULL AND o.biter > now()'
+    : durum === 'kapali' ? '(o.kapandi IS NOT NULL OR o.biter <= now())'
+      : 'true';
+  const [liste, ozet] = await Promise.all([
+    havuz.query(
+      `SELECT o.id, o.kod, o.baslik, o.sahip_id, k.kullanici_adi AS sahip_adi,
+              o.kaynak, o.baglanti_saglayici, o.baglanti_kimlik, o.baglanti_url,
+              (o.video IS NOT NULL) AS video_var, o.video_ad, o.video_boyut,
+              o.video_sure_ms, o.video_kodek, o.ses_kodek,
+              o.hazirlik_durum, o.hazirlik_yuzde, o.hazirlik_hata,
+              o.oynuyor, o.konum_ms, o.konum_zaman, o.hiz, o.surum,
+              o.olusturuldu, o.biter, o.kapandi,
+              u.uye, u.katilan, u.davet, u.cevrimici, u.son_hareket,
+              c.izleyenler, m.mesaj, m.son_mesaj
+         FROM izleme_odalari o
+         JOIN kullanicilar k ON k.id = o.sahip_id
+         LEFT JOIN LATERAL (
+           SELECT count(*)::int AS uye,
+                  count(*) FILTER (WHERE katildi IS NOT NULL)::int AS katilan,
+                  count(*) FILTER (WHERE katildi IS NULL)::int AS davet,
+                  count(*) FILTER (WHERE katildi IS NOT NULL
+                    AND son_gorulme > now() - make_interval(secs => $1))::int AS cevrimici,
+                  max(son_gorulme) AS son_hareket
+             FROM oda_uyeler WHERE oda_id = o.id) u ON true
+         LEFT JOIN LATERAL (
+           SELECT array_agg(k2.kullanici_adi ORDER BY u2.son_gorulme DESC) AS izleyenler
+             FROM oda_uyeler u2 JOIN kullanicilar k2 ON k2.id = u2.kullanici_id
+            WHERE u2.oda_id = o.id AND u2.katildi IS NOT NULL
+              AND u2.son_gorulme > now() - make_interval(secs => $1)) c ON true
+         LEFT JOIN LATERAL (
+           SELECT count(*)::int AS mesaj, max(tarih) AS son_mesaj
+             FROM oda_mesajlar WHERE oda_id = o.id) m ON true
+        WHERE ${kosul}
+        ORDER BY u.cevrimici DESC NULLS LAST, o.oynuyor DESC,
+                 u.son_hareket DESC NULLS LAST, o.id DESC
+        LIMIT $2`,
+      [ADMIN_ODA_ESIK_SN, ADMIN_ODA_LIMIT]),
+    // Özet DAİMA açık odalar üzerinden: süzgeç "kapalı"ya alınsa bile üstteki
+    // kartlar "şu an ne oluyor" sorusunu cevaplamalı.
+    havuz.query(
+      `SELECT count(DISTINCT o.id)::int AS oda,
+              count(DISTINCT o.id) FILTER (WHERE o.oynuyor)::int AS oynayan,
+              count(DISTINCT u.kullanici_id) FILTER (
+                WHERE u.katildi IS NOT NULL
+                  AND u.son_gorulme > now() - make_interval(secs => $1))::int AS izleyici,
+              count(u.kullanici_id) FILTER (WHERE u.katildi IS NOT NULL)::int AS uye,
+              count(u.kullanici_id) FILTER (WHERE u.katildi IS NULL)::int AS davet
+         FROM izleme_odalari o
+         LEFT JOIN oda_uyeler u ON u.oda_id = o.id
+        WHERE o.kapandi IS NULL AND o.biter > now()`,
+      [ADMIN_ODA_ESIK_SN]),
+  ]);
+  res.json({
+    durum,
+    esik_sn: ADMIN_ODA_ESIK_SN,
+    // Panel zaman kodunu KENDİ saatiyle ilerletiyor; yönetici makinesinin
+    // saati kaymışsa fark buradan düzeltilir.
+    sunucu_zaman: Date.now(),
+    ozet: ozet.rows[0],
+    odalar: liste.rows.map((o) => ({
+      ...adminOdaGovde(o),
+      uye: o.uye || 0,
+      katilan: o.katilan || 0,
+      davet: o.davet || 0,
+      cevrimici: o.cevrimici || 0,
+      izleyenler: o.izleyenler || [],
+      mesaj: o.mesaj || 0,
+      son_mesaj: o.son_mesaj ? new Date(o.son_mesaj).getTime() : null,
+      son_hareket: o.son_hareket ? new Date(o.son_hareket).getTime() : null,
+    })),
+  });
+}));
+
+// Tek odanın detayı: kim içeride, kim davetli ama girmemiş, kim hangi rolde,
+// yükleme nerede kaldı. Sohbet YALNIZ SAYIMLA temsil edilir (yukarıdaki
+// gizlilik notu).
+app.get('/admin/oda/:id', adminKisit, sarici(async (req, res) => {
+  const id = Number.parseInt(req.params.id, 10);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ hata: 'Geçersiz id' });
+  }
+  const o = await havuz.query(
+    `SELECT o.*, (o.video IS NOT NULL) AS video_var,
+            k.kullanici_adi AS sahip_adi
+       FROM izleme_odalari o JOIN kullanicilar k ON k.id = o.sahip_id
+      WHERE o.id = $1`, [id]);
+  if (!o.rows.length) return res.status(404).json({ hata: 'Oda bulunamadı' });
+  const [uyeler, sohbet, kisiler, tepkiler, yuklemeler] = await Promise.all([
+    havuz.query(
+      `SELECT u.kullanici_id, u.rol, u.katildi, u.hazir, u.son_gorulme,
+              k.kullanici_adi, k.yasakli,
+              d.kullanici_adi AS davet_eden
+         FROM oda_uyeler u
+         JOIN kullanicilar k ON k.id = u.kullanici_id
+         LEFT JOIN kullanicilar d ON d.id = u.davet_eden
+        WHERE u.oda_id = $1
+        ORDER BY (u.rol = 'sahip') DESC, u.katildi NULLS LAST, u.kullanici_id`,
+      [id]),
+    havuz.query(
+      `SELECT count(*)::int AS mesaj,
+              count(*) FILTER (WHERE tepki IS NOT NULL)::int AS tepki,
+              count(*) FILTER (WHERE sistem)::int AS sistem,
+              min(tarih) AS ilk, max(tarih) AS son
+         FROM oda_mesajlar WHERE oda_id = $1`, [id]),
+    havuz.query(
+      `SELECT k.kullanici_adi, count(*)::int AS sayi, max(m.tarih) AS son
+         FROM oda_mesajlar m LEFT JOIN kullanicilar k ON k.id = m.kullanici_id
+        WHERE m.oda_id = $1 AND NOT m.sistem AND m.kullanici_id IS NOT NULL
+        GROUP BY k.kullanici_adi ORDER BY 2 DESC, 3 DESC LIMIT 20`, [id]),
+    havuz.query(
+      `SELECT tepki, count(*)::int AS sayi FROM oda_mesajlar
+        WHERE oda_id = $1 AND tepki IS NOT NULL
+        GROUP BY tepki ORDER BY 2 DESC`, [id]),
+    havuz.query(
+      `SELECT y.id, y.ad, y.boyut, y.ofset, y.olusturuldu, y.guncellendi,
+              k.kullanici_adi
+         FROM oda_yuklemeler y JOIN kullanicilar k ON k.id = y.kullanici_id
+        WHERE y.oda_id = $1 ORDER BY y.guncellendi DESC LIMIT 20`, [id]),
+  ]);
+  const simdi = Date.now();
+  res.json({
+    oda: adminOdaGovde(o.rows[0]),
+    esik_sn: ADMIN_ODA_ESIK_SN,
+    sunucu_zaman: simdi,
+    uyeler: uyeler.rows.map((u) => ({
+      id: u.kullanici_id,
+      ad: u.kullanici_adi,
+      rol: u.rol,
+      yasakli: u.yasakli,
+      davet_eden: u.davet_eden,
+      // `katildi` NULL = davet edildi ama HENÜZ GİRMEDİ (davet ile üyelik
+      // aynı tabloda; bkz. migrasyon-2026-09-03.sql).
+      katildi: u.katildi ? new Date(u.katildi).getTime() : null,
+      hazir: u.hazir,
+      son_gorulme: new Date(u.son_gorulme).getTime(),
+      cevrimici: u.katildi != null
+        && odaCevrimiciMi(new Date(u.son_gorulme).getTime(), simdi),
+    })),
+    sohbet: {
+      ...sohbet.rows[0],
+      ilk: sohbet.rows[0].ilk ? new Date(sohbet.rows[0].ilk).getTime() : null,
+      son: sohbet.rows[0].son ? new Date(sohbet.rows[0].son).getTime() : null,
+      kisiler: kisiler.rows.map((k) => ({
+        ad: k.kullanici_adi, sayi: k.sayi, son: new Date(k.son).getTime(),
+      })),
+      tepkiler: tepkiler.rows,
+    },
+    yuklemeler: yuklemeler.rows.map((y) => ({
+      id: y.id,
+      ad: y.ad,
+      kullanici_adi: y.kullanici_adi,
+      boyut: Number(y.boyut),
+      ofset: Number(y.ofset),
+      olusturuldu: new Date(y.olusturuldu).getTime(),
+      guncellendi: new Date(y.guncellendi).getTime(),
+    })),
   });
 }));
 
