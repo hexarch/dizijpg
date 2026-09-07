@@ -67,8 +67,10 @@ import datetime as dt
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
+import urllib.parse
 import urllib.request
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
@@ -129,17 +131,26 @@ uyari = lambda m: print(f"{R['sar']}!{R['sif']} {m}")
 hata = lambda m: print(f"{R['kir']}✗{R['sif']} {m}", file=sys.stderr)
 
 
+AYAR_DOSYA = "gonderi_ayar.json"
+_AYAR = None
+
+
+def ayar():
+    """Elle ayar dosyası (araclar/gonderi_ayar.json): kara liste, şirket adı ve
+    logo ezmeleri. Kullanıcının doğrudan düzenlediği yer."""
+    global _AYAR
+    if _AYAR is None:
+        yol = os.path.join(CALISMA if CALISIYOR_KOPYADAN else BURASI, AYAR_DOSYA)
+        try:
+            with open(yol, encoding="utf-8") as f:
+                _AYAR = json.load(f)
+        except FileNotFoundError:
+            _AYAR = {}
+    return _AYAR
+
+
 def haric(tur):
-    """Gönderilerden çıkarılacak TMDB kimlikleri (araclar/gonderi_haric.json).
-    Kullanıcının elle beslediği kara liste — skor havuzuna DEĞİL, yalnız
-    yayımlanan listeye uygulanır."""
-    yol = os.path.join(CALISMA if CALISIYOR_KOPYADAN else BURASI,
-                       "gonderi_haric.json")
-    try:
-        with open(yol, encoding="utf-8") as f:
-            return set(json.load(f).get(tur) or [])
-    except FileNotFoundError:
-        return set()
+    return set((ayar().get("haric") or {}).get(tur) or [])
 
 
 def font(ad, boyut):
@@ -251,6 +262,87 @@ def tmdb(yol, **parametre):
     with open(dosya, "w", encoding="utf-8") as f:
         json.dump(veri, f, ensure_ascii=False)
     return veri
+
+
+WIKI_UA = {"User-Agent": "dizijpg-gonderi/1.0 (https://dizijpg.com)"}
+# Sadeleştirmede atılan jenerik kelimeler: ad eşleşmesi "warner" gibi ÖZ ada
+# baksın, "pictures/studios" gibi herkeste olan eklere değil.
+JENERIK = {"pictures", "picture", "studios", "studio", "television", "tv",
+           "entertainment", "productions", "production", "company", "films",
+           "film", "media", "group", "inc", "llc", "ltd", "the", "co"}
+
+
+def _sade(ad):
+    parcalar = re.sub(r"[^a-z0-9 ]", " ", ad.lower()).split()
+    return [p for p in parcalar if p not in JENERIK]
+
+
+def wikidata_logo(ad):
+    """Şirketin GÜNCEL resmî logosu (Wikidata P154 → Wikimedia Commons).
+
+    NEDEN TMDB YETMİYOR: TMDB şirket başına TEK logo tutar ve çoğu, yıllar önce
+    yüklenmiş siyah/eski sürümdür (7 Eyl 2026: kullanıcı "neden bazıları renkli
+    bazıları siyah?" diye sordu — ölçüldü, Warner/Paramount/20th Century
+    TMDB'de eski markayla duruyordu). Wikidata güncel logoyu işaret eder,
+    Commons da SVG'yi `Special:FilePath?width=` ile PNG'ye çevirir.
+
+    YANLIŞ EŞLEŞME KAPISI: aday varlığın etiketi ile şirket adının ÖZ
+    kelimeleri kesişmiyorsa kabul edilmez (aksi hâlde "Syncopy" araması
+    alakasız bir varlığın logosunu getirebilirdi)."""
+    onbellek = os.path.join(ONBELLEK, "wikidata.json")
+    try:
+        with open(onbellek, encoding="utf-8") as f:
+            kayit = json.load(f)
+    except (FileNotFoundError, ValueError):
+        kayit = {}
+    if ad in kayit:
+        return kayit[ad]
+
+    def cek(url):
+        with urllib.request.urlopen(
+                urllib.request.Request(url, headers=WIKI_UA), timeout=20) as y:
+            return json.loads(y.read().decode())
+
+    sonuc = None
+    try:
+        q = urllib.parse.quote(ad)
+        arama = cek("https://www.wikidata.org/w/api.php?action=wbsearchentities"
+                    f"&search={q}&language=en&format=json&type=item&limit=4")
+        cekirdek = set(_sade(ad))
+        for aday in arama.get("search", []):
+            if cekirdek and not (cekirdek & set(_sade(aday.get("label") or ""))):
+                continue
+            iddia = cek("https://www.wikidata.org/w/api.php?action=wbgetclaims"
+                        f"&entity={aday['id']}&property=P154&format=json")
+            p154 = (iddia.get("claims") or {}).get("P154")
+            if not p154:
+                continue
+            dosya = p154[0]["mainsnak"]["datavalue"]["value"]
+            sonuc = ("https://commons.wikimedia.org/wiki/Special:FilePath/"
+                     + urllib.parse.quote(dosya) + "?width=600")
+            break
+    except Exception as e:                      # ağ/kota hatası sessizce TMDB'ye düşer
+        uyari(f"wikidata ({ad}): {e}")
+        return None
+
+    kayit[ad] = sonuc
+    os.makedirs(ONBELLEK, exist_ok=True)
+    with open(onbellek, "w", encoding="utf-8") as f:
+        json.dump(kayit, f, ensure_ascii=False)
+    return sonuc
+
+
+def url_indir(url):
+    """Herhangi bir adresten görsel (diske önbellekli, saydamlık korunur)."""
+    dosya = os.path.join(ONBELLEK, "gorsel",
+                         hashlib.md5(url.encode()).hexdigest() + ".png")
+    os.makedirs(os.path.dirname(dosya), exist_ok=True)
+    if not os.path.exists(dosya):
+        with urllib.request.urlopen(
+                urllib.request.Request(url, headers=WIKI_UA), timeout=30) as y, \
+                open(dosya, "wb") as f:
+            f.write(y.read())
+    return Image.open(dosya).convert("RGBA")
 
 
 def gorsel_indir(yol, boyut="w342", alfa=False):
@@ -404,7 +496,7 @@ def kutu_ciz(im, d, gorsel, x, y, w, h, yaricap=14):
                         outline=(46, 46, 52), width=2)
 
 
-def logo_kutusu(im, d, logo_yolu, x, y, w, h, yaricap=14):
+def logo_kutusu(im, d, logo, x, y, w, h, yaricap=14):
     """Şirket logosunu kutuya ortalar.
 
     KART RENGİ HEP AYNI (açık): on kutunun bir kısmı koyu bir kısmı açık olunca
@@ -412,7 +504,6 @@ def logo_kutusu(im, d, logo_yolu, x, y, w, h, yaricap=14):
     BEYAZ-SAYDAM olduğu için açık kartta kaybolurdu; bu logolar (parlak ve
     renksiz olanlar) tersine çevrilip koyu çizilir — biçim korunur, renkli
     logolar (Marvel'ın kırmızısı, WB'nin altını) olduğu gibi kalır."""
-    logo = gorsel_indir(logo_yolu, "w500", alfa=True)
     if logo is None:
         return
     kucuk = logo.resize((64, 64))
@@ -450,7 +541,7 @@ def ciz_izgara(b, s, satir1, satir2, alt_metin, ogeler):
     for i, oge in enumerate(ogeler[:10]):
         sx = KENAR + (i % IZGARA_SUTUN) * (AFIS_G + bosluk)
         sy = IZGARA_UST + (i // IZGARA_SUTUN) * (hucre_y + 60)
-        if oge.get("logo"):
+        if oge.get("logo") is not None:
             logo_kutusu(im, d, oge["logo"], sx, sy, AFIS_G, AFIS_Y)
         else:
             kutu_ciz(im, d, gorsel_indir(oge["afis"], "w342"), sx, sy, AFIS_G, AFIS_Y)
@@ -673,8 +764,20 @@ def sirket_listesi(havuz, adet=10):
             continue
         kullanilan.add(afis)
         det = tmdb(f"/company/{kimlik}")
-        ad, logo = det.get("name"), det.get("logo_path")
-        if not ad or not logo:
+        ad = (ayar().get("sirket_ad") or {}).get(str(kimlik)) or det.get("name")
+        if not ad:
+            continue
+        # Logo kaynağı sırası: elle ezme → Wikidata (güncel resmî) → TMDB (eski).
+        elle = (ayar().get("sirket_logo") or {}).get(str(kimlik))
+        adres = elle or wikidata_logo(det.get("name") or ad)
+        try:
+            logo = url_indir(adres) if adres else None
+        except Exception as e:
+            uyari(f"logo inilemedi ({ad}): {e}")
+            logo = None
+        if logo is None and det.get("logo_path"):
+            logo = gorsel_indir(det["logo_path"], "w500", alfa=True)
+        if logo is None:
             continue
         cikti.append({"tmdb_id": kimlik, "ad": ad, "afis": afis, "logo": logo})
         if len(cikti) == adet:
@@ -911,8 +1014,8 @@ def kur():
     os.makedirs(os.path.join(varliklar, "fonts"), exist_ok=True)
     shutil.copy2(os.path.abspath(__file__),
                  os.path.join(CALISMA, "haftalik_gonderi.py"))
-    shutil.copy2(os.path.join(BURASI, "gonderi_haric.json"),
-                 os.path.join(CALISMA, "gonderi_haric.json"))
+    shutil.copy2(os.path.join(BURASI, AYAR_DOSYA),
+                 os.path.join(CALISMA, AYAR_DOSYA))
     shutil.copy2(LOGO, os.path.join(varliklar, "logo.png"))
     for f in _glob.glob(os.path.join(FONT_DIZIN, "Poppins-*.ttf")):
         shutil.copy2(f, os.path.join(varliklar, "fonts", os.path.basename(f)))

@@ -1,0 +1,20 @@
+{
+  "_not": "Haftalık Instagram gönderilerinin elle ayar dosyası. Betik her koşuda okur; sunucuya gitmez.",
+
+  "_haric_not": "Gönderiden ÇIKARILACAK TMDB kimlikleri. Yalnız YAYIMLANAN listeye uygulanır, skor havuzunu değiştirmez (Avengers'ı çıkarmak Russo kardeşleri yönetmen listesinden düşürmez).",
+  "haric": {
+    "movie": [854, 24428, 99861, 299536, 299534],
+    "_movie_adlar": ["Maske", "Avengers", "Avengers: Ultron Çağı", "Avengers: Sonsuzluk Savaşı", "Avengers: Endgame"],
+    "tv": [],
+    "person": [],
+    "company": []
+  },
+
+  "_sirket_ad_not": "TMDB'deki eski şirket adını güncel adla değiştirir (logo güncel olduğunda ad da güncel olmalı). Anahtar = TMDB şirket kimliği.",
+  "sirket_ad": {
+    "25": "20th Century Studios"
+  },
+
+  "_sirket_logo_not": "Elle logo ezmesi: TMDB şirket kimliği -> görsel adresi. Wikidata yanlış/eski logo verirse buraya yaz.",
+  "sirket_logo": {}
+}
