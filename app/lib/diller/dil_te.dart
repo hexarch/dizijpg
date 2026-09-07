@@ -1678,4 +1678,16 @@ const Map<String, String> cevirilerTe = {
   'Seyirci': 'ప్రేక్షకులు',
   "2027'de Vizyona Girecek Filmler": "2027లో విడుదలయ్యే సినిమాలు",
   "2027'de Başlayacak Diziler": "2027లో ప్రారంభమయ్యే సిరీస్‌లు",
+  'Gizli hesap': 'ప్రైవేట్ ఖాతా',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'ఆన్ చేస్తే మీరు ఆమోదించిన అనుచరులే మీ ప్రొఫైల్ చూడగలరు; కొత్త ఫాలోలు అభ్యర్థనలుగా వస్తాయి',
+  'İstek Gönderildi': 'అభ్యర్థించారు',
+  'Bu hesap gizli': 'ఈ ఖాతా ప్రైవేట్',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'మీ అభ్యర్థన పెండింగ్‌లో ఉంది; ఆమోదించాక వారు చూసినవి, వ్యాఖ్యలు, జాబితాలు చూడగలరు.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'వారు చూసినవి, వ్యాఖ్యలు, జాబితాలు చూడటానికి ఫాలో అభ్యర్థన పంపండి; ఆమోదించాక ప్రొఫైల్ తెరుచుకుంటుంది.',
+  '@{} seni takip etmek istiyor': '@{} మిమ్మల్ని ఫాలో చేయాలనుకుంటున్నారు',
+  '@{} takip isteğini kabul etti': '@{} మీ ఫాలో అభ్యర్థనను ఆమోదించారు',
+  'Onayla': 'ఆమోదించు',
 };

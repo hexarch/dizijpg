@@ -1817,3 +1817,26 @@ CREATE TABLE IF NOT EXISTS dis_puanlar (
   PRIMARY KEY (tur, tmdb_id)
 );
 CREATE INDEX IF NOT EXISTS idx_dis_puan_cekim ON dis_puanlar(cekim);
+
+-- ---------------------------------------------------------------------------
+-- GİZLİ HESAP (8 Eyl 2026, migrasyon-2026-09-08.sql) — Instagram tarzı özel
+-- profil. `hesap_gizli` TAKİPÇİYE AÇIK / yabancıya KAPALI (diğer `_gizli`
+-- alanları herkese karşı ve bölüm bölüm; bu yüzden ayrı sütun). Bekleyen
+-- istekler `takipler`e bayrakla değil AYRI tabloya yazılır: eski hiçbir
+-- "takip ediyor" sorgusu bekleyen isteği takip sanmaz. Gerekçe migrasyonda.
+-- ---------------------------------------------------------------------------
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS hesap_gizli BOOLEAN NOT NULL DEFAULT false;
+CREATE TABLE IF NOT EXISTS takip_istekleri (
+  isteyen_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  hedef_id   INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  tarih      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (isteyen_id, hedef_id),
+  CHECK (isteyen_id <> hedef_id)
+);
+CREATE INDEX IF NOT EXISTS idx_takip_istek_hedef ON takip_istekleri(hedef_id, tarih DESC);
+ALTER TABLE bildirimler DROP CONSTRAINT IF EXISTS bildirimler_tur_check;
+ALTER TABLE bildirimler ADD CONSTRAINT bildirimler_tur_check
+  CHECK (tur IN ('yanit', 'begeni', 'takip', 'mesaj', 'etiket',
+                 'kacirilan_arama', 'bolum', 'kisi', 'geri_bildirim',
+                 'surum', 'oda_davet', 'takip_istegi', 'takip_kabul'));

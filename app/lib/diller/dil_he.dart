@@ -1642,4 +1642,16 @@ const Map<String, String> cevirilerHe = {
   'Seyirci': 'קהל',
   "2027'de Vizyona Girecek Filmler": "סרטים שיצאו ב-2027",
   "2027'de Başlayacak Diziler": "סדרות שיתחילו ב-2027",
+  'Gizli hesap': 'חשבון פרטי',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'כשמופעל, רק עוקבים שאישרת רואים את הפרופיל; עוקבים חדשים מגיעים כבקשות',
+  'İstek Gönderildi': 'הבקשה נשלחה',
+  'Bu hesap gizli': 'החשבון הזה פרטי',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'הבקשה שלך ממתינה; אחרי האישור תוכלו לראות מה נצפה, תגובות ורשימות.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'שלחו בקשת מעקב כדי לראות מה נצפה, תגובות ורשימות; הפרופיל ייפתח אחרי האישור.',
+  '@{} seni takip etmek istiyor': '@{} רוצה לעקוב אחריך',
+  '@{} takip isteğini kabul etti': '@{} אישר/ה את בקשת המעקב שלך',
+  'Onayla': 'אישור',
 };

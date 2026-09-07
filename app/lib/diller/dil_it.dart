@@ -1693,4 +1693,16 @@ const Map<String, String> cevirilerIt = {
   'Seyirci': 'Pubblico',
   "2027'de Vizyona Girecek Filmler": "Film in uscita nel 2027",
   "2027'de Başlayacak Diziler": "Serie al via nel 2027",
+  'Gizli hesap': 'Account privato',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Se attivo, solo i follower che approvi vedono il tuo profilo; i nuovi follow ti arrivano come richieste',
+  'İstek Gönderildi': 'Richiesta inviata',
+  'Bu hesap gizli': 'Questo account è privato',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'La tua richiesta è in attesa; quando verrà accettata vedrai cosa guarda, i suoi commenti e le sue liste.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Invia una richiesta per vedere cosa guarda, i suoi commenti e le sue liste; il profilo si apre quando viene accettata.',
+  '@{} seni takip etmek istiyor': '@{} vuole seguirti',
+  '@{} takip isteğini kabul etti': '@{} ha accettato la tua richiesta',
+  'Onayla': 'Approva',
 };

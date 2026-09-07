@@ -75,6 +75,12 @@ class _TakipDugmesiState extends State<TakipDugmesi> {
   late bool _takipte = widget.takipEdiyorum;
   bool _isleniyor = false;
 
+  /// GİZLİ HESAP (8 Eyl 2026): sunucu takip yerine `istek:true` döndüyse
+  /// düğme "İstek Gönderildi" olur; ikinci dokunuş isteği geri çeker.
+  /// Liste satırları bu bilgiyi taşımaz (takipçi listesi zaten yalnız
+  /// takipçiyi gösterir), o yüzden başlangıçta hep false — sunucu söyler.
+  bool _istek = false;
+
   @override
   void didUpdateWidget(TakipDugmesi eski) {
     super.didUpdateWidget(eski);
@@ -89,9 +95,13 @@ class _TakipDugmesiState extends State<TakipDugmesi> {
     if (_isleniyor) return;
     if (!girisGerekli(context)) return; // oturumsuz → nazik giriş istemi
     final eski = _takipte;
+    final eskiIstek = _istek;
     setState(() {
       _isleniyor = true;
-      _takipte = !eski; // İYİMSER: etiket anında değişir
+      // İYİMSER: etiket anında değişir. Bekleyen istek geri çekiliyorsa
+      // "Takip Et"e döner; gizli hesapsa sunucu yanıtı "istek"e çevirir.
+      _istek = false;
+      _takipte = eskiIstek ? false : !eski;
     });
     widget.onDegisti?.call(_takipte);
     try {
@@ -101,6 +111,7 @@ class _TakipDugmesiState extends State<TakipDugmesi> {
       if (!mounted) return;
       setState(() {
         _takipte = sunucu;
+        _istek = d['istek'] == true;
         _isleniyor = false;
       });
     } catch (e) {
@@ -109,6 +120,7 @@ class _TakipDugmesiState extends State<TakipDugmesi> {
       if (!mounted) return;
       setState(() {
         _takipte = eski;
+        _istek = eskiIstek;
         _isleniyor = false;
       });
       ScaffoldMessenger.of(
@@ -120,7 +132,13 @@ class _TakipDugmesiState extends State<TakipDugmesi> {
   @override
   Widget build(BuildContext context) {
     if (widget.benMi) return const SizedBox.shrink();
-    final etiket = _takipte ? 'Takibi Bırak'.c : 'Takip Et'.c;
+    final etiket = _takipte
+        ? 'Takibi Bırak'.c
+        : _istek
+        ? 'İstek Gönderildi'.c
+        : 'Takip Et'.c;
+    // Takipte ve istek bekliyor hâlleri aynı "pasif" çizimi paylaşır.
+    final pasif = _takipte || _istek;
     // Spinner etiketin ÜSTÜNDE çizilir (etiket görünmez ama yerini korur):
     // düğme genişliği işlem sırasında zıplamaz.
     final govde = _isleniyor
@@ -133,7 +151,7 @@ class _TakipDugmesiState extends State<TakipDugmesi> {
                 height: 14,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: _takipte ? DiziRenkler.sariMetin : Colors.black,
+                  color: pasif ? DiziRenkler.sariMetin : Colors.black,
                 ),
               ),
             ],
@@ -159,7 +177,7 @@ class _TakipDugmesiState extends State<TakipDugmesi> {
         // erişilebilirlik EYLEMİNİ de silerdi — tooltip silmez.)
         child: Tooltip(
           message: '$etiket · @${widget.kullaniciAdi}',
-          child: _takipte
+          child: pasif
               ? OutlinedButton(
                   onPressed: _isleniyor ? null : _bas,
                   style: OutlinedButton.styleFrom(

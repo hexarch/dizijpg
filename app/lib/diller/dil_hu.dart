@@ -1690,4 +1690,16 @@ const Map<String, String> cevirilerHu = {
   'Seyirci': 'Közönség',
   "2027'de Vizyona Girecek Filmler": "2027-ben érkező filmek",
   "2027'de Başlayacak Diziler": "2027-ben induló sorozatok",
+  'Gizli hesap': 'Privát fiók',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Ha be van kapcsolva, csak a jóváhagyott követőid látják a profilodat; az új követések kérésként érkeznek',
+  'İstek Gönderildi': 'Kérés elküldve',
+  'Bu hesap gizli': 'Ez a fiók privát',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'A kérésed függőben van; jóváhagyás után látod, mit néz, a hozzászólásait és a listáit.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Küldj követési kérést, hogy lásd, mit néz, a hozzászólásait és a listáit; a profil jóváhagyás után nyílik meg.',
+  '@{} seni takip etmek istiyor': '@{} követni szeretne',
+  '@{} takip isteğini kabul etti': '@{} elfogadta a követési kérésedet',
+  'Onayla': 'Jóváhagyás',
 };

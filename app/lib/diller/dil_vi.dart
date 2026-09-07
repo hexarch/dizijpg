@@ -1676,4 +1676,16 @@ const Map<String, String> cevirilerVi = {
   'Seyirci': 'Khán giả',
   "2027'de Vizyona Girecek Filmler": "Phim ra rạp năm 2027",
   "2027'de Başlayacak Diziler": "Phim bộ lên sóng năm 2027",
+  'Gizli hesap': 'Tài khoản riêng tư',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Khi bật, chỉ những người theo dõi bạn duyệt mới thấy hồ sơ; lượt theo dõi mới sẽ đến dưới dạng yêu cầu',
+  'İstek Gönderildi': 'Đã gửi yêu cầu',
+  'Bu hesap gizli': 'Tài khoản này ở chế độ riêng tư',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'Yêu cầu của bạn đang chờ; khi được duyệt bạn sẽ thấy phim đã xem, bình luận và danh sách.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Gửi yêu cầu theo dõi để xem phim đã xem, bình luận và danh sách; hồ sơ mở khi được duyệt.',
+  '@{} seni takip etmek istiyor': '@{} muốn theo dõi bạn',
+  '@{} takip isteğini kabul etti': '@{} đã chấp nhận yêu cầu theo dõi của bạn',
+  'Onayla': 'Duyệt',
 };

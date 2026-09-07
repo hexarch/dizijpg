@@ -1599,4 +1599,16 @@ const Map<String, String> cevirilerKo = {
   'Seyirci': '관객',
   "2027'de Vizyona Girecek Filmler": "2027년 개봉 예정 영화",
   "2027'de Başlayacak Diziler": "2027년 방영 시작 시리즈",
+  'Gizli hesap': '비공개 계정',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      '켜면 승인한 팔로워만 프로필을 볼 수 있어요. 새 팔로우는 요청으로 도착합니다',
+  'İstek Gönderildi': '요청됨',
+  'Bu hesap gizli': '비공개 계정입니다',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      '요청이 대기 중이에요. 승인되면 시청 기록, 댓글, 리스트를 볼 수 있어요.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      '시청 기록, 댓글, 리스트를 보려면 팔로우 요청을 보내세요. 승인되면 프로필이 열립니다.',
+  '@{} seni takip etmek istiyor': '@{}님이 팔로우를 요청했어요',
+  '@{} takip isteğini kabul etti': '@{}님이 팔로우 요청을 수락했어요',
+  'Onayla': '승인',
 };

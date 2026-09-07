@@ -1724,4 +1724,16 @@ const Map<String, String> cevirilerRo = {
   'Seyirci': 'Public',
   "2027'de Vizyona Girecek Filmler": "Filme care apar în 2027",
   "2027'de Başlayacak Diziler": "Seriale care încep în 2027",
+  'Gizli hesap': 'Cont privat',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Când e activ, doar urmăritorii aprobați îți văd profilul; urmăririle noi îți vin ca solicitări',
+  'İstek Gönderildi': 'Solicitat',
+  'Bu hesap gizli': 'Acest cont este privat',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'Solicitarea ta e în așteptare; după aprobare vei vedea ce urmărește, comentariile și listele.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Trimite o solicitare de urmărire pentru a vedea ce urmărește, comentariile și listele; profilul se deschide după aprobare.',
+  '@{} seni takip etmek istiyor': '@{} vrea să te urmărească',
+  '@{} takip isteğini kabul etti': '@{} a acceptat solicitarea ta de urmărire',
+  'Onayla': 'Aprobă',
 };

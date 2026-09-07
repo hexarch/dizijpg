@@ -1712,4 +1712,16 @@ const Map<String, String> cevirilerFil = {
   'Seyirci': 'Manonood',
   "2027'de Vizyona Girecek Filmler": "Mga Pelikulang Lalabas sa 2027",
   "2027'de Başlayacak Diziler": "Mga Seryeng Magsisimula sa 2027",
+  'Gizli hesap': 'Pribadong account',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Kapag naka-on, tanging mga follower na inaprubahan mo ang makakakita ng profile mo; darating ang mga bagong follow bilang request',
+  'İstek Gönderildi': 'Nai-request',
+  'Bu hesap gizli': 'Pribado ang account na ito',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'Nakabinbin ang request mo; kapag naaprubahan, makikita mo ang pinapanood, mga komento at listahan.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Magpadala ng follow request para makita ang pinapanood, mga komento at listahan; bubukas ang profile kapag naaprubahan.',
+  '@{} seni takip etmek istiyor': 'Gustong sumunod sa iyo ni @{}',
+  '@{} takip isteğini kabul etti': 'Tinanggap ni @{} ang follow request mo',
+  'Onayla': 'Aprubahan',
 };

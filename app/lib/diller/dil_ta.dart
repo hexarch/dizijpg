@@ -1707,4 +1707,16 @@ const Map<String, String> cevirilerTa = {
   'Seyirci': 'பார்வையாளர்கள்',
   "2027'de Vizyona Girecek Filmler": "2027ல் வெளியாகும் திரைப்படங்கள்",
   "2027'de Başlayacak Diziler": "2027ல் தொடங்கும் தொடர்கள்",
+  'Gizli hesap': 'தனிப்பட்ட கணக்கு',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'இயக்கினால் நீங்கள் ஒப்புதல் அளித்த பின்தொடர்பவர்கள் மட்டும் சுயவிவரத்தைப் பார்க்கலாம்; புதிய பின்தொடர்தல்கள் கோரிக்கையாக வரும்',
+  'İstek Gönderildi': 'கோரிக்கை அனுப்பப்பட்டது',
+  'Bu hesap gizli': 'இந்தக் கணக்கு தனிப்பட்டது',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'உங்கள் கோரிக்கை நிலுவையில் உள்ளது; ஒப்புதல் பெற்றால் பார்த்தவை, கருத்துகள், பட்டியல்களைப் பார்க்கலாம்.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'பார்த்தவை, கருத்துகள், பட்டியல்களைப் பார்க்க பின்தொடர் கோரிக்கை அனுப்பவும்; ஒப்புதல் பெற்றால் சுயவிவரம் திறக்கும்.',
+  '@{} seni takip etmek istiyor': '@{} உங்களைப் பின்தொடர விரும்புகிறார்',
+  '@{} takip isteğini kabul etti': '@{} உங்கள் பின்தொடர் கோரிக்கையை ஏற்றார்',
+  'Onayla': 'ஒப்புதல்',
 };

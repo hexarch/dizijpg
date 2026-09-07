@@ -1674,4 +1674,16 @@ const Map<String, String> cevirilerHi = {
   'Seyirci': 'दर्शक',
   "2027'de Vizyona Girecek Filmler": "2027 में आने वाली फ़िल्में",
   "2027'de Başlayacak Diziler": "2027 में शुरू होने वाली सीरीज़",
+  'Gizli hesap': 'निजी खाता',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'चालू होने पर आपकी प्रोफ़ाइल केवल आपके स्वीकृत फ़ॉलोअर देख सकते हैं; नए फ़ॉलो आपको अनुरोध के रूप में मिलते हैं',
+  'İstek Gönderildi': 'अनुरोध भेजा',
+  'Bu hesap gizli': 'यह खाता निजी है',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'आपका अनुरोध लंबित है; स्वीकृत होने पर आप इनके देखे गए शो, टिप्पणियाँ और सूचियाँ देख सकेंगे।',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'इनके देखे गए शो, टिप्पणियाँ और सूचियाँ देखने के लिए फ़ॉलो अनुरोध भेजें; स्वीकृत होने पर प्रोफ़ाइल खुल जाएगी।',
+  '@{} seni takip etmek istiyor': '@{} आपको फ़ॉलो करना चाहते हैं',
+  '@{} takip isteğini kabul etti': '@{} ने आपका फ़ॉलो अनुरोध स्वीकार किया',
+  'Onayla': 'स्वीकृत करें',
 };

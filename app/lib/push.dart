@@ -335,6 +335,12 @@ String? bildirimHedefi(Map<String, dynamic> veri) {
       return ad.isEmpty ? null : '/sohbet/$ad';
     case 'takip':
       return ad.isEmpty ? null : '/kullanici/$ad';
+    // GİZLİ HESAP (8 Eyl 2026): istek kararı bildirim listesinde verilir;
+    // kabul haberi ise kabul edenin profiline götürür.
+    case 'takip_istegi':
+      return '/bildirimler';
+    case 'takip_kabul':
+      return ad.isEmpty ? null : '/kullanici/$ad';
     case 'bolum':
       // Md. 27 — yeni bölüm: doğrudan bölüm sayfasına. Alanlar FCM data'sında
       // STRING gelir; biri eksikse bildirim listesine düş (yanlış rotaya

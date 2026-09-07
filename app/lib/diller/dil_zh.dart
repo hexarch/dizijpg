@@ -1593,4 +1593,16 @@ const Map<String, String> cevirilerZh = {
   'Seyirci': '观众',
   "2027'de Vizyona Girecek Filmler": "2027 年上映的电影",
   "2027'de Başlayacak Diziler": "2027 年开播的剧集",
+  'Gizli hesap': '私密账号',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      '开启后，只有你批准的关注者才能看到你的主页；新的关注将以请求形式发送给你',
+  'İstek Gönderildi': '已请求',
+  'Bu hesap gizli': '此账号为私密账号',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      '你的请求正在等待处理；通过后即可查看对方的观看记录、评论和列表。',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      '发送关注请求即可查看对方的观看记录、评论和列表；通过后主页将开放。',
+  '@{} seni takip etmek istiyor': '@{} 请求关注你',
+  '@{} takip isteğini kabul etti': '@{} 已接受你的关注请求',
+  'Onayla': '批准',
 };

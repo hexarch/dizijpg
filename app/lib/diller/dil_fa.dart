@@ -1661,4 +1661,16 @@ const Map<String, String> cevirilerFa = {
   'Seyirci': 'تماشاگران',
   "2027'de Vizyona Girecek Filmler": "فیلم‌های اکران 2027",
   "2027'de Başlayacak Diziler": "سریال‌هایی که در 2027 آغاز می‌شوند",
+  'Gizli hesap': 'حساب خصوصی',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'وقتی فعال باشد فقط دنبال‌کنندگان تأییدشده نمایه‌ات را می‌بینند؛ دنبال‌کردن‌های جدید به‌صورت درخواست می‌آیند',
+  'İstek Gönderildi': 'درخواست ارسال شد',
+  'Bu hesap gizli': 'این حساب خصوصی است',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'درخواستت در انتظار است؛ پس از تأیید می‌توانی تماشاها، نظرها و فهرست‌هایش را ببینی.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'برای دیدن تماشاها، نظرها و فهرست‌هایش درخواست دنبال‌کردن بفرست؛ پس از تأیید نمایه باز می‌شود.',
+  '@{} seni takip etmek istiyor': '@{} می‌خواهد تو را دنبال کند',
+  '@{} takip isteğini kabul etti': '@{} درخواست دنبال‌کردنت را پذیرفت',
+  'Onayla': 'تأیید',
 };

@@ -1,6 +1,60 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-08 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-08 — 🔒 GİZLİ HESAP: Instagram tarzı özel profil + takip istekleri (1.145.0+221) ✅
+
+**Tetik (kullanıcı, birebir):** *"profil gizleme aynı instagramdaki gibi profil
+gizleyebilinsin sadece takip isteklerini kabul ettiğinde gözüksün ve takip
+istekleri bildirimler kısmında biriksin"*.
+
+**Neden yeni sütun:** mevcut altı `_gizli` alanı HERKESE karşı ve BÖLÜM BÖLÜM
+kapatır; gizli hesap TAKİPÇİYE AÇIK / yabancıya KAPALI tek kapıdır, anahtarı
+tercih değil takip ilişkisidir → `kullanicilar.hesap_gizli` (7. gizlilik alanı,
+Ayarlar › Gizlilik'te EN ÜSTTE). Bekleyen istekler `takipler`e bayrakla değil
+AYRI `takip_istekleri` tablosuna yazılır: 40'a yakın "takip ediyor" sorgusunun
+hiçbiri bekleyen isteği takip sanmaz (`backend/migrasyon-2026-09-08.sql`).
+
+**Sunucu**
+- `POST /takip/:ad` gizli hesapta takip yerine İSTEK açar → `{takip:false,
+  istek:true, takipci}`; ikinci dokunuş isteği geri çeker. Eski istemci (Play
+  1.40) yalnız `takip` okur, yanlış bir şey görmez.
+- Yeni uçlar: `GET /takip-istekleri`, `POST /takip-istekleri/:ad/kabul|reddet`.
+  Kabul → satır `takipler`e, isteyene `takip_kabul`, sahibine `takip` bildirimi;
+  ret sessiz (Instagram gibi). 404 = istek çoktan yok.
+- `GET /profil/:ad`: takipçi olmayana yalnız başlık + bio + SAYAÇLAR, içerik
+  listeleri boş, `gizli_profil:true` + `takip_istegi`. Alt uçlar (izlenenler,
+  puanlar, kitaplık, takipçi/takip listeleri) aynı kapıdan (`hesapKapaliMi`).
+- Akış/Keşfet: `AKIS_GOVDE`'ye `gizliHesapSuzgec` — özel hesabın gönderisi
+  takip etmeyenin akışına/Keşfet'ine DÜŞMEZ. İçerik sayfasındaki yorumlar
+  herkese açık kalır (Instagram'da da özel hesabın başkasının gönderisine
+  yorumu görünür). Engelleme bekleyen isteği de koparır.
+- Hesap GİZLİDEN AÇIĞA geçince bekleyen istekler kendiliğinden kabul edilir.
+- Bildirim türleri `takip_istegi` (tercihle KAPATILAMAZ — kapatılsa sahibi
+  isteği hiç göremezdi) ve `takip_kabul` (`bildir_takip`e bağlı); istek ↔
+  bildirim değişmezi: bekleyen istek varsa kutuda satırı vardır, kabul/ret/
+  iptal ikisini birden kaldırır. PUSH_SABLON 16 dile iki anahtar.
+
+**Uygulama**
+- Ziyaretçi profili: `gizli_profil` → kilit kartı (`_GizliProfilKarti`),
+  sekmeler ve içerik HİÇ çizilmez; düğme üç hâlli: Takip Et / İstek Gönderildi
+  (geri çek) / Takibi Bırak. `TakipDugmesi` (liste satırları) aynı üçüncü hâli
+  aldı.
+- Bildirimler: `takip_istegi` satırında **Onayla / Sil** düğmeleri; onayda satır
+  yerinde "seni takip etti"ye döner, silmede düşer, 404'te sessizce düşer.
+  `takip_kabul` satırı profile gider. Push yönlendirmesi iki türü öğrendi.
+- 9 yeni metin 45 dile (`app/scratchpad/gizli-hesap-ceviri/ekle.py`).
+
+**Kanıt:** `backend/test/gizlilik_secenekleri.test.js` +5 (gizli hesabın
+listeleri takipçiye açık / yabancıya-oturumsuza kapalı / sahibine tam / açık
+hesap eski kural), `app/test/gizli_hesap_test.dart` 10 madde (kilit kartı,
+üç hâl, geri çekme, liste düğmesi, Onayla/Sil/404/500, kabul satırı, push).
+Sunucu 2401/1 (tek kırık `cihaz_dagilimi` adminKisit `ADMIN_IPLER` — 5 Eyl
+sıcak listeden kalan, bu turla ilgisiz).
+
+**Bilinçli sınır:** içerik sayfası yorumları, "izleyenler" listesi ve beğenenler
+listesi gizli hesabı süzmüyor (Instagram'daki yorum görünürlüğü ile aynı);
+istenirse `gizliHesapSuzgec` aynı çağrıyla eklenir.
+
 ## 2026-09-08 — 🎬 Yönetim panelinde İZLEME ODALARI: kim şu an birlikte izliyor 🚀
 
 **Tetik (kullanıcı, birebir):** *"dizi jpg admin panelinde canlı izleme yapanları

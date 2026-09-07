@@ -46,6 +46,7 @@ const _madde21 = {
 
 /// Gizlilik sheet'indeki TÜM `_gizli` anahtarları (dördü + yanıtlar + çevrimiçi).
 const _tumGizliAlanlar = [
+  'hesap_gizli', // 8 Eyl 2026: gizli hesap (Instagram tarzı)
   'izlenenler_gizli',
   'yorumlar_gizli',
   'yanitlar_gizli',

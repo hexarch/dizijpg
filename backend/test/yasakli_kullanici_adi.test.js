@@ -573,7 +573,7 @@ test('ADAY SQL: `ai_payi` tavanı `k.ai` sütunundan besleniyor', async () => {
     release() {},
   };
   const adaylariGetir = kur(
-    ['engelSuzgec', 'AKIS_GOVDE', 'AKIS_KURAL', 'KESFET_VIDEOLU', 'KESFET_KAT',
+    ['engelSuzgec', 'gizliHesapSuzgec', 'AKIS_GOVDE', 'AKIS_KURAL', 'KESFET_VIDEOLU', 'KESFET_KAT',
       'KESFET_MEDYALI', 'ADAY_AZAMI', 'adaylariGetir'],
     {
       havuz: { connect: async () => istemci },

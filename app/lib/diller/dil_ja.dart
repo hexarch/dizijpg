@@ -1595,4 +1595,16 @@ const Map<String, String> cevirilerJa = {
   'Seyirci': '観客',
   "2027'de Vizyona Girecek Filmler": "2027年公開予定の映画",
   "2027'de Başlayacak Diziler": "2027年放送開始のドラマ",
+  'Gizli hesap': '非公開アカウント',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'オンにすると、承認したフォロワーだけがプロフィールを見られます。新しいフォローはリクエストとして届きます',
+  'İstek Gönderildi': 'リクエスト済み',
+  'Bu hesap gizli': 'このアカウントは非公開です',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'リクエストは承認待ちです。承認されると視聴作品、コメント、リストが見られます。',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      '視聴作品、コメント、リストを見るにはフォローリクエストを送ってください。承認されるとプロフィールが開きます。',
+  '@{} seni takip etmek istiyor': '@{}さんがフォローをリクエストしました',
+  '@{} takip isteğini kabul etti': '@{}さんがフォローリクエストを承認しました',
+  'Onayla': '承認',
 };

@@ -1779,6 +1779,17 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
   String? _hata;
 
   static const _alanlar = [
+    // GİZLİ HESAP (8 Eyl 2026) — Instagram'ın "Gizli hesap" anahtarı. EN
+    // ÜSTTE: öteki altısı bölüm bölüm gizler, bu tek başına profilin
+    // tamamını yabancıya kapatır; kullanıcı önce onu arar. Kapı TAKİP
+    // İLİŞKİSİ: onaylanan takipçi her şeyi görür, yabancı yalnız başlığı ve
+    // sayaçları. Açıkken gelen takipler bildirimlere "istek" olarak düşer;
+    // kapatınca bekleyen istekler kendiliğinden kabul edilir (sunucu).
+    (
+      'hesap_gizli',
+      'Gizli hesap',
+      'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir',
+    ),
     // Açıklama 14 Ağu'da GENİŞLETİLDİ çünkü ZORLAMA genişledi: şeritler zaten
     // gizleniyordu ama Bölüm/Film sayaçları, ekran süresi kartı, uyum kartı ve
     // "5.000 bölüm" rozeti açık kalıyordu — gizlenen şeyin BOYUTU

@@ -1674,4 +1674,16 @@ const Map<String, String> cevirilerPa = {
   'Seyirci': 'ਦਰਸ਼ਕ',
   "2027'de Vizyona Girecek Filmler": "2027 ਵਿੱਚ ਆਉਣ ਵਾਲੀਆਂ ਫ਼ਿਲਮਾਂ",
   "2027'de Başlayacak Diziler": "2027 ਵਿੱਚ ਸ਼ੁਰੂ ਹੋਣ ਵਾਲੀਆਂ ਸੀਰੀਜ਼",
+  'Gizli hesap': 'ਨਿੱਜੀ ਖਾਤਾ',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'ਚਾਲੂ ਹੋਣ \'ਤੇ ਸਿਰਫ਼ ਤੁਹਾਡੇ ਮਨਜ਼ੂਰ ਕੀਤੇ ਫਾਲੋਅਰ ਪ੍ਰੋਫਾਈਲ ਦੇਖ ਸਕਦੇ ਹਨ; ਨਵੇਂ ਫਾਲੋ ਬੇਨਤੀ ਵਜੋਂ ਆਉਂਦੇ ਹਨ',
+  'İstek Gönderildi': 'ਬੇਨਤੀ ਭੇਜੀ',
+  'Bu hesap gizli': 'ਇਹ ਖਾਤਾ ਨਿੱਜੀ ਹੈ',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'ਤੁਹਾਡੀ ਬੇਨਤੀ ਬਕਾਇਆ ਹੈ; ਮਨਜ਼ੂਰੀ ਮਗਰੋਂ ਤੁਸੀਂ ਉਨ੍ਹਾਂ ਦੇ ਦੇਖੇ ਸ਼ੋਅ, ਟਿੱਪਣੀਆਂ ਅਤੇ ਸੂਚੀਆਂ ਦੇਖ ਸਕੋਗੇ।',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'ਉਨ੍ਹਾਂ ਦੇ ਦੇਖੇ ਸ਼ੋਅ, ਟਿੱਪਣੀਆਂ ਅਤੇ ਸੂਚੀਆਂ ਦੇਖਣ ਲਈ ਫਾਲੋ ਬੇਨਤੀ ਭੇਜੋ; ਮਨਜ਼ੂਰੀ \'ਤੇ ਪ੍ਰੋਫਾਈਲ ਖੁੱਲ੍ਹੇਗਾ।',
+  '@{} seni takip etmek istiyor': '@{} ਤੁਹਾਨੂੰ ਫਾਲੋ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹਨ',
+  '@{} takip isteğini kabul etti': '@{} ਨੇ ਤੁਹਾਡੀ ਫਾਲੋ ਬੇਨਤੀ ਮਨਜ਼ੂਰ ਕੀਤੀ',
+  'Onayla': 'ਮਨਜ਼ੂਰ ਕਰੋ',
 };

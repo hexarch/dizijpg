@@ -1685,4 +1685,16 @@ const Map<String, String> cevirilerUk = {
   'Seyirci': 'Глядачі',
   "2027'de Vizyona Girecek Filmler": "Фільми, що вийдуть у 2027",
   "2027'de Başlayacak Diziler": "Серіали, що стартують у 2027",
+  'Gizli hesap': 'Закритий акаунт',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Якщо ввімкнено, ваш профіль бачать лише схвалені підписники; нові підписки надходять як запити',
+  'İstek Gönderildi': 'Запит надіслано',
+  'Bu hesap gizli': 'Це закритий акаунт',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'Ваш запит очікує; після схвалення ви побачите перегляди, коментарі та списки.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Надішліть запит на підписку, щоб бачити перегляди, коментарі та списки; профіль відкриється після схвалення.',
+  '@{} seni takip etmek istiyor': '@{} хоче підписатися на вас',
+  '@{} takip isteğini kabul etti': '@{} прийняв(ла) ваш запит на підписку',
+  'Onayla': 'Схвалити',
 };

@@ -123,7 +123,8 @@ test('gizlilik alanlarının POLARİTESİ tek yönlü: hepsi `_gizli` ile biter'
   for (const a of GIZLILIK_ALANLARI) {
     assert.ok(a.endsWith('_gizli'), `${a}: gizlilik listesinde negatif olmayan alan`);
   }
-  assert.equal(GIZLILIK_ALANLARI.length, 6);
+  // 7.: hesap_gizli (8 Eyl 2026, gizli hesap).
+  assert.equal(GIZLILIK_ALANLARI.length, 7);
 });
 
 test('yeni iki alan `/gizlilik-tercihleri` uçlarından OKUNUR ve YAZILIR', () => {
@@ -212,10 +213,13 @@ const KULLANICILAR = {
   ayse: { id: 10, takipciler_gizli: true, takip_edilenler_gizli: false },
   can: { id: 20, takipciler_gizli: false, takip_edilenler_gizli: true },
   deniz: { id: 30, takipciler_gizli: false, takip_edilenler_gizli: false },
+  // mert(60): GİZLİ HESAP (8 Eyl 2026) — liste tercihleri açık, ama hesap
+  // takipçiye açık / yabancıya kapalı. can(20) onu takip ediyor.
+  mert: { id: 60, takipciler_gizli: false, takip_edilenler_gizli: false, hesap_gizli: true },
 };
 // (takip_eden_id, takip_edilen_id)
-const TAKIPLER = [[20, 10], [30, 10], [40, 10], [10, 20], [10, 30]];
-const ADLAR = { 10: 'ayse', 20: 'can', 30: 'deniz', 40: 'engelli' };
+const TAKIPLER = [[20, 10], [30, 10], [40, 10], [10, 20], [10, 30], [20, 60], [30, 60], [60, 40]];
+const ADLAR = { 10: 'ayse', 20: 'can', 30: 'deniz', 40: 'engelli', 60: 'mert' };
 // engelli(40) ile bakan(20) birbirini engellemiş.
 const ENGELLER = [[20, 40]];
 
@@ -229,8 +233,14 @@ function sahteHavuz(kayit = {}) {
         // sorgudan okuyoruz — yanlış sütuna bakılırsa test kırmızıya döner.
         const m = /SELECT id, (\w+) AS gizli/.exec(sql);
         assert.ok(m, 'takipListesi gizli sütunu `AS gizli` ile seçmeli');
+        assert.ok(sql.includes('hesap_gizli'), 'takipListesi hesap_gizli sütununu seçmeli');
         kayit.gizliSutun = m[1];
-        return { rows: [{ id: k.id, gizli: k[m[1]] }] };
+        return { rows: [{ id: k.id, gizli: k[m[1]], hesap_gizli: k.hesap_gizli === true }] };
+      }
+      // hesapKapaliMi -> takipEdiyorMu: "bakan, sahibi takip ediyor mu?"
+      if (sql.includes('FROM takipler WHERE takip_eden_id=$1 AND takip_edilen_id=$2')) {
+        const var_ = TAKIPLER.some(([e, h]) => e === deg[0] && h === deg[1]);
+        return { rows: var_ ? [{ '?column?': 1 }] : [] };
       }
       kayit.sql = sql;
       const [sahipId, benId] = deg;
@@ -263,7 +273,8 @@ function sahteHavuz(kayit = {}) {
 // da denetleyebilir (hangi sütuna bakıldı, süzgeç parçaları duruyor mu).
 const KAYIT = {};
 const takipListesi = (() => {
-  const govde = ['engelSuzgec', 'kendiSatirSuzgec', 'TAKIP_GIZLILIK_ALANI', 'takipListesi']
+  const govde = ['engelSuzgec', 'kendiSatirSuzgec', 'TAKIP_GIZLILIK_ALANI',
+    'takipEdiyorMu', 'hesapKapaliMi', 'takipListesi']
     .map(bildirimCek).join('\n');
   // eslint-disable-next-line no-new-func
   return new Function('kayit', 'sahteHavuz', 'assert', `
@@ -278,6 +289,46 @@ const takipEttikleri = (ad, ben) =>
   takipListesi(ad, 'takip_eden_id', 'takip_edilen_id', ben, 'takip_edilenler');
 
 const adlari = (s) => s.kullanicilar.map((k) => k.kullanici_adi).sort();
+
+// ---------------------------------------------------------------------------
+// GİZLİ HESAP (8 Eyl 2026): kapı takip İLİŞKİSİ — tercih değil.
+// ---------------------------------------------------------------------------
+test('GİZLİ HESAP: takipçi (can) mert\'in listelerini TAM görür', async () => {
+  const s = await takipcilerinden('mert', 20);
+  assert.equal(s.gizli, false);
+  assert.deepEqual(adlari(s), ['can', 'deniz']);
+  // deniz(30) da takipçi; mert'in takip ettiği engelli(40) ile arasında engel yok.
+  const t = await takipEttikleri('mert', 30);
+  assert.equal(t.gizli, false);
+  assert.deepEqual(adlari(t), ['engelli']);
+});
+
+test('GİZLİ HESAP: takip etmeyen yabancı (esra) için liste kapalı ve BOŞ', async () => {
+  const s = await takipcilerinden('mert', 50);
+  assert.equal(s.gizli, true);
+  assert.deepEqual(s.kullanicilar, [], 'gizli hesabın takipçileri yabancıya sızdı');
+  const t = await takipEttikleri('mert', 50);
+  assert.equal(t.gizli, true);
+  assert.deepEqual(t.kullanicilar, []);
+});
+
+test('GİZLİ HESAP: oturumsuz okuma (ben=0) da kapalı', async () => {
+  const s = await takipcilerinden('mert', 0);
+  assert.equal(s.gizli, true);
+  assert.deepEqual(s.kullanicilar, []);
+});
+
+test('GİZLİ HESAP: sahibi (mert) kendi listesini TAM görür', async () => {
+  const s = await takipcilerinden('mert', 60);
+  assert.equal(s.gizli, false);
+  assert.deepEqual(adlari(s), ['can', 'deniz']);
+});
+
+test('GİZLİ HESAP: açık hesabın (deniz) listesi eski kuralla, dokunulmadı', async () => {
+  const s = await takipcilerinden('deniz', 50);
+  assert.equal(s.gizli, false);
+  assert.deepEqual(adlari(s), ['ayse']);
+});
 
 test('AÇIKKEN GÖRÜNÜR: gizlemeyen kullanıcının takipçi listesi tam gelir', async () => {
   // deniz(30) hiçbir şeyi gizlemiyor; can(20) bakıyor.

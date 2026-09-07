@@ -1714,4 +1714,16 @@ const Map<String, String> cevirilerEl = {
   'Seyirci': 'Κοινό',
   "2027'de Vizyona Girecek Filmler": "Ταινίες που βγαίνουν το 2027",
   "2027'de Başlayacak Diziler": "Σειρές που ξεκινούν το 2027",
+  'Gizli hesap': 'Ιδιωτικός λογαριασμός',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Όταν είναι ενεργό, μόνο οι ακόλουθοι που εγκρίνεις βλέπουν το προφίλ σου· οι νέες ακολουθήσεις έρχονται ως αιτήματα',
+  'İstek Gönderildi': 'Αίτημα στάλθηκε',
+  'Bu hesap gizli': 'Αυτός ο λογαριασμός είναι ιδιωτικός',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'Το αίτημά σου εκκρεμεί· μόλις εγκριθεί θα βλέπεις τι παρακολουθεί, τα σχόλια και τις λίστες.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Στείλε αίτημα ακολούθησης για να βλέπεις τι παρακολουθεί, τα σχόλια και τις λίστες· το προφίλ ανοίγει μόλις εγκριθεί.',
+  '@{} seni takip etmek istiyor': '@{} θέλει να σε ακολουθήσει',
+  '@{} takip isteğini kabul etti': '@{} αποδέχτηκε το αίτημά σου',
+  'Onayla': 'Έγκριση',
 };

@@ -1687,4 +1687,16 @@ const Map<String, String> cevirilerMl = {
   'Seyirci': 'പ്രേക്ഷകർ',
   "2027'de Vizyona Girecek Filmler": "2027-ൽ എത്തുന്ന സിനിമകൾ",
   "2027'de Başlayacak Diziler": "2027-ൽ തുടങ്ങുന്ന പരമ്പരകൾ",
+  'Gizli hesap': 'സ്വകാര്യ അക്കൗണ്ട്',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'ഓണാക്കിയാൽ നിങ്ങൾ അംഗീകരിച്ച ഫോളോവർമാർക്ക് മാത്രമേ പ്രൊഫൈൽ കാണാനാകൂ; പുതിയ ഫോളോകൾ അഭ്യർത്ഥനയായി വരും',
+  'İstek Gönderildi': 'അഭ്യർത്ഥിച്ചു',
+  'Bu hesap gizli': 'ഈ അക്കൗണ്ട് സ്വകാര്യമാണ്',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'നിങ്ങളുടെ അഭ്യർത്ഥന കാത്തിരിക്കുന്നു; അംഗീകരിച്ചാൽ കണ്ടവ, കമന്റുകൾ, ലിസ്റ്റുകൾ കാണാം.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'കണ്ടവ, കമന്റുകൾ, ലിസ്റ്റുകൾ കാണാൻ ഫോളോ അഭ്യർത്ഥന അയയ്ക്കൂ; അംഗീകരിച്ചാൽ പ്രൊഫൈൽ തുറക്കും.',
+  '@{} seni takip etmek istiyor': '@{} നിങ്ങളെ ഫോളോ ചെയ്യാൻ ആഗ്രഹിക്കുന്നു',
+  '@{} takip isteğini kabul etti': '@{} നിങ്ങളുടെ ഫോളോ അഭ്യർത്ഥന സ്വീകരിച്ചു',
+  'Onayla': 'അംഗീകരിക്കുക',
 };

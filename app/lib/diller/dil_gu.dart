@@ -1665,4 +1665,16 @@ const Map<String, String> cevirilerGu = {
   'Seyirci': 'દર્શકો',
   "2027'de Vizyona Girecek Filmler": "2027માં આવનારી ફિલ્મો",
   "2027'de Başlayacak Diziler": "2027માં શરૂ થનારી સિરીઝ",
+  'Gizli hesap': 'ખાનગી ખાતું',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'ચાલુ હોય ત્યારે તમે મંજૂર કરેલા અનુયાયીઓ જ પ્રોફાઇલ જોઈ શકે; નવા ફોલો વિનંતી તરીકે આવે છે',
+  'İstek Gönderildi': 'વિનંતી મોકલી',
+  'Bu hesap gizli': 'આ ખાતું ખાનગી છે',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'તમારી વિનંતી બાકી છે; મંજૂર થયા પછી તેમના જોયેલા શો, ટિપ્પણીઓ અને યાદીઓ જોઈ શકશો.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'તેમના જોયેલા શો, ટિપ્પણીઓ અને યાદીઓ જોવા ફોલો વિનંતી મોકલો; મંજૂર થતાં પ્રોફાઇલ ખુલશે.',
+  '@{} seni takip etmek istiyor': '@{} તમને ફોલો કરવા માંગે છે',
+  '@{} takip isteğini kabul etti': '@{} એ તમારી ફોલો વિનંતી સ્વીકારી',
+  'Onayla': 'મંજૂર કરો',
 };

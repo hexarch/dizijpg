@@ -1679,4 +1679,16 @@ const Map<String, String> cevirilerKn = {
   'Seyirci': 'ಪ್ರೇಕ್ಷಕರು',
   "2027'de Vizyona Girecek Filmler": "2027ರಲ್ಲಿ ಬಿಡುಗಡೆಯಾಗುವ ಸಿನಿಮಾಗಳು",
   "2027'de Başlayacak Diziler": "2027ರಲ್ಲಿ ಆರಂಭವಾಗುವ ಸರಣಿಗಳು",
+  'Gizli hesap': 'ಖಾಸಗಿ ಖಾತೆ',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'ಆನ್ ಆಗಿದ್ದರೆ ನೀವು ಅನುಮೋದಿಸಿದ ಅನುಯಾಯಿಗಳು ಮಾತ್ರ ಪ್ರೊಫೈಲ್ ನೋಡಬಹುದು; ಹೊಸ ಫಾಲೋಗಳು ವಿನಂತಿಯಾಗಿ ಬರುತ್ತವೆ',
+  'İstek Gönderildi': 'ವಿನಂತಿ ಕಳುಹಿಸಲಾಗಿದೆ',
+  'Bu hesap gizli': 'ಈ ಖಾತೆ ಖಾಸಗಿಯಾಗಿದೆ',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'ನಿಮ್ಮ ವಿನಂತಿ ಬಾಕಿ ಇದೆ; ಅನುಮೋದನೆಯ ನಂತರ ಅವರು ನೋಡಿದವು, ಕಾಮೆಂಟ್‌ಗಳು ಮತ್ತು ಪಟ್ಟಿಗಳನ್ನು ನೋಡಬಹುದು.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'ಅವರು ನೋಡಿದವು, ಕಾಮೆಂಟ್‌ಗಳು ಮತ್ತು ಪಟ್ಟಿಗಳನ್ನು ನೋಡಲು ಫಾಲೋ ವಿನಂತಿ ಕಳುಹಿಸಿ; ಅನುಮೋದನೆಯಾದಾಗ ಪ್ರೊಫೈಲ್ ತೆರೆಯುತ್ತದೆ.',
+  '@{} seni takip etmek istiyor': '@{} ನಿಮ್ಮನ್ನು ಫಾಲೋ ಮಾಡಲು ಬಯಸುತ್ತಾರೆ',
+  '@{} takip isteğini kabul etti': '@{} ನಿಮ್ಮ ಫಾಲೋ ವಿನಂತಿಯನ್ನು ಸ್ವೀಕರಿಸಿದರು',
+  'Onayla': 'ಅನುಮೋದಿಸಿ',
 };

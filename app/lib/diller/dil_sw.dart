@@ -1686,4 +1686,16 @@ const Map<String, String> cevirilerSw = {
   'Seyirci': 'Watazamaji',
   "2027'de Vizyona Girecek Filmler": "Filamu zinazotoka 2027",
   "2027'de Başlayacak Diziler": "Vipindi vinavyoanza 2027",
+  'Gizli hesap': 'Akaunti ya faragha',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Ikiwashwa, wafuasi unaowaidhinisha pekee ndio wanaona wasifu wako; ufuatiliaji mpya hukufikia kama maombi',
+  'İstek Gönderildi': 'Ombi limetumwa',
+  'Bu hesap gizli': 'Akaunti hii ni ya faragha',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'Ombi lako linasubiri; likiidhinishwa utaona anachotazama, maoni na orodha zake.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Tuma ombi la kufuata ili uone anachotazama, maoni na orodha zake; wasifu hufunguka baada ya kuidhinishwa.',
+  '@{} seni takip etmek istiyor': '@{} anataka kukufuata',
+  '@{} takip isteğini kabul etti': '@{} amekubali ombi lako la kufuata',
+  'Onayla': 'Idhinisha',
 };

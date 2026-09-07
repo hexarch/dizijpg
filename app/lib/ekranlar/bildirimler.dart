@@ -182,6 +182,18 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
         return (Icons.favorite, '@{} yorumunu beğendi'.cf([b['aktor']]));
       case 'takip':
         return (Icons.person_add, '@{} seni takip etti'.cf([b['aktor']]));
+      // GİZLİ HESAP (8 Eyl 2026): istek satırının sağında Onayla/Sil
+      // düğmeleri var (_istekDugmeleri); dokunuş isteyenin profilini açar.
+      case 'takip_istegi':
+        return (
+          Icons.person_add_alt_1,
+          '@{} seni takip etmek istiyor'.cf([b['aktor']]),
+        );
+      case 'takip_kabul':
+        return (
+          Icons.how_to_reg,
+          '@{} takip isteğini kabul etti'.cf([b['aktor']]),
+        );
       case 'mesaj':
         return (Icons.mail, '@{} sana mesaj gönderdi'.cf([b['aktor']]));
       // 4 Eyl 2026 — İZLEME ODASI DAVETİ. Aktörlü tür: davet edenin avatarı
@@ -347,6 +359,95 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
     );
   }
 
+  /// Takip isteği satırının sağ ucu: Onayla (dolu) + Sil (çerçeveli).
+  /// İşlenirken ikisi de kilitlenir; kabulde satır yerinde "seni takip
+  /// etti"ye döner (sunucu da bildirimi öyle değiştirir), silmede düşer.
+  Widget _istekDugmeleri(Map<String, dynamic> b) {
+    final isleniyor = b['_isleniyor'] == true;
+    final ad = b['aktor'] as String? ?? '';
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        FilledButton(
+          key: Key('istek-onayla-$ad'),
+          onPressed: isleniyor ? null : () => _istekKarar(b, kabul: true),
+          style: FilledButton.styleFrom(
+            minimumSize: const Size(0, 36),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            textStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text('Onayla'.c),
+        ),
+        const SizedBox(width: 6),
+        OutlinedButton(
+          key: Key('istek-sil-$ad'),
+          onPressed: isleniyor ? null : () => _istekKarar(b, kabul: false),
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(0, 36),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            foregroundColor: DiziRenkler.metin,
+            side: BorderSide(color: DiziRenkler.metin24),
+            textStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text('Sil'.c),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _istekKarar(
+    Map<String, dynamic> b, {
+    required bool kabul,
+  }) async {
+    final ad = b['aktor'] as String? ?? '';
+    setState(() => b['_isleniyor'] = true);
+    try {
+      await Api.post(
+        '/takip-istekleri/$ad/${kabul ? 'kabul' : 'reddet'}',
+        const {},
+      );
+      if (!mounted) return;
+      setState(() {
+        if (kabul) {
+          b['tur'] = 'takip';
+          b['_isleniyor'] = false;
+        } else {
+          _bildirimler?.remove(b);
+        }
+      });
+    } on ApiHata catch (e) {
+      if (!mounted) return;
+      // 404 = istek artık yok (isteyen geri çekmiş ya da başka cihazdan
+      // karar verilmiş): satır düşer, kullanıcı hata okumaz.
+      if (e.kod == 404) {
+        setState(() => _bildirimler?.remove(b));
+        return;
+      }
+      setState(() => b['_isleniyor'] = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => b['_isleniyor'] = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget govde;
@@ -448,7 +549,9 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
               // (1 Eyl 2026 isteği: "en sağda hangi gönderiyi beğendiğinin
               // minik bir görseli olsun; video ise videodan, fotoğraf ise
               // fotoğraftan"). Medyasız gönderide görsel çizilmez.
-              trailing: _sagUc(b),
+              trailing: b['tur'] == 'takip_istegi'
+                  ? _istekDugmeleri(b)
+                  : _sagUc(b),
               // Hedefi olmayan satır TIKLANMAZ (onTap null → dalga da yok):
               // "dokundum, hiçbir şey olmadı" hissi vermek yerine satır
               // baştan etkileşimsiz görünsün.

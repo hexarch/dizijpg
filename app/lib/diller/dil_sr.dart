@@ -1682,4 +1682,16 @@ const Map<String, String> cevirilerSr = {
   'Seyirci': 'Publika',
   "2027'de Vizyona Girecek Filmler": "Филмови који стижу 2027",
   "2027'de Başlayacak Diziler": "Серије које почињу 2027",
+  'Gizli hesap': 'Приватни налог',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Када је укључено, профил виде само пратиоци које одобриш; нова праћења стижу као захтеви',
+  'İstek Gönderildi': 'Захтев послат',
+  'Bu hesap gizli': 'Овај налог је приватан',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'Твој захтев чека; када буде одобрен видећеш шта гледа, коментаре и листе.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Пошаљи захтев за праћење да видиш шта гледа, коментаре и листе; профил се отвара након одобрења.',
+  '@{} seni takip etmek istiyor': '@{} жели да те прати',
+  '@{} takip isteğini kabul etti': '@{} је прихватио/ла твој захтев за праћење',
+  'Onayla': 'Одобри',
 };

@@ -1696,4 +1696,17 @@ const Map<String, String> cevirilerMy = {
   'Seyirci': 'ပရိသတ်',
   "2027'de Vizyona Girecek Filmler": "2027 တွင် ရုံတင်မည့် ရုပ်ရှင်များ",
   "2027'de Başlayacak Diziler": "2027 တွင် စတင်မည့် ဇာတ်လမ်းတွဲများ",
+  'Gizli hesap': 'သီးသန့်အကောင့်',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'ဖွင့်ထားပါက သင်ခွင့်ပြုထားသော ဖော်လိုဝါများသာ ပရိုဖိုင်ကိုကြည့်နိုင်သည်။ ဖော်လိုအသစ်များ တောင်းဆိုမှုအဖြစ် ရောက်လာမည်',
+  'İstek Gönderildi': 'တောင်းဆိုပြီး',
+  'Bu hesap gizli': 'ဤအကောင့်သည် သီးသန့်ဖြစ်သည်',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'သင့်တောင်းဆိုမှု စောင့်ဆိုင်းနေသည်။ ခွင့်ပြုပြီးပါက ကြည့်ရှုမှုများ၊ မှတ်ချက်များနှင့် စာရင်းများကို ကြည့်နိုင်မည်။',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'ကြည့်ရှုမှုများ၊ မှတ်ချက်များနှင့် စာရင်းများကို ကြည့်ရန် ဖော်လိုတောင်းဆိုမှု ပို့ပါ။ ခွင့်ပြုပြီးပါက ပရိုဖိုင် ပွင့်မည်။',
+  '@{} seni takip etmek istiyor': '@{} သင့်ကို ဖော်လိုလုပ်လိုသည်',
+  '@{} takip isteğini kabul etti':
+      '@{} သင့်ဖော်လိုတောင်းဆိုမှုကို လက်ခံလိုက်သည်',
+  'Onayla': 'ခွင့်ပြု',
 };

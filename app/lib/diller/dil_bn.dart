@@ -1669,4 +1669,16 @@ const Map<String, String> cevirilerBn = {
   'Seyirci': 'দর্শক',
   "2027'de Vizyona Girecek Filmler": "2027 সালে আসছে যে সিনেমা",
   "2027'de Başlayacak Diziler": "2027 সালে শুরু হচ্ছে যে সিরিজ",
+  'Gizli hesap': 'ব্যক্তিগত অ্যাকাউন্ট',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'চালু থাকলে শুধু আপনার অনুমোদিত অনুসারীরা প্রোফাইল দেখতে পারে; নতুন অনুসরণ অনুরোধ হিসেবে আসে',
+  'İstek Gönderildi': 'অনুরোধ পাঠানো হয়েছে',
+  'Bu hesap gizli': 'এই অ্যাকাউন্ট ব্যক্তিগত',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'আপনার অনুরোধ অপেক্ষমাণ; অনুমোদিত হলে তাঁর দেখা শো, মন্তব্য ও তালিকা দেখতে পারবেন।',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'তাঁর দেখা শো, মন্তব্য ও তালিকা দেখতে অনুসরণ অনুরোধ পাঠান; অনুমোদিত হলে প্রোফাইল খুলবে।',
+  '@{} seni takip etmek istiyor': '@{} আপনাকে অনুসরণ করতে চান',
+  '@{} takip isteğini kabul etti': '@{} আপনার অনুসরণ অনুরোধ গ্রহণ করেছেন',
+  'Onayla': 'অনুমোদন',
 };

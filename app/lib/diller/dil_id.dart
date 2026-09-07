@@ -1678,4 +1678,16 @@ const Map<String, String> cevirilerId = {
   'Seyirci': 'Penonton',
   "2027'de Vizyona Girecek Filmler": "Film yang tayang di 2027",
   "2027'de Başlayacak Diziler": "Serial yang mulai di 2027",
+  'Gizli hesap': 'Akun privat',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Jika aktif, hanya pengikut yang kamu setujui yang melihat profilmu; pengikut baru masuk sebagai permintaan',
+  'İstek Gönderildi': 'Diminta',
+  'Bu hesap gizli': 'Akun ini privat',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'Permintaanmu menunggu; setelah disetujui kamu bisa melihat tontonan, komentar, dan daftarnya.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Kirim permintaan mengikuti untuk melihat tontonan, komentar, dan daftarnya; profil terbuka setelah disetujui.',
+  '@{} seni takip etmek istiyor': '@{} ingin mengikutimu',
+  '@{} takip isteğini kabul etti': '@{} menerima permintaan mengikutimu',
+  'Onayla': 'Setujui',
 };

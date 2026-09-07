@@ -1686,4 +1686,16 @@ const Map<String, String> cevirilerFi = {
   'Seyirci': 'Yleisö',
   "2027'de Vizyona Girecek Filmler": "Vuonna 2027 tulevat elokuvat",
   "2027'de Başlayacak Diziler": "Vuonna 2027 alkavat sarjat",
+  'Gizli hesap': 'Yksityinen tili',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Kun tämä on päällä, vain hyväksymäsi seuraajat näkevät profiilisi; uudet seuraamiset tulevat pyyntöinä',
+  'İstek Gönderildi': 'Pyyntö lähetetty',
+  'Bu hesap gizli': 'Tämä tili on yksityinen',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'Pyyntösi odottaa; kun se hyväksytään, näet katsotut, kommentit ja listat.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Lähetä seurauspyyntö nähdäksesi katsotut, kommentit ja listat; profiili avautuu, kun pyyntö hyväksytään.',
+  '@{} seni takip etmek istiyor': '@{} haluaa seurata sinua',
+  '@{} takip isteğini kabul etti': '@{} hyväksyi seurauspyyntösi',
+  'Onayla': 'Hyväksy',
 };

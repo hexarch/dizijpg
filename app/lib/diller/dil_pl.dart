@@ -1698,4 +1698,16 @@ const Map<String, String> cevirilerPl = {
   'Seyirci': 'Widzowie',
   "2027'de Vizyona Girecek Filmler": "Filmy z premierą w 2027",
   "2027'de Başlayacak Diziler": "Seriale z premierą w 2027",
+  'Gizli hesap': 'Konto prywatne',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Gdy włączone, profil widzą tylko zaakceptowani obserwujący; nowe obserwacje trafiają do Ciebie jako prośby',
+  'İstek Gönderildi': 'Wysłano prośbę',
+  'Bu hesap gizli': 'To konto jest prywatne',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'Twoja prośba czeka; po akceptacji zobaczysz, co ta osoba ogląda, jej komentarze i listy.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Wyślij prośbę o obserwowanie, aby zobaczyć, co ta osoba ogląda, jej komentarze i listy; profil otworzy się po akceptacji.',
+  '@{} seni takip etmek istiyor': '@{} chce Cię obserwować',
+  '@{} takip isteğini kabul etti': '@{} zaakceptował(a) Twoją prośbę',
+  'Onayla': 'Zatwierdź',
 };

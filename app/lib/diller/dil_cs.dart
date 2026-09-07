@@ -1675,4 +1675,16 @@ const Map<String, String> cevirilerCs = {
   'Seyirci': 'Diváci',
   "2027'de Vizyona Girecek Filmler": "Filmy chystané na 2027",
   "2027'de Başlayacak Diziler": "Seriály chystané na 2027",
+  'Gizli hesap': 'Soukromý účet',
+  'Açıkken profilini yalnız onayladığın takipçiler görür; yeni takipler sana istek olarak gelir':
+      'Když je zapnuto, profil vidí jen schválení sledující; nová sledování přicházejí jako žádosti',
+  'İstek Gönderildi': 'Žádost odeslána',
+  'Bu hesap gizli': 'Tento účet je soukromý',
+  'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.':
+      'Tvoje žádost čeká; po schválení uvidíš, co sleduje, komentáře a seznamy.',
+  'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.':
+      'Pošli žádost o sledování, abys viděl(a), co sleduje, komentáře a seznamy; profil se otevře po schválení.',
+  '@{} seni takip etmek istiyor': '@{} tě chce sledovat',
+  '@{} takip isteğini kabul etti': '@{} přijal(a) tvou žádost o sledování',
+  'Onayla': 'Schválit',
 };

@@ -1921,22 +1921,22 @@ const buzLimiti = hizLimiti(60, (req) => `bz:${req.kullanici.id}`);
 // (özne "серия", dişil), ar 'صدرت' (özne "حلقة", dişil).
 // Kilit: test/cinsiyetsiz_dil.test.js.
 const PUSH_SABLON = {
-  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi', arama: '{ad} seni arıyor', kacirilan_arama: '{ad} seni aradı', bolum: '{dizi} {sb} yayınlandı', kisi: '{kisi} yeni bir yapımda: {yapim}', geri_bildirim: 'Geri bildirimine yanıt verdik', oda_davet: '{ad} seni izleme odasına davet etti' },
-  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment', arama: '{ad} is calling you', kacirilan_arama: '{ad} called you', bolum: '{dizi} {sb} is out', kisi: 'New from {kisi}: {yapim}', geri_bildirim: 'We replied to your feedback', oda_davet: '{ad} invited you to a watch party' },
-  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario', arama: '{ad} te está llamando', kacirilan_arama: '{ad} te llamó', bolum: 'Ya está disponible {dizi} {sb}', kisi: 'Novedad de {kisi}: {yapim}', geri_bildirim: 'Respondimos a tus comentarios', oda_davet: '{ad} te invitó a una sala de visualización' },
-  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário', arama: '{ad} está te ligando', kacirilan_arama: '{ad} te ligou', bolum: '{dizi} {sb} já está disponível', kisi: 'Novidade de {kisi}: {yapim}', geri_bildirim: 'Respondemos ao seu feedback', oda_davet: '{ad} te convidou para uma sala de exibição' },
-  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt', arama: '{ad} ruft dich an', kacirilan_arama: '{ad} hat dich angerufen', bolum: '{dizi} {sb} ist da', kisi: 'Neu von {kisi}: {yapim}', geri_bildirim: 'Wir haben auf dein Feedback geantwortet', oda_davet: '{ad} hat dich in einen Watch-Party-Raum eingeladen' },
-  fr: { takip: '{ad} te suit maintenant', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: 'Mention de {ad} dans un commentaire', arama: '{ad} t\'appelle', kacirilan_arama: 'Appel manqué de {ad}', bolum: '{dizi} {sb} est disponible', kisi: 'Nouveauté de {kisi} : {yapim}', geri_bildirim: 'Nous avons répondu à ton retour', oda_davet: '{ad} t\'a invité dans une salle de visionnage' },
-  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: 'Menzione da {ad} in un commento', arama: '{ad} ti sta chiamando', kacirilan_arama: 'Chiamata persa da {ad}', bolum: '{dizi} {sb} è disponibile', kisi: 'Novità di {kisi}: {yapim}', geri_bildirim: 'Abbiamo risposto al tuo feedback', oda_davet: '{ad} ti ha invitato in una stanza di visione' },
-  ru: { takip: 'Новый подписчик: {ad}', begeni: 'Новая оценка твоего комментария: {ad}', yanit: 'Новый ответ на твой комментарий: {ad}', mesaj: 'Новое сообщение от {ad}', etiket: 'Упоминание от {ad} в комментарии', arama: '{ad} звонит тебе', kacirilan_arama: 'Пропущенный звонок от {ad}', bolum: 'Вышла серия {dizi} {sb}', kisi: 'Новинка с участием {kisi}: {yapim}', geri_bildirim: 'Мы ответили на ваш отзыв', oda_davet: '{ad} пригласил вас в комнату совместного просмотра' },
-  ar: { takip: 'متابعة جديدة: {ad}', begeni: 'إعجاب جديد بتعليقك: {ad}', yanit: 'رد جديد على تعليقك: {ad}', mesaj: 'رسالة جديدة من {ad}', etiket: 'إشارة إليك من {ad} في تعليق', arama: 'مكالمة واردة من {ad}', kacirilan_arama: 'مكالمة فائتة من {ad}', bolum: 'صدرت {dizi} {sb}', kisi: 'جديد من {kisi}: {yapim}', geri_bildirim: 'لقد رددنا على ملاحظاتك', oda_davet: 'دعاك {ad} إلى غرفة مشاهدة مشتركة' },
-  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया', arama: '{ad} की ओर से कॉल आ रही है', kacirilan_arama: '{ad} ने आपको कॉल किया', bolum: '{dizi} {sb} आ गया है', kisi: '{kisi} का नया काम: {yapim}', geri_bildirim: 'हमने आपके फ़ीडबैक का जवाब दिया', oda_davet: '{ad} ने आपको साथ देखने वाले रूम में बुलाया' },
-  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar', arama: '{ad} sedang meneleponmu', kacirilan_arama: '{ad} meneleponmu', bolum: '{dizi} {sb} sudah tayang', kisi: 'Baru dari {kisi}: {yapim}', geri_bildirim: 'Kami membalas masukanmu', oda_davet: '{ad} mengundangmu ke ruang nonton bareng' },
-  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました', arama: '{ad}さんが着信中です', kacirilan_arama: '{ad}さんから不在着信があります', bolum: '{dizi} {sb} が配信されました', kisi: '{kisi}さんの新作: {yapim}', geri_bildirim: 'フィードバックに返信しました', oda_davet: '{ad}さんが一緒に見る部屋に招待しました' },
-  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요', arama: '{ad}님이 전화를 걸고 있어요', kacirilan_arama: '{ad}님의 부재중 전화가 있어요', bolum: '{dizi} {sb}이(가) 공개됐어요', kisi: '{kisi}님의 신작: {yapim}', geri_bildirim: '보내주신 의견에 답변했어요', oda_davet: '{ad}님이 같이 보기 방에 초대했습니다' },
-  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你', arama: '{ad} 正在呼叫你', kacirilan_arama: '{ad} 给你打过电话', bolum: '{dizi} {sb} 已更新', kisi: '{kisi} 的新作: {yapim}', geri_bildirim: '我们回复了你的反馈', oda_davet: '{ad} 邀请你加入一起看房间' },
-  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie', arama: '{ad} belt je', kacirilan_arama: '{ad} heeft je gebeld', bolum: '{dizi} {sb} is uit', kisi: 'Nieuw van {kisi}: {yapim}', geri_bildirim: 'We hebben op je feedback gereageerd', oda_davet: '{ad} heeft je uitgenodigd in een kijkkamer' },
-  pl: { takip: '{ad} obserwuje cię teraz', begeni: '{ad} lubi twój komentarz', yanit: 'Nowa odpowiedź na twój komentarz: {ad}', mesaj: 'Nowa wiadomość od {ad}', etiket: 'Wzmianka od {ad} w komentarzu', arama: '{ad} dzwoni do ciebie', kacirilan_arama: 'Nieodebrane połączenie od {ad}', bolum: '{dizi} {sb} już jest', kisi: 'Nowość od {kisi}: {yapim}', geri_bildirim: 'Odpowiedzieliśmy na Twoją opinię', oda_davet: '{ad} zaprosił(a) Cię do pokoju wspólnego oglądania' },
+  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi', arama: '{ad} seni arıyor', kacirilan_arama: '{ad} seni aradı', bolum: '{dizi} {sb} yayınlandı', kisi: '{kisi} yeni bir yapımda: {yapim}', geri_bildirim: 'Geri bildirimine yanıt verdik', oda_davet: '{ad} seni izleme odasına davet etti', takip_istegi: '{ad} seni takip etmek istiyor', takip_kabul: '{ad} takip isteğini kabul etti' },
+  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment', arama: '{ad} is calling you', kacirilan_arama: '{ad} called you', bolum: '{dizi} {sb} is out', kisi: 'New from {kisi}: {yapim}', geri_bildirim: 'We replied to your feedback', oda_davet: '{ad} invited you to a watch party', takip_istegi: '{ad} wants to follow you', takip_kabul: '{ad} accepted your follow request' },
+  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario', arama: '{ad} te está llamando', kacirilan_arama: '{ad} te llamó', bolum: 'Ya está disponible {dizi} {sb}', kisi: 'Novedad de {kisi}: {yapim}', geri_bildirim: 'Respondimos a tus comentarios', oda_davet: '{ad} te invitó a una sala de visualización', takip_istegi: '{ad} quiere seguirte', takip_kabul: '{ad} aceptó tu solicitud de seguimiento' },
+  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário', arama: '{ad} está te ligando', kacirilan_arama: '{ad} te ligou', bolum: '{dizi} {sb} já está disponível', kisi: 'Novidade de {kisi}: {yapim}', geri_bildirim: 'Respondemos ao seu feedback', oda_davet: '{ad} te convidou para uma sala de exibição', takip_istegi: '{ad} quer te seguir', takip_kabul: '{ad} aceitou seu pedido para seguir' },
+  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt', arama: '{ad} ruft dich an', kacirilan_arama: '{ad} hat dich angerufen', bolum: '{dizi} {sb} ist da', kisi: 'Neu von {kisi}: {yapim}', geri_bildirim: 'Wir haben auf dein Feedback geantwortet', oda_davet: '{ad} hat dich in einen Watch-Party-Raum eingeladen', takip_istegi: '{ad} möchte dir folgen', takip_kabul: '{ad} hat deine Folgeanfrage angenommen' },
+  fr: { takip: '{ad} te suit maintenant', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: 'Mention de {ad} dans un commentaire', arama: '{ad} t\'appelle', kacirilan_arama: 'Appel manqué de {ad}', bolum: '{dizi} {sb} est disponible', kisi: 'Nouveauté de {kisi} : {yapim}', geri_bildirim: 'Nous avons répondu à ton retour', oda_davet: '{ad} t\'a invité dans une salle de visionnage', takip_istegi: '{ad} souhaite te suivre', takip_kabul: 'Demande d\'abonnement acceptée par {ad}' },
+  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: 'Menzione da {ad} in un commento', arama: '{ad} ti sta chiamando', kacirilan_arama: 'Chiamata persa da {ad}', bolum: '{dizi} {sb} è disponibile', kisi: 'Novità di {kisi}: {yapim}', geri_bildirim: 'Abbiamo risposto al tuo feedback', oda_davet: '{ad} ti ha invitato in una stanza di visione', takip_istegi: '{ad} vuole seguirti', takip_kabul: 'Richiesta di seguire accettata da {ad}' },
+  ru: { takip: 'Новый подписчик: {ad}', begeni: 'Новая оценка твоего комментария: {ad}', yanit: 'Новый ответ на твой комментарий: {ad}', mesaj: 'Новое сообщение от {ad}', etiket: 'Упоминание от {ad} в комментарии', arama: '{ad} звонит тебе', kacirilan_arama: 'Пропущенный звонок от {ad}', bolum: 'Вышла серия {dizi} {sb}', kisi: 'Новинка с участием {kisi}: {yapim}', geri_bildirim: 'Мы ответили на ваш отзыв', oda_davet: '{ad} пригласил вас в комнату совместного просмотра', takip_istegi: 'Запрос на подписку от {ad}', takip_kabul: 'Запрос на подписку принят: {ad}' },
+  ar: { takip: 'متابعة جديدة: {ad}', begeni: 'إعجاب جديد بتعليقك: {ad}', yanit: 'رد جديد على تعليقك: {ad}', mesaj: 'رسالة جديدة من {ad}', etiket: 'إشارة إليك من {ad} في تعليق', arama: 'مكالمة واردة من {ad}', kacirilan_arama: 'مكالمة فائتة من {ad}', bolum: 'صدرت {dizi} {sb}', kisi: 'جديد من {kisi}: {yapim}', geri_bildirim: 'لقد رددنا على ملاحظاتك', oda_davet: 'دعاك {ad} إلى غرفة مشاهدة مشتركة', takip_istegi: 'طلب متابعة من {ad}', takip_kabul: 'قبول طلب المتابعة: {ad}' },
+  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया', arama: '{ad} की ओर से कॉल आ रही है', kacirilan_arama: '{ad} ने आपको कॉल किया', bolum: '{dizi} {sb} आ गया है', kisi: '{kisi} का नया काम: {yapim}', geri_bildirim: 'हमने आपके फ़ीडबैक का जवाब दिया', oda_davet: '{ad} ने आपको साथ देखने वाले रूम में बुलाया', takip_istegi: '{ad} आपको फ़ॉलो करना चाहते हैं', takip_kabul: '{ad} ने आपका फ़ॉलो अनुरोध स्वीकार किया' },
+  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar', arama: '{ad} sedang meneleponmu', kacirilan_arama: '{ad} meneleponmu', bolum: '{dizi} {sb} sudah tayang', kisi: 'Baru dari {kisi}: {yapim}', geri_bildirim: 'Kami membalas masukanmu', oda_davet: '{ad} mengundangmu ke ruang nonton bareng', takip_istegi: '{ad} ingin mengikutimu', takip_kabul: '{ad} menerima permintaan mengikutimu' },
+  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました', arama: '{ad}さんが着信中です', kacirilan_arama: '{ad}さんから不在着信があります', bolum: '{dizi} {sb} が配信されました', kisi: '{kisi}さんの新作: {yapim}', geri_bildirim: 'フィードバックに返信しました', oda_davet: '{ad}さんが一緒に見る部屋に招待しました', takip_istegi: '{ad}さんがフォローをリクエストしました', takip_kabul: '{ad}さんがフォローリクエストを承認しました' },
+  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요', arama: '{ad}님이 전화를 걸고 있어요', kacirilan_arama: '{ad}님의 부재중 전화가 있어요', bolum: '{dizi} {sb}이(가) 공개됐어요', kisi: '{kisi}님의 신작: {yapim}', geri_bildirim: '보내주신 의견에 답변했어요', oda_davet: '{ad}님이 같이 보기 방에 초대했습니다', takip_istegi: '{ad}님이 팔로우를 요청했어요', takip_kabul: '{ad}님이 팔로우 요청을 수락했어요' },
+  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你', arama: '{ad} 正在呼叫你', kacirilan_arama: '{ad} 给你打过电话', bolum: '{dizi} {sb} 已更新', kisi: '{kisi} 的新作: {yapim}', geri_bildirim: '我们回复了你的反馈', oda_davet: '{ad} 邀请你加入一起看房间', takip_istegi: '{ad} 请求关注你', takip_kabul: '{ad} 已接受你的关注请求' },
+  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie', arama: '{ad} belt je', kacirilan_arama: '{ad} heeft je gebeld', bolum: '{dizi} {sb} is uit', kisi: 'Nieuw van {kisi}: {yapim}', geri_bildirim: 'We hebben op je feedback gereageerd', oda_davet: '{ad} heeft je uitgenodigd in een kijkkamer', takip_istegi: '{ad} wil je volgen', takip_kabul: '{ad} heeft je volgverzoek geaccepteerd' },
+  pl: { takip: '{ad} obserwuje cię teraz', begeni: '{ad} lubi twój komentarz', yanit: 'Nowa odpowiedź na twój komentarz: {ad}', mesaj: 'Nowa wiadomość od {ad}', etiket: 'Wzmianka od {ad} w komentarzu', arama: '{ad} dzwoni do ciebie', kacirilan_arama: 'Nieodebrane połączenie od {ad}', bolum: '{dizi} {sb} już jest', kisi: 'Nowość od {kisi}: {yapim}', geri_bildirim: 'Odpowiedzieliśmy na Twoją opinię', oda_davet: '{ad} zaprosił(a) Cię do pokoju wspólnego oglądania', takip_istegi: 'Prośba o obserwację od {ad}', takip_kabul: 'Prośba o obserwację przyjęta: {ad}' },
 };
 
 /**
@@ -2090,6 +2090,11 @@ const BILDIRIM_TERCIH_KOLON = {
   begeni: 'bildir_begeni',
   yanit: 'bildir_yanit',
   takip: 'bildir_takip',
+  // 'takip_kabul' ("isteğin kabul edildi") takip ailesine bağlı.
+  // *** 'takip_istegi' BİLEREK YOK ***: istek bildirimi kapatılabilir olsaydı
+  // takip bildirimlerini kapatan gizli hesap sahibi istekleri HİÇ GÖREMEZ ve
+  // kabul edemezdi — istek bir haber değil, cevap bekleyen bir eylemdir.
+  takip_kabul: 'bildir_takip',
   mesaj: 'bildir_mesaj',
   etiket: 'bildir_etiket',
   // *** KASITLI BOŞLUK ***: `bildir_arama` YALNIZ KAÇIRILAN ARAMA bildirimini
@@ -2309,6 +2314,86 @@ function engelSuzgec(sutun, ben) {
   return `(${ben}::int = 0 OR ${sutun} NOT IN (
         SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=${ben}
         UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=${ben}))`;
+}
+
+// ---------------------------------------------------------------------------
+// GİZLİ HESAP (8 Eyl 2026) — Instagram tarzı özel profil
+// ---------------------------------------------------------------------------
+// `kullanicilar.hesap_gizli` açıkken profil içeriği YALNIZ takipçiye açılır;
+// yabancı yalnız başlığı (ad, avatar, bio, sayaçlar) görür ve "Takip Et"
+// yerine "İstek Gönder" ile `takip_istekleri`ne yazar. Sahibi kabul edince
+// satır `takipler`e taşınır. Diğer `_gizli` alanlarından FARKI: onlar herkese
+// karşı ve bölüm bölüm; bu, takipçiye açık / yabancıya kapalı tek kapıdır.
+//
+// İKİ YÜZEY, İKİ ARAÇ:
+//  · `hesapKapaliMi(satir, benId)` — tek profil/tek liste ucu için (profil,
+//    izlenenler, puanlar, kitaplık, takipçi listeleri). Sahibi ve takipçisi
+//    için false; oturumsuz (benId 0) yabancı için true.
+//  · `gizliHesapSuzgec(k, ben)` — akış/keşfet SQL parçası: gizli hesabın
+//    gönderisi takip etmeyenin akışına ve Keşfet'ine DÜŞMEZ (Instagram'da da
+//    özel hesabın gönderisi Keşfet'e çıkmaz). İçerik sayfasındaki yorumlar
+//    ise herkese açık kalır — Instagram'da da özel hesabın başkasının
+//    gönderisine yazdığı yorum görünür.
+//
+// İSTEK ↔ BİLDİRİM DEĞİŞMEZİ: `takip_istekleri`nde bekleyen her satır için
+// alıcının kutusunda BİR 'takip_istegi' bildirimi vardır; kabul/ret/iptal
+// ikisini birlikte kaldırır (kabulde yerine 'takip' satırı yazılır). İstemci
+// "hâlâ bekliyor mu" diye ikinci uca gitmez, satır varsa bekliyordur.
+async function takipEdiyorMu(edenId, edilenId) {
+  if (!edenId || !edilenId) return false;
+  const { rows } = await havuz.query(
+    'SELECT 1 FROM takipler WHERE takip_eden_id=$1 AND takip_edilen_id=$2',
+    [edenId, edilenId],
+  );
+  return rows.length > 0;
+}
+
+/** `satir`: kullanicilar satırı (`id` + `hesap_gizli` seçilmiş olmalı). */
+async function hesapKapaliMi(satir, benId = 0) {
+  if (!satir || satir.hesap_gizli !== true) return false;
+  if (benId && benId === satir.id) return false;
+  return !(await takipEdiyorMu(benId, satir.id));
+}
+
+/** `k`: kullanicilar tablosunun takma adı (ör. 'k'), `ben`: yer tutucu ('$1'). */
+function gizliHesapSuzgec(k, ben) {
+  return `(NOT ${k}.hesap_gizli OR ${k}.id = ${ben}::int OR EXISTS (
+        SELECT 1 FROM takipler tg
+         WHERE tg.takip_eden_id = ${ben}::int AND tg.takip_edilen_id = ${k}.id))`;
+}
+
+/**
+ * Bekleyen istekleri tek seferde takibe çevirir: hesap GİZLİDEN AÇIĞA
+ * geçince (Instagram da öyle yapar) ya da sahibi tek tek kabul edince.
+ * `isteyenId` verilirse yalnız o istek; verilmezse hedefin tümü.
+ * @returns {Promise<number[]>} takibe çevrilen isteyen id'leri
+ */
+async function takipIsteklerineKabul(hedefId, isteyenId = null) {
+  const { rows } = await havuz.query(
+    `DELETE FROM takip_istekleri
+      WHERE hedef_id=$1 AND ($2::int IS NULL OR isteyen_id=$2)
+      RETURNING isteyen_id`,
+    [hedefId, isteyenId],
+  );
+  if (!rows.length) return [];
+  const idler = rows.map((r) => r.isteyen_id);
+  await havuz.query(
+    `INSERT INTO takipler (takip_eden_id, takip_edilen_id)
+     SELECT unnest($1::int[]), $2 ON CONFLICT DO NOTHING`,
+    [idler, hedefId],
+  );
+  // İstek bildirimi yerini "takip etmeye başladı" satırına bırakır: sahibinin
+  // kutusunda hem "istiyor" hem "başladı" durmaz.
+  await havuz.query(
+    `DELETE FROM bildirimler
+      WHERE kullanici_id=$1 AND tur='takip_istegi' AND aktor_id = ANY($2::int[])`,
+    [hedefId, idler],
+  );
+  for (const id of idler) {
+    bildirimEkle(hedefId, 'takip', id);
+    bildirimEkle(id, 'takip_kabul', hedefId);
+  }
+  return idler;
 }
 
 /** Karşılıklı takip: A→B ve B→A. `takipler` PK'si (eden, edilen), ters yön
@@ -11871,6 +11956,9 @@ app.post('/kisi/:id/bildirim', girisZorunlu, kisiLimiti, sarici(async (req, res)
 const GIZLILIK_ALANLARI = [
   'izlenenler_gizli', 'yorumlar_gizli', 'yanitlar_gizli', 'cevrimici_gizli',
   'takipciler_gizli', 'takip_edilenler_gizli',
+  // GİZLİ HESAP (8 Eyl 2026): takipçiye açık / yabancıya kapalı; TEK YÖNLÜ ve
+  // negatif polarite kuralına uyar. Zorlama `hesapKapaliMi` + `gizliHesapSuzgec`.
+  'hesap_gizli',
 ];
 
 // Kullanıcı başına sesli/görüntülü arama açma-kapama (istek listesi md. 38).
@@ -11949,6 +12037,10 @@ app.post('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
      RETURNING ${TERCIH_ALANLARI.join(', ')}`,
     deg,
   );
+  // GİZLİDEN AÇIĞA geçiş bekleyen istekleri kabul eder (Instagram ile aynı):
+  // hesap açıldıktan sonra "bekleyen istek" diye bir şey kalmamalı — isteyen
+  // zaten herkesin gördüğünü görür, düğmesi de "Takip Ediyorsun" olmalı.
+  if (g.hesap_gizli === false) await takipIsteklerineKabul(req.kullanici.id);
   res.json({ ...rows[0], misafir: req.misafir === true });
 }));
 
@@ -14305,6 +14397,9 @@ const AKIS_GOVDE = `
      -- NOT: bu blok bir SABLON DIZESI icinde; buraya BACKTICK YAZMA.
      WHERE NOT k.yasakli
        AND ${engelSuzgec('y.kullanici_id', '$1')}
+       -- GIZLI HESAP (8 Eyl 2026): ozel hesabin gonderisi yalniz takipcisinin
+       -- akisina/Kesfet'ine duser (gerekce gizliHesapSuzgec basliginda).
+       AND ${gizliHesapSuzgec('k', '$1')}
        AND y.ust_id IS NULL`;
 const AKIS_ALANLAR = `
      SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
@@ -19128,16 +19223,40 @@ app.get('/gizlenen-yorumlar', girisZorunlu, sarici(async (req, res) => {
 // Kullanıcı adına göre takip et / bırak
 app.post('/takip/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   const hedef = await havuz.query(
-    'SELECT id FROM kullanicilar WHERE kullanici_adi=$1', [req.params.kullaniciAdi]);
+    'SELECT id, hesap_gizli FROM kullanicilar WHERE kullanici_adi=$1', [req.params.kullaniciAdi]);
   if (!hedef.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
   const hedefId = hedef.rows[0].id;
   if (hedefId === req.kullanici.id) {
     return res.status(400).json({ hata: 'Kendini takip edemezsin' });
   }
+  const takipciSay = async () => (await havuz.query(
+    'SELECT count(*)::int AS adet FROM takipler WHERE takip_edilen_id=$1', [hedefId],
+  )).rows[0].adet;
+  // Yanıt sözleşmesi: `takip` (takip ediyorum), `istek` (istek bekliyor),
+  // `takipci`. Eski istemci (Play 1.40) yalnız `takip`i okur; gizli hesaba
+  // istek attığında `takip:false` görür ve düğmesi "Takip Et" kalır — yanlış
+  // bir şey söylemez, yalnız isteği göstermez.
   const silindi = await havuz.query(
     'DELETE FROM takipler WHERE takip_eden_id=$1 AND takip_edilen_id=$2',
     [req.kullanici.id, hedefId],
   );
+  // BEKLEYEN İSTEĞİ GERİ ÇEK (gizli hesap): takip yoksa ikinci dokunuş
+  // isteği iptal eder ve bildirimi alıcının kutusundan kaldırır (istek ↔
+  // bildirim değişmezi, bkz. hesapKapaliMi başlığı).
+  if (silindi.rowCount === 0) {
+    const iptal = await havuz.query(
+      'DELETE FROM takip_istekleri WHERE isteyen_id=$1 AND hedef_id=$2',
+      [req.kullanici.id, hedefId],
+    );
+    if (iptal.rowCount) {
+      await havuz.query(
+        `DELETE FROM bildirimler
+          WHERE kullanici_id=$1 AND tur='takip_istegi' AND aktor_id=$2`,
+        [hedefId, req.kullanici.id],
+      );
+      return res.json({ takip: false, istek: false, takipci: await takipciSay() });
+    }
+  }
   // ENGELLEME (md. 19): engelli çiftte TAKİP KURULAMAZ. Yalnız KURMA yönü
   // kapalı — yukarıdaki DELETE (takipten çıkma) bilerek serbesttir; temizleyici
   // eylemi engellemek kullanıcıyı kendi takip listesinde kilitler.
@@ -19147,33 +19266,90 @@ app.post('/takip/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   if (silindi.rowCount === 0 && await engelliMi(req.kullanici.id, hedefId)) {
     return res.status(403).json({ hata: 'Bu kullanıcıyı takip edemezsin' });
   }
+  let istek = false;
   if (silindi.rowCount === 0) {
-    await havuz.query(
-      'INSERT INTO takipler (takip_eden_id, takip_edilen_id) VALUES ($1,$2) ON CONFLICT DO NOTHING',
-      [req.kullanici.id, hedefId],
-    );
-    bildirimEkle(hedefId, 'takip', req.kullanici.id);
-    // md. 23 — "bu gönderiden kaç kişi takip etti". ATIF İSTEMCİDEN gelir
-    // (`kaynak_gonderi`), ama SAYIM SUNUCUDA ve YALNIZ BURADA yapılır:
-    // gerçekten YENİ bir takip satırı açıldığı dalda. İstemcinin bildirdiği
-    // bir "takip ettim" olayına güvenilseydi takip-bırak-takip döngüsü sayacı
-    // sınırsız şişirirdi. Gönderinin hedef kişiye ait olması da SQL'de şart
-    // koşuluyor: başkasının gönderisine takip yazılamaz.
-    const kg = req.body?.kaynak_gonderi;
-    if (Number.isInteger(kg) && kg > 0) {
-      havuz.query(
-        `INSERT INTO gonderi_sayac (gonderi_id, olcu, adet)
-         SELECT y.id, 'takip', 1 FROM yorumlar y
-          WHERE y.id=$1 AND y.kullanici_id=$2
-         ON CONFLICT (gonderi_id, olcu)
-           DO UPDATE SET adet = gonderi_sayac.adet + 1`,
-        [kg, hedefId],
-      ).catch(() => {});
+    if (hedef.rows[0].hesap_gizli === true) {
+      // GİZLİ HESAP (8 Eyl 2026): takip yerine İSTEK. Bildirim tercihle
+      // kapatılamaz (BILDIRIM_TERCIH_KOLON); kabul/ret /takip-istekleri'nde.
+      await havuz.query(
+        'INSERT INTO takip_istekleri (isteyen_id, hedef_id) VALUES ($1,$2) ON CONFLICT DO NOTHING',
+        [req.kullanici.id, hedefId],
+      );
+      bildirimEkle(hedefId, 'takip_istegi', req.kullanici.id);
+      istek = true;
+    } else {
+      await havuz.query(
+        'INSERT INTO takipler (takip_eden_id, takip_edilen_id) VALUES ($1,$2) ON CONFLICT DO NOTHING',
+        [req.kullanici.id, hedefId],
+      );
+      bildirimEkle(hedefId, 'takip', req.kullanici.id);
+      // md. 23 — "bu gönderiden kaç kişi takip etti". ATIF İSTEMCİDEN gelir
+      // (`kaynak_gonderi`), ama SAYIM SUNUCUDA ve YALNIZ BURADA yapılır:
+      // gerçekten YENİ bir takip satırı açıldığı dalda. İstemcinin bildirdiği
+      // bir "takip ettim" olayına güvenilseydi takip-bırak-takip döngüsü sayacı
+      // sınırsız şişirirdi. Gönderinin hedef kişiye ait olması da SQL'de şart
+      // koşuluyor: başkasının gönderisine takip yazılamaz.
+      const kg = req.body?.kaynak_gonderi;
+      if (Number.isInteger(kg) && kg > 0) {
+        havuz.query(
+          `INSERT INTO gonderi_sayac (gonderi_id, olcu, adet)
+           SELECT y.id, 'takip', 1 FROM yorumlar y
+            WHERE y.id=$1 AND y.kullanici_id=$2
+           ON CONFLICT (gonderi_id, olcu)
+             DO UPDATE SET adet = gonderi_sayac.adet + 1`,
+          [kg, hedefId],
+        ).catch(() => {});
+      }
     }
   }
-  const say = await havuz.query(
-    'SELECT count(*)::int AS adet FROM takipler WHERE takip_edilen_id=$1', [hedefId]);
-  res.json({ takip: silindi.rowCount === 0, takipci: say.rows[0].adet });
+  res.json({ takip: silindi.rowCount === 0 && !istek, istek, takipci: await takipciSay() });
+}));
+
+// ---------- takip istekleri (gizli hesap) ----------
+// Bekleyen istekler: bildirim kutusundaki 'takip_istegi' satırlarının kaynağı.
+// Ayrı uç, çünkü bildirim listesi 100'le kırpılır; isteklerin tamamı burada.
+app.get('/takip-istekleri', girisZorunlu, sarici(async (req, res) => {
+  const { rows } = await havuz.query(
+    `SELECT k.kullanici_adi, k.avatar, k.bio, k.testci, i.tarih
+       FROM takip_istekleri i JOIN kullanicilar k ON k.id = i.isteyen_id
+      WHERE i.hedef_id=$1 AND NOT k.yasakli
+      ORDER BY i.tarih DESC LIMIT 500`,
+    [req.kullanici.id],
+  );
+  res.json({ istekler: rows });
+}));
+
+// İsteği kabul et: satır takibe döner, isteyene 'takip_kabul', sahibine
+// 'takip' bildirimi. Bekleyen istek yoksa 404 — düğme çift basılmış ya da
+// isteyen geri çekmiş demektir; istemci satırı düşürür.
+app.post('/takip-istekleri/:kullaniciAdi/kabul', girisZorunlu, sarici(async (req, res) => {
+  const k = await havuz.query(
+    'SELECT id FROM kullanicilar WHERE kullanici_adi=$1', [req.params.kullaniciAdi]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const kabul = await takipIsteklerineKabul(req.kullanici.id, k.rows[0].id);
+  if (!kabul.length) return res.status(404).json({ hata: 'Bekleyen istek yok' });
+  res.json({ tamam: true, takipci: (await havuz.query(
+    'SELECT count(*)::int AS adet FROM takipler WHERE takip_edilen_id=$1',
+    [req.kullanici.id])).rows[0].adet });
+}));
+
+// İsteği reddet: satır ve bildirim silinir, isteyene HİÇBİR ŞEY gitmez
+// (Instagram ile aynı — ret bildirilmez, düğmesi "İstek Gönder"e döner).
+app.post('/takip-istekleri/:kullaniciAdi/reddet', girisZorunlu, sarici(async (req, res) => {
+  const k = await havuz.query(
+    'SELECT id FROM kullanicilar WHERE kullanici_adi=$1', [req.params.kullaniciAdi]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const sil = await havuz.query(
+    'DELETE FROM takip_istekleri WHERE hedef_id=$1 AND isteyen_id=$2',
+    [req.kullanici.id, k.rows[0].id],
+  );
+  await havuz.query(
+    `DELETE FROM bildirimler
+      WHERE kullanici_id=$1 AND tur='takip_istegi' AND aktor_id=$2`,
+    [req.kullanici.id, k.rows[0].id],
+  );
+  if (!sil.rowCount) return res.status(404).json({ hata: 'Bekleyen istek yok' });
+  res.json({ tamam: true });
 }));
 
 // Bir kullanıcının takipçileri / takip ettikleri
@@ -19221,14 +19397,17 @@ const TAKIP_GIZLILIK_ALANI = {
 async function takipListesi(kullaniciAdi, sutun, digerSutun, benId = 0, hangi = 'takipciler') {
   const gizliAlan = TAKIP_GIZLILIK_ALANI[hangi];
   const k = await havuz.query(
-    `SELECT id, ${gizliAlan} AS gizli FROM kullanicilar WHERE kullanici_adi=$1`,
+    `SELECT id, ${gizliAlan} AS gizli, hesap_gizli FROM kullanicilar WHERE kullanici_adi=$1`,
     [kullaniciAdi]);
   if (!k.rows.length) return null;
   const sahipId = k.rows[0].id;
   // KENDİ LİSTENİ HER ZAMAN GÖRÜRSÜN: tercih yalnız BAŞKALARINA karşıdır
   // (yanındaki dört `_gizli` alanıyla aynı kapsam). Sahibi kendi listesini
   // göremeseydi tercihini geri almadan kimin takip ettiğini bilemezdi.
-  const gizli = k.rows[0].gizli === true && benId !== sahipId;
+  // GİZLİ HESAP (8 Eyl 2026): takipçi olmayan yabancı için liste de kapalı —
+  // takipçiler_gizli ile aynı "kendi satırın kalır" davranışı.
+  const gizli = (k.rows[0].gizli === true && benId !== sahipId)
+    || await hesapKapaliMi(k.rows[0], benId);
   // `takip_ediyorum` + `ben_mi`: 14 Ağu 2026. Eski istemci kendi takip
   // listesini ayrıca çekip satırları o 500'lük kümeyle karşılaştırıyordu;
   // 501. kişiden sonrası yanlışlıkla "Takip Et" görünüyordu. Satır alanı
@@ -19801,7 +19980,7 @@ app.get('/profil/:kullaniciAdi/kitaplik/:durum', girisZorunlu, sarici(async (req
     return res.status(400).json({ hata: 'Geçersiz liste' });
   }
   const k = await havuz.query(
-    `SELECT id, kullanici_adi, ad, avatar, izlenenler_gizli
+    `SELECT id, kullanici_adi, ad, avatar, izlenenler_gizli, hesap_gizli
      FROM kullanicilar WHERE kullanici_adi=$1`,
     [req.params.kullaniciAdi]);
   if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
@@ -19809,6 +19988,7 @@ app.get('/profil/:kullaniciAdi/kitaplik/:durum', girisZorunlu, sarici(async (req
   const benMi = sahipId === req.kullanici.id;
   const gizli = !benMi &&
     (k.rows[0].izlenenler_gizli === true ||
+     await hesapKapaliMi(k.rows[0], req.kullanici.id) ||
      await engelliMi(req.kullanici.id, sahipId));
   if (gizli) return res.json({ gizli: true, ogeler: [] });
   const { rows } = await havuz.query(
@@ -19857,7 +20037,7 @@ app.get('/profil/:kullaniciAdi/izlenenler', girisIsteğeBagli, sarici(async (req
   }
   const ofset = Math.min(50000, Math.max(0, parseInt(req.query.ofset, 10) || 0));
   const k = await havuz.query(
-    'SELECT id, izlenenler_gizli FROM kullanicilar WHERE kullanici_adi=$1',
+    'SELECT id, izlenenler_gizli, hesap_gizli FROM kullanicilar WHERE kullanici_adi=$1',
     [req.params.kullaniciAdi]);
   if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
   const id = k.rows[0].id;
@@ -19865,6 +20045,7 @@ app.get('/profil/:kullaniciAdi/izlenenler', girisIsteğeBagli, sarici(async (req
   const benMi = benId === id;
   const gizli = !benMi &&
     (k.rows[0].izlenenler_gizli === true ||
+     await hesapKapaliMi(k.rows[0], benId) ||
      (benId ? await engelliMi(benId, id) : false));
   if (gizli) return res.json({ gizli: true, toplam: 0, sayfa_boyu: IZLENEN_SAYFA, ogeler: [] });
   const gizliFiltre = benMi ? '' :
@@ -19929,7 +20110,7 @@ const PROFIL_PUAN_SAYFA = 60;
 
 app.get('/profil/:kullaniciAdi/puanlar', girisIsteğeBagli, profilPuanLimiti, sarici(async (req, res) => {
   const k = await havuz.query(
-    `SELECT id, izlenenler_gizli FROM kullanicilar WHERE kullanici_adi=$1`,
+    `SELECT id, izlenenler_gizli, hesap_gizli FROM kullanicilar WHERE kullanici_adi=$1`,
     [req.params.kullaniciAdi]);
   if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
   const sahipId = k.rows[0].id;
@@ -19937,6 +20118,7 @@ app.get('/profil/:kullaniciAdi/puanlar', girisIsteğeBagli, profilPuanLimiti, sa
   const benMi = sahipId === benId;
   const gizli = !benMi &&
     (k.rows[0].izlenenler_gizli === true ||
+     await hesapKapaliMi(k.rows[0], benId) ||
      (benId ? await engelliMi(benId, sahipId) : false));
   if (gizli) return res.json({ gizli: true, toplam: 0, ogeler: [] });
   const sayfa = Math.max(0, Math.min(200, parseInt(req.query.sayfa, 10) || 0));
@@ -19978,7 +20160,8 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     // ad: görünen ad; kimlik değil ETİKET (migrasyon-2026-08-21.sql).
     `SELECT id, kullanici_adi, ad, avatar, kapak, bio, ulke, sosyal, olusturma,
             izlenenler_gizli, yorumlar_gizli, yanitlar_gizli,
-            takipciler_gizli, takip_edilenler_gizli, testci, misafir
+            takipciler_gizli, takip_edilenler_gizli, testci, misafir,
+            hesap_gizli
      FROM kullanicilar WHERE kullanici_adi=$1`,
     [req.params.kullaniciAdi],
   );
@@ -20037,6 +20220,54 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   // Gizlilik: sahibi kendi profilinde her şeyi görür; başkaları için
   // içerik bazlı gizlenenler düşer, genel anahtarlar bölümü tamamen kapatır.
   const benMi = benId === id;
+  // ---------------------------------------------------------------------
+  // GİZLİ HESAP (8 Eyl 2026) — TAKİPÇİ DEĞİLSEN YALNIZ BAŞLIK
+  // ---------------------------------------------------------------------
+  // Engel dalıyla aynı kalıp ama farkları var: bio/kapak/sosyal KALIR
+  // (Instagram'da da özel profilin biyografisi görünür; kişi kim olduğunu
+  // anlatıp takip isteği alabilsin), sayaçlar KALIR (gönderi/takipçi/takip
+  // sayıları özel profilde de yazar), içerik listeleri BOŞ döner, uyum ve
+  // ekran süresi gizlenen kütüphaneden türediği için düşer. `gizli_profil`
+  // bayrağı istemciye "kilit kartı çiz" der; `takip_istegi` düğmenin
+  // "İstek Gönderildi" hâlini besler.
+  if (!benMi && k.rows[0].hesap_gizli === true && !(await takipEdiyorMu(benId, id))) {
+    const [sayac, istek] = await Promise.all([
+      havuz.query(
+        `SELECT
+           (SELECT count(*)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='tv') AS bolum,
+           (SELECT count(*)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='movie') AS film,
+           (SELECT count(DISTINCT tmdb_id)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='tv') AS dizi,
+           (SELECT count(*)::int FROM takipler WHERE takip_edilen_id=$1) AS takipci,
+           (SELECT count(*)::int FROM takipler WHERE takip_eden_id=$1) AS takip_edilen,
+           (SELECT count(*)::int FROM yorumlar y
+             WHERE y.kullanici_id=$1 AND NOT y.profilde_gizli) AS yorum,
+           (SELECT count(*)::int FROM puanlar pn
+             WHERE pn.kullanici_id=$1 AND pn.sezon IS NULL AND pn.puan IS NOT NULL
+               AND pn.tur IN ('tv','movie')) AS puan`,
+        [id]),
+      benId
+        ? havuz.query(
+          'SELECT 1 FROM takip_istekleri WHERE isteyen_id=$1 AND hedef_id=$2',
+          [benId, id])
+        : Promise.resolve({ rows: [] }),
+    ]);
+    return res.json({
+      ...k.rows[0],
+      ben_mi: false,
+      takip_ediyorum: false,
+      takip_istegi: istek.rows.length > 0,
+      gizli_profil: true,
+      engelledim: false,
+      uyum: null,
+      istatistik: {
+        ...sayac.rows[0],
+        toplam_goruntulenme: 0, toplam_begeni: 0, tahmini_dakika: 0,
+      },
+      rozetler: [], listeler: [], incelemeler: [], yorumlar: [],
+      icerikler: {}, izlenenler: [],
+      seviye: null,
+    });
+  }
   // *** SAHİBİ HER ZAMAN KENDİ VERİSİNİ GÖRÜR *** — üç bayrağın da başında
   // `!benMi` var. Kendi profiline bakan kullanıcı gizlediği şeyi GÖRMEYE
   // devam eder; aksi hâlde tercihini geri almadan neyi sakladığını bilemezdi.
@@ -20296,6 +20527,10 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     ...k.rows[0],
     ben_mi: benId === id,
     takip_ediyorum: takip.rows[0].var,
+    // Açık profilde ya da takipçiysen bekleyen istek olamaz (açığa geçiş
+    // istekleri kabul eder); alan yine de döner ki istemci tek sözleşme okusun.
+    takip_istegi: false,
+    gizli_profil: false,
     engelledim: takip.rows[0].engel,
     uyum,
     istatistik: {
@@ -20587,6 +20822,13 @@ app.post('/engelle/:kullaniciAdi', girisZorunlu, engelLimiti, sarici(async (req,
   await havuz.query(
     `DELETE FROM bildirimler
      WHERE (kullanici_id=$1 AND aktor_id=$2) OR (kullanici_id=$2 AND aktor_id=$1)`,
+    [req.kullanici.id, hedefId],
+  );
+  // GİZLİ HESAP (8 Eyl 2026): bekleyen takip isteği de koparılır — engel
+  // takibi koparıyorsa henüz kurulmamış takibi de koparmalı.
+  await havuz.query(
+    `DELETE FROM takip_istekleri WHERE (isteyen_id=$1 AND hedef_id=$2)
+       OR (isteyen_id=$2 AND hedef_id=$1)`,
     [req.kullanici.id, hedefId],
   );
   res.json({ engellendi: true });

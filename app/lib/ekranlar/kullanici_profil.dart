@@ -65,10 +65,18 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
     try {
       final d = await Api.takipToggle(widget.kullaniciAdi);
       if (!mounted) return;
+      final gizliydi = _profil!['gizli_profil'] == true;
       setState(() {
         _profil!['takip_ediyorum'] = d['takip'];
+        // Gizli hesaba dokunuş takip DEĞİL istek açar; sunucu `istek:true`
+        // der, düğme "İstek Gönderildi"ye döner. İkinci dokunuş isteği geri
+        // çeker (`istek:false`).
+        _profil!['takip_istegi'] = d['istek'] == true;
         _profil!['istatistik']['takipci'] = d['takipci'];
       });
+      // Kilitli profil takibe döndüyse (hesap bu arada açığa alınmış ya da
+      // istek onaylanmıştı) içerik artık bize açık: yeniden çek.
+      if (gizliydi && d['takip'] == true) await _yukle();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -147,6 +155,12 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
       // sunucu zaten boş liste dönüyor, ekranda "Yorum yok" yazmak yerine
       // sebebini söyleyip geri alma yolunu göstermek gerekir.
       final engelledim = p['engel'] == true;
+      // GİZLİ HESAP (8 Eyl 2026): sunucu takipçi olmayana yalnız başlık +
+      // sayaçlar gönderir ve `gizli_profil:true` der. Sekmeler ve içerik
+      // HİÇ çizilmez (engel dalıyla aynı sebep: boş liste "henüz bir şey
+      // izlememiş" gibi YANLIŞ okunurdu); yerine kilit kartı durur.
+      final gizliProfil = p['gizli_profil'] == true;
+      final istekGonderildi = p['takip_istegi'] == true;
       final yorumlar = (p['yorumlar'] as List<dynamic>? ?? []);
       // Aile rozeti akış kartında adın yanında çizilsin diye (1 Eyl 2026)
       // profil düzeyindeki `testci` her yorum satırına kopyalanır — profil
@@ -172,7 +186,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
       //  · engellediğim kişi — sekmeler HİÇ çizilmiyor, `_sekme`yi değiştirmek
       //    hiçbir şey yapmazdı.
       final yorumSekmesi =
-          (engelledim || (!benMi && p['yorumlar_gizli'] == true))
+          (engelledim || gizliProfil || (!benMi && p['yorumlar_gizli'] == true))
           ? null
           : () => setState(() => _sekme = 1);
 
@@ -411,8 +425,12 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       children: [
                         Expanded(
                           child: FilledButton.icon(
+                            key: const Key('profil-takip-dugmesi'),
                             onPressed: _takipIsleniyor ? null : _takip,
-                            style: takipEdiyorum
+                            // Üç hâl: takipte (bırak) / istek bekliyor (geri
+                            // çek) / takip et. İlk ikisi "pasif" kart
+                            // renginde: birincil eylem yalnız takip etmektir.
+                            style: (takipEdiyorum || istekGonderildi)
                                 ? FilledButton.styleFrom(
                                     backgroundColor: DiziRenkler.kart,
                                     foregroundColor: DiziRenkler.metin,
@@ -421,10 +439,16 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                             icon: Icon(
                               takipEdiyorum
                                   ? Icons.person_remove
+                                  : istekGonderildi
+                                  ? Icons.hourglass_top
                                   : Icons.person_add,
                             ),
                             label: Text(
-                              takipEdiyorum ? 'Takibi Bırak'.c : 'Takip Et'.c,
+                              takipEdiyorum
+                                  ? 'Takibi Bırak'.c
+                                  : istekGonderildi
+                                  ? 'İstek Gönderildi'.c
+                                  : 'Takip Et'.c,
                             ),
                           ),
                         ),
@@ -446,10 +470,14 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         ),
                       ],
                     ),
+                  if (gizliProfil) ...[
+                    const SizedBox(height: 12),
+                    _GizliProfilKarti(istekGonderildi: istekGonderildi),
+                  ],
                   const SizedBox(height: 20),
                   // İki sekme: kendi profilimizle BİREBİR aynı widget
                   // (profil.dart > ProfilSekmeleri).
-                  if (!engelledim)
+                  if (!engelledim && !gizliProfil)
                     ProfilSekmeleri(
                       secili: _sekme,
                       onSec: (i) => setState(() => _sekme = i),
@@ -465,7 +493,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
             // döndüğü için buraya düşen dal "Bu kullanıcı henüz bir şey
             // izlememiş" gibi YANLIŞ bir sebep gösterirdi. Doğru sebep
             // yukarıdaki _EngelKarti'nda yazıyor.
-            if (engelledim)
+            if (engelledim || gizliProfil)
               const SizedBox.shrink()
             else if (_sekme == 0)
               Padding(
@@ -790,6 +818,57 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
     } finally {
       if (mounted) setState(() => _engelIsleniyor = false);
     }
+  }
+}
+
+/// Gizli hesabın (takipçi olmayan ziyaretçiye) sekmelerin yerine çizilen
+/// kilit kartı: neden boş olduğunu ve ne yapılacağını söyler. Düğme yok —
+/// eylem yukarıdaki Takip Et / İstek Gönderildi düğmesinde.
+class _GizliProfilKarti extends StatelessWidget {
+  final bool istekGonderildi;
+  const _GizliProfilKarti({required this.istekGonderildi});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('gizli-profil-karti'),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      decoration: BoxDecoration(
+        color: DiziRenkler.kart,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.lock_outline, color: DiziRenkler.sariMetin, size: 22),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Bu hesap gizli'.c,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  istekGonderildi
+                      ? 'İsteğin bekliyor; onaylanınca izlediklerini, yorumlarını ve listelerini görebilirsin.'
+                            .c
+                      : 'İzlediklerini, yorumlarını ve listelerini görmek için takip isteği gönder; onaylanınca profil açılır.'
+                            .c,
+                  style: TextStyle(
+                    color: DiziRenkler.metin54,
+                    fontSize: 12.5,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
