@@ -43,6 +43,44 @@ ilan eder.
 Masaüstü'nü okuyamıyor (`Operation not permitted`) ve ajan SESSİZCE ölüyor. Tam Disk Erişimi'ne
 `/usr/bin/python3` eklenmeden zamanlama çalışmaz (plist başlığında adım adım).
 
+## 2026-09-07 — 🧪 Tam test turu: web + Android + iOS (1.143.8+218) 🚀
+
+**Tetik (kullanıcı):** *"bir daha herşeyi test et"* → *"mobil cihazlardan da test et web den aç
+mobilden gir ios dan gir falan filan yap gerekli testleri"*
+
+Yerel takımlar, canlı uç matrisi, Android emülatörü ve iOS simülatörü. **Beş gerçek hata**
+çıktı; hepsi düzeltildi:
+
+| # | Hata | Nasıl yakalandı |
+|---|---|---|
+| 1 | `Api.surum` pubspec ile ayrışmıştı (1.142.0+209'da kalmış) | `surum_esleme_test` |
+| 2 | `GET /odalar` sorgusu `kaynak`/`baglanti_*` kolonlarını SEÇMİYORDU → bağlantılı oda modalde "boş" | canlı uç matrisi |
+| 3 | Mobilde YouTube kromu (duraklama/bitiş kartı) sızıyordu | iOS simülatörü |
+| 4 | Mobil WebView dokunuşu yutuyordu → izleyici YouTube'dan duraklatıp senkronu bozabiliyordu | iOS simülatörü |
+| 5 | "Birlikte izle" modalinin açıklaması bağlantı kipinden hiç bahsetmiyordu | Android emülatörü |
+
+**Canlı uç matrisi (42 durum):** 13 kabul (YouTube'un 7 biçimi, Vimeo 3, doğrudan dosya 3),
+18 ret (OK.ru, VK, Dailymotion, Netflix, kanal/oynatma listesi, .mkv/.avi, `http://`, altı
+özel ağ adresi, boş/saçma/`javascript:`), istemcinin uydurduğu gövdenin yok sayılması, gövde
+alanları, sistem mesajı. **40/42 → iki hata (2. madde) düzeltildikten sonra 42/42.**
+
+**Android (emülatör, kodla katılma):** modal → kod → oda → gömme oynatıcı açıldı → sahip 30.
+saniyeye sardı, izleyicide altyazı o noktadan aktı → "Sesi aç" dokunuşuyla ses açıldı ve düğme
+kayboldu.
+
+**iOS (simülatör, oda sahibi):** oda → oynatıcı + sahip kontrolleri (3:34 süresi doğru okundu)
+→ senkron → sesi aç. Oturum forma parola yazılmadan sağlandı (API'den alınan jeton doğrudan
+uygulama tercihlerine yazıldı).
+
+**DÜZELTİLEMEYEN (bulgu, yorumda ve hafızada yazılı):** iOS'ta video DURAKLATILDIĞINDA sistem
+kendi yerel katmanını basıyor (başlık, kanal kapağı, YouTube logosu, duraklat simgesi). Enjekte
+edilen teşhis bu öğelerin DOM'da OLMADIĞINI kanıtladı — CSS ile kaldırılamıyor. Oynarken ekran
+temiz.
+
+**Bilinen tek eksik:** `test/cihaz_dagilimi.test.js` içindeki bir iddia `ADMIN_IPLER` sabitini
+arıyor; admin IP listesi 5 Eyl'de sıcak dosyaya taşındığı için düşüyor. **Bu turdan ÖNCE de
+düşüyordu** (eski `server.js` ile doğrulandı) — bu işin kapsamı dışında, ayrı bir düzeltme.
+
 ## 2026-09-07 — 🔗 İzleme odasına BAĞLANTI kaynağı: yükleme yerine adres yapıştırma (1.143.6+216) 🚀
 
 **Tetik (kullanıcı):** *"bu birlikte izlemeye video upload yerine kullanıcıya tarayıcı açabilir
