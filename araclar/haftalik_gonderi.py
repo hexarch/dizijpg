@@ -40,9 +40,10 @@ gibi gösterir. TEKİL KİŞİ sayısı bu çarpıtmaya kapalı: arşivini işar
 kişi listeye 1 katkı verir. Bölüm sayısı yalnız eşitlik bozucudur.
 
 ------------------------------------------------------- TELİF / ATIF (ZORUNLU)
-1. Afişler ve kişi fotoğrafları TMDB'den gelir. Her görselin ALTINDA ve her
-   açıklama metninde TMDB atfı YAZILIR (aşağıdaki ATIF_* sabitleri) —
-   TMDB kullanım şartlarının istediği cümle birebir geçer.
+1. Afişler ve kişi fotoğrafları TMDB'den gelir. TMDB ADI HİÇBİR YERDE GEÇMEZ
+   (kullanıcı kararı, 7 Eyl 2026: önce görselden, sonra açıklama metninden
+   kaldırıldı). Atıf cümlesini geri koymak gerekirse yeri açıklama metninin
+   sonudur — görsel değil.
 2. Afişler KÜÇÜK ÖLÇEKTE ve yapımı TANIMLAMAK için kullanılır; üzerlerindeki
    marka/dağıtımcı işaretleri kırpılmaz, filigran kaldırılmaz.
 3. Stüdyo gönderisinde şirketin KENDİ LOGOSU kullanılır (TMDB `logo_path`) —
@@ -114,8 +115,6 @@ BEYAZ = (255, 255, 255)
 GRI = (158, 158, 163)          # DiziRenkler.ikincilMetin (koyu)
 KOYU_GRI = (58, 58, 64)
 
-ATIF_METIN = ("Bu ürün TMDB API'sini kullanır, ancak TMDB tarafından "
-              "onaylanmamıştır.")
 SITE = "dizijpg.com"
 
 AYLAR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz",
@@ -572,8 +571,6 @@ def izgara_metni(baslik, ogeler, b, s, kapanis, etiketler):
         "",
         f"{kapanis} {SITE}",
         "",
-        ATIF_METIN,
-        "",
         etiketler,
     ])
 
@@ -911,7 +908,7 @@ def ciz_film(veri, b, s):
 
 def metin_film(veri, b, s):
     return izgara_metni("Haftanın en beğenilen 10 filmi", veri, b, s,
-                        "Sen hangisine kaç verirdin? Puanını bırak:",
+                        "Sen hangisini beğendin?",
                         "#dizijpg #film #haftaninfilmleri #sinema #filmonerisi "
                         "#filmizle #movie #sinemakeyfi #filmsever #tvshows")
 
@@ -1014,6 +1011,8 @@ def kur():
     os.makedirs(os.path.join(varliklar, "fonts"), exist_ok=True)
     shutil.copy2(os.path.abspath(__file__),
                  os.path.join(CALISMA, "haftalik_gonderi.py"))
+    shutil.copy2(os.path.join(BURASI, "haftalik_video.py"),
+                 os.path.join(CALISMA, "haftalik_video.py"))
     shutil.copy2(os.path.join(BURASI, AYAR_DOSYA),
                  os.path.join(CALISMA, AYAR_DOSYA))
     shutil.copy2(LOGO, os.path.join(varliklar, "logo.png"))
@@ -1023,6 +1022,16 @@ def kur():
     with open(jeton, "w", encoding="utf-8") as f:
         f.write(tmdb_token())
     os.chmod(jeton, 0o600)
+    # ElevenLabs anahtarı (video seslendirmesi) — varsa kopyalanır.
+    env = os.path.expanduser("~/.dizijpg-eleven.env")
+    if os.path.exists(env):
+        with open(env, encoding="utf-8") as f:
+            for satir in f:
+                if satir.startswith("ELEVENLABS_API_KEY="):
+                    ses = os.path.join(CALISMA, "eleven.token")
+                    with open(ses, "w", encoding="utf-8") as g:
+                        g.write(satir.split("=", 1)[1].strip())
+                    os.chmod(ses, 0o600)
     tamam(f"çalışma kopyası: {CALISMA}")
     tamam(f"zamanlanmış çıktı: {os.path.expanduser('~/Pictures/dizi.jpg-gonderiler')}")
 

@@ -37,7 +37,20 @@ Onluk liste dolmazsa gönderi HİÇ üretilmez — dokuz kutuluk bir "ilk 10" ve
 ilan eder.
 
 **Marka:** sol üstte gerçek logo (`logo.png`, uygulama ikonuyla aynı), tipografiyle
-"dizi.jpg" yazmak DEĞİL.
+"dizi.jpg" yazmak DEĞİL. Stüdyo kutularında şirketin GÜNCEL resmî logosu (Wikidata P154 →
+Commons; TMDB'deki tek logo çoğu şirkette eski/siyah sürüm). TMDB adı hiçbir yerde geçmiyor.
+
+**Video (7 Eyl, aynı tur):** `araclar/haftalik_video.py` — aynı listeden 1080×1920
+Reels/Shorts videosu, **10 dilde** (tr, en, es, pt, fr, de, it, nl, pl, id): geri sayım
+10 → 1, her dilde o dilin TMDB başlıkları + ElevenLabs seslendirmesi (Türkçe'de İstanbul
+aksanlı yerli ses, diğerlerinde çok dilli model). Süre 23-34 sn. Pazartesi ajanı görsellerden
+sonra videoyu da basıyor (~3.500 karakter/hafta ElevenLabs kotası).
+Diller LATİN alfabesiyle sınırlı: Poppins Latin+Latin-Ext alt kümesiyle paketli, Rusça/
+Arapça/Hintçe için önce font (Arapça'da ayrıca birleştirme + RTL) gerekiyor.
+MÜZİK YOK — telifsizliği kanıtlanamayan parça videoya gömülmüyor; Instagram'ın kendi
+kütüphanesinden yükleme sırasında eklenebilir.
+
+
 
 **TUZAK — macOS TCC:** proje ~/Desktop altında; launchd'den başlatılan `/usr/bin/python3`
 Masaüstü'nü okuyamıyor (`Operation not permitted`) ve ajan SESSİZCE ölüyor. Tam Disk Erişimi'ne

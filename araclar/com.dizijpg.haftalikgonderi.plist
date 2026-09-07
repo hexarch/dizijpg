@@ -36,12 +36,14 @@ veri merkezi IP'lerini engelliyor).
   <key>Label</key>
   <string>com.dizijpg.haftalikgonderi</string>
 
+  <!-- Önce beş görsel gönderi, sonra 10 dilli video. Video seslendirmesi
+       ElevenLabs kotasından haftada ~3.500 karakter yer; kapatmak için
+       ikinci komutu bu satırdan çıkarmak yeter. -->
   <key>ProgramArguments</key>
   <array>
-    <string>/usr/bin/python3</string>
-    <string>/Users/wolf/Library/Application Support/dizijpg/gonderi/haftalik_gonderi.py</string>
-    <string>--post</string>
-    <string>hepsi</string>
+    <string>/bin/sh</string>
+    <string>-c</string>
+    <string>/usr/bin/python3 haftalik_gonderi.py --post hepsi; /usr/bin/python3 haftalik_video.py</string>
   </array>
 
   <key>WorkingDirectory</key>
