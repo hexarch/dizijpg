@@ -1,0 +1,125 @@
+# dizi.jpg 1.145.0 (221) — Play sürüm notları (201/1.134.0'dan bu yana: 202-221)
+# Play şablonundaki dil sırası: en-US, ar, de-DE, el-GR, es-ES, fr-FR, id,
+# it-IT, pt-BR, ru-RU, tr-TR
+# HER DİL 500 KARAKTERİN ALTINDA OLMALI (python len ile sayıldı).
+
+<en-US>
+Private accounts are here.
+
+• Private account: only followers you approve see your profile. New follows arrive as requests in Notifications with Approve / Delete.
+• Watch party: paste a YouTube or Vimeo link instead of uploading a video.
+• Full "Shows / Movies watched" lists on other profiles.
+• Home: shelves for 2027 movies and series.
+• Feed/Explore bar hides while scrolling; studio logos on posts.
+• Bug fixes and polish.
+</en-US>
+
+<ar>
+الحسابات الخاصة وصلت.
+
+• حساب خاص: لا يرى ملفك سوى المتابعين الذين توافق عليهم. تصل المتابعات الجديدة كطلبات في الإشعارات مع موافقة / حذف.
+• المشاهدة المشتركة: الصق رابط YouTube أو Vimeo بدل رفع فيديو.
+• قوائم كاملة لـ"المسلسلات / الأفلام المشاهَدة" في ملفات الآخرين.
+• الرئيسية: أرفف أفلام ومسلسلات 2027.
+• شريط الخلاصة/الاستكشاف يختفي أثناء التمرير؛ شعارات الاستوديوهات في المنشورات.
+• إصلاحات وتحسينات.
+</ar>
+
+<de-DE>
+Private Konten sind da.
+
+• Privates Konto: Nur bestätigte Follower sehen dein Profil. Neue Follows kommen als Anfragen in die Benachrichtigungen – Bestätigen / Löschen.
+• Watch-Party: YouTube- oder Vimeo-Link einfügen statt Video hochladen.
+• Vollständige Listen „Gesehene Serien / Filme“ auf fremden Profilen.
+• Startseite: Regale für Filme und Serien 2027.
+• Feed/Entdecken-Leiste blendet sich beim Scrollen aus; Studio-Logos in Beiträgen.
+• Fehlerbehebungen und Feinschliff.
+</de-DE>
+
+<el-GR>
+Ήρθαν οι ιδιωτικοί λογαριασμοί.
+
+• Ιδιωτικός λογαριασμός: το προφίλ σου το βλέπουν μόνο οι ακόλουθοι που εγκρίνεις. Οι νέες ακολουθήσεις έρχονται ως αιτήματα στις Ειδοποιήσεις με Έγκριση / Διαγραφή.
+• Κοινή προβολή: επικόλλησε σύνδεσμο YouTube ή Vimeo αντί για ανέβασμα βίντεο.
+• Πλήρεις λίστες «Σειρές / Ταινίες που είδε» σε άλλα προφίλ.
+• Αρχική: ράφια για ταινίες και σειρές του 2027.
+• Η μπάρα Ροής/Εξερεύνησης κρύβεται στην κύλιση· λογότυπα στούντιο.
+• Διορθώσεις και βελτιώσεις.
+</el-GR>
+
+<es-ES>
+Llegan las cuentas privadas.
+
+• Cuenta privada: solo los seguidores que apruebes ven tu perfil. Los nuevos seguimientos llegan como solicitudes a Notificaciones con Aprobar / Eliminar.
+• Ver juntos: pega un enlace de YouTube o Vimeo en vez de subir un vídeo.
+• Listas completas de «Series / Películas vistas» en otros perfiles.
+• Inicio: estantes de películas y series de 2027.
+• La barra de Inicio/Explorar se oculta al desplazarte; logos de estudios.
+• Correcciones y mejoras.
+</es-ES>
+
+<fr-FR>
+Les comptes privés arrivent.
+
+• Compte privé : seuls les abonnés que tu approuves voient ton profil. Les nouveaux abonnements arrivent en demandes dans Notifications avec Approuver / Supprimer.
+• Visionnage à plusieurs : colle un lien YouTube ou Vimeo au lieu d'envoyer une vidéo.
+• Listes complètes « Séries / Films vus » sur les autres profils.
+• Accueil : rayons films et séries 2027.
+• La barre Fil/Explorer se masque au défilement ; logos des studios.
+• Corrections et finitions.
+</fr-FR>
+
+<id>
+Akun privat hadir.
+
+• Akun privat: hanya pengikut yang kamu setujui yang melihat profilmu. Pengikut baru masuk sebagai permintaan di Notifikasi dengan Setujui / Hapus.
+• Nonton bareng: tempel tautan YouTube atau Vimeo, tanpa mengunggah video.
+• Daftar lengkap "Serial / Film yang ditonton" di profil orang lain.
+• Beranda: rak film dan serial 2027.
+• Bilah Beranda/Jelajah tersembunyi saat menggulir; logo studio di postingan.
+• Perbaikan bug dan penyempurnaan.
+</id>
+
+<it-IT>
+Arrivano gli account privati.
+
+• Account privato: solo i follower che approvi vedono il tuo profilo. I nuovi follow arrivano come richieste nelle Notifiche con Approva / Elimina.
+• Visione insieme: incolla un link YouTube o Vimeo invece di caricare un video.
+• Liste complete «Serie / Film visti» sugli altri profili.
+• Home: scaffali di film e serie del 2027.
+• La barra Feed/Esplora si nasconde scorrendo; loghi degli studi nei post.
+• Correzioni e rifiniture.
+</it-IT>
+
+<pt-BR>
+Chegaram as contas privadas.
+
+• Conta privada: só os seguidores que você aprovar veem seu perfil. Novos seguidores chegam como pedidos em Notificações com Aprovar / Excluir.
+• Assistir juntos: cole um link do YouTube ou Vimeo em vez de enviar vídeo.
+• Listas completas de "Séries / Filmes assistidos" em outros perfis.
+• Início: prateleiras de filmes e séries de 2027.
+• A barra Feed/Explorar se esconde ao rolar; logos dos estúdios nos posts.
+• Correções e ajustes.
+</pt-BR>
+
+<ru-RU>
+Появились закрытые аккаунты.
+
+• Закрытый аккаунт: профиль видят только одобренные подписчики. Новые подписки приходят как запросы в Уведомления — Одобрить / Удалить.
+• Совместный просмотр: вставьте ссылку YouTube или Vimeo вместо загрузки видео.
+• Полные списки «Просмотренные сериалы / фильмы» в чужих профилях.
+• Главная: полки фильмов и сериалов 2027 года.
+• Панель Ленты/Обзора скрывается при прокрутке; логотипы студий в постах.
+• Исправления и доработки.
+</ru-RU>
+
+<tr-TR>
+Gizli hesap geldi.
+
+• Gizli hesap: profilini yalnız onayladığın takipçiler görür. Yeni takipler Bildirimler'e istek olarak düşer; Onayla / Sil.
+• Birlikte izleme: video yüklemek yerine YouTube veya Vimeo bağlantısı yapıştır.
+• Başkasının profilinde "İzlediği Diziler / Filmler" tam liste.
+• Ana sayfa: 2027'de vizyona girecek film ve dizi rafları.
+• Akış/Keşfet üst barı kaydırınca gizlenir; gönderilerde stüdyo logoları.
+• Hata düzeltmeleri ve ince ayarlar.
+</tr-TR>
