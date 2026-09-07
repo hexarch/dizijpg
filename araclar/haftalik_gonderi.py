@@ -45,9 +45,12 @@ kişi listeye 1 katkı verir. Bölüm sayısı yalnız eşitlik bozucudur.
    TMDB kullanım şartlarının istediği cümle birebir geçer.
 2. Afişler KÜÇÜK ÖLÇEKTE ve yapımı TANIMLAMAK için kullanılır; üzerlerindeki
    marka/dağıtımcı işaretleri kırpılmaz, filigran kaldırılmaz.
-3. Stüdyo gönderisinde ŞİRKET LOGOSU KULLANILMAZ (logo = ticari marka);
-   şirket adı tipografiyle yazılır. Aynı sebeple hiçbir platform (Netflix,
-   Disney+, ...) logosu bu görsellere girmez.
+3. Stüdyo gönderisinde şirketin KENDİ LOGOSU kullanılır (TMDB `logo_path`) —
+   şirketi TANIMLAMAK için, adını yazmakla aynı iş; onay/iş birliği ima eden
+   hiçbir ifade yok, logo değiştirilmez/deforme edilmez (yalnız beyaz-saydam
+   logolar açık kartta görünsün diye koyuya çevrilir). Buna karşılık YAYIN
+   PLATFORMU logosu (Netflix, Disney+, ...) hiçbir görsele girmez: onlar
+   listelenen taraf değil, sıralamayla ilgisi olmayan üçüncü markalar.
 4. Font Poppins (SIL OFL 1.1) — ticari kullanım serbest, dosyalar
    app/assets/fonts/ altında, lisans app/assets/fonts/LISANSLAR/'da.
 5. Şablon TAMAMEN bizim: TV Time / Letterboxd / IMDb'den hiçbir görsel,
@@ -250,7 +253,7 @@ def tmdb(yol, **parametre):
     return veri
 
 
-def gorsel_indir(yol, boyut="w342"):
+def gorsel_indir(yol, boyut="w342", alfa=False):
     """TMDB görselini indirir (diske önbellekli), PIL Image döner."""
     if not yol:
         return None
@@ -261,7 +264,7 @@ def gorsel_indir(yol, boyut="w342"):
         istek = urllib.request.Request(url, headers={"User-Agent": "dizijpg-gonderi/1.0"})
         with urllib.request.urlopen(istek, timeout=30) as y, open(dosya, "wb") as f:
             f.write(y.read())
-    return Image.open(dosya).convert("RGB")
+    return Image.open(dosya).convert("RGBA" if alfa else "RGB")
 
 
 # ------------------------------------------------------------------- hafta
@@ -401,6 +404,40 @@ def kutu_ciz(im, d, gorsel, x, y, w, h, yaricap=14):
                         outline=(46, 46, 52), width=2)
 
 
+def logo_kutusu(im, d, logo_yolu, x, y, w, h, yaricap=14):
+    """Şirket logosunu kutuya ortalar.
+
+    KART RENGİ HEP AYNI (açık): on kutunun bir kısmı koyu bir kısmı açık olunca
+    ızgara dağınık duruyordu (ilk deneme). TMDB logolarının bir kısmı
+    BEYAZ-SAYDAM olduğu için açık kartta kaybolurdu; bu logolar (parlak ve
+    renksiz olanlar) tersine çevrilip koyu çizilir — biçim korunur, renkli
+    logolar (Marvel'ın kırmızısı, WB'nin altını) olduğu gibi kalır."""
+    logo = gorsel_indir(logo_yolu, "w500", alfa=True)
+    if logo is None:
+        return
+    kucuk = logo.resize((64, 64))
+    piksel = list(kucuk.getdata())
+    agirlik = sum(p[3] for p in piksel) or 1
+    parlaklik = sum((0.299 * p[0] + 0.587 * p[1] + 0.114 * p[2]) * p[3]
+                    for p in piksel) / agirlik
+    doygunluk = sum((max(p[:3]) - min(p[:3])) * p[3] for p in piksel) / agirlik
+    if parlaklik > 175 and doygunluk < 45:
+        r, g, bl, a = logo.split()
+        logo = Image.merge("RGBA", (r.point(lambda v: 40), g.point(lambda v: 40),
+                                    bl.point(lambda v: 44), a))
+
+    kart = Image.new("RGBA", (w, h), (242, 242, 245, 255))
+    en_g, en_y = int(w * 0.82), int(h * 0.56)
+    oran = min(en_g / logo.width, en_y / logo.height)
+    logo = logo.resize((max(1, round(logo.width * oran)),
+                        max(1, round(logo.height * oran))), Image.LANCZOS)
+    kart.alpha_composite(logo, ((w - logo.width) // 2, (h - logo.height) // 2))
+    kart = yuvarlak(kart, yaricap)
+    im.paste(kart, (x, y), kart)
+    d.rounded_rectangle([x, y, x + w - 1, y + h - 1], yaricap,
+                        outline=(46, 46, 52), width=2)
+
+
 def ciz_izgara(b, s, satir1, satir2, alt_metin, ogeler):
     """Onluk ızgara gönderisi. `ogeler`: [{ad, afis}] — afis TMDB yolu."""
     im, d = tuval()
@@ -413,7 +450,10 @@ def ciz_izgara(b, s, satir1, satir2, alt_metin, ogeler):
     for i, oge in enumerate(ogeler[:10]):
         sx = KENAR + (i % IZGARA_SUTUN) * (AFIS_G + bosluk)
         sy = IZGARA_UST + (i // IZGARA_SUTUN) * (hucre_y + 60)
-        kutu_ciz(im, d, gorsel_indir(oge["afis"], "w342"), sx, sy, AFIS_G, AFIS_Y)
+        if oge.get("logo"):
+            logo_kutusu(im, d, oge["logo"], sx, sy, AFIS_G, AFIS_Y)
+        else:
+            kutu_ciz(im, d, gorsel_indir(oge["afis"], "w342"), sx, sy, AFIS_G, AFIS_Y)
 
         # sıra rozeti — sarı üstüne DAİMA siyah (tema kuralı)
         r = 52 if i == 0 else 46
@@ -611,9 +651,12 @@ def kisi_listesi(havuz, bolum, adet=10):
 
 
 def sirket_listesi(havuz, adet=10):
-    """Şirketler; görsel olarak o hafta en çok beğenilen YAPIMININ afişi
-    kullanılır. ŞİRKET LOGOSU KULLANILMIYOR (ticari marka — dosya başlığındaki
-    3. kural)."""
+    """Şirketler; kutuda ŞİRKETİN KENDİ LOGOSU (TMDB `logo_path`).
+
+    Logo, şirketi TANIMLAMAK için kullanılıyor — bir markanın adını yazmakla
+    aynı iş; onay/iş birliği ima eden hiçbir ifade yok. Logosu olmayan şirket
+    LİSTEYE ALINMAZ: kutuların yarısı logo yarısı afiş olunca ızgara dağılıyor
+    (7 Eyl 2026, ilk deneme afişliydi ve aynı afiş iki kutuda çıkıyordu)."""
     yasak = haric("company")
     cikti, kullanilan = [], set()
     for kimlik, kayit in sorted(havuz.items(), key=lambda p: -p[1]["skor"]):
@@ -630,10 +673,10 @@ def sirket_listesi(havuz, adet=10):
             continue
         kullanilan.add(afis)
         det = tmdb(f"/company/{kimlik}")
-        ad = det.get("name")
-        if not ad:
+        ad, logo = det.get("name"), det.get("logo_path")
+        if not ad or not logo:
             continue
-        cikti.append({"tmdb_id": kimlik, "ad": ad, "afis": afis})
+        cikti.append({"tmdb_id": kimlik, "ad": ad, "afis": afis, "logo": logo})
         if len(cikti) == adet:
             break
     return cikti
