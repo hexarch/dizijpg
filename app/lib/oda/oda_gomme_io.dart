@@ -277,6 +277,22 @@ const _enjekte = r'''
       '.annotation,.ytp-spinner,',
       '.vp-title,.vp-controls,.vp-sidedock,.vp-overlay-cell,.vp-outro',
       '{display:none!important;}',
+      // KESİN KURAL — sınıf adı kovalamayı bırakan satır (7 Eyl 2026).
+      //
+      // NOT (iOS, ölçüldü): bu kural DOM kromunu gerçekten temizliyor —
+      // enjekte edilen teşhis, oynatıcının görünür tek çocuğunun altyazı
+      // penceresi olduğunu bildirdi. Buna rağmen video DURAKLATILDIĞINDA
+      // iOS ekrana kendi yerel katmanını basıyor (başlık, kanal kapağı,
+      // YouTube logosu, duraklat simgesi). O katman DOM'da DEĞİL, dolayısıyla
+      // CSS ile kaldırılamıyor; yalnız duraklama anında görünüyor.
+      // Yukarıdaki liste YouTube'un duraklama/bitiş kartını iOS'ta
+      // yakalayamadı (başlık, kanal, tekrar oynat, HD rozeti, logo, paylaş
+      // hâlâ görünüyordu) ve her sürümde sınıf adı değişebiliyor. Bu kural
+      // oynatıcının BÜTÜN çocuklarını gizliyor; yalnız videonun kabı ve
+      // altyazı penceresi kalıyor. Yeni bir krom parçası eklenirse
+      // kendiliğinden gizlenmiş oluyor.
+      '.html5-video-player > *:not(.html5-video-container)',
+      ':not(.ytp-caption-window-container){display:none!important;}',
       'html,body{margin:0!important;padding:0!important;overflow:hidden!important;background:#000!important;}',
       'video{position:absolute!important;top:0!important;left:0!important;',
       'width:100%!important;height:100%!important;object-fit:contain!important;}'
