@@ -190,7 +190,27 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
   Widget build(BuildContext context) {
     final w = _web;
     if (w == null) return const ColoredBox(color: Colors.black);
-    return IgnorePointer(child: WebViewWidget(controller: w));
+    return IgnorePointer(child: _webGorunum(w));
+  }
+
+  /// ANDROID'DE HYBRID COMPOSITION ŞART (8 Eyl 2026, telefonda canlı görüldü).
+  ///
+  /// Varsayılan kip WebView'i bir SurfaceTexture'a KOPYALAR; donanım
+  /// hızlandırmalı video ise ayrı yüzeyde çözülüyor ve o kopyaya girmiyor.
+  /// Belirti: YouTube bağlantısı odada SES VERİYOR, GÖRÜNTÜ SİMSİYAH. Web'de
+  /// (iframe) ve iOS'ta bu kip yok, emülatörde de çıkmadı — yalnız gerçek
+  /// cihazda. Fragman oynatıcısı aynı tuzağı 1.65.0+113'te yaşamıştı
+  /// (`ekranlar/fragman_gom_io.dart#_webGorunum`); bu kalıp oradan.
+  Widget _webGorunum(WebViewController w) {
+    if (w.platform is AndroidWebViewController) {
+      return WebViewWidget.fromPlatformCreationParams(
+        params: AndroidWebViewWidgetCreationParams(
+          controller: w.platform,
+          displayWithHybridComposition: true,
+        ),
+      );
+    }
+    return WebViewWidget(controller: w);
   }
 }
 
