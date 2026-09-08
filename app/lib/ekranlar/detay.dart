@@ -1029,58 +1029,123 @@ class _DetayEkraniState extends State<DetayEkrani>
     }
   }
 
+  /// "Yeni liste" adını sorar. `null` → vazgeçildi ya da ad boş bırakıldı.
+  ///
+  /// TextEditingController YOK, metin `onChanged` ile yerel değişkende
+  /// tutuluyor: denetleyici `finally` içinde bırakıldığında dialog'un KAPANIŞ
+  /// animasyonu sürerken TextField hâlâ ağaçtadır ve Flutter "A
+  /// TextEditingController was used after being disposed" diye patlar
+  /// (8 Eyl 2026 testinde yakalandı). Sahibi olmadığımız bir denetleyiciyi
+  /// hiç yaratmamak, ne zaman atılacağını hesaplamaktan basit.
+  Future<String?> _yeniListeAdiSor(BuildContext context) async {
+    var ad = '';
+    final onay = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        backgroundColor: DiziRenkler.koyuGri,
+        title: Text('Yeni Liste'.c),
+        content: TextField(
+          autofocus: true,
+          maxLength: 60,
+          textInputAction: TextInputAction.done,
+          onChanged: (d) => ad = d,
+          // Klavyenin "bitti" tuşu da oluşturur: ad yazıp Enter'a basan
+          // kullanıcı düğmeyi aramak zorunda kalmasın.
+          onSubmitted: (_) => Navigator.pop(c, true),
+          decoration: InputDecoration(hintText: 'Liste adı'.c),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(c, false),
+            child: Text('İptal'.c),
+          ),
+          FilledButton(
+            key: const Key('yeni-liste-olustur'),
+            onPressed: () => Navigator.pop(c, true),
+            child: Text('Oluştur'.c),
+          ),
+        ],
+      ),
+    );
+    final metin = ad.trim();
+    return onay == true && metin.isNotEmpty ? metin : null;
+  }
+
   Future<void> _listeyeEkle() async {
     if (!girisGerekli(context)) return;
     try {
       final d = await Api.get('/listelerim');
       if (!mounted) return;
       final listeler = d['listeler'] as List<dynamic>;
+
+      /// Seçilen listeye ekler, sayfayı kapatır, sonucu bildirir.
+      /// Messenger ve Navigator pop'tan ÖNCE alınır: modal kapanınca context
+      /// ölür, onunla SnackBar aramak "deactivated widget" hatası verir.
+      Future<void> ekle(BuildContext sheetContext, Object listeId) async {
+        final messenger = ScaffoldMessenger.of(sheetContext);
+        final sayfa = Navigator.of(sheetContext);
+        try {
+          await Api.post('/listeler/$listeId/oge', {
+            'tmdb_id': widget.tmdbId,
+            'tur': widget.tur,
+          });
+          sayfa.pop();
+          messenger.showSnackBar(SnackBar(content: Text('Listeye eklendi'.c)));
+        } catch (e) {
+          messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+        }
+      }
+
       await showModalBottomSheet(
         context: context,
         backgroundColor: DiziRenkler.koyuGri,
+        // Listesi çok olan kullanıcıda sabit yükseklik taşıyordu; sheet
+        // içeriği kendi kadar yer kaplasın, gerekirse KAYSIN.
+        isScrollControlled: true,
         builder: (context) => SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  'Listeye Ekle'.c,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              if (listeler.isEmpty)
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Text(
-                    'Henüz listen yok — Profil sekmesinden oluştur.'.c,
+                    'Listeye Ekle'.c,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
-              for (final l in listeler)
+                // YENİ LİSTE ADIMI BURADA (8 Eyl 2026 isteği: "listeye ekle
+                // kısmında var olan listelerim geliyor ama orada yeni liste
+                // oluşturma adımı da olmalı").
+                //
+                // NEDEN EN ÜSTTE: listesi olmayan kullanıcı eskiden "Profil
+                // sekmesinden oluştur" yazısıyla baş başa kalıyordu — yani
+                // ekleme akışı, kullanıcıyı başka bir sekmeye gönderip geri
+                // gelmesini bekliyordu. Oluşturunca yapım O LİSTEYE ANINDA
+                // eklenir: "yeni liste" burada tek başına bir amaç değil,
+                // ekleme akışının bir adımı.
                 ListTile(
+                  key: const Key('listeye-ekle-yeni'),
                   leading: Icon(
-                    Icons.playlist_add,
-                    color: DiziRenkler.sariMetin,
+                    Icons.playlist_add_circle,
+                    color: DiziRenkler.sari,
                   ),
-                  title: Text(l['ad'] as String),
-                  subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
+                  title: Text(
+                    'Yeni liste oluştur'.c,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
                   onTap: () async {
-                    // Messenger'ı pop'tan ÖNCE al: modal kapanınca context ölür,
-                    // onunla SnackBar aramak "deactivated widget" hatası verir.
-                    final messenger = ScaffoldMessenger.of(context);
-                    final sayfa = Navigator.of(context);
+                    final sheetContext = context;
+                    final messenger = ScaffoldMessenger.of(sheetContext);
+                    final ad = await _yeniListeAdiSor(sheetContext);
+                    if (ad == null || !sheetContext.mounted) return;
                     try {
-                      await Api.post('/listeler/${l['id']}/oge', {
-                        'tmdb_id': widget.tmdbId,
-                        'tur': widget.tur,
-                      });
-                      sayfa.pop();
-                      messenger.showSnackBar(
-                        SnackBar(content: Text('Listeye eklendi'.c)),
-                      );
+                      final yeni = await Api.post('/listeler', {'ad': ad});
+                      if (!sheetContext.mounted) return;
+                      await ekle(sheetContext, (yeni as Map)['id'] as Object);
                     } catch (e) {
                       messenger.showSnackBar(
                         SnackBar(content: Text(e.toString())),
@@ -1088,8 +1153,28 @@ class _DetayEkraniState extends State<DetayEkrani>
                     }
                   },
                 ),
-              const SizedBox(height: 8),
-            ],
+                Divider(height: 1, color: DiziRenkler.metin12),
+                if (listeler.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      'Henüz listen yok.'.c,
+                      style: TextStyle(color: DiziRenkler.metin54),
+                    ),
+                  ),
+                for (final l in listeler)
+                  ListTile(
+                    leading: Icon(
+                      Icons.playlist_add,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                    title: Text(l['ad'] as String),
+                    subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
+                    onTap: () => ekle(context, l['id'] as Object),
+                  ),
+                const SizedBox(height: 8),
+              ],
+            ),
           ),
         ),
       );

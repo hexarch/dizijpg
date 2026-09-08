@@ -1607,4 +1607,6 @@ const Map<String, String> cevirilerJa = {
   '@{} seni takip etmek istiyor': '@{}さんがフォローをリクエストしました',
   '@{} takip isteğini kabul etti': '@{}さんがフォローリクエストを承認しました',
   'Onayla': '承認',
+  'Yeni liste oluştur': '新しいリストを作成',
+  'Henüz listen yok.': 'まだリストがありません。',
 };

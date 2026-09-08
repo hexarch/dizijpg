@@ -1736,4 +1736,6 @@ const Map<String, String> cevirilerRo = {
   '@{} seni takip etmek istiyor': '@{} vrea să te urmărească',
   '@{} takip isteğini kabul etti': '@{} a acceptat solicitarea ta de urmărire',
   'Onayla': 'Aprobă',
+  'Yeni liste oluştur': 'Creează o listă nouă',
+  'Henüz listen yok.': 'Nu ai încă nicio listă.',
 };

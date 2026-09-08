@@ -1690,4 +1690,6 @@ const Map<String, String> cevirilerTe = {
   '@{} seni takip etmek istiyor': '@{} మిమ్మల్ని ఫాలో చేయాలనుకుంటున్నారు',
   '@{} takip isteğini kabul etti': '@{} మీ ఫాలో అభ్యర్థనను ఆమోదించారు',
   'Onayla': 'ఆమోదించు',
+  'Yeni liste oluştur': 'కొత్త జాబితా సృష్టించు',
+  'Henüz listen yok.': 'మీకు ఇంకా జాబితాలు లేవు.',
 };

@@ -1699,4 +1699,6 @@ const Map<String, String> cevirilerMl = {
   '@{} seni takip etmek istiyor': '@{} നിങ്ങളെ ഫോളോ ചെയ്യാൻ ആഗ്രഹിക്കുന്നു',
   '@{} takip isteğini kabul etti': '@{} നിങ്ങളുടെ ഫോളോ അഭ്യർത്ഥന സ്വീകരിച്ചു',
   'Onayla': 'അംഗീകരിക്കുക',
+  'Yeni liste oluştur': 'പുതിയ ലിസ്റ്റ് ഉണ്ടാക്കുക',
+  'Henüz listen yok.': 'നിങ്ങൾക്ക് ഇതുവരെ ലിസ്റ്റുകളില്ല.',
 };

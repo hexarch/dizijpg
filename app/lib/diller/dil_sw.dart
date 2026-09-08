@@ -1698,4 +1698,6 @@ const Map<String, String> cevirilerSw = {
   '@{} seni takip etmek istiyor': '@{} anataka kukufuata',
   '@{} takip isteğini kabul etti': '@{} amekubali ombi lako la kufuata',
   'Onayla': 'Idhinisha',
+  'Yeni liste oluştur': 'Tengeneza orodha mpya',
+  'Henüz listen yok.': 'Bado huna orodha yoyote.',
 };

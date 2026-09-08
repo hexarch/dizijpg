@@ -1681,4 +1681,6 @@ const Map<String, String> cevirilerAz = {
   '@{} seni takip etmek istiyor': '@{} səni izləmək istəyir',
   '@{} takip isteğini kabul etti': '@{} izləmə sorğunu qəbul etdi',
   'Onayla': 'Təsdiqlə',
+  'Yeni liste oluştur': 'Yeni siyahı yarat',
+  'Henüz listen yok.': 'Hələ siyahın yoxdur.',
 };

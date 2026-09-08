@@ -1724,4 +1724,6 @@ const Map<String, String> cevirilerFil = {
   '@{} seni takip etmek istiyor': 'Gustong sumunod sa iyo ni @{}',
   '@{} takip isteğini kabul etti': 'Tinanggap ni @{} ang follow request mo',
   'Onayla': 'Aprubahan',
+  'Yeni liste oluştur': 'Gumawa ng bagong listahan',
+  'Henüz listen yok.': 'Wala ka pang listahan.',
 };

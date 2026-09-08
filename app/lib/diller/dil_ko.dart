@@ -1611,4 +1611,6 @@ const Map<String, String> cevirilerKo = {
   '@{} seni takip etmek istiyor': '@{}님이 팔로우를 요청했어요',
   '@{} takip isteğini kabul etti': '@{}님이 팔로우 요청을 수락했어요',
   'Onayla': '승인',
+  'Yeni liste oluştur': '새 목록 만들기',
+  'Henüz listen yok.': '아직 목록이 없습니다.',
 };

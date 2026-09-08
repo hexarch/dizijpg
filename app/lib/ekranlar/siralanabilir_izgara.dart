@@ -80,9 +80,40 @@ class SiralanabilirPosterIzgarasi extends StatefulWidget {
   /// Ekrandaki öğeler; her biri en az `tur` ve `tmdb_id` taşır.
   final List<dynamic> ogeler;
 
-  /// Sunucudaki liste anahtarı: izliyorum | izleyecegim | bitirdim | biraktim |
-  /// izlenen_tv | izlenen_movie.
-  final String liste;
+  /// Sunucudaki KİTAPLIK liste anahtarı: izliyorum | izleyecegim | bitirdim |
+  /// biraktim | izlenen_tv | izlenen_movie. Kullanıcının KENDİ oluşturduğu
+  /// listelerde bu uç yoktur; orada [onSirala] verilir ve bu alan null kalır.
+  final String? liste;
+
+  /// SIRAYI SUNUCUYA YAZAN ÇAĞRI (isteğe bağlı).
+  ///
+  /// NEDEN VAR: aynı sürükle-bırak matematiği iki farklı uca yazıyor —
+  /// kitaplık `PUT /kitaplik/sira/<liste>`, kendi listen
+  /// `PUT /listeler/<id>/sira`. Uç adresini widget'ın içine gömmek, ikinci
+  /// çağıran geldiğinde 300 satırlık sürükleme kodunu kopyalamak demekti.
+  /// Verilirse [liste] hiç kullanılmaz. Sunucu reddederse ATMASI ŞART:
+  /// eski sıra ancak istisna görülünce geri alınabilir.
+  final Future<void> Function(List<dynamic> ogeler)? onSirala;
+
+  /// "Sırayı sıfırla" düğmesi çizilsin mi? Varsayılan sıra kavramı yalnız
+  /// KİTAPLIK listelerinde var (sunucu "en son işaretlediğin önce" diye
+  /// üretiyor); kendi listende sıra zaten eklediğin sıradır, sıfırlanacak
+  /// bir şey yoktur.
+  final bool sifirlanabilir;
+
+  /// Hücrenin İÇERİĞİ (isteğe bağlı). Verilmezse [MiniIcerik] — afiş + ad.
+  /// Kendi listelerinde hücre başlıksız, çıplak afiştir ve gizlenmiş öğe
+  /// soluk + rozetli çizilir; o süsleme listeyi çizen ekranda yaşıyor.
+  final Widget Function(Map<String, dynamic> oge)? kartYapici;
+
+  /// Hücrede afişin ALTINA ayrılan başlık şeridi. [kartYapici] başlıksız bir
+  /// kart veriyorsa 0 geçilmeli, yoksa hücrenin altında boşluk kalır.
+  final double baslikYuksekligi;
+
+  /// SATIR GÖRÜNÜMÜ anahtarına ([ListeGorunumu]) uyulsun mu? O tercih altı
+  /// KİTAPLIK listesi için verildi; kullanıcının kendi listesini de satıra
+  /// çevirmek, hiç istemediği bir ekranı değiştirmek olurdu.
+  final bool satirKipiDestekli;
 
   /// Sıralama kipi: "en üste taşı" düğmeleri, süzgeç ve sıfırlama görünür.
   /// Sürükle-bırak bu kipten BAĞIMSIZ, her zaman açıktır (kullanıcı "listeye
@@ -102,12 +133,20 @@ class SiralanabilirPosterIzgarasi extends StatefulWidget {
   const SiralanabilirPosterIzgarasi({
     super.key,
     required this.ogeler,
-    required this.liste,
+    this.liste,
+    this.onSirala,
+    this.sifirlanabilir = true,
+    this.kartYapici,
+    this.baslikYuksekligi = posterBaslikYuksekligi,
+    this.satirKipiDestekli = true,
     this.siralamaKipi = false,
     this.izlenenSayi,
     this.onYenile,
     this.dolgu,
-  });
+  }) : assert(
+         liste != null || onSirala != null,
+         'Sıra ya kitaplık ucuna (liste) ya da onSirala ile yazılır',
+       );
 
   @override
   State<SiralanabilirPosterIzgarasi> createState() =>
@@ -136,7 +175,7 @@ class _SiralanabilirPosterIzgarasiState
   /// sürümde ekran kapanınca seçim ölüyordu ("uygulamayı yeniden başlatıp
   /// listelere girdiğimde yine eski görünüşte oluyor"). Artık disketen okunur
   /// ve altı kitaplık listesi aynı tercihi paylaşır.
-  bool get _satirKipi => ListeGorunumu.satir.value;
+  bool get _satirKipi => widget.satirKipiDestekli && ListeGorunumu.satir.value;
 
   /// 'tur:id' → küçük harfe indirgenmiş ad (süzgeç için).
   final Map<String, String> _adlar = {};
@@ -149,7 +188,9 @@ class _SiralanabilirPosterIzgarasiState
   void initState() {
     super.initState();
     _ogeler = [...widget.ogeler];
-    ListeGorunumu.satir.addListener(_gorunumDegisti);
+    if (widget.satirKipiDestekli) {
+      ListeGorunumu.satir.addListener(_gorunumDegisti);
+    }
     // Tercih SATIR olarak kayıtlıysa ekran daha ilk karede puan/kalp/tarih/
     // emoji ile açılmalı; veri yalnız kullanıcı ikona bastığında çekilseydi
     // yeniden başlatmadan sonraki ilk açılış süssüz kalırdı.
@@ -177,7 +218,9 @@ class _SiralanabilirPosterIzgarasiState
 
   @override
   void dispose() {
-    ListeGorunumu.satir.removeListener(_gorunumDegisti);
+    if (widget.satirKipiDestekli) {
+      ListeGorunumu.satir.removeListener(_gorunumDegisti);
+    }
     _kaydirmaSaati?.cancel();
     _kaydirma.dispose();
     super.dispose();
@@ -305,12 +348,16 @@ class _SiralanabilirPosterIzgarasiState
   Future<void> _kaydet(List<dynamic> yedek) async {
     setState(() => _yaziliyor = true);
     try {
-      await Api.put('/kitaplik/sira/${widget.liste}', {
-        'ogeler': [
-          for (final o in _ogeler)
-            {'tur': o['tur'], 'tmdb_id': (o['tmdb_id'] as num).toInt()},
-        ],
-      });
+      if (widget.onSirala != null) {
+        await widget.onSirala!([..._ogeler]);
+      } else {
+        await Api.put('/kitaplik/sira/${widget.liste}', {
+          'ogeler': [
+            for (final o in _ogeler)
+              {'tur': o['tur'], 'tmdb_id': (o['tmdb_id'] as num).toInt()},
+          ],
+        });
+      }
       // Artık liste elle sıralı: "Sırayı sıfırla" görünür olsun.
       for (var i = 0; i < _ogeler.length; i++) {
         (_ogeler[i] as Map<String, dynamic>)['sira'] = i;
@@ -450,7 +497,11 @@ class _SiralanabilirPosterIzgarasiState
             padding:
                 widget.dolgu ??
                 EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
-            gridDelegate: const PosterIzgarasi(satirBoslugu: 14, bosluk: 10),
+            gridDelegate: PosterIzgarasi(
+              satirBoslugu: 14,
+              bosluk: 10,
+              baslikYuksekligi: widget.baslikYuksekligi,
+            ),
             itemCount: gorunen.length,
             itemBuilder: (context, i) =>
                 _hucre(gorunen[i] as Map<String, dynamic>, hucre),
@@ -536,7 +587,7 @@ class _SiralanabilirPosterIzgarasiState
             // kaldır, ayarların yanına ikon olarak koy") — [ListeGorunumuDugmesi].
             // Görünüm sıralamanın alt başlığı değil: buradayken görünümü
             // değiştirmek için önce sıralama kipini açmak gerekiyordu.
-            if (_elleSirali)
+            if (widget.sifirlanabilir && _elleSirali)
               IconButton(
                 key: const Key('sira-sifirla'),
                 tooltip: 'Sırayı sıfırla'.c,
@@ -567,13 +618,15 @@ class _SiralanabilirPosterIzgarasiState
     final anahtar = _anahtar(oge);
     // Sürükleme indeksleri TAM listeye göre; süzgeçliyken sürükleme kapalı.
     final i = _ogeler.indexOf(oge);
-    final kart = MiniIcerik(
-      key: ValueKey(anahtar),
-      tmdbId: (oge['tmdb_id'] as num).toInt(),
-      tur: oge['tur'] as String,
-      genislik: double.infinity,
-      izlenenSayi: widget.izlenenSayi?.call(oge),
-    );
+    final kart = widget.kartYapici != null
+        ? KeyedSubtree(key: ValueKey(anahtar), child: widget.kartYapici!(oge))
+        : MiniIcerik(
+            key: ValueKey(anahtar),
+            tmdbId: (oge['tmdb_id'] as num).toInt(),
+            tur: oge['tur'] as String,
+            genislik: double.infinity,
+            izlenenSayi: widget.izlenenSayi?.call(oge),
+          );
     final surukleAcik =
         _suzgec.isEmpty && !_yaziliyor && _ogeler.length > 1 && i >= 0;
 
@@ -739,18 +792,22 @@ class _SiralanabilirPosterIzgarasiState
             width: hucreGenisligi,
             // Hücre yüksekliği = 2:3 poster + başlık şeridi ([PosterIzgarasi]
             // ile AYNI hesap). Yalnız 1.5 katı verilseydi hayalet taşardı.
-            height: hucreGenisligi * 1.5 + posterBaslikYuksekligi,
+            // Başlıksız kartta ([kartYapici]) şerit 0'dır; sabit
+            // `posterBaslikYuksekligi` yazılsaydı hayalet hücreden UZUN olurdu.
+            height: hucreGenisligi * 1.5 + widget.baslikYuksekligi,
             child: Opacity(
               opacity: 0.92,
               child: Material(
                 color: Colors.transparent,
                 elevation: 8,
                 borderRadius: BorderRadius.circular(12),
-                child: MiniIcerik(
-                  tmdbId: (oge['tmdb_id'] as num).toInt(),
-                  tur: oge['tur'] as String,
-                  genislik: double.infinity,
-                ),
+                child:
+                    widget.kartYapici?.call(oge) ??
+                    MiniIcerik(
+                      tmdbId: (oge['tmdb_id'] as num).toInt(),
+                      tur: oge['tur'] as String,
+                      genislik: double.infinity,
+                    ),
               ),
             ),
           ),

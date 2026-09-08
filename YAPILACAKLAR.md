@@ -1,6 +1,40 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-08 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-08 — 📋 KENDİ LİSTEN: afişi basılı tutup sürükle + "Listeye ekle"de yeni liste (1.146.0+223) ✅
+
+**Tetik (kullanıcı, birebir):** *"kendi oluşturduğum listelerde basılı tut ile
+yer değiştiremiyorum liste içi"* ve *"bir dizi filmi listeye eklerken listeye
+ekle kısmında var olan listelerim geliyor ama orada yeni liste oluşturma adımı
+da olmalı"*.
+
+**1) Kendi listende sürükle-bırak.** Sıralama VARDI ama yalnız düzenleme
+kipindeki satır listesinin tutamağıyla (kalem ikonu → tutamak). Kitaplık
+listelerinde (İzliyorum, Bitirdim…) 21 Ağu'dan beri afişi basılı tutup
+sürüklemek çalıştığı için kullanıcı aynı jesti kendi listesinde de aradı,
+bulamadı. Kod KOPYALANMADI: `SiralanabilirPosterIzgarasi` artık sırayı hangi
+uca yazacağını `onSirala` ile öğreniyor (kitaplık `PUT /kitaplik/sira/<liste>`,
+kendi listen `PUT /listeler/<id>/sira`), hücre içeriğini `kartYapici` ile
+alıyor (kendi listende çıplak afiş + gizli rozeti, `baslikYuksekligi: 0`),
+"Sırayı sıfırla" ve satır görünümü tercihi bayrakla KAPATILABİLİYOR — ikisi de
+yalnız kitaplığa ait kavramlar. Sürükleme yalnız SAHİBİNE çizilir.
+Izgaradaki yeni sıra düzenleme kipine de taşınır (`_siraYaz` başarıda yerel
+listeyi günceller) — yoksa kip değişince eski sıra görünüp sunucuya geri
+yazılırdı. Kanıt: `test/liste_afis_siralama_test.dart` (5 test).
+
+**2) "Listeye ekle" sayfasında yeni liste adımı.** Listesi olmayan kullanıcı
+eskiden "Profil sekmesinden oluştur" yazısıyla baş başa kalıyordu: ekleme
+akışı kullanıcıyı başka bir sekmeye gönderip geri gelmesini bekliyordu. Artık
+sayfanın EN ÜSTÜNDE "Yeni liste oluştur" var; ad verilince `POST /listeler`
+ardından yeni listenin kimliğiyle `POST /listeler/<id>/oge` gider — yapım
+oluşturduğun listeye ANINDA eklenir. Sayfa uzun listede taşmasın diye
+`isScrollControlled`. Kanıt: `test/listeye_ekle_yeni_liste_test.dart` (5 test).
+TUZAK: dialog'un `TextEditingController`'ını `finally`de bırakmak, kapanış
+animasyonu sürerken "used after being disposed" ile patlıyor → denetleyici
+yok, metin `onChanged` ile yerel değişkende.
+
+**Çeviri:** 2 yeni anahtar ("Yeni liste oluştur", "Henüz listen yok.") 45 dile.
+
 ## 2026-09-08 — 🔒 GİZLİ HESAP: Instagram tarzı özel profil + takip istekleri (1.145.0+221) ✅
 
 **Tetik (kullanıcı, birebir):** *"profil gizleme aynı instagramdaki gibi profil

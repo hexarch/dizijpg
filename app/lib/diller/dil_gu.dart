@@ -1677,4 +1677,6 @@ const Map<String, String> cevirilerGu = {
   '@{} seni takip etmek istiyor': '@{} તમને ફોલો કરવા માંગે છે',
   '@{} takip isteğini kabul etti': '@{} એ તમારી ફોલો વિનંતી સ્વીકારી',
   'Onayla': 'મંજૂર કરો',
+  'Yeni liste oluştur': 'નવી યાદી બનાવો',
+  'Henüz listen yok.': 'તમારી પાસે હજી કોઈ યાદી નથી.',
 };

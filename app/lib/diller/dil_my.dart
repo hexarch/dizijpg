@@ -1709,4 +1709,6 @@ const Map<String, String> cevirilerMy = {
   '@{} takip isteğini kabul etti':
       '@{} သင့်ဖော်လိုတောင်းဆိုမှုကို လက်ခံလိုက်သည်',
   'Onayla': 'ခွင့်ပြု',
+  'Yeni liste oluştur': 'စာရင်းအသစ် ဖန်တီးရန်',
+  'Henüz listen yok.': 'သင့်မှာ စာရင်း မရှိသေးပါ။',
 };

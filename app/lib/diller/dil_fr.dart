@@ -1718,4 +1718,6 @@ const Map<String, String> cevirilerFr = {
   '@{} seni takip etmek istiyor': '@{} souhaite te suivre',
   '@{} takip isteğini kabul etti': '@{} a accepté ta demande d\'abonnement',
   'Onayla': 'Approuver',
+  'Yeni liste oluştur': 'Créer une nouvelle liste',
+  'Henüz listen yok.': 'Tu n\'as pas encore de liste.',
 };

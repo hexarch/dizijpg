@@ -1691,4 +1691,6 @@ const Map<String, String> cevirilerKn = {
   '@{} seni takip etmek istiyor': '@{} ನಿಮ್ಮನ್ನು ಫಾಲೋ ಮಾಡಲು ಬಯಸುತ್ತಾರೆ',
   '@{} takip isteğini kabul etti': '@{} ನಿಮ್ಮ ಫಾಲೋ ವಿನಂತಿಯನ್ನು ಸ್ವೀಕರಿಸಿದರು',
   'Onayla': 'ಅನುಮೋದಿಸಿ',
+  'Yeni liste oluştur': 'ಹೊಸ ಪಟ್ಟಿ ರಚಿಸಿ',
+  'Henüz listen yok.': 'ನಿಮ್ಮ ಬಳಿ ಇನ್ನೂ ಪಟ್ಟಿಗಳಿಲ್ಲ.',
 };

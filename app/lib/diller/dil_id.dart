@@ -1690,4 +1690,6 @@ const Map<String, String> cevirilerId = {
   '@{} seni takip etmek istiyor': '@{} ingin mengikutimu',
   '@{} takip isteğini kabul etti': '@{} menerima permintaan mengikutimu',
   'Onayla': 'Setujui',
+  'Yeni liste oluştur': 'Buat daftar baru',
+  'Henüz listen yok.': 'Kamu belum punya daftar.',
 };

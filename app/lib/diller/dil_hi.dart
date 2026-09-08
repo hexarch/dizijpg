@@ -1686,4 +1686,6 @@ const Map<String, String> cevirilerHi = {
   '@{} seni takip etmek istiyor': '@{} आपको फ़ॉलो करना चाहते हैं',
   '@{} takip isteğini kabul etti': '@{} ने आपका फ़ॉलो अनुरोध स्वीकार किया',
   'Onayla': 'स्वीकृत करें',
+  'Yeni liste oluştur': 'नई सूची बनाएँ',
+  'Henüz listen yok.': 'आपकी अभी कोई सूची नहीं है।',
 };

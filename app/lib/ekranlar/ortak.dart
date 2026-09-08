@@ -24,6 +24,7 @@ import '../video_kova.dart';
 import 'izlem_carki.dart';
 import 'medya_goster.dart';
 import 'paylas.dart';
+import 'siralanabilir_izgara.dart';
 
 /// Yorum/akış postlarındaki fotoğraf-video galerisi.
 /// Tek medya: TAM GENİŞLİK, yükseklik medyanın KENDİ oranından — her post
@@ -2209,9 +2210,28 @@ class _ListeIcerigiState extends State<ListeIcerigi> {
   /// Anahtar: aynı yapım iki türde de olabilir (tv 1396 ≠ movie 1396).
   String _anahtar(Map o) => '${o['tur']}:${o['tmdb_id']}';
 
-  /// SÜRÜKLE-BIRAK. Önce EKRANDA uygulanır (iyimser), sonra sunucuya TAM
-  /// liste yazılır. Sunucu reddederse eski sıra GERİ ALINIR — sessizce
-  /// tutmak, kullanıcıya yalan bir sıra göstermek olurdu.
+  /// Sunucuya TAM sırayı yazar ve BAŞARILIYSA yerel listeyi günceller.
+  ///
+  /// AFİŞ IZGARASINDAN çağrılır ([SiralanabilirPosterIzgarasi.onSirala]):
+  /// ızgara sırayı kendi kopyasında tutuyor, burada güncellemezsek düzenleme
+  /// kipine geçildiğinde ESKİ sıra görünür ve oradan yapılan ilk sürükleme
+  /// eskisini sunucuya geri yazardı.
+  ///
+  /// HATA YUTULMAZ: ızgara eski sırayı ancak istisna görürse geri alabilir.
+  Future<void> _siraYaz(List<dynamic> yeni) async {
+    await Api.put('/listeler/${widget.listeId}/sira', {
+      'ogeler': [
+        for (final o in yeni)
+          {'tur': o['tur'], 'tmdb_id': (o['tmdb_id'] as num).toInt()},
+      ],
+    });
+    if (mounted) setState(() => _ogeler = yeni);
+  }
+
+  /// SÜRÜKLE-BIRAK (düzenleme kipindeki SATIR listesi). Önce EKRANDA
+  /// uygulanır (iyimser), sonra sunucuya TAM liste yazılır. Sunucu
+  /// reddederse eski sıra GERİ ALINIR — sessizce tutmak, kullanıcıya yalan
+  /// bir sıra göstermek olurdu.
   Future<void> _siraDegis(int eski, int yeni) async {
     if (_ogeler == null || _siraYaziliyor) return;
     final yedek = [..._ogeler!];
@@ -2348,6 +2368,85 @@ class _ListeIcerigiState extends State<ListeIcerigi> {
     // Normal moda dönünce ızgara aynen geri gelir; düzenleme geçici bir kip.
     if (widget.duzenleme && _sahibiyim) return _duzenleyici();
 
+    // Hücre çizimi tek yerde: hem sürüklenebilir ızgara hem sade ızgara
+    // aynı kartı ve aynı "gizli" süslemesini kullanır.
+    //
+    // GİZLİ ÖĞE SAHİBİNE SOLUK + ROZETLİ GÖSTERİLİR.
+    // Başkasına hiç gönderilmiyor (sunucu süzüyor). Sahibinden de
+    // saklasaydık kullanıcı gizlediği yapımı "kaybolmuş" sanardı ve geri
+    // açmanın yolunu bulamazdı.
+    Widget hucre(Map<String, dynamic> o) {
+      final kart = _ListeOgeKart(
+        tur: o['tur'] as String,
+        tmdbId: (o['tmdb_id'] as num).toInt(),
+        modalIcinde: widget.modalIcinde,
+      );
+      if (o['gizli'] != true) return kart;
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          Opacity(opacity: 0.35, child: kart),
+          Positioned(
+            right: 6,
+            top: 6,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: DiziRenkler.siyah.withValues(alpha: 0.7),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.visibility_off,
+                size: 14,
+                color: DiziRenkler.metin,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    final dolgu = EdgeInsets.fromLTRB(
+      14,
+      0,
+      14,
+      altGuvenli(context, ekstra: 20),
+    );
+
+    // ==================================================================
+    // SAHİBİ → AFİŞİ BASILI TUTUP SÜRÜKLE (8 Eyl 2026 isteği)
+    // ==================================================================
+    // Kullanıcı: *"kendi oluşturduğum listelerde basılı tut ile yer
+    // değiştiremiyorum liste içi"*. Sıralama VARDI ama yalnız düzenleme
+    // kipinin satır listesindeki tutamakla; kitaplık listelerinde (İzliyorum,
+    // Bitirdim...) 21 Ağu'dan beri afişi basılı tutup sürüklemek çalıştığı
+    // için kullanıcı aynısını burada da aradı ve bulamadı.
+    //
+    // Aynı jest, aynı widget: [SiralanabilirPosterIzgarasi] artık sırayı
+    // hangi uca yazacağını [onSirala] ile öğreniyor. Kod kopyalanmadı —
+    // sürükleme matematiği (araya bırakma toleransı, kenar kaydırma, "en
+    // aşağıya gönder") tek yerde kalsın.
+    //
+    // Tek öğelik listede sürükleme kapalı (ızgara zaten `_ogeler.length > 1`
+    // arıyor) ve BAŞKASININ listesinde hiç çizilmez: sunucu 404 verirdi,
+    // ama asıl sebep kullanıcıya yapamayacağı bir jest önermemek.
+    if (_sahibiyim) {
+      return SiralanabilirPosterIzgarasi(
+        ogeler: _ogeler!,
+        onSirala: _siraYaz,
+        // Kendi listende "varsayılan sıra" diye bir şey yok: sıra zaten
+        // eklediğin sıradır, sıfırlanacak bir durum oluşmuyor.
+        sifirlanabilir: false,
+        // Satır görünümü tercihi ALTI KİTAPLIK listesi için verildi; kendi
+        // listeni de satıra çevirmek istenmeyen bir değişiklik olurdu.
+        satirKipiDestekli: false,
+        // Kart çıplak afiş (2:3) — altında ad şeridi yok.
+        baslikYuksekligi: 0,
+        kartYapici: hucre,
+        dolgu: dolgu,
+      );
+    }
+
     return GridView.builder(
       // ALT GÜVENLİ ALAN: GridView de bir BoxScrollView — AÇIK `padding`
       // verildiği an Flutter'ın MediaQuery alt payını kendiliğinden ekleme
@@ -2364,7 +2463,7 @@ class _ListeIcerigiState extends State<ListeIcerigi> {
       // zaten yapar — kabuğun Scaffold'u `bottomNavigationBar` taşıdığı için
       // gövdesine verdiği MediaQuery'de alt pay ZATEN 0'dır, orada
       // altGuvenli 0 + 20 = 20 döner → FAZLADAN boşluk YOK.
-      padding: EdgeInsets.fromLTRB(14, 0, 14, altGuvenli(context, ekstra: 20)),
+      padding: dolgu,
       // Sütun sayısı SABİT 3 değil: `/listeler/:id` tam sayfası masaüstünde
       // 1400 dp genişliğe açılıyor ve 3 sütunda poster 460 dp'ye şişiyordu.
       // [PosterIzgarasi] ölçülen genişlikten türetir; başlık yok, hücre
@@ -2375,41 +2474,7 @@ class _ListeIcerigiState extends State<ListeIcerigi> {
         baslikYuksekligi: 0,
       ),
       itemCount: _ogeler!.length,
-      itemBuilder: (context, i) {
-        final o = _ogeler![i] as Map<String, dynamic>;
-        final kart = _ListeOgeKart(
-          tur: o['tur'] as String,
-          tmdbId: (o['tmdb_id'] as num).toInt(),
-          modalIcinde: widget.modalIcinde,
-        );
-        // GİZLİ ÖĞE SAHİBİNE SOLUK + ROZETLİ GÖSTERİLİR.
-        // Başkasına hiç gönderilmiyor (sunucu süzüyor). Sahibinden de
-        // saklasaydık kullanıcı gizlediği yapımı "kaybolmuş" sanardı ve geri
-        // açmanın yolunu bulamazdı.
-        if (o['gizli'] != true) return kart;
-        return Stack(
-          fit: StackFit.expand,
-          children: [
-            Opacity(opacity: 0.35, child: kart),
-            Positioned(
-              right: 6,
-              top: 6,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: DiziRenkler.siyah.withValues(alpha: 0.7),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.visibility_off,
-                  size: 14,
-                  color: DiziRenkler.metin,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
+      itemBuilder: (context, i) => hucre(_ogeler![i] as Map<String, dynamic>),
     );
   }
 

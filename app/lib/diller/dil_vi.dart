@@ -1688,4 +1688,6 @@ const Map<String, String> cevirilerVi = {
   '@{} seni takip etmek istiyor': '@{} muốn theo dõi bạn',
   '@{} takip isteğini kabul etti': '@{} đã chấp nhận yêu cầu theo dõi của bạn',
   'Onayla': 'Duyệt',
+  'Yeni liste oluştur': 'Tạo danh sách mới',
+  'Henüz listen yok.': 'Bạn chưa có danh sách nào.',
 };

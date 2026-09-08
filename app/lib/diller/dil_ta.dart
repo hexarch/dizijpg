@@ -1719,4 +1719,6 @@ const Map<String, String> cevirilerTa = {
   '@{} seni takip etmek istiyor': '@{} உங்களைப் பின்தொடர விரும்புகிறார்',
   '@{} takip isteğini kabul etti': '@{} உங்கள் பின்தொடர் கோரிக்கையை ஏற்றார்',
   'Onayla': 'ஒப்புதல்',
+  'Yeni liste oluştur': 'புதிய பட்டியலை உருவாக்கு',
+  'Henüz listen yok.': 'உங்களிடம் இன்னும் பட்டியல் இல்லை.',
 };
