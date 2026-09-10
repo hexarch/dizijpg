@@ -10,6 +10,7 @@ import '../icerik_deposu.dart';
 import '../medya_yukle.dart';
 import '../spoiler_tercihi.dart';
 import '../tema.dart';
+import '../video_secenekleri.dart';
 import 'akis.dart' show PaylasKutusu;
 import 'begenenler.dart';
 import 'etiket.dart';
@@ -1020,7 +1021,10 @@ class _VideoOynaticiState extends State<VideoOynatici> {
   Future<void> _baslat() async {
     setState(() => _yukleniyor = true);
     try {
-      final d = VideoPlayerController.networkUrl(Uri.parse(widget.url));
+      final d = VideoPlayerController.networkUrl(
+        Uri.parse(widget.url),
+        videoPlayerOptions: videoSecenekleri(),
+      );
       await d.initialize();
       if (!mounted) {
         d.dispose();

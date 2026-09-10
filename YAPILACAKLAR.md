@@ -24,6 +24,22 @@ uzun basma hiçbir şey yapmaz. Kanıt: `test/reels_hizli_oynatma_test.dart`
 `initialize`'ı bir kez `pause`, `play()`'i ise hızı 1.0'a yazar — testte
 sayaçlar kurulumdan SONRA sıfırlanıp göreli ölçülür. Çeviri yok ("2x").
 
+**2) Geri sarınca yeniden yükleme (aynı gün, ikinci istek).** *"video komple
+yüklenmiş alt barda gri gözüküyor ama 1. saniyeye alınca tekrar yüklenmeye
+başlıyor"*. Sunucu temiz (Range → 206, CF HIT). Sebep Android'deki
+ExoPlayer'ın GERİ TAMPONU: varsayılan SIFIR, oynatılıp geçilen kısım bellekten
+atılıyor, geri sarınca ağdan geliyor. Gri çubuk ise eklentinin tek sayı
+bildirimini 0'dan başlayan tek aralık çizdiği için "hepsi yüklü" diye YALAN
+söylüyor. Çözüm `lib/video_secenekleri.dart`: `videoSecenekleri()` →
+`VideoPlayerOptions(backBufferDurationMs: 60000)` (oda: 120 s), ağdan kurulan
+6 oynatıcıya geçildi (Reels, akış kartı, yorum, tam ekran görüntüleyici,
+oda). iOS/web seçeneği yok sayar (kendi tamponları var). Kanıt: Reels
+testinde sahte platform `backBufferDurationMs == 60000` görüyor. TUZAK:
+seçenek geçilince `initialize` önce `setMixWithOthers` çağırır; sahte
+platformda no-op tanımlanmazsa temel sınıf UnimplementedError atar ve
+oynatıcı hiç kurulmaz (iki testte eklendi). Bellek: geri tampon RAM'de,
+60 s ≈ 15-30 MB — daha uzunu Reels'in önden kurulan sayfalarında birikir.
+
 ## 2026-09-08 — 📋 KENDİ LİSTEN: afişi basılı tutup sürükle + "Listeye ekle"de yeni liste (1.146.0+223) ✅
 
 **Tetik (kullanıcı, birebir):** *"kendi oluşturduğum listelerde basılı tut ile

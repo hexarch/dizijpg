@@ -24,6 +24,7 @@ import '../tema.dart';
 import '../veri_tasarrufu.dart';
 import '../video_konum.dart';
 import '../video_kova.dart';
+import '../video_secenekleri.dart';
 import 'akis.dart' show AkisGorunumSecici, AkisGorunumu, AkisKarti;
 import 'begenenler.dart';
 import 'etiket.dart';
@@ -572,7 +573,10 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
     final v = _ilkVideo;
     if (v == null || _d != null) return;
     final u = dosyaUrl(v)!;
-    final d = VideoPlayerController.networkUrl(Uri.parse(u));
+    final d = VideoPlayerController.networkUrl(
+      Uri.parse(u),
+      videoPlayerOptions: videoSecenekleri(),
+    );
     _d = d;
     try {
       await d.initialize();
@@ -1659,7 +1663,10 @@ class _ReelSayfaState extends State<_ReelSayfa>
       _hizli = false; // eski oynatıcıyla birlikte 2x rozeti de gider
     });
     eski?.dispose();
-    final d = VideoPlayerController.networkUrl(Uri.parse(v));
+    final d = VideoPlayerController.networkUrl(
+      Uri.parse(v),
+      videoPlayerOptions: videoSecenekleri(),
+    );
     d
         .initialize()
         .then((_) async {

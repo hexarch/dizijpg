@@ -8,6 +8,7 @@ import '../altyazi.dart';
 import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
 import '../tema.dart';
+import '../video_secenekleri.dart';
 
 /// Tam ekran medya görüntüleyici: fotoğrafta çimdik/sürükle yakınlaştırma,
 /// videoda oynatma + sarma çubuğu; birden çok medyada sayfa kaydırma.
@@ -289,7 +290,10 @@ class _TamVideoState extends State<_TamVideo> {
 
   Future<void> _baslat() async {
     try {
-      final d = VideoPlayerController.networkUrl(Uri.parse(widget.url));
+      final d = VideoPlayerController.networkUrl(
+        Uri.parse(widget.url),
+        videoPlayerOptions: videoSecenekleri(),
+      );
       await d.initialize();
       if (!mounted) {
         d.dispose();

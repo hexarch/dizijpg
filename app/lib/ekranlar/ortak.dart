@@ -21,6 +21,7 @@ import '../tema.dart';
 import '../veri_tasarrufu.dart';
 import '../video_konum.dart';
 import '../video_kova.dart';
+import '../video_secenekleri.dart';
 import 'izlem_carki.dart';
 import 'medya_goster.dart';
 import 'paylas.dart';
@@ -581,7 +582,10 @@ class _AkisVideoState extends State<AkisVideo> {
     _hazirSayi++;
     _sayildi = true;
     try {
-      final d = VideoPlayerController.networkUrl(Uri.parse(widget.url));
+      final d = VideoPlayerController.networkUrl(
+        Uri.parse(widget.url),
+        videoPlayerOptions: videoSecenekleri(),
+      );
       await d.initialize();
       // Bu video bu oturumda izlenmişse (Reels'te ya da kartın önceki
       // ömründe) kurulur kurulmaz oraya sarılır: duraklatılmış kapak bile

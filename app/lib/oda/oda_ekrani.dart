@@ -55,6 +55,7 @@ import '../ceviri.dart';
 import '../ekranlar/kabuk.dart' show KabukTamEkran;
 import '../ekranlar/ortak.dart';
 import '../tema.dart';
+import '../video_secenekleri.dart';
 import 'oda_api.dart';
 import 'oda_baglanti.dart';
 import 'oda_baglanti_sheet.dart';
@@ -846,7 +847,10 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     // --- dosya yolu (yüklenen video ya da doğrudan adres) ---
     final tam = b != null ? b.url : dosyaUrl(oda.video);
     if (tam == null) return;
-    final d = VideoPlayerController.networkUrl(Uri.parse(tam));
+    final d = VideoPlayerController.networkUrl(
+      Uri.parse(tam),
+      videoPlayerOptions: videoSecenekleri(uzun: true),
+    );
     try {
       await d.initialize();
     } catch (_) {

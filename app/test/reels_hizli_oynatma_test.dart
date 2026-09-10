@@ -30,12 +30,18 @@ class _SahtePlatform extends VideoPlayerPlatform {
   int durdur = 0;
   int kurulan = 0;
 
+  /// Kurulumda geçen geri tampon (ms) — ExoPlayer'ın geçilen kısmı atmaması
+  /// için (video_secenekleri.dart). Null: seçenek hiç geçilmemiş.
+  int? geriTampon;
+
   @override
   Future<void> init() async {}
 
   @override
-  Future<int?> createWithOptions(VideoCreationOptions options) async =>
-      ++kurulan;
+  Future<int?> createWithOptions(VideoCreationOptions options) async {
+    geriTampon = options.videoPlayerOptions?.backBufferDurationMs;
+    return ++kurulan;
+  }
 
   @override
   Stream<VideoEvent> videoEventsFor(int playerId) => olaylar.stream;
@@ -45,6 +51,11 @@ class _SahtePlatform extends VideoPlayerPlatform {
 
   @override
   Future<void> setLooping(int playerId, bool looping) async {}
+
+  // videoSecenekleri() geçilince initialize önce bunu çağırır; temel sınıf
+  // UnimplementedError atar → sahtede no-op şart.
+  @override
+  Future<void> setMixWithOthers(bool mixWithOthers) async {}
 
   @override
   Future<void> play(int playerId) async => oynat++;
@@ -155,6 +166,9 @@ void main() {
   testWidgets('sağ yarıya basılı tutunca 2x, bırakınca 1x', (tester) async {
     final p = await _kur(tester);
     expect(_rozet, findsNothing);
+    // Geri sarınca yeniden yükleme (10 Eyl): Reels oynatıcısı geri tamponla
+    // kurulmalı — seçenek geçilmezse ExoPlayer geçilen kısmı atar.
+    expect(p.geriTampon, 60000);
 
     final g = await tester.startGesture(_nokta(tester, sag: true));
     await tester.pump(kLongPressTimeout + const Duration(milliseconds: 50));

@@ -45,6 +45,11 @@ class _SahtePlatform extends VideoPlayerPlatform {
   @override
   Future<void> setLooping(int playerId, bool looping) async {}
 
+  // videoSecenekleri() geçilince initialize önce bunu çağırır; temel sınıf
+  // UnimplementedError atar → sahtede no-op şart.
+  @override
+  Future<void> setMixWithOthers(bool mixWithOthers) async {}
+
   @override
   Future<void> play(int playerId) async {}
 
