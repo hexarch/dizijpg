@@ -9012,14 +9012,17 @@ async function adRezerveMi(sorgulayici, ad, benId = null) {
  * eski (üretilmiş) ad rezerve edilmez, kilit damgası yazılmaz — e-postayla
  * kayıt olan kullanıcının formda ad seçmesiyle aynı hak.
  *
- * Dört koşul birden: Google kökenli (`google_sub`), misafir değil, adı hiç
- * değiştirmemiş (`kullanici_adi_degisim` NULL) ve karşılamayı bitirmemiş.
+ * Dört koşul birden: SAĞLAYICI kökenli (`google_sub` YA DA `apple_sub` —
+ * 10 Eyl 2026: Apple girişi eklenince yalnız Google'a bakan kural Apple
+ * hesabını "değişiklik" sayıp 90 gün kilidine takıyordu, kullanıcı karşılamada
+ * ilerleyemedi), misafir değil, adı hiç değiştirmemiş
+ * (`kullanici_adi_degisim` NULL) ve karşılamayı bitirmemiş.
  * Sonuncusu pencereyi KAPATIR: akış bittikten sonra ad değişimi
  * `/profilim/kullanici-adi`nın kilitli/rezervli yolundan gider.
  */
 function ilkAdSecimiUygun(k) {
   return Boolean(k)
-    && Boolean(k.google_sub)
+    && Boolean(k.google_sub || k.apple_sub)
     && k.misafir !== true
     && !k.kullanici_adi_degisim
     && k.karsilama_bitti !== true;
@@ -9050,7 +9053,8 @@ async function kullaniciAdiDegistir(havuzVeya, kullaniciId, istenen, simdi = Dat
     // FOR UPDATE: aynı hesaptan gelen iki eşzamanlı istek sıraya girsin,
     // ikisi birden "kilit yok" görüp iki kez değiştirmesin.
     const { rows: benSatir } = await istemci.query(
-      `SELECT kullanici_adi, kullanici_adi_degisim, misafir, google_sub, karsilama_bitti
+      `SELECT kullanici_adi, kullanici_adi_degisim, misafir, google_sub, apple_sub,
+              karsilama_bitti
          FROM kullanicilar WHERE id = $1 FOR UPDATE`,
       [kullaniciId],
     );
@@ -24100,7 +24104,7 @@ const karsilamaLimiti = hizLimiti(120, (req) => `kr:${req.kullanici.id}`);
 app.get('/karsilama', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
     `SELECT karsilama_bitti, dogum_gun, dogum_ay, dogum_yil,
-            kullanici_adi, kullanici_adi_degisim, misafir, google_sub
+            kullanici_adi, kullanici_adi_degisim, misafir, google_sub, apple_sub
        FROM kullanicilar WHERE id=$1`,
     [req.kullanici.id],
   );
@@ -24164,7 +24168,8 @@ app.get('/karsilama/kullanici-adi-musait', girisZorunlu, ilkAdMusaitLimiti,
   sarici(async (req, res) => {
     res.set('Cache-Control', 'private, no-store');
     const { rows } = await havuz.query(
-      `SELECT kullanici_adi, kullanici_adi_degisim, misafir, google_sub, karsilama_bitti
+      `SELECT kullanici_adi, kullanici_adi_degisim, misafir, google_sub, apple_sub,
+              karsilama_bitti
          FROM kullanicilar WHERE id = $1`,
       [req.kullanici.id],
     );

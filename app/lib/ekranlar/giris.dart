@@ -572,13 +572,17 @@ class _GirisEkraniState extends State<GirisEkrani> {
                     if (_appleVar) ...[
                       const SizedBox(height: 8),
                       // Apple'ın KENDİ düğmesi (marka kuralı: düğmeyi Apple
-                      // çizer; beyaz stil koyu zemin için). Guideline 4.8:
-                      // Google varken eşdeğer giriş şart, e-posta/şifre
-                      // sayılmıyor (adres gizlenemez).
+                      // çizer). Stil ZEMİNE göre: koyu temada beyaz, açık
+                      // temada siyah — 10 Eyl'de simülatörde açık temada
+                      // beyaz düğme zeminde eriyordu. Guideline 4.8: Google
+                      // varken eşdeğer giriş şart, e-posta/şifre sayılmıyor
+                      // (adres gizlenemez).
                       SignInWithAppleButton(
                         key: const Key('apple-dugmesi'),
                         text: 'Apple ile devam et'.c,
-                        style: SignInWithAppleButtonStyle.white,
+                        style: Theme.of(context).brightness == Brightness.dark
+                            ? SignInWithAppleButtonStyle.white
+                            : SignInWithAppleButtonStyle.black,
                         onPressed: _yukleniyor ? null : _appleGiris,
                       ),
                     ],

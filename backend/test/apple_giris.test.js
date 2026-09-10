@@ -170,3 +170,21 @@ test('docker-compose: APPLE_ANAHTAR_ID aktarılıyor, .p8 salt okunur bağlı', 
   assert.ok(c.includes('APPLE_ANAHTAR_ID: ${APPLE_ANAHTAR_ID:-}'));
   assert.ok(c.includes('./apple-signin.p8:/app/apple-signin.p8:ro'));
 });
+
+test('ilkAdSecimiUygun: Apple kökenli hesap da ilk ad seçimine uygun (10 Eyl kilit hatası)', () => {
+  const kaynak = dilim('function ilkAdSecimiUygun(') + '\nreturn ilkAdSecimiUygun;';
+  // eslint-disable-next-line no-new-func
+  const f = new Function(kaynak)();
+  const temel = { misafir: false, kullanici_adi_degisim: null, karsilama_bitti: false };
+  assert.equal(f({ ...temel, apple_sub: '001.abc' }), true);
+  assert.equal(f({ ...temel, google_sub: 'g1' }), true);
+  assert.equal(f({ ...temel }), false, 'şifreyle kayıt olan zaten adını seçti');
+  assert.equal(f({ ...temel, apple_sub: 'x', karsilama_bitti: true }), false);
+  // Uygunluğu okuyan üç SELECT de apple_sub'ı çekmeli, yoksa kural körleşir.
+  const secimler = KOD.split('ilkAdSecimiUygun(').length - 1;
+  assert.ok(secimler >= 4, 'tanım + 3 çağrı');
+  for (const parca of ["app.get('/karsilama/kullanici-adi-musait'", 'async function kullaniciAdiDegistir(', "app.get('/karsilama'"]) {
+    const u = dilim(parca, 3000);
+    assert.ok(/google_sub, apple_sub/.test(u), parca + ' SELECT apple_sub çekmiyor');
+  }
+});
