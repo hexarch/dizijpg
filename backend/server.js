@@ -9883,9 +9883,14 @@ app.post('/auth/apple', authLimiti, sarici(async (req, res) => {
     kok = email.split('@')[0].replace(/[^a-z0-9_.-]/g, '').replace(/\.{2,}/g, '.')
       .replace(/^[.-]+|[.-]+$/g, '').slice(0, 15);
   }
-  if (kok.length < 3) kok = 'kullanici';
+  // Ne ad ne e-posta geldiyse kök 'kullanici'dır; çıplak 'kullanici' adı
+  // VERİLMEZ (10 Eyl 2026: kullanıcı "kullanici diye isim mi oluşturulur"
+  // dedi) — ilk denemede de sonek takılır, karşılama zaten ad seçtirir.
+  const genel = kok.length < 3;
+  if (genel) kok = 'kullanici';
   for (let deneme = 0; deneme < 6; deneme++) {
-    const ad = deneme === 0 ? kok : kok.slice(0, 12) + '_' + crypto.randomBytes(2).toString('hex');
+    const ad = deneme === 0 && !genel
+      ? kok : kok.slice(0, 12) + '_' + crypto.randomBytes(2).toString('hex');
     try {
       const { rows } = await havuz.query(
         `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash, eposta_dogrulandi, apple_sub)

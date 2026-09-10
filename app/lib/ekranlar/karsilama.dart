@@ -53,6 +53,13 @@ class KarsilamaEkrani extends StatefulWidget {
 /// `kullanicilar.karsilama_bitti`.
 const String karsilamaBittiAnahtari = 'karsilama_bitti';
 
+/// Yerel bayrağın HANGİ hesaba ait olduğu (10 Eyl 2026). Bayrak hesaba bağlı
+/// değildi: aynı cihazda ikinci bir hesap açılınca (Apple ile giriş testi)
+/// karşılama SESSİZCE atlandı, kullanıcı adı seçilemedi ve üretilmiş ad
+/// kaldı. Yerel bayrağa yalnız aynı kimlik için güvenilir; başkası için
+/// sunucuya sorulur.
+const String karsilamaBittiKullaniciAnahtari = 'karsilama_bitti_kullanici';
+
 /// TEMEL adım sayısı (kullanıcı adı adımı HARİÇ) — testte kullanılır.
 /// Gerçek toplam `_KarsilamaEkraniState._toplam`: Google ile açılan hesapta
 /// bir fazla (bkz. [KarsilamaAdimi.kullaniciAdi]).
@@ -189,7 +196,12 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
   Future<void> _bittiMi() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      if (prefs.getBool(karsilamaBittiAnahtari) == true) {
+      final benimId = context.read<Oturum>().kullanici?['id'];
+      final bayrakSahibi = prefs.getInt(karsilamaBittiKullaniciAnahtari);
+      // Yerel bayrak YALNIZ aynı hesap içinse geçerli (bkz. anahtar notu).
+      if (prefs.getBool(karsilamaBittiAnahtari) == true &&
+          benimId is int &&
+          bayrakSahibi == benimId) {
         _cik(kaydet: false);
         return;
       }
@@ -421,6 +433,10 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
       try {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool(karsilamaBittiAnahtari, true);
+        final benimId = context.read<Oturum>().kullanici?['id'];
+        if (benimId is int) {
+          await prefs.setInt(karsilamaBittiKullaniciAnahtari, benimId);
+        }
       } catch (_) {
         // yerel kopya yazılamadı: sunucudaki bayrak yeter
       }

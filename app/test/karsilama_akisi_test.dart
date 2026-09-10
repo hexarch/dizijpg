@@ -150,6 +150,7 @@ Future<_Kurulum> _kur(
   bool adSecilmeli = false,
   bool musait = true,
   int adKayitDurumu = 200,
+  Map<String, Object> ekPrefs = const {},
 }) async {
   tester.view.physicalSize = const Size(520, 1400);
   tester.view.devicePixelRatio = 1.0;
@@ -158,6 +159,7 @@ Future<_Kurulum> _kur(
   SharedPreferences.setMockInitialValues({
     'token': 'sahte',
     'kullanici': jsonEncode({'id': 7, 'kullanici_adi': _uretilmisAd}),
+    ...ekPrefs,
   });
   await Api.tokenYukle();
   final kayit = <_Istek>[];
@@ -276,6 +278,45 @@ void main() {
     expect(k.yollar('/api/karsilama/toplu-durum'), isEmpty);
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getBool(karsilamaBittiAnahtari), isTrue);
+    // Bayrak HESABA bağlı yazılır (10 Eyl 2026): aynı cihazda başka hesap
+    // açılınca karşılama atlanmasın.
+    expect(prefs.getInt(karsilamaBittiKullaniciAnahtari), 7);
+  });
+
+  // 10 EYL 2026 — YEREL BAYRAK HESABA BAĞLI. Apple ile giriş testinde aynı
+  // simülatörde ikinci hesap açılınca önceki hesabın "bitti" bayrağı yüzünden
+  // karşılama sessizce atlandı, ad seçilemedi, üretilmiş ad kaldı.
+  testWidgets('başka hesabın yerel "bitti" bayrağı karşılamayı ATLATMAZ', (
+    tester,
+  ) async {
+    final k = await _kur(
+      tester,
+      ekPrefs: {
+        karsilamaBittiAnahtari: true,
+        karsilamaBittiKullaniciAnahtari: 99,
+      },
+    );
+    expect(find.text('Adım 1 / 5'), findsOneWidget);
+    expect(k.konum, '/karsilama');
+    // Sunucuya soruldu (yerel bayrağa güvenilmedi).
+    expect(
+      k.yollar('/api/karsilama').where((i) => i.govde.isEmpty),
+      isNotEmpty,
+    );
+  });
+
+  testWidgets('aynı hesabın yerel "bitti" bayrağı karşılamayı atlar', (
+    tester,
+  ) async {
+    final k = await _kur(
+      tester,
+      ekPrefs: {
+        karsilamaBittiAnahtari: true,
+        karsilamaBittiKullaniciAnahtari: 7,
+      },
+    );
+    expect(k.konum, '/kesfet');
+    expect(find.text('Adım 1 / 5'), findsNothing);
   });
 
   testWidgets('geri düğmesi bir önceki adıma döner', (tester) async {
