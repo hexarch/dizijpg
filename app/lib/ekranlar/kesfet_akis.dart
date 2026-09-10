@@ -1473,6 +1473,12 @@ class _ReelSayfaState extends State<_ReelSayfa>
   late final AnimationController _kalpAnim;
   Offset? _kalpKonum;
 
+  /// Sağ yarıya BASILI TUTMA → video 2x oynar (TikTok/Instagram davranışı,
+  /// 10 Eyl 2026 isteği). Parmak kalkınca 1x'e döner; rozet yalnız bu sırada
+  /// çizilir. Sol yarı bilerek boş: kullanıcı sağı istedi, solda tutmak hiçbir
+  /// şey yapmaz (yanlışlıkla hızlanma olmasın).
+  bool _hizli = false;
+
   /// Gönderinin TÜM medyası (sırayla) — çoklu gönderide yana kaydırılır.
   late final List<String> _medya = [
     for (final m in (widget.yorum['medya'] as List<dynamic>? ?? []))
@@ -1648,7 +1654,10 @@ class _ReelSayfaState extends State<_ReelSayfa>
     if (v == null || v == _kuruluUrl) return;
     _kuruluUrl = v;
     final eski = _d;
-    setState(() => _d = null);
+    setState(() {
+      _d = null;
+      _hizli = false; // eski oynatıcıyla birlikte 2x rozeti de gider
+    });
     eski?.dispose();
     final d = VideoPlayerController.networkUrl(Uri.parse(v));
     d
@@ -1774,6 +1783,27 @@ class _ReelSayfaState extends State<_ReelSayfa>
     final d = _d;
     if (d == null || !d.value.isInitialized) return;
     d.value.isPlaying ? d.pause() : d.play();
+  }
+
+  /// Basılı tutma başladı: yalnız SAĞ yarıda ve video kuruluysa 2x'e çıkar.
+  /// Duraklatılmış videoda da oynatır (kullanıcı "ileri sar" bekliyor; hiçbir
+  /// şey olmaması kafa karıştırırdı) — bırakınca 1x'te OYNAMAYA DEVAM eder.
+  /// Fotoğraf sayfasında hiçbir şey yapmaz.
+  void _basiliTutmaBasladi(Offset konum, double genislik) {
+    final d = _d;
+    if (d == null || !d.value.isInitialized) return;
+    if (konum.dx < genislik / 2) return;
+    d.setPlaybackSpeed(2.0);
+    if (!d.value.isPlaying) d.play();
+    setState(() => _hizli = true);
+  }
+
+  /// Parmak kalktı ya da tanıma iptal oldu: hız 1x'e döner. Hızlandırılmamış
+  /// bir bitişte (sol yarı, fotoğraf) oynatıcıya dokunulmaz.
+  void _basiliTutmaBitti() {
+    if (!_hizli) return;
+    _d?.setPlaybackSpeed(1.0);
+    if (mounted) setState(() => _hizli = false);
   }
 
   Future<void> _takipToggle() async {
@@ -1943,18 +1973,30 @@ class _ReelSayfaState extends State<_ReelSayfa>
         // geri taşır. Videonun ÜSTÜNDE durmalı, diğer kontrollerin altında.
         Positioned.fill(
           child: PointerInterceptor(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: _dokunus,
-              // Konumlu: kalp tam dokunulan yerde belirir
-              onDoubleTapDown: (d) => _ciftDokunus(d.localPosition),
-              onDoubleTap: () {},
-              // Yana kaydırma: sonraki/önceki medya; son medyadan sonra
-              // sola kaydırınca paylaşanın profili açılır.
-              onHorizontalDragEnd: (detay) {
-                final hiz = detay.primaryVelocity ?? 0;
-                if (hiz.abs() > 250) _yanaKaydir(hiz);
-              },
+            // LayoutBuilder: "sağ yarı" kararı EKRANIN değil bu katmanın
+            // genişliğine göre (masaüstü tuvali ekrandan dar).
+            child: LayoutBuilder(
+              builder: (context, kisit) => GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: _dokunus,
+                // Konumlu: kalp tam dokunulan yerde belirir
+                onDoubleTapDown: (d) => _ciftDokunus(d.localPosition),
+                onDoubleTap: () {},
+                // Sağ yarıya BASILI TUTMA: 2x, bırakınca 1x. Uzun basma
+                // tanıyıcı areneyi kazanınca tek dokunuş ATEŞLENMEZ → video
+                // durmaz. Parmak kayarsa tanıma iptal olur (cancel) ve
+                // dikey/yatay kaydırma her zamanki gibi sürer.
+                onLongPressStart: (d) =>
+                    _basiliTutmaBasladi(d.localPosition, kisit.maxWidth),
+                onLongPressEnd: (_) => _basiliTutmaBitti(),
+                onLongPressCancel: _basiliTutmaBitti,
+                // Yana kaydırma: sonraki/önceki medya; son medyadan sonra
+                // sola kaydırınca paylaşanın profili açılır.
+                onHorizontalDragEnd: (detay) {
+                  final hiz = detay.primaryVelocity ?? 0;
+                  if (hiz.abs() > 250) _yanaKaydir(hiz);
+                },
+              ),
             ),
           ),
         ),
@@ -2046,6 +2088,49 @@ class _ReelSayfaState extends State<_ReelSayfa>
                 Icons.play_arrow_rounded,
                 size: 88,
                 color: Colors.white,
+              ),
+            ),
+          ),
+        // 2x rozeti: yalnız basılı tutulurken, ÜST ORTADA (geri düğmesi sol
+        // üstte, çeviri anahtarı ve medya sayacı sağ üstte — çakışmaz).
+        // "2x" rakam+harf, çevrilmez.
+        if (_hizli)
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 14,
+            left: 0,
+            right: 0,
+            child: IgnorePointer(
+              child: Center(
+                child: Container(
+                  key: const Key('reels-2x'),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.fast_forward_rounded,
+                        size: 16,
+                        color: Colors.white,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        '2x',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

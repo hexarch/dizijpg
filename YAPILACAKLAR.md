@@ -1,5 +1,28 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-08 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-10 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-10 — ⏩ REELS: sağ yarıya basılı tutunca 2x oynatma (1.147.0+224) ✅
+
+**Tetik (kullanıcı, birebir):** *"akışta veya keşfette videoya tıklayınca tam
+ekranda reels gibi kaydırma moduna geçiyor o ekrandayken ekranın sağ tarafına
+basılı tutunca video 2x de oynamalı"*.
+
+TikTok/Instagram davranışı: Reels sayfasının dokunuş katmanına
+(`kesfet_akis.dart`, `_ReelSayfa`) `onLongPressStart/End/Cancel` eklendi.
+Basılı tutma SAĞ yarıda başlarsa `setPlaybackSpeed(2.0)` + üst ortada "2x"
+rozeti (`Key('reels-2x')`, `Icons.fast_forward_rounded`); parmak kalkınca
+1.0 ve rozet gider. "Sağ yarı" kararı EKRANIN değil katmanın genişliğine göre
+(`LayoutBuilder`) — masaüstü tuvali ekrandan dar. Sol yarı BİLEREK boş
+(kullanıcı sağı istedi; yanlışlıkla hızlanma olmasın). Duraklatılmış videoda
+basılı tutma önce oynatır, sonra 2x'e çıkar; bırakınca 1x'te oynamaya devam
+eder (hiçbir şey olmaması kafa karıştırırdı). Uzun basma tanıyıcı areneyi
+kazanınca tek dokunuş ATEŞLENMEZ → video durmaz; parmak kayarsa tanıma iptal
+olur, dikey/yatay kaydırma her zamanki gibi sürer. Yana kaydırmayla oynatıcı
+değişince `_hizli` sıfırlanır (rozet takılı kalmasın). Fotoğraf sayfasında
+uzun basma hiçbir şey yapmaz. Kanıt: `test/reels_hizli_oynatma_test.dart`
+(4 test, sahte `VideoPlayerPlatform`). TUZAK: video_player'ın kendi
+`initialize`'ı bir kez `pause`, `play()`'i ise hızı 1.0'a yazar — testte
+sayaçlar kurulumdan SONRA sıfırlanıp göreli ölçülür. Çeviri yok ("2x").
 
 ## 2026-09-08 — 📋 KENDİ LİSTEN: afişi basılı tutup sürükle + "Listeye ekle"de yeni liste (1.146.0+223) ✅
 
