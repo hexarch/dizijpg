@@ -9691,6 +9691,10 @@ async function appleDogrula({ kimlik, nonce }) {
       sub: String(d.sub),
       email: d.email && dogrulandi ? String(d.email).toLowerCase() : null,
       gizliEposta: d.is_private_email === true || String(d.is_private_email) === 'true',
+      // TEŞHİS (değer değil, alan adları): 409 "e-posta yok" vakasında hangi
+      // alanların geldiğini görmek için. E-posta değeri YAZILMAZ.
+      alanlar: Object.keys(d).join(','),
+      dogrulandi,
     };
   } catch (e) {
     console.error('Apple jeton doğrulama:', e.message);
@@ -9798,6 +9802,15 @@ app.post('/auth/apple', authLimiti, sarici(async (req, res) => {
   }
   if (mevcut.rows.length) {
     let k = mevcut.rows[0];
+    if (!k.email && email) {
+      // E-postasız açılmış Apple hesabı; Apple bu kez adresi verdi → doldur
+      // (başka hesapta kayıtlıysa UNIQUE reddeder, giriş yine sürer).
+      havuz.query(
+        'UPDATE kullanicilar SET email=lower($1) WHERE id=$2 AND email IS NULL',
+        [email, k.id],
+      ).then(() => { k.email = email; })
+        .catch((e) => console.error('apple e-posta doldurma:', e.message));
+    }
     if (k.apple_sub !== bilgi.sub) {
       // E-postayla bulundu → bağı O ANDA kur (Google'daki geriye doldurma).
       havuz.query(
@@ -9849,21 +9862,24 @@ app.post('/auth/apple', authLimiti, sarici(async (req, res) => {
       ...(yasak ? { yasak } : {}),
     });
   }
+  // E-POSTASIZ APPLE HESABI (10 Eyl 2026, simülatörde yaşandı): Apple
+  // e-postayı yalnız İLK yetkilendirmede verir; kaydı bizde yoksa (hesap
+  // silindi, ilk istek ağda düştü, ya da simülatörün bilinen davranışı) jeton
+  // `email` alanı OLMADAN gelir — teşhis günlüğünde alanlar yalnız
+  // iss,aud,exp,iat,sub,nonce,c_hash,auth_time,nonce_supported idi. İlk sürüm
+  // burada 409 verip kullanıcıyı Apple Kimliği ayarlarına yolluyordu; ayarlardan
+  // "kullanmayı bırak" denince de aynı şey oldu, yani KAPALI DÖNGÜ. Karar:
+  // hesap MİSAFİR KALIBIYLA e-postasız açılır (`email` NULL, UNIQUE NULL'a
+  // izin verir; /auth/misafir aynısını yapıyor). Kullanıcı adresi Ayarlar'dan
+  // ekler; kimlik kanıtı Apple girişi (`/auth/eposta-degistir/kod`).
   if (!email) {
-    // Apple e-postayı yalnız ilk yetkilendirmede verir; ilk yetkilendirmenin
-    // kaydı bizde yoksa (ör. o istek ağda düştü) kullanıcı Apple Kimliği
-    // ayarlarından uygulamayı kaldırıp yeniden girmeli. Sessiz boş hesap AÇILMAZ.
-    return res.status(409).json({
-      kod: 'APPLE_EPOSTA_YOK',
-      hata: 'Apple e-posta adresini paylaşmadı. Ayarlar → Apple Kimliği → '
-        + 'Apple ile Giriş Yap → dizi.jpg → "Uygulamayı Kullanmayı Bırak" '
-        + 'dedikten sonra yeniden dene.',
-    });
+    console.log('Apple e-postasız yetkilendirme: jeton alanları=%s dogrulandi=%s',
+      bilgi.alanlar, bilgi.dogrulandi);
   }
   // Yeni hesap: kök ad Apple'ın verdiği addan; yoksa e-postanın ön ekinden —
   // AKTARMA adresinin ön eki rastgele harf yığınıdır, ondan ad türetilmez.
   let kok = appleAdKoku(govde.ad);
-  if (kok.length < 3 && !bilgi.gizliEposta && !email.endsWith('@privaterelay.appleid.com')) {
+  if (kok.length < 3 && email && !bilgi.gizliEposta && !email.endsWith('@privaterelay.appleid.com')) {
     kok = email.split('@')[0].replace(/[^a-z0-9_.-]/g, '').replace(/\.{2,}/g, '.')
       .replace(/^[.-]+|[.-]+$/g, '').slice(0, 15);
   }
@@ -9875,7 +9891,7 @@ app.post('/auth/apple', authLimiti, sarici(async (req, res) => {
         `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash, eposta_dogrulandi, apple_sub)
          VALUES (lower($1), $2, $3, true, $4)
          RETURNING id, kullanici_adi, email, misafir`,
-        [email, ad, await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10), bilgi.sub],
+        [email || null, ad, await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10), bilgi.sub],
       );
       appleYenilemeJetonuKaydet(rows[0].id, govde.kod);
       return res.json({

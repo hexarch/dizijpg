@@ -71,7 +71,10 @@ function jeton(ek = {}, { anahtar = privateKey, kid = 'A' } = {}) {
 test('geçerli jeton: sub + küçük harfli e-posta + gizli işareti', async () => {
   const { appleDogrula } = kur();
   const b = await appleDogrula({ kimlik: jeton(), nonce: 'ham-nonce' });
-  assert.deepEqual(b, { sub: '001234.abc', email: 'gizli@privaterelay.appleid.com', gizliEposta: true });
+  const { alanlar, dogrulandi, ...oz } = b; // teşhis alanları ayrı
+  assert.deepEqual(oz, { sub: '001234.abc', email: 'gizli@privaterelay.appleid.com', gizliEposta: true });
+  assert.equal(dogrulandi, true);
+  assert.ok(alanlar.includes('email'));
 });
 
 test('yanlış nonce, yanlış aud, yanlış iss, süresi dolmuş → null', async () => {
@@ -130,7 +133,11 @@ test('/auth/apple: önce apple_sub sonra e-posta; 2FA yok; yeni hesapta ad_otoma
   assert.ok(u.includes('ad_otomatik: true'));
   assert.ok(u.includes("saglayici: 'apple'"));
   assert.ok(u.includes('appleYenilemeJetonuKaydet('), 'yetki kodu yenileme jetonuna çevrilir');
-  assert.ok(u.includes("kod: 'APPLE_EPOSTA_YOK'"), 'e-postasız yeni hesap AÇILMAZ');
+  // 10 Eyl 2026: Apple jetonu e-postasız gelebiliyor (simülatör, silinmiş hesap);
+  // 409 vermek kapalı döngüydü → hesap e-postasız (NULL) açılır, misafir gibi.
+  assert.ok(!u.includes("APPLE_EPOSTA_YOK"), 'e-postasız 409 KALDIRILDI');
+  assert.ok(u.includes('[email || null, ad,'), 'e-posta NULL olarak yazılır');
+  assert.ok(u.includes('WHERE id=$2 AND email IS NULL'), 'sonraki girişte adres doldurulur');
 });
 
 test('DELETE /hesabim: sağlayıcı hesabında boş şifre geçer, Apple yetkisi iptal edilir', () => {
