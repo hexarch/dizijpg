@@ -468,6 +468,8 @@ const Map<String, String> cevirilerTa = {
   'devamı': 'மேலும்',
   'Google ile devam et': 'Google மூலம் தொடரவும்',
   'Google girişi başarısız': 'Google உள்நுழைவு தோல்வியடைந்தது',
+  'Apple ile devam et': 'Apple மூலம் தொடரவும்',
+  'Apple girişi başarısız': 'Apple உள்நுழைவு தோல்வியடைந்தது',
   'Veri tasarrufu': 'தரவு சேமிப்பு',
   'Wi-Fi ağında veri tasarrufu': 'Wi-Fi இல் தரவு சேமிப்பு',
   'Mobil veride veri tasarrufu': 'மொபைல் தரவில் தரவு சேமிப்பு',
@@ -1460,6 +1462,9 @@ const Map<String, String> cevirilerTa = {
       'இந்த முகவரிக்குக் குறியீட்டை அனுப்ப முடியவில்லை, முகவரியைச் சரிபார்',
   'ya da': 'அல்லது',
   'Google ile doğrula': 'Google மூலம் சரிபார்',
+  'Apple ile doğrula': 'Apple மூலம் சரிபார்க்கவும்',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Google அல்லது Apple மூலம் கணக்கைத் திறந்திருந்தால் கடவுச்சொல் இல்லை; அந்தக் கணக்கால் அடையாளத்தைச் சரிபார்க்கவும்.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'கணக்கை Google மூலம் திறந்திருந்தால் உனக்குக் கடவுச்சொல் இல்லை; அடையாளத்தை Google மூலம் சரிபார்.',
   'Google doğrulaması bu hesapla eşleşmedi':

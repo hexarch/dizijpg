@@ -468,6 +468,8 @@ const Map<String, String> cevirilerMl = {
   'devamı': 'കൂടുതൽ',
   'Google ile devam et': 'Google ഉപയോഗിച്ച് തുടരുക',
   'Google girişi başarısız': 'Google സൈൻ ഇൻ പരാജയപ്പെട്ടു',
+  'Apple ile devam et': 'Apple ഉപയോഗിച്ച് തുടരുക',
+  'Apple girişi başarısız': 'Apple സൈൻ-ഇൻ പരാജയപ്പെട്ടു',
   'Veri tasarrufu': 'ഡാറ്റ ലാഭം',
   'Wi-Fi ağında veri tasarrufu': 'Wi-Fi യിൽ ഡാറ്റ ലാഭം',
   'Mobil veride veri tasarrufu': 'മൊബൈൽ ഡാറ്റയിൽ ഡാറ്റ ലാഭം',
@@ -1440,6 +1442,9 @@ const Map<String, String> cevirilerMl = {
       'ഈ വിലാസത്തിലേക്ക് കോഡ് അയയ്ക്കാനായില്ല, വിലാസം പരിശോധിക്കുക',
   'ya da': 'അല്ലെങ്കിൽ',
   'Google ile doğrula': 'Google ഉപയോഗിച്ച് പരിശോധിക്കുക',
+  'Apple ile doğrula': 'Apple വഴി പരിശോധിക്കുക',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Google അല്ലെങ്കിൽ Apple വഴി അക്കൗണ്ട് തുറന്നെങ്കിൽ പാസ്‌വേഡ് ഇല്ല; ആ അക്കൗണ്ട് കൊണ്ട് വ്യക്തിത്വം പരിശോധിക്കുക.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'അക്കൗണ്ട് Google വഴി തുറന്നതെങ്കിൽ നിനക്ക് പാസ്‌വേഡ് ഇല്ല; ഐഡന്റിറ്റി Google വഴി പരിശോധിക്കുക.',
   'Google doğrulaması bu hesapla eşleşmedi':

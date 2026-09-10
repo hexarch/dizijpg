@@ -468,6 +468,8 @@ const Map<String, String> cevirilerNl = {
   'devamı': 'meer',
   'Google ile devam et': 'Doorgaan met Google',
   'Google girişi başarısız': 'Google-aanmelding mislukt',
+  'Apple ile devam et': 'Doorgaan met Apple',
+  'Apple girişi başarısız': 'Inloggen met Apple mislukt',
   'Veri tasarrufu': 'Databesparing',
   'Wi-Fi ağında veri tasarrufu': 'Databesparing op wifi',
   'Mobil veride veri tasarrufu': 'Databesparing op mobiele data',
@@ -1445,6 +1447,9 @@ const Map<String, String> cevirilerNl = {
       'Kon geen code naar dit adres sturen, controleer het adres',
   'ya da': 'of',
   'Google ile doğrula': 'Verifiëren met Google',
+  'Apple ile doğrula': 'Verifiëren met Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Als je je account met Google of Apple hebt aangemaakt, heb je geen wachtwoord; verifieer je identiteit met dat account.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Als je je account met Google hebt aangemaakt, heb je geen wachtwoord; verifieer je identiteit met Google.',
   'Google doğrulaması bu hesapla eşleşmedi':

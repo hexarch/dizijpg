@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../api.dart';
+import '../apple_kapisi.dart';
 import '../ceviri.dart';
 import '../google_kapisi.dart';
 import '../tema.dart';
@@ -54,7 +55,18 @@ import 'iki_adim_sheet.dart' show ikiAdimSheetAc;
 /// bile uç 4xx döner. Kalıp sunucudakiyle aynı şeyi istiyor: alan adında en az
 /// bir nokta ve harften oluşan bir uzantı — `@_` tam da buraya takılır.
 class EpostaSheet extends StatefulWidget {
-  const EpostaSheet({super.key, required this.mevcut});
+  const EpostaSheet({
+    super.key,
+    required this.mevcut,
+    this.apple,
+    this.appleKapisi,
+  });
+
+  /// Apple kanıt düğmesi çizilsin mi? Null → platformdan (yalnız iOS).
+  final bool? apple;
+
+  /// YALNIZ TEST: sahte Apple kapısı.
+  final AppleKapisi? appleKapisi;
 
   /// Hesapta ŞU AN kayıtlı adres. İpucu olarak gösterilir: kullanıcının
   /// adresinin bozuk olduğunu görebileceği tek yer burası.
@@ -73,6 +85,9 @@ class _EpostaSheetState extends State<EpostaSheet> {
   /// Giriş ekranıyla aynı bileşen — ikinci bir Google akışı yazmıyoruz.
   late final GoogleKapisi _kapi;
   StreamSubscription<GoogleKimligi>? _googleAbonesi;
+
+  late final bool _appleVar = widget.apple ?? appleGirisiUygun(web: kIsWeb);
+  late final AppleKapisi _appleKapi = widget.appleKapisi ?? AppleKapisiIos();
 
   /// Alanın altında kırmızı duran hata. Sunucudan gelen mesaj da BURAYA
   /// yazılıyor, yalnız SnackBar'a değil: `ui-ux-pro-max` *Error Clarity* —
@@ -117,9 +132,9 @@ class _EpostaSheetState extends State<EpostaSheet> {
     super.dispose();
   }
 
-  Future<void> _gonder({GoogleKimligi? google}) async {
+  Future<void> _gonder({GoogleKimligi? google, AppleKimligi? apple}) async {
     if (!_gecerli || _gonderiliyor) return;
-    if (google == null && _sifre.text.isEmpty) return;
+    if (google == null && apple == null && _sifre.text.isEmpty) return;
     setState(() {
       _gonderiliyor = true;
       _hata = null;
@@ -130,9 +145,11 @@ class _EpostaSheetState extends State<EpostaSheet> {
     try {
       final d = await Api.epostaDegistirKodIste(
         adres,
-        sifre: google == null ? _sifre.text : null,
+        sifre: google == null && apple == null ? _sifre.text : null,
         idToken: google?.idToken,
         erisimToken: google?.erisimToken,
+        appleKimlik: apple?.identityToken,
+        appleNonce: apple?.nonce,
       );
       ipucu = d['eposta_ipucu'] as String?;
     } catch (e) {
@@ -157,9 +174,11 @@ class _EpostaSheetState extends State<EpostaSheet> {
       // ekranı da 10 dakikalıktır, pencereler örtüşür).
       yenidenGonder: () => Api.epostaDegistirKodIste(
         adres,
-        sifre: google == null ? _sifre.text : null,
+        sifre: google == null && apple == null ? _sifre.text : null,
         idToken: google?.idToken,
         erisimToken: google?.erisimToken,
+        appleKimlik: apple?.identityToken,
+        appleNonce: apple?.nonce,
       ),
     );
     if (!tamam || !mounted) return;
@@ -307,9 +326,13 @@ class _EpostaSheetState extends State<EpostaSheet> {
               ),
               const SizedBox(height: 6),
               Text(
-                'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google '
-                        'ile doğrula.'
-                    .c,
+                _appleVar
+                    ? 'Hesabını Google ya da Apple ile açtıysan şifren yoktur; '
+                              'kimliğini o hesapla doğrula.'
+                          .c
+                    : 'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google '
+                              'ile doğrula.'
+                          .c,
                 style: TextStyle(
                   color: DiziRenkler.metin54,
                   fontSize: 12,
@@ -349,6 +372,27 @@ class _EpostaSheetState extends State<EpostaSheet> {
                     label: Text('Google ile doğrula'.c),
                   ),
                 ),
+              // APPLE YOLU (10 Eyl 2026): Apple ile açılmış hesap için aynı
+              // kanıt kalıbı — yalnız iOS'ta (bkz. appleGirisiUygun).
+              if (_appleVar) ...[
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  key: const Key('eposta-apple-dogrula'),
+                  onPressed: (_gecerli && !_gonderiliyor)
+                      ? () async {
+                          try {
+                            final k = await _appleKapi.dokun();
+                            if (k == null) return; // vazgeçti
+                            await _gonder(apple: k);
+                          } catch (e) {
+                            if (mounted) setState(() => _hata = e.toString());
+                          }
+                        }
+                      : null,
+                  icon: const Icon(Icons.apple, size: 18),
+                  label: Text('Apple ile doğrula'.c),
+                ),
+              ],
             ],
           ),
         ),

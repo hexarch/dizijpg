@@ -469,6 +469,8 @@ const Map<String, String> cevirilerHu = {
   'devamı': 'tovább',
   'Google ile devam et': 'Folytatás Google-fiókkal',
   'Google girişi başarısız': 'A Google-bejelentkezés nem sikerült',
+  'Apple ile devam et': 'Folytatás Apple-lel',
+  'Apple girişi başarısız': 'Az Apple-bejelentkezés sikertelen',
   'Veri tasarrufu': 'Adattakarékos mód',
   'Wi-Fi ağında veri tasarrufu': 'Adattakarékos mód Wi-Fi-n',
   'Mobil veride veri tasarrufu': 'Adattakarékos mód mobilneten',
@@ -1447,6 +1449,9 @@ const Map<String, String> cevirilerHu = {
       'Nem sikerült kódot küldeni erre a címre, ellenőrizd a címet',
   'ya da': 'vagy',
   'Google ile doğrula': 'Ellenőrzés Google-lel',
+  'Apple ile doğrula': 'Igazolás Apple-lel',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Ha a fiókodat Google-lel vagy Apple-lel hoztad létre, nincs jelszavad; igazold magad azzal a fiókkal.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Ha Google-lel hoztad létre a fiókod, nincs jelszavad; igazold magad Google-lel.',
   'Google doğrulaması bu hesapla eşleşmedi':

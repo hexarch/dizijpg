@@ -467,6 +467,8 @@ const Map<String, String> cevirilerSr = {
   'devamı': 'још',
   'Google ile devam et': 'Настави преко Google-а',
   'Google girişi başarısız': 'Пријава преко Google-а није успела',
+  'Apple ile devam et': 'Nastavi preko Apple-a',
+  'Apple girişi başarısız': 'Prijava preko Apple-a nije uspela',
   'Veri tasarrufu': 'Уштеда података',
   'Wi-Fi ağında veri tasarrufu': 'Уштеда података на Wi-Fi мрежи',
   'Mobil veride veri tasarrufu': 'Уштеда података на мобилним подацима',
@@ -1441,6 +1443,9 @@ const Map<String, String> cevirilerSr = {
       'Није успело слање кода на ову адресу, провери адресу',
   'ya da': 'или',
   'Google ile doğrula': 'Потврди преко Google-а',
+  'Apple ile doğrula': 'Potvrdi preko Apple-a',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Ako si nalog otvorio preko Google-a ili Apple-a, nemaš lozinku; potvrdi identitet tim nalogom.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Ако си налог направио преко Google-а, немаш лозинку; потврди идентитет преко Google-а.',
   'Google doğrulaması bu hesapla eşleşmedi':

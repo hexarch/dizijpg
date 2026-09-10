@@ -470,6 +470,8 @@ const Map<String, String> cevirilerFil = {
   'devamı': 'higit pa',
   'Google ile devam et': 'Magpatuloy gamit ang Google',
   'Google girişi başarısız': 'Nabigo ang pag-sign in sa Google',
+  'Apple ile devam et': 'Magpatuloy gamit ang Apple',
+  'Apple girişi başarısız': 'Nabigo ang pag-sign in gamit ang Apple',
   'Veri tasarrufu': 'Pagtitipid ng data',
   'Wi-Fi ağında veri tasarrufu': 'Pagtitipid ng data sa Wi-Fi',
   'Mobil veride veri tasarrufu': 'Pagtitipid ng data sa mobile data',
@@ -1464,6 +1466,9 @@ const Map<String, String> cevirilerFil = {
       'Hindi makapagpadala ng code sa address na ito, suriin ang address',
   'ya da': 'o',
   'Google ile doğrula': 'I-verify gamit ang Google',
+  'Apple ile doğrula': 'I-verify gamit ang Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Kung ginawa mo ang account mo gamit ang Google o Apple, wala kang password; i-verify ang pagkakakilanlan mo gamit ang account na iyon.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Kung ginawa mo ang account mo gamit ang Google, wala kang password; i-verify ang pagkakakilanlan mo gamit ang Google.',
   'Google doğrulaması bu hesapla eşleşmedi':

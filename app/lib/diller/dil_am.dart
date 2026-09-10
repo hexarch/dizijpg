@@ -457,6 +457,8 @@ const Map<String, String> cevirilerAm = {
   'devamı': 'ተጨማሪ',
   'Google ile devam et': 'በGoogle ይቀጥሉ',
   'Google girişi başarısız': 'በGoogle መግባት አልተሳካም',
+  'Apple ile devam et': 'በApple ይቀጥሉ',
+  'Apple girişi başarısız': 'የApple መግቢያ አልተሳካም',
   'Veri tasarrufu': 'የውሂብ ቁጠባ',
   'Wi-Fi ağında veri tasarrufu': 'በWi-Fi ላይ የውሂብ ቁጠባ',
   'Mobil veride veri tasarrufu': 'በሞባይል ውሂብ ላይ የውሂብ ቁጠባ',
@@ -1384,6 +1386,9 @@ const Map<String, String> cevirilerAm = {
       'ወደዚህ አድራሻ ኮድ መላክ አልተቻለም፤ አድራሻውን አረጋግጥ',
   'ya da': 'ወይም',
   'Google ile doğrula': 'በGoogle አረጋግጥ',
+  'Apple ile doğrula': 'በApple ያረጋግጡ',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'መለያዎን በGoogle ወይም Apple ከከፈቱ የይለፍ ቃል የለዎትም፤ ማንነትዎን በዚያ መለያ ያረጋግጡ።',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'መለያህን በGoogle ከከፈትህ የይለፍ ቃል የለህም፤ ማንነትህን በGoogle አረጋግጥ።',
   'Google doğrulaması bu hesapla eşleşmedi': 'የGoogle ማረጋገጫ ከዚህ መለያ ጋር አልተዛመደም',

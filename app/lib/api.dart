@@ -521,12 +521,17 @@ class Api {
     String? sifre,
     String? idToken,
     String? erisimToken,
+    String? appleKimlik,
+    String? appleNonce,
   }) async =>
       await post('/auth/eposta-degistir/kod', {
             'email': email,
             if (sifre != null) 'sifre': sifre,
             if (idToken != null) 'kimlik': idToken,
             if (erisimToken != null) 'erisim': erisimToken,
+            // Apple ile açılmış hesabın kanıtı: taze Apple girişi (10 Eyl 2026).
+            if (appleKimlik != null) 'apple_kimlik': appleKimlik,
+            if (appleNonce != null) 'apple_nonce': appleNonce,
           })
           as Map<String, dynamic>;
 
@@ -553,6 +558,30 @@ class Api {
     final d = await post('/auth/google', {
       if (kimlik != null) 'kimlik': kimlik,
       if (erisim != null) 'erisim': erisim,
+    });
+    await _tokenKaydet(d['token'] as String);
+    _yasakOku(d, temizle: true);
+    return d;
+  }
+
+  /// Apple ile giriş/kayıt (Guideline 4.8, 10 Eyl 2026). [kimlik] Apple'ın
+  /// imzalı JWT'si, [nonce] istekte özeti gönderilen HAM değer; sunucu jetonu
+  /// Apple'ın açık anahtarlarıyla doğrular. [kod] yetki kodu (sunucu bununla
+  /// yenileme jetonu alır, hesap silinince iptal eder). [email]/[ad] yalnız
+  /// ilk yetkilendirmede dolu gelir. Dönen harita: {kullanici, yeni, ad_otomatik}.
+  static Future<Map<String, dynamic>> appleGiris({
+    required String kimlik,
+    required String nonce,
+    String? kod,
+    String? email,
+    String? ad,
+  }) async {
+    final d = await post('/auth/apple', {
+      'kimlik': kimlik,
+      'nonce': nonce,
+      if (kod != null) 'kod': kod,
+      if (email != null) 'email': email,
+      if (ad != null) 'ad': ad,
     });
     await _tokenKaydet(d['token'] as String);
     _yasakOku(d, temizle: true);
@@ -655,7 +684,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.146.0+223';
+  static const surum = '1.148.0+225';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

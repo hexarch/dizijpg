@@ -74,12 +74,19 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   -- rastgele değeri BİLMEZ ve e-posta değiştirmede şifre yerine taze Google
   -- jetonu kabul edilir.
   google_sub TEXT,
+  -- Apple hesabının DEĞİŞMEYEN kimliği + yenileme jetonu (migrasyon-2026-09-10.sql,
+  -- App Store Guideline 4.8). google_sub ile aynı iki iş; jeton hesap silinince
+  -- Apple'daki yetkiyi iptal etmek için (5.1.1(v)).
+  apple_sub TEXT,
+  apple_yenileme_jetonu TEXT,
   olusturma TIMESTAMPTZ DEFAULT now()
 );
 -- Bir Google hesabı yalnız BİR dizi.jpg hesabına bağlanabilir. Kısmi:
 -- `sub`u olmayan (şifreyle açılmış) 181 satır indekste yer kaplamasın.
 CREATE UNIQUE INDEX IF NOT EXISTS kullanicilar_google_sub
   ON kullanicilar (google_sub) WHERE google_sub IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS kullanicilar_apple_sub
+  ON kullanicilar (apple_sub) WHERE apple_sub IS NOT NULL;
 
 
 -- Bölüm bazlı izleme kaydı. Filmlerde sezon/bolum 0.

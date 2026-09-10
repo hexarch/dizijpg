@@ -106,6 +106,13 @@ services:
       GSC_SA_YOL: /app/firebase-admin.json
       JWT_SECRET: ${JWT_SECRET}
       TMDB_TOKEN: ${TMDB_TOKEN}
+      # Apple ile giriş (10 Eyl 2026, Guideline 4.8): "Sign in with Apple"
+      # anahtarının kimliği + .p8 dosyası (aşağıda :ro bağlı). Jeton DOĞRULAMA
+      # bunlara bağlı DEĞİL (Apple'ın açık anahtarlarıyla yapılır); anahtar
+      # yalnız yenileme jetonu alma ve hesap silmede İPTAL (5.1.1(v)) için.
+      # Boşsa giriş yine çalışır, iptal adımı log'a "kapalı" yazar.
+      APPLE_ANAHTAR_ID: ${APPLE_ANAHTAR_ID:-}
+      APPLE_ANAHTAR_YOL: /app/apple-signin.p8
       # MDBList anahtari (6 Eyl 2026): IMDb / Rotten Tomatoes / Metacritic
       # puanlari (dis_puan.js). Bos birakilirsa ozellik sessizce kapali.
       MDBLIST_KEY: ${MDBLIST_KEY:-}
@@ -200,6 +207,9 @@ services:
       - ./admin-ip:/admin-ip:ro
       # FCM servis hesabı: yoksa push sessizce kapanır (log: "FCM push kapalı").
       - ./firebase-admin.json:/app/firebase-admin.json:ro
+      # Sign in with Apple özel anahtarı (.p8). Dosya yoksa compose BOŞ DİZİN
+      # yaratır; server.js bunu "anahtar yok" sayar (iptal kapalı), giriş sürer.
+      - ./apple-signin.p8:/app/apple-signin.p8:ro
       # Host'taki Maildir'ler SALT-OKUNUR: panel gelen maili gösterir ama
       # API hiçbir koşulda posta kutusunu değiştiremez/silemez.
       - /home/admin/Maildir:/mail/admin:ro

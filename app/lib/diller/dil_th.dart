@@ -460,6 +460,8 @@ const Map<String, String> cevirilerTh = {
   'devamı': 'เพิ่มเติม',
   'Google ile devam et': 'ดำเนินการต่อด้วย Google',
   'Google girişi başarısız': 'การลงชื่อเข้าใช้ Google ล้มเหลว',
+  'Apple ile devam et': 'ดำเนินการต่อด้วย Apple',
+  'Apple girişi başarısız': 'การลงชื่อเข้าใช้ด้วย Apple ล้มเหลว',
   'Veri tasarrufu': 'ประหยัดข้อมูล',
   'Wi-Fi ağında veri tasarrufu': 'ประหยัดข้อมูลเมื่อใช้ Wi-Fi',
   'Mobil veride veri tasarrufu': 'ประหยัดข้อมูลเมื่อใช้เน็ตมือถือ',
@@ -1411,6 +1413,9 @@ const Map<String, String> cevirilerTh = {
       'ส่งรหัสไปยังที่อยู่นี้ไม่ได้ ตรวจสอบที่อยู่อีกครั้ง',
   'ya da': 'หรือ',
   'Google ile doğrula': 'ยืนยันด้วย Google',
+  'Apple ile doğrula': 'ยืนยันด้วย Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'หากคุณสร้างบัญชีด้วย Google หรือ Apple คุณจะไม่มีรหัสผ่าน โปรดยืนยันตัวตนด้วยบัญชีนั้น',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'ถ้าคุณสร้างบัญชีด้วย Google คุณจะไม่มีรหัสผ่าน ยืนยันตัวตนด้วย Google',
   'Google doğrulaması bu hesapla eşleşmedi':

@@ -2,11 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart'
+    show SignInWithAppleButton, SignInWithAppleButtonStyle;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../api.dart';
+import '../apple_kapisi.dart';
 import '../ceviri.dart';
 import '../google_kapisi.dart';
 import '../push.dart';
@@ -22,8 +25,13 @@ import 'ortak.dart' show altGuvenli;
 const double _formGenisligi = 400;
 
 class GirisEkrani extends StatefulWidget {
-  const GirisEkrani({super.key, bool? web, this.googleKapisi})
-    : web = web ?? kIsWeb;
+  const GirisEkrani({
+    super.key,
+    bool? web,
+    this.googleKapisi,
+    this.apple,
+    this.appleKapisi,
+  }) : web = web ?? kIsWeb;
 
   /// Web dalı mı? PARAMETRE: `flutter test` daima `kIsWeb == false` ile koşar;
   /// bayrak gömülü olsaydı testler web dalını hiç gezemezdi.
@@ -31,6 +39,13 @@ class GirisEkrani extends StatefulWidget {
 
   /// YALNIZ TEST: sahte Google kapısı. Null ise [web] değerine göre kurulur.
   final GoogleKapisi? googleKapisi;
+
+  /// Apple düğmesi çizilsin mi? Null ise platformdan karar verilir
+  /// ([appleGirisiUygun]: yalnız iOS). Test açıkça verir.
+  final bool? apple;
+
+  /// YALNIZ TEST: sahte Apple kapısı.
+  final AppleKapisi? appleKapisi;
 
   @override
   State<GirisEkrani> createState() => _GirisEkraniState();
@@ -79,6 +94,10 @@ class _GirisEkraniState extends State<GirisEkrani> {
 
   late final GoogleKapisi _kapi;
   StreamSubscription<GoogleKimligi>? _googleAbonesi;
+
+  /// Apple düğmesi bu ekranda VAR mı (bkz. [GirisEkrani.apple]).
+  late final bool _appleVar = widget.apple ?? appleGirisiUygun(web: widget.web);
+  late final AppleKapisi _appleKapi = widget.appleKapisi ?? AppleKapisiIos();
 
   @override
   void initState() {
@@ -154,6 +173,41 @@ class _GirisEkraniState extends State<GirisEkrani> {
     final d = kimlik.idToken != null
         ? await Api.googleGiris(kimlik: kimlik.idToken)
         : await Api.googleGiris(erisim: kimlik.erisimToken);
+    await _sunucuSonucunuUygula(d);
+  }
+
+  /// Apple ile giriş (Guideline 4.8). Vazgeçme sessizdir; her başka
+  /// başarısızlık kullanıcıya söylenir (Google ile aynı ilke).
+  Future<void> _appleGiris() async {
+    setState(() => _yukleniyor = true);
+    try {
+      final k = await _appleKapi.dokun();
+      if (k == null) return; // kullanıcı Apple sayfasını kapattı
+      final d = await Api.appleGiris(
+        kimlik: k.identityToken,
+        nonce: k.nonce,
+        kod: k.yetkiKodu,
+        email: k.email,
+        ad: k.ad,
+      );
+      await _sunucuSonucunuUygula(d);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e is ApiHata ? e.toString() : 'Apple girişi başarısız'.c,
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _yukleniyor = false);
+    }
+  }
+
+  /// Sağlayıcı girişlerinin (Google/Apple) ORTAK son adımı: oturumu açar,
+  /// yeni hesapta karşılamayı ve ad seçimini işaretler.
+  Future<void> _sunucuSonucunuUygula(Map<String, dynamic> d) async {
     if (!mounted) return;
     if (d['yeni'] == true) Oturum.karsilamaGerekli = true;
     // Google yeni hesapta adı sunucu türetti (e-posta ön eki + sonek);
@@ -515,6 +569,19 @@ class _GirisEkraniState extends State<GirisEkrani> {
                     // bekliyordu. Düğmenin görünümünü Google belirler.
                     // MOBİL: kendi düğmemiz (Android yolu değişmedi).
                     _googleDugmesi(),
+                    if (_appleVar) ...[
+                      const SizedBox(height: 8),
+                      // Apple'ın KENDİ düğmesi (marka kuralı: düğmeyi Apple
+                      // çizer; beyaz stil koyu zemin için). Guideline 4.8:
+                      // Google varken eşdeğer giriş şart, e-posta/şifre
+                      // sayılmıyor (adres gizlenemez).
+                      SignInWithAppleButton(
+                        key: const Key('apple-dugmesi'),
+                        text: 'Apple ile devam et'.c,
+                        style: SignInWithAppleButtonStyle.white,
+                        onPressed: _yukleniyor ? null : _appleGiris,
+                      ),
+                    ],
                     const SizedBox(height: 8),
                     OutlinedButton.icon(
                       onPressed: _yukleniyor ? null : _misafirGiris,

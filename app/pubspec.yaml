@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # DİKKAT: sürümü artırınca lib/api.dart'taki Api.surum'u da güncelle.
-version: 1.147.0+224
+version: 1.148.0+225
 
 environment:
   sdk: ^3.12.2
@@ -122,6 +122,8 @@ dependencies:
   # (backend/ARAMA-API-SOZLESMESI.md §0).
   flutter_webrtc: 1.6.0
   lottie: ^3.5.1
+  sign_in_with_apple: ^8.2.0
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:
@@ -129,7 +131,6 @@ dev_dependencies:
   # CSP satır içi betik hash bekçisi (test/csp_satir_ici_hash_test.dart).
   # Geçişli bağımlılık olarak zaten geliyordu ama TEST doğrudan import ediyor;
   # bildirilmemiş import bir gün üst paket onu bırakınca sessizce kırılırdı.
-  crypto: ^3.0.0
   # Sahte video platformu (test/akis_video_kapak_test.dart): AkisVideo'nun
   # kapak katmanı gerçek çözücü olmadan denenir. Aynı gerekçe: geçişli
   # bağımlılığı doğrudan import ediyoruz, bildirilmeli.

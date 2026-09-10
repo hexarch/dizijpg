@@ -464,6 +464,8 @@ const Map<String, String> cevirilerTe = {
   'devamı': 'మరిన్ని',
   'Google ile devam et': 'Googleతో కొనసాగించండి',
   'Google girişi başarısız': 'Google సైన్ ఇన్ విఫలమైంది',
+  'Apple ile devam et': 'Appleతో కొనసాగించండి',
+  'Apple girişi başarısız': 'Apple సైన్-ఇన్ విఫలమైంది',
   'Veri tasarrufu': 'డేటా ఆదా',
   'Wi-Fi ağında veri tasarrufu': 'Wi-Fi లో డేటా ఆదా',
   'Mobil veride veri tasarrufu': 'మొబైల్ డేటాలో డేటా ఆదా',
@@ -1434,6 +1436,9 @@ const Map<String, String> cevirilerTe = {
       'ఈ చిరునామాకు కోడ్ పంపలేకపోయాం, చిరునామాను తనిఖీ చేయి',
   'ya da': 'లేదా',
   'Google ile doğrula': 'Google తో ధృవీకరించు',
+  'Apple ile doğrula': 'Appleతో ధృవీకరించండి',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'మీరు Google లేదా Appleతో ఖాతా తెరిస్తే మీకు పాస్‌వర్డ్ లేదు; ఆ ఖాతాతో మీ గుర్తింపును ధృవీకరించండి.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'ఖాతాను Google తో తెరిచి ఉంటే నీకు పాస్‌వర్డ్ లేదు; గుర్తింపును Google తో ధృవీకరించు.',
   'Google doğrulaması bu hesapla eşleşmedi':

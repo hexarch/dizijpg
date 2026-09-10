@@ -9396,9 +9396,24 @@ function girisYuku(k) {
     // `puan_olcegi` giriş yükünde: istemci ilk kareden doğru ölçeği çizsin,
     // 5 yıldız gösterip saniye sonra 100'e atlamasın. Sütun yoksa (migrasyon
     // uygulanmamış sunucu) varsayılan 5 — eski davranış.
-    kullanici: { id, kullanici_adi, email, misafir, puan_olcegi: k.puan_olcegi ?? 5 },
+    kullanici: {
+      id, kullanici_adi, email, misafir, puan_olcegi: k.puan_olcegi ?? 5,
+      saglayici: saglayiciAdi(k),
+    },
     ...(yasak ? { yasak } : {}),
   };
+}
+
+/**
+ * Hesap hangi sağlayıcıyla açıldı: 'apple' | 'google' | null.
+ *
+ * İstemci bunu iki yerde okur: hesap silme (sağlayıcı hesabında ŞİFRE
+ * SORULMAZ — sahibi `sifre_hash`teki rastgele değeri bilmez, sorulsaydı hesap
+ * SİLİNEMEZDİ; Apple 5.1.1(v) bunu ret sebebi sayar) ve e-posta değiştirme
+ * (kanıt olarak şifre yerine sağlayıcıya taze giriş).
+ */
+function saglayiciAdi(k) {
+  return k?.apple_sub ? 'apple' : k?.google_sub ? 'google' : null;
 }
 
 // Google ile giriş/kayıt: istemci Google'dan aldığı kimliği yollar, sunucu
@@ -9552,6 +9567,7 @@ app.post('/auth/google', authLimiti, sarici(async (req, res) => {
       kullanici: {
         id, kullanici_adi, email: eposta, misafir,
         puan_olcegi: k.puan_olcegi ?? 5, // bkz. girisYuku
+        saglayici: saglayiciAdi({ ...k, google_sub: bilgi.sub || k.google_sub }),
       },
       yeni: false,
       ...(yasak ? { yasak } : {}),
@@ -9584,7 +9600,284 @@ app.post('/auth/google', authLimiti, sarici(async (req, res) => {
       // `ad_otomatik`: adı biz türettik; istemci karşılamada "kullanıcı adını
       // seç" adımını buna göre açar (bkz. ilkAdSecimiUygun).
       return res.json({
-        token: jwtUret(rows[0]), kullanici: rows[0], yeni: true, ad_otomatik: true,
+        token: jwtUret(rows[0]),
+        kullanici: { ...rows[0], saglayici: 'google' },
+        yeni: true, ad_otomatik: true,
+      });
+    } catch (e) {
+      if (e.code !== '23505') throw e; // ad çakıştıysa yeniden dene
+    }
+  }
+  res.status(500).json({ hata: 'Hesap oluşturulamadı' });
+}));
+
+// ===========================================================================
+// APPLE İLE GİRİŞ (10 Eyl 2026 — App Store Guideline 4.8 reddi)
+// ===========================================================================
+// Apple: "Google varken, veri toplamayı ad+e-postayla sınırlayan, e-postayı
+// gizleyebilen, reklam için etkileşim toplamayan EŞDEĞER bir giriş şart."
+// E-posta/şifre kaydı bu şartı karşılamıyor (adres gizlenemez).
+//
+// Akış `/auth/google` ile BİREBİR aynı kalıp: istemci Apple'ın imzalı kimlik
+// jetonunu yollar, sunucu Apple'ın AÇIK anahtarlarıyla (JWKS) doğrular,
+// hesabı `apple_sub` → e-posta sırasıyla bulur, yoksa açar. İki fark:
+//   · NONCE: istemci rastgele ham nonce üretir, Apple'a SHA-256'sını verir;
+//     jetonun `nonce` alanında özet durur. Ham nonce bize gelir, yeniden
+//     özetlenip karşılaştırılır (çalınmış jetonun yeniden oynatılması).
+//   · E-POSTA GİZLEME: "Hide My Email" seçen kullanıcı `@privaterelay.appleid.com`
+//     aktarma adresiyle gelir. Bu adres GERÇEK bir kutudur (Apple iletir) ama
+//     yalnız Apple portalında kayıtlı gönderici alanlarından gelen postayı
+//     geçirir — dizijpg.com o listeye eklendi (Services → Sign in with Apple
+//     for Email Communication).
+//
+// İKİ ADIMLI DOĞRULAMA bu yolda da SORULMAZ (Google ile aynı gerekçe: Apple
+// hesabı kendi 2FA'sını zorunlu tutuyor; kanıt zaten e-posta sahipliği).
+const APPLE_ISTEMCI = 'com.dizijpg.dizijpg'; // paket kimliği = client_id
+const APPLE_TAKIM = '632XSUC49S';
+const APPLE_YAYINCI = 'https://appleid.apple.com';
+const APPLE_ANAHTAR_ID = process.env.APPLE_ANAHTAR_ID || '';
+const APPLE_ANAHTAR_YOL = process.env.APPLE_ANAHTAR_YOL || '/app/apple-signin.p8';
+
+/** Apple'ın JWKS'i (kid → PEM). 1 saat önbellek; bilinmeyen kid gelirse tazelenir. */
+let appleAnahtarlar = { zaman: 0, harita: new Map() };
+async function appleAcikAnahtar(kid, zorla = false) {
+  const bayat = Date.now() - appleAnahtarlar.zaman > 60 * 60 * 1000;
+  if (zorla || bayat || !appleAnahtarlar.harita.has(kid)) {
+    const r = await fetch(APPLE_YAYINCI + '/auth/keys');
+    if (!r.ok) throw new Error('Apple JWKS ' + r.status);
+    const { keys } = await r.json();
+    const harita = new Map();
+    for (const jwk of keys || []) {
+      try {
+        harita.set(jwk.kid, crypto.createPublicKey({ key: jwk, format: 'jwk' })
+          .export({ type: 'spki', format: 'pem' }));
+      } catch (e) { console.error('Apple JWK okunamadı:', jwk.kid, e.message); }
+    }
+    appleAnahtarlar = { zaman: Date.now(), harita };
+  }
+  return appleAnahtarlar.harita.get(kid) || null;
+}
+
+/**
+ * Apple kimlik jetonunu DOĞRULAR; `{ sub, email, gizliEposta }` ya da null.
+ *
+ * `googleDogrula` ile aynı sözleşme: tek doğrulama noktası, `/auth/apple` ve
+ * `/auth/eposta-degistir/kod` ikisi de buradan geçer. Kontroller: imza (RS256,
+ * Apple JWKS), iss, aud (= paket kimliği), süre, nonce (jetonda varsa ham
+ * nonce'un SHA-256'sıyla eşit olmalı). `email_verified` Apple'da dize ya da
+ * bool gelebilir — ikisi de kabul.
+ */
+async function appleDogrula({ kimlik, nonce }) {
+  try {
+    if (!kimlik || typeof kimlik !== 'string') return null;
+    const baslik = jwt.decode(kimlik, { complete: true })?.header;
+    if (!baslik?.kid) return null;
+    let pem = await appleAcikAnahtar(baslik.kid);
+    if (!pem) pem = await appleAcikAnahtar(baslik.kid, true); // anahtar döndü mü?
+    if (!pem) return null;
+    const d = jwt.verify(kimlik, pem, {
+      algorithms: ['RS256'], issuer: APPLE_YAYINCI, audience: APPLE_ISTEMCI,
+    });
+    if (d.nonce) {
+      const ozet = crypto.createHash('sha256').update(String(nonce || '')).digest('hex');
+      if (ozet !== d.nonce) return null;
+    }
+    const dogrulandi = d.email_verified === true || String(d.email_verified) === 'true';
+    return {
+      sub: String(d.sub),
+      email: d.email && dogrulandi ? String(d.email).toLowerCase() : null,
+      gizliEposta: d.is_private_email === true || String(d.is_private_email) === 'true',
+    };
+  } catch (e) {
+    console.error('Apple jeton doğrulama:', e.message);
+    return null;
+  }
+}
+
+/**
+ * Apple istemci sırrı: .p8 anahtarıyla imzalı ES256 JWT (≤ 6 ay; biz 5 dk).
+ * Anahtar dosyası yoksa null → yenileme/iptal adımları sessizce atlanır
+ * (giriş etkilenmez; jeton doğrulama bu anahtara BAĞLI DEĞİL).
+ */
+function appleIstemciSirri() {
+  if (!APPLE_ANAHTAR_ID) return null;
+  let anahtar;
+  try {
+    if (!fs.statSync(APPLE_ANAHTAR_YOL).isFile()) return null;
+    anahtar = fs.readFileSync(APPLE_ANAHTAR_YOL, 'utf8');
+  } catch { return null; }
+  if (!anahtar.includes('PRIVATE KEY')) return null;
+  const simdi = Math.floor(Date.now() / 1000);
+  return jwt.sign(
+    { iss: APPLE_TAKIM, iat: simdi, exp: simdi + 300, aud: APPLE_YAYINCI, sub: APPLE_ISTEMCI },
+    anahtar, { algorithm: 'ES256', keyid: APPLE_ANAHTAR_ID },
+  );
+}
+
+/** Apple'ın jeton ucuna form gönderisi; `{ ok, json }`. */
+async function appleJetonUcu(yol, alanlar) {
+  const sir = appleIstemciSirri();
+  if (!sir) return { ok: false, kapali: true };
+  const govde = new URLSearchParams({ client_id: APPLE_ISTEMCI, client_secret: sir, ...alanlar });
+  const r = await fetch(APPLE_YAYINCI + yol, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: govde.toString(),
+  });
+  let json = null;
+  try { json = await r.json(); } catch { /* iptal ucu boş gövde döner */ }
+  return { ok: r.ok, durum: r.status, json };
+}
+
+/**
+ * Yetki kodunu yenileme jetonuyla değiştirir ve hesaba yazar — ATEŞLE-UNUT.
+ * Kod TEK KULLANIMLIK ve 5 dk ömürlü; başarısızlık girişi ENGELLEMEZ, yalnız
+ * hesap silinince iptal adımı atlanır (log'a düşer).
+ */
+function appleYenilemeJetonuKaydet(kullaniciId, kod) {
+  if (!kod) return;
+  appleJetonUcu('/auth/token', { code: String(kod), grant_type: 'authorization_code' })
+    .then(({ ok, kapali, durum, json }) => {
+      if (kapali) return console.log('Apple yenileme jetonu: anahtar yok, atlandı');
+      if (!ok || !json?.refresh_token) {
+        return console.error('Apple yenileme jetonu alınamadı:', durum, json?.error);
+      }
+      return havuz.query(
+        'UPDATE kullanicilar SET apple_yenileme_jetonu=$1 WHERE id=$2',
+        [json.refresh_token, kullaniciId]);
+    })
+    .catch((e) => console.error('Apple yenileme jetonu:', e.message));
+}
+
+/** Hesap silinince Apple'daki yetkiyi iptal eder (5.1.1(v)). Ateşle-unut. */
+function appleYetkiyiIptalEt(yenilemeJetonu, kullaniciId) {
+  if (!yenilemeJetonu) return;
+  appleJetonUcu('/auth/revoke', { token: yenilemeJetonu, token_type_hint: 'refresh_token' })
+    .then(({ ok, kapali, durum }) => {
+      if (kapali) return console.log('Apple iptal: anahtar yok, atlandı', kullaniciId);
+      console.log(ok ? 'Apple yetkisi iptal edildi' : 'Apple iptal başarısız ' + durum, kullaniciId);
+    })
+    .catch((e) => console.error('Apple iptal:', e.message));
+}
+
+/**
+ * Apple'ın verdiği addan kullanıcı adı kökü: küçük harf, ASCII'ye indirgeme,
+ * kalıp dışı karakterler atılır. Türkçe harfler ASCII'ye çevrilir ki "Çağla"
+ * → "cagla" olsun, boş kalmasın.
+ */
+function appleAdKoku(ad) {
+  const tr = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u', İ: 'i' };
+  return String(ad || '').toLowerCase()
+    .replace(/[çğıöşüİ]/g, (h) => tr[h] || h)
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '_').replace(/[^a-z0-9_.-]/g, '')
+    .replace(/\.{2,}/g, '.').replace(/^[._-]+|[._-]+$/g, '').slice(0, 15);
+}
+
+app.post('/auth/apple', authLimiti, sarici(async (req, res) => {
+  if (await cihazKapisi(req, res)) return;
+  const govde = req.body || {};
+  const bilgi = await appleDogrula(govde);
+  if (!bilgi?.sub) {
+    return res.status(401).json({ hata: 'Apple doğrulaması başarısız' });
+  }
+  // E-posta jetondan; jetonda yoksa istemcinin ilk yetkilendirmede aldığı
+  // adres (Apple aynı adresi iki yerde de verir, jeton önceliklidir).
+  const email = bilgi.email
+    || (typeof govde.email === 'string' && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(govde.email)
+      ? govde.email.toLowerCase() : null);
+
+  // İKİ AŞAMALI EŞLEŞTİRME: önce `apple_sub` (asıl bağ), sonra e-posta.
+  let mevcut = await havuz.query('SELECT * FROM kullanicilar WHERE apple_sub = $1', [bilgi.sub]);
+  if (!mevcut.rows.length && email) {
+    mevcut = await havuz.query('SELECT * FROM kullanicilar WHERE email = lower($1)', [email]);
+  }
+  if (mevcut.rows.length) {
+    let k = mevcut.rows[0];
+    if (k.apple_sub !== bilgi.sub) {
+      // E-postayla bulundu → bağı O ANDA kur (Google'daki geriye doldurma).
+      havuz.query(
+        'UPDATE kullanicilar SET apple_sub=$1 WHERE id=$2 AND apple_sub IS NULL',
+        [bilgi.sub, k.id],
+      ).catch((e) => console.error('apple_sub doldurma:', e.message));
+      k = { ...k, apple_sub: bilgi.sub };
+    }
+    // HESAP ÖN-KAÇIRMA KAPISI — /auth/google ile aynı gerekçe (denetim §4.2):
+    // buraya yalnız posta kutusunun gerçek sahibi gelebilir; hesapta duran
+    // şifre başkasının olabilir → sıfırla, oturumları düşür, sahibine yaz.
+    if (k.eposta_dogrulandi !== true) {
+      const { rows: y } = await havuz.query(
+        `UPDATE kullanicilar
+            SET sifre_hash = $2, sifre_surumu = sifre_surumu + 1, eposta_dogrulandi = true
+          WHERE id = $1
+        RETURNING *`,
+        [k.id, await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10)],
+      );
+      k = { ...y[0], apple_sub: k.apple_sub };
+      sifreSurumOnbellekSil(k.id);
+      if (k.email) {
+        mailGonder({
+          to: k.email,
+          subject: 'dizi.jpg hesabına Apple ile giriş yapıldı',
+          text: 'Hesabına Apple ile giriş yapıldı.\n\n'
+            + 'Güvenlik için bu hesabın ESKİ şifresi ve açık oturumları '
+            + 'geçersiz kılındı: e-posta adresinin sahipliği ilk kez şimdi '
+            + 'doğrulandı, öncesinde hesapta senin belirlemediğin bir şifre '
+            + 'bulunuyor olabilirdi.\n\n'
+            + 'Bundan sonra Apple ile girmeye devam edebilirsin. Şifreyle de '
+            + 'girmek istersen "Şifremi unuttum" ile yeni bir şifre belirle.\n\n'
+            + 'dizi.jpg',
+        }, { tur: 'apple_dogrulama', kullanici_id: k.id })
+          .catch((e) => console.error('apple dogrulama maili:', e.message));
+      }
+    }
+    appleYenilemeJetonuKaydet(k.id, govde.kod);
+    const yasak = yasakYuku(k);
+    const { id, kullanici_adi, email: eposta, misafir } = k;
+    return res.json({
+      token: jwtUret(k),
+      kullanici: {
+        id, kullanici_adi, email: eposta, misafir,
+        puan_olcegi: k.puan_olcegi ?? 5,
+        saglayici: 'apple',
+      },
+      yeni: false,
+      ...(yasak ? { yasak } : {}),
+    });
+  }
+  if (!email) {
+    // Apple e-postayı yalnız ilk yetkilendirmede verir; ilk yetkilendirmenin
+    // kaydı bizde yoksa (ör. o istek ağda düştü) kullanıcı Apple Kimliği
+    // ayarlarından uygulamayı kaldırıp yeniden girmeli. Sessiz boş hesap AÇILMAZ.
+    return res.status(409).json({
+      kod: 'APPLE_EPOSTA_YOK',
+      hata: 'Apple e-posta adresini paylaşmadı. Ayarlar → Apple Kimliği → '
+        + 'Apple ile Giriş Yap → dizi.jpg → "Uygulamayı Kullanmayı Bırak" '
+        + 'dedikten sonra yeniden dene.',
+    });
+  }
+  // Yeni hesap: kök ad Apple'ın verdiği addan; yoksa e-postanın ön ekinden —
+  // AKTARMA adresinin ön eki rastgele harf yığınıdır, ondan ad türetilmez.
+  let kok = appleAdKoku(govde.ad);
+  if (kok.length < 3 && !bilgi.gizliEposta && !email.endsWith('@privaterelay.appleid.com')) {
+    kok = email.split('@')[0].replace(/[^a-z0-9_.-]/g, '').replace(/\.{2,}/g, '.')
+      .replace(/^[.-]+|[.-]+$/g, '').slice(0, 15);
+  }
+  if (kok.length < 3) kok = 'kullanici';
+  for (let deneme = 0; deneme < 6; deneme++) {
+    const ad = deneme === 0 ? kok : kok.slice(0, 12) + '_' + crypto.randomBytes(2).toString('hex');
+    try {
+      const { rows } = await havuz.query(
+        `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash, eposta_dogrulandi, apple_sub)
+         VALUES (lower($1), $2, $3, true, $4)
+         RETURNING id, kullanici_adi, email, misafir`,
+        [email, ad, await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10), bilgi.sub],
+      );
+      appleYenilemeJetonuKaydet(rows[0].id, govde.kod);
+      return res.json({
+        token: jwtUret(rows[0]),
+        kullanici: { ...rows[0], saglayici: 'apple' },
+        yeni: true, ad_otomatik: true,
       });
     } catch (e) {
       if (e.code !== '23505') throw e; // ad çakıştıysa yeniden dene
@@ -9944,7 +10237,25 @@ app.post('/auth/eposta-degistir/kod', authLimiti, girisZorunlu,
     // eşleşmesiyle TAM OTURUM veriyor, yani aynı kanıt zaten hesabı açıyor.
     // Eşleşme e-posta üzerinden olduysa `google_sub` da doldurulur.
     const googleGirdi = req.body?.kimlik || req.body?.erisim;
-    if (googleGirdi) {
+    // APPLE KANITI (10 Eyl 2026): Google ile aynı iki koşul — jetonun `sub`u
+    // hesabın `apple_sub`una eşit YA DA doğrulanmış e-postası hesabın adresi.
+    if (req.body?.apple_kimlik) {
+      const a = await appleDogrula({ kimlik: req.body.apple_kimlik, nonce: req.body.apple_nonce });
+      const eslesti = a && (
+        (k.apple_sub && a.sub === k.apple_sub) || (a.email && a.email === k.email));
+      if (!eslesti) {
+        return res.status(401).json({
+          kod: 'APPLE_ESLESMEDI',
+          hata: 'Apple doğrulaması bu hesapla eşleşmedi',
+        });
+      }
+      if (!k.apple_sub) {
+        havuz.query(
+          'UPDATE kullanicilar SET apple_sub=$1 WHERE id=$2 AND apple_sub IS NULL',
+          [a.sub, req.kullanici.id],
+        ).catch((e) => console.error('apple_sub doldurma:', e.message));
+      }
+    } else if (googleGirdi) {
       const g = await googleDogrula(req.body);
       const eslesti = g && (
         (k.google_sub && g.sub === k.google_sub) || g.email === k.email);
@@ -9966,6 +10277,12 @@ app.post('/auth/eposta-degistir/kod', authLimiti, girisZorunlu,
       //
       // GOOGLE KÖKENLİ HESABA AYRI MESAJ: `google_sub` doluysa bu kişi şifre
       // BİLEMEZ; "Şifre hatalı" demek onu çıkışsız bir döngüde bırakırdı.
+      if (k.apple_sub) {
+        return res.status(401).json({
+          kod: 'APPLE_GEREKLI',
+          hata: 'Bu hesap Apple ile açıldı; doğrulamak için Apple ile giriş yap',
+        });
+      }
       if (k.google_sub) {
         return res.status(401).json({
           kod: 'GOOGLE_GEREKLI',
@@ -13483,11 +13800,17 @@ app.get('/profilim', girisZorunlu, sarici(async (req, res) => {
     // bayrakla gizler — gizli listeye "paylaşılabilir ama açılmaz" bağlantı
     // üretilmesin (özel listelerdeki kuralın aynısı, bkz. app paylas.dart).
     `SELECT id, kullanici_adi, email, misafir, avatar, kapak, bio, ulke, sosyal,
-            testci, ad, kullanici_adi_degisim, izlenenler_gizli
+            testci, ad, kullanici_adi_degisim, izlenenler_gizli,
+            google_sub, apple_sub
      FROM kullanicilar WHERE id=$1`,
     [req.kullanici.id],
   );
   if (!rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  // `saglayici` dışarı çıkar, `*_sub` ÇIKMAZ (Apple/Google kimlikleri istemcinin
+  // işi değil; yalnız "hangi sağlayıcı" bilgisi gerekiyor — bkz. saglayiciAdi).
+  rows[0].saglayici = saglayiciAdi(rows[0]);
+  delete rows[0].google_sub;
+  delete rows[0].apple_sub;
   // Kullanıcı adı kilidi: ayarlar ekranı alanı kilitli çizip KALAN GÜNÜ
   // yazabilsin diye burada hesaplanıyor. AYRI UÇ AÇILMADI — ayarlar zaten
   // `/profilim` çağırıyor, ikinci istek tur maliyeti dışında hiçbir şey
@@ -20582,11 +20905,21 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
 app.delete('/hesabim', girisZorunlu, sarici(async (req, res) => {
   const { sifre } = req.body || {};
   const { rows } = await havuz.query(
-    'SELECT sifre_hash FROM kullanicilar WHERE id=$1', [req.kullanici.id],
+    `SELECT sifre_hash, google_sub, apple_sub, apple_yenileme_jetonu
+       FROM kullanicilar WHERE id=$1`, [req.kullanici.id],
   );
   if (!rows.length) return res.status(404).json({ hata: 'Hesap bulunamadı' });
   // Şifreli hesaplarda silmeden önce şifre doğrula (kaza/kötüye kullanım koruması).
-  if (rows[0].sifre_hash && !(await bcrypt.compare(sifre || '', rows[0].sifre_hash))) {
+  //
+  // SAĞLAYICI HESABI (Google/Apple ile açılmış) ŞİFRE BİLMEZ: `sifre_hash`
+  // rastgeledir (bkz. /auth/google, /auth/apple). 10 Eyl 2026'ya kadar bu
+  // hesaplar "Şifre hatalı" yüzünden SİLİNEMİYORDU — Apple 5.1.1(v) için ret
+  // sebebi. Sağlayıcı hesabında kanıt oturumun kendisidir; kullanıcı yine de
+  // bir şifre yazdıysa (sonradan "şifremi unuttum" ile belirlemiş olabilir)
+  // yazdığı doğrulanır, boş bıraktıysa geçilir.
+  const saglayiciHesabi = Boolean(rows[0].google_sub || rows[0].apple_sub);
+  const sifreGerekli = rows[0].sifre_hash && !(saglayiciHesabi && !sifre);
+  if (sifreGerekli && !(await bcrypt.compare(sifre || '', rows[0].sifre_hash))) {
     return res.status(401).json({ hata: 'Şifre hatalı' });
   }
   // SİLİNEN HESABIN ADI DA 90 GÜN REZERVE (21 Ağu).
@@ -20627,6 +20960,9 @@ app.delete('/hesabim', girisZorunlu, sarici(async (req, res) => {
     istemci.release();
   }
   sifreSurumOnbellekSil(req.kullanici.id);
+  // Apple 5.1.1(v): hesapla birlikte Apple'daki "dizi.jpg" yetkisi de iptal
+  // edilir; yoksa kullanıcının Apple Kimliği ayarlarında uygulama asılı kalır.
+  appleYetkiyiIptalEt(rows[0].apple_yenileme_jetonu, req.kullanici.id);
   res.json({ durum: 'silindi' });
 }));
 

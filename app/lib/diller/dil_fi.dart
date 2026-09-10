@@ -467,6 +467,8 @@ const Map<String, String> cevirilerFi = {
   'devamı': 'lisää',
   'Google ile devam et': 'Jatka Google-tilillä',
   'Google girişi başarısız': 'Google-kirjautuminen epäonnistui',
+  'Apple ile devam et': 'Jatka Applella',
+  'Apple girişi başarısız': 'Apple-kirjautuminen epäonnistui',
   'Veri tasarrufu': 'Datansäästö',
   'Wi-Fi ağında veri tasarrufu': 'Datansäästö Wi-Fi-verkossa',
   'Mobil veride veri tasarrufu': 'Datansäästö mobiilidatalla',
@@ -1443,6 +1445,9 @@ const Map<String, String> cevirilerFi = {
       'Koodia ei voitu lähettää tähän osoitteeseen, tarkista osoite',
   'ya da': 'tai',
   'Google ile doğrula': 'Vahvista Googlella',
+  'Apple ile doğrula': 'Vahvista Applella',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Jos loit tilisi Googlella tai Applella, sinulla ei ole salasanaa; vahvista henkilöllisyytesi sillä tilillä.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Jos loit tilisi Googlella, sinulla ei ole salasanaa; vahvista henkilöllisyytesi Googlella.',
   'Google doğrulaması bu hesapla eşleşmedi':

@@ -452,6 +452,8 @@ const Map<String, String> cevirilerZh = {
   'devamı': '更多',
   'Google ile devam et': '通过 Google 继续',
   'Google girişi başarısız': 'Google 登录失败',
+  'Apple ile devam et': '通过 Apple 继续',
+  'Apple girişi başarısız': 'Apple 登录失败',
   'Veri tasarrufu': '流量节省',
   'Wi-Fi ağında veri tasarrufu': 'Wi-Fi 下节省流量',
   'Mobil veride veri tasarrufu': '移动数据下节省流量',
@@ -1347,6 +1349,9 @@ const Map<String, String> cevirilerZh = {
   'Bu adrese kod gönderilemedi, adresi kontrol et': '无法向该地址发送验证码，请检查地址',
   'ya da': '或',
   'Google ile doğrula': '用 Google 验证',
+  'Apple ile doğrula': '通过 Apple 验证',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      '如果你的账户是通过 Google 或 Apple 创建的，则没有密码；请用该账户验证身份。',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       '如果你的账号是用 Google 创建的，就没有密码；请用 Google 验证身份。',
   'Google doğrulaması bu hesapla eşleşmedi': 'Google 验证与此账号不匹配',

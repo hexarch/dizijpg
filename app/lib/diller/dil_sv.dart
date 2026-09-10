@@ -467,6 +467,8 @@ const Map<String, String> cevirilerSv = {
   'devamı': 'mer',
   'Google ile devam et': 'Fortsätt med Google',
   'Google girişi başarısız': 'Google-inloggningen misslyckades',
+  'Apple ile devam et': 'Fortsätt med Apple',
+  'Apple girişi başarısız': 'Inloggning med Apple misslyckades',
   'Veri tasarrufu': 'Datasparläge',
   'Wi-Fi ağında veri tasarrufu': 'Datasparläge på Wi-Fi',
   'Mobil veride veri tasarrufu': 'Datasparläge på mobildata',
@@ -1447,6 +1449,9 @@ const Map<String, String> cevirilerSv = {
       'Det gick inte att skicka en kod till den här adressen, kontrollera den',
   'ya da': 'eller',
   'Google ile doğrula': 'Verifiera med Google',
+  'Apple ile doğrula': 'Verifiera med Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Om du skapade ditt konto med Google eller Apple har du inget lösenord; verifiera din identitet med det kontot.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Om du skapade kontot med Google har du inget lösenord; verifiera din identitet med Google.',
   'Google doğrulaması bu hesapla eşleşmedi':

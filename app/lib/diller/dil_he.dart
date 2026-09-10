@@ -458,6 +458,8 @@ const Map<String, String> cevirilerHe = {
   'devamı': 'עוד',
   'Google ile devam et': 'המשך עם Google',
   'Google girişi başarısız': 'ההתחברות עם Google נכשלה',
+  'Apple ile devam et': 'המשך עם Apple',
+  'Apple girişi başarısız': 'הכניסה עם Apple נכשלה',
   'Veri tasarrufu': 'חיסכון בנתונים',
   'Wi-Fi ağında veri tasarrufu': 'חיסכון בנתונים ב-Wi-Fi',
   'Mobil veride veri tasarrufu': 'חיסכון בנתונים בחבילת גלישה',
@@ -1403,6 +1405,9 @@ const Map<String, String> cevirilerHe = {
       'לא הצלחנו לשלוח קוד לכתובת הזו, בדוק את הכתובת',
   'ya da': 'או',
   'Google ile doğrula': 'אימות באמצעות Google',
+  'Apple ile doğrula': 'אימות עם Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'אם פתחת את החשבון עם Google או Apple, אין לך סיסמה; אמת את זהותך עם אותו חשבון.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'אם יצרת את החשבון עם Google אין לך סיסמה; אמת את זהותך באמצעות Google.',
   'Google doğrulaması bu hesapla eşleşmedi': 'אימות Google לא תואם לחשבון הזה',

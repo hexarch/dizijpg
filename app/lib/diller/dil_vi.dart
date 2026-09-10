@@ -466,6 +466,8 @@ const Map<String, String> cevirilerVi = {
   'devamı': 'thêm',
   'Google ile devam et': 'Tiếp tục với Google',
   'Google girişi başarısız': 'Đăng nhập Google không thành công',
+  'Apple ile devam et': 'Tiếp tục với Apple',
+  'Apple girişi başarısız': 'Đăng nhập bằng Apple không thành công',
   'Veri tasarrufu': 'Tiết kiệm dữ liệu',
   'Wi-Fi ağında veri tasarrufu': 'Tiết kiệm dữ liệu khi dùng Wi-Fi',
   'Mobil veride veri tasarrufu': 'Tiết kiệm dữ liệu khi dùng mạng di động',
@@ -1437,6 +1439,9 @@ const Map<String, String> cevirilerVi = {
       'Không gửi được mã tới địa chỉ này, hãy kiểm tra lại địa chỉ',
   'ya da': 'hoặc',
   'Google ile doğrula': 'Xác minh bằng Google',
+  'Apple ile doğrula': 'Xác minh bằng Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Nếu bạn tạo tài khoản bằng Google hoặc Apple thì bạn không có mật khẩu; hãy xác minh danh tính bằng tài khoản đó.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Nếu bạn tạo tài khoản bằng Google thì bạn không có mật khẩu; hãy xác minh danh tính bằng Google.',
   'Google doğrulaması bu hesapla eşleşmedi':

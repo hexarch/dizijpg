@@ -467,6 +467,8 @@ const Map<String, String> cevirilerKn = {
   'devamı': 'ಇನ್ನಷ್ಟು',
   'Google ile devam et': 'Google ನೊಂದಿಗೆ ಮುಂದುವರಿಸಿ',
   'Google girişi başarısız': 'Google ಸೈನ್ ಇನ್ ವಿಫಲವಾಗಿದೆ',
+  'Apple ile devam et': 'Apple ನೊಂದಿಗೆ ಮುಂದುವರಿಸಿ',
+  'Apple girişi başarısız': 'Apple ಸೈನ್-ಇನ್ ವಿಫಲವಾಗಿದೆ',
   'Veri tasarrufu': 'ಡೇಟಾ ಉಳಿತಾಯ',
   'Wi-Fi ağında veri tasarrufu': 'Wi-Fi ನಲ್ಲಿ ಡೇಟಾ ಉಳಿತಾಯ',
   'Mobil veride veri tasarrufu': 'ಮೊಬೈಲ್ ಡೇಟಾದಲ್ಲಿ ಡೇಟಾ ಉಳಿತಾಯ',
@@ -1432,6 +1434,9 @@ const Map<String, String> cevirilerKn = {
       'ಈ ವಿಳಾಸಕ್ಕೆ ಕೋಡ್ ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ, ವಿಳಾಸ ಪರಿಶೀಲಿಸು',
   'ya da': 'ಅಥವಾ',
   'Google ile doğrula': 'Google ಮೂಲಕ ಪರಿಶೀಲಿಸು',
+  'Apple ile doğrula': 'Apple ಮೂಲಕ ಪರಿಶೀಲಿಸಿ',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'ನೀವು Google ಅಥವಾ Apple ಮೂಲಕ ಖಾತೆ ತೆರೆದಿದ್ದರೆ ಪಾಸ್‌ವರ್ಡ್ ಇಲ್ಲ; ಆ ಖಾತೆಯಿಂದ ಗುರುತನ್ನು ಪರಿಶೀಲಿಸಿ.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'ಖಾತೆಯನ್ನು Google ಮೂಲಕ ತೆರೆದಿದ್ದರೆ ನಿನಗೆ ಪಾಸ್‌ವರ್ಡ್ ಇಲ್ಲ; ಗುರುತನ್ನು Google ಮೂಲಕ ಪರಿಶೀಲಿಸು.',
   'Google doğrulaması bu hesapla eşleşmedi':

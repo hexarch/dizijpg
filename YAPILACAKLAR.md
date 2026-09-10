@@ -1,6 +1,46 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-10 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-10 —  APPLE İLE GİRİŞ: App Store 4.8 reddi (1.148.0+225) 🚀
+
+**Tetik:** Apple 10 Eyl 13:31'de 1.103.2 (165)'i **Guideline 4.8 Login
+Services** ile ikinci kez reddetti: Google ile giriş varken "ad+e-posta ile
+sınırlı, e-postayı gizleyebilen, reklam için etkileşim toplamayan" eşdeğer
+giriş yoktu. E-posta/şifre kaydı şartı karşılamıyor (adres gizlenemez).
+1 Eyl'deki 2.1 video talebi bu turda anılmadı → KAPANDI.
+
+**Uygulama:** `apple_kapisi.dart` (google_kapisi kalıbı: soyut kapı, iOS
+dalı `sign_in_with_apple` 8.2.0, ham nonce + SHA-256), giriş ekranında
+Apple'ın kendi düğmesi Google'ın altında — **yalnız iOS'ta**
+(`appleGirisiUygun`; Android/web'de Apple web akışı kurulmadı). `Api.appleGiris`
+→ `POST /auth/apple`. Hesap silme diyaloğu **sağlayıcı hesabında şifre
+sormaz** (`kullanici.saglayici`); e-posta değiştirmede "Apple ile doğrula"
+kanıtı (iOS). 4 yeni metin 45 dile çevrildi. Test: `apple_giris_test.dart`
+(12), tüm paket 2830 yeşil.
+
+**Backend:** `appleDogrula` (Apple JWKS ile RS256, iss/aud/exp/nonce; kid
+bilinmiyorsa JWKS bir kez tazelenir), `/auth/apple` (`apple_sub` → e-posta
+sırası, §4.2 ön-kaçırma kapısı, yeni hesapta ad Apple'ın verdiği addan
+`ad_otomatik`), `DELETE /hesabim` sağlayıcı hesabında boş şifreyi geçirir ve
+**Apple yetkisini iptal eder** (5.1.1(v), `/auth/revoke`; yenileme jetonu ilk
+girişte yetki kodundan alınır — `.p8` anahtarı .env'de `APPLE_ANAHTAR_ID` +
+`/opt/dizijpg/apple-signin.p8`; ANAHTAR HENÜZ ÜRETİLMEDİ, dosya boş → iptal
+adımı log'a "atlandı" yazar, giriş etkilenmez). Migrasyon
+`migrasyon-2026-09-10.sql` (apple_sub kısmi tekil + apple_yenileme_jetonu)
+CANLIDA. Test `backend/test/apple_giris.test.js` (12).
+
+**Portal (ASC API ile, tarayıcısız):** App ID'ye `APPLE_ID_AUTH` yeteneği
+(API adı bu; `SIGN_IN_WITH_APPLE` değil), eski profil silinip yeni "dizijpg
+App Store" profili (K7HM9843BW) üretildi ve `~/Library/.../Provisioning
+Profiles/` + `ios-imza/` altına yazıldı; `Runner.entitlements`e
+`com.apple.developer.applesignin=[Default]`. IPA 45,4 MB, yetki codesign ile
+doğrulandı.
+
+**Kalan (kullanıcı):** Keys → "Sign in with Apple" anahtarı (.p8 tek indirme)
++ Services → "Sign in with Apple for Email Communication" → dizijpg.com
+(Hide My Email aktarma adreslerine şifre sıfırlama maili gitsin). Cevap
+taslağı `magaza-ios/apple-4.8-cevap.md`.
+
 ## 2026-09-10 — ⏩ REELS: sağ yarıya basılı tutunca 2x oynatma (1.147.0+224) ✅
 
 **Tetik (kullanıcı, birebir):** *"akışta veya keşfette videoya tıklayınca tam

@@ -467,6 +467,8 @@ const Map<String, String> cevirilerCs = {
   'devamı': 'více',
   'Google ile devam et': 'Pokračovat přes Google',
   'Google girişi başarısız': 'Přihlášení přes Google se nezdařilo',
+  'Apple ile devam et': 'Pokračovat přes Apple',
+  'Apple girişi başarısız': 'Přihlášení přes Apple se nezdařilo',
   'Veri tasarrufu': 'Úspora dat',
   'Wi-Fi ağında veri tasarrufu': 'Úspora dat na Wi-Fi',
   'Mobil veride veri tasarrufu': 'Úspora dat na mobilních datech',
@@ -1432,6 +1434,9 @@ const Map<String, String> cevirilerCs = {
       'Na tuhle adresu se nepodařilo poslat kód, zkontroluj ji',
   'ya da': 'nebo',
   'Google ile doğrula': 'Ověřit přes Google',
+  'Apple ile doğrula': 'Ověřit přes Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Pokud sis účet založil přes Google nebo Apple, nemáš heslo; ověř svou identitu tímto účtem.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Pokud sis účet založil přes Google, nemáš heslo; ověř svou totožnost přes Google.',
   'Google doğrulaması bu hesapla eşleşmedi':

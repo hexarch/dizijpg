@@ -454,6 +454,8 @@ const Map<String, String> cevirilerKo = {
   'devamı': '더보기',
   'Google ile devam et': 'Google로 계속하기',
   'Google girişi başarısız': 'Google 로그인에 실패했어요',
+  'Apple ile devam et': 'Apple로 계속하기',
+  'Apple girişi başarısız': 'Apple 로그인 실패',
   'Veri tasarrufu': '데이터 절약',
   'Wi-Fi ağında veri tasarrufu': 'Wi-Fi에서 데이터 절약',
   'Mobil veride veri tasarrufu': '모바일 데이터에서 데이터 절약',
@@ -1365,6 +1367,9 @@ const Map<String, String> cevirilerKo = {
       '이 주소로 코드를 보내지 못했습니다. 주소를 확인하세요',
   'ya da': '또는',
   'Google ile doğrula': 'Google로 확인',
+  'Apple ile doğrula': 'Apple로 확인',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Google 또는 Apple로 계정을 만들었다면 비밀번호가 없습니다. 해당 계정으로 본인을 확인하세요.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Google로 계정을 만들었다면 비밀번호가 없습니다. Google로 본인을 확인하세요.',
   'Google doğrulaması bu hesapla eşleşmedi': 'Google 확인이 이 계정과 일치하지 않습니다',

@@ -464,6 +464,8 @@ const Map<String, String> cevirilerSw = {
   'devamı': 'zaidi',
   'Google ile devam et': 'Endelea na Google',
   'Google girişi başarısız': 'Kuingia kwa Google hakukufaulu',
+  'Apple ile devam et': 'Endelea na Apple',
+  'Apple girişi başarısız': 'Kuingia kwa Apple kumeshindikana',
   'Veri tasarrufu': 'Kuokoa data',
   'Wi-Fi ağında veri tasarrufu': 'Kuokoa data kwenye Wi-Fi',
   'Mobil veride veri tasarrufu': 'Kuokoa data kwenye data ya simu',
@@ -1442,6 +1444,9 @@ const Map<String, String> cevirilerSw = {
       'Haikuwezekana kutuma msimbo kwenye anwani hii, angalia anwani',
   'ya da': 'au',
   'Google ile doğrula': 'Thibitisha kwa Google',
+  'Apple ile doğrula': 'Thibitisha kwa Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Ikiwa ulifungua akaunti yako kwa Google au Apple, huna nenosiri; thibitisha utambulisho wako kwa akaunti hiyo.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Ikiwa ulifungua akaunti yako kwa Google huna nenosiri; thibitisha utambulisho wako kwa Google.',
   'Google doğrulaması bu hesapla eşleşmedi':

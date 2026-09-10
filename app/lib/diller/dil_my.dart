@@ -473,6 +473,8 @@ const Map<String, String> cevirilerMy = {
   'devamı': 'ထပ်ဖတ်ရန်',
   'Google ile devam et': 'Google ဖြင့် ဆက်လုပ်ပါ',
   'Google girişi başarısız': 'Google ဖြင့် ဝင်ရောက်မှု မအောင်မြင်ပါ',
+  'Apple ile devam et': 'Apple ဖြင့် ဆက်လုပ်ရန်',
+  'Apple girişi başarısız': 'Apple ဖြင့် ဝင်ရောက်မှု မအောင်မြင်ပါ',
   'Veri tasarrufu': 'ဒေတာချွေတာမှု',
   'Wi-Fi ağında veri tasarrufu': 'Wi-Fi တွင် ဒေတာချွေတာမှု',
   'Mobil veride veri tasarrufu': 'မိုဘိုင်းဒေတာတွင် ဒေတာချွေတာမှု',
@@ -1451,6 +1453,9 @@ const Map<String, String> cevirilerMy = {
       'ဤလိပ်စာသို့ ကုဒ်မပို့နိုင်ပါ၊ လိပ်စာကို စစ်ဆေးပါ',
   'ya da': 'သို့မဟုတ်',
   'Google ile doğrula': 'Google ဖြင့် အတည်ပြုပါ',
+  'Apple ile doğrula': 'Apple ဖြင့် အတည်ပြုရန်',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Google သို့မဟုတ် Apple ဖြင့် အကောင့်ဖွင့်ထားပါက စကားဝှက် မရှိပါ။ ထိုအကောင့်ဖြင့် သင့်ကိုယ်ပိုင်အချက်အလက်ကို အတည်ပြုပါ။',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'အကောင့်ကို Google ဖြင့် ဖွင့်ခဲ့ပါက စကားဝှက်မရှိပါ။ သင့်အထောက်အထားကို Google ဖြင့် အတည်ပြုပါ။',
   'Google doğrulaması bu hesapla eşleşmedi':

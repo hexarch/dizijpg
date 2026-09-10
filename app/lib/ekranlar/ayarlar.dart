@@ -517,7 +517,14 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
 
   /// Hesabı kalıcı siler: onay + (şifreli hesapta) şifre doğrulaması.
   Future<void> _hesabiSil() async {
-    final misafir = context.read<Oturum>().kullanici?['misafir'] == true;
+    final oturumK = context.read<Oturum>().kullanici;
+    final misafir = oturumK?['misafir'] == true;
+    // SAĞLAYICI HESABI (Google/Apple ile açılmış) ŞİFRE BİLMEZ — sunucu
+    // rastgele hash yazıyor. 10 Eyl 2026'ya kadar bu kullanıcı "Şifre hatalı"
+    // yüzünden hesabını SİLEMİYORDU (Apple 5.1.1(v) ret sebebi). Alan
+    // gizlenir, sunucu boş şifreyi sağlayıcı hesabında geçirir.
+    final saglayici = oturumK?['saglayici'] as String?;
+    final sifreSorulur = !misafir && saglayici == null;
     final sifre = TextEditingController();
     var isliyor = false;
     final messenger = ScaffoldMessenger.of(context);
@@ -538,7 +545,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     .c,
                 style: TextStyle(color: DiziRenkler.metin70),
               ),
-              if (!misafir) ...[
+              if (sifreSorulur) ...[
                 const SizedBox(height: 16),
                 TextField(
                   controller: sifre,

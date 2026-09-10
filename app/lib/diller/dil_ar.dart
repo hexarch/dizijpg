@@ -460,6 +460,8 @@ const Map<String, String> cevirilerAr = {
   'devamı': 'المزيد',
   'Google ile devam et': 'المتابعة باستخدام Google',
   'Google girişi başarısız': 'فشل تسجيل الدخول باستخدام Google',
+  'Apple ile devam et': 'المتابعة عبر Apple',
+  'Apple girişi başarısız': 'فشل تسجيل الدخول عبر Apple',
   'Veri tasarrufu': 'توفير البيانات',
   'Wi-Fi ağında veri tasarrufu': 'توفير البيانات على Wi-Fi',
   'Mobil veride veri tasarrufu': 'توفير البيانات على بيانات الجوال',
@@ -1406,6 +1408,9 @@ const Map<String, String> cevirilerAr = {
       'تعذّر إرسال رمز إلى هذا العنوان، تحقق من العنوان',
   'ya da': 'أو',
   'Google ile doğrula': 'التحقق عبر Google',
+  'Apple ile doğrula': 'التحقق عبر Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'إذا أنشأت حسابك عبر Google أو Apple فليس لديك كلمة مرور؛ تحقق من هويتك بذلك الحساب.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'إذا أنشأت حسابك عبر Google فليست لديك كلمة مرور؛ تحقّق من هويتك عبر Google.',
   'Google doğrulaması bu hesapla eşleşmedi': 'لم يطابق تحقّق Google هذا الحساب',

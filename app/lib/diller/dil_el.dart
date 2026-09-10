@@ -472,6 +472,8 @@ const Map<String, String> cevirilerEl = {
   'devamı': 'περισσότερα',
   'Google ile devam et': 'Συνέχεια με Google',
   'Google girişi başarısız': 'Η σύνδεση με Google απέτυχε',
+  'Apple ile devam et': 'Συνέχεια με Apple',
+  'Apple girişi başarısız': 'Η σύνδεση με Apple απέτυχε',
   'Veri tasarrufu': 'Εξοικονόμηση δεδομένων',
   'Wi-Fi ağında veri tasarrufu': 'Εξοικονόμηση δεδομένων στο Wi-Fi',
   'Mobil veride veri tasarrufu': 'Εξοικονόμηση δεδομένων στα δεδομένα κινητής',
@@ -1463,6 +1465,9 @@ const Map<String, String> cevirilerEl = {
       'Δεν στάλθηκε κωδικός σε αυτή τη διεύθυνση, έλεγξε τη διεύθυνση',
   'ya da': 'ή',
   'Google ile doğrula': 'Επαλήθευση με Google',
+  'Apple ile doğrula': 'Επαλήθευση με Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Αν δημιούργησες τον λογαριασμό σου με Google ή Apple, δεν έχεις κωδικό· επαλήθευσε την ταυτότητά σου με αυτόν τον λογαριασμό.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Αν δημιούργησες τον λογαριασμό σου με Google, δεν έχεις κωδικό· επαλήθευσε την ταυτότητά σου με Google.',
   'Google doğrulaması bu hesapla eşleşmedi':

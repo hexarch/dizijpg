@@ -464,6 +464,8 @@ const Map<String, String> cevirilerAz = {
   'devamı': 'daha çox',
   'Google ile devam et': 'Google ilə davam et',
   'Google girişi başarısız': 'Google girişi alınmadı',
+  'Apple ile devam et': 'Apple ilə davam et',
+  'Apple girişi başarısız': 'Apple ilə giriş alınmadı',
   'Veri tasarrufu': 'Trafik qənaəti',
   'Wi-Fi ağında veri tasarrufu': 'Wi-Fi şəbəkəsində trafik qənaəti',
   'Mobil veride veri tasarrufu': 'Mobil internetdə trafik qənaəti',
@@ -1428,6 +1430,9 @@ const Map<String, String> cevirilerAz = {
       'Bu ünvana kod göndərilə bilmədi, ünvanı yoxla',
   'ya da': 'ya da',
   'Google ile doğrula': 'Google ilə doğrula',
+  'Apple ile doğrula': 'Apple ilə təsdiqlə',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Hesabını Google və ya Apple ilə açmısansa şifrən yoxdur; kimliyini həmin hesabla təsdiqlə.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Hesabını Google ilə açmısansa şifrən yoxdur; kimliyini Google ilə doğrula.',
   'Google doğrulaması bu hesapla eşleşmedi':

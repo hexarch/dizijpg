@@ -470,6 +470,8 @@ const Map<String, String> cevirilerRo = {
   'devamı': 'mai mult',
   'Google ile devam et': 'Continuă cu Google',
   'Google girişi başarısız': 'Conectarea cu Google a eșuat',
+  'Apple ile devam et': 'Continuă cu Apple',
+  'Apple girişi başarısız': 'Conectarea cu Apple a eșuat',
   'Veri tasarrufu': 'Economisire date',
   'Wi-Fi ağında veri tasarrufu': 'Economisire date pe Wi-Fi',
   'Mobil veride veri tasarrufu': 'Economisire date pe date mobile',
@@ -1460,6 +1462,9 @@ const Map<String, String> cevirilerRo = {
       'Nu s-a putut trimite un cod la această adresă, verific-o',
   'ya da': 'sau',
   'Google ile doğrula': 'Verifică cu Google',
+  'Apple ile doğrula': 'Verifică cu Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Dacă ți-ai creat contul cu Google sau Apple, nu ai parolă; verifică-ți identitatea cu acel cont.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Dacă ți-ai creat contul cu Google nu ai parolă; verifică-ți identitatea cu Google.',
   'Google doğrulaması bu hesapla eşleşmedi':

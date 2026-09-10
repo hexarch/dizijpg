@@ -465,6 +465,8 @@ const Map<String, String> cevirilerId = {
   'devamı': 'selengkapnya',
   'Google ile devam et': 'Lanjutkan dengan Google',
   'Google girişi başarısız': 'Login Google gagal',
+  'Apple ile devam et': 'Lanjutkan dengan Apple',
+  'Apple girişi başarısız': 'Masuk dengan Apple gagal',
   'Veri tasarrufu': 'Hemat data',
   'Wi-Fi ağında veri tasarrufu': 'Hemat data di Wi-Fi',
   'Mobil veride veri tasarrufu': 'Hemat data di data seluler',
@@ -1437,6 +1439,9 @@ const Map<String, String> cevirilerId = {
       'Kode tidak bisa dikirim ke alamat ini, periksa alamatnya',
   'ya da': 'atau',
   'Google ile doğrula': 'Verifikasi dengan Google',
+  'Apple ile doğrula': 'Verifikasi dengan Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Jika kamu membuat akun dengan Google atau Apple, kamu tidak punya kata sandi; verifikasi identitasmu dengan akun itu.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Kalau akunmu dibuat dengan Google, kamu tidak punya kata sandi; verifikasi identitasmu dengan Google.',
   'Google doğrulaması bu hesapla eşleşmedi':

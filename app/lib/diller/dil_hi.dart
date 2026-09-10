@@ -467,6 +467,8 @@ const Map<String, String> cevirilerHi = {
   'devamı': 'और',
   'Google ile devam et': 'Google से जारी रखें',
   'Google girişi başarısız': 'Google से साइन इन नहीं हो सका',
+  'Apple ile devam et': 'Apple के साथ जारी रखें',
+  'Apple girişi başarısız': 'Apple साइन-इन विफल रहा',
   'Veri tasarrufu': 'डेटा बचत',
   'Wi-Fi ağında veri tasarrufu': 'Wi-Fi पर डेटा बचत',
   'Mobil veride veri tasarrufu': 'मोबाइल डेटा पर डेटा बचत',
@@ -1433,6 +1435,9 @@ const Map<String, String> cevirilerHi = {
       'इस पते पर कोड नहीं भेजा जा सका, पता जाँचो',
   'ya da': 'या',
   'Google ile doğrula': 'Google से सत्यापित करो',
+  'Apple ile doğrula': 'Apple से सत्यापित करें',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'अगर आपने खाता Google या Apple से बनाया है तो आपका पासवर्ड नहीं है; उसी खाते से अपनी पहचान सत्यापित करें।',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'अगर तुमने खाता Google से बनाया है तो तुम्हारा पासवर्ड नहीं है; पहचान Google से सत्यापित करो।',
   'Google doğrulaması bu hesapla eşleşmedi':

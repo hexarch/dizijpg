@@ -469,6 +469,8 @@ const Map<String, String> cevirilerPl = {
   'devamı': 'więcej',
   'Google ile devam et': 'Kontynuuj przez Google',
   'Google girişi başarısız': 'Logowanie przez Google nie powiodło się',
+  'Apple ile devam et': 'Kontynuuj przez Apple',
+  'Apple girişi başarısız': 'Logowanie przez Apple nie powiodło się',
   'Veri tasarrufu': 'Oszczędzanie danych',
   'Wi-Fi ağında veri tasarrufu': 'Oszczędzanie danych przez Wi-Fi',
   'Mobil veride veri tasarrufu': 'Oszczędzanie danych w sieci komórkowej',
@@ -1452,6 +1454,9 @@ const Map<String, String> cevirilerPl = {
       'Nie udało się wysłać kodu na ten adres, sprawdź go',
   'ya da': 'lub',
   'Google ile doğrula': 'Zweryfikuj przez Google',
+  'Apple ile doğrula': 'Zweryfikuj przez Apple',
+  'Hesabını Google ya da Apple ile açtıysan şifren yoktur; kimliğini o hesapla doğrula.':
+      'Jeśli utworzyłeś konto przez Google lub Apple, nie masz hasła; zweryfikuj tożsamość tym kontem.',
   'Hesabını Google ile açtıysan şifren yoktur; kimliğini Google ile doğrula.':
       'Jeśli założyłeś konto przez Google, nie masz hasła; potwierdź tożsamość przez Google.',
   'Google doğrulaması bu hesapla eşleşmedi':
