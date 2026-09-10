@@ -36,7 +36,7 @@ function kredi(id, tur, ek = {}) {
 // yapimlariCikar — payda
 // ---------------------------------------------------------------------------
 
-test('cast dışındaki alanlar ve posterı olmayan kayıtlar paydaya girmez', () => {
+test('tuhaf media_type ve posterı olmayan kayıtlar paydaya girmez', () => {
   const c = yapimlariCikar({
     cast: [
       kredi(1, 'tv'),
@@ -44,9 +44,35 @@ test('cast dışındaki alanlar ve posterı olmayan kayıtlar paydaya girmez', (
       kredi(3, 'person'), // TMDB bazen tuhaf media_type döndürüyor
       kredi(4, 'movie'),
     ],
-    crew: [kredi(9, 'movie')], // yönetmenlik "oynadığı" değil
   });
   assert.deepEqual(c.map((y) => y.tmdb_id), [1, 4]);
+});
+
+// 11 Eyl 2026: "zeki demirkubuz'un filmlerini aratınca filmler çıkıyor ama
+// yönetmenin filmler kısmında o film çıkmıyor" — yönetmenlik `crew`de gelir.
+test('yönetmenlik/senaristlik (crew) kredileri de paydaya girer', () => {
+  const c = yapimlariCikar({
+    cast: [kredi(44105, 'movie', { character: 'Patron', vote_count: 116 })],
+    crew: [
+      kredi(31413, 'movie', { job: 'Director', vote_count: 134 }),
+      kredi(31413, 'movie', { job: 'Writer', vote_count: 134 }), // aynı film, ikinci görev
+      kredi(44105, 'movie', { job: 'Director', vote_count: 116 }), // hem oynadı hem yönetti
+      kredi(41187, 'movie', { job: 'Director', vote_count: 69 }),
+    ],
+  });
+  assert.deepEqual(c.map((y) => y.tmdb_id), [31413, 44105, 41187],
+    'crew filmleri eksik ya da aynı film iki kez sayıldı');
+});
+
+test('"Thanks" jeneriği kişinin işi değildir, paydaya girmez', () => {
+  const c = yapimlariCikar({
+    cast: [],
+    crew: [
+      kredi(31026, 'movie', { job: 'Thanks' }),
+      kredi(31413, 'movie', { job: 'Director' }),
+    ],
+  });
+  assert.deepEqual(c.map((y) => y.tmdb_id), [31413]);
 });
 
 test('aynı yapımdaki iki rol paydayı ŞİŞİRMEZ (tekilleştirme)', () => {

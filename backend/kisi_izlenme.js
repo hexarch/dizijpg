@@ -35,9 +35,19 @@
 //   - (tur, id) TEKİLLEŞTİRİLİR: bir oyuncu aynı dizide iki rolde oynadıysa
 //     TMDB iki ayrı credit döndürür; payda 20 yerine 22 görünürdü.
 //
-// `crew` bilerek DIŞARIDA: kullanıcının sözü "oynadığı dizi film" — yönetmenlik
-// / yapımcılık kredileri oyunculuk değil, ve kişi ekranındaki ızgara da yalnız
-// `cast` gösteriyor (kisi.dart).
+// `crew` DE PAYDADA (11 Eyl 2026, kullanıcı: *"zeki demirkubuz'un filmlerini
+// aratınca filmler çıkıyor ama yönetmenin filmler kısmında o film çıkmıyor"*).
+// TMDB yönetmen/senarist/yapımcı kredilerini `cast`a değil `crew`e yazar;
+// Demirkubuz'un Masumiyet, Yazgı, Kıskanmak, Yeraltı'sı yalnız `crew`de geliyor
+// (Director), `cast`ta yalnız figüran olarak göründüğü 10 iş var. Yalnız `cast`
+// çizen sayfa yönetmeni "10 filmlik bir oyuncu" gösteriyordu. 8 Ağu'daki
+// "oynadığı" sözü oyuncu düşünülerek söylenmişti; yönetmen için doğal karşılık
+// "yaptığı". Kişi ekranındaki ızgara (kisi.dart) ile bu payda AYNI kuralı
+// kullanır ki "10/20" ile ızgara birbirini tutsun.
+//   - `job == 'Thanks'` ATILIR: "teşekkürler" jeneriği kişinin işi değil
+//     (Demirkubuz'da Uzak ve Mayıs Sıkıntısı böyle geliyordu).
+//   - Aynı yapımda hem oyuncu hem yönetmen (Kader: Director + Patron rolü)
+//     tekilleştirmeyle TEK kez sayılır.
 
 const IZLENMIS_DURUMLAR = new Set(['izliyorum', 'bitirdim', 'biraktim']);
 
@@ -54,9 +64,11 @@ export function yapimAnahtari(tur, tmdbId) {
  */
 export function yapimlariCikar(krediler) {
   const cast = Array.isArray(krediler?.cast) ? krediler.cast : [];
+  const crew = Array.isArray(krediler?.crew) ? krediler.crew : [];
   const gorulen = new Set();
   const cikti = [];
-  for (const c of cast) {
+  for (const c of [...cast, ...crew]) {
+    if (c?.job === 'Thanks') continue;
     const tur = c?.media_type;
     if (tur !== 'tv' && tur !== 'movie') continue;
     if (!c.poster_path) continue;

@@ -245,18 +245,9 @@ class _KisiEkraniState extends State<KisiEkrani> with OlcekDinler<KisiEkrani> {
         Api.get('/tmdb/person/${widget.kisiId}/combined_credits'),
       ]);
       if (!mounted) return;
-      final isler =
-          (sonuclar[1]['cast'] as List<dynamic>)
-              .where((c) => c['poster_path'] != null)
-              .toList()
-            ..sort(
-              (a, b) => ((b['vote_count'] as num?) ?? 0).compareTo(
-                (a['vote_count'] as num?) ?? 0,
-              ),
-            );
       setState(() {
         _kisi = sonuclar[0] as Map<String, dynamic>;
-        _isler = isler.take(60).toList();
+        _isler = yapimlariBirlestir(sonuclar[1]).take(60).toList();
       });
       // Sekme başlığı (bkz. sayfa_basligi.dart). Anahtar rotanın yoluyla
       // birebir: '/kisi/:id'.
@@ -619,4 +610,43 @@ class _BilgiSatiri extends StatelessWidget {
       ),
     );
   }
+}
+
+/// TMDB `combined_credits` gövdesinden ızgarada çizilecek yapım listesi.
+///
+/// CAST + CREW BİRLİKTE (11 Eyl 2026, kullanıcı: *"zeki demirkubuz'un
+/// filmlerini aratınca filmler çıkıyor ama yönetmenin filmler kısmında o film
+/// çıkmıyor"*). TMDB yönetmen/senarist/yapımcı kredilerini `crew`e yazar;
+/// Demirkubuz'un Masumiyet, Yazgı, Kıskanmak, Yeraltı'sı yalnız `crew`de
+/// (Director) geliyordu, ızgara ise yalnız `cast`ı çiziyordu → yönetmen
+/// "10 filmlik figüran" gibi görünüyordu.
+///
+/// Kurallar backend `kisi_izlenme.js::yapimlariCikar` ile BİREBİR AYNI, ki
+/// "10/20 izledin" oranı ile bu ızgara birbirini tutsun:
+///   · media_type yalnız tv|movie, poster zorunlu,
+///   · `job == 'Thanks'` atılır ("teşekkürler" jeneriği kişinin işi değil),
+///   · (tür, id) tekil: aynı filmde Director + Writer + Patron rolü TEK kart,
+///   · oy sayısına göre azalan.
+List<Map<String, dynamic>> yapimlariBirlestir(dynamic krediler) {
+  final govde = krediler is Map ? krediler : const <String, dynamic>{};
+  final cast = govde['cast'] is List ? govde['cast'] as List : const [];
+  final crew = govde['crew'] is List ? govde['crew'] as List : const [];
+  final gorulen = <String>{};
+  final cikti = <Map<String, dynamic>>[];
+  for (final c in [...cast, ...crew]) {
+    if (c is! Map) continue;
+    if (c['job'] == 'Thanks') continue;
+    final tur = c['media_type'];
+    if (tur != 'tv' && tur != 'movie') continue;
+    if (c['poster_path'] == null) continue;
+    final anahtar = '$tur:${c['id']}';
+    if (!gorulen.add(anahtar)) continue;
+    cikti.add(Map<String, dynamic>.from(c));
+  }
+  cikti.sort(
+    (a, b) => ((b['vote_count'] as num?) ?? 0).compareTo(
+      (a['vote_count'] as num?) ?? 0,
+    ),
+  );
+  return cikti;
 }

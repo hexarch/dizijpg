@@ -43,7 +43,41 @@ const _krediler = {
       'media_type': 'movie',
     },
   ],
-  'crew': <dynamic>[],
+  // 11 Eyl 2026: yönetmenlik `crew`de gelir; ızgara bunu da çizmeli.
+  'crew': [
+    {
+      'id': 31413,
+      'title': 'Masumiyet',
+      'poster_path': '/m.jpg',
+      'vote_count': 134,
+      'media_type': 'movie',
+      'job': 'Director',
+    },
+    {
+      'id': 31413,
+      'title': 'Masumiyet',
+      'poster_path': '/m.jpg',
+      'vote_count': 134,
+      'media_type': 'movie',
+      'job': 'Writer',
+    },
+    {
+      'id': 27205,
+      'title': 'Inception',
+      'poster_path': '/x.jpg',
+      'vote_count': 30000,
+      'media_type': 'movie',
+      'job': 'Producer',
+    },
+    {
+      'id': 31026,
+      'title': 'Uzak',
+      'poster_path': '/u.jpg',
+      'vote_count': 265,
+      'media_type': 'movie',
+      'job': 'Thanks',
+    },
+  ],
 };
 
 http.Client _sahteIstemci({
@@ -178,6 +212,28 @@ void main() {
 
     expect(find.byType(KisiEkrani), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('yönetmenlik (crew) kredisi de ızgarada; tekil ve Thanks yok', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(500, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    await _kur(tester, hedef: '/kisi/6193');
+
+    // Yalnız crew'de olan film çizilir.
+    expect(find.text('Masumiyet'), findsOneWidget);
+    // Hem cast hem crew'de olan film TEK kart.
+    expect(find.text('Inception'), findsOneWidget);
+    // "Thanks" jeneriği kişinin işi değildir.
+    expect(find.text('Uzak'), findsNothing);
+  });
+
+  test('yapimlariBirlestir backend kuralıyla aynı sırayı verir', () {
+    final l = yapimlariBirlestir(_krediler);
+    expect(l.map((e) => e['id']).toList(), [27205, 31413]);
   });
 
   test('/kisi/ yolu oturumsuz ziyaretçiye açık', () {

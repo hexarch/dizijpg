@@ -9956,3 +9956,19 @@ sayfada aşağılara ekle."
 - 🩹 Yan düzeltme: `Api.surum` 1.137.0+204'te kalmıştı (45115fc pubspec'i
   1.138.0+205 yapmış, sabiti unutmuş) — `surum_esleme_test` kırmızıydı,
   bu turda 1.139.0+206 ile eşitlendi.
+
+## 11 Eyl 2026 — Yönetmenin filmleri profilinde yok (1.148.1+226)
+Kullanıcı: *"bazı yönetmenler bazı filmlerde gözüküyor ama bazı filmler o
+yönetmenlerin profilinde gözükmüyor mesela zeki demirkubuz'un filmlerini
+aratınca filmler çıkıyor ama yönetmenin filmler kısmında o film çıkmıyor"*.
+- KÖK SEBEP: TMDB yönetmen/senarist/yapımcı kredilerini `combined_credits.crew`e
+  yazar; kişi ekranı (`kisi.dart`) ve "10/20 izledin" paydası
+  (`kisi_izlenme.js`) yalnız `cast`ı okuyordu. Demirkubuz (TMDB 145518):
+  Masumiyet, Yazgı, Kıskanmak, Yeraltı… 49 crew kaydı, ızgarada yalnız
+  figüranlık yaptığı 10 iş vardı.
+- ✅ `yapimlariBirlestir` (kisi.dart) + `yapimlariCikar` (kisi_izlenme.js):
+  cast+crew birleşik, (tür,id) tekil, `job == 'Thanks'` atılır, oy sırası.
+  İki taraf aynı kural — oran ile ızgara birbirini tutuyor.
+- ✅ Testler: `kisi_izlenme.test.js` (+2), `kisi_dogrudan_test.dart` (+2).
+- Not: film sayfasındaki yönetmen bağlantısı ve SSR (`/kisi/:id` botu) zaten
+  crew'i sayıyordu; eksik olan yalnız kullanıcıya çizilen ızgaraydı.
