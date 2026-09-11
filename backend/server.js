@@ -7988,26 +7988,119 @@ const SEO_KISI_OLCU_BUTCE_MS = 25000;
 //
 // Süre: 3,9 sn (yalnız `production_companies` okunuyor; `credits.cast`
 // açılsaydı aynı belgeler üzerinde 20,6 sn olurdu — ölçüldü).
+//
+// ---------------------------------------------------------------------------
+// 12 EYL 2026 — ÖLÇÜM ARTIK SAKLANIYOR (`seo_yapim_sirket`), HARİTA SORGUSU
+// TARAMA DEĞİL İNDEKS OKUMASI. Uzun gerekçe: migrasyon-2026-09-12.sql.
+// ---------------------------------------------------------------------------
+// Yukarıdaki "3,9 sn" ölçümü 21 Ağu tarihli ve ARTIK GEÇERSİZ. 29 Ağu'daki 46
+// dilli SSR `tmdb_onbellek`i 1.815.273 satır / 22 GB'a çıkardı; aynı sorgu
+// 12 Eyl'de 80,9 sn sürüyor ve `SITEMAP_SORGU_ZAMAN_ASIMI_MS` (40 sn) tavanını
+// aşarak `/sitemap-sirket-1.xml`i ve 45 dil öneklisini Googlebot'a 500
+// döndürüyordu — 1 Eylül'ün kişi arızasının birebir aynısı.
+//
+// GARANTİ DEĞİŞMEDİ, İKİYE BÖLÜNDÜ (kişi tablosundaki bölünmenin aynısı):
+//   · EŞİK → burası (tabloda karar değil HAM LİSTE durduğu için eşik hâlâ
+//            sorguda ve hâlâ `SEO_SIRKET_YAPIM_MIN` sabitinden geliyor),
+//   · ÖLÇÜ → `SEO_YAPIM_SIRKET_TAZELE` (`production_companies`, `poster_path`
+//            ve adsız firma süzgeci oraya taşındı — ifadeler BİREBİR aynı).
+// Evren yine `${SITEMAP_SORGU}`dan türüyor: harita ⊆ kendi kataloğumuz.
 const SITEMAP_SIRKET_SORGU = `
   WITH harita AS (
     SELECT DISTINCT tur, tmdb_id FROM (${SITEMAP_SORGU}) h
-  ), yapim AS (
-    SELECT (regexp_match(anahtar, '^/(tv|movie)/([0-9]+)'))[1] AS tur,
-           (regexp_match(anahtar, '^/(tv|movie)/([0-9]+)'))[2]::int AS tmdb_id,
-           veri
-      FROM tmdb_onbellek
-     WHERE anahtar ~ '^/(tv|movie)/[0-9]+\\?append_to_response=credits'
-       AND anahtar LIKE '%language=tr-TR%'
-       AND jsonb_typeof(veri->'production_companies') = 'array'
-       AND coalesce(veri->>'poster_path', '') <> ''
   )
-  SELECT (c->>'id')::int AS tmdb_id, NULL::date AS son
-    FROM (SELECT y.* FROM yapim y JOIN harita h ON h.tur = y.tur AND h.tmdb_id = y.tmdb_id) y,
-         jsonb_array_elements(y.veri->'production_companies') c
-   WHERE (c->>'id') ~ '^[0-9]+$' AND coalesce(c->>'name', '') <> ''
+  SELECT s AS tmdb_id, NULL::date AS son
+    FROM seo_yapim_sirket y
+         JOIN harita h ON h.tur = y.tur AND h.tmdb_id = y.tmdb_id,
+         unnest(y.sirket_idler) AS s
    GROUP BY 1
   HAVING count(DISTINCT y.tur || ':' || y.tmdb_id) >= ${SEO_SIRKET_YAPIM_MIN}
    ORDER BY 1`;
+
+// Tazeleme öbeği ve bütçesi — `SEO_KISI_OLCU_*` ile aynı gerekçe (o sabitlerin
+// başlığına bakın). Öbek kişininkinden BÜYÜK: firma ölçüsü belge başına yalnız
+// `production_companies` ve `poster_path` okuyor, `combined_credits` gibi
+// büyük bir alt belgeyi açmıyor.
+const SEO_YAPIM_SIRKET_OBEK = 5000;
+const SEO_YAPIM_SIRKET_BUTCE_MS = 25000;
+
+// Artımlı tazeleme. $1 = su seviyesi (`max(kaynak_zaman)`), $2 = öbek boyu.
+// `guncelleme >= $1` ve `ORDER BY guncelleme` + LIMIT gerekçeleri
+// `SEO_KISI_OLCU_TAZELE` başlığındakiyle birebir aynı.
+//
+// SÜZGEÇLER ESKİ HARİTA SORGUSUNDAN OLDUĞU GİBİ TAŞINDI: `production_companies`
+// dizi değilse ya da afiş yoksa satır YAZILIR ama dizi BOŞ kalır — yani
+// hiçbir firmanın sayısına katkı vermez (eski `yapim` CTE'sinin elemesiyle
+// aynı sonuç), su seviyesi ise ilerler. Satırı hiç yazmasaydık o yapım her
+// koşuda yeniden okunurdu.
+//
+// `DISTINCT ON` ŞART, süs değil: AYNI yapımın tr-TR'de BİRDEN ÇOK önbellek
+// anahtarı olabiliyor (canlıda 12 Eyl ölçüldü — 87.318 satır SSR'ın kendi
+// anahtarı, 570 satır `credits,similar` gibi eski/yan istek biçimleri).
+// Öbeğe aynı (tur, tmdb_id) iki kez girerse `ON CONFLICT DO UPDATE` "command
+// cannot affect row a second time" ile DÜŞER ve tazeleme hiç ilerlemez.
+// `RAF_TABAN_SORGU` aynı tuzağı aynı araçla çözüyor: varyantlar arasından EN
+// TAZE satır alınır.
+//
+// SU SEVİYESİ BOZULMAZ: `DISTINCT ON` her kimliğin EN TAZE satırını tuttuğu
+// için öbeğin `max(guncelleme)`si eksilmez — imleç geri kaymaz.
+const SEO_YAPIM_SIRKET_TAZELE = `
+  WITH src AS (
+    SELECT (regexp_match(anahtar, '^/(tv|movie)/([0-9]+)'))[1] AS tur,
+           (regexp_match(anahtar, '^/(tv|movie)/([0-9]+)'))[2]::int AS tmdb_id,
+           anahtar, guncelleme, veri
+      FROM tmdb_onbellek
+     WHERE anahtar ~ '^/(tv|movie)/[0-9]+\\?append_to_response=credits'
+       AND anahtar LIKE '%language=tr-TR%'
+       AND guncelleme >= $1
+     ORDER BY guncelleme
+     LIMIT $2
+  ), tek AS (
+    SELECT DISTINCT ON (tur, tmdb_id) *
+      FROM src
+     WHERE tur IS NOT NULL AND tmdb_id IS NOT NULL
+     ORDER BY tur, tmdb_id, guncelleme DESC
+  )
+  INSERT INTO seo_yapim_sirket (tur, tmdb_id, anahtar, sirket_idler, kaynak_zaman, olculdu)
+  SELECT s.tur, s.tmdb_id, s.anahtar,
+         coalesce((
+           SELECT array_agg(DISTINCT (c->>'id')::int)
+             FROM jsonb_array_elements(
+                    CASE WHEN jsonb_typeof(s.veri->'production_companies') = 'array'
+                          AND coalesce(s.veri->>'poster_path', '') <> ''
+                         THEN s.veri->'production_companies'
+                         ELSE '[]'::jsonb END) c
+            WHERE (c->>'id') ~ '^[0-9]+$' AND coalesce(c->>'name', '') <> ''
+         ), '{}'::int[]),
+         s.guncelleme, now()
+    FROM tek s
+      ON CONFLICT (tur, tmdb_id) DO UPDATE
+         SET anahtar      = EXCLUDED.anahtar,
+             sirket_idler = EXCLUDED.sirket_idler,
+             kaynak_zaman = EXCLUDED.kaynak_zaman,
+             olculdu      = EXCLUDED.olculdu`;
+
+// Artık satır toplama — `SEO_KISI_OLCU_TEMIZLE` ile aynı gerekçe: önbellekten
+// süresi dolup silinen yapımın ölçüsü de gitmeli, yoksa harita artık var
+// olmayan bir kataloğa dayanarak firma sayar.
+//
+// `anahtar` SÜTUNU TAM DA BUNUN İÇİN SAKLANIYOR. Kişi tablosunda önbellek
+// anahtarı tek biçimli olduğu için yeniden kurulabiliyordu; tv/movie ayrıntı
+// anahtarının BEŞ ayrı biçimi canlıda ölçüldü (12 Eyl: `append_to_response`
+// alan sırası ve `include_video_language` varlığı değişiyor). Anahtarı
+// yeniden kurmaya kalkmak satır başına regex taraması demek olurdu — yani
+// tam da kaçtığımız seq scan. Saklanan anahtarla anti-join `tmdb_onbellek`in
+// PK btree'sinden EŞİTLİKLE okur. `veri` OKUNMUYOR, TOAST açımı yok.
+//
+// SAKLANAN ANAHTAR VARYANTLARIN EN TAZESİDİR (`DISTINCT ON ... guncelleme
+// DESC`), yani aynı yapımın anahtarları arasında EN GEÇ süresi dolan. Bu
+// yüzden "saklanan anahtar gitti ama kardeşi duruyor" durumu pratikte doğmaz;
+// doğsa bile kendini onarır: yapım yeniden çekildiğinde `guncelleme` su
+// seviyesinin üstüne çıkar ve satır yeniden yazılır.
+const SEO_YAPIM_SIRKET_TEMIZLE = `
+  DELETE FROM seo_yapim_sirket y
+   WHERE NOT EXISTS (
+     SELECT 1 FROM tmdb_onbellek t WHERE t.anahtar = y.anahtar)`;
 
 const SITEMAP_SAYFA_BOYU = 20000;      // sitemap başına URL (protokol sınırı 50.000)
 // TTL 6 saat. ÖLÇÜLEN MALİYET (canlı, 21 Ağu 2026):
@@ -8048,11 +8141,11 @@ const SITEMAP_SORGU_ZAMAN_ASIMI_MS = 40000;
  * Havuzda genel bir `statement_timeout` YOK; bu sarmalayıcı olmadan uzun bir
  * sorgu havuz bağlantısını süresiz tutar (1 Eyl 2026 arızasının komşu riski).
  */
-async function sitemapSorgu(sql, degerler = []) {
+async function sitemapSorgu(sql, degerler = [], zamanAsimiMs = SITEMAP_SORGU_ZAMAN_ASIMI_MS) {
   const istemci = await havuz.connect();
   try {
     await istemci.query('BEGIN');
-    await istemci.query(`SET LOCAL statement_timeout = ${SITEMAP_SORGU_ZAMAN_ASIMI_MS}`);
+    await istemci.query(`SET LOCAL statement_timeout = ${Number(zamanAsimiMs)}`);
     const r = await istemci.query(sql, degerler);
     await istemci.query('COMMIT');
     return r;
@@ -8232,14 +8325,70 @@ function bolumTavaniniUygula(rows) {
   return kalan;
 }
 
-async function sitemapBolumUret() {
-  const { rows } = await sitemapSorgu(SITEMAP_BOLUM_SORGU);
+async function sitemapBolumUret(zamanAsimiMs = SITEMAP_SORGU_ZAMAN_ASIMI_MS) {
+  const { rows } = await sitemapSorgu(SITEMAP_BOLUM_SORGU, [], zamanAsimiMs);
   return sitemapSayfala(bolumTavaniniUygula(rows),
     (r) => `${SITE_KOK}/dizi/${r.tmdb_id}/sezon/${r.sezon}/bolum/${r.bolum}`);
 }
 
 async function sitemapBolumVerisi(zorla) {
   return sitemapKovaOku(sitemapBolumKovasi, sitemapBolumUret, zorla);
+}
+
+// ---------------------------------------------------------------------------
+// BÖLÜM KOVASININ AÇILIŞTA ISITILMASI — GEÇİCİ, 12 EYL 2026
+// ---------------------------------------------------------------------------
+// ÖLÇÜLEN DURUM: `SITEMAP_BOLUM_SORGU` canlıda **64,7 sn** sürüyor (12 Eyl,
+// EXPLAIN ANALYZE). `SITEMAP_SORGU_ZAMAN_ASIMI_MS` 40 sn, yani istek yolundaki
+// HER üretim `57014` ile düşüyor. Firma ailesindeki arızanın aynısı, aynı kök
+// sebeple (29 Ağu'nun 46 dilli SSR'ı `tmdb_onbellek`i 1,8 M satıra çıkardı).
+// Maliyet dökümü: `tmdb_bolum` iç içe döngüsü 44,7 sn (157.089 bölüm satırı),
+// `dizi_bilgi` 13,6 sn (49.690 satır `veri` sütunuyla sıralanıyor).
+//
+// NEDEN BUGÜNE KADAR GÖRÜNMEDİ: `sitemapKovaOku`nun BAYAT SERVİS dalı
+// maskeliyordu. Kova bir kez dolduktan sonra her başarısız tazeleme sessizce
+// eski listeyi servis ediyor — nginx günlüğünde 11 Eyl 16:00'dan 12 Eyl
+// 02:00'a kadar bölüm haritalarının tamamı 200. Konteyner 12 Eyl 02:27'de
+// yeniden kurulunca kova boşaldı ve maske kalktı: ilk istek 500 aldı.
+// 1 Eyl'in kişi arızasında da tam bu cümle yazılmıştı — "konteyner yeniden
+// başladıktan sonra HER istek düşer".
+//
+// BU FONKSİYON ÇÖZÜM DEĞİL, SERVİSİ AYAĞA KALDIRAN KÖPRÜ. Kalıcı çözüm,
+// kişi (1 Eyl) ve firma (12 Eyl) ailelerinde uygulanan ÖLÇÜYÜ SAKLA kalıbının
+// bölüme de uygulanmasıdır (`tmdb_bolum` bir ölçü tablosuna alınmalı).
+// O iş yapılınca BU BLOK SİLİNMELİ.
+//
+// NEDEN AÇILIŞ, NEDEN `setInterval` DEĞİL: kova süreç içi bellekte ve uygulama
+// KÜME kipinde (4 işçi); paylaşılan bir ısıtma mümkün değil, her işçi kendi
+// kovasını doldurmak zorunda. Açılışta BİR KEZ koşmak N katı yükü bir defaya
+// indirir — `setInterval` onu sürekli hâle getirirdi (kod tabanının ısıtıcı
+// yasağının gerekçesi de bu).
+//
+// ZAMAN AŞIMI İSTEK YOLUNUNKİNDEN AYRI: burada nginx yok, Googlebot beklemiyor.
+// 180 sn, 64,7 sn'lik ölçüme bol pay bırakır; yine de SINIRSIZ değil ki bozuk
+// bir sorgu havuz bağlantısını süresiz tutmasın.
+const BOLUM_ISITMA_ZAMAN_ASIMI_MS = 180000;
+
+async function bolumKovasiniIsit() {
+  const t = Date.now();
+  try {
+    const d = await sitemapKovaOku(sitemapBolumKovasi,
+      () => sitemapBolumUret(BOLUM_ISITMA_ZAMAN_ASIMI_MS));
+    logYaz({
+      seviye: 'bilgi',
+      olay: 'sitemap_bolum_isitma',
+      adet: d.adet,
+      sayfa: d.sayfalar.length,
+      sure: Date.now() - t,
+    });
+  } catch (e) {
+    // ATMAZ: ısıtma başarısızsa servis yine ayağa kalkmalı. Bölüm haritası o
+    // zaman istek yolunda denenir ve (bugünkü ölçümle) 500 döner — ama site
+    // ayakta kalır. Açılışı kilitlemek kesinlikle daha kötü olurdu.
+    logYaz({
+      seviye: 'hata', olay: 'sitemap_bolum_isitma', hata: e, sure: Date.now() - t,
+    });
+  }
 }
 
 /**
@@ -8286,7 +8435,55 @@ async function sitemapKisiVerisi(zorla) {
   return sitemapKovaOku(sitemapKisiKovasi, sitemapKisiUret, zorla);
 }
 
+/**
+ * `seo_yapim_sirket` tablosunu `tmdb_onbellek`ten ARTIMLI tazeler.
+ * Bkz. SEO_YAPIM_SIRKET_TAZELE ve migrasyon-2026-09-12.sql.
+ *
+ * ATMAZ — `seoKisiOlcuTazele` ile birebir aynı gerekçe: tazeleme haritanın ÖN
+ * ADIMIDIR, koşulu değil. 1 Eyl (kişi) ve 12 Eyl (firma) arızalarının ortak
+ * dersi bu; ölçüm düşerse dünkü ölçüyle üretilmiş harita bugünkü hiç-harita'dan
+ * iyidir. Hata kaydedilir, üretim devam eder.
+ *
+ * @returns {Promise<{obek:number, satir:number, silinen:number, sure:number}>}
+ */
+async function seoYapimSirketTazele() {
+  const baslangic = Date.now();
+  const suSeviyesi = async () => (await sitemapSorgu(
+    `SELECT coalesce(max(kaynak_zaman), '-infinity'::timestamptz) AS su
+       FROM seo_yapim_sirket`)).rows[0].su;
+  let obek = 0; let satir = 0; let silinen = 0;
+  try {
+    let su = await suSeviyesi();
+    for (;;) {
+      const r = await sitemapSorgu(SEO_YAPIM_SIRKET_TAZELE,
+        [su, SEO_YAPIM_SIRKET_OBEK]);
+      obek += 1; satir += r.rowCount;
+      // DURMA KOŞULU SU SEVİYESİ, SATIR SAYISI DEĞİL — kişi tazelemesinden
+      // AYRILDIĞI TEK YER ve sebebi ölçüldü (12 Eyl, canlı ilk doldurma):
+      // `DISTINCT ON` varyantları tekilleştirdiği için yazılan satır öbek
+      // boyundan SİSTEMATİK OLARAK küçük çıkıyor (1.000 kaynak satır → 979
+      // yazım). `rowCount < OBEK` ile durmak ilk öbekten sonra "bitti" der ve
+      // tablonun %99'u hiç dolmazdı. Kişide bu tuzak yok: oradaki anahtar
+      // deseni çıpalı ve kimlik başına tek satır.
+      if (r.rowCount === 0) break;
+      const yeni = await suSeviyesi();
+      // Su seviyesi ilerlemediyse öbek tamamen aynı zaman damgasındaydı:
+      // devam etmek AYNI satırları sonsuza kadar okumak olurdu (`>=`).
+      if (!(new Date(yeni) > new Date(su))) break;
+      su = yeni;
+      if (Date.now() - baslangic >= SEO_YAPIM_SIRKET_BUTCE_MS) break;
+    }
+    silinen = (await sitemapSorgu(SEO_YAPIM_SIRKET_TEMIZLE)).rowCount;
+  } catch (e) {
+    logYaz({ seviye: 'hata', olay: 'seo_yapim_sirket_tazeleme', hata: e, obek, satir });
+  }
+  const sure = Date.now() - baslangic;
+  logYaz({ seviye: 'bilgi', olay: 'seo_yapim_sirket', obek, satir, silinen, sure });
+  return { obek, satir, silinen, sure };
+}
+
 async function sitemapSirketUret() {
+  await seoYapimSirketTazele();
   const { rows } = await sitemapSorgu(SITEMAP_SIRKET_SORGU);
   return sitemapSayfala(rows, (r) => `${SITE_KOK}/sirket/${r.tmdb_id}`);
 }
@@ -25411,6 +25608,10 @@ const sunucu = app.listen(PORT, '0.0.0.0', () => {
   // ilk isteği beklemeden düşsün. Hata konteyneri ÖLDÜRMEZ (tablo henüz
   // migrasyonla gelmemişse burada patlayıp servisi kilitlemesin).
   yasaklariSupur().catch((e) => console.error('açılış yasak süpürme:', e.message));
+  // Bölüm site haritası kovasını ısıt — GEÇİCİ köprü, gerekçe
+  // `bolumKovasiniIsit` başlığında. `await` YOK: 65 sn'lik sorgu açılışı
+  // kilitlemesin, sağlık ucu hemen yanıt versin.
+  bolumKovasiniIsit();
   // Özel (DM) medya kümesini doldur. Hata konteyneri ÖLDÜRMEZ: küme boş
   // kalırsa davranış eski hâline (her şey genel) döner, servis ayakta kalır.
   ozelMedyaYukle();

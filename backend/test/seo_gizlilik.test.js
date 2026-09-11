@@ -189,8 +189,14 @@ test('sitemap YALNIZ içerik/bölüm URL\'i üretir — profil/kişisel URL yok'
   // yalnız TMDB kimliğinden URL kurmalı; kullanıcıya ait hiçbir yol üretmemeli.
   const uret = bolum('async function sitemapUret()', 'async function sitemapVerisi');
   assert.match(uret, /`\$\{SITE_KOK\}\/icerik\/\$\{r\.tur\}\/\$\{r\.tmdb_id\}`/);
+  // ÇIPA PARAMETRE TOLERANSLI (12 Eyl 2026): `sitemapBolumUret` son tarih
+  // parametresi aldı (açılış ısıtması nginx'in dışında koşuyor). İmzayı
+  // birebir aramak, güvencenin kendisiyle ilgisi olmayan bir imza
+  // değişikliğinde testi "kaynakta bulunamadı" ile düşürüyordu — sessizce
+  // KAPSAM KAYBI, çünkü asıl iddia (URL şablonunda kişisel yol yok) hiç
+  // çalışmıyordu. Kapanış parantezi çıpadan çıkarıldı.
   const bolumUret = bolum(
-    'async function sitemapBolumUret()', 'async function sitemapBolumVerisi');
+    'async function sitemapBolumUret(', 'async function sitemapBolumVerisi');
   assert.match(bolumUret,
     /`\$\{SITE_KOK\}\/dizi\/\$\{r\.tmdb_id\}\/sezon\/\$\{r\.sezon\}\/bolum\/\$\{r\.bolum\}`/);
   for (const y of ['kullanici', 'profil', 'sohbet', 'bildirim', 'kitaplik']) {

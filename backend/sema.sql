@@ -1548,6 +1548,29 @@ CREATE INDEX IF NOT EXISTS seo_kisi_olcu_kaynak ON seo_kisi_olcu (kaynak_zaman);
 CREATE INDEX IF NOT EXISTS seo_kisi_olcu_esik
   ON seo_kisi_olcu (biyo_uzunluk, yapim_sayisi);
 
+-- 2026-09-12: FİRMA SİTE HARİTASININ ÖLÇÜ TABLOSU — yukarıdakinin İKİZİ.
+-- Aynı arıza firma ailesinde tekrarladı: 29 Ağu'nun 46 dilli SSR'ı
+-- `tmdb_onbellek`i 1.815.273 satır / 22 GB'a çıkardı, `SITEMAP_SIRKET_SORGU`
+-- 80,9 sn sürmeye başladı ve `/sitemap-sirket-1.xml` ile 45 dil önekli
+-- kardeşi Googlebot + bingbot'a 500 döndürdü.
+-- Tabloda EŞİK KARARI değil HAM LİSTE durur: `SEO_SIRKET_YAPIM_MIN` değişirse
+-- yeniden ölçüm gerekmez. Afişsiz/firmasız yapım BOŞ dizi ile saklanır
+-- (satırın hiç yazılmaması su seviyesini bozardı).
+-- Uzun gerekçe + ölçümler: migrasyon-2026-09-12.sql.
+CREATE TABLE IF NOT EXISTS seo_yapim_sirket (
+  tur          TEXT        NOT NULL,
+  tmdb_id      INT         NOT NULL,
+  -- Ölçünün okunduğu `tmdb_onbellek.anahtar`ı; artık satır toplama bununla
+  -- EŞİTLİKLE anti-join yapar (tv/movie anahtarının beş biçimi var).
+  anahtar      TEXT        NOT NULL,
+  sirket_idler INT[]       NOT NULL DEFAULT '{}',
+  kaynak_zaman TIMESTAMPTZ NOT NULL,
+  olculdu      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (tur, tmdb_id)
+);
+CREATE INDEX IF NOT EXISTS seo_yapim_sirket_kaynak
+  ON seo_yapim_sirket (kaynak_zaman);
+
 -- 2026-09-02 — SÜRÜM DUYURUSU uygulama içi bildirim türü ('surum').
 -- Uzun gerekçe: migrasyon-2026-09-02.sql. Aktörsüz dördüncü tür; satır yalnız
 -- `surum` taşır, tanıtım içeriği uygulamada gömülü (/yenilikler/:surum).

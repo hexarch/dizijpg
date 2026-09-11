@@ -167,8 +167,17 @@ test('sitemap sorgu son tarihi nginx sitemap zaman aşımından KÜÇÜK', () =>
 
 test('HER site haritası sorgusu son tarihli yoldan geçiyor', () => {
   const yardimci = bildirimCek('sitemapSorgu');
-  assert.match(yardimci, /SET LOCAL statement_timeout = \$\{SITEMAP_SORGU_ZAMAN_ASIMI_MS\}/,
+  // 12 Eyl 2026: son tarih PARAMETRE oldu (bölüm kovasının açılışta
+  // ısıtılması nginx'in dışında koşuyor, oraya 40 sn dar geliyor). GARANTİ
+  // AYNEN DURUYOR ve iki parçaya bölündü:
+  //   · her koşuda `SET LOCAL statement_timeout` kurulmalı,
+  //   · VARSAYILAN istek yolunun sabiti olmalı — yani parametre vermeyen her
+  //     çağrı (dört harita üreticisinin dördü de) eskisiyle aynı son tarihi
+  //     alır. Varsayılan kaybolursa uçlar sessizce sonsuz beklerdi.
+  assert.match(yardimci, /SET LOCAL statement_timeout = \$\{Number\(zamanAsimiMs\)\}/,
     'statement_timeout kurulmuyor');
+  assert.match(yardimci, /zamanAsimiMs = SITEMAP_SORGU_ZAMAN_ASIMI_MS/,
+    'son tarihin varsayılanı istek yolu sabiti değil — uç sonsuz bekleyebilir');
   assert.match(yardimci, /SET LOCAL/,
     'SET LOCAL değil düz SET kullanılmış — havuzdaki bağlantı kirlenir');
   assert.match(yardimci, /istemci\.release\(\)/, 'bağlantı havuza iade edilmiyor');
@@ -342,17 +351,60 @@ test('kişi sitemap süresi nginx 45 sn tavanının ALTINDA', () => {
     'kişi sorgusu soğukta ~26 sn; 25 sn tavan canlıda 500 basmıştı');
 });
 
+// 12 Eyl 2026: ölçüm `seo_yapim_sirket`e taşındı (harita sorgusu 1.815.273
+// satırlık `tmdb_onbellek`i TOAST'tan açarken 40 sn tavanını aştı ve
+// `/sitemap-sirket-1.xml` ile 45 dil öneklisi Googlebot'a 500 döndü — 1 Eyl'in
+// kişi arızasının birebir aynısı). Garanti DEĞİŞMEDİ, İKİYE BÖLÜNDÜ:
+//   · EŞİK → SITEMAP_SIRKET_SORGU      (tabloda karar değil ham liste durduğu
+//             için eşik hâlâ sorguda ve hâlâ sabitten gelmeli),
+//   · ÖLÇÜ → SEO_YAPIM_SIRKET_TAZELE   (`production_companies`, `poster_path`,
+//             adsız firma süzgeci).
+// Test ikisini birden kilitler: biri diğerinden ayrışırsa harita sayfanın
+// görmediği veriye dayanır (kişi/bölüm ailelerindeki B2 tuzağının aynısı).
 test('firma haritası `sirketIndekslenir` eşiğini kullanıyor ve DAR tarafta', () => {
   const sorgu = bildirimCek('SITEMAP_SIRKET_SORGU');
   assert.match(sorgu, />= \$\{SEO_SIRKET_YAPIM_MIN\}/, 'firma eşiği sabitten gelmiyor');
+  assert.match(sorgu, /\$\{SITEMAP_SORGU\}/,
+    'firma evreni içerik haritamızdan türemiyor — kapsam denetlenemez hale gelir');
+  assert.match(sorgu, /FROM seo_yapim_sirket/,
+    'harita ölçü tablosundan okumuyor — ham tarama 40 sn tavanını aşar');
+  // Harita sorgusu ARTIK BELGE AÇMAMALI: `tmdb_onbellek`e dönerse 12 Eyl
+  // arızası aynen geri gelir.
+  assert.ok(!/tmdb_onbellek/.test(sorgu),
+    'firma haritası hâlâ önbellek belgelerini tarıyor — 80 sn, 500 döner');
+
+  const olcu = bildirimCek('SEO_YAPIM_SIRKET_TAZELE');
   // Kaynak KENDİ kataloğumuz: bizde 6 yapımda geçen firma TMDB discover'da da
   // en az 6 döndürür ⇒ sayfa eşiği geçer. Ters yön garanti değil, o yüzden
   // harita sayfadan DAR kalır.
-  assert.match(sorgu, /production_companies/);
-  assert.match(sorgu, /poster_path/,
-    'firma haritası afişsiz kataloğu sayıyor — sayfa noindex yer');
-  assert.match(sorgu, /\$\{SITEMAP_SORGU\}/,
-    'firma evreni içerik haritamızdan türemiyor — kapsam denetlenemez hale gelir');
+  assert.match(olcu, /production_companies/);
+  assert.match(olcu, /poster_path/,
+    'firma ölçüsü afişsiz kataloğu sayıyor — sayfa noindex yer');
+  assert.match(olcu, /coalesce\(c->>'name', ''\) <> ''/,
+    'firma ölçüsü adsız firmayı sayıyor — sayfa noindex, harita gönderir');
+  // Ölçü ARTIMLI olmalı: su seviyesiz tam tarama 80 sn sürer, arıza geri gelir.
+  assert.match(olcu, /guncelleme >= \$1/,
+    'ölçü tazelemesi su seviyesi kullanmıyor — her koşu tam tarama olur');
+  assert.match(olcu, /ON CONFLICT \(tur, tmdb_id\) DO UPDATE/,
+    'tazeleme fikirsel değil — sınırdaki satır çiftlenir/atlanır');
+  // Artık satır toplama EŞİTLİKLE okumalı; regex'e dönerse satır başına
+  // seq scan doğar (tam da kaçtığımız şey).
+  const temizle = bildirimCek('SEO_YAPIM_SIRKET_TEMIZLE');
+  assert.match(temizle, /t\.anahtar = y\.anahtar/,
+    'artık satır toplama saklanan anahtarla eşitlik yapmıyor — satır başına tarama');
+});
+
+// 1 Eyl (kişi) ve 12 Eyl (firma) arızalarının ortak ikinci dersi: ölçüm
+// haritanın ÖN ADIMI, KOŞULU DEĞİL. `sitemapSirketUret` tazelemede atarsa tüm
+// firma haritası yine 500'e düşerdi.
+test('firma ölçü tazelemesi haritayı DÜŞÜREMEZ (atmaz)', () => {
+  const tazele = bildirimCek('seoYapimSirketTazele');
+  assert.match(tazele, /catch \(e\)/,
+    'tazeleme hatayı yutmuyor — tek yavaş sorgu tüm firma haritasını 500 yapar');
+  assert.ok(!/throw/.test(tazele), 'tazeleme atıyor — bayat ölçüyle üretmek daha iyidir');
+  const uret = bildirimCek('sitemapSirketUret');
+  assert.match(uret, /await seoYapimSirketTazele\(\)/,
+    'harita üretimi ölçüyü tazelemiyor — yeni yapımlar haritaya hiç girmez');
 });
 
 test('kişi/firma haritaları YALNIZ /kisi ve /sirket URL\'i üretiyor', () => {
@@ -377,7 +429,7 @@ test('kişi/firma sorguları KULLANICI TABLOSUNA dokunmuyor (gizlilik)', () => {
   // gizlilik süzgeçleriyle korunuyor); ek olarak kendi çıktısı yalnız TMDB
   // kimliği olmalı.
   const sirket = bildirimCek('SITEMAP_SIRKET_SORGU');
-  assert.match(sirket, /SELECT \(c->>'id'\)::int AS tmdb_id, NULL::date AS son/);
+  assert.match(sirket, /SELECT s AS tmdb_id, NULL::date AS son/);
   for (const s of [kisi, sirket]) {
     assert.ok(!/kullanici_adi/.test(s), 'sorgu kullanıcı adı seçiyor');
     assert.ok(!/\bemail\b/.test(s), 'sorgu e-posta seçiyor');
@@ -517,4 +569,19 @@ test('harita dört aileyi de SEO_DILLER\'in tamamında bildiriyor (5 Eyl kararı
   // `new Set([...])` ile yapılır, listeyi ikinci bir yerde yazarak değil.
   assert.match(KAYNAK, /SEO_DILLER\.filter\(\(k\) => beyaz\.has\(k\)\)/,
     'beyaz liste SEO_DILLER üzerinden süzülmüyor — dil listesi ikiye ayrıldı');
+});
+
+// 12 Eyl 2026, İLK DOLDURMADA ÖLÇÜLDÜ: firma tazelemesi `DISTINCT ON` ile
+// varyantları tekilleştirdiği için YAZILAN satır öbek boyundan SİSTEMATİK
+// olarak küçük çıkıyor (1.000 kaynak satır → 979 yazım). Kişideki
+// `rowCount < OBEK` durma koşulu buraya kopyalanırsa döngü İLK ÖBEKTEN sonra
+// durur ve tablo hiç dolmaz — harita da sessizce boş kalır.
+test('firma tazelemesi SU SEVİYESİYLE duruyor, satır sayısıyla DEĞİL', () => {
+  const tazele = bildirimCek('seoYapimSirketTazele');
+  assert.ok(!new RegExp('rowCount\\s*<\\s*SEO_YAPIM_SIRKET_OBEK').test(tazele),
+    'firma tazelemesi öbek doluluğuyla duruyor — DISTINCT ON yüzünden ilk öbekte durur');
+  assert.match(tazele, /rowCount === 0/,
+    'boş öbekte durmuyor — sonsuz döngü riski');
+  assert.match(tazele, /new Date\(yeni\) > new Date\(su\)/,
+    'su seviyesi ilerlemesi denetlenmiyor — aynı zaman damgalı öbek sonsuza dek okunur');
 });
