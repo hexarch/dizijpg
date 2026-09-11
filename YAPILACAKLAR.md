@@ -1,5 +1,44 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-11 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-12 — 🚀 YENİLİKLER SAYFASI 1.149.0 + "güncelle" tuzağı kapandı (1.149.0+228)
+
+**Tetik:** 227 (1.148.2) duyurusu gönderilmek üzereyken görüldü ki
+`taniticiOlanlar` yalnız `['1.114.0']` — yani push "yenilikleri görmek için
+dokun" derken, YENİ GÜNCELLEMİŞ kullanıcı "uygulamayı güncelle" yazısını
+görecekti. Kullanıcı kararı: "bu sefer bildirim göndermeyelim, sorunu çöz,
+sonraki güncellemede göndeririz."
+
+- 🚀 **CANLIDA (web).** `main.3fd12606f2f1.dart.js`
+  (+ `main.dart.js_1.e777f6a27c49.part.js`); SW sökücü kopyalandı, 46 dil
+  kabuğu yazıldı, brotli 221 dosya (%73), eski hash'liler sunucudan silindi.
+  Backend DEĞİŞMEDİ.
+- ✅ **1.149.0 kartları yazıldı** (`yenilikler.dart`, `_kartlar149`): gizli
+  hesap + takip istekleri · IMDb/Rotten Tomatoes/Metacritic puanları ·
+  Reels'te 2x basılı tutma · yönetmen/senarist kredileri · videoda geri
+  sarma düzeltmesi. Üçünün CANLI MİNİ MAKETİ var (istek satırı Onayla/Sil,
+  puan rozetleri, 2x göstergeli sağ yarı vurgusu) — kalıp 1.114.0'la aynı.
+  KAPSAM: 1.114.0'dan beri duyuru hiç gönderilmediği için kartlar tek tek
+  sürüm değil, "ne kazandın" sırası.
+- ✅ **İKİ AYRI BOŞ DURUM** (asıl düzeltme): `surumIleri()` istenen sürümü
+  `Api.surum` ile karşılaştırıyor. İstenen sürüm İLERİDEYSE "uygulamayı
+  güncelle" (doğru: kullanıcı geride), DEĞİLSE "bu sürümde görünür bir
+  yenilik yok; arka planda iyileştirmeler ve düzeltmeler var". Böylece
+  kartı olmayan HERHANGİ bir sürümün duyurusu artık güvenle gönderilebilir.
+- ✅ **Çeviri:** 11 yeni anahtar, `sinirliDilAnahtarlari` kümesine eklendi ve
+  gerçek kullanıcı dillerine çevrildi (en, ru, ar, es, zh, ro — 66 çeviri);
+  kalan 39 dil Türkçe kaynağa düşüyor (2 Eyl kararı).
+- ✅ **Tekrarı engelleyen testler** (`surum_duyurusu_test`, 11 test):
+  · "GÜNCEL uygulamaya güncelle DENMEZ" — 11 Eyl tuzağını birebir kilitler
+    (1.148.2 istenirse "uygulamayı güncelle" ÇIKMAMALI).
+  · "tanıtımı olan sürümlerin HEPSİ gerçekten kart çiziyor" — listeye numara
+    yazıp `_kartlar` dalını unutmak = boş sayfa; `kartSayisi` ile yakalanır.
+  · "taniticiOlanlar uygulamanın sürümünü AŞAMAZ" — kimsenin göremeyeceği
+    kart yazmayı engeller.
+- Kanıt: `flutter test` **2849 yeşil**, `flutter analyze` 0 error.
+- ⬜ **Duyuru sırası:** 227 (1.148.2) için bildirim GÖNDERİLMEYECEK. 228
+  (1.149.0) Play'de yayına çıkınca `/admin/surum-duyuru`
+  {surum:'1.149.0', hedef:'herkes'} — önce alcelik'e prova.
 
 ## 2026-09-11 — PLAY: 227 (1.148.2) ÜRETİME İNCELEMEYE GÖNDERİLDİ 🤖
 

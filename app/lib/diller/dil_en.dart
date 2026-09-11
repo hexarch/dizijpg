@@ -1500,6 +1500,24 @@ const Map<String, String> cevirilerEn = {
   'Sohbet düzeltmeleri': 'Chat fixes',
   'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
       'The message box and request buttons no longer hide behind your phone’s navigation buttons; the bottom menu now hides itself inside a chat.',
+  'Hesabını gizleyebilirsin': 'You can make your account private',
+  'Profilini gizliye aldığında gönderilerini yalnız onayladığın takipçiler görür. Yeni takipler bildirimlerine istek olarak düşer; Onayla ya da Sil ile karar verirsin.':
+      'When your profile is private, only followers you approve can see your posts. New follows arrive in your notifications as requests; you decide with Approve or Delete.',
+  'IMDb, Rotten Tomatoes ve Metacritic puanları':
+      'IMDb, Rotten Tomatoes and Metacritic scores',
+  'Film ve dizi sayfalarında dış puanlar da görünüyor; hangi kaynağın ne verdiğini tek bakışta karşılaştırırsın.':
+      'Movie and show pages now also carry outside scores, so you can compare what each source gave at a glance.',
+  'Reels\'te iki kat hız': 'Double speed in Reels',
+  'Reels izlerken ekranın sağ yarısını basılı tut, video iki kat hızlı oynasın; parmağını çekince normal hıza döner.':
+      'While watching Reels, press and hold the right half of the screen to play at double speed; lift your finger and it goes back to normal.',
+  'Yönetmen ve senarist kredileri': 'Directing and writing credits',
+  'Kişi sayfasında oyunculuğun yanında, o kişinin yönetmenlik ve senaristlik yaptığı yapımlar da listeleniyor.':
+      'A person\'s page now lists the titles they directed or wrote, alongside the ones they acted in.',
+  'Videoda geri sarma düzeldi': 'Rewinding videos is fixed',
+  'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
+      'Rewinding a video no longer reloads it from scratch; playback continues instantly from where you are.',
+  'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
+      'This version has no visible new features — it brings behind-the-scenes improvements and fixes.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
       'Update the app to see the notes for this version',
   'Galeri': 'Gallery',

@@ -153,7 +153,24 @@ void main() {
       expect(find.text('%90'), findsOneWidget);
     });
 
-    testWidgets('BİLİNMEYEN sürümde "uygulamayı güncelle" denir', (
+    testWidgets('yeni sürümün kartları çizilir (1.149.0)', (tester) async {
+      await _yeniliklerEkrani(tester, '1.149.0');
+      expect(find.textContaining('dizi.jpg 1.149.0 yayında'), findsOneWidget);
+      expect(find.text('Hesabını gizleyebilirsin'), findsOneWidget);
+      expect(
+        find.text('IMDb, Rotten Tomatoes ve Metacritic puanları'),
+        findsOneWidget,
+      );
+      expect(find.text("Reels'te iki kat hız"), findsOneWidget);
+      expect(find.text('Yönetmen ve senarist kredileri'), findsOneWidget);
+      expect(find.text('Videoda geri sarma düzeldi'), findsOneWidget);
+      // Maket kanıtları: istek düğmeleri + 2x göstergesi + puan rozeti.
+      expect(find.text('Onayla'), findsOneWidget);
+      expect(find.text('2x'), findsOneWidget);
+      expect(find.text('IMDb'), findsOneWidget);
+    });
+
+    testWidgets('GERİDE kalan uygulamaya "uygulamayı güncelle" denir', (
       tester,
     ) async {
       await _yeniliklerEkrani(tester, '9.9.9');
@@ -166,10 +183,51 @@ void main() {
       );
     });
 
+    testWidgets('GÜNCEL uygulamaya "güncelle" DENMEZ (11 Eyl 2026 tuzağı)', (
+      tester,
+    ) async {
+      // 227 (1.148.2) duyurusu gönderilseydi, o sürümü YENİ YÜKLEMİŞ
+      // kullanıcı "uygulamayı güncelle" yazısını görecekti — push ise
+      // "yenilikleri görmek için dokun" diyordu. Kartı olmayan ama
+      // uygulamadan ESKİ/EŞİT sürüm için doğru cümle bu değil.
+      await _yeniliklerEkrani(tester, '1.148.2');
+      expect(find.textContaining('uygulamayı güncelle'), findsNothing);
+      expect(find.textContaining('arka planda iyileştirmeler'), findsOneWidget);
+    });
+
     test('yayındaki sürümün tanıtımı GÖMÜLÜ (sürüm turu unutulmasın)', () {
       // pubspec sürümü Api.surum ile eşitleniyor (surum_esleme_test);
       // buradaki kilit de "duyurusu yapılacak sürümün kartları yazılmış mı".
       expect(YeniliklerEkrani.taniticiOlanlar, contains('1.114.0'));
+      expect(YeniliklerEkrani.taniticiOlanlar, contains('1.149.0'));
+    });
+
+    test('tanıtımı olan sürümlerin HEPSİ gerçekten kart çiziyor', () {
+      // Numarayı listeye yazıp kart dalını unutmak = kartsız ama "bilinen"
+      // sürüm, yani BOŞ sayfa. Liste ile switch dalları burada eşitlenir.
+      for (final s in YeniliklerEkrani.taniticiOlanlar) {
+        expect(
+          YeniliklerEkrani(surum: s).kartSayisi,
+          greaterThan(0),
+          reason: '$s taniticiOlanlar listesinde ama kart dalı yok',
+        );
+      }
+    });
+
+    test('taniticiOlanlar uygulamanın sürümünü AŞAMAZ', () {
+      // Gömülü tanıtım, o kartları TAŞIYAN derlemeyle birlikte gider.
+      // Uygulamadan yeni bir sürümün kartlarını yazmak, kimsenin göremeyeceği
+      // sayfa üretir ve duyuru sırasını karıştırır.
+      final benim = Api.surum.split('+').first;
+      for (final s in YeniliklerEkrani.taniticiOlanlar) {
+        expect(
+          surumIleri(s, benim),
+          isFalse,
+          reason:
+              '$s, uygulamanın sürümünden ($benim) yeni — kartlar hangi '
+              'derlemeyle gidecek?',
+        );
+      }
     });
   });
 }

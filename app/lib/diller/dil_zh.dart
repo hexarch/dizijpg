@@ -1411,6 +1411,24 @@ const Map<String, String> cevirilerZh = {
   'Sohbet düzeltmeleri': '聊天修复',
   'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
       '消息输入框和请求按钮不再被手机导航键遮挡；进入聊天时底部菜单会自动隐藏。',
+  'Hesabını gizleyebilirsin': '你可以将账号设为私密',
+  'Profilini gizliye aldığında gönderilerini yalnız onayladığın takipçiler görür. Yeni takipler bildirimlerine istek olarak düşer; Onayla ya da Sil ile karar verirsin.':
+      '账号设为私密后，只有你批准的关注者才能看到你的帖子。新的关注会以请求形式出现在通知中，由你选择「批准」或「删除」。',
+  'IMDb, Rotten Tomatoes ve Metacritic puanları':
+      'IMDb、Rotten Tomatoes 和 Metacritic 评分',
+  'Film ve dizi sayfalarında dış puanlar da görünüyor; hangi kaynağın ne verdiğini tek bakışta karşılaştırırsın.':
+      '影片和剧集页面现在也会显示外部评分，一眼就能比较各来源给了多少分。',
+  'Reels\'te iki kat hız': 'Reels 双倍速',
+  'Reels izlerken ekranın sağ yarısını basılı tut, video iki kat hızlı oynasın; parmağını çekince normal hıza döner.':
+      '观看 Reels 时按住屏幕右半边，视频就会以双倍速播放；松开手指即恢复正常速度。',
+  'Yönetmen ve senarist kredileri': '导演与编剧作品',
+  'Kişi sayfasında oyunculuğun yanında, o kişinin yönetmenlik ve senaristlik yaptığı yapımlar da listeleniyor.':
+      '人物页面现在除了出演作品，也会列出其执导和编剧的作品。',
+  'Videoda geri sarma düzeldi': '视频回退已修复',
+  'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
+      '回退时视频不再重新加载，播放会立即从当前位置继续。',
+  'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
+      '此版本没有可见的新功能，带来的是后台改进与修复。',
   'Bu sürümün notlarını görmek için uygulamayı güncelle': '更新应用以查看此版本的说明',
   'Galeri': '图库',
   'Kamera': '相机',

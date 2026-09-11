@@ -1522,6 +1522,24 @@ const Map<String, String> cevirilerEs = {
   'Sohbet düzeltmeleri': 'Correcciones del chat',
   'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
       'El cuadro de mensaje y los botones de solicitud ya no quedan detrás de los botones de navegación del teléfono; el menú inferior se oculta dentro del chat.',
+  'Hesabını gizleyebilirsin': 'Puedes hacer privada tu cuenta',
+  'Profilini gizliye aldığında gönderilerini yalnız onayladığın takipçiler görür. Yeni takipler bildirimlerine istek olarak düşer; Onayla ya da Sil ile karar verirsin.':
+      'Cuando tu perfil es privado, solo ven tus publicaciones los seguidores que apruebas. Los nuevos seguimientos llegan a tus notificaciones como solicitudes; decides con Aprobar o Eliminar.',
+  'IMDb, Rotten Tomatoes ve Metacritic puanları':
+      'Puntuaciones de IMDb, Rotten Tomatoes y Metacritic',
+  'Film ve dizi sayfalarında dış puanlar da görünüyor; hangi kaynağın ne verdiğini tek bakışta karşılaştırırsın.':
+      'Las páginas de películas y series también muestran puntuaciones externas: comparas de un vistazo lo que dio cada fuente.',
+  'Reels\'te iki kat hız': 'Velocidad doble en Reels',
+  'Reels izlerken ekranın sağ yarısını basılı tut, video iki kat hızlı oynasın; parmağını çekince normal hıza döner.':
+      'Mientras ves Reels, mantén pulsada la mitad derecha de la pantalla para reproducir al doble de velocidad; al levantar el dedo vuelve a la normal.',
+  'Yönetmen ve senarist kredileri': 'Créditos de dirección y guion',
+  'Kişi sayfasında oyunculuğun yanında, o kişinin yönetmenlik ve senaristlik yaptığı yapımlar da listeleniyor.':
+      'La página de una persona ahora lista también los títulos que dirigió o escribió, junto a aquellos en los que actuó.',
+  'Videoda geri sarma düzeldi': 'Arreglado el rebobinado de vídeos',
+  'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
+      'Al rebobinar, el vídeo ya no se recarga desde cero: la reproducción sigue al instante desde donde estás.',
+  'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
+      'Esta versión no trae novedades visibles: incluye mejoras y correcciones internas.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
       'Actualiza la app para ver las notas de esta versión',
   'Galeri': 'Galería',

@@ -1507,6 +1507,24 @@ const Map<String, String> cevirilerRu = {
   'Sohbet düzeltmeleri': 'Исправления чата',
   'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
       'Поле ввода и кнопки запросов больше не прячутся за системными кнопками телефона; нижнее меню скрывается внутри чата.',
+  'Hesabını gizleyebilirsin': 'Аккаунт можно сделать закрытым',
+  'Profilini gizliye aldığında gönderilerini yalnız onayladığın takipçiler görür. Yeni takipler bildirimlerine istek olarak düşer; Onayla ya da Sil ile karar verirsin.':
+      'Когда профиль закрыт, ваши публикации видят только одобренные подписчики. Новые подписки приходят в уведомления как запросы: решайте кнопками «Подтвердить» или «Удалить».',
+  'IMDb, Rotten Tomatoes ve Metacritic puanları':
+      'Оценки IMDb, Rotten Tomatoes и Metacritic',
+  'Film ve dizi sayfalarında dış puanlar da görünüyor; hangi kaynağın ne verdiğini tek bakışta karşılaştırırsın.':
+      'На страницах фильмов и сериалов теперь есть и внешние оценки — сравните, что поставил каждый источник, с одного взгляда.',
+  'Reels\'te iki kat hız': 'Двойная скорость в Reels',
+  'Reels izlerken ekranın sağ yarısını basılı tut, video iki kat hızlı oynasın; parmağını çekince normal hıza döner.':
+      'Во время просмотра Reels зажмите правую половину экрана — видео пойдёт вдвое быстрее; уберите палец, и скорость вернётся к обычной.',
+  'Yönetmen ve senarist kredileri': 'Режиссёрские и сценарные работы',
+  'Kişi sayfasında oyunculuğun yanında, o kişinin yönetmenlik ve senaristlik yaptığı yapımlar da listeleniyor.':
+      'На странице человека теперь есть и тайтлы, которые он снял или написал, — рядом с актёрскими работами.',
+  'Videoda geri sarma düzeldi': 'Перемотка назад исправлена',
+  'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
+      'При перемотке назад видео больше не загружается заново — воспроизведение сразу продолжается с нужного места.',
+  'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
+      'В этой версии нет заметных новинок — она приносит улучшения и исправления «под капотом».',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
       'Обнови приложение, чтобы увидеть заметки этой версии',
   'Galeri': 'Галерея',

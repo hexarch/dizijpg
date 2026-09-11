@@ -1526,6 +1526,24 @@ const Map<String, String> cevirilerRo = {
   'Sohbet düzeltmeleri': 'Remedieri la conversații',
   'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
       'Caseta de mesaj și butoanele de cerere nu mai rămân sub butoanele de navigare ale telefonului; meniul de jos se ascunde singur în conversație.',
+  'Hesabını gizleyebilirsin': 'Îți poți face contul privat',
+  'Profilini gizliye aldığında gönderilerini yalnız onayladığın takipçiler görür. Yeni takipler bildirimlerine istek olarak düşer; Onayla ya da Sil ile karar verirsin.':
+      'Când profilul e privat, doar urmăritorii aprobați îți văd postările. Urmăririle noi ajung în notificări ca cereri; decizi cu Aprobă sau Șterge.',
+  'IMDb, Rotten Tomatoes ve Metacritic puanları':
+      'Scoruri IMDb, Rotten Tomatoes și Metacritic',
+  'Film ve dizi sayfalarında dış puanlar da görünüyor; hangi kaynağın ne verdiğini tek bakışta karşılaştırırsın.':
+      'Paginile de filme și seriale afișează și scoruri externe; compari dintr-o privire ce a dat fiecare sursă.',
+  'Reels\'te iki kat hız': 'Viteză dublă în Reels',
+  'Reels izlerken ekranın sağ yarısını basılı tut, video iki kat hızlı oynasın; parmağını çekince normal hıza döner.':
+      'Cât te uiți la Reels, ține apăsată jumătatea dreaptă a ecranului pentru redare la viteză dublă; ridici degetul și revine la normal.',
+  'Yönetmen ve senarist kredileri': 'Credite de regie și scenariu',
+  'Kişi sayfasında oyunculuğun yanında, o kişinin yönetmenlik ve senaristlik yaptığı yapımlar da listeleniyor.':
+      'Pagina unei persoane listează acum și titlurile pe care le-a regizat sau scris, pe lângă cele în care a jucat.',
+  'Videoda geri sarma düzeldi': 'Derularea înapoi a fost reparată',
+  'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
+      'Când derulezi înapoi, videoclipul nu se mai reîncarcă de la zero; redarea continuă instant din punctul respectiv.',
+  'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
+      'Această versiune nu are noutăți vizibile; aduce îmbunătățiri și remedieri în fundal.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
       'Actualizează aplicația ca să vezi notele acestei versiuni',
   'Galeri': 'Galerie',

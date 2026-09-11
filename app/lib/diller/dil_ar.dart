@@ -1470,6 +1470,24 @@ const Map<String, String> cevirilerAr = {
   'Sohbet düzeltmeleri': 'إصلاحات الدردشة',
   'Mesaj yazma kutusu ile istek düğmeleri artık telefonun gezinme tuşlarının altında kalmıyor; sohbete girince alt menü kendiliğinden gizleniyor.':
       'لم يعد صندوق الكتابة وأزرار الطلبات يختبئان خلف أزرار التنقل في الهاتف؛ وتختفي القائمة السفلية تلقائياً داخل الدردشة.',
+  'Hesabını gizleyebilirsin': 'يمكنك جعل حسابك خاصاً',
+  'Profilini gizliye aldığında gönderilerini yalnız onayladığın takipçiler görür. Yeni takipler bildirimlerine istek olarak düşer; Onayla ya da Sil ile karar verirsin.':
+      'عندما يكون حسابك خاصاً، لا يرى منشوراتك سوى المتابعين الذين توافق عليهم. تصلك المتابعات الجديدة في الإشعارات كطلبات، وتقرر بزر الموافقة أو الحذف.',
+  'IMDb, Rotten Tomatoes ve Metacritic puanları':
+      'تقييمات IMDb وRotten Tomatoes وMetacritic',
+  'Film ve dizi sayfalarında dış puanlar da görünüyor; hangi kaynağın ne verdiğini tek bakışta karşılaştırırsın.':
+      'صارت صفحات الأفلام والمسلسلات تعرض التقييمات الخارجية أيضاً، فتقارن ما منحه كل مصدر بنظرة واحدة.',
+  'Reels\'te iki kat hız': 'سرعة مضاعفة في Reels',
+  'Reels izlerken ekranın sağ yarısını basılı tut, video iki kat hızlı oynasın; parmağını çekince normal hıza döner.':
+      'أثناء مشاهدة Reels، اضغط مطوّلاً على النصف الأيمن من الشاشة ليُعرض الفيديو بسرعة مضاعفة؛ وعند رفع إصبعك يعود إلى السرعة العادية.',
+  'Yönetmen ve senarist kredileri': 'أعمال الإخراج وكتابة السيناريو',
+  'Kişi sayfasında oyunculuğun yanında, o kişinin yönetmenlik ve senaristlik yaptığı yapımlar da listeleniyor.':
+      'تعرض صفحة الشخص الآن الأعمال التي أخرجها أو كتبها، إلى جانب أعماله التمثيلية.',
+  'Videoda geri sarma düzeldi': 'تم إصلاح الإرجاع في الفيديو',
+  'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
+      'عند الإرجاع لم يعد الفيديو يُحمّل من جديد؛ يستمر التشغيل فوراً من الموضع الذي أنت فيه.',
+  'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
+      'لا توجد ميزات ظاهرة في هذا الإصدار؛ فهو يحمل تحسينات وإصلاحات في الخلفية.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
       'حدّث التطبيق لرؤية ملاحظات هذا الإصدار',
   'Galeri': 'المعرض',
