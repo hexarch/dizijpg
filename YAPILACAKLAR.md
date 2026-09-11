@@ -40,9 +40,12 @@ eklenti README'siyle birebir.
 **Gönderim:** 11 Eyl 12:04 build 227 sürüme bağlandı, sürüm dizesi 1.148.2,
 eski submission iptal + yeni submission → **WAITING_FOR_REVIEW** (tamamen API).
 
-**Kalan (kullanıcı):** Resolution Center mesajı (taslak
-`magaza-ios/apple-4.8-cevap.md`), Sign in with Apple .p8 + e-posta relay,
-APNs anahtarı (Firebase → iOS push).
+**12:45 — kalanların hepsi kapandı (Brave):** Resolution Center cevabı dün
+23:18'de zaten gönderilmiş; Apple anahtarı **C9FJ65FV23** (APNs Sandbox&Production
++ Sign in with Apple) üretildi → sunucu `/opt/dizijpg/apple-signin.p8` +
+`APPLE_ANAHTAR_ID`, api yeniden yaratıldı (saglik 200); e-posta relay kaynakları
+(dizijpg.com, noreply@, iletisim@) kayıtlı; Firebase'e APNs anahtarı dev+prod
+yüklendi. iOS push cihazda henüz doğrulanmadı.
 
 ## 2026-09-10 —  APPLE İLE GİRİŞ: App Store 4.8 reddi (1.148.0+225) 🚀
 
