@@ -1705,4 +1705,11 @@ const Map<String, String> cevirilerFi = {
   'Onayla': 'Hyväksy',
   'Yeni liste oluştur': 'Luo uusi lista',
   'Henüz listen yok.': 'Sinulla ei ole vielä listoja.',
+  'Telif hakkı onayı': 'Tekijänoikeusvahvistus',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Lataa vain videoita, joihin sinulla on oikeudet tai lupa jakaa. Tekijänoikeuksia loukkaavat videot poistetaan ja tili voidaan sulkea.',
+  'Onaylıyorum': 'Vahvistan',
+  'Topluluk Kuralları': 'Yhteisön säännöt',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Nollatoleranssi loukkaavalle, häiritsevälle, vihamieliselle, seksuaaliselle, väkivaltaa ihannoivalle tai tekijänoikeuksia loukkaavalle sisällölle sekä palvelun väärinkäytölle. Jokaisen kommentin, julkaisun, viestin, listan ja käyttäjän voi ilmoittaa sovelluksesta; ei-toivotut käyttäjät voi estää. Ilmoitettu sisältö tarkistetaan 24 tunnin kuluessa; sääntöjä rikkova sisältö poistetaan ja tili voidaan sulkea.',
 };

@@ -1706,4 +1706,11 @@ const Map<String, String> cevirilerBg = {
   'Onayla': 'Одобри',
   'Yeni liste oluştur': 'Създай нов списък',
   'Henüz listen yok.': 'Още нямаш списъци.',
+  'Telif hakkı onayı': 'Потвърждение за авторски права',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Качвай само видеа, чиито права притежаваш или които имаш разрешение да споделяш. Видеа, нарушаващи авторски права, се премахват, а профилът може да бъде закрит.',
+  'Onaylıyorum': 'Потвърждавам',
+  'Topluluk Kuralları': 'Правила на общността',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Нулева толерантност към обидно, тормозещо, омразно, сексуално, възхваляващо насилието или нарушаващо авторските права съдържание и към злоупотреба с услугата. Всеки коментар, публикация, съобщение, списък и потребител може да бъде докладван от приложението; нежеланите потребители могат да бъдат блокирани. Докладваното съдържание се проверява до 24 часа; при нарушение на правилата се премахва, а профилът може да бъде закрит.',
 };

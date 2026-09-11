@@ -1697,4 +1697,11 @@ const Map<String, String> cevirilerId = {
   'Onayla': 'Setujui',
   'Yeni liste oluştur': 'Buat daftar baru',
   'Henüz listen yok.': 'Kamu belum punya daftar.',
+  'Telif hakkı onayı': 'Konfirmasi hak cipta',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Unggah hanya video yang hak ciptanya kamu miliki atau yang boleh kamu bagikan. Video yang melanggar hak cipta akan dihapus dan akun dapat ditutup.',
+  'Onaylıyorum': 'Saya konfirmasi',
+  'Topluluk Kuralları': 'Pedoman Komunitas',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Tidak ada toleransi untuk konten yang kasar, melecehkan, penuh kebencian, seksual, mengagungkan kekerasan, atau melanggar hak cipta, serta untuk penyalahgunaan layanan. Setiap komentar, postingan, pesan, daftar, dan pengguna dapat dilaporkan dari dalam aplikasi; pengguna yang tidak diinginkan dapat diblokir. Konten yang dilaporkan ditinjau dalam 24 jam; jika melanggar aturan, konten dihapus dan akun dapat ditutup.',
 };

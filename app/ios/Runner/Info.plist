@@ -22,27 +22,33 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.1026295944597-9pkhf9tlaleu4lro0m5vv8hc965l3fuh</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>GIDClientID</key>
+	<string>1026295944597-9pkhf9tlaleu4lro0m5vv8hc965l3fuh.apps.googleusercontent.com</string>
+	<key>GIDServerClientID</key>
+	<string>1026295944597-alc4fpkc2gvtn1qmq92hols5oba98h55.apps.googleusercontent.com</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<!-- KALIYOR (7 Ağu 2026 kararı): dağıtım hedefi iOS 13.0
-	     (Runner.xcodeproj IPHONEOS_DEPLOYMENT_TARGET), image_picker_ios ise
-	     PHPickerViewController'ı @available(iOS 14, *) ile koruyor
-	     (FLTImagePickerPlugin.m:114/188). iOS 13'te UIImagePickerController'a
-	     düşülüyor ve o, bu anahtar olmadan çöker. Ayrıca avatar/kapak akışı
-	     (ayarlar.dart, gorsel_kirp.dart) pickImage(source: gallery) kullanmaya
-	     devam ediyor. Android'deki medya izinlerinden farklı: bu iOS anahtarı
-	     Play'in medya izni politikası kapsamında DEĞiL. -->
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Yorumlarına fotoğraf ve video ekleyebilmen için galerini gösteririz.</string>
-	<!-- image_picker'ın kamera kaynağı. Galeri seçicideki kamera kısayolu
-	     7 Ağu 2026'da kalktı; anahtar bilerek bırakıldı. -->
 	<key>NSCameraUsageDescription</key>
 	<string>Yorumuna eklemek için anında fotoğraf veya video çekebilirsin.</string>
-	<!-- Sesli mesaj kaydı (record paketi) -->
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Sohbette sesli mesaj kaydedebilmen için mikrofonu kullanırız.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Yorumlarına fotoğraf ve video ekleyebilmen için galerini gösteririz.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -83,9 +89,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<!-- Dışa aktarma uyumu: yalnız standart HTTPS kullanılıyor, muaf.
-	     Bu anahtar olmadan HER yüklemede App Store Connect soruyu tekrar sorar. -->
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 </dict>
 </plist>

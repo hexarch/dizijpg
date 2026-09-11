@@ -1688,4 +1688,11 @@ const Map<String, String> cevirilerAz = {
   'Onayla': 'Təsdiqlə',
   'Yeni liste oluştur': 'Yeni siyahı yarat',
   'Henüz listen yok.': 'Hələ siyahın yoxdur.',
+  'Telif hakkı onayı': 'Müəllif hüququ təsdiqi',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Yalnız hüquqları sənə məxsus olan və ya paylaşmaq icazən olan videoları yüklə. Müəllif hüququnu pozan videolar silinir və hesab bağlana bilər.',
+  'Onaylıyorum': 'Təsdiq edirəm',
+  'Topluluk Kuralları': 'İcma qaydaları',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Təhqiredici, təzyiq göstərən, nifrət dolu, cinsi, zorakılığı tərifləyən və ya müəllif hüququnu pozan məzmuna və xidmətdən sui-istifadəyə sıfır dözümlülük göstərilir. Hər şərh, paylaşım, mesaj, siyahı və istifadəçi tətbiq daxilindən şikayət edilə bilər; arzuolunmaz istifadəçilər bloklana bilər. Şikayət edilən məzmun 24 saat ərzində yoxlanılır; qaydalar pozulubsa, məzmun silinir və hesab bağlana bilər.',
 };

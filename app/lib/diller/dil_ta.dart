@@ -1726,4 +1726,11 @@ const Map<String, String> cevirilerTa = {
   'Onayla': 'ஒப்புதல்',
   'Yeni liste oluştur': 'புதிய பட்டியலை உருவாக்கு',
   'Henüz listen yok.': 'உங்களிடம் இன்னும் பட்டியல் இல்லை.',
+  'Telif hakkı onayı': 'பதிப்புரிமை உறுதிப்படுத்தல்',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'உங்களுக்கு உரிமை உள்ள அல்லது பகிர அனுமதி உள்ள வீடியோக்களை மட்டும் பதிவேற்றுங்கள். பதிப்புரிமையை மீறும் வீடியோக்கள் நீக்கப்படும்; கணக்கு மூடப்படலாம்.',
+  'Onaylıyorum': 'உறுதிப்படுத்துகிறேன்',
+  'Topluluk Kuralları': 'சமூக விதிகள்',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'தாக்குதலான, துன்புறுத்தும், வெறுப்பூட்டும், பாலியல், வன்முறையைப் போற்றும் அல்லது பதிப்புரிமையை மீறும் உள்ளடக்கத்திற்கும் சேவையின் தவறான பயன்பாட்டிற்கும் எந்த சகிப்புத்தன்மையும் இல்லை. ஒவ்வொரு கருத்து, பதிவு, செய்தி, பட்டியல் மற்றும் பயனரையும் செயலியிலிருந்தே புகாரளிக்கலாம்; தேவையற்ற பயனர்களைத் தடுக்கலாம். புகாரளிக்கப்பட்ட உள்ளடக்கம் 24 மணி நேரத்திற்குள் ஆய்வு செய்யப்படும்; விதிமீறல் இருந்தால் உள்ளடக்கம் நீக்கப்படும்; கணக்கு மூடப்படலாம்.',
 };

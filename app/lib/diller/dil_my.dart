@@ -1716,4 +1716,11 @@ const Map<String, String> cevirilerMy = {
   'Onayla': 'ခွင့်ပြု',
   'Yeni liste oluştur': 'စာရင်းအသစ် ဖန်တီးရန်',
   'Henüz listen yok.': 'သင့်မှာ စာရင်း မရှိသေးပါ။',
+  'Telif hakkı onayı': 'မူပိုင်ခွင့် အတည်ပြုချက်',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'သင်ပိုင်ဆိုင်သော သို့မဟုတ် မျှဝေခွင့်ရှိသော ဗီဒီယိုများကိုသာ တင်ပါ။ မူပိုင်ခွင့်ချိုးဖောက်သော ဗီဒီယိုများကို ဖယ်ရှားပြီး အကောင့်ကို ပိတ်နိုင်သည်။',
+  'Onaylıyorum': 'အတည်ပြုပါသည်',
+  'Topluluk Kuralları': 'အသိုင်းအဝိုင်း စည်းမျဉ်းများ',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'စော်ကားသော၊ နှောင့်ယှက်သော၊ အမုန်းပွားစေသော၊ လိင်ဆိုင်ရာ၊ အကြမ်းဖက်မှုကို ချီးမြှောက်သော သို့မဟုတ် မူပိုင်ခွင့်ချိုးဖောက်သော အကြောင်းအရာများနှင့် ဝန်ဆောင်မှုကို အလွဲသုံးစားလုပ်ခြင်းကို လုံးဝ ခွင့်မပြုပါ။ မှတ်ချက်၊ ပို့စ်၊ မက်ဆေ့ချ်၊ စာရင်းနှင့် အသုံးပြုသူတိုင်းကို အက်ပ်အတွင်းမှ တိုင်ကြားနိုင်ပြီး မလိုလားသော အသုံးပြုသူများကို ပိတ်ဆို့နိုင်သည်။ တိုင်ကြားထားသော အကြောင်းအရာကို ၂၄ နာရီအတွင်း စစ်ဆေးပြီး စည်းမျဉ်းချိုးဖောက်ပါက ဖယ်ရှားကာ အကောင့်ကို ပိတ်နိုင်သည်။',
 };

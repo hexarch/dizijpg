@@ -444,6 +444,15 @@ Future<void> pushBaslat() async {
       await _yerel.initialize(
         const InitializationSettings(
           android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+          // iOS (11 Eyl 2026): bu alan boşken eklenti iOS'ta hata fırlatıyor
+          // ve aşağıdaki onMessage/getToken kurulumu hiç çalışmıyordu. İzin
+          // burada İSTENMEZ (requestAlertPermission vb. false) — izni yukarıda
+          // FirebaseMessaging.requestPermission zaten istedi.
+          iOS: DarwinInitializationSettings(
+            requestAlertPermission: false,
+            requestBadgePermission: false,
+            requestSoundPermission: false,
+          ),
         ),
         // Yanıtla aksiyonuysa mesajı gönder; değilse ilgili sayfaya git
         onDidReceiveNotificationResponse: (yanit) async {

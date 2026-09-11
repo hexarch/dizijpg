@@ -1708,4 +1708,11 @@ const Map<String, String> cevirilerNl = {
   'Onayla': 'Goedkeuren',
   'Yeni liste oluştur': 'Nieuwe lijst maken',
   'Henüz listen yok.': 'Je hebt nog geen lijsten.',
+  'Telif hakkı onayı': 'Bevestiging auteursrecht',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Upload alleen video\'s waarvan je de rechten hebt of die je mag delen. Video\'s die het auteursrecht schenden worden verwijderd en het account kan worden gesloten.',
+  'Onaylıyorum': 'Ik bevestig',
+  'Topluluk Kuralları': 'Communityregels',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Er geldt nultolerantie voor beledigende, intimiderende, haatdragende, seksuele, geweld verheerlijkende of auteursrechtschendende inhoud en voor misbruik van de dienst. Elke reactie, post, bericht, lijst en gebruiker kan in de app worden gemeld; ongewenste gebruikers kunnen worden geblokkeerd. Gemelde inhoud wordt binnen 24 uur beoordeeld; bij overtreding wordt deze verwijderd en kan het account worden gesloten.',
 };

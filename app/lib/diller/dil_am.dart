@@ -1640,4 +1640,11 @@ const Map<String, String> cevirilerAm = {
   'Onayla': 'ፍቀድ',
   'Yeni liste oluştur': 'አዲስ ዝርዝር ፍጠር',
   'Henüz listen yok.': 'እስካሁን ምንም ዝርዝር የለህም።',
+  'Telif hakkı onayı': 'የቅጂ መብት ማረጋገጫ',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'መብቱ የእርስዎ የሆነ ወይም ለማጋራት ፈቃድ ያለዎትን ቪዲዮዎች ብቻ ይስቀሉ። የቅጂ መብትን የሚጥሱ ቪዲዮዎች ይወገዳሉ እና መለያው ሊዘጋ ይችላል።',
+  'Onaylıyorum': 'አረጋግጣለሁ',
+  'Topluluk Kuralları': 'የማህበረሰብ ደንቦች',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'ስድብ፣ ትንኮሳ፣ ጥላቻ፣ ወሲባዊ፣ ብጥብጥን የሚያወድስ ወይም የቅጂ መብትን የሚጥስ ይዘት እና የአገልግሎቱን አላግባብ መጠቀም በፍጹም አይታገሱም። እያንዳንዱ አስተያየት፣ ልጥፍ፣ መልዕክት፣ ዝርዝር እና ተጠቃሚ ከመተግበሪያው ውስጥ ሊጠቆም ይችላል፤ የማይፈለጉ ተጠቃሚዎች ሊታገዱ ይችላሉ። የተጠቆመ ይዘት በ24 ሰዓት ውስጥ ይገመገማል፤ ደንብ ከጣሰ ይወገዳል እና መለያው ሊዘጋ ይችላል።',
 };

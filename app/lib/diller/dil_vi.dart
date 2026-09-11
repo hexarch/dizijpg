@@ -1695,4 +1695,11 @@ const Map<String, String> cevirilerVi = {
   'Onayla': 'Duyệt',
   'Yeni liste oluştur': 'Tạo danh sách mới',
   'Henüz listen yok.': 'Bạn chưa có danh sách nào.',
+  'Telif hakkı onayı': 'Xác nhận bản quyền',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Chỉ tải lên video mà bạn sở hữu quyền hoặc được phép chia sẻ. Video vi phạm bản quyền sẽ bị gỡ và tài khoản có thể bị đóng.',
+  'Onaylıyorum': 'Tôi xác nhận',
+  'Topluluk Kuralları': 'Quy tắc cộng đồng',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Không khoan nhượng với nội dung lăng mạ, quấy rối, thù ghét, tình dục, cổ xúy bạo lực hoặc vi phạm bản quyền, cũng như hành vi lạm dụng dịch vụ. Mọi bình luận, bài đăng, tin nhắn, danh sách và người dùng đều có thể được báo cáo ngay trong ứng dụng; người dùng không mong muốn có thể bị chặn. Nội dung bị báo cáo được xem xét trong vòng 24 giờ; nếu vi phạm quy tắc sẽ bị gỡ và tài khoản có thể bị đóng.',
 };

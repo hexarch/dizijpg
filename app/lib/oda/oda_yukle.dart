@@ -34,6 +34,8 @@ library;
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
+
 import '../api.dart';
 import '../ceviri.dart';
 import 'oda_api.dart';
@@ -186,4 +188,35 @@ class OdaYuklemeIptal implements Exception {
   const OdaYuklemeIptal();
   @override
   String toString() => 'OdaYuklemeIptal';
+}
+
+/// Dosya yüklemeden önce TELİF ONAYI (11 Eyl 2026, App Store 5.2.3).
+///
+/// Oda davetle/kodla girilen özel bir alan, ama yüklenen dosya başkalarına
+/// akıtılıyor; kullanıcı yalnız hakkına sahip olduğu videoyu yükleyeceğini
+/// HER yüklemede açıkça onaylar. Oda ekranındaki iki giriş noktası (boş
+/// durum düğmesi ve "Video yükle" menüsü) `_videoSec` üzerinden buradan
+/// geçer — tek kapı. Kapatma/vazgeçme `false` döner, yükleme başlamaz.
+Future<bool> telifOnayiSor(BuildContext context) async {
+  final onay = await showDialog<bool>(
+    context: context,
+    builder: (k) => AlertDialog(
+      title: Text('Telif hakkı onayı'.c),
+      content: Text(
+        'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.'
+            .c,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(k).pop(false),
+          child: Text('Vazgeç'.c),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(k).pop(true),
+          child: Text('Onaylıyorum'.c),
+        ),
+      ],
+    ),
+  );
+  return onay == true;
 }

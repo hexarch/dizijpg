@@ -1694,4 +1694,11 @@ const Map<String, String> cevirilerCs = {
   'Onayla': 'Schválit',
   'Yeni liste oluştur': 'Vytvořit nový seznam',
   'Henüz listen yok.': 'Zatím nemáš žádné seznamy.',
+  'Telif hakkı onayı': 'Potvrzení autorských práv',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Nahrávej jen videa, ke kterým máš práva nebo svolení je sdílet. Videa porušující autorská práva jsou odstraněna a účet může být zrušen.',
+  'Onaylıyorum': 'Potvrzuji',
+  'Topluluk Kuralları': 'Pravidla komunity',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Nulová tolerance vůči urážlivému, obtěžujícímu, nenávistnému, sexuálnímu, násilí oslavujícímu nebo autorská práva porušujícímu obsahu a vůči zneužívání služby. Každý komentář, příspěvek, zprávu, seznam i uživatele lze nahlásit přímo v aplikaci; nežádoucí uživatele lze zablokovat. Nahlášený obsah je prověřen do 24 hodin; při porušení pravidel je odstraněn a účet může být zrušen.',
 };

@@ -1731,4 +1731,11 @@ const Map<String, String> cevirilerFil = {
   'Onayla': 'Aprubahan',
   'Yeni liste oluştur': 'Gumawa ng bagong listahan',
   'Henüz listen yok.': 'Wala ka pang listahan.',
+  'Telif hakkı onayı': 'Kumpirmasyon ng copyright',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Mag-upload lamang ng mga video na pag-aari mo o may pahintulot kang ibahagi. Inaalis ang mga video na lumalabag sa copyright at maaaring isara ang account.',
+  'Onaylıyorum': 'Kinukumpirma ko',
+  'Topluluk Kuralları': 'Mga Alituntunin ng Komunidad',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'May zero tolerance sa nilalamang mapang-abuso, nanghaharas, mapoot, sekswal, lumuluwalhati sa karahasan o lumalabag sa copyright, at sa maling paggamit ng serbisyo. Bawat komento, post, mensahe, listahan at user ay maaaring i-report mula sa loob ng app; maaaring i-block ang mga hindi gustong user. Sinusuri ang ni-report na nilalaman sa loob ng 24 oras; kapag lumabag sa mga patakaran, inaalis ito at maaaring isara ang account.',
 };

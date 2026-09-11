@@ -1724,4 +1724,11 @@ const Map<String, String> cevirilerRu = {
   'Onayla': 'Одобрить',
   'Yeni liste oluştur': 'Создать новый список',
   'Henüz listen yok.': 'У вас пока нет списков.',
+  'Telif hakkı onayı': 'Подтверждение авторских прав',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Загружайте только видео, права на которые принадлежат вам или которыми вам разрешено делиться. Видео, нарушающие авторские права, удаляются, а аккаунт может быть закрыт.',
+  'Onaylıyorum': 'Подтверждаю',
+  'Topluluk Kuralları': 'Правила сообщества',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Нулевая терпимость к оскорбительному, травящему, ненавистническому, сексуальному, прославляющему насилие или нарушающему авторские права контенту и к злоупотреблению сервисом. Любой комментарий, публикацию, сообщение, список и пользователя можно пожаловаться прямо в приложении; нежелательных пользователей можно заблокировать. Контент, на который поступила жалоба, проверяется в течение 24 часов; при нарушении правил он удаляется, а аккаунт может быть закрыт.',
 };

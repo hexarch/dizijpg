@@ -1691,4 +1691,11 @@ const Map<String, String> cevirilerMr = {
   'Onayla': 'मंजूर करा',
   'Yeni liste oluştur': 'नवीन यादी तयार करा',
   'Henüz listen yok.': 'तुमच्याकडे अजून यादी नाही.',
+  'Telif hakkı onayı': 'कॉपीराइट पुष्टी',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'फक्त तेच व्हिडिओ अपलोड करा ज्यांचे हक्क तुमच्याकडे आहेत किंवा जे शेअर करण्याची तुम्हाला परवानगी आहे. कॉपीराइटचे उल्लंघन करणारे व्हिडिओ काढून टाकले जातात आणि खाते बंद केले जाऊ शकते.',
+  'Onaylıyorum': 'मी पुष्टी करतो/करते',
+  'Topluluk Kuralları': 'समुदायाचे नियम',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'अपमानास्पद, छळवणूक करणारा, द्वेषपूर्ण, लैंगिक, हिंसेचे उदात्तीकरण करणारा किंवा कॉपीराइटचे उल्लंघन करणारा मजकूर आणि सेवेचा गैरवापर अजिबात खपवून घेतला जात नाही. प्रत्येक टिप्पणी, पोस्ट, संदेश, यादी आणि वापरकर्त्याची अ‍ॅपमधून तक्रार करता येते; नको असलेल्या वापरकर्त्यांना ब्लॉक करता येते. तक्रार केलेला मजकूर 24 तासांत तपासला जातो; नियम मोडल्यास मजकूर काढला जातो आणि खाते बंद केले जाऊ शकते.',
 };

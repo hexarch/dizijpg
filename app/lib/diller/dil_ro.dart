@@ -1743,4 +1743,11 @@ const Map<String, String> cevirilerRo = {
   'Onayla': 'Aprobă',
   'Yeni liste oluştur': 'Creează o listă nouă',
   'Henüz listen yok.': 'Nu ai încă nicio listă.',
+  'Telif hakkı onayı': 'Confirmarea drepturilor de autor',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Încarcă doar videoclipuri ale căror drepturi le deții sau pe care ai permisiunea să le distribui. Videoclipurile care încalcă drepturile de autor sunt eliminate, iar contul poate fi închis.',
+  'Onaylıyorum': 'Confirm',
+  'Topluluk Kuralları': 'Regulile comunității',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Toleranță zero pentru conținut abuziv, de hărțuire, de ură, sexual, care glorifică violența sau încalcă drepturile de autor și pentru folosirea abuzivă a serviciului. Orice comentariu, postare, mesaj, listă și utilizator poate fi raportat din aplicație; utilizatorii nedoriți pot fi blocați. Conținutul raportat este verificat în 24 de ore; dacă încalcă regulile, este eliminat, iar contul poate fi închis.',
 };

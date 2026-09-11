@@ -14,7 +14,7 @@ import '../tema.dart';
 /// 14.08.2026 (md. 23): gönderi istatistiklerinin topladığı AGREGAT sayaçlar
 /// ve tekil görüntüleyen sayımı için tutulan geri çevrilemez anahtarlı özet
 /// (90 gün) beyan edildi — gönderi sahibine yalnız SAYI gösterilir.
-const gizlilikGuncelleme = '14.08.2026';
+const gizlilikGuncelleme = '11.09.2026';
 const gizlilikIletisim = 'iletisim@dizijpg.com';
 
 /// Gizlilik politikası — girişsiz de erişilebilir (yonlendirme beyaz listesi).
@@ -185,6 +185,14 @@ class GizlilikEkrani extends StatelessWidget {
             _Govde(
               'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; '
               'arşiv e-posta adresine gönderilir.',
+            ),
+            // App Store 1.2 (11 Eyl 2026): kullanıcı içeriği olan uygulamada
+            // "sıfır tolerans" kuralı, şikâyet/engelleme yolu ve 24 saatlik
+            // inceleme taahhüdü YAZILI olmalı. Kayıt formu bu sayfayı
+            // "kabul etmiş olursun" satırıyla bağlıyor.
+            _Baslik('Topluluk Kuralları'),
+            _Govde(
+              'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.',
             ),
             _Baslik('Güvenlik'),
             _Govde(

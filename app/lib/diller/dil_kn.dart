@@ -1698,4 +1698,11 @@ const Map<String, String> cevirilerKn = {
   'Onayla': 'ಅನುಮೋದಿಸಿ',
   'Yeni liste oluştur': 'ಹೊಸ ಪಟ್ಟಿ ರಚಿಸಿ',
   'Henüz listen yok.': 'ನಿಮ್ಮ ಬಳಿ ಇನ್ನೂ ಪಟ್ಟಿಗಳಿಲ್ಲ.',
+  'Telif hakkı onayı': 'ಹಕ್ಕುಸ್ವಾಮ್ಯ ದೃಢೀಕರಣ',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'ನಿಮಗೆ ಹಕ್ಕು ಇರುವ ಅಥವಾ ಹಂಚಿಕೊಳ್ಳಲು ಅನುಮತಿ ಇರುವ ವೀಡಿಯೊಗಳನ್ನು ಮಾತ್ರ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ. ಹಕ್ಕುಸ್ವಾಮ್ಯ ಉಲ್ಲಂಘಿಸುವ ವೀಡಿಯೊಗಳನ್ನು ತೆಗೆದುಹಾಕಲಾಗುತ್ತದೆ; ಖಾತೆ ಮುಚ್ಚಬಹುದು.',
+  'Onaylıyorum': 'ನಾನು ದೃಢೀಕರಿಸುತ್ತೇನೆ',
+  'Topluluk Kuralları': 'ಸಮುದಾಯ ನಿಯಮಗಳು',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'ನಿಂದನೀಯ, ಕಿರುಕುಳದ, ದ್ವೇಷಪೂರಿತ, ಲೈಂಗಿಕ, ಹಿಂಸೆಯನ್ನು ವೈಭವೀಕರಿಸುವ ಅಥವಾ ಹಕ್ಕುಸ್ವಾಮ್ಯ ಉಲ್ಲಂಘಿಸುವ ವಿಷಯಕ್ಕೆ ಮತ್ತು ಸೇವೆಯ ದುರ್ಬಳಕೆಗೆ ಶೂನ್ಯ ಸಹನೆ. ಪ್ರತಿ ಕಾಮೆಂಟ್, ಪೋಸ್ಟ್, ಸಂದೇಶ, ಪಟ್ಟಿ ಮತ್ತು ಬಳಕೆದಾರರನ್ನು ಆ್ಯಪ್‌ನೊಳಗಿಂದಲೇ ವರದಿ ಮಾಡಬಹುದು; ಅನಗತ್ಯ ಬಳಕೆದಾರರನ್ನು ನಿರ್ಬಂಧಿಸಬಹುದು. ವರದಿಯಾದ ವಿಷಯವನ್ನು 24 ಗಂಟೆಗಳೊಳಗೆ ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ; ನಿಯಮ ಉಲ್ಲಂಘನೆಯಾದರೆ ವಿಷಯ ತೆಗೆದುಹಾಕಲಾಗುತ್ತದೆ; ಖಾತೆ ಮುಚ್ಚಬಹುದು.',
 };

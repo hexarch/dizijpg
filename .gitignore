@@ -23,3 +23,6 @@ ios-imza/
 # Xcode yapılandırma yedekleri (dağıtım öncesi alınan tarihli kopyalar)
 **/*.yedek-*
 letterboxd-*.zip
+
+# Firebase iOS yapılandırması (11 Eyl 2026) — kopyası firebase-gizli/ içinde
+app/ios/Runner/GoogleService-Info.plist

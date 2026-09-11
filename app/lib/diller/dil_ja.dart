@@ -1614,4 +1614,11 @@ const Map<String, String> cevirilerJa = {
   'Onayla': '承認',
   'Yeni liste oluştur': '新しいリストを作成',
   'Henüz listen yok.': 'まだリストがありません。',
+  'Telif hakkı onayı': '著作権の確認',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      '権利を持っている動画、または共有の許可を得た動画のみアップロードしてください。著作権を侵害する動画は削除され、アカウントが停止されることがあります。',
+  'Onaylıyorum': '確認しました',
+  'Topluluk Kuralları': 'コミュニティガイドライン',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      '侮辱的、嫌がらせ、憎悪的、性的、暴力を賛美する、または著作権を侵害するコンテンツと、サービスの悪用は一切許容されません。すべてのコメント、投稿、メッセージ、リスト、ユーザーはアプリ内から報告でき、迷惑なユーザーはブロックできます。報告されたコンテンツは24時間以内に確認され、規則違反があれば削除され、アカウントが停止されることがあります。',
 };

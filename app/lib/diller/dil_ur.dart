@@ -1697,4 +1697,11 @@ const Map<String, String> cevirilerUr = {
   'Onayla': 'منظور کریں',
   'Yeni liste oluştur': 'نئی فہرست بنائیں',
   'Henüz listen yok.': 'ابھی آپ کی کوئی فہرست نہیں ہے۔',
+  'Telif hakkı onayı': 'کاپی رائٹ کی تصدیق',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'صرف وہی ویڈیوز اپ لوڈ کریں جن کے حقوق آپ کے پاس ہوں یا جنہیں شیئر کرنے کی اجازت ہو۔ کاپی رائٹ کی خلاف ورزی کرنے والی ویڈیوز ہٹا دی جاتی ہیں اور اکاؤنٹ بند کیا جا سکتا ہے۔',
+  'Onaylıyorum': 'میں تصدیق کرتا/کرتی ہوں',
+  'Topluluk Kuralları': 'کمیونٹی کے اصول',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'گالی گلوچ، ہراسانی، نفرت انگیز، جنسی، تشدد کو سراہنے والے یا کاپی رائٹ کی خلاف ورزی کرنے والے مواد اور سروس کے غلط استعمال کے لیے بالکل برداشت نہیں۔ ہر تبصرہ، پوسٹ، پیغام، فہرست اور صارف کی ایپ کے اندر سے رپورٹ کی جا سکتی ہے؛ ناپسندیدہ صارفین کو بلاک کیا جا سکتا ہے۔ رپورٹ شدہ مواد 24 گھنٹوں میں جانچا جاتا ہے؛ اصول کی خلاف ورزی پر مواد ہٹا دیا جاتا ہے اور اکاؤنٹ بند کیا جا سکتا ہے۔',
 };

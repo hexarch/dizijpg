@@ -1618,4 +1618,11 @@ const Map<String, String> cevirilerKo = {
   'Onayla': '승인',
   'Yeni liste oluştur': '새 목록 만들기',
   'Henüz listen yok.': '아직 목록이 없습니다.',
+  'Telif hakkı onayı': '저작권 확인',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      '권리를 보유했거나 공유 허가를 받은 동영상만 업로드하세요. 저작권을 침해하는 동영상은 삭제되며 계정이 폐쇄될 수 있습니다.',
+  'Onaylıyorum': '확인합니다',
+  'Topluluk Kuralları': '커뮤니티 규칙',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      '모욕적, 괴롭힘, 혐오, 성적, 폭력 미화 또는 저작권 침해 콘텐츠와 서비스 남용은 절대 허용되지 않습니다. 모든 댓글, 게시물, 메시지, 목록, 사용자는 앱 안에서 신고할 수 있으며 원치 않는 사용자는 차단할 수 있습니다. 신고된 콘텐츠는 24시간 안에 검토되며, 규칙을 위반하면 삭제되고 계정이 폐쇄될 수 있습니다.',
 };

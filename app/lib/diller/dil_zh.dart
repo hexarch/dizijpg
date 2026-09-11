@@ -1612,4 +1612,11 @@ const Map<String, String> cevirilerZh = {
   'Onayla': '批准',
   'Yeni liste oluştur': '新建片单',
   'Henüz listen yok.': '你还没有片单。',
+  'Telif hakkı onayı': '版权确认',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      '只上传你拥有版权或获得分享许可的视频。侵犯版权的视频将被删除，账号可能被关闭。',
+  'Onaylıyorum': '我确认',
+  'Topluluk Kuralları': '社区准则',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      '对辱骂、骚扰、仇恨、色情、美化暴力或侵犯版权的内容以及滥用服务的行为零容忍。每条评论、帖子、消息、列表和每位用户都可以在应用内举报；可以屏蔽不想看到的用户。被举报的内容将在24小时内审核；违反规则的内容会被删除，账号可能被关闭。',
 };

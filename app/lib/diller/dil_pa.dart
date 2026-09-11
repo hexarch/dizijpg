@@ -1693,4 +1693,11 @@ const Map<String, String> cevirilerPa = {
   'Onayla': 'ਮਨਜ਼ੂਰ ਕਰੋ',
   'Yeni liste oluştur': 'ਨਵੀਂ ਸੂਚੀ ਬਣਾਓ',
   'Henüz listen yok.': 'ਤੁਹਾਡੇ ਕੋਲ ਹਾਲੇ ਕੋਈ ਸੂਚੀ ਨਹੀਂ ਹੈ।',
+  'Telif hakkı onayı': 'ਕਾਪੀਰਾਈਟ ਪੁਸ਼ਟੀ',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'ਸਿਰਫ਼ ਉਹੀ ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ ਜਿਨ੍ਹਾਂ ਦੇ ਹੱਕ ਤੁਹਾਡੇ ਕੋਲ ਹਨ ਜਾਂ ਜਿਨ੍ਹਾਂ ਨੂੰ ਸਾਂਝਾ ਕਰਨ ਦੀ ਇਜਾਜ਼ਤ ਹੈ। ਕਾਪੀਰਾਈਟ ਦੀ ਉਲੰਘਣਾ ਕਰਨ ਵਾਲੇ ਵੀਡੀਓ ਹਟਾ ਦਿੱਤੇ ਜਾਂਦੇ ਹਨ ਅਤੇ ਖਾਤਾ ਬੰਦ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ।',
+  'Onaylıyorum': 'ਮੈਂ ਪੁਸ਼ਟੀ ਕਰਦਾ/ਕਰਦੀ ਹਾਂ',
+  'Topluluk Kuralları': 'ਭਾਈਚਾਰੇ ਦੇ ਨਿਯਮ',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'ਅਪਮਾਨਜਨਕ, ਤੰਗ ਕਰਨ ਵਾਲੀ, ਨਫ਼ਰਤ ਭਰੀ, ਜਿਨਸੀ, ਹਿੰਸਾ ਦੀ ਵਡਿਆਈ ਕਰਨ ਵਾਲੀ ਜਾਂ ਕਾਪੀਰਾਈਟ ਦੀ ਉਲੰਘਣਾ ਕਰਨ ਵਾਲੀ ਸਮੱਗਰੀ ਅਤੇ ਸੇਵਾ ਦੀ ਦੁਰਵਰਤੋਂ ਨੂੰ ਬਿਲਕੁਲ ਬਰਦਾਸ਼ਤ ਨਹੀਂ ਕੀਤਾ ਜਾਂਦਾ। ਹਰ ਟਿੱਪਣੀ, ਪੋਸਟ, ਸੁਨੇਹੇ, ਸੂਚੀ ਅਤੇ ਵਰਤੋਂਕਾਰ ਦੀ ਐਪ ਦੇ ਅੰਦਰੋਂ ਰਿਪੋਰਟ ਕੀਤੀ ਜਾ ਸਕਦੀ ਹੈ; ਅਣਚਾਹੇ ਵਰਤੋਂਕਾਰਾਂ ਨੂੰ ਬਲਾਕ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ। ਰਿਪੋਰਟ ਕੀਤੀ ਸਮੱਗਰੀ ਦੀ 24 ਘੰਟਿਆਂ ਵਿੱਚ ਜਾਂਚ ਹੁੰਦੀ ਹੈ; ਨਿਯਮ ਟੁੱਟਣ \'ਤੇ ਸਮੱਗਰੀ ਹਟਾ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਅਤੇ ਖਾਤਾ ਬੰਦ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ।',
 };

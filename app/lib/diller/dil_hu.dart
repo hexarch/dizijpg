@@ -1709,4 +1709,11 @@ const Map<String, String> cevirilerHu = {
   'Onayla': 'Jóváhagyás',
   'Yeni liste oluştur': 'Új lista létrehozása',
   'Henüz listen yok.': 'Még nincs listád.',
+  'Telif hakkı onayı': 'Szerzői jogi megerősítés',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Csak olyan videókat tölts fel, amelyeknek a jogai a tiéd, vagy amelyeket megoszthatsz. A szerzői jogot sértő videókat eltávolítjuk, és a fiók lezárható.',
+  'Onaylıyorum': 'Megerősítem',
+  'Topluluk Kuralları': 'Közösségi szabályok',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Zéró tolerancia a sértő, zaklató, gyűlölködő, szexuális, erőszakot dicsőítő vagy szerzői jogot sértő tartalmakkal és a szolgáltatással való visszaéléssel szemben. Minden hozzászólás, bejegyzés, üzenet, lista és felhasználó jelenthető az alkalmazásból; a nemkívánatos felhasználók letilthatók. A jelentett tartalmat 24 órán belül átnézzük; szabályszegés esetén eltávolítjuk, és a fiók lezárható.',
 };

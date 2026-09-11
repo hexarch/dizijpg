@@ -1684,4 +1684,11 @@ const Map<String, String> cevirilerAr = {
   'Onayla': 'موافقة',
   'Yeni liste oluştur': 'إنشاء قائمة جديدة',
   'Henüz listen yok.': 'ليس لديك أي قائمة بعد.',
+  'Telif hakkı onayı': 'تأكيد حقوق النشر',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'ارفع فقط الفيديوهات التي تملك حقوقها أو لديك إذن بمشاركتها. تُحذف الفيديوهات التي تنتهك حقوق النشر وقد يُغلق الحساب.',
+  'Onaylıyorum': 'أؤكد',
+  'Topluluk Kuralları': 'قواعد المجتمع',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'لا تسامح مطلقًا مع المحتوى المسيء أو المتحرّش أو الكاره أو الجنسي أو المُمجّد للعنف أو المنتهك لحقوق النشر، ولا مع إساءة استخدام الخدمة. يمكن الإبلاغ عن أي تعليق أو منشور أو رسالة أو قائمة أو مستخدم من داخل التطبيق، ويمكن حظر المستخدمين غير المرغوب فيهم. يُراجَع المحتوى المُبلَّغ عنه خلال 24 ساعة؛ وإذا خالف القواعد يُحذف وقد يُغلق الحساب.',
 };

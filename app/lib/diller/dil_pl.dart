@@ -1717,4 +1717,11 @@ const Map<String, String> cevirilerPl = {
   'Onayla': 'Zatwierdź',
   'Yeni liste oluştur': 'Utwórz nową listę',
   'Henüz listen yok.': 'Nie masz jeszcze żadnych list.',
+  'Telif hakkı onayı': 'Potwierdzenie praw autorskich',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Przesyłaj tylko filmy, do których masz prawa lub zgodę na udostępnianie. Filmy naruszające prawa autorskie są usuwane, a konto może zostać zamknięte.',
+  'Onaylıyorum': 'Potwierdzam',
+  'Topluluk Kuralları': 'Zasady społeczności',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Zero tolerancji dla treści obraźliwych, nękających, nienawistnych, seksualnych, gloryfikujących przemoc lub naruszających prawa autorskie oraz dla nadużywania usługi. Każdy komentarz, wpis, wiadomość, listę i użytkownika można zgłosić z poziomu aplikacji; niechcianych użytkowników można zablokować. Zgłoszone treści są sprawdzane w ciągu 24 godzin; w razie naruszenia zasad są usuwane, a konto może zostać zamknięte.',
 };

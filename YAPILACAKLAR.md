@@ -1,5 +1,45 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-10 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-11 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-11 — APP STORE RET TARAMASI + YENİDEN GÖNDERİM (1.148.2+227) 🍎
+
+**Tetik:** 10 Eyl 4.8 reddi kapatıldıktan sonra, yeniden göndermeden ÖNCE
+"başka neyden ret yer?" taraması (kılavuz kılavuz, kod + ASC API + simülatör).
+
+**Bulunup kapatılan ret riskleri:**
+1. **2.1 — iOS'ta Google girişi HİÇ ÇALIŞMIYORDU.** `Info.plist`te
+   `GIDClientID`/URL şeması yoktu, Firebase projesinde iOS uygulaması kayıtlı
+   değildi (`iosApps` boş). Firebase Management API ile iOS uygulaması açıldı
+   (`1:1026295944597:ios:a6604b4e99c3fe2627929c`, OAuth iOS istemcisi
+   `…9pkhf9…`), `GoogleService-Info.plist` Runner kaynağına (xcodeproj gem,
+   cocoapods libexec ruby + rexml GEM_PATH tuzağı), `GIDClientID` +
+   `GIDServerClientID` (web istemcisi, id_token `aud`) + `CFBundleURLTypes`.
+   Dosya .gitignore'da; kopyası `firebase-gizli/`. **APNs anahtarı hâlâ yok →
+   iOS push çalışmaz (ret sebebi değil).**
+2. **2.1 — flutter_local_notifications iOS ayarı boştu** → `initialize` iOS'ta
+   fırlatıyor, onMessage/getToken kurulmuyordu. `DarwinInitializationSettings`
+   (izin isteme kapalı; izni FCM zaten istiyor).
+3. **5.2.3 — İzleme odası dosya yüklemesi** (5 GB, başkalarına akar) inceleme
+   notundaki "bölüm barındırmaz" cümlesiyle çelişiyordu. `telifOnayiSor`
+   (oda_yukle.dart) her yüklemede diyalog; `_videoSec` tek kapı. Notlar
+   "WATCH ROOMS" paragrafıyla dürüstleştirildi (davet/kod, 12 saat, telif onayı).
+4. **1.2 — UGC sıfır tolerans metni yoktu.** Gizlilik politikasına "Topluluk
+   Kuralları" (sıfır tolerans, şikâyet/engelleme, 24 saat, hesap kapatma):
+   `gizlilik.dart` + `web/gizlilik.html` 46 dilde (38-39. indeks, YAPI'da
+   Güvenlik'in önü), tarih 11.09.2026. Kayıt formu bu sayfaya bağlı.
+5. Temiz çıkanlar: ziyaretçi duvarı yok (/kesfet açık), Play/Android metni yok,
+   izin metinleri var, şifreleme bayrağı false, gizlilik URL 200, yaş beyanı ve
+   demo hesap dolu, e-posta doğrulama kapısı yok (Hide My Email güvenli).
+
+**Kanıt:** `flutter test` 2843 + 38 yeni (app_store_telif_topluluk_test) yeşil;
+analyze lib 0; IPA 227'de GIDClientID + plist + applesignin yetkisi codesign'la
+doğrulandı; iPad Air 13" simülatöründe açılış/keşfet tamam. **Google düğmesine
+canlı dokunma YOK** (osascript/Quartz erişilebilirlik izni yok) — yapılandırma
+eklenti README'siyle birebir.
+
+**Kalan (kullanıcı):** Resolution Center mesajı (taslak
+`magaza-ios/apple-4.8-cevap.md`), Sign in with Apple .p8 + e-posta relay,
+APNs anahtarı (Firebase → iOS push).
 
 ## 2026-09-10 —  APPLE İLE GİRİŞ: App Store 4.8 reddi (1.148.0+225) 🚀
 

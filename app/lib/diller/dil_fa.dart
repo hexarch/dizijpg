@@ -1680,4 +1680,11 @@ const Map<String, String> cevirilerFa = {
   'Onayla': 'تأیید',
   'Yeni liste oluştur': 'ساخت فهرست جدید',
   'Henüz listen yok.': 'هنوز فهرستی نداری.',
+  'Telif hakkı onayı': 'تأیید حق نشر',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'فقط ویدیوهایی را بارگذاری کن که حقوق آن‌ها متعلق به توست یا اجازهٔ اشتراک‌گذاری آن‌ها را داری. ویدیوهای ناقض حق نشر حذف می‌شوند و ممکن است حساب بسته شود.',
+  'Onaylıyorum': 'تأیید می‌کنم',
+  'Topluluk Kuralları': 'قوانین انجمن',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'با محتوای توهین‌آمیز، آزاردهنده، نفرت‌پراکن، جنسی، ستایشگر خشونت یا ناقض حق نشر و با سوءاستفاده از سرویس هیچ مدارایی نمی‌شود. هر نظر، پست، پیام، فهرست و کاربر را می‌توان از داخل برنامه گزارش داد و کاربران ناخواسته را مسدود کرد. محتوای گزارش‌شده ظرف ۲۴ ساعت بررسی می‌شود؛ در صورت نقض قوانین حذف می‌شود و ممکن است حساب بسته شود.',
 };

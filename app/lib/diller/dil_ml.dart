@@ -1706,4 +1706,11 @@ const Map<String, String> cevirilerMl = {
   'Onayla': 'അംഗീകരിക്കുക',
   'Yeni liste oluştur': 'പുതിയ ലിസ്റ്റ് ഉണ്ടാക്കുക',
   'Henüz listen yok.': 'നിങ്ങൾക്ക് ഇതുവരെ ലിസ്റ്റുകളില്ല.',
+  'Telif hakkı onayı': 'പകർപ്പവകാശ സ്ഥിരീകരണം',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'നിങ്ങൾക്ക് അവകാശമുള്ളതോ പങ്കിടാൻ അനുമതിയുള്ളതോ ആയ വീഡിയോകൾ മാത്രം അപ്‌ലോഡ് ചെയ്യുക. പകർപ്പവകാശം ലംഘിക്കുന്ന വീഡിയോകൾ നീക്കം ചെയ്യപ്പെടും; അക്കൗണ്ട് അടച്ചേക്കാം.',
+  'Onaylıyorum': 'ഞാൻ സ്ഥിരീകരിക്കുന്നു',
+  'Topluluk Kuralları': 'കമ്മ്യൂണിറ്റി നിയമങ്ങൾ',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'അധിക്ഷേപകരമോ, ഉപദ്രവകരമോ, വിദ്വേഷപരമോ, ലൈംഗികമോ, അക്രമത്തെ മഹത്വവൽക്കരിക്കുന്നതോ, പകർപ്പവകാശം ലംഘിക്കുന്നതോ ആയ ഉള്ളടക്കത്തോടും സേവനത്തിന്റെ ദുരുപയോഗത്തോടും ഒരു സഹിഷ്ണുതയുമില്ല. ഓരോ കമന്റും പോസ്റ്റും സന്ദേശവും ലിസ്റ്റും ഉപയോക്താവിനെയും ആപ്പിനുള്ളിൽ നിന്ന് റിപ്പോർട്ട് ചെയ്യാം; അനാവശ്യ ഉപയോക്താക്കളെ ബ്ലോക്ക് ചെയ്യാം. റിപ്പോർട്ട് ചെയ്ത ഉള്ളടക്കം 24 മണിക്കൂറിനുള്ളിൽ പരിശോധിക്കും; നിയമലംഘനമുണ്ടെങ്കിൽ ഉള്ളടക്കം നീക്കം ചെയ്യും; അക്കൗണ്ട് അടച്ചേക്കാം.',
 };

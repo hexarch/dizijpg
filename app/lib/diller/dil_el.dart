@@ -1733,4 +1733,11 @@ const Map<String, String> cevirilerEl = {
   'Onayla': 'Έγκριση',
   'Yeni liste oluştur': 'Δημιουργία νέας λίστας',
   'Henüz listen yok.': 'Δεν έχεις λίστες ακόμη.',
+  'Telif hakkı onayı': 'Επιβεβαίωση πνευματικών δικαιωμάτων',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Ανέβασε μόνο βίντεο των οποίων έχεις τα δικαιώματα ή άδεια κοινοποίησης. Τα βίντεο που παραβιάζουν πνευματικά δικαιώματα αφαιρούνται και ο λογαριασμός μπορεί να κλείσει.',
+  'Onaylıyorum': 'Επιβεβαιώνω',
+  'Topluluk Kuralları': 'Κανόνες κοινότητας',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Μηδενική ανοχή σε προσβλητικό, παρενοχλητικό, μισαλλόδοξο, σεξουαλικό περιεχόμενο, σε περιεχόμενο που εξυμνεί τη βία ή παραβιάζει πνευματικά δικαιώματα, καθώς και στην κατάχρηση της υπηρεσίας. Κάθε σχόλιο, ανάρτηση, μήνυμα, λίστα και χρήστης μπορεί να αναφερθεί μέσα από την εφαρμογή· οι ανεπιθύμητοι χρήστες μπορούν να αποκλειστούν. Το αναφερόμενο περιεχόμενο ελέγχεται εντός 24 ωρών· αν παραβιάζει τους κανόνες, αφαιρείται και ο λογαριασμός μπορεί να κλείσει.',
 };

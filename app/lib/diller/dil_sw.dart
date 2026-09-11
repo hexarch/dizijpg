@@ -1705,4 +1705,11 @@ const Map<String, String> cevirilerSw = {
   'Onayla': 'Idhinisha',
   'Yeni liste oluştur': 'Tengeneza orodha mpya',
   'Henüz listen yok.': 'Bado huna orodha yoyote.',
+  'Telif hakkı onayı': 'Uthibitisho wa hakimiliki',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Pakia tu video ambazo una haki zake au ruhusa ya kuzishiriki. Video zinazokiuka hakimiliki huondolewa na akaunti inaweza kufungwa.',
+  'Onaylıyorum': 'Ninathibitisha',
+  'Topluluk Kuralları': 'Kanuni za Jumuiya',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Hakuna uvumilivu kwa maudhui ya matusi, unyanyasaji, chuki, ngono, yanayotukuza vurugu au yanayokiuka hakimiliki, wala kwa matumizi mabaya ya huduma. Kila maoni, chapisho, ujumbe, orodha na mtumiaji anaweza kuripotiwa kutoka ndani ya programu; watumiaji wasiotakiwa wanaweza kuzuiwa. Maudhui yaliyoripotiwa hukaguliwa ndani ya saa 24; yakikiuka kanuni huondolewa na akaunti inaweza kufungwa.',
 };

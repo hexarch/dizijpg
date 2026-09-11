@@ -1199,6 +1199,8 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   }
 
   Future<void> _videoSec() async {
+    // TELİF ONAYI (11 Eyl 2026, App Store 5.2.3) — tek kapı, iki giriş noktası.
+    if (!await telifOnayiSor(context) || !mounted) return;
     FilePickerResult? secim;
     try {
       secim = await FilePicker.platform.pickFiles(

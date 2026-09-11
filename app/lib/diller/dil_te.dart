@@ -1697,4 +1697,11 @@ const Map<String, String> cevirilerTe = {
   'Onayla': 'ఆమోదించు',
   'Yeni liste oluştur': 'కొత్త జాబితా సృష్టించు',
   'Henüz listen yok.': 'మీకు ఇంకా జాబితాలు లేవు.',
+  'Telif hakkı onayı': 'కాపీరైట్ నిర్ధారణ',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'మీకు హక్కులు ఉన్న లేదా పంచుకోవడానికి అనుమతి ఉన్న వీడియోలను మాత్రమే అప్‌లోడ్ చేయండి. కాపీరైట్‌ను ఉల్లంఘించే వీడియోలు తొలగించబడతాయి; ఖాతా మూసివేయబడవచ్చు.',
+  'Onaylıyorum': 'నేను నిర్ధారిస్తున్నాను',
+  'Topluluk Kuralları': 'కమ్యూనిటీ నియమాలు',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'దూషణాత్మక, వేధింపు, ద్వేషపూరిత, లైంగిక, హింసను కీర్తించే లేదా కాపీరైట్‌ను ఉల్లంఘించే కంటెంట్‌కు మరియు సేవ దుర్వినియోగానికి ఎటువంటి సహనం లేదు. ప్రతి వ్యాఖ్య, పోస్ట్, సందేశం, జాబితా మరియు వినియోగదారుని యాప్ లోపలి నుండి నివేదించవచ్చు; అవాంఛిత వినియోగదారులను బ్లాక్ చేయవచ్చు. నివేదించిన కంటెంట్ 24 గంటల్లో సమీక్షించబడుతుంది; నియమాలు ఉల్లంఘిస్తే కంటెంట్ తొలగించబడుతుంది; ఖాతా మూసివేయబడవచ్చు.',
 };

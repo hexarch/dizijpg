@@ -1703,4 +1703,11 @@ const Map<String, String> cevirilerMs = {
   'Onayla': 'Luluskan',
   'Yeni liste oluştur': 'Cipta senarai baharu',
   'Henüz listen yok.': 'Anda belum ada senarai.',
+  'Telif hakkı onayı': 'Pengesahan hak cipta',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Muat naik hanya video yang haknya anda miliki atau yang anda dibenarkan kongsi. Video yang melanggar hak cipta akan dialih keluar dan akaun boleh ditutup.',
+  'Onaylıyorum': 'Saya sahkan',
+  'Topluluk Kuralları': 'Peraturan Komuniti',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Tiada toleransi terhadap kandungan yang kesat, mengganggu, berunsur kebencian, seksual, mengagungkan keganasan atau melanggar hak cipta, serta penyalahgunaan perkhidmatan. Setiap komen, kiriman, mesej, senarai dan pengguna boleh dilaporkan dari dalam aplikasi; pengguna yang tidak diingini boleh disekat. Kandungan yang dilaporkan disemak dalam masa 24 jam; jika melanggar peraturan, ia dialih keluar dan akaun boleh ditutup.',
 };

@@ -1700,4 +1700,11 @@ const Map<String, String> cevirilerDa = {
   'Onayla': 'Godkend',
   'Yeni liste oluştur': 'Opret en ny liste',
   'Henüz listen yok.': 'Du har ingen lister endnu.',
+  'Telif hakkı onayı': 'Bekræftelse af ophavsret',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Upload kun videoer, som du har rettighederne til eller tilladelse til at dele. Videoer, der krænker ophavsretten, fjernes, og kontoen kan blive lukket.',
+  'Onaylıyorum': 'Jeg bekræfter',
+  'Topluluk Kuralları': 'Fællesskabsregler',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Nultolerance over for krænkende, chikanerende, hadefuldt, seksuelt, voldsforherligende eller ophavsretskrænkende indhold og over for misbrug af tjenesten. Enhver kommentar, ethvert opslag, enhver besked, liste og bruger kan anmeldes i appen; uønskede brugere kan blokeres. Anmeldt indhold gennemgås inden for 24 timer; ved regelbrud fjernes det, og kontoen kan blive lukket.',
 };

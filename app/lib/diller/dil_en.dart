@@ -1715,4 +1715,11 @@ const Map<String, String> cevirilerEn = {
   'Onayla': 'Approve',
   'Yeni liste oluştur': 'Create a new list',
   'Henüz listen yok.': 'You don\'t have any lists yet.',
+  'Telif hakkı onayı': 'Copyright confirmation',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Only upload videos you own or have permission to share. Videos that infringe copyright are removed and the account may be closed.',
+  'Onaylıyorum': 'I confirm',
+  'Topluluk Kuralları': 'Community Guidelines',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'There is zero tolerance for abusive, harassing, hateful, sexual, violence-glorifying or copyright-infringing content and for misuse of the service. Every comment, post, message, list and user can be reported from within the app, and unwanted users can be blocked. Reported content is reviewed within 24 hours; if it breaks the rules, it is removed and the account may be closed.',
 };

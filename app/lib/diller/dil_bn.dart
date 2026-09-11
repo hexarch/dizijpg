@@ -1688,4 +1688,11 @@ const Map<String, String> cevirilerBn = {
   'Onayla': 'অনুমোদন',
   'Yeni liste oluştur': 'নতুন লিস্ট বানাও',
   'Henüz listen yok.': 'তোমার এখনও কোনো লিস্ট নেই।',
+  'Telif hakkı onayı': 'কপিরাইট নিশ্চিতকরণ',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'শুধু সেই ভিডিও আপলোড করুন যার স্বত্ব আপনার বা যা শেয়ার করার অনুমতি আপনার আছে। কপিরাইট লঙ্ঘনকারী ভিডিও সরিয়ে ফেলা হয় এবং অ্যাকাউন্ট বন্ধ করা হতে পারে।',
+  'Onaylıyorum': 'আমি নিশ্চিত করছি',
+  'Topluluk Kuralları': 'কমিউনিটি নির্দেশিকা',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'আপত্তিকর, হয়রানিমূলক, ঘৃণাসূচক, যৌন, সহিংসতা-গৌরবকারী বা কপিরাইট লঙ্ঘনকারী কনটেন্ট এবং সেবার অপব্যবহারের প্রতি শূন্য সহনশীলতা। প্রতিটি মন্তব্য, পোস্ট, বার্তা, তালিকা ও ব্যবহারকারীকে অ্যাপের ভেতর থেকে রিপোর্ট করা যায়; অবাঞ্ছিত ব্যবহারকারীদের ব্লক করা যায়। রিপোর্ট করা কনটেন্ট ২৪ ঘণ্টার মধ্যে পর্যালোচনা করা হয়; নিয়ম ভাঙলে কনটেন্ট সরানো হয় এবং অ্যাকাউন্ট বন্ধ করা হতে পারে।',
 };

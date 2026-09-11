@@ -236,9 +236,11 @@ void main() {
       // 34 → 35: md.37'nin kullanım istatistikleri maddesi 10. indekse girdi.
       // 35 → 37: md.23'ün İKİ gönderi istatistiği maddesi 11-12. indekse girdi.
       // 37 → 38: md.23'ün video elde tutma maddesi 13. indekse girdi.
+      // 38 → 40: 11 Eyl 2026 App Store 1.2 topluluk kuralları (başlık+gövde)
+      //          38-39. indekse (sona) eklendi, YAPI'da Güvenlik'in önüne kondu.
       expect(
         uzunluklar.first,
-        38,
+        40,
         reason: '29 + 5 + 1 + 2 + 1 yeni dize bekleniyor',
       );
     });

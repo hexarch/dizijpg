@@ -1661,4 +1661,11 @@ const Map<String, String> cevirilerHe = {
   'Onayla': 'אישור',
   'Yeni liste oluştur': 'יצירת רשימה חדשה',
   'Henüz listen yok.': 'אין לך עדיין רשימות.',
+  'Telif hakkı onayı': 'אישור זכויות יוצרים',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'העלה רק סרטונים שהזכויות עליהם שלך או שיש לך רשות לשתף. סרטונים המפרים זכויות יוצרים מוסרים והחשבון עלול להיסגר.',
+  'Onaylıyorum': 'אני מאשר/ת',
+  'Topluluk Kuralları': 'כללי הקהילה',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'אפס סובלנות לתוכן פוגעני, מטריד, שונא, מיני, מהלל אלימות או מפר זכויות יוצרים, ולשימוש לרעה בשירות. כל תגובה, פוסט, הודעה, רשימה ומשתמש ניתנים לדיווח מתוך האפליקציה; משתמשים לא רצויים ניתן לחסום. תוכן שדווח נבדק תוך 24 שעות; אם הוא מפר את הכללים, הוא מוסר והחשבון עלול להיסגר.',
 };

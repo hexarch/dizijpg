@@ -1699,4 +1699,11 @@ const Map<String, String> cevirilerNb = {
   'Onayla': 'Godkjenn',
   'Yeni liste oluştur': 'Opprett en ny liste',
   'Henüz listen yok.': 'Du har ingen lister ennå.',
+  'Telif hakkı onayı': 'Bekreftelse av opphavsrett',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'Last bare opp videoer du har rettighetene til eller tillatelse til å dele. Videoer som krenker opphavsretten fjernes, og kontoen kan bli stengt.',
+  'Onaylıyorum': 'Jeg bekrefter',
+  'Topluluk Kuralları': 'Fellesskapsregler',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'Nulltoleranse for krenkende, trakasserende, hatefullt, seksuelt, voldsforherligende eller opphavsrettskrenkende innhold og for misbruk av tjenesten. Enhver kommentar, ethvert innlegg, enhver melding, liste og bruker kan rapporteres i appen; uønskede brukere kan blokkeres. Rapportert innhold gjennomgås innen 24 timer; ved regelbrudd fjernes det, og kontoen kan bli stengt.',
 };

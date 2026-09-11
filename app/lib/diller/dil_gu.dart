@@ -1684,4 +1684,11 @@ const Map<String, String> cevirilerGu = {
   'Onayla': 'મંજૂર કરો',
   'Yeni liste oluştur': 'નવી યાદી બનાવો',
   'Henüz listen yok.': 'તમારી પાસે હજી કોઈ યાદી નથી.',
+  'Telif hakkı onayı': 'કૉપિરાઇટ પુષ્ટિ',
+  'Yalnızca hakkına sahip olduğun ya da paylaşma izni aldığın videoları yükle. Telif hakkı ihlali içeren videolar kaldırılır ve hesap kapatılabilir.':
+      'માત્ર એવા વીડિયો અપલોડ કરો જેના હક તમારા છે અથવા જેને શેર કરવાની તમને પરવાનગી છે. કૉપિરાઇટનો ભંગ કરતા વીડિયો દૂર કરવામાં આવે છે અને ખાતું બંધ થઈ શકે છે.',
+  'Onaylıyorum': 'હું પુષ્ટિ કરું છું',
+  'Topluluk Kuralları': 'સમુદાયના નિયમો',
+  'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
+      'અપમાનજનક, હેરાન કરનારી, દ્વેષપૂર્ણ, જાતીય, હિંસાને મહિમા આપતી અથવા કૉપિરાઇટનો ભંગ કરતી સામગ્રી અને સેવાના દુરુપયોગ પ્રત્યે શૂન્ય સહનશીલતા છે. દરેક ટિપ્પણી, પોસ્ટ, સંદેશ, સૂચિ અને વપરાશકર્તાની ઍપમાંથી જાણ કરી શકાય છે; અનિચ્છનીય વપરાશકર્તાઓને બ્લૉક કરી શકાય છે. જાણ કરેલી સામગ્રીની 24 કલાકમાં સમીક્ષા થાય છે; નિયમ તૂટે તો સામગ્રી દૂર થાય છે અને ખાતું બંધ થઈ શકે છે.',
 };
