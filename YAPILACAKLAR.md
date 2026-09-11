@@ -37,6 +37,9 @@ doğrulandı; iPad Air 13" simülatöründe açılış/keşfet tamam. **Google d
 canlı dokunma YOK** (osascript/Quartz erişilebilirlik izni yok) — yapılandırma
 eklenti README'siyle birebir.
 
+**Gönderim:** 11 Eyl 12:04 build 227 sürüme bağlandı, sürüm dizesi 1.148.2,
+eski submission iptal + yeni submission → **WAITING_FOR_REVIEW** (tamamen API).
+
 **Kalan (kullanıcı):** Resolution Center mesajı (taslak
 `magaza-ios/apple-4.8-cevap.md`), Sign in with Apple .p8 + e-posta relay,
 APNs anahtarı (Firebase → iOS push).
