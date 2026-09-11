@@ -1,6 +1,33 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-11 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-11 — PLAY: 227 (1.148.2) ÜRETİME İNCELEMEYE GÖNDERİLDİ 🤖
+
+Öncesinde konsoldan doğrulandı: **223 (1.146.0) canlıydı** (Etkin, 177 ülke,
+522 yükleme), yayın özeti TEMİZDİ. 224-226 Play'e hiç gitmedi; 227 hepsini
+kapsıyor (Reels 2x basılı tutma, ExoPlayer geri tamponu, kişi crew kredileri,
+karşılama ad seçimi düzeltmeleri).
+
+- **AAB:** `cikti/dizijpg-1.148.2-227.aab` (113,2 MB / diskte 108 MB),
+  `flutter build appbundle --release`. Doğrulandı: versionCode **227**,
+  versionName **1.148.2**, `com.dizijpg.dizijpg`, imza `META-INF/DIZIJPG.RSA`
+  (gerçek yükleme anahtarı).
+- **Sürüm notu:** `surum-notu-1.148.2.txt`, 11 dil, en uzunu fr-FR 436 karakter.
+  ⚠ **"Apple ile giriş" (1.148.0) Play notuna GİRMEDİ** — `apple_kapisi.dart`
+  yalnız iOS'ta çiziliyor (`appleGirisiUygun`), Android kullanıcısı göremez.
+- Kanıtlanmış sıra aynen işledi: notlar ÖNCE (11/11, JS native setter) →
+  Yükle → AppleScript Cmd+Shift+G + yol → `App bundle 227 (1.148.2), SDK 24→36`
+  → sürüm adı OTOMATİK "227 (1.148.2)" → İleri → "Yayınlamaya hazır",
+  **cihaz kaybı 0** (telefon 12.468 / tablet 6.666 / TV 4 / otomobil 25 /
+  Chromebook 72 / XR 1), yeni yükleme 25 MB (+50,4 KB), güncelleme 5,14 MB →
+  Kaydet → "Genel bakışa git" → "1 değişikliği incelemeye gönder" → onay
+  penceresi (JS click DEĞİL, gerçek tıklama) → başlık
+  **"İncelenmekte olan değişiklikler"** (doğrulandı), hızlı kontroller
+  "en fazla 14 dakika".
+- Tarayıcı: iki tarayıcı bağlıydı, Play oturumu **Brave** ("Browser 1") idi;
+  hesap `u/0` ile doğrudan geldi.
+- ⬜ Onay gelince: `/admin/surum-duyuru` hedef:herkes.
+
 ## 2026-09-11 — APP STORE RET TARAMASI + YENİDEN GÖNDERİM (1.148.2+227) 🍎
 
 **Tetik:** 10 Eyl 4.8 reddi kapatıldıktan sonra, yeniden göndermeden ÖNCE

@@ -1,0 +1,115 @@
+# dizi.jpg 1.148.2 (227) - Play surum notlari (223/1.146.0'tan bu yana: 224-227)
+# Play sablonundaki dil sirasi: en-US, ar, de-DE, el-GR, es-ES, fr-FR, id,
+# it-IT, pt-BR, ru-RU, tr-TR
+# HER DIL 500 KARAKTERIN ALTINDA OLMALI (python len ile sayildi).
+# NOT: "Apple ile giris" (1.148.0) YALNIZ iOS'ta gosteriliyor - Play notuna GIRMEZ.
+
+<en-US>
+Watch Reels at 2x.
+
+• Reels: press and hold the right half of the screen to play at 2x; let go and it goes back to normal.
+• Rewinding a video no longer reloads it on Android — playback continues instantly.
+• Person pages: besides acting, directing and writing credits are now listed too.
+• Fixes to picking a username during onboarding.
+• Bug fixes and polish.
+</en-US>
+
+<ar>
+شاهد Reels بسرعة مضاعفة.
+
+• Reels: اضغط مطوّلاً على النصف الأيمن من الشاشة لتشغيل الفيديو بسرعة 2x؛ وعند رفع إصبعك يعود إلى وضعه الطبيعي.
+• لم يعد الفيديو يُحمّل من جديد عند الإرجاع على أندرويد — يستمر التشغيل فوراً.
+• صفحات الأشخاص: إلى جانب التمثيل، تُعرض الآن أعمال الإخراج وكتابة السيناريو أيضاً.
+• إصلاحات في اختيار اسم المستخدم عند البدء.
+• إصلاحات وتحسينات.
+</ar>
+
+<de-DE>
+Reels in 2x ansehen.
+
+• Reels: Halte die rechte Bildschirmhälfte gedrückt, um mit 2x abzuspielen; beim Loslassen geht es normal weiter.
+• Beim Zurückspulen wird das Video unter Android nicht mehr neu geladen – es läuft sofort weiter.
+• Personenseiten: neben der Schauspielerei werden jetzt auch Regie- und Drehbuch-Credits gelistet.
+• Korrekturen bei der Auswahl des Benutzernamens beim Einstieg.
+• Fehlerbehebungen und Feinschliff.
+</de-DE>
+
+<el-GR>
+Δες τα Reels σε 2x.
+
+• Reels: κράτα πατημένο το δεξί μισό της οθόνης για αναπαραγωγή 2x· μόλις αφήσεις, επιστρέφει στο κανονικό.
+• Το βίντεο δεν ξαναφορτώνει πια όταν γυρνάς πίσω στο Android — η αναπαραγωγή συνεχίζεται αμέσως.
+• Σελίδες προσώπων: εκτός από την ηθοποιία, μπαίνουν πλέον και οι σκηνοθεσίες και τα σενάρια.
+• Διορθώσεις στην επιλογή ονόματος χρήστη στην αρχή.
+• Διορθώσεις και βελτιώσεις.
+</el-GR>
+
+<es-ES>
+Mira los Reels a 2x.
+
+• Reels: mantén pulsada la mitad derecha de la pantalla para reproducir a 2x; al soltar vuelve a la velocidad normal.
+• Al rebobinar, el vídeo ya no se recarga en Android: la reproducción sigue al instante.
+• Páginas de personas: además de la interpretación, ahora también se listan los créditos de dirección y guion.
+• Correcciones al elegir nombre de usuario al empezar.
+• Correcciones y mejoras.
+</es-ES>
+
+<fr-FR>
+Regarde les Reels en 2x.
+
+• Reels : appuie longuement sur la moitié droite de l'écran pour lire en 2x ; en relâchant, la vitesse redevient normale.
+• Le retour en arrière ne recharge plus la vidéo sur Android : la lecture reprend aussitôt.
+• Pages des personnes : en plus du jeu d'acteur, la réalisation et l'écriture sont désormais listées.
+• Corrections lors du choix du nom d'utilisateur au démarrage.
+• Corrections et améliorations.
+</fr-FR>
+
+<id>
+Tonton Reels dengan kecepatan 2x.
+
+• Reels: tekan lama separuh kanan layar untuk memutar 2x; begitu dilepas, kembali normal.
+• Memundurkan video tidak lagi memuat ulang di Android — pemutaran langsung lanjut.
+• Halaman orang: selain akting, kredit penyutradaraan dan penulisan naskah kini ikut tampil.
+• Perbaikan pada pemilihan nama pengguna saat awal.
+• Perbaikan bug dan penyempurnaan.
+</id>
+
+<it-IT>
+Guarda i Reels a 2x.
+
+• Reels: tieni premuta la metà destra dello schermo per riprodurre a 2x; al rilascio torna alla velocità normale.
+• Riavvolgendo, il video non si ricarica più su Android: la riproduzione riparte subito.
+• Pagine delle persone: oltre alla recitazione, ora compaiono anche i crediti di regia e sceneggiatura.
+• Correzioni nella scelta del nome utente all'avvio.
+• Correzioni e miglioramenti.
+</it-IT>
+
+<pt-BR>
+Assista aos Reels em 2x.
+
+• Reels: segure a metade direita da tela para reproduzir em 2x; ao soltar, volta ao normal.
+• Voltar no vídeo não recarrega mais no Android — a reprodução continua na hora.
+• Páginas de pessoas: além da atuação, os créditos de direção e roteiro também aparecem.
+• Correções na escolha do nome de usuário no início.
+• Correções e melhorias.
+</pt-BR>
+
+<ru-RU>
+Смотрите Reels на скорости 2x.
+
+• Reels: зажмите правую половину экрана — видео пойдёт в 2x; отпустите, и скорость вернётся к обычной.
+• Перемотка назад больше не перезагружает видео на Android — воспроизведение продолжается сразу.
+• Страницы людей: кроме актёрских работ теперь показаны режиссёрские и сценарные.
+• Исправления при выборе имени пользователя в начале.
+• Исправления и улучшения.
+</ru-RU>
+
+<tr-TR>
+Reels'i 2x hızda izle.
+
+• Reels: ekranın sağ yarısını basılı tut, video 2x oynasın; bırakınca normale döner.
+• Videoyu geri sarınca Android'de baştan yüklenmiyor artık — oynatma anında devam ediyor.
+• Kişi sayfaları: oyunculuğun yanında yönetmenlik ve senaristlik yapımları da listeleniyor.
+• Karşılamada kullanıcı adı seçimiyle ilgili düzeltmeler.
+• Hata düzeltmeleri ve iyileştirmeler.
+</tr-TR>
