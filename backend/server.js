@@ -6845,7 +6845,7 @@ app.get('/og/gozat', ogKesifUcu({
 // `acikTamYollar` listesinde, yani oturumsuz ziyaretçi de AYNI sayfayı
 // görüyor. Cloaking kilidi (`SEO_KESIF_INDEKS` disiplini) böylece sağlanıyor
 // ve aynı test bunu da doğruluyor.
-const SEO_GIZLILIK_GUNCELLEME = '14.08.2026';   // gizlilik.dart: gizlilikGuncelleme
+const SEO_GIZLILIK_GUNCELLEME = '11.09.2026';   // gizlilik.dart: gizlilikGuncelleme
 const SEO_GIZLILIK_ILETISIM = 'iletisim@dizijpg.com';
 const SEO_GIZLILIK_BLOKLARI = [
   {
@@ -6981,6 +6981,22 @@ const SEO_GIZLILIK_BLOKLARI = [
     tip: 'govde',
     metin: 'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv '
       + 'e-posta adresine gönderilir.',
+  },
+  // 11 Eyl 2026'da App Store 1.2 (kullanıcı üretimi içerik) için
+  // `gizlilik.dart`a eklendi ama BURAYA yansıtılmamıştı: SSR bu bölümü
+  // basmıyordu, yani bot ile kullanıcı FARKLI gizlilik metni görüyordu
+  // (`seo_gizlilik_sayfasi.test.js` bunu "cloaking" diye kilitliyor ve
+  // 11 Eyl'den 12 Eyl'e kadar KIRMIZI kaldı). /gizlilik noindex DEĞİL,
+  // yani eksik metin doğrudan indekse giriyordu.
+  { tip: 'baslik', metin: 'Topluluk Kuralları' },
+  {
+    tip: 'govde',
+    metin: 'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici '
+      + 'ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır '
+      + 'tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı '
+      + 'uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar '
+      + 'engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; '
+      + 'kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.',
   },
   { tip: 'baslik', metin: 'Güvenlik' },
   {

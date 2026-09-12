@@ -75,10 +75,24 @@ test('normalleştirme kırpar ve küçültür', () => {
 // ---------------------------------------------------------------------------
 
 /// Bir uç gövdesini kabaca kes: `app.post('<yol>'` işaretinden sonraki N karakter.
-function ucGovdesi(yol, uzunluk = 2200) {
+// 12 EYL 2026 — SABİT PENCERE TERK EDİLDİ, SESSİZ KAPSAM KAYBI ÜRETİYORDU.
+// Pencere elle verilen bir karakter sayısıydı (ör. 5200). `/auth/eposta-degistir/kod`
+// ucu zamanla 5.703 karaktere büyüdü; `EPOSTA_ULASMADI` (5.526) ve
+// `tur: 'eposta_degistir'` (5.339) pencerenin DIŞINDA kaldı ve üç test
+// KIRMIZIYA döndü — oysa iddiaların hepsi kodda duruyordu. Yani test artık
+// gerçeği değil, kendi sihirli sayısını ölçüyordu; sayıyı büyütmek de aynı
+// tuzağı bir sonraki büyümeye erteler.
+//
+// Pencere artık UCUN KENDİ SINIRINDAN geliyor: bir sonraki `app.<metot>(`
+// bildirimine kadar. `uzunluk` parametresi geriye dönük uyumluluk için
+// duruyor ama YALNIZ ÜST SINIR olarak — verilen sayı ucun gerçek boyundan
+// küçükse görmezden gelinir.
+function ucGovdesi(yol, uzunluk = Infinity) {
   const i = SERVER.indexOf(`app.post('${yol}'`);
   assert.notEqual(i, -1, `${yol} ucu bulunamadı`);
-  return SERVER.slice(i, i + uzunluk);
+  const sonraki = SERVER.slice(i + 10).search(/\napp\.(get|post|put|patch|delete|use)\(/);
+  const son = sonraki === -1 ? SERVER.length : i + 10 + sonraki;
+  return SERVER.slice(i, Math.max(son, Math.min(i + uzunluk, SERVER.length)));
 }
 
 test('kayıt ve bağlama uçları epostaGecerli çağırır', () => {

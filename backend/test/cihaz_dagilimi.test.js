@@ -226,7 +226,18 @@ test('uç: yetkisiz erişime kapalı — mevcut adminKisit kapısı kullanılır
     '/admin/cihazlar adminKisit ile sarılmalı (yeni yetki yolu icat edilmez)');
   // adminKisit hâlâ IP + sabit-zamanlı token kapısı mı? (kapı zayıflatılmasın)
   const kapi = SERVER.slice(SERVER.indexOf('function adminKisit('), SERVER.indexOf('const ADMIN_HTML'));
-  assert.match(kapi, /ADMIN_IPLER/);
+  // 3 Eyl 2026: IP listesi SICAK LİSTEYE taşındı (`adminIpListesi()` →
+  // ADMIN_IPLER_DOSYA, yoksa ADMIN_IPLER). Kapı aynı kapı, kaynağı dolaylı.
+  // Test 12 Eyl'e kadar hâlâ `ADMIN_IPLER` sabitini kapının GÖVDESİNDE
+  // arıyordu ve bu yüzden KIRMIZI kalmıştı — yani "kapı zayıflatılmasın"
+  // iddiası dokuz gündür hiç ölçülmüyordu. Zincirin iki halkası da kilitli:
+  assert.match(kapi, /adminIpListesi\(\)/,
+    'kapı IP listesini okumuyor — IP kapısı düşmüş olabilir');
+  assert.match(kapi, /ipEslesir\(ip, k\)/, 'kapı IP eşleştirmesi yapmıyor');
+  const liste = SERVER.slice(SERVER.indexOf('function adminIpListesi('),
+    SERVER.indexOf('function adminIpListesi(') + 1200);
+  assert.match(liste, /ADMIN_IPLER/,
+    'IP listesi kaynağı ADMIN_IPLER değil — yapılandırma yolu değişmiş');
   assert.match(kapi, /x-admin-token/);
   assert.match(kapi, /esitGizli/);
   assert.match(kapi, /res\.status\(403\)/);
