@@ -167,17 +167,8 @@ test('sitemap sorgu son tarihi nginx sitemap zaman aşımından KÜÇÜK', () =>
 
 test('HER site haritası sorgusu son tarihli yoldan geçiyor', () => {
   const yardimci = bildirimCek('sitemapSorgu');
-  // 12 Eyl 2026: son tarih PARAMETRE oldu (bölüm kovasının açılışta
-  // ısıtılması nginx'in dışında koşuyor, oraya 40 sn dar geliyor). GARANTİ
-  // AYNEN DURUYOR ve iki parçaya bölündü:
-  //   · her koşuda `SET LOCAL statement_timeout` kurulmalı,
-  //   · VARSAYILAN istek yolunun sabiti olmalı — yani parametre vermeyen her
-  //     çağrı (dört harita üreticisinin dördü de) eskisiyle aynı son tarihi
-  //     alır. Varsayılan kaybolursa uçlar sessizce sonsuz beklerdi.
-  assert.match(yardimci, /SET LOCAL statement_timeout = \$\{Number\(zamanAsimiMs\)\}/,
+  assert.match(yardimci, /SET LOCAL statement_timeout = \$\{SITEMAP_SORGU_ZAMAN_ASIMI_MS\}/,
     'statement_timeout kurulmuyor');
-  assert.match(yardimci, /zamanAsimiMs = SITEMAP_SORGU_ZAMAN_ASIMI_MS/,
-    'son tarihin varsayılanı istek yolu sabiti değil — uç sonsuz bekleyebilir');
   assert.match(yardimci, /SET LOCAL/,
     'SET LOCAL değil düz SET kullanılmış — havuzdaki bağlantı kirlenir');
   assert.match(yardimci, /istemci\.release\(\)/, 'bağlantı havuza iade edilmiyor');
@@ -237,14 +228,28 @@ test('kova, URL sayısı DEĞİŞMEDİKÇE değişim damgasını ilerletmiyor', 
 // ===========================================================================
 // A4 — mutlak bölüm numaralandırması: harita ASLA URL uydurmaz
 // ===========================================================================
+// 12 Eyl 2026: ölçüm `seo_bolum_olcu`ya taşındı, yani A4 garantisi artık İKİ
+// halkalı bir zincir. İkisi de kilitleniyor, çünkü biri koparsa harita yine
+// uydurma URL üretir:
+//   · SEO_BOLUM_OLCU_TAZELE → numarayı TMDB sezon belgesinin `episode_number`
+//     alanından OKUR ve tabloya `b` olarak yazar,
+//   · SITEMAP_BOLUM_SORGU   → numarayı o tablodan okur, türetmez.
+// generate_series yasağı HER İKİSİNDE de geçerli.
 test('bölüm haritası URL\'i GERÇEK episode_number\'dan üretiyor, generate_series\'ten DEĞİL', () => {
   const sorgu = bildirimCek('SITEMAP_BOLUM_SORGU');
-  assert.ok(!/generate_series/.test(sorgu),
-    'BÖLÜM HARİTASI generate_series KULLANIYOR. TMDB\'de mutlak numaralandırma var '
-    + '(Naruto: Shippuuden S10 = 197..221, episode_count = 25): 1..N üretmek '
-    + 'Google\'a doğrudan 404 bildirmektir.');
-  assert.match(sorgu, /\(e->>'episode_number'\)::int AS bolum/,
+  const olcu = bildirimCek('SEO_BOLUM_OLCU_TAZELE');
+  for (const [ad, s] of [['harita', sorgu], ['ölçü tazelemesi', olcu]]) {
+    assert.ok(!/generate_series/.test(s),
+      `BÖLÜM ${ad} generate_series KULLANIYOR. TMDB'de mutlak numaralandırma var `
+      + '(Naruto: Shippuuden S10 = 197..221, episode_count = 25): 1..N üretmek '
+      + 'Google\'a doğrudan 404 bildirmektir.');
+  }
+  assert.match(olcu, /\(e->>'episode_number'\)::int AS bolum/,
     'bölüm numarası sezon belgesinin gerçek listesinden gelmiyor');
+  assert.match(olcu, /'b', b\.bolum/,
+    'ölçü tablosuna yazılan `b` alanı gerçek bölüm numarası değil');
+  assert.match(sorgu, /\(e->>'b'\)::int AS bolum/,
+    'harita bölüm numarasını ölçü tablosundan okumuyor');
   const uret = bildirimCek('sitemapBolumUret');
   assert.match(uret, /sezon\/\$\{r\.sezon\}\/bolum\/\$\{r\.bolum\}/);
   assert.ok(!/\+ 1|\bi\b/.test(uret.replace(/\/\/.*$/gm, '')),
@@ -397,14 +402,33 @@ test('firma haritası `sirketIndekslenir` eşiğini kullanıyor ve DAR tarafta',
 // 1 Eyl (kişi) ve 12 Eyl (firma) arızalarının ortak ikinci dersi: ölçüm
 // haritanın ÖN ADIMI, KOŞULU DEĞİL. `sitemapSirketUret` tazelemede atarsa tüm
 // firma haritası yine 500'e düşerdi.
-test('firma ölçü tazelemesi haritayı DÜŞÜREMEZ (atmaz)', () => {
-  const tazele = bildirimCek('seoYapimSirketTazele');
+// 12 Eyl 2026 (ikinci tur): bölüm ailesi de ölçü tablosuna geçince üç ailenin
+// tazeleme gövdesi birebir aynıydı; `seoOlcuTazele` ORTAK SÜRÜCÜ oldu.
+// Garanti artık tek yerde kilitleniyor — ama ÜÇ ÇAĞIRANIN da o sürücüden
+// geçtiği ayrıca doğrulanıyor, yoksa biri kendi döngüsünü yazıp sessizce
+// kuralın dışına çıkabilir.
+test('ölçü tazelemeleri haritayı DÜŞÜREMEZ (atmaz)', () => {
+  const tazele = bildirimCek('seoOlcuTazele');
   assert.match(tazele, /catch \(e\)/,
-    'tazeleme hatayı yutmuyor — tek yavaş sorgu tüm firma haritasını 500 yapar');
+    'tazeleme hatayı yutmuyor — tek yavaş sorgu tüm haritayı 500 yapar');
   assert.ok(!/throw/.test(tazele), 'tazeleme atıyor — bayat ölçüyle üretmek daha iyidir');
-  const uret = bildirimCek('sitemapSirketUret');
-  assert.match(uret, /await seoYapimSirketTazele\(\)/,
-    'harita üretimi ölçüyü tazelemiyor — yeni yapımlar haritaya hiç girmez');
+  for (const [uretici, cagri] of [
+    ['sitemapSirketUret', 'seoYapimSirketTazele'],
+    ['sitemapBolumUret', 'seoBolumOlcuTazele'],
+  ]) {
+    assert.match(bildirimCek(uretici), new RegExp(`await ${cagri}\\(\\)`),
+      `${uretici} ölçüyü tazelemiyor — yeni kayıtlar haritaya hiç girmez`);
+  }
+  // Üç aile de ORTAK sürücüden geçmeli (kendi döngüsünü yazan olmasın).
+  for (const f of ['seoYapimSirketTazele', 'seoBolumOlcuTazele']) {
+    assert.match(bildirimCek(f), /seoOlcuTazele\(/,
+      `${f} ortak sürücüyü kullanmıyor — durma kuralı ondan ayrışabilir`);
+  }
+  // Bölüm ailesi İKİ tabloyu da tazelemeli; biri unutulursa harita yarım kalır.
+  const bolum = bildirimCek('seoBolumOlcuTazele');
+  for (const t of ['seo_dizi_olcu', 'seo_bolum_olcu']) {
+    assert.ok(bolum.includes(t), `bölüm tazelemesi ${t} tablosuna dokunmuyor`);
+  }
 });
 
 test('kişi/firma haritaları YALNIZ /kisi ve /sirket URL\'i üretiyor', () => {
@@ -571,17 +595,33 @@ test('harita dört aileyi de SEO_DILLER\'in tamamında bildiriyor (5 Eyl kararı
     'beyaz liste SEO_DILLER üzerinden süzülmüyor — dil listesi ikiye ayrıldı');
 });
 
-// 12 Eyl 2026, İLK DOLDURMADA ÖLÇÜLDÜ: firma tazelemesi `DISTINCT ON` ile
+// 12 Eyl 2026, İLK DOLDURMADA ÖLÇÜLDÜ: tazelemeler `DISTINCT ON` ile
 // varyantları tekilleştirdiği için YAZILAN satır öbek boyundan SİSTEMATİK
 // olarak küçük çıkıyor (1.000 kaynak satır → 979 yazım). Kişideki
 // `rowCount < OBEK` durma koşulu buraya kopyalanırsa döngü İLK ÖBEKTEN sonra
 // durur ve tablo hiç dolmaz — harita da sessizce boş kalır.
-test('firma tazelemesi SU SEVİYESİYLE duruyor, satır sayısıyla DEĞİL', () => {
-  const tazele = bildirimCek('seoYapimSirketTazele');
-  assert.ok(!new RegExp('rowCount\\s*<\\s*SEO_YAPIM_SIRKET_OBEK').test(tazele),
-    'firma tazelemesi öbek doluluğuyla duruyor — DISTINCT ON yüzünden ilk öbekte durur');
+test('ölçü tazelemesi SU SEVİYESİYLE duruyor, satır sayısıyla DEĞİL', () => {
+  const tazele = bildirimCek('seoOlcuTazele');
+  assert.ok(!/rowCount\s*<\s*a\.obek/.test(tazele),
+    'tazeleme öbek doluluğuyla duruyor — DISTINCT ON yüzünden ilk öbekte durur');
   assert.match(tazele, /rowCount === 0/,
     'boş öbekte durmuyor — sonsuz döngü riski');
   assert.match(tazele, /new Date\(yeni\) > new Date\(su\)/,
     'su seviyesi ilerlemesi denetlenmiyor — aynı zaman damgalı öbek sonsuza dek okunur');
+  // Her tazeleme sorgusu su seviyesini OKUMALI ve fikirsel yazmalı; biri
+  // artımlılığı kaybederse tam tarama 40 sn tavanını yeniden aşar.
+  for (const s of ['SEO_YAPIM_SIRKET_TAZELE', 'SEO_DIZI_OLCU_TAZELE',
+    'SEO_BOLUM_OLCU_TAZELE']) {
+    const q = bildirimCek(s);
+    assert.match(q, /guncelleme >= \$1/, `${s} su seviyesi kullanmıyor`);
+    assert.match(q, /ON CONFLICT \([^)]+\) DO UPDATE/, `${s} fikirsel değil`);
+    assert.match(q, /DISTINCT ON/, `${s} varyantları tekilleştirmiyor`);
+  }
+  // Artık satır toplama üçünde de EŞİTLİKLE okumalı (regex'e dönerse satır
+  // başına seq scan doğar — tam da kaçtığımız şey).
+  for (const s of ['SEO_YAPIM_SIRKET_TEMIZLE', 'SEO_DIZI_OLCU_TEMIZLE',
+    'SEO_BOLUM_OLCU_TEMIZLE']) {
+    assert.match(bildirimCek(s), /t\.anahtar = [a-z]\.anahtar/,
+      `${s} saklanan anahtarla eşitlik yapmıyor — satır başına tarama`);
+  }
 });

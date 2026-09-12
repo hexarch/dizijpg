@@ -169,9 +169,16 @@ test('harita süzgeci ile sayfanın `indexle`si AYNI DÖRT ALANI sayıyor', () =
 test('harita bölümü dizi düzeyi kapsam süzgecinden geçiriyor (TR / sonraki sezon)', () => {
   const sorgu = bildirimCek('SITEMAP_BOLUM_SORGU');
   assert.match(sorgu, /dizi_bilgi AS \(/, 'dizi düzeyi kapsam CTE\'si yok');
-  assert.match(sorgu, /\(veri->'origin_country'\) \? 'TR' AS tr_yapim/,
+  // 12 Eyl 2026: iki sinyal de `seo_dizi_olcu`ya taşındı (harita sorgusu
+  // 64,7 sn'ye çıkıp bölüm haritalarını 500'e düşürmüştü —
+  // migrasyon-2026-09-12b.sql). Kapsam kuralı DEĞİŞMEDİ; kilit iki parçaya
+  // bölündü: sinyalleri ÖLÇÜ üretir, KAPSAM süzgeci haritada uygulanır.
+  assert.match(sorgu, /FROM seo_dizi_olcu d JOIN harita_tv/,
+    'dizi düzeyi kapsam ölçü tablosundan okumuyor');
+  const diziOlcu = bildirimCek('SEO_DIZI_OLCU_TAZELE');
+  assert.match(diziOlcu, /\(s\.veri->'origin_country'\) \? 'TR'/,
     'TR yapım sinyali detay belgesinden okunmuyor');
-  assert.match(sorgu, /next_episode_to_air'->>'season_number'/,
+  assert.match(diziOlcu, /next_episode_to_air'->>'season_number'/,
     'yayında-dizi sinyali yok');
   // 29 Ağu 2026: BEŞİNCİ dal (`seo_talep_dizi`). Kapsam parantezi artık dört
   // terimli; içerik ölçüsü AYRI parantezde kalmaya devam ediyor (B2).
@@ -233,9 +240,11 @@ test('harita, sayfanın GÖRDÜĞÜNDEN AZINI okuyor (tr-TR sezon satırı)', ()
   // harita yalnız tr-TR sezon satırını okuyor. Yön ÖNEMLİ: harita "içeriği
   // var" dediğinde sayfa da der; tersi olabilir ama zararsızdır (haritada
   // olmayan indekslenebilir sayfa hata değil, iç bağlantıdan bulunur).
-  const sorgu = bildirimCek('SITEMAP_BOLUM_SORGU');
-  assert.ok(sorgu.includes("/season/[0-9]+\\\\?language=tr-TR$'"),
-    'harita sezon satırını tr-TR ile sınırlamıyor');
+  // 12 Eyl 2026: sezon satırını okuyan yer ölçü tazelemesi oldu; tr-TR
+  // sınırı oraya taşındı (harita artık ölçü tablosundan okuyor).
+  const olcu = bildirimCek('SEO_BOLUM_OLCU_TAZELE');
+  assert.ok(olcu.includes("/season/[0-9]+\\\\?language=tr-TR$'"),
+    'ölçü sezon satırını tr-TR ile sınırlamıyor');
   assert.match(bolum("const ozetEn = seoCeviriAlani(bol.translations", 'const seo = await'),
     /seoCeviriAlani\(bol\.translations, 'overview'\)/);
 });
@@ -566,7 +575,7 @@ test('talep tavanı VAR, yalnız TALEP dalına işliyor ve EN ESKİDEN sayıyor'
   // Sıra ARTAN (sezon, bölüm): kırpılan uç EN YENİ bölümlerdir. Ters sıralama
   // "bleach 2 sezon 45" gibi ERKEN bölüm kazananlarını keserdi.
   assert.match(sorgu,
-    /row_number\(\) OVER \(PARTITION BY s\.tmdb_id\n\s+ORDER BY s\.sezon, \(e->>'episode_number'\)::int\) AS sira/,
+    /row_number\(\) OVER \(PARTITION BY s\.tmdb_id\n\s+ORDER BY s\.sezon, \(e->>'b'\)::int\) AS sira/,
     'sıra numarası yok ya da AZALAN sıralı');
   // Tavan `kirpik` sütununda, kapsam parantezinde DEĞİL: TR yapım / yayında
   // sezon / kazanan dallarıyla gelen bölüm tavandan ETKİLENMEZ.
@@ -638,9 +647,15 @@ test('ısıtıcının SEZON anahtarı haritanın OKUDUĞU anahtarla AYNI', () =>
   // 28 Ağu'da `append_to_response=watch/providers` yüzünden `/tv/:id`
   // anahtarı kaymıştı. Aynı hata sezon anahtarında olursa harita 20 bin URL
   // için sonsuza kadar soğuk kalır — ısıtılan satırı kimse okumaz.
-  const sorgu = bildirimCek('SITEMAP_BOLUM_SORGU');
-  assert.ok(sorgu.includes("/season/[0-9]+\\\\?language=tr-TR$'"),
-    'harita sezon anahtarını tr-TR ile sınırlamıyor');
+  //
+  // 12 EYL 2026 — ZİNCİRE BİR HALKA GİRDİ. Harita artık sezon belgesini
+  // DOĞRUDAN okumuyor; arada `seo_bolum_olcu` var. Yani anahtarı ısıtıcıyla
+  // eşleşmesi gereken taraf ÖLÇÜ TAZELEMESİ oldu. Halka kayarsa belirti
+  // eskisinin birebir aynısı: ısıtıcı satırı doldurur, ölçü onu hiç görmez,
+  // harita sonsuza kadar soğuk kalır.
+  const olcu = bildirimCek('SEO_BOLUM_OLCU_TAZELE');
+  assert.ok(olcu.includes("/season/[0-9]+\\\\?language=tr-TR$'"),
+    'ölçü sezon anahtarını tr-TR ile sınırlamıyor');
   // Isıtıcı YOLU eksiz üretir (`bolumYollari`); dili `onbellekAnahtari` ekler.
   assert.match(KAYNAK, /tmdbGetir\(`\/tv\/\$\{id\}\/season\/\$\{s\}`/,
     'SSR sezon yolu ek parametre almış — anahtar ısıtıcıdan ayrışır');

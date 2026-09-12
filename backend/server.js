@@ -7482,56 +7482,56 @@ const SITEMAP_SORGU = `
 // migrasyon-2026-08-29.sql.
 const SEO_TALEP_BOLUM_TAVAN = 500;
 
+// ---------------------------------------------------------------------------
+// 12 EYL 2026 — ÖLÇÜM ARTIK SAKLANIYOR (`seo_dizi_olcu` + `seo_bolum_olcu`),
+// HARİTA SORGUSU TARAMA DEĞİL İNDEKS OKUMASI.
+// Uzun gerekçe ve ölçümler: migrasyon-2026-09-12b.sql.
+// ---------------------------------------------------------------------------
+// Sorgu canlıda 64,7 sn'ye çıkmıştı (tavan 40 sn) ve bölüm haritalarının
+// tamamı 500 dönüyordu; arızayı `sitemapKovaOku`nun bayat servis dalı
+// aylarca maskelemişti. Kişi (1 Eyl) ve firma (12 Eyl) ailelerinde uygulanan
+// "ölçüyü sakla" kalıbının üçüncü ve son uygulaması.
+//
+// GARANTİLER DEĞİŞMEDİ, KAYNAKLARI DEĞİŞTİ:
+//   · `dizi_bilgi`  artık `seo_dizi_olcu`dan okuyor (eskiden 49.690 TMDB
+//     belgesini `veri` sütunuyla birlikte sıralıyordu — 13,6 sn),
+//   · `tmdb_bolum`  artık `seo_bolum_olcu`dan okuyor (eskiden 6.992 sezon
+//     belgesini TOAST'tan açıp 157.089 bölüm satırı üretiyordu — 44,7 sn).
+// `sira` penceresi ve `birlesik` dalları AYNEN duruyor: kapsam kuralının
+// beş dalı (içerik ölçüsü, TR yapımı, yayında sezon, kazanan, talep) ve
+// talep tavanı bu turda HİÇ değişmedi.
 const SITEMAP_BOLUM_SORGU = `
   WITH harita_tv AS (
     SELECT DISTINCT tmdb_id FROM (${SITEMAP_SORGU}) h WHERE tur = 'tv'
   ), dizi_bilgi AS (
-    SELECT DISTINCT ON (tv) tv AS tmdb_id,
-           (veri->'origin_country') ? 'TR' AS tr_yapim,
-           CASE WHEN veri->'next_episode_to_air'->>'season_number' ~ '^[0-9]+$'
-                THEN (veri->'next_episode_to_air'->>'season_number')::int
-           END AS sonraki_sezon
-      FROM (
-        SELECT (regexp_match(anahtar, '^/tv/([0-9]+)\\?'))[1]::int AS tv, veri
-          FROM tmdb_onbellek
-         WHERE anahtar ~ '^/tv/[0-9]+\\?'
-           AND anahtar LIKE '%language=tr-TR%'
-      ) t JOIN harita_tv h ON h.tmdb_id = t.tv
-     ORDER BY tv
-  ), sezon_yaniti AS (
-    SELECT (regexp_match(anahtar, '^/tv/([0-9]+)/season/([0-9]+)'))[1]::int AS tmdb_id,
-           (regexp_match(anahtar, '^/tv/([0-9]+)/season/([0-9]+)'))[2]::int AS sezon,
-           veri
-      FROM tmdb_onbellek
-     WHERE anahtar LIKE '/tv/%/season/%'
-       AND anahtar ~ '^/tv/[0-9]+/season/[0-9]+\\?language=tr-TR$'
-       AND jsonb_typeof(veri->'episodes') = 'array'
+    SELECT d.tmdb_id, d.tr_yapim, d.sonraki_sezon
+      FROM seo_dizi_olcu d JOIN harita_tv h ON h.tmdb_id = d.tmdb_id
   ), tmdb_bolum AS MATERIALIZED (
-    -- AS MATERIALIZED ve harita_tv birleşiminin SONRAYA bırakılması BİLİNÇLİ.
-    -- İlk yazımda harita_tv bu CTE'nin içinde birleştiriliyordu; planlayıcı
-    -- regex süzgeçli seq scan'e "rows=1" biçtiği için jsonb belgelerini
-    -- Materialize edip 1.219 kez YENİDEN TARAYAN bir nested loop seçti:
-    -- ölçülen 37 sn. Birleşim toplulaştırmadan SONRA yapılınca (küçük satırlar,
-    -- hash join) aynı sonuç 6-8 sn.
-    SELECT s.tmdb_id, s.sezon, (e->>'episode_number')::int AS bolum,
-           max(length(btrim(coalesce(e->>'overview', '')))) AS ozet,
-           max(jsonb_array_length(coalesce(e->'guest_stars', '[]'::jsonb))) AS konuk,
-           count(*) FILTER (WHERE coalesce(e->>'still_path', '') <> '') AS kare,
-           max(CASE WHEN e->>'air_date' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
-                    THEN (e->>'air_date')::date END) AS yayin,
-           -- TALEP TAVANI İÇİN SIRA (29 Ağu 2026). Pencere fonksiyonu GROUP BY
-           -- SONRASI çalışır, yani bu numara "dizinin kaçıncı bölümü" demektir
-           -- (mutlak numaralandırmadan bağımsız). ARTAN sırada: kırpılan uç
-           -- EN YENİ bölümler olur, en eskiler değil — gerekçe ve ölçüm
-           -- migrasyon-2026-08-29.sql'de ("bleach 2 sezon 45" kanıtı).
+    -- HARİTA_TV BİRLEŞİMİ ARTIK BURADA (eskiden BİLEREK sonraya bırakılmıştı).
+    -- Eski gerekçe: kaynak tmdb_onbellek üzerinde regex süzgeçli bir seq
+    -- scan'di, planlayıcı ona "rows=1" biçip jsonb belgelerini 1.219 kez
+    -- yeniden tarayan bir nested loop seçiyordu (ölçülen 37 sn). O gerekçe
+    -- ORTADAN KALKTI: kaynak artık birincil anahtarı (tmdb_id, sezon) olan
+    -- küçük bir ölçü tablosu, erken birleşim indeks okumasına iniyor ve
+    -- açılacak 6.992 yerine yalnız haritadaki dizilerin sezonları kalıyor.
+    -- (Sablon dizesi: BACKTICK YOK.)
+    SELECT s.tmdb_id, s.sezon, (e->>'b')::int AS bolum,
+           (e->>'o')::int AS ozet,
+           (e->>'k')::int AS konuk,
+           (e->>'r')::int AS kare,
+           CASE WHEN coalesce(e->>'y', '') <> '' THEN (e->>'y')::date END AS yayin,
+           -- TALEP TAVANI İÇİN SIRA (29 Ağu 2026). Bu numara "dizinin kaçıncı
+           -- bölümü" demektir (mutlak numaralandırmadan bağımsız). ARTAN
+           -- sırada: kırpılan uç EN YENİ bölümler olur, en eskiler değil —
+           -- gerekçe ve ölçüm migrasyon-2026-08-29.sql'de ("bleach 2 sezon 45"
+           -- kanıtı). SAKLANMIYOR: dizinin TÜM bölüm kümesine bağlı.
            -- (Sablon dizesi: BACKTICK YOK.)
            row_number() OVER (PARTITION BY s.tmdb_id
-                              ORDER BY s.sezon, (e->>'episode_number')::int) AS sira
-      FROM sezon_yaniti s, jsonb_array_elements(s.veri->'episodes') e
+                              ORDER BY s.sezon, (e->>'b')::int) AS sira
+      FROM seo_bolum_olcu s
+           JOIN harita_tv h ON h.tmdb_id = s.tmdb_id,
+           jsonb_array_elements(s.bolumler) e
      WHERE s.sezon >= 1
-       AND e->>'episode_number' ~ '^[0-9]+$'
-       AND (e->>'episode_number')::int >= 1
-     GROUP BY 1, 2, 3
   ), bizim_bolum AS (
     SELECT tmdb_id, sezon, bolum, max(tarih) AS son FROM (
       SELECT y.tmdb_id, y.sezon, y.bolum, y.tarih
@@ -7601,6 +7601,128 @@ const SITEMAP_BOLUM_SORGU = `
          bool_and(kirpik) AS kirpik
     FROM birlesik GROUP BY tmdb_id, sezon, bolum
    ORDER BY tmdb_id, sezon, bolum`;
+
+// ---------------------------------------------------------------------------
+// BÖLÜM HARİTASININ ÖLÇÜ TAZELEMELERİ (12 Eyl 2026)
+// ---------------------------------------------------------------------------
+// İkisi de `SEO_YAPIM_SIRKET_TAZELE` ile AYNI iskelet: `tmdb_onbellek.guncelleme`
+// su seviyesi (`idx_onbellek_zaman`), öbekli ilerleme, varyantlar arasından
+// `DISTINCT ON` ile EN TAZE satır, `ON CONFLICT ... DO UPDATE` ile fikirsel
+// yazım. Gerekçelerin tamamı o sabitin başlığında; burada tekrarlanmıyor.
+//
+// Öbek boyları AYRI, çünkü belge boyları çok farklı: dizi ayrıntı belgesi
+// büyük (credits/videos/images), sezon belgesi orta boy ama açılınca ~22
+// bölüm üretiyor.
+const SEO_DIZI_OLCU_OBEK = 4000;
+const SEO_BOLUM_OLCU_OBEK = 800;
+const SEO_BOLUM_OLCU_BUTCE_MS = 25000;
+
+// Dizi düzeyi ölçü — eski `dizi_bilgi` CTE'sinin ifadeleri BİREBİR.
+// Kaynak süzgeci de eskisiyle aynı (`^/tv/[0-9]+\?` + tr-TR): harita eskiden
+// bu kümeden okuyordu, kapsam değişmesin.
+// TEK FARK VE İYİLEŞME: eski CTE `DISTINCT ON (tv) ... ORDER BY tv` ile
+// varyantlar arasından KEYFİ birini alıyordu; burada `guncelleme DESC` ile
+// EN TAZE olan alınıyor (firma tablosundaki kararla aynı).
+const SEO_DIZI_OLCU_TAZELE = `
+  WITH src AS (
+    SELECT (regexp_match(anahtar, '^/tv/([0-9]+)\\?'))[1]::int AS tmdb_id,
+           anahtar, guncelleme, veri
+      FROM tmdb_onbellek
+     WHERE anahtar ~ '^/tv/[0-9]+\\?'
+       AND anahtar LIKE '%language=tr-TR%'
+       AND guncelleme >= $1
+     ORDER BY guncelleme
+     LIMIT $2
+  ), tek AS (
+    SELECT DISTINCT ON (tmdb_id) *
+      FROM src
+     WHERE tmdb_id IS NOT NULL
+     ORDER BY tmdb_id, guncelleme DESC
+  )
+  INSERT INTO seo_dizi_olcu (tmdb_id, tr_yapim, sonraki_sezon, anahtar,
+                             kaynak_zaman, olculdu)
+  SELECT s.tmdb_id,
+         coalesce((s.veri->'origin_country') ? 'TR', false),
+         CASE WHEN s.veri->'next_episode_to_air'->>'season_number' ~ '^[0-9]+$'
+              THEN (s.veri->'next_episode_to_air'->>'season_number')::int
+         END,
+         s.anahtar, s.guncelleme, now()
+    FROM tek s
+      ON CONFLICT (tmdb_id) DO UPDATE
+         SET tr_yapim      = EXCLUDED.tr_yapim,
+             sonraki_sezon = EXCLUDED.sonraki_sezon,
+             anahtar       = EXCLUDED.anahtar,
+             kaynak_zaman  = EXCLUDED.kaynak_zaman,
+             olculdu       = EXCLUDED.olculdu`;
+
+const SEO_DIZI_OLCU_TEMIZLE = `
+  DELETE FROM seo_dizi_olcu d
+   WHERE NOT EXISTS (
+     SELECT 1 FROM tmdb_onbellek t WHERE t.anahtar = d.anahtar)`;
+
+// Sezon/bölüm ölçüsü — eski `tmdb_bolum` CTE'sinin ifadeleri BİREBİR:
+// `ozet`/`konuk`/`kare`/`yayin` toplulaştırmaları ve `episode_number`
+// süzgeçleri aynen taşındı. Toplulaştırma ŞART: aynı sezon belgesinde
+// tekrarlanan `episode_number` olabiliyor (eski CTE de `GROUP BY 1,2,3`
+// yapıyordu).
+//
+// `jsonb_agg ... ORDER BY bolum`: harita sorgusundaki pencere zaten sıralıyor,
+// ama diziyi sıralı saklamak okumayı ve gözle denetlemeyi kolaylaştırıyor.
+// Bölümsüz/bozuk sezonda `coalesce` ile BOŞ dizi yazılır (satır atlanmaz).
+const SEO_BOLUM_OLCU_TAZELE = `
+  WITH src AS (
+    SELECT (regexp_match(anahtar, '^/tv/([0-9]+)/season/([0-9]+)'))[1]::int AS tmdb_id,
+           (regexp_match(anahtar, '^/tv/([0-9]+)/season/([0-9]+)'))[2]::int AS sezon,
+           anahtar, guncelleme, veri
+      FROM tmdb_onbellek
+     WHERE anahtar LIKE '/tv/%/season/%'
+       AND anahtar ~ '^/tv/[0-9]+/season/[0-9]+\\?language=tr-TR$'
+       AND guncelleme >= $1
+     ORDER BY guncelleme
+     LIMIT $2
+  ), tek AS (
+    SELECT DISTINCT ON (tmdb_id, sezon) *
+      FROM src
+     WHERE tmdb_id IS NOT NULL AND sezon IS NOT NULL
+     ORDER BY tmdb_id, sezon, guncelleme DESC
+  )
+  INSERT INTO seo_bolum_olcu (tmdb_id, sezon, bolumler, anahtar,
+                              kaynak_zaman, olculdu)
+  SELECT s.tmdb_id, s.sezon,
+         coalesce((
+           SELECT jsonb_agg(jsonb_build_object(
+                    'b', b.bolum, 'o', b.ozet, 'k', b.konuk,
+                    'r', b.kare, 'y', b.yayin)
+                  ORDER BY b.bolum)
+             FROM (
+               SELECT (e->>'episode_number')::int AS bolum,
+                      max(length(btrim(coalesce(e->>'overview', '')))) AS ozet,
+                      max(jsonb_array_length(
+                            coalesce(e->'guest_stars', '[]'::jsonb))) AS konuk,
+                      count(*) FILTER (
+                        WHERE coalesce(e->>'still_path', '') <> '') AS kare,
+                      max(CASE WHEN e->>'air_date' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+                               THEN (e->>'air_date')::date END) AS yayin
+                 FROM jsonb_array_elements(
+                        CASE WHEN jsonb_typeof(s.veri->'episodes') = 'array'
+                             THEN s.veri->'episodes' ELSE '[]'::jsonb END) e
+                WHERE e->>'episode_number' ~ '^[0-9]+$'
+                  AND (e->>'episode_number')::int >= 1
+                GROUP BY 1
+             ) b
+         ), '[]'::jsonb),
+         s.anahtar, s.guncelleme, now()
+    FROM tek s
+      ON CONFLICT (tmdb_id, sezon) DO UPDATE
+         SET bolumler     = EXCLUDED.bolumler,
+             anahtar      = EXCLUDED.anahtar,
+             kaynak_zaman = EXCLUDED.kaynak_zaman,
+             olculdu      = EXCLUDED.olculdu`;
+
+const SEO_BOLUM_OLCU_TEMIZLE = `
+  DELETE FROM seo_bolum_olcu b
+   WHERE NOT EXISTS (
+     SELECT 1 FROM tmdb_onbellek t WHERE t.anahtar = b.anahtar)`;
 
 // ---------------------------------------------------------------------------
 // ISITMA_BOLUM_SORGU — HARİTA DEĞİL, ISITICI KUYRUĞU
@@ -8141,11 +8263,11 @@ const SITEMAP_SORGU_ZAMAN_ASIMI_MS = 40000;
  * Havuzda genel bir `statement_timeout` YOK; bu sarmalayıcı olmadan uzun bir
  * sorgu havuz bağlantısını süresiz tutar (1 Eyl 2026 arızasının komşu riski).
  */
-async function sitemapSorgu(sql, degerler = [], zamanAsimiMs = SITEMAP_SORGU_ZAMAN_ASIMI_MS) {
+async function sitemapSorgu(sql, degerler = []) {
   const istemci = await havuz.connect();
   try {
     await istemci.query('BEGIN');
-    await istemci.query(`SET LOCAL statement_timeout = ${Number(zamanAsimiMs)}`);
+    await istemci.query(`SET LOCAL statement_timeout = ${SITEMAP_SORGU_ZAMAN_ASIMI_MS}`);
     const r = await istemci.query(sql, degerler);
     await istemci.query('COMMIT');
     return r;
@@ -8325,8 +8447,72 @@ function bolumTavaniniUygula(rows) {
   return kalan;
 }
 
-async function sitemapBolumUret(zamanAsimiMs = SITEMAP_SORGU_ZAMAN_ASIMI_MS) {
-  const { rows } = await sitemapSorgu(SITEMAP_BOLUM_SORGU, [], zamanAsimiMs);
+/**
+ * Ölçü tablosunu `tmdb_onbellek`ten ARTIMLI tazeleyen ORTAK sürücü.
+ * `seoYapimSirketTazele`nin gövdesi üçüncü kez tekrarlanacaktı; üç aile de
+ * aynı iskeleti kullandığı için tek yere alındı.
+ *
+ * ATMAZ. Tazeleme haritanın ÖN ADIMIDIR, koşulu değil — 1 Eyl (kişi) ve
+ * 12 Eyl (firma + bölüm) arızalarının ortak dersi. Ölçüm düşerse dünkü
+ * ölçüyle üretilmiş harita bugünkü hiç-harita'dan iyidir.
+ *
+ * DURMA KOŞULU SU SEVİYESİ, SATIR SAYISI DEĞİL: `DISTINCT ON` varyantları
+ * tekilleştirdiği için yazılan satır öbek boyundan SİSTEMATİK olarak küçük
+ * çıkar (12 Eyl, canlı: 1.000 kaynak satır → 979 yazım). `rowCount < obek`
+ * ile durmak ilk öbekten sonra "bitti" der ve tablo hiç dolmaz.
+ *
+ * @param {{ad:string, tablo:string, tazele:string, temizle:string, obek:number}} a
+ * @returns {Promise<{obek:number, satir:number, silinen:number, sure:number}>}
+ */
+async function seoOlcuTazele(a) {
+  const baslangic = Date.now();
+  const suSeviyesi = async () => (await sitemapSorgu(
+    `SELECT coalesce(max(kaynak_zaman), '-infinity'::timestamptz) AS su
+       FROM ${a.tablo}`)).rows[0].su;
+  let obek = 0; let satir = 0; let silinen = 0;
+  try {
+    let su = await suSeviyesi();
+    for (;;) {
+      const r = await sitemapSorgu(a.tazele, [su, a.obek]);
+      obek += 1; satir += r.rowCount;
+      if (r.rowCount === 0) break;
+      const yeni = await suSeviyesi();
+      // Su seviyesi ilerlemediyse öbek tamamen aynı zaman damgasındaydı:
+      // devam etmek AYNI satırları sonsuza kadar okumak olurdu (`>=`).
+      if (!(new Date(yeni) > new Date(su))) break;
+      su = yeni;
+      if (Date.now() - baslangic >= SEO_BOLUM_OLCU_BUTCE_MS) break;
+    }
+    silinen = (await sitemapSorgu(a.temizle)).rowCount;
+  } catch (e) {
+    logYaz({ seviye: 'hata', olay: `${a.ad}_tazeleme`, hata: e, obek, satir });
+  }
+  const sure = Date.now() - baslangic;
+  logYaz({ seviye: 'bilgi', olay: a.ad, obek, satir, silinen, sure });
+  return { obek, satir, silinen, sure };
+}
+
+/** Bölüm haritasının İKİ ölçü tablosu. Bkz. migrasyon-2026-09-12b.sql. */
+async function seoBolumOlcuTazele() {
+  await seoOlcuTazele({
+    ad: 'seo_dizi_olcu',
+    tablo: 'seo_dizi_olcu',
+    tazele: SEO_DIZI_OLCU_TAZELE,
+    temizle: SEO_DIZI_OLCU_TEMIZLE,
+    obek: SEO_DIZI_OLCU_OBEK,
+  });
+  await seoOlcuTazele({
+    ad: 'seo_bolum_olcu',
+    tablo: 'seo_bolum_olcu',
+    tazele: SEO_BOLUM_OLCU_TAZELE,
+    temizle: SEO_BOLUM_OLCU_TEMIZLE,
+    obek: SEO_BOLUM_OLCU_OBEK,
+  });
+}
+
+async function sitemapBolumUret() {
+  await seoBolumOlcuTazele();
+  const { rows } = await sitemapSorgu(SITEMAP_BOLUM_SORGU);
   return sitemapSayfala(bolumTavaniniUygula(rows),
     (r) => `${SITE_KOK}/dizi/${r.tmdb_id}/sezon/${r.sezon}/bolum/${r.bolum}`);
 }
@@ -8335,61 +8521,6 @@ async function sitemapBolumVerisi(zorla) {
   return sitemapKovaOku(sitemapBolumKovasi, sitemapBolumUret, zorla);
 }
 
-// ---------------------------------------------------------------------------
-// BÖLÜM KOVASININ AÇILIŞTA ISITILMASI — GEÇİCİ, 12 EYL 2026
-// ---------------------------------------------------------------------------
-// ÖLÇÜLEN DURUM: `SITEMAP_BOLUM_SORGU` canlıda **64,7 sn** sürüyor (12 Eyl,
-// EXPLAIN ANALYZE). `SITEMAP_SORGU_ZAMAN_ASIMI_MS` 40 sn, yani istek yolundaki
-// HER üretim `57014` ile düşüyor. Firma ailesindeki arızanın aynısı, aynı kök
-// sebeple (29 Ağu'nun 46 dilli SSR'ı `tmdb_onbellek`i 1,8 M satıra çıkardı).
-// Maliyet dökümü: `tmdb_bolum` iç içe döngüsü 44,7 sn (157.089 bölüm satırı),
-// `dizi_bilgi` 13,6 sn (49.690 satır `veri` sütunuyla sıralanıyor).
-//
-// NEDEN BUGÜNE KADAR GÖRÜNMEDİ: `sitemapKovaOku`nun BAYAT SERVİS dalı
-// maskeliyordu. Kova bir kez dolduktan sonra her başarısız tazeleme sessizce
-// eski listeyi servis ediyor — nginx günlüğünde 11 Eyl 16:00'dan 12 Eyl
-// 02:00'a kadar bölüm haritalarının tamamı 200. Konteyner 12 Eyl 02:27'de
-// yeniden kurulunca kova boşaldı ve maske kalktı: ilk istek 500 aldı.
-// 1 Eyl'in kişi arızasında da tam bu cümle yazılmıştı — "konteyner yeniden
-// başladıktan sonra HER istek düşer".
-//
-// BU FONKSİYON ÇÖZÜM DEĞİL, SERVİSİ AYAĞA KALDIRAN KÖPRÜ. Kalıcı çözüm,
-// kişi (1 Eyl) ve firma (12 Eyl) ailelerinde uygulanan ÖLÇÜYÜ SAKLA kalıbının
-// bölüme de uygulanmasıdır (`tmdb_bolum` bir ölçü tablosuna alınmalı).
-// O iş yapılınca BU BLOK SİLİNMELİ.
-//
-// NEDEN AÇILIŞ, NEDEN `setInterval` DEĞİL: kova süreç içi bellekte ve uygulama
-// KÜME kipinde (4 işçi); paylaşılan bir ısıtma mümkün değil, her işçi kendi
-// kovasını doldurmak zorunda. Açılışta BİR KEZ koşmak N katı yükü bir defaya
-// indirir — `setInterval` onu sürekli hâle getirirdi (kod tabanının ısıtıcı
-// yasağının gerekçesi de bu).
-//
-// ZAMAN AŞIMI İSTEK YOLUNUNKİNDEN AYRI: burada nginx yok, Googlebot beklemiyor.
-// 180 sn, 64,7 sn'lik ölçüme bol pay bırakır; yine de SINIRSIZ değil ki bozuk
-// bir sorgu havuz bağlantısını süresiz tutmasın.
-const BOLUM_ISITMA_ZAMAN_ASIMI_MS = 180000;
-
-async function bolumKovasiniIsit() {
-  const t = Date.now();
-  try {
-    const d = await sitemapKovaOku(sitemapBolumKovasi,
-      () => sitemapBolumUret(BOLUM_ISITMA_ZAMAN_ASIMI_MS));
-    logYaz({
-      seviye: 'bilgi',
-      olay: 'sitemap_bolum_isitma',
-      adet: d.adet,
-      sayfa: d.sayfalar.length,
-      sure: Date.now() - t,
-    });
-  } catch (e) {
-    // ATMAZ: ısıtma başarısızsa servis yine ayağa kalkmalı. Bölüm haritası o
-    // zaman istek yolunda denenir ve (bugünkü ölçümle) 500 döner — ama site
-    // ayakta kalır. Açılışı kilitlemek kesinlikle daha kötü olurdu.
-    logYaz({
-      seviye: 'hata', olay: 'sitemap_bolum_isitma', hata: e, sure: Date.now() - t,
-    });
-  }
-}
 
 /**
  * `seo_kisi_olcu` tablosunu `tmdb_onbellek`ten ARTIMLI tazeler.
@@ -8447,39 +8578,13 @@ async function sitemapKisiVerisi(zorla) {
  * @returns {Promise<{obek:number, satir:number, silinen:number, sure:number}>}
  */
 async function seoYapimSirketTazele() {
-  const baslangic = Date.now();
-  const suSeviyesi = async () => (await sitemapSorgu(
-    `SELECT coalesce(max(kaynak_zaman), '-infinity'::timestamptz) AS su
-       FROM seo_yapim_sirket`)).rows[0].su;
-  let obek = 0; let satir = 0; let silinen = 0;
-  try {
-    let su = await suSeviyesi();
-    for (;;) {
-      const r = await sitemapSorgu(SEO_YAPIM_SIRKET_TAZELE,
-        [su, SEO_YAPIM_SIRKET_OBEK]);
-      obek += 1; satir += r.rowCount;
-      // DURMA KOŞULU SU SEVİYESİ, SATIR SAYISI DEĞİL — kişi tazelemesinden
-      // AYRILDIĞI TEK YER ve sebebi ölçüldü (12 Eyl, canlı ilk doldurma):
-      // `DISTINCT ON` varyantları tekilleştirdiği için yazılan satır öbek
-      // boyundan SİSTEMATİK OLARAK küçük çıkıyor (1.000 kaynak satır → 979
-      // yazım). `rowCount < OBEK` ile durmak ilk öbekten sonra "bitti" der ve
-      // tablonun %99'u hiç dolmazdı. Kişide bu tuzak yok: oradaki anahtar
-      // deseni çıpalı ve kimlik başına tek satır.
-      if (r.rowCount === 0) break;
-      const yeni = await suSeviyesi();
-      // Su seviyesi ilerlemediyse öbek tamamen aynı zaman damgasındaydı:
-      // devam etmek AYNI satırları sonsuza kadar okumak olurdu (`>=`).
-      if (!(new Date(yeni) > new Date(su))) break;
-      su = yeni;
-      if (Date.now() - baslangic >= SEO_YAPIM_SIRKET_BUTCE_MS) break;
-    }
-    silinen = (await sitemapSorgu(SEO_YAPIM_SIRKET_TEMIZLE)).rowCount;
-  } catch (e) {
-    logYaz({ seviye: 'hata', olay: 'seo_yapim_sirket_tazeleme', hata: e, obek, satir });
-  }
-  const sure = Date.now() - baslangic;
-  logYaz({ seviye: 'bilgi', olay: 'seo_yapim_sirket', obek, satir, silinen, sure });
-  return { obek, satir, silinen, sure };
+  return seoOlcuTazele({
+    ad: 'seo_yapim_sirket',
+    tablo: 'seo_yapim_sirket',
+    tazele: SEO_YAPIM_SIRKET_TAZELE,
+    temizle: SEO_YAPIM_SIRKET_TEMIZLE,
+    obek: SEO_YAPIM_SIRKET_OBEK,
+  });
 }
 
 async function sitemapSirketUret() {
@@ -25608,10 +25713,6 @@ const sunucu = app.listen(PORT, '0.0.0.0', () => {
   // ilk isteği beklemeden düşsün. Hata konteyneri ÖLDÜRMEZ (tablo henüz
   // migrasyonla gelmemişse burada patlayıp servisi kilitlemesin).
   yasaklariSupur().catch((e) => console.error('açılış yasak süpürme:', e.message));
-  // Bölüm site haritası kovasını ısıt — GEÇİCİ köprü, gerekçe
-  // `bolumKovasiniIsit` başlığında. `await` YOK: 65 sn'lik sorgu açılışı
-  // kilitlemesin, sağlık ucu hemen yanıt versin.
-  bolumKovasiniIsit();
   // Özel (DM) medya kümesini doldur. Hata konteyneri ÖLDÜRMEZ: küme boş
   // kalırsa davranış eski hâline (her şey genel) döner, servis ayakta kalır.
   ozelMedyaYukle();

@@ -225,13 +225,31 @@ test('sitemap YALNIZ içerik/bölüm URL\'i üretir — profil/kişisel URL yok'
   //     Kaynağı yalnız `tmdb_onbellek`; bir kullanıcı satırı okunmadığı için
   //     sızdıracak kişisel veri de yok. Bu, eskisinden DAHA GÜÇLÜ bir
   //     güvence — ve aşağıdaki iddia tam olarak bunu doğruluyor.
+  // 12 EYL 2026 — TMDB DALININ KAYNAĞI ÖLÇÜ TABLOSU OLDU.
+  // Sorgu 64,7 sn'ye çıkıp bölüm haritalarını 500'e düşürdüğü için belge
+  // açımı istek yolundan çıkarıldı (migrasyon-2026-09-12b.sql). Gizlilik
+  // GARANTİSİ DEĞİŞMEDİ ama artık İKİ yerde aranmalı, çünkü kullanıcı
+  // tablolarına dokunmama sözü zincirin HER halkasında tutulmalı:
+  //   · `tmdb_bolum` dalı  → yalnız `seo_bolum_olcu`dan okur,
+  //   · ölçü tazelemeleri  → yalnız `tmdb_onbellek`ten okur.
   const tmdbDali = bolum('), tmdb_bolum AS MATERIALIZED (', '), bizim_bolum AS (');
-  for (const tablo of ['yorumlar', 'puanlar', 'kullanicilar', 'izlemeler',
-    'favoriler', 'listeler', 'liste_ogeleri', 'gizli_icerikler', 'gonderiler']) {
+  const KULLANICI_TABLOLARI = ['yorumlar', 'puanlar', 'kullanicilar', 'izlemeler',
+    'favoriler', 'listeler', 'liste_ogeleri', 'gizli_icerikler', 'gonderiler'];
+  for (const tablo of KULLANICI_TABLOLARI) {
     assert.ok(!new RegExp(`\\b${tablo}\\b`).test(tmdbDali),
       `TMDB dalı kullanıcı tablosuna dokunuyor: ${tablo}`);
   }
-  assert.match(tmdbDali, /FROM sezon_yaniti s/, 'TMDB dalı sezon yanıtından okumuyor');
+  assert.match(tmdbDali, /FROM seo_bolum_olcu s/, 'TMDB dalı ölçü tablosundan okumuyor');
+  for (const ad of ['SEO_BOLUM_OLCU_TAZELE', 'SEO_DIZI_OLCU_TAZELE',
+    'SEO_BOLUM_OLCU_TEMIZLE', 'SEO_DIZI_OLCU_TEMIZLE']) {
+    const q = bildirimCek(ad);
+    for (const tablo of KULLANICI_TABLOLARI) {
+      assert.ok(!new RegExp(`\\b${tablo}\\b`).test(q),
+        `${ad} kullanıcı tablosuna dokunuyor: ${tablo}`);
+    }
+    assert.ok(!/kullanici_adi/.test(q) && !/\bemail\b/.test(q),
+      `${ad} kişisel sütun seçiyor`);
+  }
   // Bizim yorum dalı gizlilik süzgeçlerini AYNEN taşıyor mu? Kaynakta bunlar
   // ORTAK SABİT olarak duruyor (kopyalanmış SQL değil) — iddia hem sabitin
   // kullanıldığını hem sabitin içeriğini doğruluyor.

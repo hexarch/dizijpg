@@ -235,8 +235,14 @@ test('sitemap sorguları server.js kaynağından KURULUYOR, çözülmemiş şabl
   //   · bizim yorum dalı hâlâ sezon/bölüm kırılımında (`y.sezon IS NOT NULL`),
   //   · TMDB dalı sezon yanıtından bölüm çıkarıyor,
   //   · ve çıktı ÜÇ SÜTUNLU (tmdb_id, sezon, bolum) — içerik haritası iki.
+  // 12 Eyl 2026: TMDB dalının KAYNAĞI `seo_bolum_olcu` ölçü tablosu oldu
+  // (sorgu 64,7 sn'ye çıkıp bölüm haritalarını 500'e düşürmüştü —
+  // migrasyon-2026-09-12b.sql). Mekanizma yine değişti, NİYET yine aynı:
+  // dal hâlâ sezon/bölüm grenindedir, içerik sorgusunun kopyası değildir.
   assert.match(SITEMAP_BOLUM_SORGU, /y\.sezon IS NOT NULL/);
-  assert.match(SITEMAP_BOLUM_SORGU, /episode_number/, 'TMDB bölüm dalı yok');
+  assert.match(SITEMAP_BOLUM_SORGU, /FROM seo_bolum_olcu s/, 'TMDB bölüm dalı yok');
+  assert.match(SITEMAP_BOLUM_SORGU, /jsonb_array_elements\(s\.bolumler\) e/,
+    'TMDB dalı sezonun bölüm listesini açmıyor — bölüm greni kayboldu');
   assert.match(SITEMAP_BOLUM_SORGU,
     /SELECT tmdb_id, sezon, bolum, coalesce\(max\(bizim\)::date, max\(gun\)\) AS son/);
   assert.match(SITEMAP_SORGU, /SELECT tur, tmdb_id, max\(tarih\) AS son/);

@@ -1571,6 +1571,36 @@ CREATE TABLE IF NOT EXISTS seo_yapim_sirket (
 CREATE INDEX IF NOT EXISTS seo_yapim_sirket_kaynak
   ON seo_yapim_sirket (kaynak_zaman);
 
+-- 2026-09-12 (ikinci tur): BÖLÜM SİTE HARİTASININ ÖLÇÜ TABLOLARI — aynı
+-- kalıbın üçüncü ve son uygulaması. `SITEMAP_BOLUM_SORGU` 64,7 sn'ye çıkmıştı
+-- (tavan 40 sn) ve bölüm haritalarının tamamı Googlebot'a 500 dönüyordu;
+-- arızayı `sitemapKovaOku`nun BAYAT SERVİS dalı aylarca maskelemişti.
+-- Ölçüm saklanınca sorgu 0,8 sn'ye indi (çıktı birebir aynı: 27.436 satır).
+-- Sezon BAŞINA satır (bölüm başına değil): bölüm kümesi sezon satırının içinde
+-- atomik değişir, "önce sil sonra ekle" tuzağı hiç doğmaz.
+-- Uzun gerekçe + ölçümler: migrasyon-2026-09-12b.sql.
+CREATE TABLE IF NOT EXISTS seo_dizi_olcu (
+  tmdb_id       INT         PRIMARY KEY,
+  tr_yapim      BOOLEAN     NOT NULL DEFAULT false,
+  sonraki_sezon INT,
+  anahtar       TEXT        NOT NULL,
+  kaynak_zaman  TIMESTAMPTZ NOT NULL,
+  olculdu       TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS seo_dizi_olcu_kaynak ON seo_dizi_olcu (kaynak_zaman);
+
+CREATE TABLE IF NOT EXISTS seo_bolum_olcu (
+  tmdb_id      INT         NOT NULL,
+  sezon        INT         NOT NULL,
+  -- [{"b":bolum,"o":ozet_uzunluk,"k":konuk,"r":kare,"y":yayin}, ...]
+  bolumler     JSONB       NOT NULL DEFAULT '[]'::jsonb,
+  anahtar      TEXT        NOT NULL,
+  kaynak_zaman TIMESTAMPTZ NOT NULL,
+  olculdu      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (tmdb_id, sezon)
+);
+CREATE INDEX IF NOT EXISTS seo_bolum_olcu_kaynak ON seo_bolum_olcu (kaynak_zaman);
+
 -- 2026-09-02 — SÜRÜM DUYURUSU uygulama içi bildirim türü ('surum').
 -- Uzun gerekçe: migrasyon-2026-09-02.sql. Aktörsüz dördüncü tür; satır yalnız
 -- `surum` taşır, tanıtım içeriği uygulamada gömülü (/yenilikler/:surum).
