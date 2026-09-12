@@ -112,7 +112,7 @@ const Map<String, String> cevirilerAr = {
   'Tümünü Kaldır': 'إزالة الكل',
   'Tümünü İzledim': 'شاهدت الكل',
   'Türk Dizileri': 'المسلسلات التركية',
-  'Veri içe aktar (.zip)': 'استيراد البيانات (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'استيراد البيانات (.zip / .csv)',
   'Verilerim': 'بياناتي',
   'Verilerimi dışa aktar (e-posta)': 'تصدير بياناتي (بريد إلكتروني)',
   'Verilerini dışa aktar': 'صدّر بياناتك',
@@ -775,10 +775,10 @@ const Map<String, String> cevirilerAr = {
   'Verilerini yanında getir': 'بياناتك تأتي معك',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'إذا كانت مشاهداتك مسجّلة في تطبيق آخر، يمكنك نقلها إلى هنا. لا داعي للبدء من الصفر.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'اختيار ملف ZIP المُصدَّر لنقل مشاهداتك وتقييماتك وقوائمك.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'اختيار ملف ZIP/CSV المُصدَّر لنقل مشاهداتك وتقييماتك وقوائمك.',
   'Aktarılıyor...': 'جارٍ النقل...',
-  'ZIP dosyası seç': 'اختيار ملف ZIP',
+  'ZIP/CSV dosyası seç': 'اختيار ملف ZIP/CSV',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'لا داعي للعجلة: يمكنك فعل ذلك لاحقًا من الإعدادات > بياناتي.',
   'Hangi filmleri izledin?': 'ما الأفلام التي سبقت مشاهدتها؟',
@@ -1709,4 +1709,12 @@ const Map<String, String> cevirilerAr = {
   'Topluluk Kuralları': 'قواعد المجتمع',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'لا تسامح مطلقًا مع المحتوى المسيء أو المتحرّش أو الكاره أو الجنسي أو المُمجّد للعنف أو المنتهك لحقوق النشر، ولا مع إساءة استخدام الخدمة. يمكن الإبلاغ عن أي تعليق أو منشور أو رسالة أو قائمة أو مستخدم من داخل التطبيق، ويمكن حظر المستخدمين غير المرغوب فيهم. يُراجَع المحتوى المُبلَّغ عنه خلال 24 ساعة؛ وإذا خالف القواعد يُحذف وقد يُغلق الحساب.',
+  'Dosya verisi gerekli': 'بيانات الملف مطلوبة',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'ليس ملف ZIP أو CSV أو JSON صالحًا',
+  'Dosya boş': 'الملف فارغ',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'لم يتم التعرف على هذا الملف: ارفع ملف TV Time أو Letterboxd أو dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'لا يمكن استيراد هذا الملف وحده: ارفع الأرشيف كاملًا (.zip) أو ملف dizijpg.json',
 };

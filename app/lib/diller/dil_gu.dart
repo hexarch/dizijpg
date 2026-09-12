@@ -113,7 +113,7 @@ const Map<String, String> cevirilerGu = {
   'Tümünü Kaldır': 'બધું કાઢી નાખો',
   'Tümünü İzledim': 'બધું જોઈ લીધું',
   'Türk Dizileri': 'તુર્કી સિરીઝ',
-  'Veri içe aktar (.zip)': 'ડેટા ઇમ્પોર્ટ કરો (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'ડેટા ઇમ્પોર્ટ કરો (.zip / .csv)',
   'Verilerim': 'મારો ડેટા',
   'Verilerimi dışa aktar (e-posta)': 'મારો ડેટા એક્સપોર્ટ કરો (ઈમેલ)',
   'Verilerini dışa aktar': 'તમારો ડેટા એક્સપોર્ટ કરો',
@@ -780,10 +780,10 @@ const Map<String, String> cevirilerGu = {
   'Verilerini yanında getir': 'તમારો ડેટા સાથે લાવો',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'જો બીજી કોઈ ઍપમાં જોયેલું ટ્રૅક કરતા હો, તો તે અહીં લાવી શકો છો. શરૂઆતથી શરૂ કરવાની જરૂર નથી.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'એક્સપોર્ટ કરેલી ZIP ફાઇલ પસંદ કરો; તમારાં જોયેલાં, રેટિંગ અને લિસ્ટ આવી જશે.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'એક્સપોર્ટ કરેલી ZIP/CSV ફાઇલ પસંદ કરો; તમારાં જોયેલાં, રેટિંગ અને લિસ્ટ આવી જશે.',
   'Aktarılıyor...': 'ઇમ્પોર્ટ થઈ રહ્યું છે...',
-  'ZIP dosyası seç': 'ZIP ફાઇલ પસંદ કરો',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV ફાઇલ પસંદ કરો',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'ઉતાવળ નથી: આ પછીથી સેટિંગ્સ > મારો ડેટા માંથી પણ કરી શકો છો.',
   'Hangi filmleri izledin?': 'તમે કઈ ફિલ્મો જોઈ છે?',
@@ -1691,4 +1691,12 @@ const Map<String, String> cevirilerGu = {
   'Topluluk Kuralları': 'સમુદાયના નિયમો',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'અપમાનજનક, હેરાન કરનારી, દ્વેષપૂર્ણ, જાતીય, હિંસાને મહિમા આપતી અથવા કૉપિરાઇટનો ભંગ કરતી સામગ્રી અને સેવાના દુરુપયોગ પ્રત્યે શૂન્ય સહનશીલતા છે. દરેક ટિપ્પણી, પોસ્ટ, સંદેશ, સૂચિ અને વપરાશકર્તાની ઍપમાંથી જાણ કરી શકાય છે; અનિચ્છનીય વપરાશકર્તાઓને બ્લૉક કરી શકાય છે. જાણ કરેલી સામગ્રીની 24 કલાકમાં સમીક્ષા થાય છે; નિયમ તૂટે તો સામગ્રી દૂર થાય છે અને ખાતું બંધ થઈ શકે છે.',
+  'Dosya verisi gerekli': 'ફાઇલનો ડેટા જરૂરી છે',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'માન્ય ZIP, CSV કે JSON ફાઇલ નથી',
+  'Dosya boş': 'ફાઇલ ખાલી છે',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'આ ફાઇલ ઓળખાઈ નથી: TV Time, Letterboxd કે dizi.jpg ફાઇલ અપલોડ કરો',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'આ ફાઇલ એકલી ઇમ્પોર્ટ થઈ શકતી નથી: આખું આર્કાઇવ (.zip) કે dizijpg.json ફાઇલ અપલોડ કરો',
 };

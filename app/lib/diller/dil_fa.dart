@@ -113,7 +113,7 @@ const Map<String, String> cevirilerFa = {
   'Tümünü Kaldır': 'حذف همه',
   'Tümünü İzledim': 'همه را دیدم',
   'Türk Dizileri': 'سریال‌های ترکی',
-  'Veri içe aktar (.zip)': 'وارد کردن داده (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'وارد کردن داده (.zip / .csv)',
   'Verilerim': 'داده‌های من',
   'Verilerimi dışa aktar (e-posta)': 'خروجی داده‌هایم (ایمیل)',
   'Verilerini dışa aktar': 'خروجی گرفتن از داده‌ها',
@@ -783,10 +783,10 @@ const Map<String, String> cevirilerFa = {
   'Verilerini yanında getir': 'داده‌هایت را با خودت بیاور',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'اگر در برنامه‌ای دیگر تماشاهایت را دنبال می‌کنی، می‌توانی آن‌ها را به اینجا بیاوری. لازم نیست از صفر شروع کنی.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'فایل ZIP خروجی‌گرفته را انتخاب کن تا تماشاها، امتیازها و فهرست‌هایت منتقل شوند.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'فایل ZIP/CSV خروجی‌گرفته را انتخاب کن تا تماشاها، امتیازها و فهرست‌هایت منتقل شوند.',
   'Aktarılıyor...': 'در حال انتقال...',
-  'ZIP dosyası seç': 'انتخاب فایل ZIP',
+  'ZIP/CSV dosyası seç': 'انتخاب فایل ZIP/CSV',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'عجله‌ای نیست: این کار را بعداً هم می‌توانی از تنظیمات > داده‌های من انجام دهی.',
   'Hangi filmleri izledin?': 'چه فیلم‌هایی دیده‌ای؟',
@@ -1687,4 +1687,12 @@ const Map<String, String> cevirilerFa = {
   'Topluluk Kuralları': 'قوانین انجمن',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'با محتوای توهین‌آمیز، آزاردهنده، نفرت‌پراکن، جنسی، ستایشگر خشونت یا ناقض حق نشر و با سوءاستفاده از سرویس هیچ مدارایی نمی‌شود. هر نظر، پست، پیام، فهرست و کاربر را می‌توان از داخل برنامه گزارش داد و کاربران ناخواسته را مسدود کرد. محتوای گزارش‌شده ظرف ۲۴ ساعت بررسی می‌شود؛ در صورت نقض قوانین حذف می‌شود و ممکن است حساب بسته شود.',
+  'Dosya verisi gerekli': 'داده فایل لازم است',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'فایل ZIP، CSV یا JSON معتبر نیست',
+  'Dosya boş': 'فایل خالی است',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'این فایل شناسایی نشد: فایل TV Time، Letterboxd یا dizi.jpg بارگذاری کن',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'این فایل به تنهایی وارد نمی‌شود: کل آرشیو (.zip) یا فایل dizijpg.json را بارگذاری کن',
 };

@@ -113,7 +113,7 @@ const Map<String, String> cevirilerCs = {
   'Tümünü Kaldır': 'Odebrat vše',
   'Tümünü İzledim': 'Vše zhlédnuto',
   'Türk Dizileri': 'Turecké seriály',
-  'Veri içe aktar (.zip)': 'Import dat (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Import dat (.zip / .csv)',
   'Verilerim': 'Moje data',
   'Verilerimi dışa aktar (e-posta)': 'Export mých dat (e-mail)',
   'Verilerini dışa aktar': 'Exportuj svá data',
@@ -785,10 +785,10 @@ const Map<String, String> cevirilerCs = {
   'Verilerini yanında getir': 'Vezmi si svá data s sebou',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Pokud si své sledování vedeš v jiné aplikaci, můžeš ho přenést sem. Není potřeba začínat od nuly.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Vyber ZIP soubor z exportu a přenesou se tvá zhlédnutí, hodnocení i seznamy.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Vyber ZIP/CSV soubor z exportu a přenesou se tvá zhlédnutí, hodnocení i seznamy.',
   'Aktarılıyor...': 'Importuje se...',
-  'ZIP dosyası seç': 'Vybrat ZIP soubor',
+  'ZIP/CSV dosyası seç': 'Vybrat ZIP/CSV soubor',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Nespěchej: tohle můžeš udělat i později v Nastavení > Moje data.',
   'Hangi filmleri izledin?': 'Které filmy už máš zhlédnuté?',
@@ -1701,4 +1701,12 @@ const Map<String, String> cevirilerCs = {
   'Topluluk Kuralları': 'Pravidla komunity',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Nulová tolerance vůči urážlivému, obtěžujícímu, nenávistnému, sexuálnímu, násilí oslavujícímu nebo autorská práva porušujícímu obsahu a vůči zneužívání služby. Každý komentář, příspěvek, zprávu, seznam i uživatele lze nahlásit přímo v aplikaci; nežádoucí uživatele lze zablokovat. Nahlášený obsah je prověřen do 24 hodin; při porušení pravidel je odstraněn a účet může být zrušen.',
+  'Dosya verisi gerekli': 'Jsou potřeba data souboru',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Není to platný soubor ZIP, CSV ani JSON',
+  'Dosya boş': 'Soubor je prázdný',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Soubor nebyl rozpoznán: nahraj soubor z TV Time, Letterboxdu nebo dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Tento soubor nelze naimportovat samostatně: nahraj celý archiv (.zip) nebo soubor dizijpg.json',
 };

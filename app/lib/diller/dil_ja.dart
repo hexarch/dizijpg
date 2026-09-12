@@ -109,7 +109,7 @@ const Map<String, String> cevirilerJa = {
   'Tümünü Kaldır': 'すべて解除',
   'Tümünü İzledim': 'すべて視聴済みにする',
   'Türk Dizileri': 'トルコドラマ',
-  'Veri içe aktar (.zip)': 'データをインポート（.zip）',
+  'Veri içe aktar (.zip / .csv)': 'データをインポート（.zip / .csv）',
   'Verilerim': 'マイデータ',
   'Verilerimi dışa aktar (e-posta)': 'データをエクスポート（メール）',
   'Verilerini dışa aktar': 'データをエクスポート',
@@ -760,10 +760,10 @@ const Map<String, String> cevirilerJa = {
   'Verilerini yanında getir': 'データを持ってこよう',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       '他のアプリで視聴を記録しているなら、ここに移せます。ゼロから始める必要はありません。',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'エクスポートした ZIP ファイルを選ぶと、視聴履歴・評価・リストが取り込まれます。',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'エクスポートした ZIP/CSV ファイルを選ぶと、視聴履歴・評価・リストが取り込まれます。',
   'Aktarılıyor...': 'インポート中...',
-  'ZIP dosyası seç': 'ZIP ファイルを選択',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV ファイルを選択',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       '急がなくて大丈夫。あとから設定 > マイデータでもできます。',
   'Hangi filmleri izledin?': 'どの映画を観た？',
@@ -1621,4 +1621,12 @@ const Map<String, String> cevirilerJa = {
   'Topluluk Kuralları': 'コミュニティガイドライン',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       '侮辱的、嫌がらせ、憎悪的、性的、暴力を賛美する、または著作権を侵害するコンテンツと、サービスの悪用は一切許容されません。すべてのコメント、投稿、メッセージ、リスト、ユーザーはアプリ内から報告でき、迷惑なユーザーはブロックできます。報告されたコンテンツは24時間以内に確認され、規則違反があれば削除され、アカウントが停止されることがあります。',
+  'Dosya verisi gerekli': 'ファイルのデータが必要です',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      '有効な ZIP・CSV・JSON ファイルではありません',
+  'Dosya boş': 'ファイルが空です',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'このファイルを認識できませんでした。TV Time、Letterboxd、dizi.jpg のファイルをアップロードしてください',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'このファイルだけではインポートできません。アーカイブ全体（.zip）か dizijpg.json をアップロードしてください',
 };

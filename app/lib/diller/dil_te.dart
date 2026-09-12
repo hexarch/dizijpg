@@ -113,7 +113,7 @@ const Map<String, String> cevirilerTe = {
   'Tümünü Kaldır': 'అన్నీ తొలగించు',
   'Tümünü İzledim': 'అన్నీ చూశాను',
   'Türk Dizileri': 'టర్కిష్ సిరీస్‌లు',
-  'Veri içe aktar (.zip)': 'డేటా దిగుమతి (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'డేటా దిగుమతి (.zip / .csv)',
   'Verilerim': 'నా డేటా',
   'Verilerimi dışa aktar (e-posta)': 'నా డేటాను ఎగుమతి చేయి (ఇమెయిల్)',
   'Verilerini dışa aktar': 'నీ డేటాను ఎగుమతి చేయి',
@@ -783,10 +783,10 @@ const Map<String, String> cevirilerTe = {
   'Verilerini yanında getir': 'నీ డేటాను వెంట తెచ్చుకో',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'వేరే యాప్‌లో చూసినవి ట్రాక్ చేస్తుంటే, వాటిని ఇక్కడికి తెచ్చుకోవచ్చు. మొదటి నుంచి మొదలుపెట్టాల్సిన అవసరం లేదు.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'ఎగుమతి చేసిన ZIP ఫైల్‌ను ఎంచుకో; చూసినవి, రేటింగ్‌లు, లిస్టులు ఇక్కడికి వచ్చేస్తాయి.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'ఎగుమతి చేసిన ZIP/CSV ఫైల్‌ను ఎంచుకో; చూసినవి, రేటింగ్‌లు, లిస్టులు ఇక్కడికి వచ్చేస్తాయి.',
   'Aktarılıyor...': 'దిగుమతి అవుతోంది...',
-  'ZIP dosyası seç': 'ZIP ఫైల్ ఎంచుకో',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV ఫైల్ ఎంచుకో',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'తొందరేమీ లేదు: దీన్ని తర్వాత సెట్టింగ్స్ > నా డేటా విభాగం నుంచీ చేయవచ్చు.',
   'Hangi filmleri izledin?': 'ఏ సినిమాలు చూశావు?',
@@ -1704,4 +1704,12 @@ const Map<String, String> cevirilerTe = {
   'Topluluk Kuralları': 'కమ్యూనిటీ నియమాలు',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'దూషణాత్మక, వేధింపు, ద్వేషపూరిత, లైంగిక, హింసను కీర్తించే లేదా కాపీరైట్‌ను ఉల్లంఘించే కంటెంట్‌కు మరియు సేవ దుర్వినియోగానికి ఎటువంటి సహనం లేదు. ప్రతి వ్యాఖ్య, పోస్ట్, సందేశం, జాబితా మరియు వినియోగదారుని యాప్ లోపలి నుండి నివేదించవచ్చు; అవాంఛిత వినియోగదారులను బ్లాక్ చేయవచ్చు. నివేదించిన కంటెంట్ 24 గంటల్లో సమీక్షించబడుతుంది; నియమాలు ఉల్లంఘిస్తే కంటెంట్ తొలగించబడుతుంది; ఖాతా మూసివేయబడవచ్చు.',
+  'Dosya verisi gerekli': 'ఫైల్ డేటా అవసరం',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'ఇది సరైన ZIP, CSV లేదా JSON ఫైల్ కాదు',
+  'Dosya boş': 'ఫైల్ ఖాళీగా ఉంది',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'ఈ ఫైల్ గుర్తించబడలేదు: TV Time, Letterboxd లేదా dizi.jpg ఫైల్‌ను అప్‌లోడ్ చేయి',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'ఈ ఫైల్‌ను ఒంటరిగా దిగుమతి చేయలేం: పూర్తి ఆర్కైవ్ (.zip) లేదా dizijpg.json ఫైల్‌ను అప్‌లోడ్ చేయి',
 };

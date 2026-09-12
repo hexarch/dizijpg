@@ -114,7 +114,7 @@ const Map<String, String> cevirilerFi = {
   'Tümünü Kaldır': 'Poista kaikki',
   'Tümünü İzledim': 'Katsoin kaikki',
   'Türk Dizileri': 'Turkkilaiset sarjat',
-  'Veri içe aktar (.zip)': 'Tuo tiedot (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Tuo tiedot (.zip / .csv)',
   'Verilerim': 'Omat tiedot',
   'Verilerimi dışa aktar (e-posta)': 'Vie tietoni (sähköposti)',
   'Verilerini dışa aktar': 'Vie tietosi',
@@ -788,10 +788,10 @@ const Map<String, String> cevirilerFi = {
   'Verilerini yanında getir': 'Ota tietosi mukaan',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Jos seuraat katsomiasi toisessa sovelluksessa, voit siirtää ne tänne. Sinun ei tarvitse aloittaa alusta.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Valitse viemäsi ZIP-tiedosto, niin katseluhistoriasi, arvosanasi ja listasi tuodaan mukana.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Valitse viemäsi ZIP/CSV-tiedosto, niin katseluhistoriasi, arvosanasi ja listasi tuodaan mukana.',
   'Aktarılıyor...': 'Tuodaan...',
-  'ZIP dosyası seç': 'Valitse ZIP-tiedosto',
+  'ZIP/CSV dosyası seç': 'Valitse ZIP/CSV-tiedosto',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Ei kiirettä: voit tehdä tämän myöhemmin kohdassa Asetukset > Omat tiedot.',
   'Hangi filmleri izledin?': 'Mitä elokuvia olet katsonut?',
@@ -1712,4 +1712,12 @@ const Map<String, String> cevirilerFi = {
   'Topluluk Kuralları': 'Yhteisön säännöt',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Nollatoleranssi loukkaavalle, häiritsevälle, vihamieliselle, seksuaaliselle, väkivaltaa ihannoivalle tai tekijänoikeuksia loukkaavalle sisällölle sekä palvelun väärinkäytölle. Jokaisen kommentin, julkaisun, viestin, listan ja käyttäjän voi ilmoittaa sovelluksesta; ei-toivotut käyttäjät voi estää. Ilmoitettu sisältö tarkistetaan 24 tunnin kuluessa; sääntöjä rikkova sisältö poistetaan ja tili voidaan sulkea.',
+  'Dosya verisi gerekli': 'Tiedoston data vaaditaan',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Ei kelvollinen ZIP-, CSV- tai JSON-tiedosto',
+  'Dosya boş': 'Tiedosto on tyhjä',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Tiedostoa ei tunnistettu: lataa TV Timen, Letterboxdin tai dizi.jpg:n tiedosto',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Tätä tiedostoa ei voi tuoda yksinään: lataa koko arkisto (.zip) tai dizijpg.json-tiedosto',
 };

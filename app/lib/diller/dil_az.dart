@@ -113,7 +113,7 @@ const Map<String, String> cevirilerAz = {
   'Tümünü Kaldır': 'Hamısını Sil',
   'Tümünü İzledim': 'Hamısını İzlədim',
   'Türk Dizileri': 'Türk Serialları',
-  'Veri içe aktar (.zip)': 'Məlumat idxal et (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Məlumat idxal et (.zip / .csv)',
   'Verilerim': 'Məlumatlarım',
   'Verilerimi dışa aktar (e-posta)': 'Məlumatlarımı ixrac et (e-poçt)',
   'Verilerini dışa aktar': 'Məlumatlarını ixrac et',
@@ -779,10 +779,10 @@ const Map<String, String> cevirilerAz = {
   'Verilerini yanında getir': 'Məlumatlarını özünlə gətir',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'İzlədiklərini başqa tətbiqdə qeyd edirsənsə, onları bura köçürə bilərsən. Sıfırdan başlamağına ehtiyac yoxdur.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'İxrac etdiyin ZIP faylını seç; izlədiklərin, qiymətlərin və siyahıların köçürülsün.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'İxrac etdiyin ZIP/CSV faylını seç; izlədiklərin, qiymətlərin və siyahıların köçürülsün.',
   'Aktarılıyor...': 'Köçürülür...',
-  'ZIP dosyası seç': 'ZIP faylı seç',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV faylı seç',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Tələsməyə ehtiyac yoxdur: bunu sonra Tənzimləmələr > Məlumatlarım bölməsindən də edə bilərsən.',
   'Hangi filmleri izledin?': 'Hansı filmləri izləmisən?',
@@ -1695,4 +1695,12 @@ const Map<String, String> cevirilerAz = {
   'Topluluk Kuralları': 'İcma qaydaları',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Təhqiredici, təzyiq göstərən, nifrət dolu, cinsi, zorakılığı tərifləyən və ya müəllif hüququnu pozan məzmuna və xidmətdən sui-istifadəyə sıfır dözümlülük göstərilir. Hər şərh, paylaşım, mesaj, siyahı və istifadəçi tətbiq daxilindən şikayət edilə bilər; arzuolunmaz istifadəçilər bloklana bilər. Şikayət edilən məzmun 24 saat ərzində yoxlanılır; qaydalar pozulubsa, məzmun silinir və hesab bağlana bilər.',
+  'Dosya verisi gerekli': 'Fayl məlumatı lazımdır',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Düzgün ZIP, CSV və ya JSON faylı deyil',
+  'Dosya boş': 'Fayl boşdur',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Bu fayl tanınmadı: TV Time, Letterboxd və ya dizi.jpg faylı yüklə',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Bu fayl tək başına idxal edilə bilmir: arxivin hamısını (.zip) və ya dizijpg.json faylını yüklə',
 };

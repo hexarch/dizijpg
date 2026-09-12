@@ -113,7 +113,7 @@ const Map<String, String> cevirilerUk = {
   'Tümünü Kaldır': 'Прибрати все',
   'Tümünü İzledim': 'Все переглянуто',
   'Türk Dizileri': 'Турецькі серіали',
-  'Veri içe aktar (.zip)': 'Імпорт даних (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Імпорт даних (.zip / .csv)',
   'Verilerim': 'Мої дані',
   'Verilerimi dışa aktar (e-posta)': 'Експорт моїх даних (на пошту)',
   'Verilerini dışa aktar': 'Експорт твоїх даних',
@@ -787,10 +787,10 @@ const Map<String, String> cevirilerUk = {
   'Verilerini yanında getir': 'Перенеси свої дані',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Якщо ведеш історію переглядів в іншому застосунку, перенеси її сюди. Починати з нуля не доведеться.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Вибери ZIP-файл з експорту — перегляди, оцінки та списки перенесуться.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Вибери ZIP/CSV-файл з експорту — перегляди, оцінки та списки перенесуться.',
   'Aktarılıyor...': 'Перенесення...',
-  'ZIP dosyası seç': 'Вибрати ZIP-файл',
+  'ZIP/CSV dosyası seç': 'Вибрати ZIP/CSV-файл',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Поспішати не треба: це можна зробити пізніше в розділі Налаштування > Мої дані.',
   'Hangi filmleri izledin?': 'Які фільми вже переглянуто?',
@@ -1711,4 +1711,12 @@ const Map<String, String> cevirilerUk = {
   'Topluluk Kuralları': 'Правила спільноти',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Нульова толерантність до образливого, цькувального, ненависницького, сексуального, такого, що прославляє насильство або порушує авторські права, контенту та до зловживання сервісом. На будь-який коментар, допис, повідомлення, список і користувача можна поскаржитися в застосунку; небажаних користувачів можна заблокувати. Контент зі скаргою перевіряється протягом 24 годин; у разі порушення правил його видаляють, а обліковий запис може бути закрито.',
+  'Dosya verisi gerekli': 'Потрібні дані файлу',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Це не коректний файл ZIP, CSV або JSON',
+  'Dosya boş': 'Файл порожній',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Файл не розпізнано: завантаж файл із TV Time, Letterboxd або dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Цей файл не можна імпортувати окремо: завантаж увесь архів (.zip) або файл dizijpg.json',
 };

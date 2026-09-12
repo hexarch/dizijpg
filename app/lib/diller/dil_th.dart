@@ -112,7 +112,7 @@ const Map<String, String> cevirilerTh = {
   'Tümünü Kaldır': 'เอาออกทั้งหมด',
   'Tümünü İzledim': 'ดูครบทุกตอนแล้ว',
   'Türk Dizileri': 'ซีรีส์ตุรกี',
-  'Veri içe aktar (.zip)': 'นำเข้าข้อมูล (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'นำเข้าข้อมูล (.zip / .csv)',
   'Verilerim': 'ข้อมูลของฉัน',
   'Verilerimi dışa aktar (e-posta)': 'ส่งออกข้อมูลของฉัน (อีเมล)',
   'Verilerini dışa aktar': 'ส่งออกข้อมูลของคุณ',
@@ -774,10 +774,10 @@ const Map<String, String> cevirilerTh = {
   'Verilerini yanında getir': 'ย้ายข้อมูลของคุณมาด้วย',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'ถ้าคุณบันทึกสิ่งที่ดูไว้ในแอปอื่น ย้ายมาที่นี่ได้เลย ไม่ต้องเริ่มใหม่จากศูนย์',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'เลือกไฟล์ ZIP ที่คุณส่งออกไว้ แล้วประวัติการดู คะแนน และลิสต์ของคุณจะถูกนำเข้ามา',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'เลือกไฟล์ ZIP/CSV ที่คุณส่งออกไว้ แล้วประวัติการดู คะแนน และลิสต์ของคุณจะถูกนำเข้ามา',
   'Aktarılıyor...': 'กำลังนำเข้า...',
-  'ZIP dosyası seç': 'เลือกไฟล์ ZIP',
+  'ZIP/CSV dosyası seç': 'เลือกไฟล์ ZIP/CSV',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'ไม่ต้องรีบ: ทำภายหลังได้ที่ การตั้งค่า > ข้อมูลของฉัน',
   'Hangi filmleri izledin?': 'คุณดูหนังเรื่องไหนมาบ้าง?',
@@ -1675,4 +1675,12 @@ const Map<String, String> cevirilerTh = {
   'Topluluk Kuralları': 'กฎของชุมชน',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'ไม่ยอมรับเนื้อหาที่หยาบคาย คุกคาม สร้างความเกลียดชัง ทางเพศ ยกย่องความรุนแรง หรือละเมิดลิขสิทธิ์ รวมถึงการใช้บริการในทางที่ผิดโดยเด็ดขาด ทุกความคิดเห็น โพสต์ ข้อความ รายการ และผู้ใช้สามารถรายงานได้จากในแอป และผู้ใช้ที่ไม่พึงประสงค์สามารถถูกบล็อกได้ เนื้อหาที่ถูกรายงานจะได้รับการตรวจสอบภายใน 24 ชั่วโมง หากละเมิดกฎ เนื้อหาจะถูกลบและบัญชีอาจถูกปิด',
+  'Dosya verisi gerekli': 'ต้องมีข้อมูลไฟล์',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'ไม่ใช่ไฟล์ ZIP, CSV หรือ JSON ที่ถูกต้อง',
+  'Dosya boş': 'ไฟล์ว่างเปล่า',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'ไม่รู้จักไฟล์นี้ อัปโหลดไฟล์จาก TV Time, Letterboxd หรือ dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'ไฟล์นี้นำเข้าเดี่ยว ๆ ไม่ได้ อัปโหลดไฟล์เก็บถาวรทั้งชุด (.zip) หรือไฟล์ dizijpg.json',
 };

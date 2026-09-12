@@ -116,7 +116,7 @@ const Map<String, String> cevirilerEl = {
   'Tümünü Kaldır': 'Κατάργηση όλων',
   'Tümünü İzledim': 'Τα είδα όλα',
   'Türk Dizileri': 'Τουρκικές Σειρές',
-  'Veri içe aktar (.zip)': 'Εισαγωγή δεδομένων (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Εισαγωγή δεδομένων (.zip / .csv)',
   'Verilerim': 'Τα δεδομένα μου',
   'Verilerimi dışa aktar (e-posta)': 'Εξαγωγή δεδομένων (email)',
   'Verilerini dışa aktar': 'Εξαγωγή των δεδομένων σου',
@@ -798,10 +798,10 @@ const Map<String, String> cevirilerEl = {
   'Verilerini yanında getir': 'Φέρε τα δεδομένα σου μαζί σου',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Αν παρακολουθείς όσα βλέπεις σε άλλη εφαρμογή, μπορείς να τα μεταφέρεις εδώ. Δεν χρειάζεται να ξεκινήσεις από την αρχή.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Διάλεξε το αρχείο ZIP που εξήγαγες, για να μεταφερθούν οι προβολές, οι βαθμολογίες και οι λίστες σου.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Διάλεξε το αρχείο ZIP/CSV που εξήγαγες, για να μεταφερθούν οι προβολές, οι βαθμολογίες και οι λίστες σου.',
   'Aktarılıyor...': 'Μεταφορά...',
-  'ZIP dosyası seç': 'Επιλογή αρχείου ZIP',
+  'ZIP/CSV dosyası seç': 'Επιλογή αρχείου ZIP/CSV',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Δεν υπάρχει βιασύνη: μπορείς να το κάνεις και αργότερα από Ρυθμίσεις > Τα δεδομένα μου.',
   'Hangi filmleri izledin?': 'Ποιες ταινίες έχεις δει;',
@@ -1740,4 +1740,12 @@ const Map<String, String> cevirilerEl = {
   'Topluluk Kuralları': 'Κανόνες κοινότητας',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Μηδενική ανοχή σε προσβλητικό, παρενοχλητικό, μισαλλόδοξο, σεξουαλικό περιεχόμενο, σε περιεχόμενο που εξυμνεί τη βία ή παραβιάζει πνευματικά δικαιώματα, καθώς και στην κατάχρηση της υπηρεσίας. Κάθε σχόλιο, ανάρτηση, μήνυμα, λίστα και χρήστης μπορεί να αναφερθεί μέσα από την εφαρμογή· οι ανεπιθύμητοι χρήστες μπορούν να αποκλειστούν. Το αναφερόμενο περιεχόμενο ελέγχεται εντός 24 ωρών· αν παραβιάζει τους κανόνες, αφαιρείται και ο λογαριασμός μπορεί να κλείσει.',
+  'Dosya verisi gerekli': 'Απαιτούνται δεδομένα αρχείου',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Δεν είναι έγκυρο αρχείο ZIP, CSV ή JSON',
+  'Dosya boş': 'Το αρχείο είναι κενό',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Το αρχείο δεν αναγνωρίστηκε: ανέβασε αρχείο από TV Time, Letterboxd ή dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Αυτό το αρχείο δεν εισάγεται μόνο του: ανέβασε ολόκληρο το αρχείο (.zip) ή το dizijpg.json',
 };

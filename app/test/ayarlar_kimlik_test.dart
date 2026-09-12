@@ -149,7 +149,7 @@ const _tumAyarlar = <String>[
   'Geri Bildirim',
   // --- Verilerim ---
   'Verilerimi dışa aktar (e-posta)',
-  'Veri içe aktar (.zip)',
+  'Veri içe aktar (.zip / .csv)',
   // --- Hesap ---
   'Çıkış Yap',
   'Hesabımı Sil',

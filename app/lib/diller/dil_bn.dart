@@ -113,7 +113,7 @@ const Map<String, String> cevirilerBn = {
   'Tümünü Kaldır': 'সব সরাও',
   'Tümünü İzledim': 'সব দেখেছি',
   'Türk Dizileri': 'তুর্কি সিরিজ',
-  'Veri içe aktar (.zip)': 'ডেটা ইমপোর্ট করো (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'ডেটা ইমপোর্ট করো (.zip / .csv)',
   'Verilerim': 'আমার ডেটা',
   'Verilerimi dışa aktar (e-posta)': 'আমার ডেটা এক্সপোর্ট করো (ইমেইল)',
   'Verilerini dışa aktar': 'তোমার ডেটা এক্সপোর্ট করো',
@@ -785,10 +785,10 @@ const Map<String, String> cevirilerBn = {
   'Verilerini yanında getir': 'নিজের ডেটা সঙ্গে নিয়ে এসো',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'অন্য কোনো অ্যাপে দেখা জিনিস ট্র্যাক করলে সেগুলো এখানে নিয়ে আসতে পারো। শূন্য থেকে শুরু করার দরকার নেই।',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'সেখান থেকে এক্সপোর্ট করা ZIP ফাইল বেছে নাও; তোমার দেখা, রেটিং আর লিস্ট চলে আসবে।',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'সেখান থেকে এক্সপোর্ট করা ZIP/CSV ফাইল বেছে নাও; তোমার দেখা, রেটিং আর লিস্ট চলে আসবে।',
   'Aktarılıyor...': 'ইম্পোর্ট হচ্ছে...',
-  'ZIP dosyası seç': 'ZIP ফাইল বেছে নাও',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV ফাইল বেছে নাও',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'তাড়া নেই: এটা পরে সেটিংস > আমার ডেটা থেকেও করা যায়।',
   'Hangi filmleri izledin?': 'কোন সিনেমাগুলো দেখেছ?',
@@ -1695,4 +1695,12 @@ const Map<String, String> cevirilerBn = {
   'Topluluk Kuralları': 'কমিউনিটি নির্দেশিকা',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'আপত্তিকর, হয়রানিমূলক, ঘৃণাসূচক, যৌন, সহিংসতা-গৌরবকারী বা কপিরাইট লঙ্ঘনকারী কনটেন্ট এবং সেবার অপব্যবহারের প্রতি শূন্য সহনশীলতা। প্রতিটি মন্তব্য, পোস্ট, বার্তা, তালিকা ও ব্যবহারকারীকে অ্যাপের ভেতর থেকে রিপোর্ট করা যায়; অবাঞ্ছিত ব্যবহারকারীদের ব্লক করা যায়। রিপোর্ট করা কনটেন্ট ২৪ ঘণ্টার মধ্যে পর্যালোচনা করা হয়; নিয়ম ভাঙলে কনটেন্ট সরানো হয় এবং অ্যাকাউন্ট বন্ধ করা হতে পারে।',
+  'Dosya verisi gerekli': 'ফাইলের ডেটা দরকার',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'বৈধ ZIP, CSV বা JSON ফাইল নয়',
+  'Dosya boş': 'ফাইলটি খালি',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'এই ফাইল চেনা গেল না: TV Time, Letterboxd বা dizi.jpg ফাইল আপলোড করো',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'এই ফাইলটি একা আমদানি করা যায় না: পুরো আর্কাইভ (.zip) বা dizijpg.json ফাইল আপলোড করো',
 };

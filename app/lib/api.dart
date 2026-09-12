@@ -893,17 +893,34 @@ class Api {
     return d['mesaj'] as String? ?? 'Gönderildi'.c;
   }
 
-  /// ZIP verisini içe aktarır; içe aktarım özetini döndürür.
-  static Future<Map<String, dynamic>> veriIceAktar(Uint8List zip) async {
+  /// ZIP **ya da** tek bir CSV/JSON dosyasını içe aktarır; özeti döndürür.
+  ///
+  /// [dosyaAdi] SUNUCUYA İPUCU olarak gider (13 Eyl 2026): Letterboxd'un
+  /// `watched.csv` ve `watchlist.csv` dosyalarının BAŞLIKLARI birebir aynı
+  /// (Date,Name,Year,Letterboxd URI) — hangisi olduğunu yalnız ad söyler.
+  /// HTTP başlığı latin-1 taşıdığı için ad yüzde kodlanır; sunucu çözer,
+  /// tanımazsa yok sayar (biçim kararı asla yalnız ada dayanmaz).
+  static Future<Map<String, dynamic>> veriIceAktar(
+    Uint8List veri, {
+    String? dosyaAdi,
+  }) async {
+    final uzanti = (dosyaAdi ?? '').toLowerCase();
+    final tip = uzanti.endsWith('.csv')
+        ? 'text/csv'
+        : uzanti.endsWith('.json')
+        ? 'application/json'
+        : 'application/zip';
     final d = await _yanit(
       () => _istemci
           .post(
             Uri.parse('$apiTaban/veri/ice-aktar'),
             headers: {
-              'Content-Type': 'application/zip',
+              'Content-Type': tip,
+              if (dosyaAdi != null && dosyaAdi.isNotEmpty)
+                'X-Dosya-Adi': Uri.encodeComponent(dosyaAdi),
               if (_token != null) 'Authorization': 'Bearer $_token',
             },
-            body: zip,
+            body: veri,
           )
           .timeout(const Duration(minutes: 5)),
     );

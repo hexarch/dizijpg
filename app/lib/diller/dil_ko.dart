@@ -109,7 +109,7 @@ const Map<String, String> cevirilerKo = {
   'Tümünü Kaldır': '전체 해제',
   'Tümünü İzledim': '전체 시청 완료',
   'Türk Dizileri': '터키 드라마',
-  'Veri içe aktar (.zip)': '데이터 가져오기 (.zip)',
+  'Veri içe aktar (.zip / .csv)': '데이터 가져오기 (.zip / .csv)',
   'Verilerim': '내 데이터',
   'Verilerimi dışa aktar (e-posta)': '내 데이터 내보내기 (이메일)',
   'Verilerini dışa aktar': '데이터 내보내기',
@@ -761,10 +761,10 @@ const Map<String, String> cevirilerKo = {
   'Verilerini yanında getir': '쓰던 데이터를 가져오세요',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       '다른 앱에서 시청 기록을 관리했다면 여기로 옮길 수 있어요. 처음부터 다시 시작하지 않아도 돼요.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      '내보낸 ZIP 파일을 선택하면 시청 기록, 평점, 리스트를 그대로 가져와요.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      '내보낸 ZIP/CSV 파일을 선택하면 시청 기록, 평점, 리스트를 그대로 가져와요.',
   'Aktarılıyor...': '가져오는 중...',
-  'ZIP dosyası seç': 'ZIP 파일 선택',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV 파일 선택',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       '서두르지 않아도 돼요. 나중에 설정 > 내 데이터에서도 할 수 있어요.',
   'Hangi filmleri izledin?': '어떤 영화를 봤어요?',
@@ -1625,4 +1625,12 @@ const Map<String, String> cevirilerKo = {
   'Topluluk Kuralları': '커뮤니티 규칙',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       '모욕적, 괴롭힘, 혐오, 성적, 폭력 미화 또는 저작권 침해 콘텐츠와 서비스 남용은 절대 허용되지 않습니다. 모든 댓글, 게시물, 메시지, 목록, 사용자는 앱 안에서 신고할 수 있으며 원치 않는 사용자는 차단할 수 있습니다. 신고된 콘텐츠는 24시간 안에 검토되며, 규칙을 위반하면 삭제되고 계정이 폐쇄될 수 있습니다.',
+  'Dosya verisi gerekli': '파일 데이터가 필요합니다',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      '올바른 ZIP, CSV 또는 JSON 파일이 아닙니다',
+  'Dosya boş': '파일이 비어 있습니다',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      '파일을 인식하지 못했습니다. TV Time, Letterboxd 또는 dizi.jpg 파일을 올려주세요',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      '이 파일만으로는 가져올 수 없습니다. 전체 아카이브(.zip) 또는 dizijpg.json 파일을 올려주세요',
 };

@@ -125,7 +125,7 @@ void main() {
         tester,
         find.text('Verilerimi dışa aktar (e-posta)'),
       );
-      final ice = await _dy(tester, find.text('Veri içe aktar (.zip)'));
+      final ice = await _dy(tester, find.text('Veri içe aktar (.zip / .csv)'));
       final cikis = await _dy(tester, find.text('Çıkış Yap'));
 
       // Verilerim bloğu parçalanmadı: başlık → dışa aktar → içe aktar.

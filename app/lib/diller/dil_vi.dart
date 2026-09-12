@@ -113,7 +113,7 @@ const Map<String, String> cevirilerVi = {
   'Tümünü Kaldır': 'Xóa tất cả',
   'Tümünü İzledim': 'Đã xem tất cả',
   'Türk Dizileri': 'Phim bộ Thổ Nhĩ Kỳ',
-  'Veri içe aktar (.zip)': 'Nhập dữ liệu (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Nhập dữ liệu (.zip / .csv)',
   'Verilerim': 'Dữ liệu của tôi',
   'Verilerimi dışa aktar (e-posta)': 'Xuất dữ liệu của tôi (email)',
   'Verilerini dışa aktar': 'Xuất dữ liệu của bạn',
@@ -783,10 +783,10 @@ const Map<String, String> cevirilerVi = {
   'Verilerini yanında getir': 'Mang dữ liệu của bạn theo',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Nếu bạn đang ghi lại những gì mình xem ở ứng dụng khác, hãy chuyển sang đây. Không cần bắt đầu lại từ đầu.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Chọn tệp ZIP bạn đã xuất; lịch sử xem, điểm và danh sách của bạn sẽ được nhập vào.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Chọn tệp ZIP/CSV bạn đã xuất; lịch sử xem, điểm và danh sách của bạn sẽ được nhập vào.',
   'Aktarılıyor...': 'Đang nhập...',
-  'ZIP dosyası seç': 'Chọn tệp ZIP',
+  'ZIP/CSV dosyası seç': 'Chọn tệp ZIP/CSV',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Không cần vội: bạn có thể làm việc này sau trong Cài đặt > Dữ liệu của tôi.',
   'Hangi filmleri izledin?': 'Bạn đã xem những phim nào?',
@@ -1702,4 +1702,12 @@ const Map<String, String> cevirilerVi = {
   'Topluluk Kuralları': 'Quy tắc cộng đồng',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Không khoan nhượng với nội dung lăng mạ, quấy rối, thù ghét, tình dục, cổ xúy bạo lực hoặc vi phạm bản quyền, cũng như hành vi lạm dụng dịch vụ. Mọi bình luận, bài đăng, tin nhắn, danh sách và người dùng đều có thể được báo cáo ngay trong ứng dụng; người dùng không mong muốn có thể bị chặn. Nội dung bị báo cáo được xem xét trong vòng 24 giờ; nếu vi phạm quy tắc sẽ bị gỡ và tài khoản có thể bị đóng.',
+  'Dosya verisi gerekli': 'Cần dữ liệu tệp',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Không phải tệp ZIP, CSV hay JSON hợp lệ',
+  'Dosya boş': 'Tệp trống',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Không nhận diện được tệp: hãy tải lên tệp TV Time, Letterboxd hoặc dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Không thể nhập riêng tệp này: hãy tải lên toàn bộ kho lưu trữ (.zip) hoặc tệp dizijpg.json',
 };

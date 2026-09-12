@@ -113,7 +113,7 @@ const Map<String, String> cevirilerHi = {
   'Tümünü Kaldır': 'सभी हटाओ',
   'Tümünü İzledim': 'सभी देख लिए',
   'Türk Dizileri': 'तुर्की सीरीज़',
-  'Veri içe aktar (.zip)': 'डेटा इंपोर्ट करो (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'डेटा इंपोर्ट करो (.zip / .csv)',
   'Verilerim': 'मेरा डेटा',
   'Verilerimi dışa aktar (e-posta)': 'मेरा डेटा एक्सपोर्ट करो (ईमेल)',
   'Verilerini dışa aktar': 'अपना डेटा एक्सपोर्ट करो',
@@ -786,10 +786,10 @@ const Map<String, String> cevirilerHi = {
   'Verilerini yanında getir': 'अपना डेटा साथ ले आओ',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'किसी दूसरे ऐप में देखे हुए का हिसाब रखा है तो उसे यहाँ ले आओ। सब कुछ शुरू से करने की ज़रूरत नहीं।',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'वहाँ से एक्सपोर्ट की गई ZIP फ़ाइल चुनो; देखे हुए, रेटिंग और लिस्ट्स यहाँ आ जाएँगी।',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'वहाँ से एक्सपोर्ट की गई ZIP/CSV फ़ाइल चुनो; देखे हुए, रेटिंग और लिस्ट्स यहाँ आ जाएँगी।',
   'Aktarılıyor...': 'इंपोर्ट हो रहा है...',
-  'ZIP dosyası seç': 'ZIP फ़ाइल चुनो',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV फ़ाइल चुनो',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'जल्दी कुछ नहीं: यह बाद में सेटिंग्स > मेरा डेटा से भी किया जा सकता है।',
   'Hangi filmleri izledin?': 'तुमने कौन-सी फ़िल्में देखीं?',
@@ -1700,4 +1700,12 @@ const Map<String, String> cevirilerHi = {
   'Topluluk Kuralları': 'समुदाय के नियम',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'अपमानजनक, उत्पीड़क, घृणास्पद, यौन, हिंसा का महिमामंडन करने वाली या कॉपीराइट का उल्लंघन करने वाली सामग्री और सेवा के दुरुपयोग के प्रति शून्य सहनशीलता है। हर टिप्पणी, पोस्ट, संदेश, सूची और उपयोगकर्ता की ऐप के भीतर से रिपोर्ट की जा सकती है; अवांछित उपयोगकर्ताओं को ब्लॉक किया जा सकता है। रिपोर्ट की गई सामग्री की 24 घंटे में समीक्षा होती है; नियम टूटने पर सामग्री हटा दी जाती है और खाता बंद किया जा सकता है।',
+  'Dosya verisi gerekli': 'फ़ाइल का डेटा ज़रूरी है',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'यह मान्य ZIP, CSV या JSON फ़ाइल नहीं है',
+  'Dosya boş': 'फ़ाइल खाली है',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'यह फ़ाइल पहचानी नहीं गई: TV Time, Letterboxd या dizi.jpg फ़ाइल अपलोड करो',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'यह फ़ाइल अकेले इंपोर्ट नहीं हो सकती: पूरा आर्काइव (.zip) या dizijpg.json फ़ाइल अपलोड करो',
 };

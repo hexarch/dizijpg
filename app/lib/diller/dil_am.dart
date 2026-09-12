@@ -110,7 +110,7 @@ const Map<String, String> cevirilerAm = {
   'Tümünü Kaldır': 'ሁሉንም አስወግድ',
   'Tümünü İzledim': 'ሁሉንም አይቻለሁ',
   'Türk Dizileri': 'የቱርክ ድራማዎች',
-  'Veri içe aktar (.zip)': 'ዳታ አስገባ (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'ዳታ አስገባ (.zip / .csv)',
   'Verilerim': 'ዳታዬ',
   'Verilerimi dışa aktar (e-posta)': 'ዳታዬን አውጣ (ኢሜይል)',
   'Verilerini dışa aktar': 'ዳታህን አውጣ',
@@ -768,10 +768,10 @@ const Map<String, String> cevirilerAm = {
   'Verilerini yanında getir': 'ዳታዎን ይዘው ይምጡ',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'በሌላ መተግበሪያ ውስጥ ያዩዋቸውን የሚከታተሉ ከሆነ ወደዚህ ማዛወር ይችላሉ። ከባዶ መጀመር አያስፈልግዎትም።',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'ወደ ውጭ የላኩትን የZIP ፋይል ይምረጡ፤ ያዩዋቸው፣ ነጥቦችዎ እና ዝርዝሮችዎ ይዛወራሉ።',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'ወደ ውጭ የላኩትን የZIP/CSV ፋይል ይምረጡ፤ ያዩዋቸው፣ ነጥቦችዎ እና ዝርዝሮችዎ ይዛወራሉ።',
   'Aktarılıyor...': 'በማዛወር ላይ...',
-  'ZIP dosyası seç': 'የZIP ፋይል ይምረጡ',
+  'ZIP/CSV dosyası seç': 'የZIP/CSV ፋይል ይምረጡ',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'መቸኮል አያስፈልግም፦ ይህን በኋላም ከቅንብሮች > ዳታዬ ማድረግ ይችላሉ።',
   'Hangi filmleri izledin?': 'የትኞቹን ፊልሞች አይተዋል?',
@@ -1647,4 +1647,12 @@ const Map<String, String> cevirilerAm = {
   'Topluluk Kuralları': 'የማህበረሰብ ደንቦች',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'ስድብ፣ ትንኮሳ፣ ጥላቻ፣ ወሲባዊ፣ ብጥብጥን የሚያወድስ ወይም የቅጂ መብትን የሚጥስ ይዘት እና የአገልግሎቱን አላግባብ መጠቀም በፍጹም አይታገሱም። እያንዳንዱ አስተያየት፣ ልጥፍ፣ መልዕክት፣ ዝርዝር እና ተጠቃሚ ከመተግበሪያው ውስጥ ሊጠቆም ይችላል፤ የማይፈለጉ ተጠቃሚዎች ሊታገዱ ይችላሉ። የተጠቆመ ይዘት በ24 ሰዓት ውስጥ ይገመገማል፤ ደንብ ከጣሰ ይወገዳል እና መለያው ሊዘጋ ይችላል።',
+  'Dosya verisi gerekli': 'የፋይል ውሂብ ያስፈልጋል',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'ትክክለኛ የZIP፣ CSV ወይም JSON ፋይል አይደለም',
+  'Dosya boş': 'ፋይሉ ባዶ ነው',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'ይህ ፋይል አልታወቀም፦ የTV Time፣ Letterboxd ወይም dizi.jpg ፋይል ይጫኑ',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'ይህ ፋይል ብቻውን መግባት አይችልም፦ ሙሉውን መዝገብ (.zip) ወይም dizijpg.json ፋይል ይጫኑ',
 };

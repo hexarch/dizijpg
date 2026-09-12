@@ -115,7 +115,7 @@ const Map<String, String> cevirilerMy = {
   'Tümünü Kaldır': 'အားလုံး ဖယ်ရှားရန်',
   'Tümünü İzledim': 'အားလုံး ကြည့်ပြီးပြီ',
   'Türk Dizileri': 'တူရကီ ဇာတ်လမ်းတွဲများ',
-  'Veri içe aktar (.zip)': 'ဒေတာ ထည့်သွင်းရန် (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'ဒေတာ ထည့်သွင်းရန် (.zip / .csv)',
   'Verilerim': 'ကိုယ့်ဒေတာများ',
   'Verilerimi dışa aktar (e-posta)': 'ကိုယ့်ဒေတာ ထုတ်ယူရန် (အီးမေးလ်)',
   'Verilerini dışa aktar': 'ဒေတာ ထုတ်ယူရန်',
@@ -797,10 +797,10 @@ const Map<String, String> cevirilerMy = {
   'Verilerini yanında getir': 'သင့်ဒေတာများကို ယူဆောင်လာပါ',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'အခြားအက်ပ်တစ်ခုတွင် ကြည့်ပြီးသားများကို မှတ်သားထားလျှင် ဤနေရာသို့ ရွှေ့ယူနိုင်သည်။ အစကနေ ပြန်စရန် မလိုပါ။',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'ထုတ်ယူထားသော ZIP ဖိုင်ကို ရွေးပါ။ ကြည့်ပြီးသားများ၊ အဆင့်သတ်မှတ်ချက်များနှင့် စာရင်းများ ရောက်လာပါမည်။',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'ထုတ်ယူထားသော ZIP/CSV ဖိုင်ကို ရွေးပါ။ ကြည့်ပြီးသားများ၊ အဆင့်သတ်မှတ်ချက်များနှင့် စာရင်းများ ရောက်လာပါမည်။',
   'Aktarılıyor...': 'သွင်းယူနေသည်...',
-  'ZIP dosyası seç': 'ZIP ဖိုင် ရွေးရန်',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV ဖိုင် ရွေးရန်',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'အလျင်စလို မလိုပါ - ဤအရာကို နောက်မှ ဆက်တင်များ > ကိုယ့်ဒေတာများ မှလည်း လုပ်နိုင်သည်။',
   'Hangi filmleri izledin?': 'ဘယ်ရုပ်ရှင်တွေ ကြည့်ဖူးလဲ?',
@@ -1723,4 +1723,12 @@ const Map<String, String> cevirilerMy = {
   'Topluluk Kuralları': 'အသိုင်းအဝိုင်း စည်းမျဉ်းများ',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'စော်ကားသော၊ နှောင့်ယှက်သော၊ အမုန်းပွားစေသော၊ လိင်ဆိုင်ရာ၊ အကြမ်းဖက်မှုကို ချီးမြှောက်သော သို့မဟုတ် မူပိုင်ခွင့်ချိုးဖောက်သော အကြောင်းအရာများနှင့် ဝန်ဆောင်မှုကို အလွဲသုံးစားလုပ်ခြင်းကို လုံးဝ ခွင့်မပြုပါ။ မှတ်ချက်၊ ပို့စ်၊ မက်ဆေ့ချ်၊ စာရင်းနှင့် အသုံးပြုသူတိုင်းကို အက်ပ်အတွင်းမှ တိုင်ကြားနိုင်ပြီး မလိုလားသော အသုံးပြုသူများကို ပိတ်ဆို့နိုင်သည်။ တိုင်ကြားထားသော အကြောင်းအရာကို ၂၄ နာရီအတွင်း စစ်ဆေးပြီး စည်းမျဉ်းချိုးဖောက်ပါက ဖယ်ရှားကာ အကောင့်ကို ပိတ်နိုင်သည်။',
+  'Dosya verisi gerekli': 'ဖိုင်ဒေတာ လိုအပ်သည်',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'မှန်ကန်သော ZIP၊ CSV သို့မဟုတ် JSON ဖိုင် မဟုတ်ပါ',
+  'Dosya boş': 'ဖိုင်သည် ဗလာဖြစ်နေသည်',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'ဤဖိုင်ကို မသိရှိပါ။ TV Time၊ Letterboxd သို့မဟုတ် dizi.jpg ဖိုင် တင်ပါ',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'ဤဖိုင်တစ်ခုတည်းဖြင့် ထည့်သွင်း၍ မရပါ။ မှတ်တမ်းတစ်ခုလုံး (.zip) သို့မဟုတ် dizijpg.json ဖိုင် တင်ပါ',
 };

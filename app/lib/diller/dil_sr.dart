@@ -114,7 +114,7 @@ const Map<String, String> cevirilerSr = {
   'Tümünü Kaldır': 'Уклони све',
   'Tümünü İzledim': 'Све одгледано',
   'Türk Dizileri': 'Турске серије',
-  'Veri içe aktar (.zip)': 'Увоз података (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Увоз података (.zip / .csv)',
   'Verilerim': 'Моји подаци',
   'Verilerimi dışa aktar (e-posta)': 'Извези моје податке (имејл)',
   'Verilerini dışa aktar': 'Извези своје податке',
@@ -786,10 +786,10 @@ const Map<String, String> cevirilerSr = {
   'Verilerini yanında getir': 'Понеси своје податке са собом',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Ако у другој апликацији пратиш шта гледаш, можеш то пренети овде. Не мораш да почињеш испочетка.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Изабери ZIP датотеку из извоза — пренеће се одгледано, оцене и листе.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Изабери ZIP/CSV датотеку из извоза — пренеће се одгледано, оцене и листе.',
   'Aktarılıyor...': 'Преношење...',
-  'ZIP dosyası seç': 'Изабери ZIP датотеку',
+  'ZIP/CSV dosyası seç': 'Изабери ZIP/CSV датотеку',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Нема журбе: ово можеш урадити и касније у одељку Подешавања > Моји подаци.',
   'Hangi filmleri izledin?': 'Који филмови су већ одгледани?',
@@ -1708,4 +1708,12 @@ const Map<String, String> cevirilerSr = {
   'Topluluk Kuralları': 'Pravila zajednice',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Nulta tolerancija prema uvredljivom, uznemiravajućem, mrzilačkom, seksualnom sadržaju, sadržaju koji veliča nasilje ili krši autorska prava, kao i prema zloupotrebi usluge. Svaki komentar, objava, poruka, lista i korisnik mogu se prijaviti iz aplikacije; neželjeni korisnici mogu se blokirati. Prijavljeni sadržaj se pregleda u roku od 24 sata; ako krši pravila, uklanja se, a nalog može biti zatvoren.',
+  'Dosya verisi gerekli': 'Потребни су подаци фајла',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Није исправан ZIP, CSV или JSON фајл',
+  'Dosya boş': 'Фајл је празан',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Фајл није препознат: отпреми фајл из TV Time, Letterboxd или dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Овај фајл не може да се увезе сам: отпреми цео архив (.zip) или фајл dizijpg.json',
 };

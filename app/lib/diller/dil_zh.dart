@@ -108,7 +108,7 @@ const Map<String, String> cevirilerZh = {
   'Tümünü Kaldır': '全部移除',
   'Tümünü İzledim': '全部标记已看',
   'Türk Dizileri': '土耳其剧集',
-  'Veri içe aktar (.zip)': '导入数据（.zip）',
+  'Veri içe aktar (.zip / .csv)': '导入数据（.zip / .csv）',
   'Verilerim': '我的数据',
   'Verilerimi dışa aktar (e-posta)': '导出我的数据（邮箱）',
   'Verilerini dışa aktar': '导出你的数据',
@@ -751,10 +751,10 @@ const Map<String, String> cevirilerZh = {
   'Verilerini yanında getir': '把你的数据一起带过来',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       '如果你在别的应用里记录过观看，可以搬到这里来，不用从零开始。',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      '选择你导出的 ZIP 文件，把观看记录、评分和片单一起导进来。',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      '选择你导出的 ZIP/CSV 文件，把观看记录、评分和片单一起导进来。',
   'Aktarılıyor...': '导入中...',
-  'ZIP dosyası seç': '选择 ZIP 文件',
+  'ZIP/CSV dosyası seç': '选择 ZIP/CSV 文件',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       '不用着急：以后也可以在设置 > 我的数据中完成。',
   'Hangi filmleri izledin?': '你看过哪些电影？',
@@ -1637,4 +1637,11 @@ const Map<String, String> cevirilerZh = {
   'Topluluk Kuralları': '社区准则',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       '对辱骂、骚扰、仇恨、色情、美化暴力或侵犯版权的内容以及滥用服务的行为零容忍。每条评论、帖子、消息、列表和每位用户都可以在应用内举报；可以屏蔽不想看到的用户。被举报的内容将在24小时内审核；违反规则的内容会被删除，账号可能被关闭。',
+  'Dosya verisi gerekli': '需要文件数据',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil': '不是有效的 ZIP、CSV 或 JSON 文件',
+  'Dosya boş': '文件为空',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      '无法识别此文件：请上传 TV Time、Letterboxd 或 dizi.jpg 的文件',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      '仅这个文件无法导入：请上传整个压缩包（.zip）或 dizijpg.json 文件',
 };

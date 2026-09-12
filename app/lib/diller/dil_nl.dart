@@ -114,7 +114,7 @@ const Map<String, String> cevirilerNl = {
   'Tümünü Kaldır': 'Alles verwijderen',
   'Tümünü İzledim': 'Alles gezien',
   'Türk Dizileri': 'Turkse series',
-  'Veri içe aktar (.zip)': 'Gegevens importeren (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Gegevens importeren (.zip / .csv)',
   'Verilerim': 'Mijn gegevens',
   'Verilerimi dışa aktar (e-posta)': 'Mijn gegevens exporteren (e-mail)',
   'Verilerini dışa aktar': 'Exporteer je gegevens',
@@ -789,10 +789,10 @@ const Map<String, String> cevirilerNl = {
   'Verilerini yanında getir': 'Neem je gegevens mee',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Houd je in een andere app bij wat je kijkt? Dan kun je alles hierheen halen. Je hoeft niet opnieuw te beginnen.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Kies het ZIP-bestand dat je hebt geëxporteerd; je kijkgeschiedenis, beoordelingen en lijsten gaan mee.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Kies het ZIP/CSV-bestand dat je hebt geëxporteerd; je kijkgeschiedenis, beoordelingen en lijsten gaan mee.',
   'Aktarılıyor...': 'Importeren...',
-  'ZIP dosyası seç': 'ZIP-bestand kiezen',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV-bestand kiezen',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Geen haast: dit kan later ook via Instellingen > Mijn gegevens.',
   'Hangi filmleri izledin?': 'Welke films heb je gezien?',
@@ -1715,4 +1715,12 @@ const Map<String, String> cevirilerNl = {
   'Topluluk Kuralları': 'Communityregels',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Er geldt nultolerantie voor beledigende, intimiderende, haatdragende, seksuele, geweld verheerlijkende of auteursrechtschendende inhoud en voor misbruik van de dienst. Elke reactie, post, bericht, lijst en gebruiker kan in de app worden gemeld; ongewenste gebruikers kunnen worden geblokkeerd. Gemelde inhoud wordt binnen 24 uur beoordeeld; bij overtreding wordt deze verwijderd en kan het account worden gesloten.',
+  'Dosya verisi gerekli': 'Bestandsgegevens vereist',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Geen geldig ZIP-, CSV- of JSON-bestand',
+  'Dosya boş': 'Het bestand is leeg',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Bestand niet herkend: upload een bestand van TV Time, Letterboxd of dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Dit bestand kan niet los worden geïmporteerd: upload het hele archief (.zip) of het bestand dizijpg.json',
 };

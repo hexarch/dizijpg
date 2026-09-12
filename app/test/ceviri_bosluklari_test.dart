@@ -290,6 +290,18 @@ const _yeniAnahtarlar = [
   'Sunucu yanıt vermedi',
   'Güvenli bağlantı kurulamadı',
   'Sunucudan beklenmeyen bir yanıt geldi',
+  // TEK DOSYA (CSV/JSON) İÇE AKTARIMI (13 Eyl 2026). Üç anahtar YENİDEN
+  // ADLANDIRILDI (ZIP → ZIP/CSV): eski adlar haritalarda kalsaydı yeni metin
+  // 45 dilde Türkçe'ye düşerdi. Dördü sunucunun döndürdüğü hata cümlesi —
+  // kullanıcının o an gördüğü TEK metin onlar.
+  'Veri içe aktar (.zip / .csv)',
+  'ZIP/CSV dosyası seç',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.',
+  'Dosya verisi gerekli',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil',
+  'Dosya boş',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle',
 ];
 
 /// Türkçe hariç bütün dil kodları (Türkçe'nin haritası yoktur: anahtar zaten o).

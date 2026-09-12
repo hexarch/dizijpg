@@ -112,7 +112,7 @@ const Map<String, String> cevirilerDa = {
   'Tümünü Kaldır': 'Fjern alle',
   'Tümünü İzledim': 'Har set alle',
   'Türk Dizileri': 'Tyrkiske serier',
-  'Veri içe aktar (.zip)': 'Importér data (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Importér data (.zip / .csv)',
   'Verilerim': 'Mine data',
   'Verilerimi dışa aktar (e-posta)': 'Eksportér mine data (e-mail)',
   'Verilerini dışa aktar': 'Eksportér dine data',
@@ -784,10 +784,10 @@ const Map<String, String> cevirilerDa = {
   'Verilerini yanında getir': 'Tag dine data med',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Hvis du holder styr på, hvad du ser, i en anden app, kan du flytte det hele hertil. Du behøver ikke starte forfra.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Vælg den ZIP-fil, du har eksporteret, så følger din visningshistorik, dine bedømmelser og dine lister med.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Vælg den ZIP/CSV-fil, du har eksporteret, så følger din visningshistorik, dine bedømmelser og dine lister med.',
   'Aktarılıyor...': 'Importerer...',
-  'ZIP dosyası seç': 'Vælg ZIP-fil',
+  'ZIP/CSV dosyası seç': 'Vælg ZIP/CSV-fil',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Ingen hast: du kan også gøre det senere under Indstillinger > Mine data.',
   'Hangi filmleri izledin?': 'Hvilke film har du set?',
@@ -1707,4 +1707,12 @@ const Map<String, String> cevirilerDa = {
   'Topluluk Kuralları': 'Fællesskabsregler',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Nultolerance over for krænkende, chikanerende, hadefuldt, seksuelt, voldsforherligende eller ophavsretskrænkende indhold og over for misbrug af tjenesten. Enhver kommentar, ethvert opslag, enhver besked, liste og bruger kan anmeldes i appen; uønskede brugere kan blokeres. Anmeldt indhold gennemgås inden for 24 timer; ved regelbrud fjernes det, og kontoen kan blive lukket.',
+  'Dosya verisi gerekli': 'Fildata er påkrævet',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Ikke en gyldig ZIP-, CSV- eller JSON-fil',
+  'Dosya boş': 'Filen er tom',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Filen blev ikke genkendt: upload en fil fra TV Time, Letterboxd eller dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Denne fil kan ikke importeres alene: upload hele arkivet (.zip) eller filen dizijpg.json',
 };

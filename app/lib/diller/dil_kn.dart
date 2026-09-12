@@ -114,7 +114,7 @@ const Map<String, String> cevirilerKn = {
   'Tümünü Kaldır': 'ಎಲ್ಲವನ್ನೂ ತೆಗೆದುಹಾಕು',
   'Tümünü İzledim': 'ಎಲ್ಲವನ್ನೂ ನೋಡಿದ್ದೇನೆ',
   'Türk Dizileri': 'ಟರ್ಕಿಶ್ ಸೀರೀಸ್',
-  'Veri içe aktar (.zip)': 'ಡೇಟಾ ಆಮದು (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'ಡೇಟಾ ಆಮದು (.zip / .csv)',
   'Verilerim': 'ನನ್ನ ಡೇಟಾ',
   'Verilerimi dışa aktar (e-posta)': 'ನನ್ನ ಡೇಟಾ ರಫ್ತು ಮಾಡು (ಇಮೇಲ್)',
   'Verilerini dışa aktar': 'ನಿನ್ನ ಡೇಟಾ ರಫ್ತು ಮಾಡು',
@@ -786,10 +786,10 @@ const Map<String, String> cevirilerKn = {
   'Verilerini yanında getir': 'ನಿನ್ನ ಡೇಟಾವನ್ನು ಜೊತೆಗೇ ತಗೊಂಡು ಬಾ',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'ಬೇರೆ ಆ್ಯಪ್‌ನಲ್ಲಿ ನೋಡಿದ್ದನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡುತ್ತಿದ್ದರೆ ಅದನ್ನು ಇಲ್ಲಿಗೆ ತರಬಹುದು. ಮೊದಲಿನಿಂದ ಶುರು ಮಾಡುವ ಅಗತ್ಯವಿಲ್ಲ.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'ರಫ್ತು ಮಾಡಿದ ZIP ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡು; ನೋಡಿದವು, ರೇಟಿಂಗ್‌ಗಳು ಮತ್ತು ಲಿಸ್ಟ್‌ಗಳು ಇಲ್ಲಿಗೆ ಬರುತ್ತವೆ.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'ರಫ್ತು ಮಾಡಿದ ZIP/CSV ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡು; ನೋಡಿದವು, ರೇಟಿಂಗ್‌ಗಳು ಮತ್ತು ಲಿಸ್ಟ್‌ಗಳು ಇಲ್ಲಿಗೆ ಬರುತ್ತವೆ.',
   'Aktarılıyor...': 'ಆಮದು ಆಗುತ್ತಿದೆ...',
-  'ZIP dosyası seç': 'ZIP ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡು',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV ಫೈಲ್ ಆಯ್ಕೆ ಮಾಡು',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'ಆತುರವೇನಿಲ್ಲ: ಇದನ್ನು ನಂತರ ಸೆಟ್ಟಿಂಗ್ಸ್ > ನನ್ನ ಡೇಟಾ ವಿಭಾಗದಿಂದಲೂ ಮಾಡಬಹುದು.',
   'Hangi filmleri izledin?': 'ಯಾವ ಸಿನಿಮಾಗಳನ್ನು ನೋಡಿದ್ದೀಯ?',
@@ -1705,4 +1705,12 @@ const Map<String, String> cevirilerKn = {
   'Topluluk Kuralları': 'ಸಮುದಾಯ ನಿಯಮಗಳು',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'ನಿಂದನೀಯ, ಕಿರುಕುಳದ, ದ್ವೇಷಪೂರಿತ, ಲೈಂಗಿಕ, ಹಿಂಸೆಯನ್ನು ವೈಭವೀಕರಿಸುವ ಅಥವಾ ಹಕ್ಕುಸ್ವಾಮ್ಯ ಉಲ್ಲಂಘಿಸುವ ವಿಷಯಕ್ಕೆ ಮತ್ತು ಸೇವೆಯ ದುರ್ಬಳಕೆಗೆ ಶೂನ್ಯ ಸಹನೆ. ಪ್ರತಿ ಕಾಮೆಂಟ್, ಪೋಸ್ಟ್, ಸಂದೇಶ, ಪಟ್ಟಿ ಮತ್ತು ಬಳಕೆದಾರರನ್ನು ಆ್ಯಪ್‌ನೊಳಗಿಂದಲೇ ವರದಿ ಮಾಡಬಹುದು; ಅನಗತ್ಯ ಬಳಕೆದಾರರನ್ನು ನಿರ್ಬಂಧಿಸಬಹುದು. ವರದಿಯಾದ ವಿಷಯವನ್ನು 24 ಗಂಟೆಗಳೊಳಗೆ ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ; ನಿಯಮ ಉಲ್ಲಂಘನೆಯಾದರೆ ವಿಷಯ ತೆಗೆದುಹಾಕಲಾಗುತ್ತದೆ; ಖಾತೆ ಮುಚ್ಚಬಹುದು.',
+  'Dosya verisi gerekli': 'ಫೈಲ್ ಡೇಟಾ ಅಗತ್ಯವಿದೆ',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'ಇದು ಮಾನ್ಯ ZIP, CSV ಅಥವಾ JSON ಫೈಲ್ ಅಲ್ಲ',
+  'Dosya boş': 'ಫೈಲ್ ಖಾಲಿಯಾಗಿದೆ',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'ಈ ಫೈಲ್ ಗುರುತಿಸಲಾಗಿಲ್ಲ: TV Time, Letterboxd ಅಥವಾ dizi.jpg ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡು',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'ಈ ಫೈಲ್ ಒಂಟಿಯಾಗಿ ಆಮದು ಆಗುವುದಿಲ್ಲ: ಪೂರ್ಣ ಆರ್ಕೈವ್ (.zip) ಅಥವಾ dizijpg.json ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡು',
 };

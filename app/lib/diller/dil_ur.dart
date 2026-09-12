@@ -113,7 +113,7 @@ const Map<String, String> cevirilerUr = {
   'Tümünü Kaldır': 'سب ہٹائیں',
   'Tümünü İzledim': 'سب دیکھ لیے',
   'Türk Dizileri': 'ترک ڈرامے',
-  'Veri içe aktar (.zip)': 'ڈیٹا درآمد کریں (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'ڈیٹا درآمد کریں (.zip / .csv)',
   'Verilerim': 'میرا ڈیٹا',
   'Verilerimi dışa aktar (e-posta)': 'میرا ڈیٹا برآمد کریں (ای میل)',
   'Verilerini dışa aktar': 'اپنا ڈیٹا برآمد کریں',
@@ -785,10 +785,10 @@ const Map<String, String> cevirilerUr = {
   'Verilerini yanında getir': 'اپنا ڈیٹا ساتھ لے آئیں',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'اگر کسی اور ایپ میں دیکھی ہوئی چیزوں کا ریکارڈ ہے تو اسے یہاں منتقل کر سکتے ہیں۔ صفر سے شروع کرنے کی ضرورت نہیں۔',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'وہاں سے برآمد کی ہوئی ZIP فائل منتخب کریں؛ دیکھی ہوئی چیزیں، ریٹنگز اور فہرستیں منتقل ہو جائیں گی۔',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'وہاں سے برآمد کی ہوئی ZIP/CSV فائل منتخب کریں؛ دیکھی ہوئی چیزیں، ریٹنگز اور فہرستیں منتقل ہو جائیں گی۔',
   'Aktarılıyor...': 'منتقل ہو رہا ہے...',
-  'ZIP dosyası seç': 'ZIP فائل منتخب کریں',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV فائل منتخب کریں',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'جلدی کی ضرورت نہیں: یہ کام بعد میں ترتیبات > میرا ڈیٹا سے بھی کیا جا سکتا ہے۔',
   'Hangi filmleri izledin?': 'کون سی فلمیں دیکھی ہوئی ہیں؟',
@@ -1704,4 +1704,12 @@ const Map<String, String> cevirilerUr = {
   'Topluluk Kuralları': 'کمیونٹی کے اصول',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'گالی گلوچ، ہراسانی، نفرت انگیز، جنسی، تشدد کو سراہنے والے یا کاپی رائٹ کی خلاف ورزی کرنے والے مواد اور سروس کے غلط استعمال کے لیے بالکل برداشت نہیں۔ ہر تبصرہ، پوسٹ، پیغام، فہرست اور صارف کی ایپ کے اندر سے رپورٹ کی جا سکتی ہے؛ ناپسندیدہ صارفین کو بلاک کیا جا سکتا ہے۔ رپورٹ شدہ مواد 24 گھنٹوں میں جانچا جاتا ہے؛ اصول کی خلاف ورزی پر مواد ہٹا دیا جاتا ہے اور اکاؤنٹ بند کیا جا سکتا ہے۔',
+  'Dosya verisi gerekli': 'فائل کا ڈیٹا درکار ہے',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'یہ درست ZIP، CSV یا JSON فائل نہیں ہے',
+  'Dosya boş': 'فائل خالی ہے',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'یہ فائل پہچانی نہیں گئی: TV Time، Letterboxd یا dizi.jpg فائل اپ لوڈ کریں',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'یہ فائل تنہا درآمد نہیں ہو سکتی: پورا آرکائیو (.zip) یا dizijpg.json فائل اپ لوڈ کریں',
 };

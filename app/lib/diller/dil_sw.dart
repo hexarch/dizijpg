@@ -113,7 +113,7 @@ const Map<String, String> cevirilerSw = {
   'Tümünü Kaldır': 'Ondoa Zote',
   'Tümünü İzledim': 'Nimetazama Zote',
   'Türk Dizileri': 'Mifululizo ya Kituruki',
-  'Veri içe aktar (.zip)': 'Leta data (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Leta data (.zip / .csv)',
   'Verilerim': 'Data Zangu',
   'Verilerimi dışa aktar (e-posta)': 'Hamisha data zangu (barua pepe)',
   'Verilerini dışa aktar': 'Hamisha data zako',
@@ -783,10 +783,10 @@ const Map<String, String> cevirilerSw = {
   'Verilerini yanında getir': 'Leta data yako nawe',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Ikiwa unafuatilia ulichotazama kwenye programu nyingine, unaweza kukihamishia hapa. Huhitaji kuanza upya.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Chagua faili la ZIP ulilohamisha kutoka huko; ulichotazama, alama zako na orodha zako zitahamishwa.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Chagua faili la ZIP/CSV ulilohamisha kutoka huko; ulichotazama, alama zako na orodha zako zitahamishwa.',
   'Aktarılıyor...': 'Inahamisha...',
-  'ZIP dosyası seç': 'Chagua faili la ZIP',
+  'ZIP/CSV dosyası seç': 'Chagua faili la ZIP/CSV',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Hakuna haraka: unaweza kufanya hivi baadaye pia kupitia Mipangilio > Data Zangu.',
   'Hangi filmleri izledin?': 'Umetazama filamu zipi?',
@@ -1712,4 +1712,12 @@ const Map<String, String> cevirilerSw = {
   'Topluluk Kuralları': 'Kanuni za Jumuiya',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Hakuna uvumilivu kwa maudhui ya matusi, unyanyasaji, chuki, ngono, yanayotukuza vurugu au yanayokiuka hakimiliki, wala kwa matumizi mabaya ya huduma. Kila maoni, chapisho, ujumbe, orodha na mtumiaji anaweza kuripotiwa kutoka ndani ya programu; watumiaji wasiotakiwa wanaweza kuzuiwa. Maudhui yaliyoripotiwa hukaguliwa ndani ya saa 24; yakikiuka kanuni huondolewa na akaunti inaweza kufungwa.',
+  'Dosya verisi gerekli': 'Data ya faili inahitajika',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Si faili sahihi ya ZIP, CSV au JSON',
+  'Dosya boş': 'Faili ni tupu',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Faili haikutambuliwa: pakia faili ya TV Time, Letterboxd au dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Faili hii haiwezi kuingizwa peke yake: pakia kumbukumbu nzima (.zip) au faili la dizijpg.json',
 };

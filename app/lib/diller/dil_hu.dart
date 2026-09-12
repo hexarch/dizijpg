@@ -114,7 +114,7 @@ const Map<String, String> cevirilerHu = {
   'Tümünü Kaldır': 'Összes eltávolítása',
   'Tümünü İzledim': 'Mindet láttam',
   'Türk Dizileri': 'Török sorozatok',
-  'Veri içe aktar (.zip)': 'Adatok importálása (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Adatok importálása (.zip / .csv)',
   'Verilerim': 'Adataim',
   'Verilerimi dışa aktar (e-posta)': 'Adataim exportálása (e-mail)',
   'Verilerini dışa aktar': 'Exportáld az adataidat',
@@ -790,10 +790,10 @@ const Map<String, String> cevirilerHu = {
   'Verilerini yanında getir': 'Hozd magaddal az adataidat',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Ha egy másik alkalmazásban tartod számon, mit néztél, ide is áthozhatod. Nem kell nulláról kezdened.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Válaszd ki az exportált ZIP-fájlt, és átkerülnek a megnézett tartalmaid, az értékeléseid és a listáid.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Válaszd ki az exportált ZIP/CSV-fájlt, és átkerülnek a megnézett tartalmaid, az értékeléseid és a listáid.',
   'Aktarılıyor...': 'Importálás...',
-  'ZIP dosyası seç': 'ZIP-fájl kiválasztása',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV-fájl kiválasztása',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Nincs sietség: ezt később a Beállítások > Adataim résznél is megteheted.',
   'Hangi filmleri izledin?': 'Mely filmeket láttad?',
@@ -1716,4 +1716,12 @@ const Map<String, String> cevirilerHu = {
   'Topluluk Kuralları': 'Közösségi szabályok',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Zéró tolerancia a sértő, zaklató, gyűlölködő, szexuális, erőszakot dicsőítő vagy szerzői jogot sértő tartalmakkal és a szolgáltatással való visszaéléssel szemben. Minden hozzászólás, bejegyzés, üzenet, lista és felhasználó jelenthető az alkalmazásból; a nemkívánatos felhasználók letilthatók. A jelentett tartalmat 24 órán belül átnézzük; szabályszegés esetén eltávolítjuk, és a fiók lezárható.',
+  'Dosya verisi gerekli': 'Fájladatok szükségesek',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Nem érvényes ZIP-, CSV- vagy JSON-fájl',
+  'Dosya boş': 'A fájl üres',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'A fájl nem ismerhető fel: tölts fel TV Time-, Letterboxd- vagy dizi.jpg-fájlt',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Ez a fájl önmagában nem importálható: töltsd fel a teljes archívumot (.zip) vagy a dizijpg.json fájlt',
 };

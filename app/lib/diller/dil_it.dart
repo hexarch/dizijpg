@@ -115,7 +115,7 @@ const Map<String, String> cevirilerIt = {
   'Tümünü Kaldır': 'Rimuovi tutto',
   'Tümünü İzledim': 'Ho visto tutto',
   'Türk Dizileri': 'Serie turche',
-  'Veri içe aktar (.zip)': 'Importa dati (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Importa dati (.zip / .csv)',
   'Verilerim': 'I miei dati',
   'Verilerimi dışa aktar (e-posta)': 'Esporta i miei dati (e-mail)',
   'Verilerini dışa aktar': 'Esporta i tuoi dati',
@@ -794,10 +794,10 @@ const Map<String, String> cevirilerIt = {
   'Verilerini yanında getir': 'Porta con te i tuoi dati',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       "Se tieni traccia di ciò che guardi in un'altra app, puoi portare tutto qui. Non devi ricominciare da zero.",
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Scegli il file ZIP che hai esportato: le tue visualizzazioni, i tuoi voti e le tue liste verranno importati.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Scegli il file ZIP/CSV che hai esportato: le tue visualizzazioni, i tuoi voti e le tue liste verranno importati.',
   'Aktarılıyor...': 'Importazione in corso...',
-  'ZIP dosyası seç': 'Scegli file ZIP',
+  'ZIP/CSV dosyası seç': 'Scegli file ZIP/CSV',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       "Non c'è fretta: puoi farlo anche più tardi da Impostazioni > I miei dati.",
   'Hangi filmleri izledin?': 'Quali film hai visto?',
@@ -1719,4 +1719,12 @@ const Map<String, String> cevirilerIt = {
   'Topluluk Kuralları': 'Regole della community',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Tolleranza zero per contenuti offensivi, molesti, d\'odio, sessuali, che esaltano la violenza o violano il diritto d\'autore, e per l\'abuso del servizio. Ogni commento, post, messaggio, lista e utente può essere segnalato dall\'app; gli utenti indesiderati possono essere bloccati. I contenuti segnalati vengono esaminati entro 24 ore; se violano le regole, vengono rimossi e l\'account può essere chiuso.',
+  'Dosya verisi gerekli': 'Servono i dati del file',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Non è un file ZIP, CSV o JSON valido',
+  'Dosya boş': 'Il file è vuoto',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'File non riconosciuto: carica un file TV Time, Letterboxd o dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Questo file non si può importare da solo: carica l’intero archivio (.zip) o il file dizijpg.json',
 };

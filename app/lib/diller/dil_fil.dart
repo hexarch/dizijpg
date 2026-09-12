@@ -114,7 +114,7 @@ const Map<String, String> cevirilerFil = {
   'Tümünü Kaldır': 'Alisin Lahat',
   'Tümünü İzledim': 'Napanood Ko Lahat',
   'Türk Dizileri': 'Mga Seryeng Turkish',
-  'Veri içe aktar (.zip)': 'Mag-import ng data (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Mag-import ng data (.zip / .csv)',
   'Verilerim': 'Data Ko',
   'Verilerimi dışa aktar (e-posta)': 'I-export ang data ko (email)',
   'Verilerini dışa aktar': 'I-export ang data mo',
@@ -795,10 +795,10 @@ const Map<String, String> cevirilerFil = {
   'Verilerini yanında getir': 'Dalhin mo ang data mo',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Kung sinusubaybayan mo ang mga napapanood mo sa ibang app, puwede mong ilipat ang mga iyon dito. Hindi mo kailangang magsimula sa wala.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Piliin ang ZIP file na na-export mo para mailipat ang mga napanood, rating at listahan mo.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Piliin ang ZIP/CSV file na na-export mo para mailipat ang mga napanood, rating at listahan mo.',
   'Aktarılıyor...': 'Ini-import...',
-  'ZIP dosyası seç': 'Pumili ng ZIP file',
+  'ZIP/CSV dosyası seç': 'Pumili ng ZIP/CSV file',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Walang minamadali: puwede mo rin itong gawin mamaya sa Mga Setting > Data Ko.',
   'Hangi filmleri izledin?': 'Anong mga pelikula ang napanood mo?',
@@ -1738,4 +1738,12 @@ const Map<String, String> cevirilerFil = {
   'Topluluk Kuralları': 'Mga Alituntunin ng Komunidad',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'May zero tolerance sa nilalamang mapang-abuso, nanghaharas, mapoot, sekswal, lumuluwalhati sa karahasan o lumalabag sa copyright, at sa maling paggamit ng serbisyo. Bawat komento, post, mensahe, listahan at user ay maaaring i-report mula sa loob ng app; maaaring i-block ang mga hindi gustong user. Sinusuri ang ni-report na nilalaman sa loob ng 24 oras; kapag lumabag sa mga patakaran, inaalis ito at maaaring isara ang account.',
+  'Dosya verisi gerekli': 'Kailangan ng data ng file',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Hindi wastong ZIP, CSV o JSON file',
+  'Dosya boş': 'Walang laman ang file',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Hindi nakilala ang file: mag-upload ng file mula sa TV Time, Letterboxd o dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Hindi puwedeng i-import ang file na ito nang mag-isa: i-upload ang buong archive (.zip) o ang dizijpg.json',
 };

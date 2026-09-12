@@ -114,7 +114,7 @@ const Map<String, String> cevirilerTa = {
   'Tümünü Kaldır': 'அனைத்தையும் நீக்கு',
   'Tümünü İzledim': 'அனைத்தையும் பார்த்துவிட்டேன்',
   'Türk Dizileri': 'துருக்கிய தொடர்கள்',
-  'Veri içe aktar (.zip)': 'தரவு இறக்குமதி (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'தரவு இறக்குமதி (.zip / .csv)',
   'Verilerim': 'என் தரவு',
   'Verilerimi dışa aktar (e-posta)': 'என் தரவை ஏற்றுமதி செய் (மின்னஞ்சல்)',
   'Verilerini dışa aktar': 'உன் தரவை ஏற்றுமதி செய்',
@@ -792,10 +792,10 @@ const Map<String, String> cevirilerTa = {
   'Verilerini yanında getir': 'உன் தரவை உடன் கொண்டு வா',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'வேறொரு ஆப்பில் பார்த்தவற்றைக் கண்காணித்து வந்தால், அவற்றை இங்கே கொண்டு வரலாம். புதிதாகத் தொடங்க வேண்டியதில்லை.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'ஏற்றுமதி செய்த ZIP கோப்பைத் தேர்ந்தெடு; பார்த்தவை, மதிப்பீடுகள், பட்டியல்கள் இங்கே வந்து சேரும்.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'ஏற்றுமதி செய்த ZIP/CSV கோப்பைத் தேர்ந்தெடு; பார்த்தவை, மதிப்பீடுகள், பட்டியல்கள் இங்கே வந்து சேரும்.',
   'Aktarılıyor...': 'இறக்குமதி ஆகிறது...',
-  'ZIP dosyası seç': 'ZIP கோப்பைத் தேர்ந்தெடு',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV கோப்பைத் தேர்ந்தெடு',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'அவசரம் இல்லை: இதை பிறகு அமைப்புகள் > என் தரவு பகுதியிலிருந்தும் செய்யலாம்.',
   'Hangi filmleri izledin?': 'எந்தப் படங்களைப் பார்த்தாய்?',
@@ -1733,4 +1733,12 @@ const Map<String, String> cevirilerTa = {
   'Topluluk Kuralları': 'சமூக விதிகள்',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'தாக்குதலான, துன்புறுத்தும், வெறுப்பூட்டும், பாலியல், வன்முறையைப் போற்றும் அல்லது பதிப்புரிமையை மீறும் உள்ளடக்கத்திற்கும் சேவையின் தவறான பயன்பாட்டிற்கும் எந்த சகிப்புத்தன்மையும் இல்லை. ஒவ்வொரு கருத்து, பதிவு, செய்தி, பட்டியல் மற்றும் பயனரையும் செயலியிலிருந்தே புகாரளிக்கலாம்; தேவையற்ற பயனர்களைத் தடுக்கலாம். புகாரளிக்கப்பட்ட உள்ளடக்கம் 24 மணி நேரத்திற்குள் ஆய்வு செய்யப்படும்; விதிமீறல் இருந்தால் உள்ளடக்கம் நீக்கப்படும்; கணக்கு மூடப்படலாம்.',
+  'Dosya verisi gerekli': 'கோப்பின் தரவு தேவை',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'இது சரியான ZIP, CSV அல்லது JSON கோப்பு அல்ல',
+  'Dosya boş': 'கோப்பு காலியாக உள்ளது',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'இந்தக் கோப்பு அடையாளம் காணப்படவில்லை: TV Time, Letterboxd அல்லது dizi.jpg கோப்பைப் பதிவேற்று',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'இந்தக் கோப்பை மட்டும் இறக்குமதி செய்ய முடியாது: முழு காப்பகத்தையும் (.zip) அல்லது dizijpg.json கோப்பைப் பதிவேற்று',
 };

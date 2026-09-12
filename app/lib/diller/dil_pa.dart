@@ -113,7 +113,7 @@ const Map<String, String> cevirilerPa = {
   'Tümünü Kaldır': 'ਸਭ ਹਟਾਓ',
   'Tümünü İzledim': 'ਸਭ ਦੇਖ ਲਏ',
   'Türk Dizileri': 'ਤੁਰਕੀ ਸੀਰੀਜ਼',
-  'Veri içe aktar (.zip)': 'ਡੇਟਾ ਇੰਪੋਰਟ ਕਰੋ (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'ਡੇਟਾ ਇੰਪੋਰਟ ਕਰੋ (.zip / .csv)',
   'Verilerim': 'ਮੇਰਾ ਡੇਟਾ',
   'Verilerimi dışa aktar (e-posta)': 'ਮੇਰਾ ਡੇਟਾ ਐਕਸਪੋਰਟ ਕਰੋ (ਈਮੇਲ)',
   'Verilerini dışa aktar': 'ਆਪਣਾ ਡੇਟਾ ਐਕਸਪੋਰਟ ਕਰੋ',
@@ -783,10 +783,10 @@ const Map<String, String> cevirilerPa = {
   'Verilerini yanında getir': 'ਆਪਣਾ ਡੇਟਾ ਨਾਲ ਲਿਆਓ',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'ਜੇ ਕਿਸੇ ਹੋਰ ਐਪ ਵਿੱਚ ਦੇਖੇ ਹੋਏ ਟ੍ਰੈਕ ਕਰਦੇ ਹੋ, ਤਾਂ ਉਹ ਇੱਥੇ ਲਿਆ ਸਕਦੇ ਹੋ। ਸ਼ੁਰੂ ਤੋਂ ਸ਼ੁਰੂ ਕਰਨ ਦੀ ਲੋੜ ਨਹੀਂ।',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'ਐਕਸਪੋਰਟ ਕੀਤੀ ZIP ਫਾਈਲ ਚੁਣੋ; ਤੁਹਾਡੇ ਦੇਖੇ ਹੋਏ, ਰੇਟਿੰਗਾਂ ਤੇ ਲਿਸਟਾਂ ਆ ਜਾਣਗੀਆਂ।',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'ਐਕਸਪੋਰਟ ਕੀਤੀ ZIP/CSV ਫਾਈਲ ਚੁਣੋ; ਤੁਹਾਡੇ ਦੇਖੇ ਹੋਏ, ਰੇਟਿੰਗਾਂ ਤੇ ਲਿਸਟਾਂ ਆ ਜਾਣਗੀਆਂ।',
   'Aktarılıyor...': 'ਇੰਪੋਰਟ ਹੋ ਰਿਹਾ ਹੈ...',
-  'ZIP dosyası seç': 'ZIP ਫਾਈਲ ਚੁਣੋ',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV ਫਾਈਲ ਚੁਣੋ',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'ਕਾਹਲੀ ਨਹੀਂ: ਇਹ ਬਾਅਦ ਵਿੱਚ ਸੈਟਿੰਗਾਂ > ਮੇਰਾ ਡੇਟਾ ਵਿੱਚੋਂ ਵੀ ਕਰ ਸਕਦੇ ਹੋ।',
   'Hangi filmleri izledin?': 'ਤੁਸੀਂ ਕਿਹੜੀਆਂ ਫ਼ਿਲਮਾਂ ਦੇਖੀਆਂ ਹਨ?',
@@ -1700,4 +1700,12 @@ const Map<String, String> cevirilerPa = {
   'Topluluk Kuralları': 'ਭਾਈਚਾਰੇ ਦੇ ਨਿਯਮ',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'ਅਪਮਾਨਜਨਕ, ਤੰਗ ਕਰਨ ਵਾਲੀ, ਨਫ਼ਰਤ ਭਰੀ, ਜਿਨਸੀ, ਹਿੰਸਾ ਦੀ ਵਡਿਆਈ ਕਰਨ ਵਾਲੀ ਜਾਂ ਕਾਪੀਰਾਈਟ ਦੀ ਉਲੰਘਣਾ ਕਰਨ ਵਾਲੀ ਸਮੱਗਰੀ ਅਤੇ ਸੇਵਾ ਦੀ ਦੁਰਵਰਤੋਂ ਨੂੰ ਬਿਲਕੁਲ ਬਰਦਾਸ਼ਤ ਨਹੀਂ ਕੀਤਾ ਜਾਂਦਾ। ਹਰ ਟਿੱਪਣੀ, ਪੋਸਟ, ਸੁਨੇਹੇ, ਸੂਚੀ ਅਤੇ ਵਰਤੋਂਕਾਰ ਦੀ ਐਪ ਦੇ ਅੰਦਰੋਂ ਰਿਪੋਰਟ ਕੀਤੀ ਜਾ ਸਕਦੀ ਹੈ; ਅਣਚਾਹੇ ਵਰਤੋਂਕਾਰਾਂ ਨੂੰ ਬਲਾਕ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ। ਰਿਪੋਰਟ ਕੀਤੀ ਸਮੱਗਰੀ ਦੀ 24 ਘੰਟਿਆਂ ਵਿੱਚ ਜਾਂਚ ਹੁੰਦੀ ਹੈ; ਨਿਯਮ ਟੁੱਟਣ \'ਤੇ ਸਮੱਗਰੀ ਹਟਾ ਦਿੱਤੀ ਜਾਂਦੀ ਹੈ ਅਤੇ ਖਾਤਾ ਬੰਦ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ।',
+  'Dosya verisi gerekli': 'ਫਾਈਲ ਦਾ ਡੇਟਾ ਲੋੜੀਂਦਾ ਹੈ',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'ਇਹ ਵੈਧ ZIP, CSV ਜਾਂ JSON ਫਾਈਲ ਨਹੀਂ ਹੈ',
+  'Dosya boş': 'ਫਾਈਲ ਖਾਲੀ ਹੈ',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'ਇਹ ਫਾਈਲ ਪਛਾਣੀ ਨਹੀਂ ਗਈ: TV Time, Letterboxd ਜਾਂ dizi.jpg ਫਾਈਲ ਅੱਪਲੋਡ ਕਰੋ',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'ਇਹ ਫਾਈਲ ਇਕੱਲੀ ਇੰਪੋਰਟ ਨਹੀਂ ਹੋ ਸਕਦੀ: ਪੂਰਾ ਆਰਕਾਈਵ (.zip) ਜਾਂ dizijpg.json ਫਾਈਲ ਅੱਪਲੋਡ ਕਰੋ',
 };

@@ -221,6 +221,12 @@ const MAX_TOPLAM_ACIK = 200 * 1024 * 1024; // 200MB açılmış boyut (zip-bomb 
 const MAX_DOSYA_ACIK = 60 * 1024 * 1024;
 const MAX_GIRIS = 300; // en fazla dosya girişi
 const MAX_FIND = 1000; // TheTVDB→TMDB eşleme çağrısı üst sınırı (önbellekli)
+// CSV başına işlenecek satır tavanı. Kendi JSON biçimimizde bu tavan zaten
+// vardı (`iceAktarNative`: 5.000/100.000) ama CSV yollarında YOKTU: 60 MB'lık
+// tek bir dosya milyonlarca satır taşıyabilir ve her satır ayrı bir INSERT
+// demektir — istek dakikalarca havuzdan bağlantı tutar. Tavan, en büyük
+// gerçek dışa aktarımın (ölçüm: 15.727 satır) çok üstünde.
+const MAX_CSV_SATIR = 200000;
 
 // tmdbFind(tvdbId) → TMDB tv id | null (TheTVDB eşlemesi).
 // tmdbAra(isim)   → TMDB tv id | null (isimle arama; takip listesinde olmayan
@@ -271,6 +277,154 @@ function izlemeTarihi(r) {
 const IZLEME_CAKISMA = `ON CONFLICT (kullanici_id, tur, tmdb_id, sezon, bolum)
        DO UPDATE SET tarih = LEAST(izlemeler.tarih, EXCLUDED.tarih),
                      tarih_kesin = izlemeler.tarih_kesin OR EXCLUDED.tarih_kesin`;
+
+// ---------------------------------------------------------------------------
+// TEK DOSYA İÇE AKTARIMI (13 Eyl 2026 isteği: "illa zip olmasın")
+// ---------------------------------------------------------------------------
+// TV Time'ın 2026 dışa aktarımı TEK bir `tv-time-export.csv`, kendi
+// yedeğimiz TEK bir `dizijpg.json`. Kullanıcı bunları yükleyebilmek için
+// önce ELİYLE zip'lemek zorundaydı — dosya seçici .zip dışını gri gösteriyordu.
+// Artık dosyanın kendisi kabul ediliyor.
+//
+// ARŞİVİN VERDİĞİ İKİ BAĞLAM TEK DOSYADA YOKTUR; farkı bilerek yönetiyoruz:
+//
+//   1. KLASÖR YOLU. Letterboxd arşivinde `deleted/` ve `orphaned/` altındaki
+//      kopyalar ile `likes/reviews.csv` (BAŞKALARININ incelemeleri) elenir.
+//      Tek dosyada yol diye bir şey yok; kullanıcı dosyayı bizzat seçtiği
+//      için seçtiği neyse o aktarılır. `likes/films.csv` ise adı `films.csv`
+//      olduğu için hâlâ tanınır ve favorilere gider.
+//
+//   2. KARDEŞ DOSYALAR. `watched.csv` ile `watchlist.csv`'nin BAŞLIKLARI
+//      BİREBİR AYNI (Date,Name,Year,Letterboxd URI) — birini diğerinden
+//      ayıran tek şey ADIDIR. Bu yüzden istemci dosya adını `X-Dosya-Adi`
+//      başlığıyla gönderir. Ad yoksa ya da tanınmazsa başlığa bakılır ve
+//      ayırt edilemeyen çift `watched` sayılır: yanlışlıkla izleme kaydı
+//      yazmak, izlenmiş filmi "izleyeceğim"e atmaktan daha az yanıltıcı.
+//
+// Biçim kararı DOSYA ADINA EMANET EDİLMEZ; ad yalnızca başlık tek başına
+// yetmediğinde konuşur. Sıra: JSON → Letterboxd (başlık) → bilinen ad →
+// başlık imzası. Hiçbiri tutmazsa 400 döner, sessizce "0 kayıt" değil.
+
+// Kendi dışa aktarımımızın ve TV Time'ın CSV başlık imzaları. Sıra ÖNEMLİ:
+// üstteki daha ayırt edici olan. (Letterboxd bu tabloda YOK — o, "Letterboxd
+// URI" sütunuyla daha önce yakalanır.)
+const CSV_IMZALARI = [
+  [['movie_name'], 'tracking-prod-records-v2.csv'],
+  [['series_name'], 'tracking-prod-records-v2.csv'],
+  [['media_type', 'watched_at'], 'tv-time-export.csv'],
+  [['episode_season_number'], 'seen_episode_latest.csv'],
+  [['movie_id'], 'seen_movie.csv'],
+  [['tv_show_id', 'episode_id'], 'show_seen_episode_latest.csv'],
+  [['tv_show_id'], 'followed_tv_show.csv'],
+  [['comment'], 'comments.csv'],
+  [['list_name'], 'lists.csv'],
+  [['rating', 'tmdb_id'], 'ratings.csv'],
+  [['name', 'value', 'user_id'], 'user_personal_data.csv'],
+];
+
+/** "ratings (1).csv" → "ratings.csv"; yol ve büyük harf atılır. */
+function dosyaAdiSadelestir(ham) {
+  const ad = String(ham || '').split(/[\\/]/).pop().trim().toLowerCase();
+  return ad.replace(/\s*\((\d+)\)(?=\.[a-z0-9]+$)/, '');
+}
+
+/** İlk satırdaki sütun adları (tırnaklar ve BOM temizlenmiş). */
+function csvBasliklari(metin) {
+  const satir = metin.slice(0, 4096).split(/\r?\n/)[0] || '';
+  return satir.split(',').map((h) => h.trim().replace(/^"|"$/g, ''));
+}
+
+/**
+ * Tek dosyanın hangi biçim olduğuna karar verir.
+ * @returns {{native:true}|{lbAd:string}|{ad:string}|null} tanınmazsa null
+ */
+export function tekDosyaTuru(dosyaAdi, metin) {
+  const ad = dosyaAdiSadelestir(dosyaAdi);
+  const govde = metin.trimStart();
+  if (ad.endsWith('.json') || govde.startsWith('{')) return { native: true };
+
+  const basliklar = csvBasliklari(metin);
+  const varMi = (...adlar) => adlar.every((a) => basliklar.includes(a));
+
+  // Letterboxd. "Letterboxd URI" yalnız onların dosyalarında bulunur;
+  // profile.csv'de o sütun yok, onu "Date Joined" ele verir.
+  if (basliklar.includes('Letterboxd URI') || varMi('Date Joined')) {
+    if (ad === 'films.csv') return { lbAd: 'begeni-films.csv' }; // likes/films.csv
+    if (LB_DOSYALAR.has(ad)) return { lbAd: ad };
+    if (varMi('Date Joined')) return { lbAd: 'profile.csv' };
+    if (varMi('Review')) return { lbAd: 'reviews.csv' };
+    if (varMi('Watched Date')) return { lbAd: 'diary.csv' };
+    if (varMi('Rating')) return { lbAd: 'ratings.csv' };
+    return { lbAd: 'watched.csv' }; // watched/watchlist ayırt edilemedi
+  }
+
+  if (/^tv-time-export.*\.csv$/i.test(ad)) return { ad: 'tv-time-export.csv' };
+  if (IZIN_LI_DOSYALAR.has(ad)) return { ad };
+
+  for (const [sutunlar, hedef] of CSV_IMZALARI) {
+    if (varMi(...sutunlar)) return { ad: hedef };
+  }
+  return null;
+}
+
+// TANINIR AMA TEK BAŞINA HİÇBİR ŞEY AKTARMAZ.
+//
+// Bu adlar `IZIN_LI_DOSYALAR`da (arşivden toplanıyorlar) ama içe aktarım
+// okuyucusu onları HİÇ OKUMUYOR — ölçüldü, yazma üretmiyorlar:
+//   seen_movie.csv              TV Time'ın KENDİ film kimliği; TMDB karşılığı yok
+//   show_seen_episode_latest.csv  sezon/bölüm taşımaz, yalnız ad→id köprüsüdür
+//   ratings.csv / lists.csv     yalnız BİZİM dışa aktarımımızda var; kayıpsız
+//                               karşılıkları dizijpg.json'dur
+//
+// ZIP'te bu sessizlik görünmüyordu: arşivde işe yarayan başka dosyalar da
+// vardı. Tek dosyada kullanıcı "0 kayıt aktarıldı" görüp bizi haklı olarak
+// suçlardı. Sebebi SÖYLEYİP ne yükleyeceğini yazmak tek dürüst davranış.
+const TEK_BASINA_YETERSIZ = new Set([
+  'seen_movie.csv', 'show_seen_episode_latest.csv', 'ratings.csv', 'lists.csv',
+]);
+
+/**
+ * ZIP DEĞİL, TEK bir .csv/.json gövdesini içe aktarır.
+ * `dosyaAdi` yalnızca ipucudur (bkz. yukarıdaki "KARDEŞ DOSYALAR").
+ */
+export async function iceAktarTekDosya(
+  havuz, userId, veri, dosyaAdi,
+  tmdbFind, tmdbAra = null, tmdbDetay = null, tmdbAraFilm = null,
+) {
+  // BOM burada düşer: ZIP yolundaki Letterboxd okuyucusu `bom: true` ile
+  // parse ediyor ama TV Time yolu etmiyor — tek dosyada ilk sütun adının
+  // başına yapışan \uFEFF tüm başlık eşleşmesini bozardı.
+  const metin = veri.toString('utf8').replace(/^\uFEFF/, '');
+  if (!metin.trim()) {
+    throw Object.assign(new Error('Dosya boş'), { status: 400 });
+  }
+  const tur = tekDosyaTuru(dosyaAdi, metin);
+  if (!tur) {
+    throw Object.assign(
+      new Error('Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle'),
+      { status: 400 });
+  }
+  // KENDİ comments.csv'miz de yetersiz sayılır: `tmdb_id` sütunu bizde TMDB
+  // kimliğidir ama okuyucu onu TheTVDB kimliği sanıp eşlemeye sokar, yani
+  // YANLIŞ diziye yorum yazardı. TV Time'ın comments.csv'sinde bu sütun yok.
+  const bizimYorumlar = tur.ad === 'comments.csv'
+    && csvBasliklari(metin).includes('tmdb_id');
+  if (tur.ad && (TEK_BASINA_YETERSIZ.has(tur.ad) || bizimYorumlar)) {
+    throw Object.assign(
+      new Error('Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) '
+        + 'ya da dizijpg.json dosyasını yükle'),
+      { status: 400 });
+  }
+
+  const ozet = yeniOzet();
+  if (tur.native) return iceAktarNative(havuz, userId, metin, ozet);
+  if (tur.lbAd) {
+    return iceAktarLetterboxd(havuz, userId, { [tur.lbAd]: metin }, ozet, tmdbAraFilm);
+  }
+  return iceAktarToplanan(
+    havuz, userId, { [tur.ad]: metin }, {}, ozet,
+    tmdbFind, tmdbAra, tmdbDetay, tmdbAraFilm);
+}
 
 export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = null, tmdbDetay = null, tmdbAraFilm = null) {
   let zip;
@@ -345,8 +499,24 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
     if (IZIN_LI_DOSYALAR.has(ad) || ad === 'tv-time-export.csv') metinler[ad] = metin;
   }
 
-  const ozet = { durum: 0, izleme: 0, puan: 0, yorum: 0, liste: 0, profil: 0, atlanan: 0 };
+  return iceAktarToplanan(
+    havuz, userId, metinler, lbMetinler, yeniOzet(),
+    tmdbFind, tmdbAra, tmdbDetay, tmdbAraFilm);
+}
 
+/** Boş içe aktarım özeti (ZIP yolu da tek dosya yolu da aynı sayaçları döner). */
+function yeniOzet() {
+  return { durum: 0, izleme: 0, puan: 0, yorum: 0, liste: 0, profil: 0, atlanan: 0 };
+}
+
+// TOPLANMIŞ METİNLERDEN İÇE AKTARIM — biçim kararı ve yazma mantığı TEK YERDE.
+// İki çağıran var: yukarıdaki `iceAktar` (ZIP açar) ve `iceAktarTekDosya`
+// (kullanıcı arşivi değil TEK bir .csv/.json seçtiğinde). Aradaki tek fark
+// dosyaların NASIL toplandığıdır; buradan sonrası aynı kodu paylaşır.
+async function iceAktarToplanan(
+  havuz, userId, metinler, lbMetinler, ozet,
+  tmdbFind, tmdbAra, tmdbDetay, tmdbAraFilm,
+) {
   // 1) Kayıpsız kendi biçimimiz varsa onu kullan.
   if (metinler['dizijpg.json']) {
     return iceAktarNative(havuz, userId, metinler['dizijpg.json'], ozet);
@@ -367,7 +537,8 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
     let satirlar = [];
     try {
       satirlar = parse(metinler['tv-time-export.csv'],
-        { columns: true, skip_empty_lines: true, relax_column_count: true });
+        { columns: true, skip_empty_lines: true, relax_column_count: true,
+          bom: true, to: MAX_CSV_SATIR });
     } catch {
       throw Object.assign(new Error('CSV okunamadı'), { status: 400 });
     }
@@ -488,7 +659,10 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
   const csv = (ad) => {
     if (!metinler[ad]) return [];
     try {
-      return parse(metinler[ad], { columns: true, skip_empty_lines: true, relax_column_count: true });
+      return parse(metinler[ad], {
+        columns: true, skip_empty_lines: true, relax_column_count: true,
+        bom: true, to: MAX_CSV_SATIR,
+      });
     } catch { return []; }
   };
 
@@ -751,8 +925,10 @@ async function iceAktarLetterboxd(havuz, userId, metinler, ozet, tmdbAraFilm) {
   const csv = (ad) => {
     if (!metinler[ad]) return [];
     try {
-      return parse(metinler[ad],
-        { columns: true, skip_empty_lines: true, relax_column_count: true, bom: true });
+      return parse(metinler[ad], {
+        columns: true, skip_empty_lines: true, relax_column_count: true,
+        bom: true, to: MAX_CSV_SATIR,
+      });
     } catch { return []; }
   };
   const tarihOku = (ham) => {

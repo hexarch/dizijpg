@@ -114,7 +114,7 @@ const Map<String, String> cevirilerRo = {
   'Tümünü Kaldır': 'Elimină tot',
   'Tümünü İzledim': 'Le-am văzut pe toate',
   'Türk Dizileri': 'Seriale turcești',
-  'Veri içe aktar (.zip)': 'Importă date (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Importă date (.zip / .csv)',
   'Verilerim': 'Datele mele',
   'Verilerimi dışa aktar (e-posta)': 'Exportă-mi datele (e-mail)',
   'Verilerini dışa aktar': 'Exportă-ți datele',
@@ -791,10 +791,10 @@ const Map<String, String> cevirilerRo = {
   'Verilerini yanında getir': 'Adu-ți datele cu tine',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Dacă îți ții evidența vizionărilor în altă aplicație, poți muta totul aici. Nu trebuie să iei de la zero.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Alege fișierul ZIP pe care l-ai exportat, iar vizionările, notele și listele tale vor fi importate.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Alege fișierul ZIP/CSV pe care l-ai exportat, iar vizionările, notele și listele tale vor fi importate.',
   'Aktarılıyor...': 'Se importă...',
-  'ZIP dosyası seç': 'Alege un fișier ZIP',
+  'ZIP/CSV dosyası seç': 'Alege un fișier ZIP/CSV',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Nu e nicio grabă: poți face asta și mai târziu din Setări > Datele mele.',
   'Hangi filmleri izledin?': 'Ce filme ai văzut?',
@@ -1768,4 +1768,12 @@ const Map<String, String> cevirilerRo = {
   'Topluluk Kuralları': 'Regulile comunității',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Toleranță zero pentru conținut abuziv, de hărțuire, de ură, sexual, care glorifică violența sau încalcă drepturile de autor și pentru folosirea abuzivă a serviciului. Orice comentariu, postare, mesaj, listă și utilizator poate fi raportat din aplicație; utilizatorii nedoriți pot fi blocați. Conținutul raportat este verificat în 24 de ore; dacă încalcă regulile, este eliminat, iar contul poate fi închis.',
+  'Dosya verisi gerekli': 'Sunt necesare datele fișierului',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Nu este un fișier ZIP, CSV sau JSON valid',
+  'Dosya boş': 'Fișierul este gol',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Fișierul nu a fost recunoscut: încarcă un fișier TV Time, Letterboxd sau dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Acest fișier nu poate fi importat singur: încarcă arhiva completă (.zip) sau fișierul dizijpg.json',
 };

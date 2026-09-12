@@ -1007,13 +1007,17 @@ class _AktarmaAdimiState extends State<_AktarmaAdimi> {
   /// MEVCUT içe aktarımı çağırır (`Api.veriIceAktar` → `backend/veri_aktar.js`).
   /// Yeni bir akış yazılmadı; Ayarlar > Verilerim ile AYNI uca gidiyor.
   Future<void> _iceAktar() async {
+    // ZIP ŞART DEĞİL (13 Eyl 2026): TV Time'ın yeni dışa aktarımı tek bir
+    // `tv-time-export.csv`, kendi yedeğimiz tek bir `dizijpg.json`.
+    // Kullanıcı bunları yükleyebilmek için önce eliyle zip'liyordu.
     final secim = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['zip'],
+      allowedExtensions: ['zip', 'csv', 'json'],
       withData: true,
     );
     final veri = secim?.files.single.bytes;
     if (veri == null) return;
+    final dosyaAdi = secim!.files.single.name;
     if (veri.length > 50 * 1024 * 1024) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1023,7 +1027,7 @@ class _AktarmaAdimiState extends State<_AktarmaAdimi> {
     }
     setState(() => _calisiyor = true);
     try {
-      final ozet = await Api.veriIceAktar(veri);
+      final ozet = await Api.veriIceAktar(veri, dosyaAdi: dosyaAdi);
       if (!mounted) return;
       int say(String k) => (ozet[k] as num?)?.toInt() ?? 0;
       final satirlar = [
@@ -1078,7 +1082,7 @@ class _AktarmaAdimiState extends State<_AktarmaAdimi> {
           // basılır — tüm dillerde doğru görünür.
           baslik: 'TV Time / Letterboxd',
           metin:
-              'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.',
+              'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.',
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
@@ -1091,7 +1095,9 @@ class _AktarmaAdimiState extends State<_AktarmaAdimi> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.folder_zip_outlined),
-            label: Text(_calisiyor ? 'Aktarılıyor...'.c : 'ZIP dosyası seç'.c),
+            label: Text(
+              _calisiyor ? 'Aktarılıyor...'.c : 'ZIP/CSV dosyası seç'.c,
+            ),
             style: FilledButton.styleFrom(
               minimumSize: const Size.fromHeight(48),
             ),

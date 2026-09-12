@@ -111,7 +111,7 @@ const Map<String, String> cevirilerHe = {
   'Tümünü Kaldır': 'הסר הכל',
   'Tümünü İzledim': 'צפיתי בהכל',
   'Türk Dizileri': 'סדרות טורקיות',
-  'Veri içe aktar (.zip)': 'ייבוא נתונים (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'ייבוא נתונים (.zip / .csv)',
   'Verilerim': 'הנתונים שלי',
   'Verilerimi dışa aktar (e-posta)': 'ייצוא הנתונים שלי (אימייל)',
   'Verilerini dışa aktar': 'ייצא את הנתונים שלך',
@@ -773,10 +773,10 @@ const Map<String, String> cevirilerHe = {
   'Verilerini yanında getir': 'הנתונים שלך באים איתך',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'אם המעקב אחרי הצפיות שלך מתנהל באפליקציה אחרת, אפשר להעביר אותו לכאן. אין צורך להתחיל מאפס.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'בחירת קובץ ה-ZIP שיוצא משם; הצפיות, הדירוגים והרשימות שלך יועברו.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'בחירת קובץ ה-ZIP/CSV שיוצא משם; הצפיות, הדירוגים והרשימות שלך יועברו.',
   'Aktarılıyor...': 'בהעברה...',
-  'ZIP dosyası seç': 'בחירת קובץ ZIP',
+  'ZIP/CSV dosyası seç': 'בחירת קובץ ZIP/CSV',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'אין למה למהר: אפשר לעשות את זה גם אחר כך בהגדרות > הנתונים שלי.',
   'Hangi filmleri izledin?': 'באילו סרטים כבר יצא לצפות?',
@@ -1668,4 +1668,12 @@ const Map<String, String> cevirilerHe = {
   'Topluluk Kuralları': 'כללי הקהילה',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'אפס סובלנות לתוכן פוגעני, מטריד, שונא, מיני, מהלל אלימות או מפר זכויות יוצרים, ולשימוש לרעה בשירות. כל תגובה, פוסט, הודעה, רשימה ומשתמש ניתנים לדיווח מתוך האפליקציה; משתמשים לא רצויים ניתן לחסום. תוכן שדווח נבדק תוך 24 שעות; אם הוא מפר את הכללים, הוא מוסר והחשבון עלול להיסגר.',
+  'Dosya verisi gerekli': 'נדרשים נתוני קובץ',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'זה לא קובץ ZIP, CSV או JSON תקין',
+  'Dosya boş': 'הקובץ ריק',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'הקובץ לא זוהה: העלה קובץ של TV Time, Letterboxd או dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'אי אפשר לייבא את הקובץ הזה לבדו: העלה את כל הארכיון (.zip) או את הקובץ dizijpg.json',
 };

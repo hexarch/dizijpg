@@ -113,7 +113,7 @@ const Map<String, String> cevirilerId = {
   'Tümünü Kaldır': 'Hapus Semua',
   'Tümünü İzledim': 'Sudah Nonton Semua',
   'Türk Dizileri': 'Serial Turki',
-  'Veri içe aktar (.zip)': 'Impor data (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Impor data (.zip / .csv)',
   'Verilerim': 'Data Saya',
   'Verilerimi dışa aktar (e-posta)': 'Ekspor data saya (email)',
   'Verilerini dışa aktar': 'Ekspor datamu',
@@ -788,10 +788,10 @@ const Map<String, String> cevirilerId = {
   'Verilerini yanında getir': 'Bawa datamu ke sini',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Kalau kamu melacak tontonanmu di aplikasi lain, kamu bisa memindahkannya ke sini. Tidak perlu mulai dari nol.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Pilih file ZIP hasil ekspormu; tontonan, rating, dan daftarmu akan dipindahkan.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Pilih file ZIP/CSV hasil ekspormu; tontonan, rating, dan daftarmu akan dipindahkan.',
   'Aktarılıyor...': 'Mengimpor...',
-  'ZIP dosyası seç': 'Pilih file ZIP',
+  'ZIP/CSV dosyası seç': 'Pilih file ZIP/CSV',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Tidak perlu buru-buru: kamu juga bisa melakukannya nanti di Pengaturan > Data Saya.',
   'Hangi filmleri izledin?': 'Film apa saja yang sudah kamu tonton?',
@@ -1704,4 +1704,12 @@ const Map<String, String> cevirilerId = {
   'Topluluk Kuralları': 'Pedoman Komunitas',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Tidak ada toleransi untuk konten yang kasar, melecehkan, penuh kebencian, seksual, mengagungkan kekerasan, atau melanggar hak cipta, serta untuk penyalahgunaan layanan. Setiap komentar, postingan, pesan, daftar, dan pengguna dapat dilaporkan dari dalam aplikasi; pengguna yang tidak diinginkan dapat diblokir. Konten yang dilaporkan ditinjau dalam 24 jam; jika melanggar aturan, konten dihapus dan akun dapat ditutup.',
+  'Dosya verisi gerekli': 'Data file diperlukan',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Bukan file ZIP, CSV, atau JSON yang valid',
+  'Dosya boş': 'File kosong',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'File tidak dikenali: unggah file TV Time, Letterboxd, atau dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'File ini tidak bisa diimpor sendirian: unggah seluruh arsip (.zip) atau file dizijpg.json',
 };

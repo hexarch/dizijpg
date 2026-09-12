@@ -640,13 +640,17 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
   }
 
   Future<void> _iceAktar() async {
+    // ZIP ŞART DEĞİL (13 Eyl 2026): TV Time'ın yeni dışa aktarımı tek bir
+    // `tv-time-export.csv`, kendi yedeğimiz tek bir `dizijpg.json`.
+    // Kullanıcı bunları yükleyebilmek için önce eliyle zip'liyordu.
     final secim = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['zip'],
+      allowedExtensions: ['zip', 'csv', 'json'],
       withData: true,
     );
     final veri = secim?.files.single.bytes;
     if (veri == null) return;
+    final dosyaAdi = secim!.files.single.name;
     if (veri.length > 50 * 1024 * 1024) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -663,7 +667,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
       ),
     );
     try {
-      final ozet = await Api.veriIceAktar(veri);
+      final ozet = await Api.veriIceAktar(veri, dosyaAdi: dosyaAdi);
       if (!mounted) return;
       Navigator.pop(context); // yükleniyor kapat
       int say(String k) => (ozet[k] as num?)?.toInt() ?? 0;
@@ -1581,7 +1585,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   onPressed: _iceAktar,
                   icon: Icon(Icons.download, color: DiziRenkler.sariMetin),
                   label: Text(
-                    'Veri içe aktar (.zip)'.c,
+                    'Veri içe aktar (.zip / .csv)'.c,
                     style: TextStyle(color: DiziRenkler.metin),
                   ),
                 ),

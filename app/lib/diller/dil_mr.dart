@@ -114,7 +114,7 @@ const Map<String, String> cevirilerMr = {
   'Tümünü Kaldır': 'सगळं काढून टाका',
   'Tümünü İzledim': 'सगळं पाहिलं',
   'Türk Dizileri': 'तुर्की सीरीज',
-  'Veri içe aktar (.zip)': 'डेटा इंपोर्ट करा (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'डेटा इंपोर्ट करा (.zip / .csv)',
   'Verilerim': 'माझा डेटा',
   'Verilerimi dışa aktar (e-posta)': 'माझा डेटा एक्स्पोर्ट करा (ईमेल)',
   'Verilerini dışa aktar': 'तुमचा डेटा एक्स्पोर्ट करा',
@@ -784,10 +784,10 @@ const Map<String, String> cevirilerMr = {
   'Verilerini yanında getir': 'तुझा डेटा सोबत आणा',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'दुसऱ्या एखाद्या अ‍ॅपमध्ये पाहिलेल्यांची नोंद असेल, तर ती इथे आणता येते. सगळे नव्याने सुरू करण्याची गरज नाही.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'तिथून एक्सपोर्ट केलेली ZIP फाइल निवडा; पाहिलेले, रेटिंग आणि लिस्ट इथे येतील.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'तिथून एक्सपोर्ट केलेली ZIP/CSV फाइल निवडा; पाहिलेले, रेटिंग आणि लिस्ट इथे येतील.',
   'Aktarılıyor...': 'इंपोर्ट होत आहे...',
-  'ZIP dosyası seç': 'ZIP फाइल निवडा',
+  'ZIP/CSV dosyası seç': 'ZIP/CSV फाइल निवडा',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'घाई नाही: हे नंतर सेटिंग्ज > माझा डेटा मधूनही करता येते.',
   'Hangi filmleri izledin?': 'कोणते सिनेमे पाहिले?',
@@ -1698,4 +1698,12 @@ const Map<String, String> cevirilerMr = {
   'Topluluk Kuralları': 'समुदायाचे नियम',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'अपमानास्पद, छळवणूक करणारा, द्वेषपूर्ण, लैंगिक, हिंसेचे उदात्तीकरण करणारा किंवा कॉपीराइटचे उल्लंघन करणारा मजकूर आणि सेवेचा गैरवापर अजिबात खपवून घेतला जात नाही. प्रत्येक टिप्पणी, पोस्ट, संदेश, यादी आणि वापरकर्त्याची अ‍ॅपमधून तक्रार करता येते; नको असलेल्या वापरकर्त्यांना ब्लॉक करता येते. तक्रार केलेला मजकूर 24 तासांत तपासला जातो; नियम मोडल्यास मजकूर काढला जातो आणि खाते बंद केले जाऊ शकते.',
+  'Dosya verisi gerekli': 'फाइलचा डेटा आवश्यक आहे',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'ही वैध ZIP, CSV किंवा JSON फाइल नाही',
+  'Dosya boş': 'फाइल रिकामी आहे',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'ही फाइल ओळखली गेली नाही: TV Time, Letterboxd किंवा dizi.jpg फाइल अपलोड करा',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'ही फाइल एकटी इंपोर्ट होऊ शकत नाही: संपूर्ण आर्काइव्ह (.zip) किंवा dizijpg.json फाइल अपलोड करा',
 };

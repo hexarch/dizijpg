@@ -112,7 +112,7 @@ const Map<String, String> cevirilerEn = {
   'Tümünü Kaldır': 'Remove All',
   'Tümünü İzledim': 'Watched All',
   'Türk Dizileri': 'Turkish Series',
-  'Veri içe aktar (.zip)': 'Import data (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Import data (.zip / .csv)',
   'Verilerim': 'My Data',
   'Verilerimi dışa aktar (e-posta)': 'Export my data (email)',
   'Verilerini dışa aktar': 'Export your data',
@@ -786,10 +786,10 @@ const Map<String, String> cevirilerEn = {
   'Verilerini yanında getir': 'Bring your data with you',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'If you track what you watch in another app, you can move it all over here. No need to start from scratch.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Pick the ZIP file you exported and your watch history, ratings and lists come along.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Pick the ZIP/CSV file you exported and your watch history, ratings and lists come along.',
   'Aktarılıyor...': 'Importing...',
-  'ZIP dosyası seç': 'Choose ZIP file',
+  'ZIP/CSV dosyası seç': 'Choose ZIP/CSV file',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'No rush: you can also do this later in Settings > My Data.',
   'Hangi filmleri izledin?': 'Which movies have you watched?',
@@ -1740,4 +1740,12 @@ const Map<String, String> cevirilerEn = {
   'Topluluk Kuralları': 'Community Guidelines',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'There is zero tolerance for abusive, harassing, hateful, sexual, violence-glorifying or copyright-infringing content and for misuse of the service. Every comment, post, message, list and user can be reported from within the app, and unwanted users can be blocked. Reported content is reviewed within 24 hours; if it breaks the rules, it is removed and the account may be closed.',
+  'Dosya verisi gerekli': 'File data required',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Not a valid ZIP, CSV or JSON file',
+  'Dosya boş': 'The file is empty',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'File not recognised: upload a TV Time, Letterboxd or dizi.jpg file',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'This file cannot be imported on its own: upload the whole archive (.zip) or the dizijpg.json file',
 };

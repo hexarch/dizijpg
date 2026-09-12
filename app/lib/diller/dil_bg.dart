@@ -114,7 +114,7 @@ const Map<String, String> cevirilerBg = {
   'Tümünü Kaldır': 'Премахни всички',
   'Tümünü İzledim': 'Всичко е изгледано',
   'Türk Dizileri': 'Турски сериали',
-  'Veri içe aktar (.zip)': 'Импорт на данни (.zip)',
+  'Veri içe aktar (.zip / .csv)': 'Импорт на данни (.zip / .csv)',
   'Verilerim': 'Моите данни',
   'Verilerimi dışa aktar (e-posta)': 'Експорт на моите данни (имейл)',
   'Verilerini dışa aktar': 'Експортирай данните си',
@@ -789,10 +789,10 @@ const Map<String, String> cevirilerBg = {
   'Verilerini yanında getir': 'Донеси данните си със себе си',
   'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
       'Ако следиш какво гледаш в друго приложение, можеш да го прехвърлиш тук. Не е нужно да започваш от нулата.',
-  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
-      'Избери ZIP файла от експорта — гледаното, оценките и списъците ти ще се прехвърлят.',
+  'Dışa aktardığın ZIP/CSV dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Избери ZIP/CSV файла от експорта — гледаното, оценките и списъците ти ще се прехвърлят.',
   'Aktarılıyor...': 'Прехвърляне...',
-  'ZIP dosyası seç': 'Избери ZIP файл',
+  'ZIP/CSV dosyası seç': 'Избери ZIP/CSV файл',
   'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
       'Няма бързане: това може да стане и по-късно от раздела Настройки > Моите данни.',
   'Hangi filmleri izledin?': 'Кои филми вече са изгледани?',
@@ -1713,4 +1713,12 @@ const Map<String, String> cevirilerBg = {
   'Topluluk Kuralları': 'Правила на общността',
   'Saldırgan, taciz edici, nefret içeren, cinsel, şiddet yüceltici ya da telif hakkı ihlali içeren içeriklere ve kötüye kullanıma sıfır tolerans gösterilir. Her yorum, gönderi, mesaj, liste ve kullanıcı uygulama içinden şikâyet edilebilir; istenmeyen kullanıcılar engellenebilir. Şikâyet edilen içerik 24 saat içinde incelenir; kural ihlalinde içerik kaldırılır ve hesap kapatılabilir.':
       'Нулева толерантност към обидно, тормозещо, омразно, сексуално, възхваляващо насилието или нарушаващо авторските права съдържание и към злоупотреба с услугата. Всеки коментар, публикация, съобщение, списък и потребител може да бъде докладван от приложението; нежеланите потребители могат да бъдат блокирани. Докладваното съдържание се проверява до 24 часа; при нарушение на правилата се премахва, а профилът може да бъде закрит.',
+  'Dosya verisi gerekli': 'Необходими са данни за файла',
+  'Geçerli bir ZIP, CSV ya da JSON dosyası değil':
+      'Не е валиден ZIP, CSV или JSON файл',
+  'Dosya boş': 'Файлът е празен',
+  'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle':
+      'Файлът не е разпознат: качи файл от TV Time, Letterboxd или dizi.jpg',
+  'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
+      'Този файл не може да се внесе сам: качи целия архив (.zip) или файла dizijpg.json',
 };

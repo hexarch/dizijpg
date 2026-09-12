@@ -38,7 +38,7 @@ import http from 'http';
 import net from 'net';
 import geoip from 'geoip-lite';
 import admin from 'firebase-admin';
-import { disaAktar, iceAktar } from './veri_aktar.js';
+import { disaAktar, iceAktar, iceAktarTekDosya } from './veri_aktar.js';
 import { dilTespit } from './dil_tespit.js';
 import { KirikFragmanlar } from './fragman_suzgec.js';
 import {
@@ -393,7 +393,20 @@ if (kumelenmisMi() && !ARAMA_SAHIBI) {
 // yaptırmaktan başka bir şey değildi. Kümesizken her zamanki gibi bu süreçte.
 const ISCI_GOREVLI = !kumelenmisMi() || isciSira() === '1';
 
-app.use(express.json({ limit: '1mb' }));
+// GENEL JSON AYRIŞTIRICI — `/veri/ice-aktar` HARİÇ (13 Eyl 2026).
+//
+// O uç artık tek bir `dizijpg.json` yedeğini de kabul ediyor ve gövdeyi HAM
+// okuyor (`express.raw`, 50 MB). Buradaki ayrıştırıcı önce koştuğu için
+// `Content-Type: application/json` ile gelen yedeği KENDİ 1 MB sınırıyla
+// yutar; büyük dosya 413, küçüğü ise nesneye dönüşüp `express.raw`ı atlatır
+// ve uç "Dosya verisi gerekli" derdi. İkisi de kullanıcıya sebepsiz görünür.
+//
+// `type` bir fonksiyon olunca varsayılan eşleşmeyi de biz yaparız:
+// `req.is` yalnız application/json (ve +json) için doğru döner.
+app.use(express.json({
+  limit: '1mb',
+  type: (req) => req.path !== '/veri/ice-aktar' && Boolean(req.is('application/json')),
+}));
 
 // Avatar ve yorum medyası (compose'ta kalıcı volume'a bağlanır)
 const AVATAR_DIZIN = process.env.AVATAR_DIZIN || './avatarlar';
@@ -673,7 +686,7 @@ app.use((req, res, next) => {
     res.set('Access-Control-Allow-Origin', koken);
     res.set('Vary', 'Origin');
   }
-  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Dil');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Dil, X-Dosya-Adi');
   res.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
   // Yüklenen dosyalar tarayıcıda içerik koklamasıyla çalıştırılamasın.
   res.set('X-Content-Type-Options', 'nosniff');
@@ -20597,24 +20610,64 @@ app.post('/veri/disa-aktar', girisZorunlu, veriLimiti, sarici(async (req, res) =
   res.json({ tamam: true, mesaj: `Verilerin ${eposta} adresine gönderildi` });
 }));
 
-// İçe aktar: ham ZIP gövdesi. Yalnızca kendi hesabına yükler.
+// İçe aktar: ham ZIP **veya** tek bir CSV/JSON gövdesi. Yalnızca kendi
+// hesabına yükler; dosyadaki `user_id` sütunu OKUNMAZ (13 Eyl 2026: tek dosya
+// desteği eklendi, bu kural değişmedi — hedef her zaman oturumun sahibi).
+//
+// Biçim İÇERİKTEN anlaşılır, `Content-Type`tan DEĞİL: ilk iki bayt "PK" ise
+// ZIP, değilse metin. Bu yüzden gövde tip süzgeci olmadan ham okunur
+// (`/medya` ve oda parçası uçlarındaki kalıp). Tip listesi tutulsaydı
+// tarayıcının .csv'ye taktığı beklenmedik bir tip -- Windows'ta sık görülen
+// `application/vnd.ms-excel` -- gövdeyi ayrıştırılmadan geçirir, uç da
+// "Dosya verisi gerekli" derdi: kullanıcı için sebepsiz bir ret.
+// `X-Dosya-Adi` yalnızca tek dosya yolunda bir İPUCUDUR (watched.csv ile
+// watchlist.csv başlıkları aynı); güvenlik kararı ona dayanmaz.
+
+/** `X-Dosya-Adi` başlığını güvenli bir taban ada indirger; şüpheliyse ''. */
+function iceAktarDosyaAdi(ham) {
+  if (!ham) return '';
+  let ad = String(ham).slice(0, 300);
+  // İstemci yüzde kodlar: HTTP başlığı latin-1'dir, Türkçe/Çince ad taşımaz.
+  try { ad = decodeURIComponent(ad); } catch { /* kodlanmamış: olduğu gibi */ }
+  ad = ad.split(/[\\/]/).pop() || '';
+  // Ad SADECE ipucudur: diske hiç yazılmıyor, yalnız bilinen adlarla
+  // karşılaştırılıyor. Bu yüzden kaçış değil ELEME yeter — kontrol karakteri
+  // ve yol ayracı düşer, "izlediklerim şubat.csv" gibi Türkçe/Çince adlar
+  // GEÇER (ASCII'ye daraltmak eşleşmeyi sebepsiz zayıflatırdı).
+  // eslint-disable-next-line no-control-regex
+  return /^[^\u0000-\u001f]{1,120}$/.test(ad) ? ad : '';
+}
+
 app.post('/veri/ice-aktar',
   girisZorunlu,
   veriLimiti,
   diskKapi,
   yuklemeBaytButcesi,
-  express.raw({ type: ['application/zip', 'application/octet-stream'], limit: '50mb' }),
+  express.raw({ type: () => true, limit: '50mb' }),
   sarici(async (req, res) => {
     if (!Buffer.isBuffer(req.body) || req.body.length < 4) {
-      return res.status(400).json({ hata: 'ZIP verisi gerekli' });
+      return res.status(400).json({ hata: 'Dosya verisi gerekli' });
     }
     // ZIP sihirli baytı (PK\x03\x04 / boş arşiv PK\x05\x06)
-    if (!(req.body[0] === 0x50 && req.body[1] === 0x4b)) {
-      return res.status(400).json({ hata: 'Geçerli bir ZIP dosyası değil' });
+    const zipMi = req.body[0] === 0x50 && req.body[1] === 0x4b;
+    if (zipMi) {
+      const ozet = await iceAktar(
+        havuz, req.kullanici.id, req.body, tvdbdenTmdb, isimdenTmdbTv,
+        tmdbBolumSayisi, isimdenTmdbFilm);
+      return res.json({ tamam: true, ozet });
     }
-    const ozet = await iceAktar(
-      havuz, req.kullanici.id, req.body, tvdbdenTmdb, isimdenTmdbTv,
-      tmdbBolumSayisi, isimdenTmdbFilm);
+    // METİN OLDUĞUNU KANITLA. CSV/JSON'da NUL baytı BULUNMAZ; gzip/pdf/exe
+    // gibi ikili bir dosya yanlışlıkla (ya da bilerek) gönderilirse burada
+    // düşsün — aşağıdaki `toString('utf8')` onu sessizce çöp metne çevirir
+    // ve kullanıcı "0 kayıt aktarıldı" diye şaşırırdı.
+    if (req.body.subarray(0, 8192).includes(0x00)) {
+      return res.status(400).json({
+        hata: 'Geçerli bir ZIP, CSV ya da JSON dosyası değil',
+      });
+    }
+    const ozet = await iceAktarTekDosya(
+      havuz, req.kullanici.id, req.body, iceAktarDosyaAdi(req.get('X-Dosya-Adi')),
+      tvdbdenTmdb, isimdenTmdbTv, tmdbBolumSayisi, isimdenTmdbFilm);
     res.json({ tamam: true, ozet });
   }));
 
