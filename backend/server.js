@@ -23164,45 +23164,106 @@ app.post('/admin/onbellek-temizle', adminKisit, sarici(async (req, res) => {
 }));
 
 // ---------- büyüme / analitik ----------
+// GOOGLE SEARCH CONSOLE TARZI AYRINTI (13 Eyl 2026, kullanıcı isteği: "günlük
+// kayıt ve günlük aktif kullanıcıda fare ile üzerine gelince tarih+sayı
+// görünsün, bu istatistikleri GSC gibi detaylı yap").
+//
+// Bu yüzden uç artık tek tek toplam DEĞİL, GÜNLÜK SERİ döndürür:
+//   · seri ÇOK METRİKLİ  → grafikte metrik kutuları açıp kapatılır,
+//   · pencere İKİ KAT     → ikinci yarı seçilen dönem, ilk yarı KIYAS dönemi
+//                           (GSC'nin "önceki dönemle karşılaştır" kutusu),
+//   · boş günler 0 ile dolu → grafikte delik, tabloda eksik satır olmaz.
+//
+// *** GÜN KOVASI TÜRKİYE GÜNÜDÜR, UTC DEĞİL. *** Konteynerin TimeZone'u UTC
+// (ölçüldü: `now()::date` 13 Eyl 00:48'de hâlâ "2026-09-12" diyordu). Ham
+// `::date` kullanılsa panel Türkiye'de gece yarısı–03:00 arası BUGÜNÜ HİÇ
+// göstermez ve her günün kovası 03:00'te kesilirdi. Bu yüzden her damga
+// `AT TIME ZONE $2` ile çevrilir; uç ayrıca `bugun` alanını döndürür ki panel
+// son kovanın KISMİ olduğunu yazabilsin (grafikteki son gün düşüşü veri
+// kaybı değil, günün henüz dolmamasıdır).
+const BUYUME_TZ = 'Europe/Istanbul';
 app.get('/admin/buyume', adminKisit, sarici(async (req, res) => {
-  const gun = Math.min(Math.max(parseInt(req.query.gun, 10) || 30, 7), 180);
-  const [kayitlar, aktifler, tutundurma, topIcerik, push, ozet] = await Promise.all([
-    // Günlük kayıt (boş günler 0 ile dolsun: grafikte delik olmasın)
+  const gun = Math.min(Math.max(parseInt(req.query.gun, 10) || 28, 7), 365);
+  const pencere = gun * 2; // seçilen dönem + önceki dönem (kıyas)
+  const [seri, tutundurma, topIcerik, push, ozet, etkin] = await Promise.all([
+    // Günlük seri. Üç eylem tablosunun birleşimi "aktif kullanıcı" için
+    // VEKİL ölçüdür: son_gorulme geçmişi tutulmuyor (tek damga var), bu
+    // yüzden geçmişe dönük DAU ancak eylem izinden çıkarılabiliyor.
     havuz.query(
-      `SELECT d::date AS gun, COALESCE(k.n,0)::int AS sayi
-         FROM generate_series(now()::date - ($1::int - 1), now()::date, '1 day') d
-         LEFT JOIN (SELECT olusturma::date g, count(*) n FROM kullanicilar
-                     WHERE olusturma > now() - ($1::int || ' days')::interval
-                     GROUP BY 1) k ON k.g = d::date
-        ORDER BY 1`, [gun]),
-    // Günlük EYLEM YAPAN kullanıcı (son_gorulme geçmişi tutulmadığı için
-    // izleme/yorum/mesaj birleşimi vekil ölçüdür).
-    havuz.query(
-      `WITH eylem AS (
-         SELECT kullanici_id, tarih::date g FROM izlemeler WHERE tarih > now() - ($1::int || ' days')::interval
-         UNION ALL
-         SELECT kullanici_id, tarih::date FROM yorumlar WHERE tarih > now() - ($1::int || ' days')::interval
-         UNION ALL
-         SELECT gonderen_id, tarih::date FROM mesajlar WHERE tarih > now() - ($1::int || ' days')::interval)
-       SELECT d::date AS gun, COALESCE(e.n,0)::int AS sayi
-         FROM generate_series(now()::date - ($1::int - 1), now()::date, '1 day') d
-         LEFT JOIN (SELECT g, count(DISTINCT kullanici_id) n FROM eylem GROUP BY 1) e ON e.g = d::date
-        ORDER BY 1`, [gun]),
-    // Tutundurma: son 30 günün kohortları, kayıttan 1 ve 7 gün SONRA eylem
-    havuz.query(
-      `WITH kohort AS (
-         SELECT id, olusturma::date g FROM kullanicilar
-          WHERE NOT misafir AND olusturma > now() - interval '30 days'),
+      `WITH zaman AS (
+         SELECT (now() AT TIME ZONE $2)::date AS bugun,
+                (((now() AT TIME ZONE $2)::date - ($1::int - 1))::timestamp
+                   AT TIME ZONE $2) AS bas),
+       gunler AS (
+         SELECT d::date AS g
+           FROM zaman z, generate_series(z.bugun - ($1::int - 1), z.bugun, '1 day') d),
+       kayit AS (
+         SELECT (k.olusturma AT TIME ZONE $2)::date g, count(*)::int n,
+                count(*) FILTER (WHERE NOT k.misafir)::int uye
+           FROM kullanicilar k, zaman z WHERE k.olusturma >= z.bas GROUP BY 1),
+       izl AS (
+         SELECT (i.tarih AT TIME ZONE $2)::date g, count(*)::int n
+           FROM izlemeler i, zaman z WHERE i.tarih >= z.bas GROUP BY 1),
+       yor AS (
+         SELECT (y.tarih AT TIME ZONE $2)::date g, count(*)::int n
+           FROM yorumlar y, zaman z WHERE y.tarih >= z.bas GROUP BY 1),
+       mes AS (
+         SELECT (m.tarih AT TIME ZONE $2)::date g, count(*)::int n
+           FROM mesajlar m, zaman z WHERE m.tarih >= z.bas GROUP BY 1),
        eylem AS (
-         SELECT kullanici_id, tarih::date g FROM izlemeler
-         UNION SELECT kullanici_id, tarih::date FROM yorumlar
-         UNION SELECT gonderen_id, tarih::date FROM mesajlar)
-       SELECT k.g AS gun, count(*)::int AS kayit,
+         SELECT i.kullanici_id k, (i.tarih AT TIME ZONE $2)::date g
+           FROM izlemeler i, zaman z WHERE i.tarih >= z.bas
+         UNION ALL
+         SELECT y.kullanici_id, (y.tarih AT TIME ZONE $2)::date
+           FROM yorumlar y, zaman z WHERE y.tarih >= z.bas
+         UNION ALL
+         SELECT m.gonderen_id, (m.tarih AT TIME ZONE $2)::date
+           FROM mesajlar m, zaman z WHERE m.tarih >= z.bas),
+       aktif AS (SELECT g, count(DISTINCT k)::int n FROM eylem GROUP BY 1)
+       SELECT to_char(d.g,'YYYY-MM-DD') AS gun,
+              COALESCE(k.n,0)   AS kayit,
+              COALESCE(k.uye,0) AS uye,
+              COALESCE(a.n,0)   AS aktif,
+              COALESCE(i.n,0)   AS izleme,
+              COALESCE(y.n,0)   AS yorum,
+              COALESCE(m.n,0)   AS mesaj
+         FROM gunler d
+         LEFT JOIN kayit k ON k.g = d.g
+         LEFT JOIN aktif a ON a.g = d.g
+         LEFT JOIN izl   i ON i.g = d.g
+         LEFT JOIN yor   y ON y.g = d.g
+         LEFT JOIN mes   m ON m.g = d.g
+        ORDER BY 1`, [pencere, BUYUME_TZ]),
+    // Tutundurma: seçilen dönemin kayıt kohortları, kayıttan 1 / 7 / 30 gün
+    // SONRA eylem. "olgun" bayrakları ŞART: 2 günlük kohortun 30. gün
+    // tutundurması 0 değil BİLİNMİYORDUR; panel onu '—' basar (eskiden %0
+    // yazıyordu ve yeni günler tabloyu felaket gibi gösteriyordu).
+    havuz.query(
+      `WITH zaman AS (
+         SELECT (now() AT TIME ZONE $2)::date AS bugun,
+                (((now() AT TIME ZONE $2)::date - ($1::int - 1))::timestamp
+                   AT TIME ZONE $2) AS bas),
+       kohort AS (
+         SELECT k.id, (k.olusturma AT TIME ZONE $2)::date g
+           FROM kullanicilar k, zaman z WHERE NOT k.misafir AND k.olusturma >= z.bas),
+       eylem AS (
+         SELECT kullanici_id, (tarih AT TIME ZONE $2)::date g FROM izlemeler
+         UNION SELECT kullanici_id, (tarih AT TIME ZONE $2)::date FROM yorumlar
+         UNION SELECT gonderen_id, (tarih AT TIME ZONE $2)::date FROM mesajlar)
+       SELECT to_char(k.g,'YYYY-MM-DD') AS gun, count(*)::int AS kayit,
               count(*) FILTER (WHERE EXISTS (
-                SELECT 1 FROM eylem e WHERE e.kullanici_id=k.id AND e.g = k.g + 1))::int AS d1,
+                SELECT 1 FROM eylem e WHERE e.kullanici_id=k.id
+                   AND e.g = k.g + 1))::int AS d1,
               count(*) FILTER (WHERE EXISTS (
-                SELECT 1 FROM eylem e WHERE e.kullanici_id=k.id AND e.g BETWEEN k.g + 6 AND k.g + 8))::int AS d7
-         FROM kohort k GROUP BY 1 ORDER BY 1 DESC LIMIT 30`),
+                SELECT 1 FROM eylem e WHERE e.kullanici_id=k.id
+                   AND e.g BETWEEN k.g + 6 AND k.g + 8))::int AS d7,
+              count(*) FILTER (WHERE EXISTS (
+                SELECT 1 FROM eylem e WHERE e.kullanici_id=k.id
+                   AND e.g BETWEEN k.g + 25 AND k.g + 35))::int AS d30,
+              (k.g + 2  <= (SELECT bugun FROM zaman)) AS olgun1,
+              (k.g + 8  <= (SELECT bugun FROM zaman)) AS olgun7,
+              (k.g + 35 <= (SELECT bugun FROM zaman)) AS olgun30
+         FROM kohort k GROUP BY 1, k.g ORDER BY k.g DESC LIMIT 120`, [gun, BUYUME_TZ]),
     havuz.query(
       `SELECT tur, tmdb_id, count(*)::int izleme, count(DISTINCT kullanici_id)::int kisi
          FROM izlemeler WHERE tarih > now() - ($1::int || ' days')::interval
@@ -23216,12 +23277,28 @@ app.get('/admin/buyume', adminKisit, sarici(async (req, res) => {
               (SELECT count(*)::int FROM cihaz_tokenlari) AS cihaz`),
     havuz.query(
       `SELECT (SELECT count(*)::int FROM kullanicilar) AS kullanici,
+              (SELECT count(*)::int FROM kullanicilar WHERE NOT misafir) AS uye,
               (SELECT count(*)::int FROM kullanicilar
                 WHERE son_gorulme > now() - interval '7 days') AS aktif7,
               (SELECT count(*)::int FROM kullanicilar
                 WHERE olusturma > now() - interval '7 days') AS yeni7,
               (SELECT count(*)::int FROM yorumlar) AS yorum,
-              (SELECT count(*)::int FROM izlemeler) AS izleme`),
+              (SELECT count(*)::int FROM izlemeler) AS izleme,
+              to_char((now() AT TIME ZONE $1)::date,'YYYY-MM-DD') AS bugun`, [BUYUME_TZ]),
+    // DAU/WAU/MAU: "yapışkanlık" (DAU÷MAU) günlük seriden TÜRETİLEMEZ —
+    // tekil kişiler günler arası toplanamaz, pencere başına ayrı sayılır.
+    // Pencereler KAYAN 24 saat / 7 gün / 30 gündür (takvim günü değil).
+    havuz.query(
+      `WITH eylem AS (
+         SELECT kullanici_id k, tarih FROM izlemeler WHERE tarih > now() - interval '30 days'
+         UNION ALL
+         SELECT kullanici_id, tarih FROM yorumlar WHERE tarih > now() - interval '30 days'
+         UNION ALL
+         SELECT gonderen_id, tarih FROM mesajlar WHERE tarih > now() - interval '30 days')
+       SELECT count(DISTINCT k)::int AS mau,
+              count(DISTINCT k) FILTER (WHERE tarih > now() - interval '7 days')::int AS wau,
+              count(DISTINCT k) FILTER (WHERE tarih > now() - interval '1 day')::int AS dau
+         FROM eylem`),
   ]);
   // İçerik adları (önbellekli TMDB)
   const adlar = {};
@@ -23237,13 +23314,16 @@ app.get('/admin/buyume', adminKisit, sarici(async (req, res) => {
   }
   res.json({
     gun,
-    kayitlar: kayitlar.rows,
-    aktifler: aktifler.rows,
+    pencere,
+    zaman_dilimi: BUYUME_TZ,
+    bugun: ozet.rows[0].bugun,
+    seri: seri.rows,
     tutundurma: tutundurma.rows,
     top_icerik: topIcerik.rows,
     icerik_adlari: adlar,
     push: push.rows[0],
     ozet: ozet.rows[0],
+    etkin: etkin.rows[0],
   });
 }));
 

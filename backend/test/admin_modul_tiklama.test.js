@@ -76,7 +76,11 @@ test('sol menü: MODULLER listesi var ve üstteki sekme çubuğu kaldırıldı',
 });
 
 test('sol menü: her sayfanın <section id="s-…"> karşılığı var (ölü sekme yok)', () => {
-  const anahtarlar = [...ADMIN.matchAll(/\{k:'([a-z]+)'/g)].map((m) => m[1]);
+  // Anahtarlar YALNIZ MODULLER dizisinden okunur. Eskiden tüm dosya taranıyordu
+  // ve paneldeki başka bir `{k:'...'}` (13 Eyl 2026: Büyüme tablosunun sütun
+  // tanımları) menü girdisi sanılıp testi yalancı biçimde düşürüyordu.
+  const modulBlok = blokCek(ADMIN, 'const MODULLER=[', '\n];');
+  const anahtarlar = [...modulBlok.matchAll(/\{k:'([a-z]+)'/g)].map((m) => m[1]);
   assert.ok(anahtarlar.length >= 17, `menüde 17 sayfa bekleniyordu, ${anahtarlar.length} var`);
   for (const k of anahtarlar) {
     assert.ok(

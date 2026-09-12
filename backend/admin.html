@@ -182,6 +182,59 @@ tr:hover td{background:rgba(255,255,255,.02)}
 @media(max-width:640px){.oda-satir{flex-direction:column;gap:6px}.oda-sag{text-align:left}}
 .uyari-kutu{margin:0 24px 16px;padding:12px 16px;border-radius:12px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:#fca5a5;font-size:13px}
 
+/* Büyüme: Search Console tarzı etkileşimli grafik (13 Eyl 2026) ------------
+   Kullanıcı "gün gün üzerine gelince tarih ve sayı görünsün" dedi; imleç ve
+   ipucu bu yüzden GRAFİĞİN parçası. `touch-action:none` tuvale ZORUNLU:
+   olmadan telefonda ipucu açmak için basılı tutmak sayfayı kaydırıyor.       */
+.bu-arac{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line)}
+.bu-arac select{padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--metin);font-family:inherit;font-size:13px}
+.bu-arac select:focus{outline:none;border-color:var(--sari)}
+.bu-onay{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 2px;
+  font-size:12px;color:var(--soluk);cursor:pointer;user-select:none}
+.bu-onay input{accent-color:var(--sari);width:15px;height:15px;cursor:pointer}
+.bu-onay:hover{color:var(--metin)}
+.bu-metrikler{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));border-bottom:1px solid var(--line)}
+.bu-metrik{position:relative;padding:12px 15px 13px;background:var(--panel2);color:var(--soluk);
+  border:none;border-right:1px solid var(--line);border-top:3px solid transparent;
+  cursor:pointer;text-align:left;font-family:inherit;transition:.15s}
+.bu-metrik:last-child{border-right:none}
+.bu-metrik:hover{background:#1d1d29;color:var(--metin)}
+.bu-metrik.acik{background:var(--panel);color:var(--metin)}
+.bu-metrik .mad{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600}
+.bu-metrik .mad i{width:9px;height:9px;border-radius:50%;flex:none;background:currentColor;opacity:.3}
+.bu-metrik.acik .mad i{opacity:1}
+.bu-metrik .mtop{font-size:23px;font-weight:800;letter-spacing:-.7px;margin-top:5px;color:var(--metin)}
+.bu-metrik .mfrk{font-size:11px;font-weight:600;margin-top:1px}
+.bu-metrik:focus-visible{outline:2px solid var(--sari);outline-offset:-2px}
+.frk-arti{color:var(--yesil)}.frk-eksi{color:var(--kirmizi)}.frk-esit{color:var(--soluk2)}
+.bu-tuval-sar{position:relative;padding:14px 12px 6px}
+#bu-tuval{display:block;width:100%;height:300px;touch-action:none;cursor:crosshair}
+#bu-tuval:focus-visible{outline:2px solid var(--sari);outline-offset:3px;border-radius:8px}
+.bu-ipucu{position:absolute;z-index:6;pointer-events:none;min-width:178px;
+  background:rgba(16,16,24,.97);border:1px solid #34343f;border-radius:12px;padding:9px 11px;
+  box-shadow:0 14px 34px rgba(0,0,0,.62);font-size:12px}
+.bu-ipucu .ig{font-weight:700;color:var(--metin);margin-bottom:6px}
+.bu-ipucu .is{display:flex;align-items:center;gap:7px;margin-top:3px;white-space:nowrap;color:var(--soluk)}
+.bu-ipucu .is i{width:8px;height:8px;border-radius:50%;flex:none}
+.bu-ipucu .is b{margin-left:auto;padding-left:12px;font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--metin)}
+.bu-ipucu .ik{margin-top:6px;padding-top:5px;border-top:1px solid var(--line);font-size:11px;color:var(--soluk2)}
+/* Günler tablosunda İKİ başlık satırı var. `th{position:sticky;top:0}` ikisini
+   de aynı yere yapıştırınca DÖNEM özeti sütun adlarını ÖRTÜYOR (13 Eyl 2026,
+   tarayıcıda görüldü: kaydırınca "TARİH KAYIT ÜYE…" kayboluyordu). Özet satırı
+   bir satır aşağıya yapışır. */
+#bu-tablo thead tr:last-child th{top:39px}
+/* Kaydırılan gövde satırları başlığın ÜSTÜNE binmesin: genel `th` kuralında
+   z-index yok, DOM'da sonra gelen tbody hücreleri yapışkan başlığın üzerine
+   çiziliyor ve arkadan "hayalet satır" sızıyordu. */
+#bu-tablo thead th{z-index:3}
+.bu-sirala{cursor:pointer;user-select:none;white-space:nowrap}
+.bu-sirala:hover{color:var(--metin)}
+@media(max-width:640px){
+  #bu-tuval{height:250px}
+  .bu-metrikler{grid-template-columns:repeat(2,1fr)}
+  .bu-metrik:nth-child(2n){border-right:none}
+}
+
 /* Mailler */
 .mail-ust{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line)}
 .mail-ust input{flex:1;min-width:180px;padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--metin);font-family:inherit;font-size:13px}
@@ -441,33 +494,55 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
   </div>
 </div>
 
-<!-- BÜYÜME -->
+<!-- BÜYÜME — Search Console tarzı: dönem seçici + açılıp kapanan metrik
+     kutuları + imleçli grafik (tarih ve sayı fareyle okunur) + gün gün tablo.
+     Tuval tabindex'li: fare olmayan kullanıcı ok tuşlarıyla gün gezer. -->
 <section id="s-buyume" class="sayfa gizli">
   <div class="kucuk-kartlar" id="bu-kartlar" style="padding:0 0 16px"></div>
-  <div class="izgara" style="padding:0 0 16px">
-    <div class="panel">
-      <h3>📈 Günlük Kayıt <span class="sag" id="bu-kayit-top">—</span></h3>
-      <div style="padding:18px"><canvas id="bu-kayit" style="width:100%;height:110px;display:block"></canvas>
-        <div class="kck" id="bu-kayit-eksen" style="display:flex;justify-content:space-between;margin-top:6px"></div></div>
+
+  <div class="panel" style="margin-bottom:16px">
+    <div class="bu-arac">
+      <label class="kck" for="bu-donem">Dönem</label>
+      <select id="bu-donem" onchange="buyumeYukle()">
+        <option value="7">son 7 gün</option>
+        <option value="28" selected>son 28 gün</option>
+        <option value="90">son 3 ay</option>
+        <option value="180">son 6 ay</option>
+        <option value="365">son 12 ay</option>
+      </select>
+      <label class="bu-onay"><input type="checkbox" id="bu-kiyas" onchange="buyumeCiz()">önceki dönemle karşılaştır</label>
+      <label class="bu-onay"><input type="checkbox" id="bu-ort" onchange="buyumeCiz()">7 günlük ortalama</label>
+      <span style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <span class="kck" id="bu-durum"></span>
+        <button class="btn" onclick="buyumeCsv()" title="Görünen dönemi CSV indir">⬇ CSV</button>
+      </span>
     </div>
-    <div class="panel">
-      <h3>👣 Günlük Aktif Kullanıcı <span class="sag" id="bu-aktif-top">—</span></h3>
-      <div style="padding:18px"><canvas id="bu-aktif" style="width:100%;height:110px;display:block"></canvas>
-        <div class="kck" style="margin-top:6px">İzleme, yorum veya mesaj eyleminde bulunan tekil kullanıcı</div></div>
+    <div class="bu-metrikler" id="bu-metrikler"></div>
+    <div class="bu-tuval-sar">
+      <canvas id="bu-tuval" tabindex="0" role="img"
+        aria-label="Günlük büyüme grafiği. Ok tuşlarıyla gün gün gezilir, değerler aşağıda yazılır."></canvas>
+      <div id="bu-ipucu" class="bu-ipucu gizli"></div>
     </div>
+    <div class="kck" id="bu-anlati" aria-live="polite" style="padding:2px 16px 14px;min-height:17px"></div>
   </div>
+
+  <div class="panel" style="margin-bottom:16px">
+    <h3>📅 Günler <span class="sag" id="bu-tablo-bilgi">—</span></h3>
+    <div style="overflow:auto;max-height:460px"><table id="bu-tablo"></table></div>
+  </div>
+
   <div class="izgara" style="padding:0">
     <div class="panel">
-      <h3>🔁 Tutundurma (kayıt kohortları)</h3>
+      <h3>🔁 Tutundurma (kayıt kohortları)
+        <span class="sag">kayıttan 1 / 7 / 30 gün sonra eylem</span></h3>
       <div style="overflow:auto;max-height:420px"><table id="bu-tutundurma"></table></div>
     </div>
     <div class="panel">
-      <h3>🔥 En Çok İzlenenler <span class="sag" id="bu-gun">son 30 gün</span></h3>
+      <h3>🔥 En Çok İzlenenler <span class="sag" id="bu-gun">son 28 gün</span></h3>
       <div style="overflow:auto;max-height:420px"><table id="bu-icerik"></table></div>
     </div>
   </div>
 </section>
-
 <!-- CİHAZLAR (md. 37) — AGREGAT. Kişi bazlı cihaz listesi YOKTUR. -->
 <section id="s-cihazlar" class="sayfa gizli">
   <div class="panel" style="margin-bottom:16px">
@@ -1850,25 +1925,6 @@ async function kullaniciDetay(ad){
 }
 
 /* ---- Ortak: çizgi grafik ---- */
-function cizgi(id, seri, renk='#F5C518'){
-  const c=$(id); if(!c) return;
-  const dpr=devicePixelRatio||1, w=c.clientWidth, h=110;
-  c.width=w*dpr; c.height=h*dpr;
-  const x=c.getContext('2d'); x.scale(dpr,dpr); x.clearRect(0,0,w,h);
-  if(!seri.length) return;
-  const max=Math.max(1,...seri), n=seri.length, dx=n>1?w/(n-1):w;
-  const nokta=(v,i)=>[i*dx, h-6-(v/max)*(h-16)];
-  x.beginPath(); seri.forEach((v,i)=>{const [px,py]=nokta(v,i); i?x.lineTo(px,py):x.moveTo(px,py)});
-  x.lineTo(w,h); x.lineTo(0,h); x.closePath();
-  const g=x.createLinearGradient(0,0,0,h);
-  g.addColorStop(0,renk+'59'); g.addColorStop(1,renk+'00');
-  x.fillStyle=g; x.fill();
-  x.beginPath(); seri.forEach((v,i)=>{const [px,py]=nokta(v,i); i?x.lineTo(px,py):x.moveTo(px,py)});
-  x.strokeStyle=renk; x.lineWidth=2; x.stroke();
-  // Son noktayı işaretle: "bugün nerede" bir bakışta görünsün
-  const [lx,ly]=nokta(seri[n-1],n-1);
-  x.beginPath(); x.arc(lx,ly,3,0,7); x.fillStyle=renk; x.fill();
-}
 const yuzde = (a,b) => b? Math.round(a/b*100)+'%' : '—';
 // "23s" saniye mi saat mi belli olmuyordu; yedek yaşı için açık biçim.
 const yasFmt = ts => { const dk=(Date.now()-ts)/60000;
@@ -1876,16 +1932,90 @@ const yasFmt = ts => { const dk=(Date.now()-ts)/60000;
     : dk<2880?`${Math.round(dk/60)} saat önce`
     : `${Math.round(dk/1440)} gün önce`; };
 
-/* ---- Büyüme ---- */
+/* ---- Büyüme: Search Console tarzı ayrıntı (13 Eyl 2026) --------------------
+   Kullanıcı isteği aynen: "günlük kayıt ve günlük aktif kullanıcıda mouse ile
+   gün gün üzerine geldiğimizde tarihleri sayıları göster, bu istatistik
+   verilerini google search console gibi detaylı yap."
+
+   GSC karşılıkları:
+     · dönem seçici (7/28/90/180/365)            → tarih aralığı
+     · açılıp kapanan metrik kutuları            → tık/gösterim kutuları
+     · imleç + ipucu: TARİH + her metriğin SAYISI → grafik ipucu
+     · "önceki dönemle karşılaştır" (kesikli)    → dönem kıyası
+     · gün gün sıralanabilir tablo + CSV         → "Tarihler" sekmesi
+   Ek olarak GSC'de olmayan iki şey: 7 günlük ortalama (gürültü yutar) ve
+   satıra tıklayınca imlecin o güne gitmesi (panelin "her yer tıklanabilir"
+   kuralı).
+
+   Neden kütüphane değil CANVAS: panel tek dosya, CSP `script-src 'self'
+   'unsafe-inline'` — CDN yok. 365 gün × 5 seri SVG'de 1.800+ düğüm demek.
+   Neden ipucu ayrı bir DIV: tuvale yazılan metin seçilemez/erişilemez, ayrıca
+   #bu-anlati aria-live olarak aynı sayıları EKRAN OKUYUCUYA da verir.        */
+const BU_METRIK = [
+  { k:'kayit',  ad:'Günlük kayıt',    renk:'#F5C518', cizgi:[],          toplam:1 },
+  { k:'aktif',  ad:'Aktif kullanıcı', renk:'#60a5fa', cizgi:[],          toplam:0 },
+  { k:'izleme', ad:'İzleme kaydı',    renk:'#34d399', cizgi:[],           toplam:1 },
+  { k:'yorum',  ad:'Gönderi',         renk:'#a78bfa', cizgi:[],           toplam:1 },
+  { k:'mesaj',  ad:'Mesaj',           renk:'#fb923c', cizgi:[],           toplam:1 },
+];
+const BU = { veri:null, gun:28, sec:new Set(['kayit','aktif']), imlec:-1, sira:'gun', yon:-1 };
+const BU_AY=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+const BU_HAFTA=['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+// 'YYYY-MM-DD' metnini T12:00 ile okuruz: sunucu günü UTC/yerel farkından ya da
+// yaz saati sınırından ötürü bir gün KAYMASIN (25 Mart gecesi tam bunu yapar).
+const buTar  = g => new Date(g+'T12:00:00');
+const buKisa = g => { const t=buTar(g); return t.getDate()+' '+BU_AY[t.getMonth()]; };
+const buUzun = g => { const t=buTar(g);
+  return t.getDate()+' '+BU_AY[t.getMonth()]+' '+t.getFullYear()+' · '+BU_HAFTA[t.getDay()]; };
+const buSayi = n => Number(n||0).toLocaleString('tr');
+const buOnd  = n => (Math.round(Number(n||0)*10)/10).toLocaleString('tr');
+/** Y ekseni için okunur tavan: 37 → 40, 213 → 250, 4 → 5. */
+function buTavan(en){
+  if(!(en>0)) return 1;
+  if(en<=5) return Math.ceil(en);
+  const p=Math.pow(10,Math.floor(Math.log10(en)));
+  for(const v of [1,1.25,1.5,2,2.5,3,4,5,6,8,10]) if(p*v>=en) return p*v;
+  return p*10;
+}
+/** 7 günlük geriye dönük ortalama. TAM seri verilir ki görünen dönemin ilk
+    günleri kıyas yarısındaki gerçek günlerle ortalanabilsin (yoksa grafik
+    soldan yapay bir tırmanışla başlıyor). */
+function buOrtala(dizi){
+  return dizi.map((_,i)=>{ let t=0,n=0;
+    for(let j=Math.max(0,i-6); j<=i; j++){ t+=dizi[j]; n++; }
+    return t/n; });
+}
+/** Bir metriğin {gorunen, onceki} dizileri. Uç pencereyi İKİ KAT döndürür:
+    ilk yarı kıyas dönemi, ikinci yarı seçilen dönem. */
+function buSeri(metrik, ortala){
+  const ham=BU.veri.seri.map(r=>Number(r[metrik])||0);
+  const s=ortala? buOrtala(ham) : ham;
+  return { gorunen:s.slice(-BU.gun), onceki:s.slice(0,BU.gun) };
+}
+
 async function buyumeYukle(){
+  const istek=($('#bu-donem')||{}).value||28;
+  $('#bu-durum').textContent='yükleniyor…';
   try{
-    const d=await api('/buyume?gun=30');
-    const o=d.ozet, p=d.push;
+    const d=await api('/buyume?gun='+encodeURIComponent(istek));
+    // Uç ile panel AYNI dağıtımdan gelmeli. 13 Eyl 2026'da paylaşılan sunucuya
+    // başka bir oturum ESKİ server.js'i yazınca panel "Cannot read properties
+    // of undefined (reading 'mau')" diye bağırdı — sebebi okunmuyordu. Artık
+    // eksik alan açıkça söylenir.
+    if(!Array.isArray(d.seri) || !d.etkin)
+      throw new Error('sunucu ESKİ /buyume yanıtını döndürüyor (server.js dağıtımı eksik)');
+    BU.veri=d; BU.gun=d.gun; BU.imlec=-1;
+    $('#bu-durum').textContent='';
+    $('#bu-gun').textContent='son '+d.gun+' gün';
+    const o=d.ozet, p=d.push, t=d.etkin;
     const K=[
-      {e:'Kullanıcı',v:o.kullanici,a:o.yeni7+' son 7 günde',i:'👤',vurgu:1},
-      {e:'Aktif (7 gün)',v:o.aktif7,a:yuzde(o.aktif7,o.kullanici)+' kullanıcının',i:'🟢'},
-      {e:'Yorum',v:o.yorum.toLocaleString('tr'),a:'toplam gönderi',i:'💬'},
-      {e:'İzleme',v:o.izleme.toLocaleString('tr'),a:'toplam kayıt',i:'👁️'},
+      {e:'Kullanıcı',v:buSayi(o.kullanici),a:buSayi(o.uye)+' üye · '+o.yeni7+' son 7 günde',i:'👤',vurgu:1},
+      {e:'Aktif (7 gün)',v:buSayi(o.aktif7),a:yuzde(o.aktif7,o.kullanici)+' kullanıcının',i:'🟢'},
+      {e:'MAU (30 gün)',v:buSayi(t.mau),a:'eylem yapan tekil kişi',i:'🗓️'},
+      {e:'Yapışkanlık',v:yuzde(t.dau,t.mau),a:'DAU÷MAU · son 24s '+buSayi(t.dau),i:'🧲',
+       bar:t.mau?Math.round(t.dau/t.mau*100):0},
+      {e:'Yorum',v:buSayi(o.yorum),a:'toplam gönderi',i:'💬'},
+      {e:'İzleme',v:buSayi(o.izleme),a:'toplam kayıt',i:'👁️'},
       {e:'Push kapsama',v:yuzde(p.pushlu,p.toplam),a:p.pushlu+'/'+p.toplam+' kullanıcı · '+p.cihaz+' cihaz',i:'🔔',
        bar:p.toplam?Math.round(p.pushlu/p.toplam*100):0},
     ];
@@ -1893,20 +2023,22 @@ async function buyumeYukle(){
       <div class="kart ${k.vurgu?'vurgu':''}"><div class="ikon">${k.i}</div>
         <div class="etk">${k.e}</div><div class="deg">${k.v}</div><div class="alt">${k.a}</div>
         ${k.bar!=null?`<div class="bar"><i style="width:${k.bar}%"></i></div>`:''}</div>`).join('');
-    const kayit=d.kayitlar.map(r=>r.sayi), aktif=d.aktifler.map(r=>r.sayi);
-    cizgi('#bu-kayit',kayit); cizgi('#bu-aktif',aktif,'#34d399');
-    $('#bu-kayit-top').textContent=kayit.reduce((a,b)=>a+b,0)+' kayıt / 30 gün';
-    $('#bu-aktif-top').textContent='zirve '+Math.max(0,...aktif);
-    const g=d.kayitlar;
-    $('#bu-kayit-eksen').innerHTML=g.length
-      ? `<span>${tarihKisa(g[0].gun)}</span><span>${tarihKisa(g[g.length-1].gun)}</span>` : '';
+
+    buTuvalBagla(); buMetrikKutulari(); buyumeCiz(); buTabloCiz();
+
+    // Tutundurma: olgunlaşmamış kohortta yüzde YAZILMAZ. Eskiden 2 günlük
+    // kohortun "7. gün" hücresi %0 gösteriyordu; tablo felaket gibi okunuyordu.
+    const tut=(s,k,olgun)=> olgun
+      ? `${s} <span class="kck">(${yuzde(s,k)})</span>`
+      : '<span class="kck" title="kohort henüz o yaşa gelmedi">—</span>';
     $('#bu-tutundurma').innerHTML = d.tutundurma.length? `
-      <thead><tr><th>Kayıt günü</th><th>Kişi</th><th>Ertesi gün</th><th>7. gün</th></tr></thead>
+      <thead><tr><th>Kayıt günü</th><th>Kişi</th><th>Ertesi gün</th><th>7. gün</th><th>30. gün</th></tr></thead>
       <tbody>${d.tutundurma.map(t=>`<tr>
-        <td class="kck mono">${tarihKisa(t.gun)}</td><td class="mono">${t.kayit}</td>
-        <td class="mono">${t.d1} <span class="kck">(${yuzde(t.d1,t.kayit)})</span></td>
-        <td class="mono">${t.d7} <span class="kck">(${yuzde(t.d7,t.kayit)})</span></td></tr>`).join('')}</tbody>`
-      : '<tbody><tr><td class="bos">Son 30 günde kayıt yok</td></tr></tbody>';
+        <td class="kck mono">${esc(buKisa(t.gun))}</td><td class="mono">${t.kayit}</td>
+        <td class="mono">${tut(t.d1,t.kayit,t.olgun1)}</td>
+        <td class="mono">${tut(t.d7,t.kayit,t.olgun7)}</td>
+        <td class="mono">${tut(t.d30,t.kayit,t.olgun30)}</td></tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Bu dönemde üye kaydı yok</td></tr></tbody>';
     $('#bu-icerik').innerHTML = d.top_icerik.length? `
       <thead><tr><th>İçerik</th><th>Kişi</th><th>İzleme</th></tr></thead>
       <tbody>${d.top_icerik.map(t=>`
@@ -1915,7 +2047,252 @@ async function buyumeYukle(){
           <span class="kck">${t.tur==='tv'?'dizi':'film'}</span></td>
         <td class="mono">${t.kisi}</td><td class="mono">${t.izleme}</td></tr>`).join('')}</tbody>`
       : '<tbody><tr><td class="bos">Veri yok</td></tr></tbody>';
-  }catch(e){ $('#bu-kartlar').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>'; }
+  }catch(e){
+    $('#bu-durum').textContent='';
+    $('#bu-kartlar').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>';
+  }
+}
+
+/* Metrik kutuları = GSC'nin tık/gösterim kutuları: tıklayınca seri grafikten
+   çıkar/girer. Toplam HAM veriden hesaplanır (7 günlük ortalama açıkken de
+   dönem toplamı değişmez). "Aktif kullanıcı" TOPLANMAZ — tekil kişiler günler
+   arası toplanamaz, o yüzden günlük ORTALAMA gösterilir. */
+function buMetrikKutulari(){
+  const d=BU.veri;
+  $('#bu-metrikler').innerHTML=BU_METRIK.map(m=>{
+    const ham=d.seri.map(r=>Number(r[m.k])||0);
+    const g=ham.slice(-BU.gun), o=ham.slice(0,BU.gun);
+    const tp=g.reduce((a,b)=>a+b,0), op=o.reduce((a,b)=>a+b,0);
+    const deg = m.toplam? tp : (g.length? tp/g.length : 0);
+    const onc = m.toplam? op : (o.length? op/o.length : 0);
+    const frk = onc? (deg-onc)/onc*100 : null;
+    const sinif = frk==null||Math.abs(frk)<0.05 ? 'frk-esit' : frk>0 ? 'frk-arti' : 'frk-eksi';
+    const ok = frk==null||Math.abs(frk)<0.05 ? '' : frk>0 ? '▲' : '▼';
+    const acik=BU.sec.has(m.k);
+    return `<button type="button" class="bu-metrik ${acik?'acik':''}" aria-pressed="${acik}"
+        style="${acik?`border-top-color:${m.renk}`:''}" onclick="buMetrikSec('${escJs(m.k)}')"
+        title="${esc(m.ad)} serisini grafikte aç/kapat">
+      <span class="mad" style="${acik?`color:${m.renk}`:''}"><i></i>${esc(m.ad)}</span>
+      <div class="mtop">${m.toplam?buSayi(deg):buOnd(deg)}</div>
+      <div class="mfrk ${sinif}">${frk==null? '<span class="kck">önceki dönem 0</span>'
+        : `${ok} %${buOnd(Math.abs(frk))} <span class="kck">· önceki ${m.toplam?buSayi(onc):buOnd(onc)}</span>`}</div>
+      <div class="kck">${m.toplam?'dönem toplamı':'günlük ortalama'}${
+        acik? ' · eksen 0–'+buSayi(buTavan(Math.max(...buSeri(m.k,$('#bu-ort').checked).gorunen))) : ''}</div>
+    </button>`;
+  }).join('');
+}
+
+function buMetrikSec(k){
+  // En az bir seri açık kalmalı: boş grafik hata gibi görünür.
+  if(BU.sec.has(k)){ if(BU.sec.size===1) return; BU.sec.delete(k); } else BU.sec.add(k);
+  buMetrikKutulari(); buyumeCiz();
+}
+
+function buyumeCiz(){
+  const d=BU.veri, c=$('#bu-tuval'); if(!d||!c) return;
+  const dpr=devicePixelRatio||1, W=c.clientWidth||640, H=c.clientHeight||300;
+  c.width=Math.round(W*dpr); c.height=Math.round(H*dpr);
+  const x=c.getContext('2d'); x.setTransform(dpr,0,0,dpr,0,0); x.clearRect(0,0,W,H);
+  const kiyas=$('#bu-kiyas').checked, ortala=$('#bu-ort').checked;
+  const gunler=d.seri.slice(-BU.gun).map(r=>r.gun);
+  const onckGunler=d.seri.slice(0,BU.gun).map(r=>r.gun);
+  const n=gunler.length; if(!n) return;
+  const seriler=BU_METRIK.filter(m=>BU.sec.has(m.k)).map(m=>({...m,...buSeri(m.k,ortala)}));
+  // HER SERİNİN KENDİ ÖLÇEĞİ. GSC de tık ile gösterimi ayrı eksende çizer;
+  // burada da izleme (yüz binler) ile mesaj (yüzler) tek eksene sıkışınca
+  // küçük seri düz çizgiye ÇÖKÜYORDU (13 Eyl'de canlıda görüldü). Sol eksen
+  // ilk açık serinin, sağ eksen ikincisinin; üçüncüden sonrası etiketsizdir
+  // (kesin sayı zaten imleç ipucunda yazıyor).
+  const sol=54, sag=seriler.length>1? 56 : 16, ust=16, alt=30;
+  const pw=Math.max(20,W-sol-sag), ph=Math.max(20,H-ust-alt);
+  seriler.forEach(s=>{
+    s.tvn=buTavan(Math.max(...s.gorunen, kiyas? Math.max(...s.onceki) : 0)); });
+  const px=i=> sol+(n>1? i*pw/(n-1) : pw/2);
+  const py=(v,tvn)=> ust+ph-(Math.max(0,v)/tvn)*ph;
+  BU.olcu={sol,pw,n};
+
+  x.font='11px Inter,system-ui,sans-serif'; x.textBaseline='middle';
+  const eksenYazi=(tvn,oran)=>{ const v=tvn*oran; return tvn>=10? buSayi(Math.round(v)) : buOnd(v); };
+  for(let s=0;s<=4;s++){
+    const oran=s/4, yy=Math.round(ust+ph-oran*ph)+.5;
+    x.strokeStyle= s? 'rgba(255,255,255,.055)':'rgba(255,255,255,.16)';
+    x.lineWidth=1; x.beginPath(); x.moveTo(sol,yy); x.lineTo(sol+pw,yy); x.stroke();
+    x.textAlign='right'; x.fillStyle=seriler.length>1? seriler[0].renk : '#5a5a68';
+    x.globalAlpha=seriler.length>1? .75 : 1;
+    x.fillText(eksenYazi(seriler[0].tvn,oran), sol-9, ust+ph-oran*ph);
+    if(seriler[1]){ x.textAlign='left'; x.fillStyle=seriler[1].renk;
+      x.fillText(eksenYazi(seriler[1].tvn,oran), sol+pw+9, ust+ph-oran*ph); }
+    x.globalAlpha=1;
+  }
+  // X ekseni: ~6 etiket, ilk ve SON her zaman (son gün "bugün"dür, kaybolmaz).
+  const adim=Math.max(1,Math.ceil(n/6)); const tik=[];
+  for(let i=0;i<n;i+=adim) tik.push(i);
+  if(tik[tik.length-1]!==n-1){ if(n-1-tik[tik.length-1] < adim*0.6) tik.pop(); tik.push(n-1); }
+  x.textBaseline='top'; x.fillStyle='#5a5a68';
+  tik.forEach(i=>{ const a=px(i);
+    x.textAlign= i===0? 'left' : i===n-1? 'right' : 'center';
+    x.fillText(buKisa(gunler[i]), i===0? sol : i===n-1? sol+pw : a, ust+ph+9); });
+
+  const ciz=(dizi,tvn,renk,dash,kalin,alfa)=>{
+    x.save(); x.globalAlpha=alfa; x.setLineDash(dash); x.lineWidth=kalin;
+    x.strokeStyle=renk; x.lineJoin='round'; x.lineCap='round'; x.beginPath();
+    dizi.forEach((v,i)=>{ const a=px(i),b=py(v,tvn); i?x.lineTo(a,b):x.moveTo(a,b); });
+    x.stroke(); x.restore();
+  };
+  if(kiyas) seriler.forEach(s=>ciz(s.onceki,s.tvn,s.renk,[4,4],1.4,.45));
+  // Tek seride altı doldurulur (hacim hissi); çok seride dolgular birbirini
+  // boyayıp çizgileri okunmaz yapıyor, o yüzden yalnız çizgi.
+  if(seriler.length===1 && n>1){
+    const s=seriler[0]; x.save(); x.beginPath();
+    s.gorunen.forEach((v,i)=>{ const a=px(i),b=py(v,s.tvn); i?x.lineTo(a,b):x.moveTo(a,b); });
+    x.lineTo(px(n-1),ust+ph); x.lineTo(px(0),ust+ph); x.closePath();
+    const g=x.createLinearGradient(0,ust,0,ust+ph);
+    g.addColorStop(0,s.renk+'4d'); g.addColorStop(1,s.renk+'00');
+    x.fillStyle=g; x.fill(); x.restore();
+  }
+  seriler.forEach(s=>ciz(s.gorunen,s.tvn,s.renk,s.cizgi,2.2,1));
+
+  const i=BU.imlec;
+  if(i>=0 && i<n){
+    const a=px(i);
+    x.save(); x.setLineDash([3,3]); x.strokeStyle='rgba(255,255,255,.32)'; x.lineWidth=1;
+    x.beginPath(); x.moveTo(a,ust); x.lineTo(a,ust+ph); x.stroke(); x.restore();
+    let enUst=ust+ph;
+    seriler.forEach(s=>{ const b=py(s.gorunen[i],s.tvn); enUst=Math.min(enUst,b);
+      x.beginPath(); x.arc(a,b,4.5,0,7); x.fillStyle=s.renk; x.fill();
+      x.lineWidth=2; x.strokeStyle='#12121b'; x.stroke(); });
+    buIpucu(i,a,enUst,seriler,kiyas,ortala,gunler,onckGunler);
+  }else{
+    // İmleç yokken son nokta işaretli kalsın: "bugün nerede" bir bakışta.
+    seriler.forEach(s=>{ x.beginPath(); x.arc(px(n-1),py(s.gorunen[n-1],s.tvn),3.2,0,7);
+      x.fillStyle=s.renk; x.fill(); });
+    $('#bu-ipucu').classList.add('gizli');
+    $('#bu-anlati').textContent=
+      `${buKisa(gunler[0])} – ${buKisa(gunler[n-1])} (${n} gün) · `+
+      seriler.map(s=>`${s.ad}: ${s.toplam
+        ? buSayi(Math.round(s.gorunen.reduce((p,q)=>p+q,0)))+' toplam'
+        : buOnd(s.gorunen.reduce((p,q)=>p+q,0)/n)+' günlük ort.'}`).join(' · ')+
+      (seriler.length>1? ' · her serinin ölçeği ayrı (sol/sağ eksen)':'')+
+      ' · günler Türkiye saatiyle kesilir, son gün kısmi'+
+      ' · gün gün gezmek için fareyle üzerine gel ya da ok tuşlarını kullan';
+  }
+}
+
+/** İpucu: TARİH + her açık metriğin O GÜNKÜ sayısı (kullanıcının asıl isteği).
+    Tuvalin dışına taşmaz: sağa sığmazsa noktanın soluna geçer. */
+function buIpucu(i,cx,cy,seriler,kiyas,ortala,gunler,onckGunler){
+  const d=BU.veri, ip=$('#bu-ipucu'), c=$('#bu-tuval');
+  const satir=d.seri.slice(-BU.gun)[i];
+  const bic=v=> ortala? buOnd(v) : buSayi(v);
+  ip.innerHTML=`<div class="ig">${esc(buUzun(gunler[i]))}</div>`+
+    seriler.map(s=>
+      `<div class="is"><i style="background:${s.renk}"></i>${esc(s.ad)}<b>${bic(s.gorunen[i])}</b></div>`+
+      (kiyas? `<div class="is" style="opacity:.62"><i style="background:${s.renk};opacity:.5"></i>${
+        esc(buKisa(onckGunler[i]))} (önceki)<b>${bic(s.onceki[i])}</b></div>`:'')
+    ).join('')+
+    (BU.sec.has('kayit')&&!ortala? `<div class="ik">${buSayi(satir.uye)} üye · ${
+      buSayi(satir.kayit-satir.uye)} misafir kaydı</div>`:'')+
+    (ortala? '<div class="ik">7 günlük ortalama gösteriliyor</div>':'')+
+    (gunler[i]===d.bugun? '<div class="ik">bugün · gün henüz dolmadı (kısmi)</div>':'');
+  ip.classList.remove('gizli');
+  const sar=ip.parentElement, gen=ip.offsetWidth, yuk=ip.offsetHeight;
+  const ox=c.offsetLeft, oy=c.offsetTop;
+  let l=ox+cx+18; if(l+gen>sar.clientWidth-6) l=ox+cx-18-gen;
+  ip.style.left=Math.max(6,Math.min(l,sar.clientWidth-gen-6))+'px';
+  ip.style.top=Math.max(6,Math.min(oy+cy-yuk/2, sar.clientHeight-yuk-6))+'px';
+  // Ekran okuyucu ipucunu görmez (pointer-events:none, tuval role=img):
+  // aynı sayılar aria-live kutusuna da yazılır.
+  $('#bu-anlati').textContent=buUzun(gunler[i])+' · '+
+    seriler.map(s=>`${s.ad} ${bic(s.gorunen[i])}`).join(' · ')+
+    (kiyas? ' · önceki dönem: '+seriler.map(s=>`${s.ad} ${bic(s.onceki[i])}`).join(' · '):'');
+}
+
+/** Fare/dokunma/klavye bağları BİR KEZ kurulur (sayfa her açılışta yükleniyor). */
+function buTuvalBagla(){
+  const c=$('#bu-tuval'); if(!c||c.dataset.bagli) return; c.dataset.bagli='1';
+  const indeks=e=>{
+    const o=BU.olcu; if(!o) return -1;
+    const r=c.getBoundingClientRect(), t=(e.touches&&e.touches[0])||e;
+    const x=t.clientX-r.left;
+    if(x<o.sol-24 || x>o.sol+o.pw+24) return -1;
+    const dx=o.n>1? o.pw/(o.n-1) : o.pw;
+    return Math.max(0,Math.min(o.n-1,Math.round((x-o.sol)/dx)));
+  };
+  const gez=e=>{ const i=indeks(e); if(i!==BU.imlec){ BU.imlec=i; buyumeCiz(); } };
+  c.addEventListener('mousemove',gez);
+  c.addEventListener('mouseleave',()=>{ if(BU.imlec!==-1){ BU.imlec=-1; buyumeCiz(); } });
+  // Dokunmada parmakla gezinmek sayfayı kaydırmasın (touch-action:none ile birlikte).
+  c.addEventListener('touchstart',e=>{ gez(e); e.preventDefault(); },{passive:false});
+  c.addEventListener('touchmove', e=>{ gez(e); e.preventDefault(); },{passive:false});
+  c.addEventListener('keydown',e=>{
+    const o=BU.olcu; if(!o) return;
+    if(e.key==='Escape'){ if(BU.imlec<0) return;
+      e.preventDefault(); BU.imlec=-1; buyumeCiz(); return; }
+    let i= BU.imlec<0? o.n-1 : BU.imlec;
+    if(e.key==='ArrowLeft') i--; else if(e.key==='ArrowRight') i++;
+    else if(e.key==='Home') i=0; else if(e.key==='End') i=o.n-1;
+    else return;
+    e.preventDefault();
+    // Uçlarda KALIR: ok tuşu imleci kapatmamalı (ilk günde sola basınca ipucu
+    // kayboluyordu, tuş "bozuk" gibi hissettiriyordu). Kapatan yalnız Esc.
+    BU.imlec=Math.max(0,Math.min(o.n-1,i)); buyumeCiz();
+  });
+  // Tuval genişliği CSS'ten gelir: pencere boyu değişince yeniden çizilmeli,
+  // yoksa grafik bulanıklaşır ve imleç yanlış güne düşer.
+  addEventListener('resize',()=>{ clearTimeout(BU.zamanlayici);
+    BU.zamanlayici=setTimeout(()=>{
+      if(BU.veri && !$('#s-buyume').classList.contains('gizli')) buyumeCiz();
+    },140); });
+}
+
+/* Gün gün tablo (GSC'nin "Tarihler" sekmesi): başlığa tıkla = sırala,
+   satıra tıkla = grafikteki imleç o güne gitsin. */
+const BU_KOL=[
+  {k:'gun',   ad:'Tarih'},
+  {k:'kayit', ad:'Kayıt'},{k:'uye',ad:'Üye'},{k:'aktif',ad:'Aktif'},
+  {k:'izleme',ad:'İzleme'},{k:'yorum',ad:'Gönderi'},{k:'mesaj',ad:'Mesaj'},
+];
+function buSirala(k){ if(BU.sira===k) BU.yon=-BU.yon; else { BU.sira=k; BU.yon=-1; } buTabloCiz(); }
+function buImlece(i){ BU.imlec=i; buyumeCiz(); $('#bu-tuval').focus({preventScroll:true}); }
+function buTabloCiz(){
+  const ham=BU.veri.seri.slice(-BU.gun).map((r,i)=>({...r,i}));
+  const a=BU.sira, y=BU.yon;
+  const satirlar=ham.slice().sort((p,q)=> a==='gun'
+    ? (p.gun<q.gun?-1:1)*y
+    : ((Number(p[a])-Number(q[a])) || (p.gun<q.gun?-1:1))*y);
+  const toplam=k=>ham.reduce((t,r)=>t+Number(r[k]||0),0);
+  $('#bu-tablo-bilgi').textContent=`${ham.length} gün · başlığa tıkla sırala, satıra tıkla grafikte göster`;
+  $('#bu-tablo').innerHTML=`
+    <thead><tr>${BU_KOL.map(k=>`<th class="bu-sirala" onclick="buSirala('${escJs(k.k)}')">
+      ${k.ad}${BU.sira===k.k? (BU.yon<0?' ↓':' ↑'):''}</th>`).join('')}</tr>
+      <tr><th class="kck">dönem</th>${BU_KOL.slice(1).map(k=>
+        `<th class="kck mono">${k.k==='aktif'
+          ? 'ort. '+buOnd(toplam('aktif')/(ham.length||1))
+          : buSayi(toplam(k.k))}</th>`).join('')}</tr></thead>
+    <tbody>${satirlar.map(r=>`<tr class="satir-tikla" onclick="buImlece(${r.i})"
+        title="${esc(buUzun(r.gun))} — grafikte göster">
+      <td class="mono">${esc(buKisa(r.gun))}
+        <span class="kck">${BU_HAFTA[buTar(r.gun).getDay()]}${
+          r.gun===BU.veri.bugun? ' · kısmi':''}</span></td>
+      <td class="mono">${buSayi(r.kayit)}</td><td class="mono kck">${buSayi(r.uye)}</td>
+      <td class="mono">${buSayi(r.aktif)}</td><td class="mono">${buSayi(r.izleme)}</td>
+      <td class="mono">${buSayi(r.yorum)}</td><td class="mono">${buSayi(r.mesaj)}</td>
+    </tr>`).join('')}</tbody>`;
+}
+
+/** Görünen dönemi CSV indirir (Excel Türkçe ayraç bekler: noktalı virgül,
+    başta BOM — yoksa 'İ' bozuluyor ve sütunlar tek hücreye yığılıyor). */
+function buyumeCsv(){
+  if(!BU.veri) return;
+  const g=BU.veri.seri.slice(-BU.gun);
+  const bas=['tarih','kayit','uye','aktif','izleme','gonderi','mesaj'];
+  const metin=[bas.join(';')].concat(g.map(r=>
+    [r.gun,r.kayit,r.uye,r.aktif,r.izleme,r.yorum,r.mesaj].join(';'))).join('\r\n');
+  const u=URL.createObjectURL(new Blob(['﻿'+metin],{type:'text/csv;charset=utf-8'}));
+  const a=document.createElement('a');
+  a.href=u; a.download=`dizijpg-buyume-${BU.gun}gun-${g[g.length-1].gun}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(u),4000);
 }
 
 /* ---- Cihaz dağılımı (md. 37) ----------------------------------------------

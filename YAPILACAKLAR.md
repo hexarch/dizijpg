@@ -1,5 +1,57 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-13 — 🚀 İÇE AKTARIM: artık ZIP şart değil, tek CSV/JSON da olur
+
+**Tetik:** kullanıcı — "dıştan dosya aktarmayı destekliyoruz ya sadece zip
+destekliyoruz neden csv desteklemiyoruz?"
+
+**Durum:** CSV'yi zaten okuyorduk — ZIP'in İÇİNDEN. Kısıt kapıdaydı: dosya
+seçici `allowedExtensions: ['zip']`, uç nokta da ilk iki baytın `PK` olmasını
+şart koşuyordu. Oysa TV Time'ın 2026 dışa aktarımı TEK bir
+`tv-time-export.csv`, kendi yedeğimiz TEK bir `dizijpg.json` — kullanıcı
+bunları yükleyebilmek için önce ELİYLE zip'liyordu.
+
+- 🚀 **CANLIDA.** `iceAktar` ikiye ayrıldı: ZIP açma + ortak dağıtıcı
+  (`iceAktarToplanan`). Tek dosya girişi `iceAktarTekDosya`, sınıflandırıcı
+  `tekDosyaTuru`. Karar sırası: JSON → Letterboxd ("Letterboxd URI" başlığı) →
+  bilinen ad → başlık imzası (`CSV_IMZALARI`). Tanınmazsa 400.
+- **Dosya adı NEDEN gerekti:** `watched.csv` ile `watchlist.csv`'nin başlıkları
+  BİREBİR AYNI (`Date,Name,Year,Letterboxd URI`); ayıran tek şey ad. İstemci adı
+  `X-Dosya-Adi` başlığıyla (yüzde kodlu) yolluyor. Ad ASLA tek karar mercii
+  değil: kendi `ratings.csv`'miz ile Letterboxd'unki hâlâ BAŞLIKTAN ayrılıyor.
+- **Sessiz "0 kayıt" kapatıldı.** Ölçüldü: `seen_movie.csv`, `lists.csv`,
+  `ratings.csv` (bizimki) ve `show_seen_episode_latest.csv` okuyucu tarafından
+  HİÇ okunmuyor. ZIP'te görünmüyordu (arşivde işe yarayan başka dosyalar
+  vardı); tek başına yüklenirlerse artık sebebiyle reddediliyorlar. Kendi
+  `comments.csv`'miz de listede: `tmdb_id`'yi okuyucu TheTVDB sanıp YANLIŞ
+  diziye yorum yazardı.
+- **CSV satır tavanı eklendi** (`MAX_CSV_SATIR = 200000`). Kendi JSON
+  biçimimizde tavan vardı (5.000/100.000), CSV yollarında YOKTU: 60 MB'lık tek
+  dosya milyonlarca satır → satır başına bir INSERT → istek dakikalarca
+  havuzdan bağlantı tutardı.
+
+**Üç tuzak (hepsi kodda yorumlu):**
+1. **Genel `express.json` ucu yutuyordu.** `application/json` gövdeyi KENDİ
+   1 MB sınırıyla ayrıştırıyor: büyük `dizijpg.json` 413, küçüğü nesneye
+   dönüşüp `express.raw`ı atlatıp "Dosya verisi gerekli" dedirtiyordu.
+   `/veri/ice-aktar` artık ondan muaf (`type` fonksiyonu).
+2. **Gövde içerik tipine bakılmadan okunur** (`type: () => true`). Tip listesi
+   tutulsaydı tarayıcının .csv'ye taktığı beklenmedik tip (Windows'ta sık:
+   `application/vnd.ms-excel`) sebepsiz ret üretirdi. Biçim kararı İÇERİKTEN:
+   ilk iki bayt `PK` ise ZIP, değilse metin.
+3. **BOM ilk sütun adını bozuyordu.** ZIP'teki Letterboxd okuyucusu `bom: true`
+   ile parse ediyordu ama TV Time yolu etmiyordu; tek dosyada `\uFEFF` başlık
+   eşleşmesini komple düşürürdü. Artık hem girişte siliniyor hem her parse'ta
+   `bom: true`.
+
+**Güvenlik değişmedi:** dosya diske yazılmıyor, çalıştırılmıyor, tüm INSERT'ler
+parametreli, hedef her zaman oturum sahibi (dosyadaki `user_id` OKUNMAZ).
+İkili dosya metin sanılmasın diye NUL bayt kontrolü eklendi.
+
+**Kanıt:** `backend/test/tek_dosya_ice_aktarim.test.js` (16 test — sınıflandırma,
+uçtan uca, BOM, ret durumları, kablolama). Backend 2.451, Flutter 2.849 test geçti.
+Yeni/değişen 8 kullanıcı metni 45 dile eklendi.
 
 ## 2026-09-12 — 🚀 SİTE HARİTASI 500'LERİ: firma + bölüm ölçü tablosuna alındı (04a1933, ca04c09)
 
@@ -10148,3 +10200,43 @@ aratınca filmler çıkıyor ama yönetmenin filmler kısmında o film çıkmıy
 - ✅ Testler: `kisi_izlenme.test.js` (+2), `kisi_dogrudan_test.dart` (+2).
 - Not: film sayfasındaki yönetmen bağlantısı ve SSR (`/kisi/:id` botu) zaten
   crew'i sayıyordu; eksik olan yalnız kullanıcıya çizilen ızgaraydı.
+
+## 13 Eyl 2026 — Büyüme paneli: Search Console tarzı günlük istatistik ✅
+Kullanıcı: *"admin panelinde büyüme bölümündeki günlük kayıt ve günlük aktif
+kullanıcıda mouse ile gün gün üzerine geldiğimizde tarihleri sayıları göster,
+bu istatistik verilerini google search console gibi detaylı yap"*.
+- ÖNCESİ: iki küçük eksensiz kıvrım (`cizgi()`), hiçbir sayı okunmuyordu; dönem
+  `gun=30` olarak KODA gömülüydü; kıyas, tablo ve dışa aktarım yoktu.
+- ✅ `GET /admin/buyume` yeniden yazıldı: çok metrikli GÜNLÜK SERİ
+  (kayıt/üye/aktif/izleme/gönderi/mesaj), pencere İKİ KAT (ikinci yarı seçilen
+  dönem, ilk yarı kıyas), boş günler 0, dönem 7–365, `etkin` (DAU/WAU/MAU),
+  tutundurmaya 30. gün + `olgun1/7/30` bayrakları (olgunlaşmamış kohortta artık
+  %0 değil "—" yazıyor).
+- ✅ GÜN KOVASI TÜRKİYE GÜNÜ: konteyner TimeZone=UTC, ham `::date` yüzünden
+  saat 00:00–03:00 arasında panel BUGÜNÜ hiç göstermiyordu (13 Eyl 00:48'de
+  son gün "12 Eyl" idi). Her damga `AT TIME ZONE 'Europe/Istanbul'`; yanıt
+  `bugun` alanını da taşıyor, panel son günü "kısmi" diye işaretliyor.
+- ✅ Panel (admin.html): dönem seçici, açılıp kapanan metrik kutuları (dönem
+  toplamı / günlük ortalama + önceki döneme göre % fark + kendi ekseni),
+  imleçli tuval — fare/dokunma/ok tuşları ile gün gün gezilir, ipucu TARİH +
+  her metriğin sayısı + üye/misafir kırılımı; "önceki dönemle karşılaştır"
+  (kesikli), "7 günlük ortalama", sıralanabilir gün tablosu (satıra tıkla →
+  imleç o güne gider), CSV indirme, aria-live özet.
+- ✅ HER SERİ KENDİ ÖLÇEĞİNDE (GSC'nin tık/gösterim ekseni gibi): izleme
+  (yüz binler) ile mesaj (yüzler) tek eksende çizilince küçük seri düz çizgiye
+  çöküyordu — sol eksen 1., sağ eksen 2. seri, her kutu kendi aralığını yazar.
+- ✅ `test/admin_buyume_grafik.test.js` (16 test): panelin GERÇEK kodu sahte
+  DOM + sahte 2D bağlamda koşuyor — ipucu içeriği, imleç matematiği, görünen
+  yarı, ok tuşları/dokunma, kısmi gün, TZ sözleşmesi. Takım 2.453/2.453.
+- TUZAKLAR:
+  · `admin_modul_tiklama` menü anahtarlarını TÜM dosyadan tarıyordu; tablo
+    sütun tanımları (`{k:'gun'…}`) menü sanılıp testi düşürdü → tarama artık
+    yalnız MODULLER bloğunda.
+  · Paylaşılan sunucu: dağıtımdan 3 dk sonra BAŞKA bir oturum kendi
+    server.js'ini yazıp ucu ESKİ sürüme döndürdü, panel "reading 'mau'" diye
+    patladı. Artık panel eksik alanı açıkça söylüyor; canlıya göndermeden önce
+    `scp karanew:/opt/dizijpg/server.js` ile ÇEKİP yamayı onun üstüne uygula.
+  · Aynı URL'e (#hash dahil) navigate etmek sayfayı YENİLEMEZ; panelde eski
+    kopyayı gösterip "dağıtım gitmemiş" sanısı yaratır → `location.reload()`.
+  · `th{position:sticky;top:0}` iki başlık satırını üst üste bindiriyor ve
+    z-index'siz olduğu için gövde satırları başlığın üstüne biniyordu.
