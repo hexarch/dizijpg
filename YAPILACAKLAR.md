@@ -1,6 +1,70 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-12 — 🚀 SİTE HARİTASI 500'LERİ: firma + bölüm ölçü tablosuna alındı (04a1933, ca04c09)
+
+**Tetik:** SEO/GEO durum turu. Googlebot ve bingbot `/sitemap-sirket-1.xml` ve
+45 dil öneklisinden 500 alıyordu (10 saatte 34 kez) ve `sirket` ailesi sitemap
+dizininden TAMAMEN düşmüştü (141 alt haritanın 0'ı firma).
+
+**Kök sebep (ölçüldü, tahmin değil):** 29 Ağu'nun 46 dilli SSR'ı
+`tmdb_onbellek`i **1.815.273 satır / 22 GB**'a (21 GB'ı TOAST) çıkardı. İki
+harita sorgusu da 40 sn'lik `SITEMAP_SORGU_ZAMAN_ASIMI_MS` tavanını aştı:
+- `SITEMAP_SIRKET_SORGU` **80,9 sn** (yalnız anahtar süzgeci bile 38,9 sn / 537 MB disk)
+- `SITEMAP_BOLUM_SORGU` **64,7 sn** (`tmdb_bolum` 44,7 sn / 157.089 satır, `dizi_bilgi` 13,6 sn)
+
+1 Eyl'deki kişi arızasının birebir aynısı → aynı çözüm, üçüncü ve son kez.
+
+- 🚀 **CANLIDA.** `seo_yapim_sirket` (101 bin satır), `seo_dizi_olcu` (46.765
+  satır, 13 MB), `seo_bolum_olcu` (7.095 satır, 7 MB — sezon başına satır,
+  bölüm listesi JSONB). Migrasyonlar: `migrasyon-2026-09-12.sql`, `-12b.sql`.
+- **Sonuç:** firma 80,9 → **3,0 sn**, bölüm 64,7 → **0,795 sn**. Sitemap dizini
+  141 → **187** alt harita. Çıktı BİREBİR aynı doğrulandı: bölüm 27.436 satır /
+  655 kırpık / 342 dizi → haritada 26.781 URL (eski EXPLAIN ve canlı
+  `sitemap_bolum_talep_tavani` logu da tam bu sayılar).
+- **Soğuk yol konteyner YENİDEN BAŞLATILARAK ölçüldü:** bolum-1 2,2 sn,
+  sirket 2,5 sn, kisi 4,7 sn, sitemap.xml 4,5 sn.
+
+**BAYAT KOVA ARIZAYI MASKELİYOR — bu turun en önemli dersi.**
+`sitemapKovaOku`nun bayat servis dalı, kova bir kez dolduktan sonra her
+başarısız tazelemede sessizce eski listeyi servis ediyor. nginx günlüğü kanıt:
+11 Eyl 16:00 – 12 Eyl 02:00 arası bölüm haritalarının TAMAMI 200; konteyner
+02:27'de yeniden kurulunca 500. **"Sitemap 200 dönüyor" sorgunun çalıştığının
+KANITI DEĞİL** — ölçümü konteyneri yeniden başlatarak yap.
+
+**İki tuzak daha (ikisi de ölçülerek bulundu, koda yorum olarak yazıldı):**
+1. `DISTINCT ON` ŞART: aynı yapımın tr-TR'de BEŞ önbellek anahtarı biçimi var
+   (87.318 SSR anahtarı + 570 `credits,similar` vb.). Öbeğe aynı kimlik iki kez
+   girerse `ON CONFLICT DO UPDATE` "command cannot affect row a second time"
+   ile düşer.
+2. Tazeleme döngüsü **SU SEVİYESİYLE** durmalı, satır sayısıyla DEĞİL:
+   tekilleştirme yüzünden yazılan satır öbek boyunun altında kalıyor (1.000
+   kaynak → 979 yazım); kişideki `rowCount < OBEK` kuralı kopyalanırsa tablo
+   ilk öbekte kalır ve harita sessizce boşalır. Regresyon testi yazıldı.
+
+**"Gece ısıtma" ELENDİ:** kova süreç içi bellekte ve uygulama KÜME kipinde
+(4 işçi) — tek ısıtma isteği 4 işçiden birini ısıtır, kardeş konteyner ise API
+belleğine hiç erişemez. Küme kipinde ısıtmanın tek geçerli biçimi sonucu DB'ye
+yazmaktır. Geçici olarak kurulan açılış ısıtması kalıcı çözümle birlikte SİLİNDİ.
+
+**Ayrıca — göç kalıntısı:** `pg_dump/restore` planlayıcı istatistiğini TAŞIMIYOR;
+66 tablonun 58'inde `last_analyze` ve `last_autoanalyze` NULL'dı. Canlıda
+`ANALYZE` çalıştırıldı (6 sn). Autovacuum açık, tablolar kendi kendine
+tazeleniyor (doğrulandı).
+
+**Testler:** 2.421 test, 2.414 geçiyor. 12 test eski sorgu şeklini kilitliyordu,
+yeni kaynağa yönlendirildi; garantiler GEVŞETİLMEDİ — A4 (gerçek
+`episode_number`) artık iki halkalı zincirde kilitli, gizlilik iddiası ölçü
+tazelemelerini de kapsıyor, ısıtıcı-anahtar eşleşmesi ölçü tazelemesiyle
+karşılaştırılıyor. Kalan 5 hata bu işten ÖNCE de vardı (temel koşturularak
+doğrulandı).
+
+**⬜ AÇIK — İNDEKS ŞİŞMESİ (kullanıcı kararı: şimdilik DOKUNMA).** Sitemap
+Google'a 1.251.960 URL bildiriyor, Googlebot ~700/gün tarıyor, keşfedildi-
+taranmadı kuyruğu 61.079. Tıklamanın %91'i Türkiye'den. Kişi haritası tr+en'e
+daraltılmış, bölüm hâlâ 46 dilde. Kullanıcı 12 Eyl'de "boşver tarasın google"
+dedi — daraltma YAPILMADI, bilinçli karar.
+
 ## 2026-09-12 — 🚀 YENİLİKLER SAYFASI 1.149.0 + "güncelle" tuzağı kapandı (1.149.0+228)
 
 **Tetik:** 227 (1.148.2) duyurusu gönderilmek üzereyken görüldü ki
