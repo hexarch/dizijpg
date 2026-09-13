@@ -3790,7 +3790,9 @@ class _PuanSatiriState extends State<PuanSatiri> {
                   Icon(Icons.star, size: 16, color: DiziRenkler.sariMetin),
                   const SizedBox(width: 3),
                   Text(
-                    '${yildiza(widget.puan, olcek: olcek)}/$olcek',
+                    // ONDALIKLI (13 Eyl 2026): 4,6 veren kullanıcı burada
+                    // 5/5 görmemeli — yıldız şeridiyle aynı sayı basılır.
+                    '${yildizPuanMetni(widget.puan, olcek: olcek)}/$olcek',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w800,

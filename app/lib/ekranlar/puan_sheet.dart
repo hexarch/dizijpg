@@ -4,6 +4,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../puan.dart';
 import '../tema.dart';
+import 'kesirli_yildiz.dart';
 import 'ortak.dart' show altGuvenli;
 import 'puan_sec_sheet.dart';
 
@@ -37,7 +38,11 @@ Future<bool> puanlaVeKaydet(
   // Görünüm ölçeği; sunucuda kanonik 1-100 tutulur (bkz. lib/puan.dart).
   // Sheet açıkken ölçek değişemeyeceği için bir kez okunur.
   final olcek = PuanOlcegi.deger.value;
-  var secilen = yildiza(mevcutPuan, olcek: olcek);
+  // ONDALIKLI (13 Eyl 2026): şeritte 4,6 veren kullanıcı bu sheet'i açıp
+  // Kaydet'e bastığında puanı 5'e YUVARLANMAMALI. Buradaki dokunuşlar tam
+  // sayı verir (hedef 44 dp; ondalık ayar yıldız şeridinde sürükleyerek
+  // yapılır), ama MEVCUT ondalık değer olduğu gibi korunur.
+  var secilen = yildizaKesirli(mevcutPuan, olcek: olcek);
   var kaydediyor = false;
 
   try {
@@ -59,7 +64,9 @@ Future<bool> puanlaVeKaydet(
               await Api.post('/puan', {
                 'tmdb_id': tmdbId,
                 'tur': tur,
-                'puan': secilen == 0 ? null : dbPuani(secilen, olcek: olcek),
+                'puan': secilen <= 0
+                    ? null
+                    : dbPuaniKesirli(secilen, olcek: olcek),
                 'kanonik': true, // bkz. tepki.dart'taki gerekçe
               });
               // Yorum İKİNCİ istek: puan kaydı yorumun başarısına BAĞLI
@@ -136,16 +143,20 @@ Future<bool> puanlaVeKaydet(
                     children: [
                       for (var p = 1; p <= olcek; p++)
                         IconButton(
-                          onPressed: () => setModal(() => secilen = p),
-                          icon: Icon(
-                            p <= secilen
-                                ? Icons.star_rounded
-                                : Icons.star_outline_rounded,
-                            color: DiziRenkler.sari,
+                          onPressed: () =>
+                              setModal(() => secilen = p.toDouble()),
+                          icon: KesirliYildiz(
+                            // 4,6 puanda 5. yıldız %60 dolu çizilir; yoksa
+                            // sheet şeritten FARKLI bir puan gösterirdi.
+                            dolu: (secilen - (p - 1)).clamp(0.0, 1.0),
+                            // Boş yıldız BURADA DA SARI ÇERÇEVE: bu sheet'in
+                            // eski görünümü buydu, soluk griye çevirmek ilgisiz
+                            // bir tasarım değişikliği olurdu.
+                            bosRenk: DiziRenkler.sari,
                             // 10 yıldızda 40 dp ikonlar Wrap'i iki satıra
                             // kırıyordu; ölçekle küçülür (tek kaynak:
                             // yildizIkonBoyu).
-                            size: yildizIkonBoyu(olcek, taban: 40),
+                            boy: yildizIkonBoyu(olcek, taban: 40),
                           ),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(
@@ -163,9 +174,9 @@ Future<bool> puanlaVeKaydet(
                         final s = await puanSecSheet(
                           context,
                           olcek: olcek,
-                          mevcut: secilen,
+                          mevcut: secilen.round(),
                         );
-                        if (s != null) setModal(() => secilen = s);
+                        if (s != null) setModal(() => secilen = s.toDouble());
                       },
                       icon: Icon(
                         secilen > 0
@@ -174,7 +185,9 @@ Future<bool> puanlaVeKaydet(
                         color: DiziRenkler.sari,
                       ),
                       label: Text(
-                        secilen > 0 ? '$secilen/$olcek' : 'Puanla'.c,
+                        secilen > 0
+                            ? '${yildizMetni(secilen)}/$olcek'
+                            : 'Puanla'.c,
                         style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                     ),

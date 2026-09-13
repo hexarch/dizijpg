@@ -239,7 +239,10 @@ class _IcerikSatiriState extends State<IcerikSatiri> {
                                     ),
                                     const SizedBox(width: 3),
                                     Text(
-                                      '${yildiza(dbPuan, olcek: olcek)}/$olcek',
+                                      // Ondalıklı puan (4,6) olduğu gibi
+                                      // basılır; yuvarlarsak liste kartı ile
+                                      // içerik sayfası ayrışırdı.
+                                      '${yildizPuanMetni(dbPuan, olcek: olcek)}/$olcek',
                                       style: TextStyle(
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.w700,

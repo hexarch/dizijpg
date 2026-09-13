@@ -2177,7 +2177,7 @@ class _DetayEkraniState extends State<DetayEkrani>
                                     size: 14,
                                   ),
                                   Text(
-                                    ' ${yildiza(inc['puan'])}',
+                                    ' ${yildizPuanMetni(inc['puan'])}',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w700,
                                     ),

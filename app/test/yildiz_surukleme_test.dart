@@ -16,10 +16,17 @@
 //     kullanıcı puanını görür).
 //  6. Dar kutuda satır TAŞMAZ: ikon küçülür, 18 dp'nin altına inecekse
 //     rozet + kaydırıcı kipine düşülür.
+//  7. ONDALIKLI (13 Eyl 2026, kullanıcı: *"5 yıldızda ... 4.5 kadar çekince
+//     yine 5 oluyor; yıldız başına 10'dalık olarak hassas yapmalısın, 4.6
+//     yıldıza kadar çekebilmeliyim"*): sürükleme SÜREKLİ eşlenir ve 0,1
+//     adımına yuvarlanır. Şeridin %92'sine çekmek 4,6/5 = kanonik 92 verir;
+//     eski `ceil()` davranışı (hücrenin herhangi bir yeri = tam yıldız) ARTIK
+//     YOK. Dokunma tam sayı vermeye devam eder.
 import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ceviri.dart';
+import 'package:dizijpg/ekranlar/kesirli_yildiz.dart';
 import 'package:dizijpg/ekranlar/tepki.dart';
 import 'package:dizijpg/puan.dart';
 import 'package:dizijpg/tema.dart';
@@ -85,21 +92,36 @@ Finder get _bos => find.descendant(
   matching: find.byIcon(Icons.star_outline_rounded),
 );
 
-/// Şeritteki [sira]. yıldızın (1'den) merkezine sürükleyip bırakır.
+/// [deger] yıldıza karşılık gelen ekran noktası (şeridin solundan ölçülür).
+///
+/// Sürükleme artık SÜREKLİ eşlendiği için testler "kaçıncı yıldızın merkezi"
+/// değil "kaç yıldız" ile konuşur: 4.0 = 4. yıldızın SAĞ kenarı, 3.5 = 4.
+/// yıldızın ortası.
+///
+/// ŞERİDİN KENDİSİNDEN ÖLÇÜLÜR, `YildizPuan`ın kutusundan DEĞİL: sıkı
+/// kısıtta (SizedBox) widget verilen genişliğe yayılır ama yıldızlar hücre
+/// tavanı (44 dp) yüzünden daha dar bir şerit kaplar. Kutuya göre ölçmek
+/// parmağı şeridin sağına taşırıp her testi tavan puanla geçirirdi.
+Offset _nokta(WidgetTester tester, double deger, {int olcek = 5}) {
+  final yildizlar = find.byType(KesirliYildiz);
+  final ilk = tester.getRect(yildizlar.first);
+  final son = tester.getRect(yildizlar.at(olcek - 1));
+  final hucre = (son.center.dx - ilk.center.dx) / (olcek - 1);
+  return Offset(ilk.center.dx - hucre / 2 + hucre * deger, ilk.center.dy);
+}
+
+/// Şeridin üzerinde [bitis] yıldıza kadar sürükleyip bırakır.
 Future<void> _surukle(
   WidgetTester tester, {
-  required int baslangicSira,
-  required int bitisSira,
+  double baslangic = 0.5,
+  required double bitis,
+  int olcek = 5,
 }) async {
-  final tumu = find.descendant(
-    of: find.byType(YildizPuan),
-    matching: find.byWidgetPredicate((w) => w is Icon && w.size != null),
+  final imlec = await tester.startGesture(
+    _nokta(tester, baslangic, olcek: olcek),
   );
-  final bas = tester.getCenter(tumu.at(baslangicSira - 1));
-  final son = tester.getCenter(tumu.at(bitisSira - 1));
-  final imlec = await tester.startGesture(bas);
   await tester.pump(const Duration(milliseconds: 20));
-  await imlec.moveTo(son);
+  await imlec.moveTo(_nokta(tester, bitis, olcek: olcek));
   await tester.pump(const Duration(milliseconds: 20));
   // Bırakmadan önceki hâli çağıran doğrulayabilsin diye burada durulmuyor;
   // gerekirse test kendi arasında pump eder.
@@ -121,7 +143,7 @@ void main() {
     tester,
   ) async {
     await _kur(tester);
-    await _surukle(tester, baslangicSira: 1, bitisSira: 4);
+    await _surukle(tester, bitis: 4);
     expect(_yollar.where((y) => y.endsWith('/puan')).length, 1);
     expect(_govdeler.single['puan'], dbPuani(4, olcek: 5));
     expect(_govdeler.single['puan'], 80);
@@ -134,13 +156,9 @@ void main() {
     tester,
   ) async {
     await _kur(tester);
-    final tumu = find.descendant(
-      of: find.byType(YildizPuan),
-      matching: find.byWidgetPredicate((w) => w is Icon && w.size != null),
-    );
-    final imlec = await tester.startGesture(tester.getCenter(tumu.first));
+    final imlec = await tester.startGesture(_nokta(tester, 0.5));
     await tester.pump(const Duration(milliseconds: 20));
-    await imlec.moveTo(tester.getCenter(tumu.at(2))); // 3. yıldız
+    await imlec.moveTo(_nokta(tester, 3)); // tam 3 yıldız
     await tester.pump(const Duration(milliseconds: 20));
     expect(_dolu, findsNWidgets(3));
     expect(_bos, findsNWidgets(2));
@@ -155,7 +173,7 @@ void main() {
   ) async {
     await _kur(tester, baslangicPuan: 60); // 3/5
     expect(_dolu, findsNWidgets(3));
-    await _surukle(tester, baslangicSira: 1, bitisSira: 3);
+    await _surukle(tester, bitis: 3);
     expect(_yollar.where((y) => y.endsWith('/puan')), isEmpty);
     expect(_dolu, findsNWidgets(3));
   });
@@ -184,6 +202,108 @@ void main() {
     await tester.tap(_dolu.at(2)); // 3. yıldız = mevcut puan
     await tester.pump(const Duration(milliseconds: 50));
     expect(_govdeler.single['puan'], isNull);
+  });
+
+  // ---- ONDALIKLI PUAN (13 Eyl 2026) ----
+
+  testWidgets('4,6 yıldıza kadar çekmek KANONİK 92 yazar (0,1 hassasiyet)', (
+    tester,
+  ) async {
+    await _kur(tester);
+    await _surukle(tester, bitis: 4.6);
+    expect(_govdeler.single['puan'], 92);
+    expect(_govdeler.single['kanonik'], isTrue);
+  });
+
+  testWidgets('4,5 kadar çekmek 5 DEĞİL 4,5 verir (bildirilen hata)', (
+    tester,
+  ) async {
+    await _kur(tester);
+    await _surukle(tester, bitis: 4.5);
+    expect(_govdeler.single['puan'], 90);
+  });
+
+  testWidgets('sonuna kadar çekmek TAM puan verir (5/5 = 100)', (tester) async {
+    await _kur(tester);
+    // Parmak şeridin sağından taşar: sürükleme tanıcısı kutu dışında da
+    // güncelleme yollar, değer ölçeğin tavanına kırpılır.
+    await _surukle(tester, bitis: 5.4);
+    expect(_govdeler.single['puan'], 100);
+  });
+
+  testWidgets('ondalık puan şeritte KISMEN dolu yıldız çizer', (tester) async {
+    await _kur(tester, baslangicPuan: 92); // 4,6/5
+    // 4 tam + 1 kısmi: kısmi yıldız dolu ve boş glifi ÜST ÜSTE çizer.
+    expect(find.byType(KesirliYildiz), findsNWidgets(5));
+    final kismi = tester
+        .widgetList<KesirliYildiz>(find.byType(KesirliYildiz))
+        .map((w) => double.parse(w.dolu.toStringAsFixed(2)))
+        .toList();
+    expect(kismi, [1, 1, 1, 1, 0.6]);
+  });
+
+  testWidgets('ondalık puan alt yazıda "4.6/5" olarak yazılır', (tester) async {
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    _sunucu();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: diziTema(acik: false),
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              width: 400,
+              child: YildizPuan(
+                tur: 'movie',
+                tmdbId: 27205,
+                baslangicPuan: 92,
+                altYazi: true,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(find.textContaining('4.6/5'), findsOneWidget);
+  });
+
+  testWidgets('tam sayı puanda alt yazı "4/5" der (sondaki sıfır yok)', (
+    tester,
+  ) async {
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    _sunucu();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: diziTema(acik: false),
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              width: 400,
+              child: YildizPuan(
+                tur: 'movie',
+                tmdbId: 27205,
+                baslangicPuan: 80,
+                altYazi: true,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(find.textContaining('4/5'), findsOneWidget);
+    expect(find.textContaining('4.0/5'), findsNothing);
+  });
+
+  testWidgets('10\'luk ölçekte de 0,1 adım kanonikte kayıpsız (4,6 → 46)', (
+    tester,
+  ) async {
+    PuanOlcegi.deger.value = 10;
+    await _kur(tester, genislik: 400);
+    await _surukle(tester, bitis: 4.6, olcek: 10);
+    expect(_govdeler.single['puan'], 46);
   });
 
   testWidgets('10 yıldız geniş kutuda satır çizer ve TAŞMAZ', (tester) async {

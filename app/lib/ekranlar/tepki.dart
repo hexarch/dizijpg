@@ -5,6 +5,7 @@ import '../api.dart';
 import '../hareketli_emoji.dart';
 import '../ceviri.dart';
 import '../puan.dart';
+import 'kesirli_yildiz.dart';
 import 'puan_sec_sheet.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
@@ -435,7 +436,11 @@ class YildizPuan extends StatefulWidget {
   /// Kaydetme BAŞARILI olduğunda çağrılır: (yıldız 0..N, sunucu yanıtı).
   /// 0 = puan silindi. Üst blok ortalamayı tazelemek ve sunucunun bildirdiği
   /// yan etkiyi (bölüm "izlendi" işaretlendi) göstermek için kullanır.
-  final void Function(int yildiz, Map<String, dynamic> yanit)? kaydedildi;
+  ///
+  /// ⚠ ONDALIKLI (13 Eyl 2026): yıldız artık `double` — 4,6 gibi değerler
+  /// gelir. Çağıran kanonik puana çevirecekse `dbPuaniKesirli` kullanmalı;
+  /// `dbPuani(int)` ondalığı sessizce kırpardı.
+  final void Function(double yildiz, Map<String, dynamic> yanit)? kaydedildi;
 
   const YildizPuan({
     super.key,
@@ -455,17 +460,21 @@ class YildizPuan extends StatefulWidget {
 }
 
 class _YildizPuanState extends State<YildizPuan> {
-  late int _yildiz = yildiza(widget.baslangicPuan);
+  /// ONDALIKLI (13 Eyl 2026): 4,6 gibi değerler tutar. Sunucudaki kanonik
+  /// ölçek (1-100) tam sayıdır; ≤10 yıldızlı ölçeklerde 0,1 yıldız kanonikte
+  /// tam karşılığı olduğu için kayıp YOK (bkz. `yildizOndaliklanir`).
+  late double _yildiz = yildizaKesirli(widget.baslangicPuan);
   bool _isleniyor = false;
 
   /// Parmak yıldızların üzerindeyken canlı önizleme; sürükleme bitince null.
   /// `null` DEĞİL de 0 kullanılsaydı "sürüklemiyor" ile "sıfır yıldız" aynı
   /// değere düşerdi — sıfır bu dosyada "puanı sil" demek.
-  int? _surukleme;
+  double? _surukleme;
 
-  /// Bir yıldızın kapladığı yatay genişlik (build'de ölçülür). Sürükleme
-  /// bunu kullanarak parmağın x'ini yıldıza çevirir; sabit sayı yazsaydık
-  /// dar kutuda önizleme parmağın altındaki yıldızdan kayardı.
+  /// Bir yıldızın GERÇEKTEN kapladığı yatay genişlik (ikon + iki yan pay,
+  /// build'de ölçülür). Sürükleme bunu kullanarak parmağın x'ini yıldıza
+  /// çevirir; sabit sayı yazsaydık dar kutuda önizleme parmağın altındaki
+  /// yıldızdan kayardı.
   double _hucre = 0;
 
   @override
@@ -486,29 +495,32 @@ class _YildizPuanState extends State<YildizPuan> {
 
   void _olcekDegisti() {
     if (!mounted || _isleniyor) return;
-    setState(() => _yildiz = yildiza(widget.baslangicPuan));
+    setState(() => _yildiz = yildizaKesirli(widget.baslangicPuan));
   }
 
   @override
   void didUpdateWidget(YildizPuan eski) {
     super.didUpdateWidget(eski);
     if (eski.baslangicPuan != widget.baslangicPuan && !_isleniyor) {
-      _yildiz = yildiza(widget.baslangicPuan);
+      _yildiz = yildizaKesirli(widget.baslangicPuan);
     }
   }
 
-  Future<void> _sec(int yildiz) async {
+  Future<void> _sec(double yildiz) async {
     // `/puan` girisZorunlu: oturumsuzda iyimser güncelleme yapıp 401 ile geri
     // almak yerine hiç başlamayız — kullanıcı doğrudan giriş istemini görür
     // (`TepkiSatiri._sec` ile aynı kural; burada 8 Ağu 2026'ya kadar eksikti).
     if (!girisGerekli(context)) return;
     if (_isleniyor) return;
     // Aynı yıldıza basınca sil — YALNIZ SATIR KİPİNDE geçerli kısayol.
+    // Ondalıklı puan verdikten sonra aynı yıldıza DOKUNMAK silmez, tam
+    // sayıya yuvarlar: 4,6'lık puanı olan kullanıcı 5. yıldıza basınca 5
+    // alır. Silmek için o tam sayı puanın üstüne bir kez daha dokunur.
     await _yaz(yildiz == _yildiz ? 0 : yildiz);
   }
 
   /// Puanı yaz (0 = sil). İyimser güncelleme; hata olursa ESKİ DEĞERE DÖNER.
-  Future<void> _yaz(int yeni) async {
+  Future<void> _yaz(double yeni) async {
     final eski = _yildiz;
     setState(() {
       _yildiz = yeni;
@@ -521,7 +533,7 @@ class _YildizPuanState extends State<YildizPuan> {
         // Bölüm hedefi ikisi birden gider ya da hiç gitmez (sunucu sözleşmesi).
         if (widget.sezon != null) 'sezon': widget.sezon,
         if (widget.sezon != null) 'bolum': widget.bolum,
-        'puan': yeni == 0 ? null : dbPuani(yeni),
+        'puan': yeni <= 0 ? null : dbPuaniKesirli(yeni),
         // Sunucuya "bu puan KANONİK 1-100 ölçeğinde" de. Bayrak yoksa sunucu
         // gönderileni 1-10 sayıp ×10 uygular (eski sürüm koruması).
         'kanonik': true,
@@ -546,12 +558,16 @@ class _YildizPuanState extends State<YildizPuan> {
   Future<void> _sheetAc(int olcek) async {
     if (!girisGerekli(context)) return;
     if (_isleniyor) return;
-    final secim = await puanSecSheet(context, olcek: olcek, mevcut: _yildiz);
+    final secim = await puanSecSheet(
+      context,
+      olcek: olcek,
+      mevcut: _yildiz.round(),
+    );
     // null = vazgeçti. 0 = sil. Diğerleri puan. `_sec` "aynı değere basınca
     // sil" mantığı taşıdığı için BURADA kullanılamaz: kullanıcı sayfada
     // mevcut puanını onaylamak isteyebilir, bu silme olmamalı.
     if (secim == null || !mounted) return;
-    await _yaz(secim);
+    await _yaz(secim.toDouble());
   }
 
   @override
@@ -618,17 +634,36 @@ class _YildizPuanState extends State<YildizPuan> {
   }
 
   /// Parmağın yatay konumunu (satırın soluna göre) yıldıza çevirir.
-  /// `ceil`: 1. hücrenin herhangi bir noktası 1 yıldızdır, sınırı geçince 2.
-  /// Sola taşan sürükleme 1'e kırpılır — 0 (silme) SÜRÜKLEMEYLE VERİLMEZ,
-  /// çünkü kullanıcı puan vermek için sürüklerken kazara silmemeli; silme
-  /// yine "aynı yıldıza dokun" kısayolu.
-  int _hedefYildiz(double dx, int olcek) {
-    if (_hucre <= 0) return 1;
-    return (dx / _hucre).ceil().clamp(1, olcek);
+  ///
+  /// SÜREKLİ EŞLEME + 0,1 ADIM (13 Eyl 2026, kullanıcı isteği): dolgu
+  /// parmağı BİREBİR izler — 4. yıldızın ortasındaki parmak 3,5 puandır,
+  /// 4,6'ya kadar çekmek 4,6 verir. Eskiden `ceil()` vardı: hücrenin
+  /// herhangi bir noktası tam yıldız sayılıyordu, yani "4,5 kadar çekince
+  /// yine 5 oluyor" — kullanıcının bildirdiği hata tam olarak buydu.
+  ///
+  /// EN BÜYÜK DEĞER SATIRIN SAĞINDAN TAŞARAK ALINIR: 5,0 için son yıldızın
+  /// sağ kenarına değmek gerekir, ama sürükleme tanıcısı parmak kutunun
+  /// DIŞINA çıkınca da güncelleme göndermeye devam eder ve burada kırpılır.
+  /// Yani "sonuna kadar çek" hâlâ en yüksek puanı verir.
+  ///
+  /// Sola taşan sürükleme ölçeğin en küçük puanına kırpılır — 0 (silme)
+  /// SÜRÜKLEMEYLE VERİLMEZ, çünkü kullanıcı puan vermek için sürüklerken
+  /// kazara silmemeli; silme yine "aynı yıldıza dokun" kısayolu.
+  double _hedefYildiz(double dx, int olcek) {
+    final enAz = yildizEnAz(olcek);
+    if (_hucre <= 0) return enAz;
+    final ham = yildizAdimla(dx / _hucre, olcek);
+    return ham.clamp(enAz, olcek.toDouble());
   }
 
   Widget _satir(int olcek, double boy, double yatay, double hucre) {
-    _hucre = hucre;
+    // SÜRÜKLEMENİN ÖLÇÜSÜ GERÇEK HÜCRE: `hucre` yalnız yatay payı HESAPLAMAK
+    // için kullanılan ara değerdir; pay 7 dp'de KIRPILDIĞI için çizilen hücre
+    // ondan dar olabiliyor (10'luk ölçek, 400 dp: hucre 40, çizilen 36).
+    // Sürüklemeyi 40'a göre eşleyince şeridin sonuna kadar çeken kullanıcı
+    // 10 yerine 9 alıyordu — ondalık puanla bu sapma gözle görünür oldu
+    // (13 Eyl 2026). Tek doğru kaynak ikonun kendi kutusudur.
+    _hucre = boy + 2 * yatay;
     // Sürüklerken dolan yıldız sayısı parmağı izler; bırakınca gerçek puana
     // döner (kaydetme başarısızsa iyimser güncelleme zaten geri alıyor).
     final gosterilen = _surukleme ?? _yildiz;
@@ -663,14 +698,17 @@ class _YildizPuanState extends State<YildizPuan> {
     );
   }
 
-  Widget _yildizlar(int olcek, double boy, double yatay, int gosterilen) {
+  Widget _yildizlar(int olcek, double boy, double yatay, double gosterilen) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         for (var y = 1; y <= olcek; y++)
           InkWell(
             borderRadius: BorderRadius.circular(6),
-            onTap: () => _sec(y),
+            // DOKUNMA TAM SAYI KALIR: ondalık sürüklemenin işi; tek dokunuşla
+            // 4,6 hedeflemek 44 dp'lik hücrede mümkün değil ve dokunanın
+            // beklentisi "o yıldız kadar" puandır.
+            onTap: () => _sec(y.toDouble()),
             // DOKUNMA HEDEFİ: ikon + 2x yatay pay = 44 dp; dikeyde
             // + 2x8. Eski 2x4 pay 38 dp veriyordu, yani asgari
             // 44x44'ün ALTINDA (ui-ux-pro-max "Touch Target Size", High).
@@ -684,12 +722,10 @@ class _YildizPuanState extends State<YildizPuan> {
                 horizontal: yatay,
                 vertical: ((44 - boy) / 2).clamp(8.0, 20.0),
               ),
-              child: Icon(
-                y <= gosterilen
-                    ? Icons.star_rounded
-                    : Icons.star_outline_rounded,
-                size: boy,
-                color: y <= gosterilen ? DiziRenkler.sari : DiziRenkler.metin38,
+              // Bu yıldızın dolu payı: 4,6 puanda 5. yıldız %60 dolar.
+              child: KesirliYildiz(
+                dolu: (gosterilen - (y - 1)).clamp(0.0, 1.0),
+                boy: boy,
               ),
             ),
           ),
@@ -721,7 +757,11 @@ class _YildizPuanState extends State<YildizPuan> {
           // SENİN girdin/çağrın: tam kontrast. `metin38` (pasif ton)
           // BİLEREK kullanılmadı — "Puanla" tıklanabilir bir çağrı, ipucu
           // değil; 11 dp'de white38 zaten okunmuyor (tema.dart md.).
-          TextSpan(text: gosterilen > 0 ? '$gosterilen/$olcek' : 'Puanla'.c),
+          TextSpan(
+            text: gosterilen > 0
+                ? '${yildizMetni(gosterilen)}/$olcek'
+                : 'Puanla'.c,
+          ),
           // Ek (topluluk ortalaması) İKİNCİL: aynı renkte olsaydı
           // "3/5 · ort. 4.2" tek bir sayı dizisi gibi okunur, kullanıcı
           // hangisinin kendi puanı olduğunu ayırt edemezdi. `acikGri`
@@ -778,7 +818,9 @@ class _YildizPuanState extends State<YildizPuan> {
   ///    başlangıcıyla hizalansın.
   Widget _kaydirici(int olcek) {
     const yatayPay = 10.0;
-    final gosterilen = (_surukleme ?? _yildiz).clamp(0, olcek);
+    // GENİŞ ÖLÇEK TAM SAYI: 100'lük ölçekte bir adım zaten kanonik ölçeğin
+    // en küçük birimi; 0,1 orada KAYDEDİLEMEZ (bkz. `yildizOndaliklanir`).
+    final gosterilen = (_surukleme ?? _yildiz).round().clamp(0, olcek);
     return ConstrainedBox(
       // TAVAN 420 DP: şirket sayfasında satır tam sayfa genişliğinde ve
       // kaydırıcı masaüstünde 1.050 dp'ye yayılıyordu — bir puan denetimi
@@ -826,12 +868,12 @@ class _YildizPuanState extends State<YildizPuan> {
             },
             onChanged: (d) {
               if (!_kaydirmaIzni) return;
-              final y = d.round();
+              final y = d.roundToDouble();
               if (y != _surukleme) setState(() => _surukleme = y);
             },
             onChangeEnd: (d) {
               if (!_kaydirmaIzni) return;
-              final y = d.round();
+              final y = d.roundToDouble();
               setState(() => _surukleme = null);
               if (y != _yildiz) _yaz(y);
             },
@@ -890,7 +932,7 @@ class _YildizPuanState extends State<YildizPuan> {
             const SizedBox(width: 6),
             Flexible(
               child: Text(
-                puanli ? '$_yildiz/$olcek' : 'Puanla'.c,
+                puanli ? '${yildizMetni(_yildiz)}/$olcek' : 'Puanla'.c,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -982,8 +1024,10 @@ class _BolumPuaniState extends State<BolumPuani> {
     }
   }
 
-  void _kaydedildi(int yildiz, Map<String, dynamic> yanit) {
-    setState(() => _benim = yildiz == 0 ? null : dbPuani(yildiz));
+  void _kaydedildi(double yildiz, Map<String, dynamic> yanit) {
+    // `dbPuani(int)` DEĞİL: ondalıklı puan (4,6) tam sayıya kırpılır ve
+    // ekrandaki yıldızlar kaydedilenden farklı dolardı.
+    setState(() => _benim = yildiz <= 0 ? null : dbPuaniKesirli(yildiz));
     if (yanit['izlendi'] == true) widget.izlendiIsaretlendi?.call();
     _yukle(); // ortalama + sayaç tazelensin
   }

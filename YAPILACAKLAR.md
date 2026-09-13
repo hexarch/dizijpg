@@ -1,6 +1,66 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-13 — 🔨 ONDALIKLI PUAN: YILDIZ BAŞINA 10 ADIM (1.157.0+236)
+
+**Tetik:** kullanıcı — *"puanlama sisteminde sürükle bırak ile de oy
+kullanabiliyoruz ya; 5 yıldızda 1'den 5'e kadar çekince 5 doluyor ama 4.5
+kadar çekince yine 5 oluyor. Orada yıldız başına 10'dalık olarak hassas
+yapmalısın; mesela 4.6 yıldıza kadar çekebilmeliyim, o zaman 4.6 puan
+vermeli."*
+
+### 1) Kök sebep: sürükleme `ceil()` ile eşleniyordu
+`_hedefYildiz` parmağın x'ini `(dx / hucre).ceil()` yapıyordu — yani 4. ve 5.
+yıldız arasındaki HER nokta 5 sayılıyordu. Kullanıcının gördüğü "4,5'e çektim
+5 oldu" tam olarak buydu. Artık eşleme SÜREKLİ: `dx / hucre` değeri 0,1
+adımına yuvarlanır (`yildizAdimla`), dolgu parmağı birebir izler.
+
+### 2) Şema değişmedi — 0,1 yıldız kanonikte zaten var
+Kanonik ölçek (`puanlar.puan`) 1-100 tam sayı. 5'lik ölçekte 0,1 yıldız = 2
+kanonik puan, 10'luk ölçekte = 1. Yani ondalık YALNIZ `ölçek × 10 ≤ 100` iken
+kayıpsız taşınır — `yildizOndaliklanir()` bunu söyler ve bu küme tam olarak
+yıldız ŞERİDİNİN çizildiği küme (≤10). 50/100'lük ölçekte kaydırıcı tam sayı
+kalır; orada bir yıldızın kendisi zaten kanoniğin en küçük birimi.
+Sunucuda ve migrasyonda DEĞİŞİKLİK YOK: 4,6 → `puan=92` gider.
+
+### 3) Kısmen dolu yıldız çizimi (`lib/ekranlar/kesirli_yildiz.dart`)
+Dolu/boş iki ikonla 4,6 çizilemez — kullanıcı "4.6/5" yazısını görür ama
+şeritte 5 dolu yıldız sayar ve yazıya değil şeride inanır. Yeni `KesirliYildiz`
+dolu glifi (`star_rounded`) boş glifin (`star_outline_rounded`) üstüne koyup
+soldan `dolu` oranında kırpar. Kırpma oranı glifin KENDİ genişliğine göre
+eşlenir (Material ikonlarında kutu içinde ~%8 kenar boşluğu var; kutuya göre
+kırpsaydık 0,1'lik dolgu hiç görünmezdi).
+
+### 4) Yan bulgu — sürükleme hücresi 10'luk ölçekte KAYIYORDU
+`_hucre` build'deki `hucre` ara değerinden alınıyordu; yatay pay 7 dp'de
+kırpıldığı için çizilen hücre daha dar olabiliyor (10 yıldız / 400 dp: hesap
+40, çizilen 36). Sürüklemeyi 40'a göre eşleyince şeridin SONUNA kadar çeken
+kullanıcı 10 yerine 9 alıyordu. `_hucre` artık `boy + 2 * yatay` — ikonun
+kendi kutusu. (Ondalık olmadan da hatalıydı, ondalıkla görünür oldu.)
+
+### 5) Ondalık değer yuvarlanmadan yaşasın diye dokunulan yerler
+- `lib/puan.dart`: `yildizOndalikAdim`, `yildizOndaliklanir`, `yildizAdimla`,
+  `yildizEnAz`, `yildizaKesirli`, `dbPuaniKesirli`, `yildizMetni`,
+  `yildizPuanMetni`. Tam sayı isteyen yerler (dağılım kovaları, geniş ölçek
+  kaydırıcısı) eski `yildiza`/`dbPuani` ile devam eder.
+- `YildizPuan._yildiz`/`_surukleme` artık `double`; `kaydedildi` geri çağrısı
+  da `double` taşır (`BolumPuani` `dbPuaniKesirli` ile yazar).
+- `puan_sheet.dart`: mevcut ondalık puan KORUNUR — şeritte 4,6 veren kullanıcı
+  yorum sheet'ini açıp Kaydet'e basınca puanı 5'e yuvarlanmıyor.
+- Metin basan üç yer ondalığı gösterir: profil puan satırı, içerik satırı
+  kartı, detay incelemesi. Alt yazı "4.6/5"; tam sayıda sondaki sıfır atılır
+  ("4/5", "4.0/5" değil).
+
+### 6) Dokunma TAM SAYI kalır
+44 dp'lik bir hücrede tek dokunuşla 4,6 hedeflemek mümkün değil ve dokunanın
+beklentisi "o yıldız kadar" puandır. Ondalık sürüklemenin işidir. "Aynı
+yıldıza dokununca sil" kısayolu korundu.
+
+### Kanıt
+`test/yildiz_surukleme_test.dart` 15 test (6 yeni): 4,6 → 92 · 4,5 → 90
+(bildirilen hata) · sonuna kadar → 100 · kısmi dolgu oranları [1,1,1,1,0.6] ·
+alt yazı "4.6/5" ve "4/5" · 10'luk ölçekte 4,6 → 46. Tüm paket: 2.925 geçti.
+
 ## 2026-09-13 — 🚀 SOHBET EKİ: GERÇEK YÜZDE + KİLİTSİZ KUTU (1.156.0+235)
 
 **Tetik:** kullanıcı — *"dizi jpg de birisine video gönderirken video

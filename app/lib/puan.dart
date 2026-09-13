@@ -178,6 +178,71 @@ String yildizOrtalamaMetni(Object? dbOrtalama, {int? olcek}) {
   return n > 10 ? v.round().toString() : v.toStringAsFixed(1);
 }
 
+/// ONDALIKLI PUAN — yıldız başına 10 adım (13 Eyl 2026, kullanıcı isteği:
+/// *"5 yıldızda ... 4.5 kadar çekince yine 5 oluyor; yıldız başına 10'dalık
+/// olarak hassas yapmalısın, 4.6 yıldıza kadar çekebilmeliyim"*).
+///
+/// ŞEMA DEĞİŞMEDİ: kanonik ölçek yine tam sayı 1-100. 0,1 yıldız 5'lik
+/// ölçekte 2, 10'luk ölçekte 1 kanonik puan eder — yani ondalık YALNIZ
+/// ölçek × 10 ≤ 100 iken KAYIPSIZ taşınabilir. Üstündeki ölçeklerde
+/// (50, 100) bir yıldızın kendisi zaten kanonik çözünürlüğün altında;
+/// orada adım 1'dir ve kaydırıcı kipi tam sayı çalışır.
+const int yildizOndalikAdim = 10;
+
+/// Bu ölçekte 0,1'lik puan verilebilir mi? (ölçek × 10 kanonikte sığıyor mu)
+///
+/// Eşik `yildizSatiriOlur` ile AYNI kümeyi verir (≤10) ama gerekçesi FARKLI:
+/// orada dokunma hedefi, burada kanonik çözünürlük. İkisini tek işleve
+/// bağlamadım — biri değişince diğeri sessizce bozulurdu.
+bool yildizOndaliklanir(int olcek) => olcek * yildizOndalikAdim <= dbPuanAzami;
+
+/// Ham yıldız değerini ölçeğin adımına yuvarlar (0,1 ya da 1).
+double yildizAdimla(double yildiz, int olcek) {
+  if (!yildizOndaliklanir(olcek)) return yildiz.roundToDouble();
+  return (yildiz * yildizOndalikAdim).round() / yildizOndalikAdim;
+}
+
+/// Bu ölçekte verilebilecek EN KÜÇÜK (sıfır olmayan) puan.
+double yildizEnAz(int olcek) =>
+    yildizOndaliklanir(olcek) ? 1 / yildizOndalikAdim : 1;
+
+/// DB puanı (1-100) → görünüm yıldızı, ONDALIKLI.
+///
+/// [yildiza] ile aynı iş, tek farkı yuvarlamanın 0,1 adımında durması.
+/// Tam sayı isteyen yerler (dağılım kovaları, geniş ölçek kaydırıcısı)
+/// [yildiza]'yı kullanmaya DEVAM EDER — kova sayısı ondalıklanamaz.
+double yildizaKesirli(Object? dbPuan, {int? olcek}) {
+  final n = olcek ?? yildizAzami;
+  final p = puanSayisi(dbPuan) ?? 0;
+  if (p <= 0) return 0;
+  final y = yildizAdimla((p * n / dbPuanAzami).toDouble(), n);
+  // Taban [yildiza] ile aynı gerekçe: puan varsa sıfır GÖSTERİLMEZ, yoksa
+  // 100'lük ölçekte 1 puan veren kişinin oyu 5'lik ölçekte kaybolurdu.
+  return y.clamp(yildizEnAz(n), n.toDouble());
+}
+
+/// Ondalıklı görünüm yıldızı → DB puanı (0-100). Sunucuya YAZARKEN.
+int dbPuaniKesirli(double yildiz, {int? olcek}) {
+  final n = olcek ?? yildizAzami;
+  final y = yildiz.clamp(0.0, n.toDouble());
+  if (y <= 0) return 0;
+  return (y * dbPuanAzami / n).round().clamp(1, dbPuanAzami);
+}
+
+/// Yıldız değerinin ekran metni: 4 → "4", 4.6 → "4.6".
+///
+/// SONDAKİ SIFIR ATILIR: tam sayı puan veren kullanıcıya "4.0/5" yazmak
+/// ondalık kipi bilmeyen herkes için gürültü; ondalık YALNIZ varsa görünür.
+String yildizMetni(double yildiz) {
+  final tam = yildiz.roundToDouble();
+  if ((yildiz - tam).abs() < 0.0001) return tam.toInt().toString();
+  return yildiz.toStringAsFixed(1);
+}
+
+/// DB puanı → "4.6" metni (kullanıcının KENDİ puanını basan listeler için).
+String yildizPuanMetni(Object? dbPuan, {int? olcek}) =>
+    yildizMetni(yildizaKesirli(dbPuan, olcek: olcek));
+
 /// Görünüm yıldızı (0..N) → DB puanı (0-100). Sunucuya YAZARKEN kullanılır.
 int dbPuani(int yildiz, {int? olcek}) {
   final n = olcek ?? yildizAzami;
