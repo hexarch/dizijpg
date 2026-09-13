@@ -2,7 +2,7 @@
 const Map<String, String> cevirilerNl = {
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Plak een link of upload een video, nodig vrienden uit en kijk samen.',
-  'Bağlantı yapıştır': 'Link plakken',
+  'URL yapıştır': 'Link plakken',
   'Yapıştır': 'Plakken',
   'Video bağlantısı': 'Videolink',
   'Odada aç': 'Openen in de room',

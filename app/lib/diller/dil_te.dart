@@ -2,7 +2,7 @@
 const Map<String, String> cevirilerTe = {
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'లింక్ అతికించండి లేదా వీడియో అప్‌లోడ్ చేయండి, స్నేహితులను ఆహ్వానించి కలిసి చూడండి.',
-  'Bağlantı yapıştır': 'లింక్ అతికించండి',
+  'URL yapıştır': 'లింక్ అతికించండి',
   'Yapıştır': 'అతికించండి',
   'Video bağlantısı': 'వీడియో లింక్',
   'Odada aç': 'గదిలో తెరవండి',

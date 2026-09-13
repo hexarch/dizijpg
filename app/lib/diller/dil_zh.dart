@@ -2,7 +2,7 @@
 const Map<String, String> cevirilerZh = {
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       '粘贴链接或上传视频，邀请好友，一起观看。',
-  'Bağlantı yapıştır': '粘贴链接',
+  'URL yapıştır': '粘贴 URL',
   'Yapıştır': '粘贴',
   'Video bağlantısı': '视频链接',
   'Odada aç': '在房间中打开',

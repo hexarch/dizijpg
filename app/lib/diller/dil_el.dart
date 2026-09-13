@@ -2,7 +2,7 @@
 const Map<String, String> cevirilerEl = {
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Επικολλήστε σύνδεσμο ή ανεβάστε βίντεο, καλέστε φίλους και δείτε μαζί.',
-  'Bağlantı yapıştır': 'Επικόλληση συνδέσμου',
+  'URL yapıştır': 'Επικόλληση συνδέσμου',
   'Yapıştır': 'Επικόλληση',
   'Video bağlantısı': 'Σύνδεσμος βίντεο',
   'Odada aç': 'Άνοιγμα στο δωμάτιο',

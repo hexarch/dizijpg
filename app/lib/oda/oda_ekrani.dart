@@ -1147,7 +1147,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
           children: [
             ListTile(
               leading: const Icon(Icons.link),
-              title: Text('Bağlantı yapıştır'.c),
+              title: Text('URL yapıştır'.c),
               subtitle: Text(
                 '{} · doğrudan video adresi'.cf([
                   odaDesteklenenPlatformlar.join(', '),
@@ -1177,7 +1177,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     }
   }
 
-  /// "Bağlantı yapıştır" akışı (7 Eyl 2026).
+  /// "URL yapıştır" akışı (7 Eyl 2026).
   ///
   /// Adres SUNUCUYA HAM gider; sağlayıcı çözümlemesini sunucu kendi yapar
   /// (gerekçe `OdaApi.baglantiVer`). Başarıda tam yenileme yapılıyor çünkü
@@ -2087,28 +2087,94 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
               // BAĞLANTI ÖNDE (7 Eyl 2026): ücretsiz, anında ve her platformda
               // çalışıyor; yükleme 5 GB'a kadar bekleme demek. Sık olan yol
               // birincil düğme, ötekisi ikincil.
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                alignment: WrapAlignment.center,
-                children: [
-                  SizedBox(
+              // ***İKİ DÜĞME AYNI BOYDA*** (13 Eyl 2026, kullanıcı isteği).
+              //
+              // Eskiden `Wrap` içindeydiler, yani her düğme KENDİ metni kadar
+              // genişliyordu: "Bağlantı yapıştır" ötekinden belirgin uzundu ve
+              // ikili dengesiz duruyordu. Eşitlik METİN KISALTARAK değil
+              // YERLEŞİMLE kuruluyor — 45 dilin hepsinde aynı kalsın diye:
+              // `Expanded` ikisine de tam olarak aynı genişliği verir.
+              //
+              // Dar kutuda (yatay telefonda video kutusu 200 dp'ye kadar
+              // iniyor) yan yana iki düğme okunmaz hâle gelirdi; orada alt
+              // alta ve ikisi de TAM GENİŞLİK — yine eşit.
+              LayoutBuilder(
+                builder: (context, k) {
+                  final dar = k.maxWidth < 320;
+                  final url = SizedBox(
                     height: 44,
                     child: FilledButton.icon(
                       onPressed: _baglantiSor,
                       icon: const Icon(Icons.link, size: 20),
-                      label: Text('Bağlantı yapıştır'.c),
+                      label: Text(
+                        'URL yapıştır'.c,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  SizedBox(
+                  );
+                  final yukle = SizedBox(
                     height: 44,
                     child: OutlinedButton.icon(
+                      // ***İKİNCİ DÜĞME BİRİNCİNİN İKİZİ*** (13 Eyl 2026,
+                      // kullanıcı: "ikisi de aynı tasarım stilinde olmalı").
+                      //
+                      // `OutlinedButton`ın uygulamada teması YOK, yani
+                      // Material 3 varsayılanına düşüyordu: HAP şekli (tam
+                      // yuvarlak), 24 dp yatay dolgu ve NORMAL kalınlıkta
+                      // yazı. Yanındaki `FilledButton` ise tema gereği 12 dp
+                      // yarıçap, 20/14 dolgu ve w800 yazı taşıyor — ikisi
+                      // yan yana iki ayrı tasarım dili gibi duruyordu.
+                      //
+                      // Geometri ve tipografi artık BİREBİR aynı; tek fark
+                      // dolgu yerine çizgi, çünkü birincil/ikincil ayrımı
+                      // duruyor (bağlantı yolu ücretsiz ve anında; gerekçe
+                      // yukarıda).
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: DiziRenkler.sari,
+                        side: BorderSide(
+                          color: DiziRenkler.sari.withValues(alpha: 0.75),
+                          width: 1.5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 14,
+                        ),
+                        textStyle: const TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                       onPressed: _videoSec,
                       icon: const Icon(Icons.upload_outlined, size: 20),
-                      label: Text('Video yükle'.c),
+                      label: Text(
+                        'Video yükle'.c,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                ],
+                  );
+                  if (dar) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(width: double.infinity, child: url),
+                        const SizedBox(height: 8),
+                        SizedBox(width: double.infinity, child: yukle),
+                      ],
+                    );
+                  }
+                  return Row(
+                    children: [
+                      Expanded(child: url),
+                      const SizedBox(width: 8),
+                      Expanded(child: yukle),
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 8),
               // DESTEKLENEN SİTELER GÖRÜNÜR YERDE (kullanıcı isteği, 7 Eyl):

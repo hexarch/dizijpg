@@ -2,7 +2,7 @@
 const Map<String, String> cevirilerHu = {
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Illessz be egy linket vagy tölts fel videót, hívd meg a barátaidat, és nézzétek együtt.',
-  'Bağlantı yapıştır': 'Link beillesztése',
+  'URL yapıştır': 'Link beillesztése',
   'Yapıştır': 'Beillesztés',
   'Video bağlantısı': 'Videó link',
   'Odada aç': 'Megnyitás a szobában',

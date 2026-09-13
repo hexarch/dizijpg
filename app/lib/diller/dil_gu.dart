@@ -2,7 +2,7 @@
 const Map<String, String> cevirilerGu = {
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'લિંક પેસ્ટ કરો અથવા વિડિયો અપલોડ કરો, મિત્રોને આમંત્રિત કરો અને સાથે જુઓ.',
-  'Bağlantı yapıştır': 'લિંક પેસ્ટ કરો',
+  'URL yapıştır': 'લિંક પેસ્ટ કરો',
   'Yapıştır': 'પેસ્ટ કરો',
   'Video bağlantısı': 'વિડિયો લિંક',
   'Odada aç': 'રૂમમાં ખોલો',

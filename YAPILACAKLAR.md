@@ -117,6 +117,32 @@ taranmadı kuyruğu 61.079. Tıklamanın %91'i Türkiye'den. Kişi haritası tr+
 daraltılmış, bölüm hâlâ 46 dilde. Kullanıcı 12 Eyl'de "boşver tarasın google"
 dedi — daraltma YAPILMADI, bilinçli karar.
 
+## 2026-09-13 — 🎛️ ODA BOŞ DURUMU: iki düğme eşit boyda, "URL yapıştır"
+
+**Tetik (kullanıcı):** *"video odasını açınca bağlantı yapıştır ve video yükle
+buttonları aynı boyutta olsun; bağlantı yapıştır yerine url kelimesini
+kullanabilirsin"*.
+
+- ✅ **Eşitlik yerleşimle kuruldu, metin kısaltarak değil.** Düğmeler `Wrap`
+  içindeydi, yani her biri kendi metni kadar genişliyordu. Artık `Expanded`
+  ikisine de aynı genişliği veriyor — 45 dilin hepsinde eşit kalır. Dar
+  kutuda (yatay telefonda video kutusu 200 dp'ye iniyor) alt alta ve ikisi de
+  tam genişlik; metinler `maxLines:1 + ellipsis`.
+- ✅ **İKİSİ AYNI TASARIM DİLİNDE** (kullanıcı ikinci turda: *"ikisi de aynı
+  tasarım stilinde olmalı, url kısmının yüksekliği ve kenar genişlikleri daha
+  büyük"*). `OutlinedButton`ın uygulamada teması YOKTU, Material 3
+  varsayılanına düşüyordu: hap şekli, 24 dp dolgu, normal kalınlıkta yazı.
+  Yanındaki `FilledButton` ise tema gereği 12 dp yarıçap, 20/14 dolgu, w800
+  yazı. Artık geometri + tipografi birebir aynı; tek fark dolgu yerine 1,5 px
+  çizgi (birincil/ikincil ayrımı duruyor).
+- ✅ **Anahtar yeniden adlandırıldı:** `Bağlantı yapıştır` → `URL yapıştır`,
+  45 dil dosyasında da (değerler korundu, yani hiçbir dil Türkçeye düşmedi).
+  Gerçek kullanıcı dillerinde metin de URL'e çevrildi: en "Paste URL",
+  ru "Вставить URL", ar "الصق عنوان URL", es "Pegar URL", zh "粘贴 URL",
+  ro "Lipește URL-ul". Kalan diller kendi doğal "bağlantı" sözcüğünü koruyor.
+- Kanıt: emülatörde yeni oda açılıp görüldü; `oda_baglanti_ekran`,
+  `oda_yerlesim`, `ceviri_bosluklari`, `uzun_ceviri_tasma` paketleri yeşil.
+
 ## 2026-09-13 — 🐞 BİRLİKTE İZLE: SİYAH EKRAN + YOUTUBE KROMUNUN İÇ İÇE GEÇMESİ
 
 **Tetik (kullanıcı):** *"birlikte izlede hala siyah ekran var ve oranın

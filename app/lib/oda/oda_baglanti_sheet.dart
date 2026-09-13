@@ -1,4 +1,4 @@
-/// İZLEME ODASI — "Bağlantı yapıştır" modalı.
+/// İZLEME ODASI — "URL yapıştır" modalı.
 ///
 /// Kullanıcı isteği (7 Eyl 2026): *"youtube gibi tüm platformların url'ini
 /// destekleyecek şekilde yapsak ve altına desteklenen siteler yazsak"*.

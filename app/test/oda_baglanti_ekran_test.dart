@@ -2,7 +2,7 @@
 // widget'a dokunulduysa KANIT ZORUNLU).
 //
 // Neyi kilitliyor:
-//   1. Boş odada sahip HEM "Bağlantı yapıştır" HEM "Video yükle" görüyor ve
+//   1. Boş odada sahip HEM "URL yapıştır" HEM "Video yükle" görüyor ve
 //      desteklenen siteler EKRANDA yazıyor (kullanıcı isteği, 7 Eyl 2026).
 //   2. Modal geçersiz adreste düğmeyi KAPALI tutuyor; geçerli adreste açıyor
 //      ve tanınan platformu söylüyor.
@@ -117,7 +117,7 @@ void main() {
     await t.pump();
     await t.pump(const Duration(milliseconds: 100));
 
-    expect(find.text('Bağlantı yapıştır'.c), findsOneWidget);
+    expect(find.text('URL yapıştır'.c), findsOneWidget);
     expect(find.text('Video yükle'.c), findsOneWidget);
     // Kullanıcı isteği birebir: "altına desteklenen siteler yazsak".
     // Listeyi metnin İÇİNDE arıyoruz ki tek kaynaktan geldiği kanıtlansın.
@@ -249,7 +249,7 @@ void main() {
     await t.pump(const Duration(milliseconds: 100));
 
     // Gömme yüzeyi kuruldu: artık "bir video seç" boş durumu YOK.
-    expect(find.text('Bağlantı yapıştır'.c), findsNothing);
+    expect(find.text('URL yapıştır'.c), findsNothing);
     expect(
       find.text('Bir video bağlantısı yapıştır ya da dosya yükle'.c),
       findsNothing,
