@@ -3927,135 +3927,129 @@ class _KesfetYanitSatiriState extends State<_KesfetYanitSatiri> {
     final av = dosyaUrl(c['avatar'] as String?);
     final tarih = (c['tarih'] as String? ?? '').split('T').first;
     final goruntulenme = (c['goruntulenme'] as int?) ?? 0;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 7),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () => kullaniciyaGit(context, c['kullanici_adi'] as String),
-            child: KullaniciAvatari(
-              url: av,
-              kullaniciAdi: c['kullanici_adi'] as String?,
-              yaricap: 14,
-              arkaplan: DiziRenkler.kart,
-              // Reels yanıt satırı (md.13).
-              hareketli: true,
+    // BASILI TUTUNCA ARKADAŞA GÖNDER (13 Eyl 2026 isteği): Instagram'daki
+    // gibi yorumun kendisi DM'e gider. Jest satırın GÖVDESİNDE: beğeni
+    // düğmesinin uzun basması ZATEN beğenenleri açıyor (o daha içeride
+    // olduğu için arenayı kazanır, çakışma yok).
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onLongPress: () => yorumPaylas(context, widget.yanit),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 7),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () =>
+                  kullaniciyaGit(context, c['kullanici_adi'] as String),
+              child: KullaniciAvatari(
+                url: av,
+                kullaniciAdi: c['kullanici_adi'] as String?,
+                yaricap: 14,
+                arkaplan: DiziRenkler.kart,
+                // Reels yanıt satırı (md.13).
+                hareketli: true,
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () =>
-                          kullaniciyaGit(context, c['kullanici_adi'] as String),
-                      child: Text(
-                        '@${c['kullanici_adi']}',
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () => kullaniciyaGit(
+                          context,
+                          c['kullanici_adi'] as String,
+                        ),
+                        child: Text(
+                          '@${c['kullanici_adi']}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                            // Yanıtlar sheet'i açık temada açık zemin → sariMetin
+                            color: DiziRenkler.sariMetin,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        tarih,
                         style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                          // Yanıtlar sheet'i açık temada açık zemin → sariMetin
-                          color: DiziRenkler.sariMetin,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      tarih,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: DiziRenkler.metin38,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                EtiketliMetin(
-                  c['metin'] as String? ?? '',
-                  stil: TextStyle(color: DiziRenkler.metin70, fontSize: 13),
-                ),
-                if ((c['medya'] as List<dynamic>? ?? []).isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: MedyaGaleri(
-                      yollar: (c['medya'] as List<dynamic>).cast<String>(),
-                    ),
-                  ),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.remove_red_eye,
-                      size: 13,
-                      color: DiziRenkler.metin38,
-                    ),
-                    const SizedBox(width: 3),
-                    Text(
-                      '$goruntulenme',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: DiziRenkler.metin38,
-                      ),
-                    ),
-                    // Dokunma hedefleri geniş padding ile ~44px
-                    InkWell(
-                      onTap: _begen,
-                      onLongPress: () =>
-                          begenenleriAc(context, widget.yanit['id'] as int),
-                      borderRadius: BorderRadius.circular(16),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 10,
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              _begendim
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              size: 15,
-                              color: _begendim
-                                  ? DiziRenkler.sari
-                                  : DiziRenkler.metin38,
-                            ),
-                            if (_begeni > 0) ...[
-                              const SizedBox(width: 3),
-                              Text(
-                                '$_begeni',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: _begendim
-                                      ? DiziRenkler.sari
-                                      : DiziRenkler.metin38,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: widget.yanitla,
-                      borderRadius: BorderRadius.circular(16),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 10,
-                        ),
-                        child: Icon(
-                          Icons.reply,
-                          size: 15,
+                          fontSize: 10,
                           color: DiziRenkler.metin38,
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  EtiketliMetin(
+                    c['metin'] as String? ?? '',
+                    stil: TextStyle(color: DiziRenkler.metin70, fontSize: 13),
+                  ),
+                  if ((c['medya'] as List<dynamic>? ?? []).isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: MedyaGaleri(
+                        yollar: (c['medya'] as List<dynamic>).cast<String>(),
+                      ),
                     ),
-                    if (widget.benim)
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.remove_red_eye,
+                        size: 13,
+                        color: DiziRenkler.metin38,
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        '$goruntulenme',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: DiziRenkler.metin38,
+                        ),
+                      ),
+                      // Dokunma hedefleri geniş padding ile ~44px
                       InkWell(
-                        onTap: widget.sil,
+                        onTap: _begen,
+                        onLongPress: () =>
+                            begenenleriAc(context, widget.yanit['id'] as int),
+                        borderRadius: BorderRadius.circular(16),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 10,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                _begendim
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                size: 15,
+                                color: _begendim
+                                    ? DiziRenkler.sari
+                                    : DiziRenkler.metin38,
+                              ),
+                              if (_begeni > 0) ...[
+                                const SizedBox(width: 3),
+                                Text(
+                                  '$_begeni',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: _begendim
+                                        ? DiziRenkler.sari
+                                        : DiziRenkler.metin38,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                      InkWell(
+                        onTap: widget.yanitla,
                         borderRadius: BorderRadius.circular(16),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
@@ -4063,18 +4057,35 @@ class _KesfetYanitSatiriState extends State<_KesfetYanitSatiri> {
                             vertical: 10,
                           ),
                           child: Icon(
-                            Icons.delete_outline,
+                            Icons.reply,
                             size: 15,
                             color: DiziRenkler.metin38,
                           ),
                         ),
                       ),
-                  ],
-                ),
-              ],
+                      if (widget.benim)
+                        InkWell(
+                          onTap: widget.sil,
+                          borderRadius: BorderRadius.circular(16),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 10,
+                            ),
+                            child: Icon(
+                              Icons.delete_outline,
+                              size: 15,
+                              color: DiziRenkler.metin38,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

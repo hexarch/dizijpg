@@ -1,6 +1,61 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-13 — 🚀 BİLDİRİMDE PROFİL BAĞI + YORUMU ARKADAŞA GÖNDERME (1.153.0+232)
+
+**Tetik:** kullanıcı — *"dizi jpg de birisi paylaştığım yorumu beğendiğinde
+bildirim geliyor; eğer bildirimler kısmından onun profiline tıklarsam
+profiline, gönderiye tıklarsam gönderiye yönlendirmesi gerekiyor"* ve *"ve
+gönderideki yorumlara basılı tutunca instagramdaki gibi arkadaşlarıma
+gönderebilmeliyim; mesajlar kısmında da gönderi ve gönderinin altında solu %10
+boş kalacak şekilde sağa doğru kullanıcı logosu ve yorum olmalı, yorum eğer
+uzunsa alt satıra inmeli"*
+
+### 1) Bildirim satırının İKİ hedefi (`ekranlar/bildirimler.dart`)
+- **Avatar → profil, satırın geri kalanı → gönderi.** Avatar `_AvatarDokunusu`
+  ile sarıldı (`HitTestBehavior.opaque`): dokunuş ListTile'ın InkWell'ine
+  DÜŞMEZ. Aktörsüz türlerde (yeni bölüm · favori kişi · sürüm · geri bildirim)
+  sarmalayıcı şeffaftır, satır eskisi gibi çalışır.
+- **Metindeki `@ad` de bağ.** Başlık artık `_BildirimBasligi` widget'ı:
+  `TapGestureRecognizer` ada göre önbelleklenir ve YALNIZ `dispose`'da
+  bırakılır (çizimde bırakmak parmak altındaki dokunuşu keserdi). Toplu
+  beğenide (`@a, @b ve 10 kişi`) her ad KENDİ profiline gider; ad kalın yazılır
+  (renk değişmedi — satır zaten sarı ikonlu).
+- Profil kabuk içinde yaşadığı için `kullaniciyaGit` kullanılır (düz `push`
+  kabuğu ikinci kez kurup siyah ekran üretiyordu).
+
+### 2) Yoruma basılı tutunca arkadaşa gönder
+- **Jest iki yüzeyde de var:** yanıtlar sheet'i (`kesfet_akis.dart`
+  `_KesfetYanitSatiri`) ve içerik sayfasındaki yanıt satırı (`yorumlar.dart`
+  `_YanitSatiri`). Beğeni düğmesinin uzun basması (beğenenler) daha içeride
+  olduğu için arenayı kazanır — çakışma yok.
+- `paylas.dart` → `yorumPaylas()`: bağlantı `?yanit=1` taşır, DM'e giden şey
+  yorumun `yorum_id`si.
+
+### 3) Sohbetteki görünüm (`sohbet.dart` `PaylasilanGonderi`)
+- Sunucu (`server.js` `paylasilanGonderiOnizleme`) paylaşılan şey YANITSA
+  kartı ÜST GÖNDERİDEN kurar (kapak/oran/ad onun), yorumu `yorum` alanında ayrı
+  gönderir. Üst gönderi LEFT JOIN ile AYNI turda çekilir (N+1 yok).
+- İstemci kartın altına **kartın %10'u kadar girintili** satır çizer: avatar +
+  `@ad` + yorum; `Expanded` sayesinde uzun yorum alt satıra iner (en çok 4
+  satır). Yalnız medyalı yorumda metin yerine "Fotoğraf/Video" yazılır (mevcut
+  çeviri anahtarları — yeni metin açılmadı).
+- Dokununca `?yanit=1` ile üst gönderi + yorumlar yüzeyi açılır.
+- **Yan düzeltme:** çıplak (balonsuz) paylaşım mesajında önizleme artık balon
+  yazı rengini değil tema metnini kullanıyor — koyu zeminde okunmuyordu.
+
+### Kanıt
+- `app/test/bildirim_profil_yolu_test.dart` (5 test): avatar → profil, `@ad` →
+  profil, toplu beğenide doğru ad, satır → gönderi, aktörsüz satır yutulmuyor.
+- `app/test/yorum_paylasim_test.dart` (6 test): uzun basış sheet'i açar, kısa
+  dokunuş AÇMAZ, %10 girinti, uzun yorum sarılır, yorumsuz gönderide ek satır
+  yok.
+- `backend/test/paylasilan_yorum.test.js` (6 test): kart üst gönderiden,
+  `yorum` alanı, silinmiş üstte eski davranış, LEFT JOIN kilidi.
+- Canlı uçtan uca: gönderi+yanıt oluşturuldu → yanıt DM ile gönderildi →
+  `GET /mesajlar/:ad` yanıtında `gonderiler[5791].yorum` doğrulandı → test
+  verisi silindi.
+
 ## 2026-09-13 — 🔨 BİLDİRİM DOKUNMAYLA KAPANIR + MİSAFİR GİRİŞİ TEPKİ VERİR
 
 **Tetik:** kullanıcı — *"profildeki listeleri açınca basılı tutunca en aşağı al

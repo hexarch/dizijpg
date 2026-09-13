@@ -7,6 +7,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../gonderi_olcu.dart';
 import '../tema.dart';
+import '../yonlendirme.dart' show gonderiYolu;
 import 'giris_istem.dart';
 import 'ortak.dart';
 
@@ -38,6 +39,26 @@ Future<void> gonderiPaylas(BuildContext context, Map<String, dynamic> yorum) =>
       metin: yorum['metin'] as String?,
       yorumId: yorum['id'] as int,
     );
+
+/// Bir YORUMU (gönderinin altındaki yanıtı) paylaş — 13 Eyl 2026 isteği:
+/// *"gönderideki yorumlara basılı tutunca Instagram'daki gibi arkadaşlarıma
+/// gönderebilmeliyim."*
+///
+/// Gönderi paylaşımından İKİ farkı var:
+///  1. Bağlantı `?yanit=1` taşır ([gonderiYolu]): açan kişi yanıtı tek başına
+///     tam ekranda değil, ÜST GÖNDERİNİN yorumlar yüzeyinde görür.
+///  2. DM'e giden kartı sunucu üst gönderiyle birlikte döndürür (server.js
+///     `/sohbet/:ad` → `gonderiler[id].yorum`), sohbette "gönderi + altında
+///     yorum" olarak çizilir (bkz. [PaylasilanGonderi]).
+Future<void> yorumPaylas(BuildContext context, Map<String, dynamic> yorum) {
+  final id = (yorum['id'] as num).toInt();
+  return paylasSheet(
+    context,
+    url: 'https://dizijpg.com${gonderiYolu('$id', yanit: true)}',
+    metin: yorum['metin'] as String?,
+    yorumId: id,
+  );
+}
 
 /// Liste adının yanındaki paylaş düğmesi.
 ///

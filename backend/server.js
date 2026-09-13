@@ -15474,6 +15474,52 @@ async function kadroKisileri(benId) {
 // Satır listesi için içerik adı + poster haritası (kişide profile_path).
 // "tur:tmdb_id" anahtarlarından {ad, poster} haritası. Okunamayan (Çince vb.)
 // başlıklar İngilizcesiyle, birebir çeviri başlıklar orijinaliyle değiştirilir.
+/**
+ * Sohbette çizilecek PAYLAŞILAN GÖNDERİ önizlemesi — `/sohbet/:ad` sorgusunun
+ * bir satırını istemcinin beklediği biçime çevirir. SAF fonksiyon (veritabanı
+ * yok): davranışı testten doğrudan çalıştırılabilsin diye ayrı duruyor
+ * (backend/test/paylasilan_yorum.test.js).
+ *
+ * İKİ HÂL VAR:
+ *  • Sıradan gönderi → kart gönderinin kendisidir.
+ *  • YANIT (13 Eyl 2026, "yoruma basılı tutunca arkadaşıma gönder") → kart
+ *    ÜST GÖNDERİDİR, paylaşılan yorum ise `yorum` alanında ayrı gider;
+ *    istemci onu kartın ALTINA, %10 girintili satır olarak çizer. Yanıtın
+ *    kendi medyası çoğu zaman yok — kartı yanıttan kurmak boş çerçeve demekti.
+ *
+ * Üst gönderi okunamıyorsa (silinmiş) yanıt KENDİ BAŞINA çizilir: yarım kart
+ * göstermektense eski davranışa düşmek yeğdir.
+ */
+function paylasilanGonderiOnizleme(r) {
+  const temel = {
+    id: r.id,
+    kullanici_adi: r.kullanici_adi,
+    avatar: r.avatar,
+    metin: (r.metin || '').slice(0, 140),
+    kapak: (r.medya || [])[0] || null,
+    medya_oran: r.medya_oran,
+    tur: r.tur,
+    tmdb_id: r.tmdb_id,
+  };
+  if (r.ust_id == null || r.ust_kullanici_adi == null) return temel;
+  return {
+    ...temel,
+    ust_id: r.ust_id,
+    // KART = ÜST GÖNDERİ (kapak, oran, sahibi onun)
+    kullanici_adi: r.ust_kullanici_adi,
+    metin: (r.ust_metin || '').slice(0, 140),
+    kapak: (r.ust_medya || [])[0] || null,
+    medya_oran: r.ust_medya_oran,
+    // KARTIN ALTINDAKİ SATIR = paylaşılan YORUMUN kendisi
+    yorum: {
+      kullanici_adi: r.kullanici_adi,
+      avatar: r.avatar,
+      metin: (r.metin || '').slice(0, 280),
+      medya: (r.medya || [])[0] || null,
+    },
+  };
+}
+
 async function icerikBilgileri(anahtarlar) {
   const yollar = anahtarlar.map((a) => {
     const [tur, id] = a.split(':');
@@ -16814,25 +16860,27 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
       // `medya_olculer`). Sohbet kartı eskiden kapağı 1:1'e kırpıyordu —
       // dikey Reels'in yarısı kesiliyor, yatay video da bandajlanıyordu.
       // Oran bilinmiyorsa NULL gider, istemci dikey varsayımına düşer.
-      `SELECT y.id, y.metin, y.medya, y.tur, y.tmdb_id, k.kullanici_adi, k.avatar,
+      //
+      // PAYLAŞILAN YORUM (13 Eyl 2026): paylaşılan şey bir YANIT olabiliyor
+      // ("gönderideki yoruma basılı tutunca arkadaşıma göndereyim"). O zaman
+      // sohbette görünmesi gereken kapak YANITIN değil ÜST GÖNDERİNİNDİR —
+      // yanıtın çoğu zaman medyası yoktur, kart bomboş bir çerçeve olurdu.
+      // Üst gönderi LEFT JOIN ile aynı sorguda çekilir (ikinci tur yok).
+      `SELECT y.id, y.metin, y.medya, y.tur, y.tmdb_id, y.ust_id,
+              k.kullanici_adi, k.avatar,
               (SELECT mo.en::float / mo.boy FROM medya_olculer mo
-                 WHERE mo.medya = y.medya[1]) AS medya_oran
+                 WHERE mo.medya = y.medya[1]) AS medya_oran,
+              u.metin AS ust_metin, u.medya AS ust_medya,
+              uk.kullanici_adi AS ust_kullanici_adi,
+              (SELECT mo.en::float / mo.boy FROM medya_olculer mo
+                 WHERE mo.medya = u.medya[1]) AS ust_medya_oran
        FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+       LEFT JOIN yorumlar u ON u.id = y.ust_id
+       LEFT JOIN kullanicilar uk ON uk.id = u.kullanici_id
        WHERE y.id = ANY($1::int[])`,
       [gonderiIdler],
     );
-    for (const r of g.rows) {
-      gonderiler[r.id] = {
-        id: r.id,
-        kullanici_adi: r.kullanici_adi,
-        avatar: r.avatar,
-        metin: (r.metin || '').slice(0, 140),
-        kapak: (r.medya || [])[0] || null,
-        medya_oran: r.medya_oran,
-        tur: r.tur,
-        tmdb_id: r.tmdb_id,
-      };
-    }
+    for (const r of g.rows) gonderiler[r.id] = paylasilanGonderiOnizleme(r);
   }
   havuz.query(
     `UPDATE mesajlar SET okundu=true, iletildi=true

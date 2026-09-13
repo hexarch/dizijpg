@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -265,56 +266,17 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
   }
 
   /// Bildirim metnini, rozetli aktör adlarının HEMEN ARDINA [MiniRozet]
-  /// yerleştirerek çizer.
-  ///
-  /// AD ÇEVİRİDEN SONRA ARANIR, kalıptan önce değil: bazı dillerde ad cümlenin
-  /// sonunda (ör. Arapça "…: @{}"), o yüzden "@ ile başlar" varsayımı YOK.
-  /// Sınır kontrolü şart: aktör "ali" iken metindeki "@alican"a tik konmasın
-  /// diye adın bittiği yerde kullanıcı adı karakteri (harf/rakam/._) devam
-  /// ediyorsa eşleşme sayılmaz. Uzun ad önce denenir (@ali / @alican ikisi de
-  /// satırdaysa doğru olanı kazansın).
-  Widget _rozetliBaslik(String metin, Map<String, bool> rozetler) {
-    final stil = TextStyle(fontSize: 14, color: DiziRenkler.metin);
-    final adlar = rozetler.keys.toList()
-      ..sort((a, b) => b.length.compareTo(a.length));
-    final spans = <InlineSpan>[];
-    var kalan = metin;
-    while (adlar.isNotEmpty) {
-      var enErken = -1;
-      String? bulunan;
-      for (final ad in adlar) {
-        var i = kalan.indexOf('@$ad');
-        while (i >= 0) {
-          final son = i + 1 + ad.length;
-          final devam = son < kalan.length ? kalan[son] : '';
-          if (!RegExp(r'[A-Za-z0-9._]').hasMatch(devam)) break;
-          i = kalan.indexOf('@$ad', i + 1);
-        }
-        if (i >= 0 && (enErken < 0 || i < enErken)) {
-          enErken = i;
-          bulunan = ad;
-        }
-      }
-      if (bulunan == null) break;
-      final son = enErken + 1 + bulunan.length;
-      spans.add(TextSpan(text: kalan.substring(0, son)));
-      if (rozetler[bulunan] == true) {
-        spans.add(
-          const WidgetSpan(
-            alignment: PlaceholderAlignment.middle,
-            child: Padding(
-              padding: EdgeInsets.only(left: 3),
-              child: MiniRozet(),
-            ),
-          ),
-        );
-      }
-      kalan = kalan.substring(son);
-    }
-    if (kalan.isNotEmpty) spans.add(TextSpan(text: kalan));
-    // RichText tema rengini DEVRALMAZ (skill md. 2) — renk açıkça verilir.
-    return Text.rich(TextSpan(style: stil, children: spans));
-  }
+  /// yerleştirerek çizer — ve `@ad` geçişlerini PROFİLE GÖTÜREN bağ yapar
+  /// (13 Eyl 2026 isteği: "bildirimde onun profiline tıklarsam profiline,
+  /// gönderiye tıklarsam gönderiye götürsün").
+  Widget _rozetliBaslik(Map<String, dynamic> b, String metin) =>
+      _BildirimBasligi(
+        // Aynı satır iki kez çizilse de tanıcılar yeniden kurulmasın diye
+        // anahtar bildirim id'si (widget kimliği sabit kalır).
+        key: ValueKey('bildirim-baslik-${b['id']}'),
+        metin: metin,
+        rozetler: _rozetliAdlar(b),
+      );
 
   /// Satırın sağ ucu: okunmamış noktası + ilgili gönderinin mini görseli.
   /// İkisi de yoksa null (ListTile hiç yer ayırmaz).
@@ -497,49 +459,59 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
             final tarih = (b['tarih'] as String? ?? '').split('T').first;
             // KART YOK (1 Eyl 2026 isteği: "arka planla aynı renkte olsunlar,
             // tek parça olacak"): satır doğrudan sayfa zemininde durur.
+            // AVATAR PROFİLE GİDER (13 Eyl 2026 isteği): satırın kendisi
+            // GÖNDERİYE gider; "kim yaptı" sorusunun cevabı ise avatardadır.
+            // Aktörsüz türlerde (poster duran satırlar) gidilecek profil YOK,
+            // orada avatar satırla birlikte hareket eder.
+            final aktorAdi = aktorsuz ? null : b['aktor'] as String?;
             return ListTile(
-              leading: Stack(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: DiziRenkler.koyuGri,
-                    // Aynı yuvarlak ya TMDB posteri ya kendi sunucumuzdaki
-                    // avatarı gösteriyor; WebP başlığının gerekip
-                    // gerekmediğine ADRESE bakarak tek yerde karar veriliyor.
-                    backgroundImage: avatar != null
-                        ? CachedNetworkImageProvider(
-                            avatar,
-                            headers: gorselBasliklari(avatar),
-                          )
-                        : null,
-                    child: avatar == null
-                        ? Icon(switch (b['tur']) {
-                            'bolum' => Icons.tv_outlined,
-                            'kisi' => Icons.movie_outlined,
-                            // Geri bildirim yanıtının posteri/avatarı YOK;
-                            // kişi ikonu "biri bir şey yaptı" der ve
-                            // yanıltırdı.
-                            'geri_bildirim' => Icons.support_agent,
-                            _ => Icons.person,
-                          }, color: DiziRenkler.metin38)
-                        : null,
-                  ),
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: CircleAvatar(
-                      radius: 9,
-                      backgroundColor: DiziRenkler.sari,
-                      child: Icon(ikon, size: 11, color: Colors.black),
+              leading: _AvatarDokunusu(
+                // Aktörsüz satırda sarmalayıcı dokunuş YUTMAZ (onTap null →
+                // dokunuş ListTile'a düşer, satır eskisi gibi çalışır).
+                ad: aktorAdi,
+                cocuk: Stack(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: DiziRenkler.koyuGri,
+                      // Aynı yuvarlak ya TMDB posteri ya kendi sunucumuzdaki
+                      // avatarı gösteriyor; WebP başlığının gerekip
+                      // gerekmediğine ADRESE bakarak tek yerde karar veriliyor.
+                      backgroundImage: avatar != null
+                          ? CachedNetworkImageProvider(
+                              avatar,
+                              headers: gorselBasliklari(avatar),
+                            )
+                          : null,
+                      child: avatar == null
+                          ? Icon(switch (b['tur']) {
+                              'bolum' => Icons.tv_outlined,
+                              'kisi' => Icons.movie_outlined,
+                              // Geri bildirim yanıtının posteri/avatarı YOK;
+                              // kişi ikonu "biri bir şey yaptı" der ve
+                              // yanıltırdı.
+                              'geri_bildirim' => Icons.support_agent,
+                              _ => Icons.person,
+                            }, color: DiziRenkler.metin38)
+                          : null,
                     ),
-                  ),
-                ],
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: CircleAvatar(
+                        radius: 9,
+                        backgroundColor: DiziRenkler.sari,
+                        child: Icon(ikon, size: 11, color: Colors.black),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               // Aile rozetli aktörlerin adının hemen ardına mini tik girer
               // (WidgetSpan) — metin akışı bozulmaz, satır kaydırmada tik
               // adıyla birlikte taşınır.
               title: _rozetliBaslik(
+                b,
                 metin + (((b['ek'] as int?) ?? 0) > 0 ? '  +${b['ek']}' : ''),
-                _rozetliAdlar(b),
               ),
               subtitle: Text(
                 tarih,
@@ -663,6 +635,143 @@ class _GeriBildirimYanitSheet extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// Bildirim satırının başlığı: düz metin + rozetli adların yanına mini tik +
+/// `@ad` geçişlerine PROFİL BAĞI.
+///
+/// NEDEN AYRI WIDGET (13 Eyl 2026): adı tıklanabilir yapmak
+/// [TapGestureRecognizer] ister, tanıcı da BIRAKILMAK (dispose) zorundadır.
+/// Metot içinde kurulsaydı her çizimde yenisi doğar, hiçbiri bırakılmazdı.
+/// Tanıcılar ADA GÖRE önbelleklenir (satırın adları sabittir), yalnız
+/// [dispose]'da bırakılır — çizim sırasında bırakmak, o an parmak altındaki
+/// bir dokunuşu ortada keserdi.
+///
+/// AD ÇEVİRİDEN SONRA ARANIR, kalıptan önce değil: bazı dillerde ad cümlenin
+/// sonunda (ör. Arapça "…: @{}"), o yüzden "@ ile başlar" varsayımı YOK.
+/// Sınır kontrolü şart: aktör "ali" iken metindeki "@alican"a tik konmasın
+/// diye adın bittiği yerde kullanıcı adı karakteri (harf/rakam/._) devam
+/// ediyorsa eşleşme sayılmaz. Uzun ad önce denenir (@ali / @alican ikisi de
+/// satırdaysa doğru olanı kazansın).
+class _BildirimBasligi extends StatefulWidget {
+  final String metin;
+
+  /// Satırda geçen aktör adları → aile rozeti var mı. Anahtarların HEPSİ
+  /// tıklanabilir olur (toplu beğenide iki ad da kendi profiline gider).
+  final Map<String, bool> rozetler;
+
+  const _BildirimBasligi({
+    super.key,
+    required this.metin,
+    required this.rozetler,
+  });
+
+  @override
+  State<_BildirimBasligi> createState() => _BildirimBasligiState();
+}
+
+class _BildirimBasligiState extends State<_BildirimBasligi> {
+  final _tanicilar = <String, TapGestureRecognizer>{};
+
+  @override
+  void dispose() {
+    for (final t in _tanicilar.values) {
+      t.dispose();
+    }
+    super.dispose();
+  }
+
+  TapGestureRecognizer _tanici(String ad) => _tanicilar.putIfAbsent(
+    ad,
+    () => TapGestureRecognizer()
+      // Profil kabuk İÇİNDE yaşıyor; düz `push` kabuğu ikinci kez kurup
+      // siyah ekran üretebilir — bkz. [kullaniciyaGit].
+      ..onTap = () => kullaniciyaGit(context, ad),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final stil = TextStyle(fontSize: 14, color: DiziRenkler.metin);
+    // Bağ stili: renk DEĞİŞMEZ (satır zaten sarı ikonlu; adı da sarıya
+    // boyamak satırı iki odaklı yapardı), yalnız kalınlık adın dokunulabilir
+    // olduğunu söyler.
+    final bagStili = stil.copyWith(fontWeight: FontWeight.w800);
+    final adlar = widget.rozetler.keys.toList()
+      ..sort((a, b) => b.length.compareTo(a.length));
+    final spans = <InlineSpan>[];
+    var kalan = widget.metin;
+    while (adlar.isNotEmpty) {
+      var enErken = -1;
+      String? bulunan;
+      for (final ad in adlar) {
+        var i = kalan.indexOf('@$ad');
+        while (i >= 0) {
+          final son = i + 1 + ad.length;
+          final devam = son < kalan.length ? kalan[son] : '';
+          if (!RegExp(r'[A-Za-z0-9._]').hasMatch(devam)) break;
+          i = kalan.indexOf('@$ad', i + 1);
+        }
+        if (i >= 0 && (enErken < 0 || i < enErken)) {
+          enErken = i;
+          bulunan = ad;
+        }
+      }
+      if (bulunan == null) break;
+      final son = enErken + 1 + bulunan.length;
+      // Addan ÖNCEKİ düz metin ile ADIN KENDİSİ ayrı span: yalnız ad
+      // tıklanabilir olsun (eskiden ikisi tek span'dı).
+      if (enErken > 0) spans.add(TextSpan(text: kalan.substring(0, enErken)));
+      spans.add(
+        TextSpan(
+          text: kalan.substring(enErken, son),
+          style: bagStili,
+          recognizer: _tanici(bulunan),
+        ),
+      );
+      if (widget.rozetler[bulunan] == true) {
+        spans.add(
+          const WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Padding(
+              padding: EdgeInsets.only(left: 3),
+              child: MiniRozet(),
+            ),
+          ),
+        );
+      }
+      kalan = kalan.substring(son);
+    }
+    if (kalan.isNotEmpty) spans.add(TextSpan(text: kalan));
+    // RichText tema rengini DEVRALMAZ (skill md. 2) — renk açıkça verilir.
+    return Text.rich(TextSpan(style: stil, children: spans));
+  }
+}
+
+/// Bildirim satırının solundaki avatarı PROFİLE bağlar (13 Eyl 2026).
+///
+/// Satırın kendisi gönderiye gider; kullanıcı "kim beğendi" diye avatara
+/// dokunduğunda gönderiye düşmesin diye dokunuş burada YAKALANIR
+/// (`behavior: opaque` — ListTile'ın InkWell'i arenayı kaybeder).
+///
+/// [ad] null ise (aktörsüz bildirim: yeni bölüm, favori kişi, sürüm, geri
+/// bildirim) sarmalayıcı ŞEFFAFTIR: dokunuş eskisi gibi satıra düşer.
+class _AvatarDokunusu extends StatelessWidget {
+  final String? ad;
+  final Widget cocuk;
+  const _AvatarDokunusu({required this.ad, required this.cocuk});
+
+  @override
+  Widget build(BuildContext context) {
+    final a = ad;
+    if (a == null || a.isEmpty) return cocuk;
+    return GestureDetector(
+      key: Key('bildirim-avatar-$a'),
+      behavior: HitTestBehavior.opaque,
+      // Profil kabuk İÇİNDE yaşar — bkz. [kullaniciyaGit].
+      onTap: () => kullaniciyaGit(context, a),
+      child: cocuk,
     );
   }
 }

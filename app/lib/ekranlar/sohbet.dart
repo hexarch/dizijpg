@@ -31,6 +31,7 @@ import '../push.dart';
 import '../sohbet_olay.dart';
 import '../sohbet_tema.dart';
 import '../tema.dart';
+import '../yonlendirme.dart' show gonderiYolu;
 import 'tepki.dart';
 import 'medya_goster.dart';
 import 'medya_inceleme.dart';
@@ -4021,8 +4022,19 @@ class _MesajBaloncugu extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 4),
                     child: PaylasilanGonderi(
                       gonderi: gonderi,
-                      onTap: () => context.push('/gonderi/$gonderiId'),
-                      yaziRengi: yaziRengi,
+                      // Paylaşılan YORUM ise üst gönderiyi açıp yorumlar
+                      // yüzeyini getir (`?yanit=1`) — kullanıcı yanıtı
+                      // gördüğü yerde okusun, yanıt tek başına tam ekran
+                      // açılmasın (bkz. gonderiYolu).
+                      onTap: () => context.push(
+                        gonderiYolu(
+                          '$gonderiId',
+                          yanit: gonderi?['yorum'] != null,
+                        ),
+                      ),
+                      // ÇIPLAK mesajda balon YOK: balonun yazı rengi (koyu)
+                      // sohbet zemininde okunmaz — tema metnine düşülür.
+                      yaziRengi: ciplak ? DiziRenkler.metin : yaziRengi,
                     ),
                   ),
                 // Dizi/film kartı
@@ -4726,8 +4738,82 @@ class PaylasilanGonderi extends StatelessWidget {
     return Size(en, boy);
   }
 
+  /// PAYLAŞILAN YORUM (13 Eyl 2026 isteği, birebir): *"gönderideki yorumlara
+  /// basılı tutunca Instagram'daki gibi arkadaşlarıma gönderebilmeliyim;
+  /// mesajlar kısmında da gönderi ve gönderinin altında solu %10 boş kalacak
+  /// şekilde sağa doğru kullanıcı logosu ve yorum olmalı, yorum uzunsa alt
+  /// satıra inmeli."*
+  ///
+  /// Üstteki kart ÜST GÖNDERİNİN kendisidir (sunucu `gonderiler` haritasında
+  /// yanıtın yerine üstünü kartlar, bkz. server.js `/sohbet/:ad`); bu satır
+  /// paylaşılan YORUMU gösterir. Girinti kartın %10'u: kart 220 dp ise 22 dp.
+  Widget _yorumSatiri(Map<String, dynamic> y, double genislik) {
+    final ad = y['kullanici_adi'] as String?;
+    var metin = (y['metin'] as String? ?? '').trim();
+    if (metin.isEmpty) {
+      // Yalnız medyalı yorum: boş satır bırakmak yerine ne olduğunu söyle
+      // (anahtarlar mesaj özetinde ZATEN var, yeni çeviri açılmadı).
+      final m = y['medya'] as String?;
+      metin = m == null ? '' : (videoMu(m) ? 'Video'.c : 'Fotoğraf'.c);
+    }
+    return Padding(
+      // Girinti kartın %10'u (istek) — testte de bu oran kilitli.
+      key: const Key('paylasilan-yorum'),
+      padding: EdgeInsets.only(top: 6, left: genislik * 0.10),
+      child: SizedBox(
+        width: genislik * 0.90,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            KullaniciAvatari(
+              url: dosyaUrl(y['avatar'] as String?),
+              kullaniciAdi: ad,
+              yaricap: 9,
+              arkaplan: DiziRenkler.kart,
+            ),
+            const SizedBox(width: 6),
+            // Expanded ŞART: uzun yorum alt satıra insin (istek), taşıp
+            // "RenderFlex overflow" çizmesin.
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '@${ad ?? '...'} ',
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    TextSpan(text: metin),
+                  ],
+                ),
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+                // RichText tema rengini DEVRALMAZ — renk açıkça verilir.
+                style: TextStyle(fontSize: 12, height: 1.3, color: yaziRengi),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final yorum = gonderi?['yorum'] as Map<String, dynamic>?;
+    final kart = _kart(context);
+    if (yorum == null) return kart;
+    final genislik = gonderi?['kapak'] == null
+        ? azamiEn
+        : olcu((gonderi?['medya_oran'] as num?)?.toDouble()).width;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [kart, _yorumSatiri(yorum, genislik)],
+    );
+  }
+
+  /// Gönderinin kendi önizlemesi (kapak ya da yazı kutusu).
+  Widget _kart(BuildContext context) {
     final kapak = gonderi?['kapak'] as String?;
     final ad = gonderi?['kullanici_adi'] as String?;
     // Kapaksız (yalnız metin) gönderi: üstüne beyaz yazı basacak bir medya
