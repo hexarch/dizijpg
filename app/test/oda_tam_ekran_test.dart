@@ -437,12 +437,14 @@ void main() {
       bool cubukSuruklemede = false,
       bool yaziyor = false,
       bool yuklemeVar = false,
+      bool tamEkran = false,
     }) => kontrolSonebilir(
       videoHazir: videoHazir,
       oynuyor: oynuyor,
       cubukSuruklemede: cubukSuruklemede,
       yaziyor: yaziyor,
       yuklemeVar: yuklemeVar,
+      tamEkran: tamEkran,
     );
 
     // Temel hâl: video hazır ve oynuyor -> söner ("sadece video gözüksün").
@@ -479,6 +481,25 @@ void main() {
 
     // Birden çok engel aynı anda: yine sönmez.
     expect(k(oynuyor: false, yaziyor: true), isFalse);
+
+    // TAM EKRAN (14 Eyl 2026): *"ekranı çevirince videonun önündeki şeyleri
+    // saklamalısın sadece video gözükmeli"*. Orada "duraklatılmışken sönmez"
+    // kuralı KALKAR — tek dokunuşla geri geliyor, yani kimse mahsur kalmıyor.
+    expect(
+      k(oynuyor: false, tamEkran: true),
+      isTrue,
+      reason: 'tam ekranda duraklatılmış video da temiz ekran bırakmalı',
+    );
+    // Ama ÖTEKİ engeller tam ekranda da geçerli: parmağın altındaki çubuk,
+    // açık klavye ve süren yükleme hiçbir düzende kaybolmamalı.
+    expect(k(cubukSuruklemede: true, tamEkran: true), isFalse);
+    expect(k(yaziyor: true, tamEkran: true), isFalse);
+    expect(k(yuklemeVar: true, tamEkran: true), isFalse);
+    expect(
+      k(videoHazir: false, tamEkran: true),
+      isFalse,
+      reason: 'video yokken tam ekranda da "Video yükle" kaybolmamalı',
+    );
   });
 
   testWidgets('sönme süresi ve geçişi makul aralıkta', (t) async {
@@ -508,6 +529,150 @@ void main() {
       ),
       findsWidgets,
       reason: 'tepki şeridi sönebilen katmanın içinde olmalı',
+    );
+  });
+
+  // =========================================================================
+  // 6. 14 EYL 2026 DÜZENİ — EMOJİLER VİDEONUN SAĞ ALTINDA, DÜĞMELER ÜSTTE
+  // =========================================================================
+  //
+  // Kullanıcı isteği birebir: *"emojileri de videonun sağ altına koy ve ekrana
+  // tıklamadıkça gösterme"*. Eskiden videonun ALTINDA tam genişlikte 48 dp'lik
+  // bir şeritti; ölçülen şey bu yüzden "sönüyor mu" değil, tepki pilinin
+  // GERÇEKTEN videonun dikdörtgeninin içinde ve sağ altında olması.
+
+  testWidgets('tepki pili VİDEONUN İÇİNDE ve SAĞ ALTTA (dikey)', (t) async {
+    addTearDown(t.view.reset);
+    addTearDown(KabukTamEkran.sifirla);
+    _boyut(t, _dikey.width, _dikey.height);
+    await _ac(t);
+    await t.pumpAndSettle();
+
+    final video = t.getRect(find.byKey(odaVideoYuzeyiAnahtari));
+    // Pilin KENDİSİ ölçülüyor: ilk emoji sola yaslı durduğu için tek başına
+    // "sağda mı" sorusunu yanıtlamaz.
+    final pil = t.getRect(
+      find.ancestor(of: find.text('❤️').first, matching: find.byType(Wrap)),
+    );
+    expect(
+      video.contains(pil.center),
+      isTrue,
+      reason: 'emojiler videonun üstünde yüzmeli, altında şerit olmamalı',
+    );
+    expect(
+      video.right - pil.right,
+      lessThan(24),
+      reason: 'pil SAĞ kenara yaslanmalı',
+    );
+    expect(
+      video.bottom - pil.bottom,
+      lessThan(24),
+      reason: 'pil ALT kenara yaslanmalı',
+    );
+  });
+
+  testWidgets('tam ekran/sohbet düğmeleri videonun ÜST sağında', (t) async {
+    // Alt sağ köşe artık tepki piline ait; iki düzen (dikey + tam ekran) aynı
+    // köşeyi göstermeli ki kullanıcı elini bir kez öğrensin.
+    addTearDown(t.view.reset);
+    addTearDown(KabukTamEkran.sifirla);
+    _boyut(t, _dikey.width, _dikey.height);
+    await _ac(t);
+    await t.pumpAndSettle();
+
+    final video = t.getRect(find.byKey(odaVideoYuzeyiAnahtari));
+    final dugme = t.getRect(find.byIcon(Icons.fullscreen));
+    expect(video.contains(dugme.center), isTrue);
+    expect(
+      dugme.center.dy,
+      lessThan(video.center.dy),
+      reason: 'düğmeler ÜST yarıda olmalı',
+    );
+    final pil = t.getRect(find.text('❤️').first);
+    expect(
+      dugme.center.dy,
+      lessThan(pil.center.dy),
+      reason: 'düğmeler tepki pilinin ÜSTÜNDE kalmalı (çakışma yok)',
+    );
+  });
+
+  // =========================================================================
+  // 7. TAKILMA NÖBETÇİSİ — "odaya geri girince yayın devam etmiyor"
+  // =========================================================================
+  //
+  // Kurtarma PAHALI (yüzeyi komple yeniden kurar), yanlış pozitif videoyu
+  // sürekli baştan yükletir. Bu yüzden kenar durumlarının her biri tek tek
+  // kilitleniyor.
+
+  test('takilmaSayilir: yalnız GERÇEKTEN duran oynatıcıda ateşler', () {
+    bool k({
+      bool oynuyor = true,
+      bool hazir = true,
+      bool sariyor = false,
+      bool sarHedefiVar = false,
+      bool tamponluyor = false,
+      int ilerlemeMs = 0,
+      int gecenSn = 8,
+    }) => takilmaSayilir(
+      oynuyor: oynuyor,
+      hazir: hazir,
+      sariyor: sariyor,
+      sarHedefiVar: sarHedefiVar,
+      tamponluyor: tamponluyor,
+      ilerleme: Duration(milliseconds: ilerlemeMs),
+      gecen: Duration(seconds: gecenSn),
+    );
+
+    // Temel hâl: oda oynuyor, oynatıcı hazır, konum 8 saniyedir kıpırdamıyor.
+    expect(k(), isTrue);
+
+    expect(
+      k(oynuyor: false),
+      isFalse,
+      reason: 'duraklatılmış odada konum zaten ilerlemez',
+    );
+    expect(
+      k(hazir: false),
+      isFalse,
+      reason: 'oynatıcı henüz yokken kurtarma `_gommeNobetci`nin işi',
+    );
+    expect(k(sariyor: true), isFalse, reason: 'sarma sırasında konum sabittir');
+    expect(k(sarHedefiVar: true), isFalse);
+    expect(
+      k(tamponluyor: true),
+      isFalse,
+      reason: 'yeniden kurmak tamponu sıfırlar; yavaş ağda zarar verir',
+    );
+    expect(k(ilerlemeMs: 1200), isFalse, reason: 'video akıyorsa takılma yok');
+    expect(
+      k(ilerlemeMs: 300),
+      isTrue,
+      reason: '300 ms raporlama gürültüsüdür, gerçek oynatma değil',
+    );
+    expect(
+      k(gecenSn: 4),
+      isFalse,
+      reason: 'eşik dolmadan ateşlemek yavaş açılışı kurtarma sanar',
+    );
+  });
+
+  testWidgets('tam ekranda üye şeridi DOKUNUŞA bağlı (mesaj onu yakmaz)', (
+    t,
+  ) async {
+    // *"birisi sohbete yazarsa SADECE sohbet gözükmeli"* — üye avatarları
+    // bindirmeyle birlikte yanıyordu; artık yalnız ekrana dokununca geliyor.
+    // Ölçülen: üye şeridi `_sonebilir` katmanında (kontrollerle aynı kural),
+    // `_bindirmeSonebilir`de değil.
+    addTearDown(t.view.reset);
+    addTearDown(KabukTamEkran.sifirla);
+    _boyut(t, _yatay.width, _yatay.height);
+    await _ac(t);
+    await t.pumpAndSettle();
+    final durum = t.state<OdaEkraniDurumu>(find.byType(OdaEkrani));
+    expect(
+      durum.bindirmeCanliMi,
+      isFalse,
+      reason: 'girişte hareket yok; üye şeridi yine de dokunuşla gelmeli',
     );
   });
 }

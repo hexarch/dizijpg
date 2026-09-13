@@ -32,10 +32,26 @@ class OdaGommeYuzeyi extends StatefulWidget {
   final OdaBaglanti baglanti;
   final OdaGommeDenetci denetci;
 
+  /// ODA ŞU AN NEREDE — gömme AÇILIRKEN oradan başlasın diye.
+  ///
+  /// ===========================================================================
+  /// NEDEN GEREKLİ (14 Eyl 2026)
+  /// ===========================================================================
+  /// Gömme daima 0'dan açılıyordu: yarısına gelinmiş bir filme giren kişinin
+  /// oynatıcısı önce baştan açılıyor, sonra senkron düzelticisi onu 40 dakika
+  /// ileri SARIYORDU. Sarma YouTube'un tamponunu komple attırıyor ve
+  /// "kare donmuş" gibi görünen uzun bir tamponlama üretiyordu. `start=`
+  /// parametresiyle oynatıcı DOĞRU yerden açılıyor, sarmaya hiç gerek kalmıyor.
+  ///
+  /// Geri çağırma (değer değil): yüzey kurtarma nöbetçisiyle yeniden
+  /// kurulabiliyor ve o an okunan sabit bir sayı 12+ saniye BAYAT olurdu.
+  final int Function()? baslangicSn;
+
   const OdaGommeYuzeyi({
     super.key,
     required this.baglanti,
     required this.denetci,
+    this.baslangicSn,
   });
 
   @override
@@ -45,6 +61,14 @@ class OdaGommeYuzeyi extends StatefulWidget {
 class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
   late final String _gorunumTipi;
   web.HTMLIFrameElement? _iframe;
+
+  /// BU YÜZEYDEN en az bir cevap geldi mi (el sıkışma bitti mi).
+  ///
+  /// Döngünün duracağı an buna bakar, denetçinin `isInitialized`ına DEĞİL:
+  /// yüzey yeniden kurulduğunda denetçi ZATEN "hazır"dır ve el sıkışma daha
+  /// ilk turda iptal olurdu — yeni iframe'e `listening` hiç gitmez, oynatıcı
+  /// sessizce ölü kalırdı. (Aynı tuzak `oda_gomme_io.dart`ta da vardı.)
+  bool _rapor = false;
   web.EventListener? _dinleyici;
   Timer? _elSikisma;
   Timer? _yoklama;
@@ -111,6 +135,9 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
           // izleyicinin videosu HİÇ açılmazdı. Ses "Sesi aç" düğmesiyle
           // gelir; gerekçe `OdaGommeDenetci` başlığında.
           otomatik: true,
+          // Oda yarısına gelmişse oynatıcı ORADAN açılır; gerekçe
+          // [OdaGommeYuzeyi.baslangicSn] başlığında.
+          baslangicSn: widget.baslangicSn?.call() ?? 0,
         )
         ..style.border = 'none'
         ..style.position = 'absolute'
@@ -166,7 +193,7 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
     _elSikisma?.cancel();
     var kalan = 150;
     _elSikisma = Timer.periodic(const Duration(milliseconds: 400), (t) {
-      if (!mounted || widget.denetci.value.isInitialized) {
+      if (!mounted || _rapor) {
         t.cancel();
         return;
       }
@@ -284,6 +311,8 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
     // `listening` yollandığında oynatıcı `alreadyInitialized` cevabı verdi.
     final olay = g['event'] as String?;
     final bilgi = g['info'];
+    // Oynatıcıdan HERHANGİ bir cevap geldi: el sıkışma döngüsü durabilir.
+    _rapor = true;
     if (olay == 'onReady') {
       widget.denetci.bildir(hazir: true);
       return;
@@ -306,6 +335,8 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
   }
 
   void _vimeoMesaji(Map<String, dynamic> g) {
+    // YouTube dalıyla aynı: cevap geldi, el sıkışma döngüsü durabilir.
+    _rapor = true;
     final olay = g['event'] as String?;
     final yontem = g['method'] as String?;
     final veri = g['data'];

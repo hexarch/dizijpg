@@ -1,6 +1,63 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-14 — 🔨 İZLEME ODASI: KONTROL DÜZENİ + "GERİ GİRİNCE YAYIN DEVAM ETMİYOR"
+
+**Tetik (iki ayrı bildirim, aynı tur):**
+1. *"yayın odasında odadan çıkıp ana sayfada gezip tekrar yayın odasına
+   girdiğinde yayın devam etmiyor ama uygulamayı aç kapa yapıp katılınca
+   devam ediyor"* (telefon/APK, izleyici rolü; kare duruyor, oynamıyor).
+2. *"videoyu değiştir yazısını kaldır icon yeterli ve ileri sar geri sar
+   durdur duraklat'ı yukarıdaki izleme çubuğunun yanına al o alan çok yer
+   kaplıyor emojileri de videonun sağ altına koy ve ekrana tıklamadıkça
+   gösterme ve ekranı çevirince videonun önündeki şeyleri saklamalısın
+   sadece video gözükmeli birisi sohbete yazarsa sadece sohbet gözükmeli ve
+   ekrana tıklayınca ileri sar geri sar gözükmeli"*
+
+### 1) Yeni kontrol düzeni (`oda_ekrani.dart`)
+- Kontroller TEK SATIR: `[⟲10] [▶/⏸] [⟳10] ──çubuk── 12:34 / 45:00 [⇄]`.
+  Eski ikinci satır (44 dp) ve izleyicideki "Oda sahibiyle eşleniyor" satırı
+  kalktı; eşleniyor bilgisi çubuğun solundaki `sync` ikonunda (tooltip +
+  `semanticLabel`). "Videoyu değiştir" YALNIZ ikon.
+- Tepki emojileri videonun ALTINDAKİ 48 dp'lik şeritten çıktı, videonun SAĞ
+  ALTINA yarı saydam bir pil olarak bindirildi ve kontrollerle birlikte
+  sönüyor (`_sonebilir`). Tam ekran/sohbet düğmeleri videonun SAĞ ÜSTÜNE
+  taşındı (iki düzende aynı köşe).
+- Videoya ayrılan tavan: kontrol payı 150/110 dp → **60/52 dp**.
+- Tam ekranda "sadece video": `kontrolSonebilir(tamEkran: true)` artık
+  DURAKLATILMIŞ videoda da söndürüyor; üye şeridi de dokunuşa bağlandı
+  (eskiden her mesajda yanıyordu). Sohbet yazı alanı + kontrol şeridi sohbet
+  açıkken artık üst üste binmiyor (`_bindirmePayi`).
+- Testler: `oda_tam_ekran_test.dart` +4 (pil videonun içinde ve sağ altta,
+  düğmeler üstte, `kontrolSonebilir` tam ekran kenarları, `takilmaSayilir`).
+
+### 2) "Yayın devam etmiyor" — belirtiye bağlı kurtarma
+Kök sebep tek bir yerde değil (gömme oynatıcı bizim sürecimizde değil).
+Emülatörde ölçüldü: **yüzey sökülünce WebView gerçekten yok oluyor** (sızıntı
+teorisi ELENDİ, devtools hedef listesiyle kanıtlandı), ama emülatör YouTube'u
+hiç çözemediği için belirtinin kendisi orada üretilemedi. Bu yüzden dört
+katman:
+- **Takılma nöbetçisi** (`takilmaSayilir` saf kuralı + `_takilmaNobetci`):
+  oda oynuyor, oynatıcı hazır, sarma/tamponlama yok ve konum 6 sn hiç
+  ilerlemediyse önce `oynat` tekrarlanır, sonraki turda yüzey komple yeniden
+  kurulur (canlıda kanıtlanmış kurtarma yolu; en çok 2 kurtarma).
+- **Enjekte döngüsü artık SAYFA-YEREL bayrağa bakıyor** (`_rapor`), denetçinin
+  `isInitialized`ına değil. Eski hâlde yüzey yeniden kurulunca denetçi zaten
+  "hazır" olduğu için döngü ilk turda iptal oluyordu → yeni WebView'e JS hiç
+  enjekte edilmez, oynatıcı komut almayan ölü bir kutu kalırdı. (io + web)
+- **Gömme artık odanın ŞU ANKİ yerinden açılıyor** (`baslangicSn` → YouTube
+  `start=`, Vimeo `#t=`): yarısına gelinmiş odada oynatıcı 0'dan açılıp 40
+  dakika ileri sarılmıyor; sarma tamponu attırdığı için "kare donmuş" gibi
+  görünen uzun bekleme buradan geliyordu.
+- **Yüzey sökülürken WebView susturuluyor** (`about:blank` + video.pause):
+  `WebViewController`ın `dispose`u yok, GC'ye kalıyordu; odadan/fragmandan
+  çıkan kullanıcının YouTube'u arkada ağ ve pil yiyordu. (`oda_gomme_io.dart`
+  + `ekranlar/fragman_gom_io.dart`)
+
+**AÇIK:** belirti telefonda ÜRETİLEMEDİ (emülatörde video hiç çözülmüyor,
+kullanıcının telefonu kilitliydi). Kullanıcı 1.158.0+237 ile aynı akışı
+denemeli: odadan çık → ana sayfada gez → geri gir.
+
 ## 2026-09-14 — 🚀 ADMIN: ÇEVRİMİÇİ YANINDA "AKTİF IP" SAYACI
 
 **Tetik:** kullanıcı — *"admin panelinde çevrimiçi kullanıcılar kısmı var ya,

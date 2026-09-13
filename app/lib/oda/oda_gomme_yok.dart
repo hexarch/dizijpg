@@ -14,10 +14,14 @@ class OdaGommeYuzeyi extends StatelessWidget {
   final OdaBaglanti baglanti;
   final OdaGommeDenetci denetci;
 
+  /// Gerçek yüzeylerle aynı imza — testte kullanılmıyor.
+  final int Function()? baslangicSn;
+
   const OdaGommeYuzeyi({
     super.key,
     required this.baglanti,
     required this.denetci,
+    this.baslangicSn,
   });
 
   @override

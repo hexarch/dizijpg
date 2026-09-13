@@ -142,6 +142,40 @@ Duration odaBindirmeSuresi({String? metin, bool sistem = false}) {
   return Duration(seconds: (10 + uzunluk * 0.25).clamp(10.0, 60.0).round());
 }
 
+/// Oynatıcı ŞU AN "takılmış" sayılır mı — SAF kural, tek doğru.
+///
+/// Ayrı ve saf, çünkü asıl değer KENAR DURUMLARINDA ve hiçbiri widget
+/// testinde kurulamıyor (gerçek bir WebView gerekirdi). Yanlış pozitif
+/// PAHALI: kurtarma yüzeyi komple yeniden kuruyor, yani boş yere ateşlenen
+/// bir nöbetçi videoyu sürekli baştan yükletir.
+///
+/// TAKILMA SAYILMAYAN HÂLLER:
+///  · [oynuyor] değil — oda zaten duraklatılmış, konum ilerlemeyecek.
+///  · [hazir] değil — henüz oynatıcı yok; o hâlin kendi nöbetçisi var
+///    (`_gommeNobetci`).
+///  · [sariyor] / [sarHedefiVar] — sarma sırasında konum kasten sabit.
+///  · [tamponluyor] — ağ yavaş; yeniden kurmak tamponu SIFIRLAR, yani
+///    kurtarma değil zarar olurdu.
+///  · [ilerleme] eşiğin üstünde — video zaten akıyor.
+///  · [gecen] eşiğin altında — henüz yeterince beklemedik.
+@visibleForTesting
+bool takilmaSayilir({
+  required bool oynuyor,
+  required bool hazir,
+  required bool sariyor,
+  required bool sarHedefiVar,
+  required bool tamponluyor,
+  required Duration ilerleme,
+  required Duration gecen,
+  Duration sinir = const Duration(seconds: 6),
+}) {
+  if (!oynuyor || !hazir || sariyor || sarHedefiVar || tamponluyor) {
+    return false;
+  }
+  if (ilerleme.inMilliseconds.abs() > 400) return false;
+  return gecen >= sinir;
+}
+
 /// Kontroller ŞU AN sönebilir mi — SAF kural, tek doğru.
 ///
 /// Ayrı ve saf, çünkü asıl değer KENAR DURUMLARINDA: her biri atlanırsa
@@ -153,12 +187,20 @@ Duration odaBindirmeSuresi({String? metin, bool sistem = false}) {
 ///  · [videoHazir] değil — sönecek kontrol yok; "Video yükle" düğmesi
 ///    kaybolursa ekranın tek çıkış yolu gider.
 ///  · [oynuyor] değil — kullanıcı bilinçli duraklattı; o an ekranda aradığı
-///    şey zaten kontrollerdir.
+///    şey zaten kontrollerdir. ***TAM EKRANDA GEÇERSİZ*** — gerekçe aşağıda.
 ///  · [cubukSuruklemede] — parmağın altındaki ilerleme çubuğunu kaybetmek.
 ///  · [yaziyor] — sohbete yazarken kontroller giderse, kullanıcı mesajı
 ///    gönderdikten sonra ekrana ayrıca dokunmak zorunda kalır.
 ///  · [yuklemeVar] — ilerleme çubuğu bir DURUM göstergesi; 5 GB yüklenirken
 ///    kaybolmamalı.
+///
+/// [tamEkran] "DURAKLATILMIŞKEN SÖNMEZ" kuralını KALDIRIR (14 Eyl 2026,
+/// kullanıcı isteği: *"ekranı çevirince videonun önündeki şeyleri saklamalısın
+/// sadece video gözükmeli"*). Tam ekran bir İZLEME kipidir: orada duraklatılmış
+/// bir karenin üstünde asılı kalan çubuk, istenen "temiz ekran"ı imkânsız
+/// kılıyordu. Kontroller bir dokunuşla geri geliyor, yani hiçbir şey
+/// kaybolmuyor. Dikey/normal düzende kural aynen duruyor: orada video zaten
+/// ekranın bir parçası, altındaki şerit kimseyi rahatsız etmiyor.
 @visibleForTesting
 bool kontrolSonebilir({
   required bool videoHazir,
@@ -166,7 +208,13 @@ bool kontrolSonebilir({
   required bool cubukSuruklemede,
   required bool yaziyor,
   required bool yuklemeVar,
-}) => videoHazir && oynuyor && !cubukSuruklemede && !yaziyor && !yuklemeVar;
+  bool tamEkran = false,
+}) =>
+    videoHazir &&
+    (oynuyor || tamEkran) &&
+    !cubukSuruklemede &&
+    !yaziyor &&
+    !yuklemeVar;
 
 class OdaEkrani extends StatefulWidget {
   final int odaId;
@@ -189,6 +237,16 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
   /// YALNIZ TEST: tam ekran bindirmesi şu an bir HAREKET yüzünden açık mı.
   @visibleForTesting
   bool get bindirmeCanliMi => _bindirmeCanli;
+
+  /// YALNIZ TEST: gömme oynatıcının kumandası.
+  ///
+  /// Widget testinde gömme yüzeyi SİYAH KUTU (`oda_gomme_yok.dart`), yani
+  /// oynatıcı "hazırım" demiyor ve kontrol şeridi hiç çizilmiyor. Kontrollerin
+  /// DÜZENİNİ (14 Eyl 2026: düğmeler çubuğun yanında, "Videoyu değiştir"
+  /// yalnız ikon) sınamanın tek yolu, testin o haberi kumandaya kendisinin
+  /// vermesi.
+  @visibleForTesting
+  OdaGommeDenetci? get gommeDenetcisi => _gomme;
 
   Oda? _oda;
   String? _hata;
@@ -279,6 +337,43 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
   /// turu artırdığında (aşağıdaki iki yerde). Yüzeyi gerçekten söküp yeniden
   /// kurmak istediğimiz haller onlar.
   GlobalKey _gommeAnahtari = GlobalKey();
+
+  /// TAKILMA NÖBETÇİSİ — "oda oynuyor ama video ilerlemiyor".
+  ///
+  /// ===========================================================================
+  /// 14 EYL 2026 — "ODADAN ÇIKIP GERİ GİRİNCE YAYIN DEVAM ETMİYOR"
+  /// ===========================================================================
+  /// Kullanıcı bildirimi birebir: *"yayın odasında odadan çıkıp ana sayfada
+  /// gezip tekrar yayın odasına girdiğinde yayın devam etmiyor ama uygulamayı
+  /// aç kapa yapıp katılınca devam ediyor"*. Belirti: kare duruyor, ses yok,
+  /// hata yok — yani gömme oynatıcı "hazırım" demiş ama oynamıyor.
+  ///
+  /// Kök sebep tek bir yerde DEĞİL: gömme oynatıcı bizim sürecimizde değil,
+  /// arada WebView/iframe var ve "sessizce ölü kalma" halleri birden fazla
+  /// (platform görünümü yeniden bağlanırken yüzeyin donması, sayfanın
+  /// enjekte edilen kumandayı kaybetmesi, otomatik oynatmanın reddedilmesi).
+  /// Bu yüzden kurtarma BELİRTİYE bağlandı, sebebe değil — aynı disiplin
+  /// [_gommeNobetci]'de de var ("kök sebebi tahmin etmek yerine KANITLANMIŞ
+  /// kurtarma yolu").
+  ///
+  /// Kural: oda OYNUYOR, oynatıcı HAZIR, sarma yok ve tamponlama yok olduğu
+  /// hâlde oynatıcının bildirdiği konum [_takilmaSiniri] boyunca hiç
+  /// ilerlemediyse önce oynat komutu tekrarlanır, ikinci turda yüzey komple
+  /// yeniden kurulur ([_gommeAnahtari] yenilenir). En çok iki kurtarma:
+  /// sonsuz yeniden kurulum titreyen bir ekran demek olurdu ve üçüncü turda
+  /// sorun artık yüzeyde değildir (ağ, engellenmiş gömme, silinmiş video).
+  Timer? _takilmaNobetci;
+  int _takilmaKonumu = -1;
+  int _takilmaAni = 0;
+  int _takilmaKurtarma = 0;
+
+  /// Konum bu kadar süre hiç ilerlemezse oynatıcı TAKILMIŞ sayılır.
+  ///
+  /// 6 saniye: tamponlama bunun altında kalır (tamponlama zaten ayrıca
+  /// dışlanıyor), kullanıcının "donmuş" demesi ise bunun üstünde başlıyor.
+  /// Daha kısa tutmak, yavaş ağda oynayan bir videoyu boş yere yeniden
+  /// kurdururdu.
+  static const _takilmaSiniri = Duration(seconds: 6);
 
   /// Programatik seek sürerken düzeltme YAPILMAZ: art arda gelen iki seek
   /// oynatıcıyı tampon boşaltma döngüsüne sokar.
@@ -520,6 +615,7 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
     _kalp?.cancel();
     _sarYakinsama?.cancel();
     _gommeNobetci?.cancel();
+    _takilmaNobetci?.cancel();
     _yukleyici?.iptal();
     _oynatici?.sok();
     _metin.dispose();
@@ -680,6 +776,7 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
     cubukSuruklemede: _cubukSuruklemede,
     yaziyor: _metinOdak.hasFocus,
     yuklemeVar: _yuklemeDurumu != null,
+    tamEkran: _tamEkran,
   );
 
   /// Sohbet bindirmesi şu an çizilmeli mi (yalnız tam ekran/yatay düzende
@@ -961,6 +1058,7 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
     _kuruluVideo = damga;
 
     final eski = _oynatici;
+    _takilmaNobetci?.cancel();
     setState(() {
       _oynatici = null;
       _oynaticiHazir = false;
@@ -1048,6 +1146,83 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
     });
   }
 
+  /// Takılma nöbetçisini kurar — gerekçe [_takilmaNobetci] başlığında.
+  ///
+  /// YALNIZ GÖMMEDE: yüklenen dosyada oynatıcı bizim sürecimizde ve
+  /// `video_player` takıldığında zaten hata bildiriyor; kurtarma yolu da
+  /// (yüzeyi yeniden kurmak) orada yok.
+  void _takilmaNobetciyiKur() {
+    _takilmaNobetci?.cancel();
+    _takilmaKonumu = -1;
+    _takilmaAni = DateTime.now().millisecondsSinceEpoch;
+    _takilmaKurtarma = 0;
+    if (_gomme == null) return;
+    _takilmaNobetci = Timer.periodic(const Duration(seconds: 2), (t) {
+      if (!mounted) {
+        t.cancel();
+        return;
+      }
+      _takilmayiOlc();
+    });
+  }
+
+  /// Bir tur ölçüm: konum ilerledi mi, ilerlemediyse ne kadar oldu.
+  void _takilmayiOlc() {
+    final d = _oynatici;
+    final oda = _oda;
+    final simdi = DateTime.now().millisecondsSinceEpoch;
+    // Kurtarmanın ANLAMLI olduğu hâllerin dışında sayaç sürekli sıfırlanır:
+    // duraklatılmış oda, tamponlama ve sarma "takılma" DEĞİLDİR.
+    if (d == null || oda == null || _gomme == null) {
+      _takilmaAni = simdi;
+      return;
+    }
+    final konum = d.value.position.inMilliseconds;
+    // Karar SAF fonksiyonda ([takilmaSayilir]); burada yalnız ölçüm var.
+    final takildi = takilmaSayilir(
+      oynuyor: oda.durum.oynuyor,
+      hazir: _oynaticiHazir,
+      sariyor: _sariyor,
+      sarHedefiVar: _sarHedefMs != null,
+      tamponluyor: d.value.isBuffering,
+      ilerleme: Duration(milliseconds: konum - _takilmaKonumu),
+      gecen: Duration(milliseconds: simdi - _takilmaAni),
+      sinir: _takilmaSiniri,
+    );
+    if (!takildi) {
+      // Sayaç YALNIZ gerçek ilerlemede (ya da takılmanın anlamsız olduğu
+      // hâllerde) sıfırlanır; "ilerlemedi ama süre dolmadı" hâlinde AYNEN
+      // kalmalı, yoksa eşik hiç dolmaz.
+      final ilerledi = (konum - _takilmaKonumu).abs() > 400;
+      if (ilerledi || !oda.durum.oynuyor || !_oynaticiHazir) {
+        _takilmaKonumu = konum;
+        _takilmaAni = simdi;
+      } else if (_sariyor || _sarHedefMs != null || d.value.isBuffering) {
+        _takilmaKonumu = konum;
+        _takilmaAni = simdi;
+      }
+      return;
+    }
+    _takilmaAni = simdi;
+    _takilmaKurtarma++;
+    if (_takilmaKurtarma == 1) {
+      // ÖNCE EN UCUZ YOL: oynat komutunu tekrarla. Sayfa canlı ama komutu
+      // kaçırmışsa (ya da otomatik oynatma reddedilmişse) bu yeter.
+      d.oynat();
+      return;
+    }
+    if (_takilmaKurtarma > 3) {
+      // Üçüncü turdan sonra sorun yüzeyde değil: yeniden kurmayı bırak,
+      // yoksa kullanıcı titreyen bir ekranla kalır.
+      _takilmaNobetci?.cancel();
+      return;
+    }
+    // YÜZEYİ KOMPLE YENİDEN KUR — [_gommeNobetci]'nin kullandığı, canlıda
+    // defalarca işe yaradığı kanıtlanmış kurtarma. Yeni yüzey `baslangicSn`
+    // sayesinde odanın ŞU ANKİ yerinden açılır, baştan değil.
+    setState(() => _gommeAnahtari = GlobalKey());
+  }
+
   /// Gömme oynatıcı hazır olduğunu bildirince bir kereye mahsus hizalar.
   ///
   /// Dosya yolunda bu iş `initialize()` sonrasında yapılıyor; gömmede "hazır"
@@ -1062,7 +1237,27 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
       OdaApi.hazir(widget.odaId, true).catchError((_) {});
       _duzelt(kasitli: true);
       _kontrolleriGoster();
+      // Oynatıcı hazır: bundan sonrası "oynuyor mu" meselesi.
+      _takilmaNobetciyiKur();
     }
+  }
+
+  /// Gömme yüzeyi AÇILIRKEN videonun başlaması gereken saniye.
+  ///
+  /// `_duzelt`in kullandığı formülün aynısı — tek fark, burada henüz oynatıcı
+  /// yok, yani süre yalnız sunucunun bildirdiği `videoSureMs` ile kırpılıyor.
+  /// Duraklatılmış odada da doğru: `beklenenKonum` duruma bakıyor.
+  int _gommeBaslangicSn() {
+    final oda = _oda;
+    if (oda == null) return 0;
+    final beklenen = beklenenKonum(
+      oda.durum,
+      _sapma.sunucuAni(DateTime.now().millisecondsSinceEpoch),
+      sureMs: oda.videoSureMs,
+    );
+    // 2 saniyenin altını yollamıyoruz: `start=1` YouTube'da bazen ilk kareyi
+    // atlatıp gereksiz bir tamponlama turu açıyor, kazancı ise sıfır.
+    return beklenen < 2000 ? 0 : beklenen ~/ 1000;
   }
 
   /// Yerel oynatıcıyı sunucudaki duruma yaklaştırır.
@@ -1807,9 +2002,11 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
   /// videoya neredeyse tüm yükseklik kalır.
   double _videoTavani(double yukseklik, {bool sohbetAyri = false}) {
     if (!yukseklik.isFinite || yukseklik <= 0) return 240;
-    // Kontroller + tepki şeridi. Sahipte oynat/sar satırı da var, izleyicide
-    // yalnız tek satırlık "eşleniyor" göstergesi.
-    final kontrolPayi = _yonetebilirMiyim ? 150.0 : 110.0;
+    // Videonun ALTINDA kalan tek şey: kontrol satırı. 14 Eyl 2026'da hem
+    // oynat/sar düğmeleri çubuğun yanına alındı hem de tepki şeridi videonun
+    // üstüne taşındı; pay 150/110'dan buraya düştü ve videoya o kadar yer
+    // açıldı.
+    final kontrolPayi = _yonetebilirMiyim ? 60.0 : 52.0;
     if (sohbetAyri) return math.max(120.0, yukseklik - kontrolPayi);
     // Sohbete en az bu kadar: üye şeridi + yazı alanı + birkaç satır balon.
     const sohbetAsgari = 170.0;
@@ -1859,9 +2056,18 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
   /// Mesaj listesi [IgnorePointer] içinde: videoya dokunup kontrolleri geri
   /// getirmek, bindirmenin altında kalan yerlerde de çalışmalı. Yazı alanı ve
   /// üye satırı ise gerçek dokunma alanı — onlar hariç tutuldu.
+  /// Tam ekranda sohbet bindirmesinin kapladığı genişlik.
+  ///
+  /// TEK YER: hem bindirmenin kendisi hem de altındaki kontrol şeridi bunu
+  /// okuyor. İki ayrı yerde hesaplansaydı biri değişip öteki kalır ve
+  /// kontroller yine sohbetin altına girerdi.
+  double _bindirmePayi() => math.min(
+    _bindirmeAzamiGenislik,
+    MediaQuery.of(context).size.width * 0.38,
+  );
+
   Widget _sohbetBindirmesi(Oda oda) {
-    final en = MediaQuery.of(context).size.width;
-    final genislik = math.min(_bindirmeAzamiGenislik, en * 0.38);
+    final genislik = _bindirmePayi();
     // Yalnız SON birkaç satır: bindirme ekranı kaplamamalı. Sistem satırları
     // da dahil, çünkü "X odaya katıldı" izlerken görülmesi gereken bir olay.
     final son = _mesajlar.length <= _bindirmeAzamiSatir
@@ -1877,8 +2083,14 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
         children: [
           // Üye avatarları bindirmede de görünür: kiminle izlediğini bilmek
           // tam ekranda da gerekli. Bindirmede KÜÇÜK boy — videonun üstünde
-          // yer kaplamamalı. HAREKET YOKSA SÖNÜK ([_bindirmeGorunur]).
-          _bindirmeSonebilir(_uyeSatiri(oda, dar: true, bindirme: true)),
+          // yer kaplamamalı.
+          //
+          // DOKUNUŞA BAĞLI, HAREKETE DEĞİL (14 Eyl 2026): kullanıcı tam ekran
+          // için *"birisi sohbete yazarsa SADECE sohbet gözükmeli"* dedi.
+          // Üye şeridi `_bindirmeSonebilir` ile her mesajda da yanıyordu, yani
+          // tek satırlık bir "ok" videonun üstüne avatar şeridini de
+          // getiriyordu. Artık yalnız ekrana dokununca geliyor ([_sonebilir]).
+          _sonebilir(_uyeSatiri(oda, dar: true, bindirme: true)),
           Expanded(
             child: IgnorePointer(
               // TERS LİSTE (`reverse: true`): satırlar ALTTAN yukarı dizilir,
@@ -1973,7 +2185,11 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
         ),
         Positioned(
           left: 0,
-          right: 0,
+          // SOHBET AÇIKSA ALT KATMAN ONUN ALTINA GİRMEZ: bindirmenin en altında
+          // yazı alanı var, kontroller tam genişlik alınca ikisi üst üste
+          // biniyordu (ikisi de aynı dokunuşla açılıyor, yani çakışma her
+          // seferinde görünüyordu).
+          right: _sohbetAcik ? _bindirmePayi() : 0,
           bottom: 0,
           child: _sonebilir(
             DecoratedBox(
@@ -1994,8 +2210,13 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
                 children: [
                   ..._uyumsuzSerit(oda),
                   if (_yuklemeDurumu != null) _yuklemeCubugu(_yuklemeDurumu!),
+                  // Tepki pili KONTROLLERİN ÜSTÜNDE ve sağa yaslı: tam ekranda
+                  // "videonun sağ altı" tam olarak burası.
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8, bottom: 2),
+                    child: _tepkiSeridi(),
+                  ),
                   if (d != null && _oynaticiHazir) _kontroller(oda, d),
-                  _tepkiSeridi(),
                 ],
               ),
             ),
@@ -2131,11 +2352,22 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
               ),
             ),
             // Tam ekran düğmesi HER İKİ ROLDE de var: izleyicinin oynatma
-            // kontrolü yok ama videoyu büyütme hakkı var.
+            // kontrolü yok ama videoyu büyütme hakkı var. ÜST SAĞ KÖŞE
+            // (14 Eyl 2026): alt sağ köşe artık tepki piline ait ve tam ekran
+            // düzeninde düğmeler zaten üstte — iki düzen aynı yeri gösterince
+            // kullanıcı elini nereye götüreceğini bir kez öğreniyor.
             Positioned(
               right: 6,
-              bottom: 6,
+              top: 6,
               child: _sonebilir(_ustDugmeler(sohbetDugmesi: sohbetDugmesi)),
+            ),
+            // TEPKİ PİLİ VİDEONUN İÇİNDE, SAĞ ALTTA — ekrana dokunulmadıkça
+            // görünmez (gerekçe [_tepkiSeridi] başlığında).
+            Positioned(
+              left: 6,
+              right: 6,
+              bottom: 6,
+              child: _sonebilir(_tepkiSeridi()),
             ),
           ],
         ),
@@ -2145,7 +2377,6 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
         ..._uyumsuzSerit(oda),
         if (_yuklemeDurumu != null) _yuklemeCubugu(_yuklemeDurumu!),
         if (d != null && _oynaticiHazir) _sonebilir(_kontroller(oda, d)),
-        _sonebilir(_tepkiSeridi()),
       ],
     );
   }
@@ -2175,7 +2406,15 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
       return Stack(
         fit: StackFit.expand,
         children: [
-          OdaGommeYuzeyi(key: _gommeAnahtari, baglanti: b, denetci: g),
+          OdaGommeYuzeyi(
+            key: _gommeAnahtari,
+            baglanti: b,
+            denetci: g,
+            // Gömme, odanın ŞU ANKİ yerinden açılır (gerekçe
+            // `OdaGommeYuzeyi.baslangicSn`). Fonksiyon veriliyor, sayı değil:
+            // yüzey kurtarma nöbetçisiyle yeniden kurulabiliyor.
+            baslangicSn: _gommeBaslangicSn,
+          ),
           // SESSİZ BAŞLAMA KAPISI: gömme oynatıcı sesli otomatik başlayamaz
           // (tarayıcı politikası, gerekçe `OdaGommeDenetci` başlığında).
           // Düğme hem jesti verir hem sesi açar; olmasaydı kullanıcı sessiz
@@ -2617,119 +2856,117 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
             .clamp(0, math.max(sure, 1))
             .toInt();
         return Padding(
-          padding: const EdgeInsets.fromLTRB(12, 6, 12, 2),
-          child: Column(
+          padding: const EdgeInsets.fromLTRB(6, 2, 6, 4),
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Text(
-                    odaKonumBicim(konum),
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: DiziRenkler.metin54,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                  Expanded(
-                    child: _yonetebilirMiyim
-                        ? Slider(
-                            value: sure > 0
-                                ? konum.toDouble().clamp(0, sure.toDouble())
-                                : 0,
-                            max: sure > 0 ? sure.toDouble() : 1,
-                            // Sürüklerken sönme sayacı DURUR: parmağın
-                            // altındaki çubuğun kaybolması kabul edilemez.
-                            onChangeStart: (_) {
-                              _cubukSuruklemede = true;
-                              _kontrolleriGoster();
-                            },
-                            onChanged: (v) => _sar(d, v.round()),
-                            onChangeEnd: (v) {
-                              _cubukSuruklemede = false;
-                              _konumaSar(v.round());
-                              _sonmeyiKur();
-                            },
-                          )
-                        // İZLEYİCİ: salt okunur çubuk. Slider verilseydi
-                        // dokunan kişi kendi videosunu kaydırır ve bir sonraki
-                        // düzeltmede geri zıplardı — "bozuk" hissi verirdi.
-                        : Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(999),
-                              child: LinearProgressIndicator(
-                                value: sure > 0 ? konum / sure : 0,
-                                minHeight: 4,
-                                color: DiziRenkler.sari,
-                              ),
-                            ),
-                          ),
-                  ),
-                  Text(
-                    odaKonumBicim(sure),
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: DiziRenkler.metin54,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                ],
-              ),
-              if (_yonetebilirMiyim)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      tooltip: '10 saniye geri'.c,
-                      onPressed: () => _atla(-10),
-                      icon: const Icon(Icons.replay_10),
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton.filled(
-                      tooltip: oda.durum.oynuyor ? 'Duraklat'.c : 'Oynat'.c,
-                      onPressed: _oynatDurdur,
-                      icon: Icon(
-                        oda.durum.oynuyor ? Icons.pause : Icons.play_arrow,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      tooltip: '10 saniye ileri'.c,
-                      onPressed: () => _atla(10),
-                      icon: const Icon(Icons.forward_10),
-                    ),
-                    const SizedBox(width: 12),
-                    SizedBox(
-                      height: 44,
-                      child: TextButton.icon(
-                        onPressed: _kaynagiDegistir,
-                        icon: const Icon(Icons.swap_horiz, size: 18),
-                        label: Text('Videoyu değiştir'.c),
-                      ),
-                    ),
-                  ],
-                )
-              else
+              // OYNATMA DÜĞMELERİ ÇUBUĞUN YANINDA — ALTINDA DEĞİL (14 Eyl
+              // 2026, kullanıcı isteği: *"ileri sar geri sar durdur duraklat'ı
+              // yukarıdaki izleme çubuğunun yanına al, o alan çok yer
+              // kaplıyor"*). Eskiden ikinci bir satırdaydılar ve dikey
+              // telefonda 44 dp'yi sohbetten çalıyorlardı.
+              if (_yonetebilirMiyim) ...[
+                _KontrolDugmesi(
+                  ikon: Icons.replay_10,
+                  etiket: '10 saniye geri'.c,
+                  onTap: () => _atla(-10),
+                ),
+                _KontrolDugmesi(
+                  ikon: oda.durum.oynuyor ? Icons.pause : Icons.play_arrow,
+                  etiket: oda.durum.oynuyor ? 'Duraklat'.c : 'Oynat'.c,
+                  onTap: _oynatDurdur,
+                  vurgulu: true,
+                ),
+                _KontrolDugmesi(
+                  ikon: Icons.forward_10,
+                  etiket: '10 saniye ileri'.c,
+                  onTap: () => _atla(10),
+                ),
+              ] else
+                // İZLEYİCİ: eski "Oda sahibiyle eşleniyor" satırı KENDİ
+                // SATIRINI yiyordu; aynı bilgi artık çubuğun solunda tek bir
+                // ikon. Anlamı `Tooltip` + `Semantics` ile duruyor.
                 Padding(
-                  padding: const EdgeInsets.only(top: 2, bottom: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.sync,
-                        size: 14,
-                        color: DiziRenkler.cevrimiciYesil,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Oda sahibiyle eşleniyor'.c,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: DiziRenkler.metin54,
+                  padding: const EdgeInsets.fromLTRB(6, 0, 10, 0),
+                  child: Tooltip(
+                    message: 'Oda sahibiyle eşleniyor'.c,
+                    child: Icon(
+                      Icons.sync,
+                      size: 16,
+                      color: DiziRenkler.cevrimiciYesil,
+                      semanticLabel: 'Oda sahibiyle eşleniyor'.c,
+                    ),
+                  ),
+                ),
+              Expanded(
+                child: _yonetebilirMiyim
+                    ? SliderTheme(
+                        // ÇUBUK İNCELTİLDİ: varsayılan Slider satırda 48 dp
+                        // yer istiyor ve düğmelerle aynı satıra girince
+                        // videoya kalan yeri yiyordu.
+                        data: SliderTheme.of(context).copyWith(
+                          trackHeight: 3,
+                          overlayShape: const RoundSliderOverlayShape(
+                            overlayRadius: 14,
+                          ),
+                          thumbShape: const RoundSliderThumbShape(
+                            enabledThumbRadius: 7,
+                          ),
+                        ),
+                        child: Slider(
+                          value: sure > 0
+                              ? konum.toDouble().clamp(0, sure.toDouble())
+                              : 0,
+                          max: sure > 0 ? sure.toDouble() : 1,
+                          // Sürüklerken sönme sayacı DURUR: parmağın
+                          // altındaki çubuğun kaybolması kabul edilemez.
+                          onChangeStart: (_) {
+                            _cubukSuruklemede = true;
+                            _kontrolleriGoster();
+                          },
+                          onChanged: (v) => _sar(d, v.round()),
+                          onChangeEnd: (v) {
+                            _cubukSuruklemede = false;
+                            _konumaSar(v.round());
+                            _sonmeyiKur();
+                          },
+                        ),
+                      )
+                    // İZLEYİCİ: salt okunur çubuk. Slider verilseydi
+                    // dokunan kişi kendi videosunu kaydırır ve bir sonraki
+                    // düzeltmede geri zıplardı — "bozuk" hissi verirdi.
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(999),
+                          child: LinearProgressIndicator(
+                            value: sure > 0 ? konum / sure : 0,
+                            minHeight: 4,
+                            color: DiziRenkler.sari,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+              ),
+              // TEK ETİKET ("12:34 / 1:45:00"): iki ayrı metin çubuğun iki
+              // yanında 76 dp yiyordu; dar telefonda düğmelerle aynı satıra
+              // sığmıyordu.
+              Text(
+                // Çeviri anahtarı YOK: iki saat biçimi ve bir eğik çizgi,
+                // çevrilecek tek kelime içermiyor.
+                '${odaKonumBicim(konum)} / ${odaKonumBicim(sure)}',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: DiziRenkler.metin54,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+              ),
+              // "Videoyu değiştir" ARTIK YALNIZ İKON (14 Eyl 2026, kullanıcı
+              // isteği: *"videoyu değiştir yazısını kaldır, ikon yeterli"*).
+              // Anlam `tooltip` + `semanticLabel`da duruyor.
+              if (_yonetebilirMiyim)
+                _KontrolDugmesi(
+                  ikon: Icons.swap_horiz,
+                  etiket: 'Videoyu değiştir'.c,
+                  onTap: _kaynagiDegistir,
                 ),
             ],
           ),
@@ -2738,40 +2975,63 @@ class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
     );
   }
 
+  /// TEPKİ PİLİ — VİDEONUN SAĞ ALTINDA, kontrollerle birlikte söner.
+  ///
+  /// ===========================================================================
+  /// NEDEN ŞERİT DEĞİL PİL (14 Eyl 2026, kullanıcı isteği)
+  /// ===========================================================================
+  /// *"emojileri de videonun sağ altına koy ve ekrana tıklamadıkça gösterme"*.
+  /// Eskiden videonun ALTINDA tam genişlikte 48 dp'lik yatay bir listeydi:
+  /// dikey telefonda o şerit doğrudan sohbetten yer çalıyordu ve hiç
+  /// dokunulmasa bile hep oradaydı. Artık videonun üstünde yüzen bir pil ve
+  /// kontrollerle aynı sönme kuralına bağlı ([_sonebilir]).
+  ///
+  /// `Wrap` bilinçli: genişlik SINIRLI verildiğinde (solda ve sağda konumlanmış
+  /// bir `Positioned` içinde) içerik sığmıyorsa alt satıra kayar — dar bir
+  /// telefonda `Row` sarı-siyah taşma şeridi çizerdi. Sığıyorsa `Wrap` kendi
+  /// içeriği kadar yer kaplar, yani pil videoyu boydan boya kesmez.
   Widget _tepkiSeridi() {
-    return SizedBox(
-      height: 48,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        children: [
-          for (final e in const [
-            '❤️',
-            '😂',
-            '😮',
-            '😢',
-            '🔥',
-            '👏',
-            '👀',
-            '💀',
-          ])
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: InkWell(
-                onTap: () => _tepkiGonder(e),
-                borderRadius: BorderRadius.circular(22),
-                // 44×44 dokunma hedefi (ui-ux-pro-max, Touch Target Size);
-                // aradaki 4 px + iç dolgu 8 px boşluk kuralını karşılar.
-                child: SizedBox(
-                  width: 44,
-                  height: 44,
-                  child: Center(
-                    child: Text(e, style: const TextStyle(fontSize: 22)),
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: DecoratedBox(
+        // Emoji açık bir karenin üstünde kaybolur; yarı saydam koyu zemin
+        // onu her sahnede ayırır (aynı gerekçe sohbet bindirmesinde).
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.45),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+          child: Wrap(
+            alignment: WrapAlignment.end,
+            children: [
+              for (final e in const [
+                '❤️',
+                '😂',
+                '😮',
+                '😢',
+                '🔥',
+                '👏',
+                '👀',
+                '💀',
+              ])
+                InkWell(
+                  onTap: () => _tepkiGonder(e),
+                  borderRadius: BorderRadius.circular(20),
+                  // 40×40 dokunma hedefi: videonun üstünde sekiz emoji dar
+                  // telefona ancak böyle sığıyor (8×44 = 352 dp, 360 dp'lik
+                  // ekranda kenar boşluğu kalmıyordu).
+                  child: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Center(
+                      child: Text(e, style: const TextStyle(fontSize: 20)),
+                    ),
                   ),
                 ),
-              ),
-            ),
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -3763,6 +4023,52 @@ class _AdaySatiri extends StatelessWidget {
                 ),
               ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// KONTROL SATIRINDAKİ İKON DÜĞMESİ (geri 10 / oynat / ileri 10 / değiştir).
+///
+/// `IconButton` doğrudan kullanılmıyor: varsayılanı 48×48 + 8 dp iç dolgu, yani
+/// dört düğme ilerleme çubuğuyla aynı satıra girince (14 Eyl 2026 düzeni) dar
+/// bir telefonda çubuğa 80 dp bile kalmıyordu. Burada hedef 40×40 — dokunma
+/// hedefi sınırının hemen üstünde, satır ise sığıyor.
+///
+/// [vurgulu] yalnız oynat/duraklat için: o düğme diğer ikisinden AYRILMALI,
+/// çünkü kullanıcının satırda en sık aradığı şey odur.
+class _KontrolDugmesi extends StatelessWidget {
+  final IconData ikon;
+  final String etiket;
+  final VoidCallback onTap;
+  final bool vurgulu;
+  const _KontrolDugmesi({
+    required this.ikon,
+    required this.etiket,
+    required this.onTap,
+    this.vurgulu = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: etiket,
+      child: Semantics(
+        button: true,
+        label: etiket,
+        child: Material(
+          color: vurgulu ? DiziRenkler.sari : Colors.transparent,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: onTap,
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: Icon(ikon, size: 22, color: vurgulu ? Colors.black : null),
+            ),
+          ),
         ),
       ),
     );

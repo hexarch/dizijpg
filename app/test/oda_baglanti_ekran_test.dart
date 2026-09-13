@@ -255,4 +255,114 @@ void main() {
       findsNothing,
     );
   });
+
+  // =========================================================================
+  // 14 EYL 2026 — TEK SATIRLIK KONTROL ŞERİDİ
+  // =========================================================================
+  //
+  // Kullanıcı isteği birebir: *"videoyu değiştir yazısını kaldır icon yeterli
+  // ve ileri sar geri sar durdur duraklat'ı yukarıdaki izleme çubuğunun
+  // yanına al o alan çok yer kaplıyor"*.
+  //
+  // Kontroller ancak oynatıcı "hazırım" dediğinde çiziliyor; widget testinde
+  // gömme yüzeyi siyah kutu olduğu için haberi kumandaya TEST veriyor
+  // (`gommeDenetcisi`, `@visibleForTesting`).
+
+  testWidgets('kontroller TEK SATIR: düğmeler çubuğun YANINDA', (t) async {
+    _sunucu(
+      oda: _oda(
+        kaynak: 'baglanti',
+        baglanti: {
+          'saglayici': 'youtube',
+          'kimlik': 'dQw4w9WgXcQ',
+          'url': 'https://youtu.be/dQw4w9WgXcQ',
+        },
+      ),
+    );
+    await t.pumpWidget(_sar(const OdaEkrani(odaId: 5)));
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 100));
+
+    final durum = t.state<OdaEkraniDurumu>(find.byType(OdaEkrani));
+    durum.gommeDenetcisi!.bildir(
+      hazir: true,
+      konumMs: 65000,
+      sureMs: 600000,
+      oynuyor: true,
+    );
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 50));
+
+    // Üç oynatma düğmesi de VAR (sahip rolündeyiz).
+    expect(find.byIcon(Icons.replay_10), findsOneWidget);
+    expect(find.byIcon(Icons.forward_10), findsOneWidget);
+    expect(find.byIcon(Icons.play_arrow), findsOneWidget);
+
+    // ***AYNI SATIR:*** düğmelerin dikey merkezi çubuğunkiyle çakışmalı.
+    // Eski düzende düğmeler çubuğun ALTINDA ayrı bir satırdaydı ve bu iddia
+    // düşerdi.
+    final cubuk = t.getRect(find.byType(Slider));
+    for (final ikon in [Icons.replay_10, Icons.play_arrow, Icons.forward_10]) {
+      final d = t.getRect(find.byIcon(ikon));
+      expect(
+        d.center.dy,
+        inInclusiveRange(cubuk.top, cubuk.bottom),
+        reason: '$ikon çubukla aynı satırda olmalı',
+      );
+    }
+
+    // "Videoyu değiştir" YALNIZ İKON: metin ekranda yok, anlamı Semantics'te.
+    expect(find.byIcon(Icons.swap_horiz), findsOneWidget);
+    expect(
+      find.text('Videoyu değiştir'.c),
+      findsNothing,
+      reason: 'kullanıcı yazının kalkmasını istedi',
+    );
+    expect(find.bySemanticsLabel('Videoyu değiştir'.c), findsOneWidget);
+
+    // Konum/süre TEK etiket: "1:05 / 10:00".
+    expect(find.textContaining('/'), findsWidgets);
+  });
+
+  testWidgets('İZLEYİCİDE "eşleniyor" satırı yok, ikon var', (t) async {
+    // Eski düzende izleyici çubuğun ALTINDA ayrı bir "Oda sahibiyle eşleniyor"
+    // satırı görüyordu; o satır da videodan yer çalıyordu.
+    final oda = _oda(
+      kaynak: 'baglanti',
+      baglanti: {
+        'saglayici': 'youtube',
+        'kimlik': 'dQw4w9WgXcQ',
+        'url': 'https://youtu.be/dQw4w9WgXcQ',
+      },
+    );
+    oda['sahibi_miyim'] = false;
+    oda['sahip_id'] = 9;
+    oda['benim_rol'] = 'uye';
+    _sunucu(oda: oda);
+    await t.pumpWidget(_sar(const OdaEkrani(odaId: 5)));
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 100));
+
+    final durum = t.state<OdaEkraniDurumu>(find.byType(OdaEkrani));
+    durum.gommeDenetcisi!.bildir(
+      hazir: true,
+      konumMs: 65000,
+      sureMs: 600000,
+      oynuyor: true,
+    );
+    await t.pump();
+    await t.pump(const Duration(milliseconds: 50));
+
+    expect(find.byIcon(Icons.forward_10), findsNothing);
+    expect(
+      find.text('Oda sahibiyle eşleniyor'.c),
+      findsNothing,
+      reason: 'metin satırı kalktı',
+    );
+    expect(
+      find.bySemanticsLabel('Oda sahibiyle eşleniyor'.c),
+      findsOneWidget,
+      reason: 'anlam ikonun etiketinde durmalı',
+    );
+  });
 }

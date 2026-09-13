@@ -30,10 +30,26 @@ class OdaGommeYuzeyi extends StatefulWidget {
   final OdaBaglanti baglanti;
   final OdaGommeDenetci denetci;
 
+  /// ODA ŞU AN NEREDE — gömme AÇILIRKEN oradan başlasın diye.
+  ///
+  /// ===========================================================================
+  /// NEDEN GEREKLİ (14 Eyl 2026)
+  /// ===========================================================================
+  /// Gömme daima 0'dan açılıyordu: yarısına gelinmiş bir filme giren kişinin
+  /// oynatıcısı önce baştan açılıyor, sonra senkron düzelticisi onu 40 dakika
+  /// ileri SARIYORDU. Sarma YouTube'un tamponunu komple attırıyor ve
+  /// "kare donmuş" gibi görünen uzun bir tamponlama üretiyordu. `start=`
+  /// parametresiyle oynatıcı DOĞRU yerden açılıyor, sarmaya hiç gerek kalmıyor.
+  ///
+  /// Geri çağırma (değer değil): yüzey kurtarma nöbetçisiyle yeniden
+  /// kurulabiliyor ve o an okunan sabit bir sayı 12+ saniye BAYAT olurdu.
+  final int Function()? baslangicSn;
+
   const OdaGommeYuzeyi({
     super.key,
     required this.baglanti,
     required this.denetci,
+    this.baslangicSn,
   });
 
   @override
@@ -43,6 +59,15 @@ class OdaGommeYuzeyi extends StatefulWidget {
 class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
   WebViewController? _web;
   Timer? _kur;
+
+  /// BU SAYFADAN en az bir durum raporu geldi mi.
+  ///
+  /// Enjekte döngüsünün duracağı an buna bakar, denetçinin
+  /// `isInitialized`ına DEĞİL: yüzey yeniden kurulduğunda (kurtarma
+  /// nöbetçisi) denetçi ZATEN "hazır" durumdadır ve döngü daha ilk turda
+  /// kendini iptal ederdi — yeni WebView'e JS hiç enjekte edilmez, oynatıcı
+  /// komut almayan ölü bir kutu olarak kalırdı.
+  bool _rapor = false;
 
   /// `flutter test` VM'de platform WebView YOK: `WebViewController` kurmak
   /// orada assert atıyor ve odanın bağlantı kipini sınayan her widget testi
@@ -62,12 +87,44 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
     _denetciKur();
   }
 
+  /// Yüzey AYNI KALIP denetçi değişebilir (`GlobalKey` ile taşınan State).
+  ///
+  /// `initState` o durumda YENİDEN KOŞMAZ; kanca olmasaydı yeni denetçinin
+  /// [OdaGommeDenetci.gonder]'i hiç dolmaz ve oynat/duraklat/sar komutları
+  /// SESSİZCE düşerdi — ekranda "video donmuş" olarak görünür, hiçbir hata
+  /// basılmaz.
+  @override
+  void didUpdateWidget(OdaGommeYuzeyi eski) {
+    super.didUpdateWidget(eski);
+    if (identical(eski.denetci, widget.denetci)) return;
+    if (identical(eski.denetci.gonder, _komutIslet)) eski.denetci.gonder = null;
+    widget.denetci.gonder = _komutIslet;
+  }
+
   @override
   void dispose() {
     _kur?.cancel();
     if (identical(widget.denetci.gonder, _komutIslet)) {
       widget.denetci.gonder = null;
     }
+    // ===========================================================================
+    // WEBVIEW'İ ÖLDÜR — KENDİLİĞİNDEN ÖLMÜYOR (14 Eyl 2026)
+    // ===========================================================================
+    // `webview_flutter`ın `WebViewController`ında `dispose()` YOK: yerel WebView
+    // ancak Dart nesnesi çöp toplanınca serbest kalıyor ve GC'nin ne zaman
+    // koşacağı BELLİ DEĞİL. Yani odadan çıkan kullanıcının YouTube oynatıcısı
+    // arkada CANLI kalıyor: ağı ve pili yiyor, sesi açıksa sesi de sürüyor ve
+    // cihazın video kod çözücüsünü tutuyor. Kullanıcının bildirdiği belirti
+    // tam buydu — *"odadan çıkıp ana sayfada gezip tekrar odaya girince yayın
+    // devam etmiyor, uygulamayı kapatıp açınca düzeliyor"*: ikinci giriş yeni
+    // bir oynatıcı kuruyor ama eskisi hâlâ ayakta.
+    //
+    // `about:blank` gezinme süzgecinden GEÇER (`odaGommeIstegiGuvenli`, `about`
+    // şeması açıkça izinli). Önce videoyu elle durdurup kaynağını boşaltıyoruz:
+    // sayfa değişimi kod çözücüyü her cihazda aynı hızda bırakmıyor.
+    _web?.runJavaScript(_sondur).catchError((_) {});
+    _web?.loadRequest(Uri.parse('about:blank')).catchError((_) {});
+    _web = null;
     super.dispose();
   }
 
@@ -103,7 +160,10 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
         onNavigationRequest: (istek) => odaGommeIstegiGuvenli(istek.url)
             ? NavigationDecision.navigate
             : NavigationDecision.prevent,
-        onPageFinished: (_) => _enjekteyiBaslat(),
+        onPageFinished: (_) {
+          _rapor = false;
+          _enjekteyiBaslat();
+        },
         onWebResourceError: (h) {
           if (h.isForMainFrame == true) widget.denetci.bildir(hazir: false);
         },
@@ -122,7 +182,12 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
     setState(() => _web = w);
     await w.loadRequest(
       Uri.parse(
-        odaGommeUrl(widget.baglanti, dil: Ceviri.dil.value, otomatik: true),
+        odaGommeUrl(
+          widget.baglanti,
+          dil: Ceviri.dil.value,
+          otomatik: true,
+          baslangicSn: widget.baslangicSn?.call() ?? 0,
+        ),
       ),
       headers: const {'Referer': 'https://dizijpg.com/'},
     );
@@ -141,7 +206,7 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
     _kur?.cancel();
     var kalan = 150;
     _kur = Timer.periodic(const Duration(milliseconds: 400), (t) {
-      if (!mounted || widget.denetci.value.isInitialized) {
+      if (!mounted || _rapor) {
         t.cancel();
         return;
       }
@@ -180,6 +245,7 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
       return;
     }
     if (m == null || !mounted) return;
+    _rapor = true;
     widget.denetci.bildir(
       hazir: true,
       konumMs: m['t'] == null ? null : ((m['t'] as num) * 1000).round(),
@@ -407,10 +473,26 @@ const _enjekte = r'''
       b: tampon
     }));
   };
-  setInterval(yolla, 250);
+  window.__odaRapor = setInterval(yolla, 250);
   v.addEventListener('timeupdate', yolla);
   v.addEventListener('play', yolla);
   v.addEventListener('pause', yolla);
   yolla();
+})();
+''';
+
+/// Yüzey sökülürken çalıştırılan kapatma betiği.
+///
+/// Yalnız `about:blank`e gitmek YETMİYOR: bazı cihazlarda gezinme tamamlanana
+/// kadar eski oynatıcı kod çözücüyü bırakmıyor. Videoyu önce durdurup
+/// kaynağını boşaltmak bırakmayı ANINDA tetikliyor. Her adım ayrı `try`:
+/// sayfa çoktan boşalmışsa ilk satırın atacağı hata ötekileri de yutardı.
+const _sondur = r'''
+(function(){
+  try { if (window.__odaRapor) { clearInterval(window.__odaRapor); window.__odaRapor = 0; } } catch (e) {}
+  try {
+    var v = document.querySelector('video');
+    if (v) { v.pause(); v.removeAttribute('src'); v.load(); }
+  } catch (e) {}
 })();
 ''';

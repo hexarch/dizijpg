@@ -86,6 +86,15 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
   @override
   void dispose() {
     _boya?.cancel();
+    // WEBVIEW KENDİLİĞİNDEN ÖLMÜYOR (14 Eyl 2026, oda gömmesiyle aynı kök):
+    // `WebViewController`ın `dispose()`u yok, yerel WebView ancak Dart nesnesi
+    // çöp toplanınca serbest kalıyor. Fragmandan çıkan kullanıcının YouTube
+    // oynatıcısı arkada canlı kalıyor — ağ, pil ve video kod çözücüsü onda.
+    // Gerekçenin tamamı `oda/oda_gomme_io.dart#dispose` başlığında.
+    final denetci = _denetci;
+    _denetci = null;
+    denetci?.runJavaScript(_sondurJs).catchError((_) {});
+    denetci?.loadRequest(Uri.parse('about:blank')).catchError((_) {});
     super.dispose();
   }
 
@@ -587,5 +596,16 @@ const _gizleJs = r'''
       new MutationObserver(supur).observe(document.body, {childList: true});
     } catch (e) {}
   }
+})();
+''';
+
+/// Fragman yüzeyi sökülürken çalıştırılan kapatma betiği — gerekçe
+/// `FragmanGomucu.dispose` içinde.
+const _sondurJs = r'''
+(function(){
+  try {
+    var v = document.querySelector('video');
+    if (v) { v.pause(); v.removeAttribute('src'); v.load(); }
+  } catch (e) {}
 })();
 ''';
