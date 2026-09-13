@@ -102,13 +102,13 @@ void main() {
   setUp(() {
     AnlikBildirim.sifirla();
     BildirimCanli.sifirla();
-    BildirimCanli.webMi = true;
+    BildirimCanli.yoklamali = true;
     SohbetOlaylari.acikPartner = null;
   });
   tearDown(() {
     AnlikBildirim.sifirla();
     BildirimCanli.sifirla();
-    BildirimCanli.webMi = false;
+    BildirimCanli.yoklamali = false;
   });
 
   group('PENCERE — çizim ve kapanış', () {
@@ -311,6 +311,22 @@ void main() {
       BildirimCanli.dur();
       AnlikBildirim.kapat();
       await tester.pumpAndSettle();
+    });
+
+    testWidgets('PUSH ÇALIŞIYORSA yoklama başlamaz (iOS: iki kanal olmaz)', (
+      tester,
+    ) async {
+      SharedPreferences.setMockInitialValues({'token': 'sahte'});
+      await Api.tokenYukle();
+      addTearDown(Api.cikis);
+      await _uygulama(tester);
+      sunucu((_) => const []);
+      // push.dart jetonu sunucuya yazdığında bunu çağırır.
+      BildirimCanli.pushCalisiyorBildir();
+      BildirimCanli.baslat();
+      await tester.pumpAndSettle();
+      expect(BildirimCanli.acik, isFalse);
+      expect(istenenler, isEmpty);
     });
 
     testWidgets('oturum yokken yoklama HİÇ başlamaz', (tester) async {

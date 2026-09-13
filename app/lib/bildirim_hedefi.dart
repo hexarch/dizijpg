@@ -5,8 +5,6 @@
 // penceresi (anlik_bildirim.dart) WEBDE de aynı hedefi hesaplamak zorunda —
 // yani kuralın Firebase'siz bir yerde durması gerekiyordu. Davranış aynen
 // korundu; `push.dart` bu dosyayı yeniden yayımlıyor.
-import 'package:flutter/foundation.dart';
-
 import 'yonlendirme.dart';
 
 /// Bildirim verisindeki bir alanı METİN olarak okur.
@@ -27,7 +25,11 @@ String _alan(Map<String, dynamic> veri, String anahtar) {
 ///
 /// AYRI FONKSİYON: gezinmenin kendisi ([rotayaGit]) canlı bir GoRouter ister,
 /// hedef HESABI istemez — böylece kural testten doğrudan okunabiliyor.
-@visibleForTesting
+///
+/// `@visibleForTesting` DEĞİL (13 Eyl 2026): kural artık ÜRETİMDE de iki
+/// yerden okunuyor — `push.dart` (FCM dokunuşu) ve `anlik_bildirim.dart`
+/// (uygulama içi pencere). İşaret kalsaydı her çağrı bir analiz uyarısı
+/// üretirdi.
 String? bildirimHedefi(Map<String, dynamic> veri) {
   final tur = _alan(veri, 'tur');
   final ad = _alan(veri, 'ad');

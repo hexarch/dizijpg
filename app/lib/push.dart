@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'anlik_bildirim.dart';
 import 'api.dart';
+import 'bildirim_canli.dart';
 import 'bildirim_hedefi.dart';
 import 'ceviri.dart';
 import 'gorusme/arama_bildirim.dart';
@@ -449,11 +450,44 @@ Future<void> pushBaslat() async {
       _kuruldu = true;
     }
 
-    final token = await mesajlasma.getToken();
+    final token = await _tokenAl(mesajlasma);
     if (token != null) await _tokenGonder(token);
-  } catch (_) {
-    // izin reddi/hata → sessiz geç
+  } catch (hata, yigin) {
+    // ARTIK SESSİZ DEĞİL (13 Eyl 2026): iOS'ta HİÇ jeton kaydolmadığı
+    // `cihaz_tokenlari` sayımıyla ortaya çıktı (714 android, 0 ios) ve
+    // sebebini gösterecek TEK iz bu blokta yutuluyordu. Kullanıcıya bir şey
+    // gösterilmez (izin reddi normaldir), ama sunucu günlüğüne düşer.
+    Api.hataBildir(hata, yigin, yol: 'push/baslat');
   }
+}
+
+/// FCM jetonunu alır — iOS'ta **APNS jetonunu BEKLEYEREK**.
+///
+/// KULLANICI BİLDİRİMİ (13 Eyl 2026): *"apple'da bildirimler gitmiyor, mesela
+/// apple kullanan birisini takip edince bildirim gitmiyor ama android'de
+/// gidiyor"*. Ölçüm: `cihaz_tokenlari` tablosunda **714 android, 0 ios** satır
+/// — yani iOS cihazlar sunucuya HİÇ jeton kaydetmemiş; push'un gidecek adresi
+/// yoktu.
+///
+/// KÖK SEBEP: iOS'ta `getToken()` yalnız APNS jetonu geldikten SONRA çalışır;
+/// daha erken çağrılırsa `apns-token-not-set` fırlatır. Jeton, izin verildikten
+/// birkaç yüz milisaniye sonra (bazen saniyeler) gelir — `requestPermission`ın
+/// hemen ardından `getToken()` çağırmak YARIŞ demekti ve kaybedilen her yarış
+/// (a) yukarıdaki `catch` tarafından yutuluyor, (b) uygulama yeniden açılana
+/// kadar TEKRAR DENENMİYORDU.
+///
+/// Android'de bu bekleme YOKTUR (`getAPNSToken` null döner, döngü boşuna
+/// dönerdi) — bu yüzden dal `Platform.isIOS` ile kapalı.
+Future<String?> _tokenAl(FirebaseMessaging mesajlasma) async {
+  if (Platform.isIOS) {
+    // ~9 sn'lik pencere: APNS kaydı ağ gerektirir, ilk açılışta yavaş olabilir.
+    for (var deneme = 0; deneme < 12; deneme++) {
+      final apns = await mesajlasma.getAPNSToken();
+      if (apns != null) break;
+      await Future.delayed(const Duration(milliseconds: 750));
+    }
+  }
+  return mesajlasma.getToken();
 }
 
 Future<void> _tokenGonder(String token) async {
@@ -463,6 +497,9 @@ Future<void> _tokenGonder(String token) async {
       Platform.isIOS ? 'ios' : 'android',
       Ceviri.dil.value,
     );
+    // Push ADRESİ artık var: iOS'ta açılan yedek yoklama kanalı kapansın
+    // (bkz. bildirim_canli.dart). Android'de o kanal zaten hiç açılmıyor.
+    BildirimCanli.pushCalisiyorBildir();
   } catch (_) {}
 }
 

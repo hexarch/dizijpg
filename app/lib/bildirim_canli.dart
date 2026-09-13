@@ -1,13 +1,17 @@
 // WEBDE ANLIK BİLDİRİM KAYNAĞI — `/bildirimler/canli` yoklaması.
 //
 // ===========================================================================
-// NEDEN YALNIZ WEB
+// KİMLER YOKLAR: WEB + (PUSH'U ÇALIŞMAYAN) iOS
 // ===========================================================================
-// Mobilde kaynak FCM'dir: uygulama ön plandayken `onMessage` tetiklenir ve
+// Android'de kaynak FCM'dir: uygulama ön plandayken `onMessage` tetiklenir ve
 // pencereyi o çizer (push.dart). Tarayıcıda FCM YOK — yoklama olmadan
 // "uygulamada gezerken mesaj gelince yukarıda pencere" web'de HİÇ çalışmazdı.
-// Mobilde ayrıca yoklamak pil ve veri harcar, üstelik aynı bildirim iki kez
-// pencere açardı (tekrar süzgeci yakalar ama tur bedeli boşuna ödenirdi).
+//
+// iOS DA YOKLAR (13 Eyl 2026): kullanıcı "apple'da bildirimler gitmiyor" diye
+// bildirdi, ölçüm `cihaz_tokenlari`nde **714 android / 0 ios** satır gösterdi —
+// iOS cihazlar FCM jetonu kaydedemiyordu (bkz. push.dart `_tokenAl`). Jeton
+// GERÇEKTEN kaydolduğunda [pushCalisiyorBildir] çağrılır ve yoklama SUSAR:
+// push varken ikinci kanal pil ve veri harcamaktan başka bir şey yapmaz.
 //
 // ===========================================================================
 // İLK TUR "DAMGA" TURUDUR
@@ -34,10 +38,23 @@ class BildirimCanli {
   /// (400/saat) iki sekmeye yer bırakır.
   static const Duration tur = Duration(seconds: 20);
 
-  /// [webMi] bilerek `kIsWeb`in kendisi değil, ondan BAŞLATILAN bir alandır:
-  /// `flutter test` daima `kIsWeb == false` koşar, gömülü bayrakla yazılan web
-  /// dalı testten gizlenirdi (arama_servisi.dart'taki aynı kalıp).
-  static bool webMi = kIsWeb;
+  /// Bu platform yoklamalı mı? Bilerek `kIsWeb`in kendisi değil, ondan
+  /// BAŞLATILAN bir alandır: `flutter test` daima `kIsWeb == false` koşar,
+  /// gömülü bayrakla yazılan dal testten gizlenirdi (arama_servisi.dart'taki
+  /// aynı kalıp).
+  ///
+  /// `defaultTargetPlatform` kullanılır, `Platform.isIOS` DEĞİL: `dart:io`
+  /// web derlemesinde yok.
+  static bool yoklamali = kIsWeb || defaultTargetPlatform == TargetPlatform.iOS;
+
+  /// Push jetonu sunucuya KAYDEDİLDİ mi (mobil). True olunca yoklama susar.
+  static bool pushHazir = false;
+
+  /// push.dart jetonu kaydettiğinde çağırır: ikinci kanal kapanır.
+  static void pushCalisiyorBildir() {
+    pushHazir = true;
+    dur();
+  }
 
   static Timer? _sayac;
   static int? _son;
@@ -47,7 +64,7 @@ class BildirimCanli {
 
   /// Yoklamayı başlatır (zaten açıksa hiçbir şey yapmaz).
   static void baslat() {
-    if (!webMi || !Api.girisli || _sayac != null) return;
+    if (!yoklamali || pushHazir || !Api.girisli || _sayac != null) return;
     _sayac = Timer.periodic(tur, (_) => _tur());
     // İlk tur HEMEN: damga alınsın ki ilk gerçek bildirim 20 sn beklemesin.
     _tur();
@@ -110,5 +127,6 @@ class BildirimCanli {
   static void sifirla() {
     dur();
     _ucusta = false;
+    pushHazir = false;
   }
 }

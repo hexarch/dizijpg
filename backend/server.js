@@ -1981,7 +1981,7 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
       aktorId
         ? havuz.query('SELECT kullanici_adi, avatar FROM kullanicilar WHERE id=$1', [aktorId])
         : Promise.resolve({ rows: [] }),
-      havuz.query('SELECT token, dil FROM cihaz_tokenlari WHERE kullanici_id=$1', [aliciId]),
+      havuz.query('SELECT token, dil, platform FROM cihaz_tokenlari WHERE kullanici_id=$1', [aliciId]),
     ]);
     if (!tok.rows.length) return;
     const aktorAdi = akt.rows[0]?.kullanici_adi || '';
@@ -2008,7 +2008,19 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
           ? (sablon.geri_bildirim || '')
           : (sablon[tur] || '').replace('{ad}', ad);
     if (!govde) return;
-    const tokens = tok.rows.map((r) => r.token);
+    // ===================================================================
+    // PLATFORMA GÖRE İKİ PAKET (13 Eyl 2026 — kullanıcı bildirdi: "apple'da
+    // bildirimler gitmiyor, mesela apple kullanan birini takip edince
+    // bildirim gitmiyor ama android'de gidiyor")
+    // ===================================================================
+    // iOS, `notification` alanı OLMAYAN bir push'u KULLANICIYA GÖSTERMEZ:
+    // veri-mesajı ancak uygulama ön plandayken (ya da `content-available`
+    // ile sessizce) teslim edilir. Android tarafında 'mesaj' ve 'arama'
+    // BİLEREK veri-mesajıdır (avatarlı MessagingStyle, Cevapla/Reddet,
+    // tam ekran arama) — aynı paketi iOS'a yollamak o cihazlarda mesaj ve
+    // arama bildirimini SESSİZCE ÖLDÜRÜYORDU.
+    const iosTokenlari = tok.rows.filter((r) => r.platform === 'ios').map((r) => r.token);
+    const digerTokenlar = tok.rows.filter((r) => r.platform !== 'ios').map((r) => r.token);
     // Derin bağlantı + görsel için ortak veri (FCM data değerleri string olmalı)
     const veri = {
       tur: String(tur),
@@ -2054,7 +2066,6 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
       // kullanıcı için hem kafa karıştırıcı hem ürkütücü. TTL çalma süresiyle
       // AYNI olmalı (firebase-admin `android.ttl` MİLİSANİYEDİR).
       paket = {
-        tokens,
         data: {
           ...veri,
           arama_id: String(ekstra?.arama_id || ''),
@@ -2070,7 +2081,6 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
       // bildirim kurar ve dokununca sohbeti açar. notification alanı olsaydı
       // sistem kendisi basar, avatar/derin bağlantı özelleşemezdi.
       paket = {
-        tokens,
         data: {
           ...veri,
           baslik: ad,
@@ -2080,20 +2090,45 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
       };
     } else {
       paket = {
-        tokens,
         notification: { title: 'dizi.jpg', body: govde },
         data: veri,
         android: { priority: 'high', notification: { channelId: 'dizijpg_bildirim' } },
       };
     }
-    const yanit = await admin.messaging().sendEachForMulticast(paket);
+    // iOS PAKETİ: türü ne olursa olsun GÖRÜNÜR bildirim (`notification`) +
+    // aynı `data` (dokununca derin bağlantı çalışsın). Başlık mesajda
+    // GÖNDEREN, aramada ARAYAN, diğerlerinde marka adıdır.
+    const iosPaketi = {
+      notification: {
+        title: (tur === 'mesaj' || tur === 'arama') ? ad : 'dizi.jpg',
+        body: tur === 'mesaj' ? String(ekstra?.metin || govde).slice(0, 500) : govde,
+      },
+      data: { ...(paket.data || veri) },
+      apns: {
+        headers: {
+          'apns-priority': '10',
+          // Arama bildirimi de Android'deki gibi çalma süresiyle ÖLÜR:
+          // iki gün sonra "seni arıyor" bildirimi düşmesin.
+          ...(tur === 'arama'
+            ? { 'apns-expiration': String(Math.floor(Date.now() / 1000) + Math.floor(CALMA_MS / 1000)) }
+            : {}),
+        },
+        payload: { aps: { sound: 'default' } },
+      },
+    };
+    const gonderimler = [];
+    if (digerTokenlar.length) gonderimler.push({ tokens: digerTokenlar, paket });
+    if (iosTokenlari.length) gonderimler.push({ tokens: iosTokenlari, paket: iosPaketi });
     const gecersiz = [];
-    yanit.responses.forEach((r, i) => {
-      const kod = r.error?.code || '';
-      if (!r.success && /not-registered|invalid-argument|invalid-registration/.test(kod)) {
-        gecersiz.push(tokens[i]);
-      }
-    });
+    for (const g of gonderimler) {
+      const yanit = await admin.messaging().sendEachForMulticast({ ...g.paket, tokens: g.tokens });
+      yanit.responses.forEach((r, i) => {
+        const kod = r.error?.code || '';
+        if (!r.success && /not-registered|invalid-argument|invalid-registration/.test(kod)) {
+          gecersiz.push(g.tokens[i]);
+        }
+      });
+    }
     if (gecersiz.length) {
       await havuz.query('DELETE FROM cihaz_tokenlari WHERE token = ANY($1)', [gecersiz]);
     }
