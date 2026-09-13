@@ -10583,3 +10583,35 @@ beğendiğinde yukarıda popup ile gözükmeli aynı Instagram'daki gibi"*.
     tarafı `dart:io` + Firebase çeken bir dosyayı okumasın.
   · Arama ekranındayken (`yenilemeyleAcilmaz`) ve açık konuşmada pencere
     ÇİZİLMEZ; üst konum `uri.path` değil `sohbetUstKonum` ile okunur.
+
+## 13 Eyl 2026 — iOS'ta bildirimler hiç gitmiyordu ✅ (sunucu canlı, istemci sürüm bekliyor)
+Kullanıcı: *"apple'de bildirimler gitmiyor mesela apple kullanan birisini takip
+edince takip ettiğimin bildirimi gitmiyor ama android'de gidiyor"*.
+- ÖLÇÜM (kanıt): `SELECT platform, count(*) FROM cihaz_tokenlari` →
+  **714 android, 0 ios**. `hatalar` tablosunda iOS 1.148.2+227 kullanıcısı
+  BUGÜN hata raporu gönderiyor — yani iOS kullanıcısı var, jetonu yok.
+  APNs anahtarı (C9FJ65FV23) Firebase'e 11 Eyl'de yüklendi, entitlement
+  (`aps-environment: production`) yerinde, GoogleService-Info doğru projede.
+  Yani sorun yapılandırmada DEĞİL, iki koddaydı:
+- ✅ **İSTEMCİ:** iOS'ta `getToken()` APNS jetonu gelmeden çağrılıyor
+  (`apns-token-not-set` fırlatır) ve hata `catch (_) {}` içinde yutuluyordu →
+  `_tokenAl()` iOS'ta `getAPNSToken()`i ~9 sn bekliyor; `pushBaslat` hataları
+  artık `Api.hataBildir` ile sunucuya düşüyor (sessiz ölüm bitti).
+- ✅ **SUNUCU (CANLI):** 'mesaj' ve 'arama' BİLEREK veri-mesajıydı (Android'de
+  avatarlı MessagingStyle + Cevapla/Reddet). iOS `notification` alanı olmayan
+  push'u KULLANICIYA GÖSTERMEZ → jeton kaydolsa bile DM ve arama sessiz
+  kalırdı. `pushBildirim` artık platforma göre İKİ paket yolluyor: Android'e
+  eskisinin AYNISI, iOS'a görünür bildirim + `apns.sound` + aramada
+  `apns-expiration` (45 sn sonra ölür).
+- ✅ **YEDEK KANAL:** iOS'ta uygulama içi bildirim yoklaması (bildirim_canli)
+  açık — push jetonu gerçekten kaydolunca `pushCalisiyorBildir()` ile susuyor,
+  iki kanal birden çalışmıyor.
+- ⏳ AÇIK: istemci düzeltmesi ancak YENİ App Store sürümüyle ulaşır
+  (mağazada 1.148.2+227 canlı). Sunucu düzeltmesi 1.155.0 ile birlikte canlıda.
+- TUZAKLAR:
+  · Sahte havuzda `DELETE FROM cihaz_tokenlari` sorgusu da "FROM
+    cihaz_tokenlari" içeriyor — DELETE dalı ÖNCE bakılmazsa silme jeton
+    listesi sanılır (test bu tuzağa düştü).
+  · `web_brotli.sh` KOŞARKEN eski hash'li paketi silme: betik o dosyayı
+    sıkıştırırken `stat` hatası alıp ölüyor ve `index.html.br` BAYAT kalıyor
+    (canlı curl hâlâ eski paketi verir).
