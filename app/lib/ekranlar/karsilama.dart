@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
+import '../bildirim_canli.dart';
 import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
 import '../push.dart';
@@ -452,6 +453,7 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
     // düşüyordu; kullanıcı daha uygulamayı görmeden bir izin kararı veriyor
     // ve genelde reddediyordu. Akış bitince (ya da kapatılınca) sorulur.
     pushBaslat();
+    BildirimCanli.baslat();
     if (mounted) context.go('/kesfet');
   }
 

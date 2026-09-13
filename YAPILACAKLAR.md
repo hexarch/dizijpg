@@ -10543,3 +10543,43 @@ bu istatistik verilerini google search console gibi detaylı yap"*.
     kopyayı gösterip "dağıtım gitmemiş" sanısı yaratır → `location.reload()`.
   · `th{position:sticky;top:0}` iki başlık satırını üst üste bindiriyor ve
     z-index'siz olduğu için gövde satırları başlığın üstüne biniyordu.
+
+## 13 Eyl 2026 — Uygulama içi anlık bildirim penceresi (Instagram tarzı) ✅
+Kullanıcı: *"uygulamada gezerken gelen bildirimleri yukarıdan görsek daha iyi
+olmaz mı; uygulamada gezerken mesaj geldiğinde veya birisi gönderiyi
+beğendiğinde yukarıda popup ile gözükmeli aynı Instagram'daki gibi"*.
+- ÖNCESİ: uygulama ÖN PLANDAYKEN gelen FCM'ler SİSTEM bildirimi olarak
+  basılıyordu (gölgeye düşüyor, kullanıcı uygulamadan çıkıp geri dönüyordu);
+  webde ise hiçbir şey olmuyordu — mesaj/beğeni ancak ekrana girilince
+  görülüyordu.
+- ✅ `anlik_bildirim.dart`: ekranın üstünden inen pencere (avatar + tür rozeti,
+  kalın başlık, iki satır metin, kapat düğmesi). Dokunuş HEDEFE gider
+  (mesaj → sohbet, beğeni/yanıt/etiket → gönderi, takip → profil, bölüm →
+  bölüm sayfası); AVATAR dokunuşu aktörün profiline. Yukarı sürükleyince
+  kapanır, 5 sn sonra kendiliğinden düşer, son gelen öncekinin yerine geçer.
+  Giriş 240 ms easeOut / çıkış 170 ms easeIn; "hareketi azalt" açıkken
+  animasyonsuz belirir.
+- ✅ MOBİL kaynak: `push.dart` ön planda artık yerel bildirim BASMIYOR,
+  pencereyi çiziyor. İletildi damgası (`çift tik`) ayrı fonksiyona alındı —
+  yoksa uygulama açıkken gelen mesajlarda çift tik hiç düşmezdi.
+- ✅ WEB kaynak: `GET /bildirimler/canli?son=<id>` + `bildirim_canli.dart`
+  (20 sn yoklama, yalnız web, yalnız ön planda). İLK TUR DAMGA TURUDUR:
+  eski bildirimler pencere açmaz. Mesaj satırında önizleme METNİ de gelir
+  (şifreli zarf sunucuda çözülür), medyada "Fotoğraf"/"Video" etiketi.
+- ✅ Metin/ikon TEK KAYNAK (`bildirim_gorunumu.dart`) — liste ekranı ve
+  pencere aynı 45 dilli cümleleri kullanıyor; YENİ ÇEVİRİ ANAHTARI AÇILMADI.
+- ✅ Testler: `app/test/anlik_bildirim_test.dart` (15) +
+  `backend/test/anlik_bildirim_ucu.test.js` (6, uç sahte havuzla GERÇEKTEN
+  koşuyor). Takım: Flutter 2.912/2.912, backend 2.468/2.469 (tek kırmızı
+  `seo_soft404` BOT_ROTALARI — başka oturumun liste rotalarından, bu işle
+  ilgisiz ve bu değişiklikten ÖNCE de kırmızıydı).
+- TUZAKLAR:
+  · `bildirimHedefi` FCM sözlüğünü okur: aktör adı orada `ad`, API satırında
+    `aktor`. Çevrilmezse mesaj/takip pencereleri HEDEFSİZ kalır (test yakaladı).
+  · Pencere `MaterialApp.builder` içinde, Navigator'ın ÜSTÜNDE yaşıyor →
+    üstünde Overlay YOK: `Tooltip` kullanmak "No Overlay widget found"
+    assert'i attırıyor. Erişilebilirlik etiketi `Icon.semanticLabel` ile.
+  · `bildirimHedefi` `push.dart`tan `bildirim_hedefi.dart`a taşındı: web
+    tarafı `dart:io` + Firebase çeken bir dosyayı okumasın.
+  · Arama ekranındayken (`yenilemeyleAcilmaz`) ve açık konuşmada pencere
+    ÇİZİLMEZ; üst konum `uri.path` değil `sohbetUstKonum` ile okunur.

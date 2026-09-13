@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../altyazi.dart';
 import '../api.dart';
+import '../bildirim_canli.dart';
 import '../bayrak.dart' show ulkeAdi;
 import '../ceviri.dart';
 import '../gorusme/arama_servisi.dart';
@@ -598,6 +599,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
     sifre.dispose();
     if (silindi == true) {
       await pushTokenSil();
+      BildirimCanli.dur(); // anlık bildirim yoklaması da sussun
       await oturum.cikis();
     }
   }
@@ -1595,6 +1597,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   onPressed: () async {
                     final oturum = context.read<Oturum>();
                     await pushTokenSil(); // bu cihaza artık bildirim gitmesin
+                    BildirimCanli.dur(); // yoklama da sussun
                     if (!context.mounted) return;
                     Navigator.pop(context);
                     oturum.cikis();

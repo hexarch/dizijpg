@@ -22,6 +22,7 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dizijpg/anlik_bildirim.dart';
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/bildirimler.dart';
 import 'package:dizijpg/push.dart';
@@ -486,23 +487,22 @@ void main() {
       );
     });
 
-    test('bildirimYuku kisi alanlarını KAYBETMEZ (ön plan dokunuşu)', () {
-      // Ön planda basılan yerel bildirimin yükü FCM data'sının TAMAMIDIR;
-      // icerik_tur düşerse dokunuş listeye giderdi.
-      final yuk =
-          jsonDecode(
-                bildirimYuku(const {
-                  'tur': 'kisi',
-                  'icerik_tur': 'movie',
-                  'tmdb_id': 1396,
-                  'kisi_id': 17419,
-                }),
-              )
-              as Map<String, dynamic>;
-      expect(yuk['icerik_tur'], 'movie');
-      expect(yuk['tmdb_id'], '1396');
-      expect(yuk['kisi_id'], '17419');
-      expect(bildirimHedefi(yuk), '/icerik/movie/1396');
+    test('ÖN PLAN PENCERESİ kisi alanlarını KAYBETMEZ', () {
+      // 13 Ağu 2026 hatası: ön planda basılan yerel bildirimin yükü yalnız
+      // {tur, ad} taşıyordu, `icerik_tur` düşünce dokunuş listeye gidiyordu.
+      // 13 Eyl 2026'dan beri ön planda pencere iniyor ve FCM data'sının
+      // TAMAMINI görüyor — hedef arka plandakiyle AYNI olmalı.
+      AnlikBildirim.sifirla();
+      addTearDown(AnlikBildirim.sifirla);
+      const veri = {
+        'tur': 'kisi',
+        'icerik_tur': 'movie',
+        'tmdb_id': 1396,
+        'kisi_id': 17419,
+      };
+      AnlikBildirim.fcmGoster(veri);
+      expect(AnlikBildirim.aktif.value?.hedef, '/icerik/movie/1396');
+      expect(AnlikBildirim.aktif.value?.hedef, bildirimHedefi(veri));
     });
 
     test('GERİLEME: eski türlerin hedefleri değişmedi', () {

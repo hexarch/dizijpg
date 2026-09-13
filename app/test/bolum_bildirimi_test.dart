@@ -20,6 +20,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dizijpg/anlik_bildirim.dart';
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/ayarlar.dart';
 import 'package:dizijpg/ekranlar/bildirimler.dart';
@@ -507,17 +508,23 @@ void main() {
     });
   });
 
-  group('PUSH — ön plan yükü hedefi KAYBETMİYOR', () {
+  group('PUSH — ön plan penceresi hedefi KAYBETMİYOR', () {
     // HATA BUYDU (13 Ağu 2026): uygulama ÖN PLANDAYKEN gelen bildirimin yerel
     // kopyası `jsonEncode({'tur':..., 'ad':...})` ile basılıyordu; `tmdb_id`,
     // `sezon`, `bolum` ve `yorum_id` yükte yoktu. Aynı bildirime uygulama arka
     // plandayken dokunmak bölüme/gönderiye götürürken ön planda dokunmak
     // /bildirimler listesine düşüyordu.
+    //
+    // 13 Eyl 2026: ön planda artık YEREL BİLDİRİM DEĞİL, uygulama içi pencere
+    // iniyor (anlik_bildirim.dart) ve FCM data'sını OLDUĞU GİBİ görüyor —
+    // kural aynı, kanıt penceresinin üstünde.
     void ayniYereGitmeli(String ad, Map<String, dynamic> veri) {
-      test('$ad: ön plan yükü ile FCM data\'sı AYNI hedefi verir', () {
-        final cozulen = jsonDecode(bildirimYuku(veri)) as Map<String, dynamic>;
-        expect(bildirimHedefi(cozulen), bildirimHedefi(veri));
-        expect(bildirimHedefi(cozulen), isNot('/bildirimler'));
+      test('$ad: ön plan penceresi ile FCM data\'sı AYNI hedefi verir', () {
+        AnlikBildirim.sifirla();
+        addTearDown(AnlikBildirim.sifirla);
+        AnlikBildirim.fcmGoster(veri);
+        expect(AnlikBildirim.aktif.value?.hedef, bildirimHedefi(veri));
+        expect(AnlikBildirim.aktif.value?.hedef, isNot('/bildirimler'));
       });
     }
 
@@ -537,12 +544,13 @@ void main() {
     });
     ayniYereGitmeli('takip', const {'tur': 'takip', 'ad': 'ayse'});
 
-    test('yük JSON olarak çözülebilir kalır (null değer sızmaz)', () {
-      final cozulen =
-          jsonDecode(bildirimYuku(const {'tur': 'takip', 'ad': null}))
-              as Map<String, dynamic>;
-      expect(cozulen['ad'], '');
-      expect(bildirimHedefi(cozulen), isNull);
+    test('adsız takip bildirimi hiçbir yere GÖTÜRMEZ (pencere hedefsiz)', () {
+      AnlikBildirim.sifirla();
+      addTearDown(AnlikBildirim.sifirla);
+      const veri = {'tur': 'takip', 'ad': null};
+      expect(bildirimHedefi(veri), isNull);
+      AnlikBildirim.fcmGoster(veri);
+      expect(AnlikBildirim.aktif.value?.hedef, isNull);
     });
   });
 

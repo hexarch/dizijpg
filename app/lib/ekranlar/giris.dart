@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../api.dart';
+import '../bildirim_canli.dart';
 import '../apple_kapisi.dart';
 import '../ceviri.dart';
 import '../google_kapisi.dart';
@@ -208,6 +209,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
       if (!mounted) return;
       await context.read<Oturum>().girisYapildi(kullanici);
       pushBaslat(); // push izni + token kaydı
+      BildirimCanli.baslat(); // webde anlık bildirim penceresi
       // Ekrandan çıkışı [_oturumDegisti] yapıyor — oturumun açıldığı HER yol
       // (misafir, şifre, Google, Apple, iki adım) aynı kapıdan geçsin.
     } catch (e) {
@@ -307,7 +309,10 @@ class _GirisEkraniState extends State<GirisEkrani> {
       d['kullanici'] as Map<String, dynamic>,
     );
     // Yeni hesapta push izni karşılamanın sonunda (karsilama.dart `_cik`).
-    if (d['yeni'] != true) pushBaslat(); // push izni + token kaydı
+    if (d['yeni'] != true) {
+      pushBaslat(); // push izni + token kaydı
+      BildirimCanli.baslat(); // webde anlık bildirim penceresi
+    }
   }
 
   /// Google girişinin HER başarısızlığı kullanıcıya söylenir: sessiz
@@ -492,6 +497,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
         d['kullanici'] as Map<String, dynamic>,
       );
       pushBaslat(); // push izni + token kaydı
+      BildirimCanli.baslat(); // webde anlık bildirim penceresi
     } on ApiHata catch (e) {
       if (!mounted) return;
       // Kayıtta kullanıcı adı çakışması/yasağı ALANIN ALTINA yazılır (makine
@@ -526,6 +532,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
       if (!mounted) return;
       await context.read<Oturum>().girisYapildi(kullanici);
       pushBaslat(); // push izni + token kaydı
+      BildirimCanli.baslat(); // webde anlık bildirim penceresi
     },
     yenidenGonder: () => Api.girisKoduYenile(bilet),
   );

@@ -1885,6 +1885,10 @@ const takvimLimiti = hizLimiti(60, (req) => `k:${req.kullanici.id}`);
 const kisiLimiti = hizLimiti(240, (req) => `ko:${req.kullanici.id}`);
 const akisLimiti = hizLimiti(240, (req) => `f:${req.kullanici.id}`);
 const mesajLimiti = hizLimiti(300, (req) => `m:${req.kullanici.id}`);
+// ANLIK BİLDİRİM YOKLAMASI (webde FCM yok; bkz. GET /bildirimler/canli).
+// 20 sn'lik tur = saatte 180 istek; 400 iki sekmeye yer bırakır, üçüncüsü
+// 429 alır ve pencere o sekmede susar (uygulamanın geri kalanı etkilenmez).
+const canliBildirimLimiti = hizLimiti(400, (req) => `cb:${req.kullanici.id}`);
 // Bir sohbet mesajındaki (albüm) medya tavanı — istemci `albumAzami` ile aynı.
 const ALBUM_AZAMI = 10;
 // Yorum spam + @etiket bildirim seli koruması
@@ -16177,6 +16181,115 @@ app.post('/bildirimler/okundu', girisZorunlu, sarici(async (req, res) => {
     'UPDATE bildirimler SET okundu=true WHERE kullanici_id=$1 AND NOT okundu',
     [req.kullanici.id]);
   res.json({ tamam: true });
+}));
+
+// ---------------------------------------------------------------------------
+// ANLIK BİLDİRİM PENCERESİ (13 Eyl 2026 isteği: "uygulamada gezerken mesaj
+// geldiğinde veya birisi gönderiyi beğendiğinde yukarıda popup ile gözükmeli,
+// aynı Instagram'daki gibi")
+// ---------------------------------------------------------------------------
+// MOBİLDE KAYNAK FCM'DİR (ön plandaki `onMessage`); bu uç WEB İÇİNDİR —
+// tarayıcıda FCM yok, pencereyi besleyecek başka bir kanal da yok.
+//
+// Üç tasarım kararı:
+//  1) `son` YOKSA SATIR DÖNMEZ, yalnız en büyük id verilir. İlk turda dünkü
+//     bildirimlerin hepsi üst üste pencere açsaydı uygulama açılır açılmaz
+//     ekran pencere yağmuruna dönerdi; istemci ilk turu "damga al" turu
+//     olarak kullanır.
+//  2) `/bildirimler`in aksine 'mesaj' TÜRÜ DE GELİR — pencerenin asıl amacı
+//     DM'i haber vermek. (Liste ucunda mesaj satırları bilerek gizli; orada
+//     gerekçe "mesajlar etkileşim bildirimlerini eziyordu", bkz. yukarısı.)
+//     Satır ZATEN yalnız alıcı o sohbette DEĞİLSE yazılıyor (POST /mesajlar),
+//     yani açık konuşmada pencere çıkmaz.
+//  3) EN FAZLA 5 SATIR: art arda 30 beğeni gelse bile 5 pencere çizilir.
+//
+// Yoklanan uçtur; ucuz kalmalı. TMDB zenginleştirmesi YALNIZ gerçekten yeni
+// 'bolum'/'kisi' satırı varsa çalışır (turların ezici çoğunluğu boş döner).
+app.get('/bildirimler/canli', girisZorunlu, canliBildirimLimiti, sarici(async (req, res) => {
+  const son = Number.parseInt(req.query.son, 10);
+  const damga = await havuz.query(
+    'SELECT COALESCE(max(id), 0)::int AS son FROM bildirimler WHERE kullanici_id=$1',
+    [req.kullanici.id]);
+  const enSon = damga.rows[0].son;
+  // İlk tur (damgasız) ya da arada yeni satır yok → sorgu bile açılmaz.
+  if (!Number.isInteger(son) || son < 0 || son >= enSon) {
+    return res.json({ son: enSon, bildirimler: [] });
+  }
+  const { rows } = await havuz.query(
+    `SELECT b.id, b.tur, b.yorum_id, b.tarih,
+            b.tmdb_id, b.sezon, b.bolum, b.kisi_id, b.icerik_tur,
+            b.surum, b.oda_id,
+            k.kullanici_adi AS aktor, k.avatar AS aktor_avatar,
+            k.testci AS aktor_testci,
+            y.tur AS yorum_tur
+     FROM bildirimler b
+     LEFT JOIN kullanicilar k ON k.id = b.aktor_id
+     LEFT JOIN yorumlar y ON y.id = b.yorum_id
+     WHERE b.kullanici_id=$1 AND b.id > $2
+     ORDER BY b.id DESC LIMIT 5`,
+    [req.kullanici.id, son]);
+
+  // MESAJ ÖNİZLEMESİ: pencerede "@ad sana mesaj gönderdi" yerine mesajın
+  // KENDİSİ yazsın (Instagram/WhatsApp davranışı). Metin DB'de şifrelidir;
+  // sohbet listesindeki önizlemeyle AYNI kapıdan (`cozGoster`) çözülür.
+  // N+1 YOK: gönderen başına tek `DISTINCT ON` sorgusu.
+  const gonderenler = [...new Set(rows.filter((r) => r.tur === 'mesaj' && r.aktor)
+    .map((r) => r.aktor))];
+  if (gonderenler.length) {
+    const m = await havuz.query(
+      `SELECT DISTINCT ON (m.gonderen_id) k.kullanici_adi AS gonderen,
+              m.metin, m.medya
+       FROM mesajlar m JOIN kullanicilar k ON k.id = m.gonderen_id
+       WHERE m.alici_id=$1 AND k.kullanici_adi = ANY($2)
+       ORDER BY m.gonderen_id, m.id DESC`,
+      [req.kullanici.id, gonderenler]);
+    const harita = new Map(m.rows.map((r) => [r.gonderen, r]));
+    for (const r of rows) {
+      if (r.tur !== 'mesaj') continue;
+      const s = harita.get(r.aktor);
+      if (!s) continue;
+      // Pencere iki satır yazar; 200 karakterden fazlası zaten kırpılır.
+      r.metin = (cozGoster(s.metin) || '').slice(0, 200);
+      // Medyanın YOLU GİTMEZ (imzasız yol zaten açılmaz): istemci yalnız
+      // "fotoğraf mı video mu" etiketini yazsın diye tür bayrağı gider.
+      r.medya_tur = s.medya
+        ? (/\.(mp4|webm)$/i.test(s.medya) ? 'video' : 'foto')
+        : null;
+    }
+  }
+
+  // 'bolum'/'kisi' satırları aktörsüzdür: pencerede yazacak ad TMDB'den gelir.
+  // `/bildirimler` ile AYNI toplu çağrı (aynı önbellek anahtarları).
+  const bolumler = rows.filter((r) => r.tur === 'bolum' && r.tmdb_id);
+  const kisiler = rows.filter((r) => r.tur === 'kisi' && r.tmdb_id && r.icerik_tur);
+  if (bolumler.length || kisiler.length) {
+    const yol = (id) => `/tv/${id}?language=tr-TR`;
+    const yapimYolu = (r) => `/${r.icerik_tur}/${r.tmdb_id}?language=tr-TR`;
+    const kisiYolu = (id) => `/person/${id}`;
+    const harita = await tmdbTopluGetir(
+      [
+        ...bolumler.map((r) => yol(r.tmdb_id)),
+        ...kisiler.map(yapimYolu),
+        ...kisiler.filter((r) => r.kisi_id).map((r) => kisiYolu(r.kisi_id)),
+      ],
+      ONBELLEK_TTL_SN.uzun,
+    ).catch(() => new Map());
+    for (const r of bolumler) {
+      const d = harita.get(yol(r.tmdb_id));
+      r.dizi_adi = d?.name || null;
+      r.poster = d?.poster_path || null;
+    }
+    for (const r of kisiler) {
+      const y = harita.get(yapimYolu(r));
+      const p = r.kisi_id ? harita.get(kisiYolu(r.kisi_id)) : null;
+      r.yapim_adi = y?.name || y?.title || null;
+      r.poster = y?.poster_path || null;
+      r.kisi_adi = p?.name || null;
+    }
+  }
+  // Eskiden yeniye: istemci pencereleri geldikleri sırayla çizer.
+  rows.reverse();
+  res.json({ son: enSon, bildirimler: rows });
 }));
 
 // ---------- özel mesajlar ----------

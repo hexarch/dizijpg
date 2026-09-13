@@ -43,11 +43,8 @@ Map<String, dynamic> _begeni({
 
 late GoRouter _yonlendirici;
 
-String get _konum => _yonlendirici
-    .routerDelegate
-    .currentConfiguration
-    .uri
-    .toString();
+String get _konum =>
+    _yonlendirici.routerDelegate.currentConfiguration.uri.toString();
 
 Future<void> _ekran(
   WidgetTester tester,
@@ -73,9 +70,8 @@ Future<void> _ekran(
       ),
       GoRoute(
         path: '/kullanici/:ad',
-        builder: (_, s) => Scaffold(
-          body: Text('profil:${s.pathParameters['ad']}'),
-        ),
+        builder: (_, s) =>
+            Scaffold(body: Text('profil:${s.pathParameters['ad']}')),
       ),
       GoRoute(
         path: '/dizi/:id/sezon/:s/bolum/:b',
@@ -89,7 +85,10 @@ Future<void> _ekran(
     ],
   );
   await tester.pumpWidget(
-    MaterialApp.router(theme: diziTema(acik: false), routerConfig: _yonlendirici),
+    MaterialApp.router(
+      theme: diziTema(acik: false),
+      routerConfig: _yonlendirici,
+    ),
   );
   await tester.pump(); // istek
   await tester.pump(); // yanıt

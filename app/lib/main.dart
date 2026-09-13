@@ -10,7 +10,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'altyazi.dart';
+import 'anlik_bildirim.dart';
 import 'api.dart';
+import 'bildirim_canli.dart';
 import 'ceviri.dart';
 import 'sayfa_basligi.dart';
 import 'cihaz_kimlik.dart';
@@ -144,6 +146,9 @@ Future<void> main() async {
     await acilisAdimi('oturum', oturum.yukle);
     // Girişli kullanıcıda push'u başlat (izin + token kaydı)
     if (oturum.girisli) pushBaslat();
+    // Webde anlık bildirim penceresinin TEK kaynağı bu yoklamadır (FCM yok);
+    // mobilde `baslat` kendiliğinden geri döner. Bkz. bildirim_canli.dart.
+    if (oturum.girisli) BildirimCanli.baslat();
     if (oturum.girisli) KitaplikDurumu.yukle();
     // Ölçeği sunucudan tazele (cihazlar arası tutarlılık). Bloklamaz.
     if (oturum.girisli) PuanOlcegi.tazele();
@@ -269,13 +274,22 @@ class _DiziJpgAppState extends State<DiziJpgApp> {
             // düşürür (13 Eyl 2026 isteği, bkz. uyari.dart). Katman
             // dokunuşu YUTMAZ; sürüm kapısı ve davet penceresi dahil her
             // şey altında normal çalışır.
+            // ANLIK BİLDİRİM PENCERESİ (13 Eyl 2026): UyariKatmani'nın
+            // İÇİNDE ama Navigator'ın ÜSTÜNDE — rota değişse de pencere
+            // ekranda kalır, her sayfanın üzerine iner. Dışına alınsaydı ilk
+            // dokunuşta SnackBar'ı düşüren Listener pencerenin dokunuşunu da
+            // görürdü; içine alınca pencere kendi dokunuşunu kendi yönetir.
             child: UyariKatmani(
-              cocuk: SurumKapisi(
-                // Uygulama daveti sürüm kapısının ALTINDA: zorunlu güncelleme
-                // ekranı varken indirme penceresi onun üstüne çıkmamalı.
-                // Web dışında ve masaüstü tarayıcıda hiç çizilmez
-                // (bkz. uygulama_daveti_web.dart).
-                cocuk: UygulamaDaveti(cocuk: cocuk ?? const SizedBox.shrink()),
+              cocuk: AnlikBildirimKatmani(
+                cocuk: SurumKapisi(
+                  // Uygulama daveti sürüm kapısının ALTINDA: zorunlu güncelleme
+                  // ekranı varken indirme penceresi onun üstüne çıkmamalı.
+                  // Web dışında ve masaüstü tarayıcıda hiç çizilmez
+                  // (bkz. uygulama_daveti_web.dart).
+                  cocuk: UygulamaDaveti(
+                    cocuk: cocuk ?? const SizedBox.shrink(),
+                  ),
+                ),
               ),
             ),
           ),
