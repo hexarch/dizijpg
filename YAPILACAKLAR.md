@@ -117,6 +117,30 @@ taranmadı kuyruğu 61.079. Tıklamanın %91'i Türkiye'den. Kişi haritası tr+
 daraltılmış, bölüm hâlâ 46 dilde. Kullanıcı 12 Eyl'de "boşver tarasın google"
 dedi — daraltma YAPILMADI, bilinçli karar.
 
+## 2026-09-13 — 🔁 YAN ÇEVİRİNCE VİDEO BAŞTAN YÜKLENİYORDU
+
+**Tetik (kullanıcı):** *"dikeyken yan çevirdiğimde video tekrardan yükleniyor"*.
+
+- ✅ **Kök sebep ölçüldü.** Telefonu yatay çevirmek odayı OTOMATİK tam ekrana
+  sokuyor (`_yonuIsle`, 4 Eyl'de bilerek yazıldı) ve tam ekran düzeni
+  (`_tamEkranIskelet` → `Stack`/`Positioned.fill`) normal düzenle (`Scaffold`
+  + `AppBar` + `Column`) AYNI AĞAÇ DEĞİL. Flutter elemanları konuma göre
+  eşleştirdiği için `OdaGommeYuzeyi`nin State'i sökülüp yenisi kuruluyordu;
+  yeni State = yeni `WebViewController` = yeni `loadRequest` = video sıfırdan.
+  Emülatörde CDP ile doğrulandı: döndürmeden sonra `currentTime` 458 → **0**,
+  WebView penceresi 406×228'de **bayat** kalıyordu.
+- ✅ **Düzeltme: `ValueKey` → `GlobalKey`.** `GlobalKey` elemanı söküp yeniden
+  kurmak yerine YENİ YERİNE TAŞIYOR (reparenting); State de altındaki platform
+  görünümü de canlı kalıyor. Anahtar yalnız KASITLI hallerde yenileniyor:
+  kaynak değişimi ve kurtarma nöbetçisi.
+- ✅ **Kanıt (iki katmanlı):** yeni `test/oda_yon_gomme_test.dart` — yüzeyin
+  State'i dikey↔yatay ve tam ekran giriş/çıkışında AYNI NESNE kalmalı;
+  düzeltme geri alınınca testler DÜŞÜYOR (kilit gerçek). Emülatörde de
+  sayfaya damga konup çevrildi: damga yerinde kaldı (yeniden yükleme YOK),
+  pencere 406×228 → 723×406 olarak doğru boyutlandı.
+- Not: artık kullanılmayan `_gommeTur` sayacı kaldırıldı; nöbetçinin gerekçesi
+  `_gommeNobetci` başlığına taşındı.
+
 ## 2026-09-13 — 🎛️ ODA BOŞ DURUMU: iki düğme eşit boyda, "URL yapıştır"
 
 **Tetik (kullanıcı):** *"video odasını açınca bağlantı yapıştır ve video yükle

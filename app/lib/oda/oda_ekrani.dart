@@ -197,7 +197,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   /// kumanda burada yaşar).
   OdaGommeDenetci? _gomme;
 
-  /// Gömme yüzeyinin KURULUM TURU — `ValueKey`in içinde.
+  /// Gömme yüzeyinin KURTARMA NÖBETÇİSİ.
   ///
   /// ===========================================================================
   /// NEDEN NÖBETÇİ VAR (7 Eyl 2026, canlıda ölçüldü)
@@ -214,13 +214,39 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   /// en olası açıklama.
   ///
   /// Bu yüzden kök sebebi tahmin etmek yerine KANITLANMIŞ kurtarma yolu koda
-  /// alındı: yüzey 5 saniye içinde "hazırım" demezse tur artar, `ValueKey`
-  /// değişir, Flutter yüzeyi söküp yeniden kurar. En çok 3 deneme —
+  /// alındı: yüzey 5 saniye içinde "hazırım" demezse tur artar, [_gommeAnahtari]
+  /// yenilenir, Flutter yüzeyi söküp yeniden kurar. En çok 3 deneme —
   /// sonrasında sorun yüzeyde değil (ağ, engellenmiş gömme) demektir ve
   /// sonsuz yeniden kurulum kullanıcıyı titreyen bir ekranla baş başa
   /// bırakırdı.
-  int _gommeTur = 0;
   Timer? _gommeNobetci;
+
+  /// Gömme yüzeyinin kimliği — ***`ValueKey` DEĞİL `GlobalKey`.***
+  ///
+  /// ===========================================================================
+  /// 13 EYL 2026 — "YAN ÇEVİRİNCE VİDEO BAŞTAN YÜKLENİYOR"
+  /// ===========================================================================
+  /// Kullanıcı bildirimi birebir: *"dikeyken yan çevirdiğimde video tekrardan
+  /// yükleniyor"*.
+  ///
+  /// Sebep: telefonu yatay çevirmek odayı OTOMATİK tam ekrana sokuyor
+  /// ([_yonuIsle], 4 Eyl 2026'da bilerek yazıldı) ve tam ekran düzeni
+  /// ([_tamEkranIskelet] → `Stack`/`Positioned.fill`) normal düzenle
+  /// (`Scaffold` + `AppBar` + `Column`) AYNI AĞAÇ DEĞİL. Flutter elemanları
+  /// konuma göre eşleştirdiği için `OdaGommeYuzeyi`nin State'i sökülüyor,
+  /// yenisi kuruluyor; yeni State demek YENİ `WebViewController` ve yeni
+  /// `loadRequest` demek — yani video sıfırdan yükleniyor, sahip neredeyse
+  /// oraya sarılıyor, tampon baştan doluyor. Aynısı tam ekrana elle girip
+  /// çıkarken de oluyordu.
+  ///
+  /// `GlobalKey` elemanı söküp yeniden kurmak yerine YENİ YERİNE TAŞIYOR
+  /// (reparenting): State de, altındaki platform görünümü de (WebView /
+  /// iframe) canlı kalıyor, video kaldığı yerden sürüyor.
+  ///
+  /// Anahtar YALNIZ kasıtlı olarak yenilenir: kaynak değiştiğinde ve nöbetçi
+  /// turu artırdığında (aşağıdaki iki yerde). Yüzeyi gerçekten söküp yeniden
+  /// kurmak istediğimiz haller onlar.
+  GlobalKey _gommeAnahtari = GlobalKey();
 
   /// Programatik seek sürerken düzeltme YAPILMAZ: art arda gelen iki seek
   /// oynatıcıyı tampon boşaltma döngüsüne sokar.
@@ -839,6 +865,8 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       setState(() {
         _gomme = g;
         _oynatici = g;
+        // YENİ KAYNAK = YENİ YÜZEY: eski WebView eski adresi taşıyor.
+        _gommeAnahtari = GlobalKey();
       });
       _gommeNobetciyiKur();
       return;
@@ -879,7 +907,8 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     _kontrolleriGoster();
   }
 
-  /// Yüzey haber vermezse onu yeniden kurar — gerekçe [_gommeTur] başlığında.
+  /// Yüzey haber vermezse onu yeniden kurar — gerekçe [_gommeNobetci]
+  /// başlığında.
   void _gommeNobetciyiKur() {
     _gommeNobetci?.cancel();
     var deneme = 0;
@@ -897,7 +926,11 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         t.cancel();
         return;
       }
-      setState(() => _gommeTur++);
+      // Nöbetçi yüzeyi BİLEREK söküyor: anahtar da yenilenmeli, yoksa
+      // `GlobalKey` aynı elemanı taşır ve hiçbir şey yeniden kurulmaz.
+      setState(() {
+        _gommeAnahtari = GlobalKey();
+      });
     });
   }
 
@@ -2004,7 +2037,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
       return Stack(
         fit: StackFit.expand,
         children: [
-          OdaGommeYuzeyi(key: ValueKey(_gommeTur), baglanti: b, denetci: g),
+          OdaGommeYuzeyi(key: _gommeAnahtari, baglanti: b, denetci: g),
           // SESSİZ BAŞLAMA KAPISI: gömme oynatıcı sesli otomatik başlayamaz
           // (tarayıcı politikası, gerekçe `OdaGommeDenetci` başlığında).
           // Düğme hem jesti verir hem sesi açar; olmasaydı kullanıcı sessiz
