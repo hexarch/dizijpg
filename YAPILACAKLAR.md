@@ -1,5 +1,29 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-14 — 🚀 ADMIN: ÇEVRİMİÇİ YANINDA "AKTİF IP" SAYACI
+
+**Tetik:** kullanıcı — *"admin panelinde çevrimiçi kullanıcılar kısmı var ya,
+hareketlerde onun yanına şunu da yaz: aktif ip sayısını koy."*
+
+Hareketler → "🟢 Çevrimiçi Kullanıcılar" başlığının sağında artık
+`5 kişi · 12 aktif IP (3 dk)` yazıyor.
+
+**İki sayı AYNI ŞEYİ ÖLÇMEZ, tutmaları da beklenmez:** kişi sayısı HESABIN
+`son_gorulme` damgasından gelir (giriş yapmış kullanıcı), IP sayısı ham
+trafikten — girişsiz ziyaretçi, aynı kişinin ikinci cihazı ve bot da bir
+IP'dir. Bu yüzden IP normalde daha büyüktür. Pencere ikisinde de
+`CEVRIMICI_ESIK_SN` (3 dk): sistemde "şu an"ın tek tanımı var.
+
+**"≥" ne demek:** sayım, bellek-içi istek halkasından yapılır (ISTEK_SINIR =
+400 kayıt, kümede birincilde birleşik). Yoğun dakikada 400 kayıt 3 dk'yı
+kapsamayabilir; kapsamıyorsa gerçek sayı daha büyüktür ve panel uydurmak
+yerine `≥12` basar (`aktif_ip.alt_sinir`).
+
+- Sayım saf fonksiyon: `backend/cevrimici.js` → `aktifIpOzeti()`
+- Uç: `GET /admin/hareketler` → `aktif_ip: {sayi, dakika, alt_sinir}`
+- Panel: `admin.html` `#cev-ip`
+- Test: `backend/test/admin_aktif_ip.test.js` (5 test)
 
 ## 2026-09-13 — 🔨 YANITIN YANITI: REDDIT KALIBI GİRİNTİ
 

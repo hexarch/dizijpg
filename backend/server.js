@@ -62,7 +62,7 @@ import {
 } from './dizi_durum.js';
 import {
   CEVRIMICI_ESIK_SN, sonGorulmeYazilmali, varlikSayilir, sohbetleriAyir, istekRozeti,
-  sohbetIstekMi,
+  sohbetIstekMi, aktifIpOzeti,
 } from './cevrimici.js';
 import {
   sohbetAcikAnahtar, sohbetAcikIsaretle, sohbetAcikKapat, sohbetAcikMi,
@@ -22464,12 +22464,17 @@ app.get('/admin/hareketler', adminKisit, sarici(async (_req, res) => {
       icerikler[a] = v.name || v.title || '?';
     } catch { icerikler[a] = '?'; }
   }));
+  // Aktif IP: aynı 3 dk içinde İSTEK YAPMIŞ benzersiz IP sayısı. Sayım ve
+  // "bu sayı taban mı" kararı cevrimici.js -> aktifIpOzeti içinde (saf, test
+  // edilebilir); kaynak, kümede birleşik olan bellek-içi istek halkası.
+  const aktifIp = aktifIpOzeti((await istekVerisi()).son, { sinir: ISTEK_SINIR });
   res.json({
     yorumlar: yorumlar.rows,
     izlemeler: izlemeler.rows,
     durumlar: durumlar.rows,
     yeni_kullanicilar: yeniler.rows,
     cevrimici: { sayi: cevrimici.rows.length, liste: cevrimici.rows },
+    aktif_ip: aktifIp,
     icerikler,
   });
 }));

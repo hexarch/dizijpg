@@ -135,3 +135,39 @@ export function sohbetleriAyir(satirlar) {
 export function istekRozeti(istekler) {
   return istekler.filter((s) => (s.okunmamis || 0) > 0).length;
 }
+
+/**
+ * Admin panelindeki "aktif IP" sayacı — SAF sayım.
+ *
+ * Çevrimiçi KİŞİ sayısından farklı bir şey ölçer: orada kullanıcı HESABININ
+ * son_gorulme damgası vardır, burada ham trafik. Giriş yapmamış ziyaretçi,
+ * aynı kişinin ikinci cihazı ve bot da bir IP'dir — bu yüzden aktif IP,
+ * çevrimiçi kişi sayısından normalde BÜYÜKTÜR ve ikisinin birbirini tutması
+ * BEKLENMEZ. Pencere yine CEVRIMICI_ESIK_SN: sistemde "şu an" tanımı tek.
+ *
+ * ⚠ KAYNAK SINIRLI: sayım, bellek-içi istek halkasından yapılır ve o halka
+ * sabit sayıda (server.js ISTEK_SINIR) kayıt tutar. Yoğun dakikada halkanın
+ * tamamı pencereden daha kısa bir süreyi kapsayabilir; o an gerçek sayı
+ * döndürülenden BÜYÜKTÜR. Uydurmamak için bu durum `alt_sinir: true` ile
+ * işaretlenir, panel sayıyı "≥" ile basar.
+ *
+ * @param {Array<{ip?:string, ts?:number}>} halka en yeniden eskiye istekler
+ * @param {{simdi?:number, sinir?:number}} secenek
+ */
+export function aktifIpOzeti(halka, { simdi = Date.now(), sinir = 0 } = {}) {
+  const esik = simdi - CEVRIMICI_ESIK_SN * 1000;
+  const ipler = new Set();
+  let enEski = Infinity;
+  for (const i of (Array.isArray(halka) ? halka : [])) {
+    if (typeof i?.ts !== 'number') continue;
+    if (i.ts < enEski) enEski = i.ts;
+    if (i.ip && i.ts >= esik) ipler.add(i.ip);
+  }
+  return {
+    sayi: ipler.size,
+    dakika: CEVRIMICI_ESIK_SN / 60,
+    // Halka dolu VE en eski kaydı bile pencerenin içindeyse pencerenin
+    // başlangıcını göremiyoruz demektir: sayı bir TABANDIR.
+    alt_sinir: sinir > 0 && halka?.length >= sinir && enEski > esik,
+  };
+}

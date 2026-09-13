@@ -426,7 +426,9 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
 <!-- HAREKETLER -->
 <section id="s-hareketler" class="sayfa gizli">
   <div class="panel" style="margin-bottom:16px">
-    <h3>🟢 Çevrimiçi Kullanıcılar <span class="sag" id="cev-say">—</span></h3>
+    <h3>🟢 Çevrimiçi Kullanıcılar <span class="sag" id="cev-say">—</span>
+      <span id="cev-ip" style="font-size:11px;color:var(--soluk);font-weight:500"
+            title="Son 3 dk içinde istek yapan benzersiz IP sayısı — girişsiz ziyaretçiler ve botlar dahil">—</span></h3>
     <div id="cevrimici" style="padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px"></div>
   </div>
   <div class="izgara" style="padding:0 0 16px">
@@ -1467,6 +1469,13 @@ async function hareketleriYukle(){
     const d=await api('/hareketler');
     const ic=(tur,id)=>iBag(tur,id,d.icerikler[tur+':'+id]||('#'+id));
     $('#cev-say').textContent=d.cevrimici.sayi+' kişi';
+    /* Aktif IP: çevrimiçi KİŞİ sayısının yanındaki ikinci ölçü. Kişi sayısı
+       hesap (son_gorulme), IP sayısı ham trafik — girişsiz ziyaretçi ve bot
+       da sayıldığı için normalde daha büyüktür. Sunucu `alt_sinir` derse
+       istek halkası 3 dk'yı kapsamamıştır, sayı TABANDIR: "≥" ile basılır. */
+    const aip=d.aktif_ip;
+    $('#cev-ip').textContent = aip
+      ? `· ${aip.alt_sinir?'≥':''}${aip.sayi} aktif IP (${aip.dakika} dk)` : '';
     $('#cevrimici').innerHTML = d.cevrimici.liste.map(u=>
       `<button class="btn" onclick="kullaniciDetay('${escJs(u.kullanici_adi)}')">🟢 @${esc(u.kullanici_adi)}${u.misafir?' <span style="color:var(--soluk2)">(misafir)</span>':''}</button>`
     ).join('') || '<span style="color:var(--soluk)">Şu an kimse yok</span>';
