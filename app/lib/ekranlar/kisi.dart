@@ -7,6 +7,7 @@ import '../sayfa_basligi.dart';
 import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
 import '../puan.dart';
+import '../tarih.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
 import 'ortak.dart';
@@ -360,10 +361,17 @@ class _KisiEkraniState extends State<KisiEkrani> with OlcekDinler<KisiEkrani> {
                               ),
                             ),
                             const SizedBox(height: 6),
+                            // DOĞUM SATIRI — tarihin yanında parantez içinde
+                            // YAŞ (14 Eyl 2026, kullanıcı isteği). Vefat
+                            // edenlerde satır "doğum – ölüm (yaş)" olur ve
+                            // yaş ölüm gününde donar (bkz. [dogumYasMetni]).
                             if (k['birthday'] != null)
                               _BilgiSatiri(
                                 ikon: Icons.cake_outlined,
-                                metin: '${k['birthday']}',
+                                metin: dogumYasMetni(
+                                  k['birthday'],
+                                  olum: k['deathday'],
+                                ),
                               ),
                             if ((k['place_of_birth'] as String?)?.isNotEmpty ==
                                 true)

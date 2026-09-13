@@ -92,3 +92,50 @@ String tarihSayi(Object? ham, {bool hepYil = false}) {
       ? '${iki(gun)}.${iki(ay)}.$yil'
       : '${iki(gun)}.${iki(ay)}';
 }
+
+/// ISO tarihinden yaş — ölüm tarihi varsa yaş ORADA durur.
+///
+/// NEDEN ÖLÜM TARİHİNE BAKIYOR (14 Eyl 2026): kişi sayfasında doğum tarihinin
+/// yanına yaş yazılacaktı. Yaşı körü körüne "bugün - doğum" diye hesaplamak
+/// vefat etmiş oyuncular için YANLIŞ bir sayı üretir (Marlon Brando 1924
+/// doğumlu; bugüne göre 102, oysa 80 yaşında öldü) ve sayfa onu yaşıyormuş
+/// gibi gösterirdi. TMDB `deathday` alanını zaten döndürüyor.
+///
+/// Çözülemeyen/saçma değerde `null` döner (ham metin BASILMAZ — parantez
+/// içinde çöp bir sayı, satırın hiç çıkmamasından kötüdür).
+int? yasHesapla(Object? dogum, {Object? olum, DateTime? bugun}) {
+  List<int>? parcala(Object? ham) {
+    final p = (ham?.toString() ?? '').split('T').first.split('-');
+    if (p.length != 3) return null;
+    final y = int.tryParse(p[0]);
+    final a = int.tryParse(p[1]);
+    final g = int.tryParse(p[2]);
+    if (y == null || a == null || g == null) return null;
+    if (a < 1 || a > 12 || g < 1 || g > 31) return null;
+    return [y, a, g];
+  }
+
+  final d = parcala(dogum);
+  if (d == null) return null;
+  final s = bugun ?? DateTime.now();
+  final b = parcala(olum) ?? [s.year, s.month, s.day];
+  var yas = b[0] - d[0];
+  if (b[1] < d[1] || (b[1] == d[1] && b[2] < d[2])) yas -= 1;
+  return (yas >= 0 && yas < 130) ? yas : null;
+}
+
+/// Kişi sayfasının doğum satırı: "1956-03-07 (70)", vefat edenlerde
+/// "1924-04-03 – 2004-07-01 (80)".
+///
+/// NEDEN VEFAT EDENDE İKİ TARİH: yalnız doğum + "(80)" yazsaydık okur sayıyı
+/// bugünkü yaş sanardı. Kısa çizgili aralık bunu TEK bakışta çözüyor ve YENİ
+/// ÇEVİRİ METNİ GEREKTİRMİYOR (45 dilde "vefat" anahtarı açmak yerine tarih ve
+/// sayı — her dilde aynı okunan işaretler).
+String dogumYasMetni(Object? dogum, {Object? olum, DateTime? bugun}) {
+  final d = (dogum?.toString() ?? '').split('T').first;
+  if (d.isEmpty) return '';
+  final o = (olum?.toString() ?? '').split('T').first;
+  final yas = yasHesapla(dogum, olum: olum, bugun: bugun);
+  final aralik = o.isEmpty ? d : '$d – $o';
+  return yas == null ? aralik : '$aralik ($yas)';
+}
