@@ -142,6 +142,21 @@ void main() {
       expect(find.byKey(const Key('anlik-bildirim')), findsNothing);
     });
 
+    testWidgets('YUKARI SÜRÜKLEYİNCE kapanır (Instagram/iOS kalıbı)', (
+      tester,
+    ) async {
+      await _uygulama(tester);
+      AnlikBildirim.satirGoster(_satir(id: 40, tur: 'takip', aktor: 'ayse'));
+      await tester.pumpAndSettle();
+      final kutu = tester.getCenter(find.byKey(const Key('anlik-bildirim')));
+      await tester.dragFrom(kutu, const Offset(0, -140));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('anlik-bildirim')), findsNothing);
+      // Sayaç da sönmeli: sürükleyip kapatan kullanıcı 5 sn sonra ikinci bir
+      // kapanma animasyonu görmemeli (bekleyen Timer testi de düşürür).
+      expect(AnlikBildirim.aktif.value, isNull);
+    });
+
     testWidgets('SON GELEN KAZANIR: ikinci bildirim birincinin yerine geçer', (
       tester,
     ) async {
