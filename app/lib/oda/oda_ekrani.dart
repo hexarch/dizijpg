@@ -99,7 +99,7 @@ const Duration kontrolSonmeGecisi = Duration(milliseconds: 200);
 ///
 /// Kısıt bir an dayatılır ki cihaz gerçekten dönsün; hemen kaldırılsaydı bazı
 /// cihazlar yatayda kalırdı. Kalıcı bırakmak ise kullanıcıyı uygulamanın
-/// tamamında dikeye kilitler — gerekçe [_OdaEkraniState._yonuAyarla]'da.
+/// tamamında dikeye kilitler — gerekçe [OdaEkraniDurumu._yonuAyarla]'da.
 const Duration _yonSerbestGecikmesi = Duration(milliseconds: 700);
 
 /// Tam ekranda mesajların videonun üstünde bindirildiği panelin AZAMİ genişliği.
@@ -122,6 +122,25 @@ const Key odaVideoYuzeyiAnahtari = ValueKey('oda-video-yuzeyi');
 /// Canlı yayın sohbeti kalıbı: ekranı kaplamamalı, son birkaç satır yeter.
 /// Fazlası videoyu okunmaz hâle getirir.
 const int _bindirmeAzamiSatir = 7;
+
+/// Tam ekran bindirmesi bir olaydan sonra NE KADAR açık kalır.
+///
+/// SAF ve ayrı, çünkü asıl değer UÇLARDA: tabanı da tavanı da kullanıcı
+/// söyledi (13 Eyl 2026: *"odaya yeni birisi katılınca 10 saniye gözüksün
+/// veya sohbete yazı yazılınca uzunluğuna göre 10-60 saniye"*) ve ikisi de
+/// widget testinde saat ilerleterek değil, doğrudan sınanmalı.
+///
+///  · Sistem satırı (katıldı/ayrıldı/video eklendi) SABİT 10 sn — okunacak
+///    tek bir isim var.
+///  · Sohbet satırı uzunluğuna göre: taban 10 sn (kısa bir "ok" için videoyu
+///    bir dakika kirletmek anlamsız), harf başına 0,25 sn, tavan 60 sn (uzun
+///    bir mesajı 10 saniyede okumak mümkün değil).
+@visibleForTesting
+Duration odaBindirmeSuresi({String? metin, bool sistem = false}) {
+  if (sistem) return const Duration(seconds: 10);
+  final uzunluk = (metin ?? '').trim().length;
+  return Duration(seconds: (10 + uzunluk * 0.25).clamp(10.0, 60.0).round());
+}
 
 /// Kontroller ŞU AN sönebilir mi — SAF kural, tek doğru.
 ///
@@ -154,10 +173,23 @@ class OdaEkrani extends StatefulWidget {
   const OdaEkrani({super.key, required this.odaId});
 
   @override
-  State<OdaEkrani> createState() => _OdaEkraniState();
+  State<OdaEkrani> createState() => OdaEkraniDurumu();
 }
 
-class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
+/// Oda ekranının durumu.
+///
+/// SINIF ADI AÇIK (`_OdaEkraniState` değil): tam ekran bindirmesinin
+/// "hareket var mı" bayrağı DIŞARIDAN gözlenemeden sınanamıyor. Widget
+/// testinde kontrollerin kendiliğinden sönmesi mümkün değil — sönme kuralı
+/// gerçek bir `VideoPlayerController` istiyor (bkz. [kontrolSonebilir]
+/// başlığı), dolayısıyla "bindirme sönük müydü, mesaj gelince yandı mı"
+/// sorusu ancak bayrağın kendisine bakılarak yanıtlanıyor.
+@visibleForTesting
+class OdaEkraniDurumu extends State<OdaEkrani> with WidgetsBindingObserver {
+  /// YALNIZ TEST: tam ekran bindirmesi şu an bir HAREKET yüzünden açık mı.
+  @visibleForTesting
+  bool get bindirmeCanliMi => _bindirmeCanli;
+
   Oda? _oda;
   String? _hata;
   bool _kapandi = false;
@@ -372,6 +404,42 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
 
   Timer? _sonmeSayaci;
 
+  // ---- TAM EKRAN BİNDİRMESİ: HAREKET YOKSA GÖRÜNMEZ ----------------------
+
+  /// Yatay/tam ekranda sohbet bindirmesi (üye şeridi + mesajlar) ŞU AN
+  /// "canlı" mı.
+  ///
+  /// ===========================================================================
+  /// KULLANICI İSTEĞİ (13 Eyl 2026, birebir)
+  /// ===========================================================================
+  /// *"full ekranda gözüken (yani yatay ekranda) kullanıcı logo yazıları
+  /// sohbet chatları bir hareketlilik yoksa gözükmesin; yani odaya yeni birisi
+  /// katılınca 10 saniye gözüksün veya sohbete yazı yazılınca uzunluğuna göre
+  /// 10-60 saniye gözüksün gibi"*.
+  ///
+  /// Gerekçe: tam ekranın tek amacı "sadece video". Sessiz bir odada sağ
+  /// yarıda duran avatarlar ve eski mesajlar filmin üstünde kalıcı bir leke
+  /// oluyordu — canlı yayın kalıbında da bindirme yalnız OLAY olduğunda
+  /// parlar.
+  ///
+  /// Ekrana dokunmak yine her şeyi geri getiriyor ([_kontrolGorunur]): sohbeti
+  /// okumak isteyen onu bilerek çağırabilmeli.
+  bool _bindirmeCanli = false;
+  Timer? _bindirmeSonme;
+
+  /// Bindirmenin görünür kalacağı ANIN kendisi (epoch ms).
+  ///
+  /// Sayaç körü körüne yeniden kurulmuyor: uzun bir mesajın 60 saniyesi
+  /// sürerken gelen tek kelimelik bir satır pencereyi 10 saniyeye DÜŞÜRÜRDÜ.
+  /// Yeni süre ancak mevcut pencereyi UZATIYORSA yazılır.
+  int _bindirmeBitisi = 0;
+
+  /// İlk akış turu geldi mi.
+  ///
+  /// Odaya girerken ilk yoklama BÜTÜN geçmişi getiriyor; onu "hareket" sayıp
+  /// bindirmeyi yakmak, tam ekrana giren herkesi eski sohbetle karşılardı.
+  bool _ilkAkisGeldi = false;
+
   /// İlerleme çubuğu ŞU AN sürükleniyor mu — sürüklerken sönmek, kullanıcının
   /// elinin altındaki çubuğu kaybetmesi demek olurdu.
   bool _cubukSuruklemede = false;
@@ -447,6 +515,7 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     // çeviremez ve sebebini asla bulamaz.
     _yonKisitiniKaldir();
     _sonmeSayaci?.cancel();
+    _bindirmeSonme?.cancel();
     _yoklama?.cancel();
     _kalp?.cancel();
     _sarYakinsama?.cancel();
@@ -613,13 +682,41 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     yuklemeVar: _yuklemeDurumu != null,
   );
 
+  /// Sohbet bindirmesi şu an çizilmeli mi (yalnız tam ekran/yatay düzende
+  /// sorulur).
+  ///
+  /// İKİ YOL: ya ekrana dokunulmuştur (kontroller görünür, sohbet de onlarla
+  /// gelir) ya da odada bir HAREKET olmuştur ([_bindirmeCanli]).
+  bool get _bindirmeGorunur => _kontrolGorunur || _bindirmeCanli;
+
+  /// Bindirmeyi yakar ve [sure] sonra söndürür.
+  ///
+  /// Mevcut pencere daha uzunsa DOKUNULMAZ: 60 saniyelik bir mesajın
+  /// ardından gelen tek kelimelik satır pencereyi 10 saniyeye düşürmemeli.
+  void _bindirmeyiCanlandir(Duration sure) {
+    if (!mounted) return;
+    final hedef = DateTime.now().millisecondsSinceEpoch + sure.inMilliseconds;
+    if (_bindirmeCanli && hedef <= _bindirmeBitisi) return;
+    _bindirmeBitisi = hedef;
+    _bindirmeSonme?.cancel();
+    if (!_bindirmeCanli) setState(() => _bindirmeCanli = true);
+    _bindirmeSonme = Timer(sure, () {
+      if (!mounted) return;
+      setState(() => _bindirmeCanli = false);
+    });
+  }
+
   Future<void> _sohbetiAcKapa() async {
     final yeni = !_sohbetAcik;
     setState(() => _sohbetAcik = yeni);
     await OdaTercihi.sohbetSec(yeni);
   }
 
+  // Parametre adı Türkçe: dosyanın tamamı öyle. Lint bunu ancak sınıf
+  // testlere açıldığı için (public) görüyor; çağıran taraf adlandırılmış
+  // argüman kullanmıyor.
   @override
+  // ignore: avoid_renaming_method_parameters
   void didChangeAppLifecycleState(AppLifecycleState durum) {
     // Arka planda yoklama DURUR: 1 sn'lik tur cebe girmiş bir telefonda pil
     // yakar ve sunucuya karşılığı olmayan yük bindirir. Öne dönünce tek bir
@@ -762,6 +859,10 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         degisti = true;
       }
       if (akis.mesajlar.isNotEmpty) {
+        // Bu turda gelen satırların EN UZUN penceresi. Tek tek canlandırmak
+        // yerine toplu: aynı turda beş satır geldiyse pencere en uzun olana
+        // göre açılmalı.
+        Duration? bindirmePenceresi;
         setState(() {
           for (final m in akis.mesajlar) {
             // İMLEÇ HER SATIRDA İLERLER — çizilsin çizilmesin. Bu satır
@@ -779,11 +880,24 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
             if (_cizilenIdler.contains(m.id)) continue;
             _cizilenIdler.add(m.id);
             _mesajlar.add(m);
+            // KENDİ satırım bindirmeyi ZATEN gönderirken yaktı; ikinci kez
+            // uzatmak, yazan kişinin ekranında pencereyi iki katına çıkarırdı.
+            if (m.kullaniciId == _benimId && !m.sistem) continue;
+            final p = odaBindirmeSuresi(metin: m.metin, sistem: m.sistem);
+            if (bindirmePenceresi == null || p > bindirmePenceresi!) {
+              bindirmePenceresi = p;
+            }
           }
         });
+        // İLK TUR HAREKET SAYILMAZ: odaya girerken bütün geçmiş bir anda
+        // geliyor ve bindirme eski sohbetle açılırdı.
+        if (_ilkAkisGeldi && bindirmePenceresi != null) {
+          _bindirmeyiCanlandir(bindirmePenceresi!);
+        }
         _sonaKaydir();
         degisti = true;
       }
+      _ilkAkisGeldi = true;
       if (!degisti && _kapandi) setState(() => _kapandi = false);
     } on ApiHata catch (e) {
       if (!mounted) return;
@@ -1332,6 +1446,9 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
   }
 
   Future<void> _metniGonder(String metin, int? konumMs) async {
+    // Kendi mesajını yazan kişi de gönderdiğini GÖRMELİ: bindirme sönükken
+    // "gitti mi?" sorusu kalırdı.
+    _bindirmeyiCanlandir(odaBindirmeSuresi(metin: metin));
     final anahtar =
         'y${DateTime.now().microsecondsSinceEpoch}-${_yerelSayac++}';
     final benim = _benimId;
@@ -1760,8 +1877,8 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
         children: [
           // Üye avatarları bindirmede de görünür: kiminle izlediğini bilmek
           // tam ekranda da gerekli. Bindirmede KÜÇÜK boy — videonun üstünde
-          // yer kaplamamalı.
-          _uyeSatiri(oda, dar: true, bindirme: true),
+          // yer kaplamamalı. HAREKET YOKSA SÖNÜK ([_bindirmeGorunur]).
+          _bindirmeSonebilir(_uyeSatiri(oda, dar: true, bindirme: true)),
           Expanded(
             child: IgnorePointer(
               // TERS LİSTE (`reverse: true`): satırlar ALTTAN yukarı dizilir,
@@ -1771,26 +1888,28 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
               // dosyadaki taşma testi yakaladı). Liste ayrıca kaydırmıyor
               // (`NeverScrollable`): bindirme salt görsel, sohbetin kendisi
               // dikeydeki panelde.
-              child: ListView(
-                reverse: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                children: [
-                  for (var i = son.length - 1; i >= 0; i--)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(6, 2, 6, 2),
-                      child: Opacity(
-                        // ESKİ SATIRLAR SOLUK: en yeni altta ve en okunur.
-                        // Hepsi aynı parlaklıkta olsaydı göz en yeniyi
-                        // bulamazdı (uçuşan tepkilerdeki solma mantığı).
-                        opacity: _bindirmeSaydamlik(i, son.length),
-                        child: _BindirmeSatiri(
-                          mesaj: son[i],
-                          benim: son[i].kullaniciId == _benimId,
+              child: _bindirmeSonebilir(
+                ListView(
+                  reverse: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  children: [
+                    for (var i = son.length - 1; i >= 0; i--)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(6, 2, 6, 2),
+                        child: Opacity(
+                          // ESKİ SATIRLAR SOLUK: en yeni altta ve en okunur.
+                          // Hepsi aynı parlaklıkta olsaydı göz en yeniyi
+                          // bulamazdı (uçuşan tepkilerdeki solma mantığı).
+                          opacity: _bindirmeSaydamlik(i, son.length),
+                          child: _BindirmeSatiri(
+                            mesaj: son[i],
+                            benim: son[i].kullaniciId == _benimId,
+                          ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -1897,6 +2016,25 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
     ignoring: !_kontrolGorunur,
     child: AnimatedOpacity(
       opacity: _kontrolGorunur ? 1 : 0,
+      duration: kontrolSonmeGecisi,
+      child: cocuk,
+    ),
+  );
+
+  /// Bindirmenin sönen parçaları (üye şeridi + mesajlar).
+  ///
+  /// [_sonebilir]den AYRI bir kural: kontroller "ekrana dokunuldu mu"ya
+  /// bakar, bindirme ise ayrıca ODADA HAREKET OLDU MU'ya. Gerekçe
+  /// [_bindirmeCanli] başlığında.
+  ///
+  /// Widget ağaçtan KALDIRILMIYOR, yalnız saydamlaşıyor: kaldırmak sağdaki
+  /// sütunu her mesajda yeniden ölçtürür ve mesaj geldiğinde bindirme
+  /// ZIPLAYARAK belirirdi. Saydamken dokunma da yutulmamalı — altındaki
+  /// videoya dokunup kontrolleri geri getirmek her yerde çalışmalı.
+  Widget _bindirmeSonebilir(Widget cocuk) => IgnorePointer(
+    ignoring: !_bindirmeGorunur,
+    child: AnimatedOpacity(
+      opacity: _bindirmeGorunur ? 1 : 0,
       duration: kontrolSonmeGecisi,
       child: cocuk,
     ),

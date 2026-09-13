@@ -117,6 +117,34 @@ taranmadı kuyruğu 61.079. Tıklamanın %91'i Türkiye'den. Kişi haritası tr+
 daraltılmış, bölüm hâlâ 46 dilde. Kullanıcı 12 Eyl'de "boşver tarasın google"
 dedi — daraltma YAPILMADI, bilinçli karar.
 
+## 2026-09-13 — 🌫️ TAM EKRAN BİNDİRMESİ: HAREKET YOKSA GÖRÜNMEZ
+
+**Tetik (kullanıcı):** *"full ekranda gözüken (yani yatay ekranda) kullanıcı
+logo yazıları sohbet chatları bir hareketlilik yoksa gözükmesin; yani odaya
+yeni birisi katılınca 10 saniye gözüksün veya sohbete yazı yazılınca
+uzunluğuna göre 10-60 saniye gözüksün gibi"*.
+
+- ✅ **Bindirme (üye şeridi + mesajlar) artık OLAYA bağlı.** Görünürlük
+  `_kontrolGorunur || _bindirmeCanli`: ya ekrana dokunulmuştur ya da odada
+  bir hareket olmuştur. Sessiz bir odada tam ekran artık gerçekten
+  "sadece video".
+- ✅ **Süre kuralı SAF ve tek yerde** (`odaBindirmeSuresi`): sistem satırı
+  (katıldı/ayrıldı/video eklendi) SABİT 10 sn; sohbet satırı taban 10 sn +
+  harf başına 0,25 sn, tavan 60 sn.
+- ✅ **Pencere UZAR, KISALMAZ:** 60 saniyelik uzun bir mesajın ardından gelen
+  tek kelimelik satır pencereyi 10 saniyeye düşürmüyor (`_bindirmeBitisi`).
+- ✅ **İlk tur hareket sayılmaz:** odaya girerken ilk yoklama bütün geçmişi
+  getiriyor; o yakılsaydı tam ekrana giren herkes eski sohbetle karşılaşırdı.
+- ✅ **Kendi mesajın da yakıyor** (gönderen "gitti mi?" diye kalmasın), ama
+  yoklama aynı satırı geri getirince pencere İKİNCİ kez uzatılmıyor.
+- ✅ **Kanıt:** `test/oda_bindirme_sonme_test.dart` (6 test: süre uçları, ilk
+  tur, yeni mesaj, katılma satırı, pencere kısalmaması). Widget testinde
+  kontroller asla sönmediği için (sönme kuralı gerçek oynatıcı istiyor)
+  ölçülen şey saydamlık değil hareket bayrağı; bunun için `_OdaEkraniState`
+  → `OdaEkraniDurumu` (`@visibleForTesting`) açıldı. Emülatörde de görüldü:
+  yatayda video oynarken bindirme tamamen kayboluyor, ekrana dokununca
+  geri geliyor.
+
 ## 2026-09-13 — 🔁 YAN ÇEVİRİNCE VİDEO BAŞTAN YÜKLENİYORDU
 
 **Tetik (kullanıcı):** *"dikeyken yan çevirdiğimde video tekrardan yükleniyor"*.
