@@ -1,6 +1,47 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-13 — 🚀 MOBİL WEBDE UYGULAMA DAVETİ (Instagram/TikTok tarzı pencere)
+
+**Tetik:** kullanıcı — "dizijpg.com mobil cihazdan tabletten açıldığında uygulama
+indirmeye yönelik modal açalım, android ise play store, ios ise ios, bilmiyorsak
+ikisi de… ama çarpıya basıp kapatabilsin."
+
+- 🚀 **CANLIDA (1.150.0+229).** `uygulama_daveti.dart`: alttan gelen sayfa
+  (bottom sheet), logo + başlık + tek cümle + mağaza düğmesi + "Tarayıcıda
+  devam et". `MaterialApp.builder` içinde Stack KATMANI (Dialog değil —
+  builder'ın context'i Navigator'ın üstünde, `showDialog` orada patlar).
+  Sürüm kapısının ALTINDA: zorunlu güncelleme ekranı önceliklidir.
+- **Platform tespiti** `uygulama_daveti_web.dart`te, yalnız web derlemesinde
+  bağlanır (`dart.library.js_interop` koşullu import); native derlemede sap
+  sabit `DavetHedefi.yok` döner, yani telefon uygulamasında kod hiç çalışmaz.
+  Android → Google Play, iPhone/iPad → App Store, mobil ama tanınmayan
+  platform → İKİ mağaza da (kullanıcı seçer).
+- **Kapatma üç yoldan:** çarpı, "Tarayıcıda devam et", karartmaya dokunma.
+  Kapatan 7 gün görmez (`uygulama_daveti_son`, web'de localStorage). Mağazaya
+  giden de kapattı sayılır — dönünce aynı pencere karşılamaz.
+- **Dört yeni metin 45 dile çevrildi**; "Google Play" / "App Store" MARKA
+  olduğu için çevrilmedi ve haritaya hiç girmedi.
+- 11 widget testi (`test/uygulama_daveti_test.dart`) + canlı piksel kanıtı
+  (`araclar/mobil_kesit.py`, yeni araç): android/ios/ipad/masaustu/bot kipleri.
+
+**Dört tuzak:**
+1. **iPadOS 13+ kendini "Macintosh" tanıtıyor** (Safari varsayılanı). Ayıran tek
+   işaret `navigator.maxTouchPoints > 1`; bu dal olmasa iPad'de davet HİÇ
+   çıkmazdı. Emülasyonla doğrulandı: iPad kipinde App Store düğmesi geliyor.
+2. **Botlar elenir** (`bot|crawl|lighthouse|pagespeed|headless…`): araya giren
+   geçiş sayfası ölçütüne takılmamak ve PSI ölçümünü bozmamak için. nginx zaten
+   botu `/og/ana` SSR'ına düşürüyor — Googlebot UA ile ölçüldü, tuval bile yok.
+3. **`Api.surum` pubspec ile elle eşleniyor.** pubspec 1.150.0'a çıktı, sabit
+   1.149.0 kaldı: köşedeki sürüm rozeti eski numarayı gösterdi (canlı kesitte
+   yakalandı, `surum_tutarlilik_test` de düşerdi). `version.json` da ayrı bir
+   dosya — dağıtımda kopyalanmazsa rozet bayat kalır.
+4. **BAYAT `.br` CANLIYA ESKİ PAKETİ SERVİS ETTİRİR.** Yeni `index.html`
+   sunucuda doğru hash'i gösterirken `curl https://dizijpg.com/` hâlâ eski
+   `main.<hash>.dart.js`i veriyordu: Cloudflare origin'den `br` isteyip 20 dk
+   önceki `index.html.br`yi alıyor. `web_brotli.sh` koşup doğrulayana kadar
+   dağıtım BİTMEMİŞTİR (betik ~5 dk sürüyor, arka planda koştur).
+
 ## 2026-09-13 — 🚀 İÇE AKTARIM: artık ZIP şart değil, tek CSV/JSON da olur
 
 **Tetik:** kullanıcı — "dıştan dosya aktarmayı destekliyoruz ya sadece zip
