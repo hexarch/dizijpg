@@ -11,6 +11,7 @@ import '../medya_yukle.dart';
 import '../spoiler_tercihi.dart';
 import '../tema.dart';
 import '../video_secenekleri.dart';
+import '../yorum_agaci.dart';
 import 'akis.dart' show PaylasKutusu;
 import 'begenenler.dart';
 import 'etiket.dart';
@@ -221,12 +222,14 @@ class _YorumBolumuState extends State<YorumBolumu> {
     });
     for (final y in tumu.where((y) => y['ust_id'] == null)) {
       if (medyali(y)) ekle(y);
-      // Yanıtlar ekranda id sırasıyla çizilir; Reels sırası da aynı olmalı.
-      final yanitlar =
-          tumu.where((c) => c['ust_id'] == (y as Map)['id']).toList()
-            ..sort((a, b) => (a['id'] as int).compareTo(b['id'] as int));
-      for (final c in yanitlar) {
-        if (medyali(c)) ekle(c);
+      // Yanıtlar ekranda AĞAÇ sırasıyla çizilir; Reels sırası da aynı olmalı
+      // (13 Eyl 2026: sıra artık id değil [yorumAgaci] — yanıtın yanıtı
+      // yanıtladığı satırın hemen ardından gelir).
+      for (final d in yorumAgaci(
+        tumu.where((c) => c['ust_id'] == (y as Map)['id']),
+        y['id'] as int,
+      )) {
+        if (medyali(d.yorum)) ekle(d.yorum);
       }
     }
     return liste;
@@ -828,7 +831,11 @@ class _YorumKartiState extends State<YorumKarti> {
                     ),
                   ],
                 ),
-                // Yanıtlar (tek seviye)
+                // YANIT AĞACI (13 Eyl 2026): iş parçacığı sunucuda hâlâ
+                // tek seviye (`ust_id` köke sabit), ama bir yanıta verilen
+                // yanıt artık `yanit_id` sayesinde yanıtladığı satırın altına,
+                // bir kademe içeri çizilir. `yanit_id` taşımayan ESKİ satırlar
+                // 0. düzeyde kalır: liste eskisi gibi düz görünür.
                 if (widget.yanitlar.isNotEmpty) ...[
                   const SizedBox(height: 6),
                   Padding(
@@ -836,13 +843,17 @@ class _YorumKartiState extends State<YorumKarti> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        for (final c in widget.yanitlar)
+                        for (final d in yorumAgaci(
+                          widget.yanitlar,
+                          widget.yorum['id'] as int,
+                        ))
                           _YanitSatiri(
-                            key: ValueKey(c['id']),
-                            yanit: c as Map<String, dynamic>,
-                            benim: c['kullanici_id'] == widget.benimId,
-                            sil: () => widget.yanitSil(c['id'] as int),
-                            yanitla: () => widget.yanitla(c),
+                            key: ValueKey(d.yorum['id']),
+                            yanit: d.yorum,
+                            derinlik: d.derinlik,
+                            benim: d.yorum['kullanici_id'] == widget.benimId,
+                            sil: () => widget.yanitSil(d.yorum['id'] as int),
+                            yanitla: () => widget.yanitla(d.yorum),
                             medyaAc: widget.medyaAc,
                           ),
                       ],
@@ -1128,6 +1139,9 @@ class _YanitSatiri extends StatefulWidget {
   /// Medyaya dokununca (yanıt, dokunulan medyanın sırası) — Reels açar.
   final void Function(Map<String, dynamic>, int) medyaAc;
 
+  /// Ağaçtaki kademe (0 = doğrudan üst yoruma yazılmış yanıt).
+  final int derinlik;
+
   const _YanitSatiri({
     super.key,
     required this.yanit,
@@ -1135,6 +1149,7 @@ class _YanitSatiri extends StatefulWidget {
     required this.sil,
     required this.yanitla,
     required this.medyaAc,
+    this.derinlik = 0,
   });
 
   @override
@@ -1200,99 +1215,85 @@ class _YanitSatiriState extends State<_YanitSatiri> {
     // BASILI TUTUNCA ARKADAŞA GÖNDER (13 Eyl 2026) — yanıt sheet'indeki
     // satırla AYNI jest; iki yüzeyden birinde olmayınca kullanıcı "bazen
     // çalışıyor" derdi.
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onLongPress: () => yorumPaylas(context, y),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                KullaniciAvatari(
-                  url: avatar,
-                  kullaniciAdi: y['kullanici_adi'] as String?,
-                  yaricap: 10,
-                  // Yanıt satırı da yorum yüzeyinin parçası (md.13).
-                  hareketli: true,
-                ),
-                const SizedBox(width: 6),
-                InkWell(
-                  onTap: () =>
-                      kullaniciyaGit(context, y['kullanici_adi'] as String),
-                  child: Text(
-                    '@${y['kullanici_adi']}',
+    return YorumGirintisi(
+      derinlik: widget.derinlik,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onLongPress: () => yorumPaylas(context, y),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  KullaniciAvatari(
+                    url: avatar,
+                    kullaniciAdi: y['kullanici_adi'] as String?,
+                    yaricap: 10,
+                    // Yanıt satırı da yorum yüzeyinin parçası (md.13).
+                    hareketli: true,
+                  ),
+                  const SizedBox(width: 6),
+                  InkWell(
+                    onTap: () =>
+                        kullaniciyaGit(context, y['kullanici_adi'] as String),
+                    child: Text(
+                      '@${y['kullanici_adi']}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: DiziRenkler.sariMetin,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    tarih,
                     style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: DiziRenkler.sariMetin,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  tarih,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: DiziRenkler.gonderiEylem,
-                  ),
-                ),
-                const Spacer(),
-                // Dokunma hedefleri 44px'e yakın olsun diye geniş padding
-                InkWell(
-                  onTap: _begen,
-                  onLongPress: () =>
-                      begenenleriAc(context, widget.yanit['id'] as int),
-                  borderRadius: BorderRadius.circular(16),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          _begendim ? Icons.favorite : Icons.favorite_border,
-                          size: 15,
-                          color: _begendim
-                              ? DiziRenkler.sariMetin
-                              : DiziRenkler.gonderiEylem,
-                        ),
-                        if (_begeni > 0) ...[
-                          const SizedBox(width: 3),
-                          Text(
-                            '$_begeni',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: _begendim
-                                  ? DiziRenkler.sariMetin
-                                  : DiziRenkler.gonderiEylem,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: widget.yanitla,
-                  borderRadius: BorderRadius.circular(16),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 10,
-                    ),
-                    child: Icon(
-                      Icons.reply,
-                      size: 15,
+                      fontSize: 10,
                       color: DiziRenkler.gonderiEylem,
                     ),
                   ),
-                ),
-                if (widget.benim)
+                  const Spacer(),
+                  // Dokunma hedefleri 44px'e yakın olsun diye geniş padding
                   InkWell(
-                    onTap: widget.sil,
+                    onTap: _begen,
+                    onLongPress: () =>
+                        begenenleriAc(context, widget.yanit['id'] as int),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            _begendim ? Icons.favorite : Icons.favorite_border,
+                            size: 15,
+                            color: _begendim
+                                ? DiziRenkler.sariMetin
+                                : DiziRenkler.gonderiEylem,
+                          ),
+                          if (_begeni > 0) ...[
+                            const SizedBox(width: 3),
+                            Text(
+                              '$_begeni',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: _begendim
+                                    ? DiziRenkler.sariMetin
+                                    : DiziRenkler.gonderiEylem,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: widget.yanitla,
                     borderRadius: BorderRadius.circular(16),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -1300,43 +1301,60 @@ class _YanitSatiriState extends State<_YanitSatiri> {
                         vertical: 10,
                       ),
                       child: Icon(
-                        Icons.delete_outline,
+                        Icons.reply,
                         size: 15,
-                        color: DiziRenkler.metin38,
+                        color: DiziRenkler.gonderiEylem,
                       ),
                     ),
                   ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 26, top: 2),
-              child: SpoilerMetin(
-                y['metin'] as String? ?? '',
-                spoiler: !_spoilerAcik,
-                onAc: () => setState(() => _spoilerAcik = true),
-                stil: TextStyle(
-                  fontSize: 13,
-                  height: 1.35,
-                  color: DiziRenkler.metin,
-                ),
+                  if (widget.benim)
+                    InkWell(
+                      onTap: widget.sil,
+                      borderRadius: BorderRadius.circular(16),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 10,
+                        ),
+                        child: Icon(
+                          Icons.delete_outline,
+                          size: 15,
+                          color: DiziRenkler.metin38,
+                        ),
+                      ),
+                    ),
+                ],
               ),
-            ),
-            // Yanıtın medyası: üst yorumla AYNI kaydırmalı galeri. Eskiden hiç
-            // çizilmiyordu — fotoğraflı yanıt gönderen kullanıcı boş metin
-            // görüyordu. Spoiler perdesi kapalıysa medya da gizli kalır.
-            if (medya.isNotEmpty && _spoilerAcik)
               Padding(
-                padding: const EdgeInsets.only(left: 26, top: 6),
-                child: MedyaGaleri(
-                  yollar: medya,
-                  otomatikOynat: true,
-                  onAc: (mi) => widget.medyaAc(y, mi),
-                  onCiftDokunus: _begen,
-                  // md. 23 — yanıt da bir gönderidir; kendi eğrisini alır.
-                  gonderiId: y['id'],
+                padding: const EdgeInsets.only(left: 26, top: 2),
+                child: SpoilerMetin(
+                  y['metin'] as String? ?? '',
+                  spoiler: !_spoilerAcik,
+                  onAc: () => setState(() => _spoilerAcik = true),
+                  stil: TextStyle(
+                    fontSize: 13,
+                    height: 1.35,
+                    color: DiziRenkler.metin,
+                  ),
                 ),
               ),
-          ],
+              // Yanıtın medyası: üst yorumla AYNI kaydırmalı galeri. Eskiden hiç
+              // çizilmiyordu — fotoğraflı yanıt gönderen kullanıcı boş metin
+              // görüyordu. Spoiler perdesi kapalıysa medya da gizli kalır.
+              if (medya.isNotEmpty && _spoilerAcik)
+                Padding(
+                  padding: const EdgeInsets.only(left: 26, top: 6),
+                  child: MedyaGaleri(
+                    yollar: medya,
+                    otomatikOynat: true,
+                    onAc: (mi) => widget.medyaAc(y, mi),
+                    onCiftDokunus: _begen,
+                    // md. 23 — yanıt da bir gönderidir; kendi eğrisini alır.
+                    gonderiId: y['id'],
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

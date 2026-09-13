@@ -1,6 +1,46 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-13 — 🔨 YANITIN YANITI: REDDIT KALIBI GİRİNTİ
+
+**Tetik:** kullanıcı — *"akışta bir gönderiye yorum yapmış birinin yorumuna
+yanıt verince gönderiye yorum yapmış gibi oluyorum ama oysa Reddit'teki gibi
+gönderideki yorumun altına azıcık sağlı olarak yorum gözükmeliydi."*
+
+### 1) Kök sebep: hangi yoruma yanıt verildiği HİÇBİR YERDE tutulmuyordu
+`POST /yorumlar` iş parçacığını tek seviyede tutuyor: `gercekUst = u.ust_id ||
+u.id`, yani bir yanıta yazılan yanıt KÖK gönderiye bağlanıyor. Bu karar
+DEĞİŞMEDİ — "ust_id IS NULL = gönderi" sözleşmesi server.js'te 20'den fazla
+sorguda geçiyor (akış, site haritası, istatistik, yanıt sayacı). Eksik olan,
+`ust_id`nin YANINDA yanıt hedefini tutan bir alandı; olmayınca istemci
+girintiyi çizemiyor, iki satır listede ayırt edilemiyordu.
+
+### 2) `yanit_id` sütunu (migrasyon-2026-09-13.sql)
+`ust_id` = KÖK (değişmedi) · `yanit_id` = DOĞRUDAN yanıtlanan yorum.
+`ON DELETE SET NULL` (CASCADE değil): hedef silinince alttaki yanıtlar bugünkü
+gibi yaşamaya devam eder, yalnız girintisini yitirir. CASCADE bugün görünen
+yanıtları sessizce silerdi. Eski satırlar NULL kalır → düz çizilir.
+
+### 3) İstemci: `lib/yorum_agaci.dart` (saf Dart + girinti sarmalayıcı)
+Düz listeyi ağaca dizer, her satıra derinlik verir; kademe 14 dp, tavan 4
+kademe (telefonda 7. kademede metin sütunu okunmaz olurdu), sol kenarda 1 dp
+iş parçacığı çizgisi. İKİ YÜZEY birden kullanıyor: akıştaki yanıt sheet'i
+(`YanitlarSheet`) ve içerik sayfasındaki yorum kartı (`YorumKarti`). Reels'in
+medya sırası da aynı ağaçtan.
+
+### 4) Yan bulgu — bildirim YANLIŞ KİŞİYE gidiyordu
+Birinin yorumuna yanıt yazınca "yanıt" bildirimi GÖNDERİ SAHİBİNE düşüyor,
+yanıtlanan kişinin hiç haberi olmuyordu (`bildirimEkle` kökün sahibiyle
+çağrılıyordu). Artık doğrudan yanıtlanana gidiyor; sahip zaten üst sorgudan
+biliniyor, fazladan SELECT de kalktı.
+
+### 5) Kanıt
+`app/test/yorum_yanit_girintisi_test.dart` — 7 test: ağaç sırası/derinlik,
+eski satırların düz kalması, öksüz yanıt, döngü emniyeti + İKİ yüzeyde de
+girintinin gerçekten çizildiği (`@mehmet`in x'i `@ayse`ninkinden büyük).
+
+**Kalan:** canlı dağıtım (migrasyon + server.js + web paketi).
+
 ## 2026-09-13 — 🔨 ONDALIKLI PUAN: YILDIZ BAŞINA 10 ADIM (1.157.0+236)
 
 **Tetik:** kullanıcı — *"puanlama sisteminde sürükle bırak ile de oy

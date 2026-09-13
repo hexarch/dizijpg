@@ -14840,6 +14840,12 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
   const { rows } = await havuz.query(
     `SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
             y.metin, y.medya, y.tarih, y.goruntulenme, y.spoiler,
+            -- ust_id/yanit_id (13 Eyl 2026): istemci bir YANITIN bağlantısıyla
+            -- açıldığında üst gönderiyi bulmak için fazladan bir liste isteği
+            -- atıyordu (kesfet_akis.dart, _ustGonderi); iki alan burada
+            -- döndüğü için o yol tek isteğe indi.
+            -- (Şablon dizesi: BACKTICK YAZMA.)
+            y.ust_id, y.yanit_id,
             k.kullanici_adi, k.avatar, k.testci, y.kaynak_dil,
             (SELECT c.metin FROM metin_cevirileri c
                    WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $3) AS ceviri_metin,
@@ -15025,7 +15031,7 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
        WHERE $3::int IS NULL AND i.kullanici_id=$5
          AND i.tur=$1 AND i.tmdb_id=$2::int)
      SELECT y.id, y.kullanici_id, y.metin, y.medya, y.tarih, y.sezon, y.bolum,
-            y.ust_id, y.goruntulenme, k.kullanici_adi, k.avatar, k.testci,
+            y.ust_id, y.yanit_id, y.goruntulenme, k.kullanici_adi, k.avatar, k.testci,
             y.kaynak_dil,
             ${ETIKET_ALANI},
             -- SPOILER PERDESI ESLESEN ETIKETE BAKAR, birincil etikete degil.
@@ -19917,8 +19923,14 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
     sezon = birincil?.bolum != null ? birincil.sezon : null;
     bolum = birincil?.bolum ?? null;
   }
-  // Yanıt: hedef alanları üst yorumdan alınır; yanıtın yanıtı üst yoruma bağlanır (tek seviye).
+  // Yanıt: hedef alanları üst yorumdan alınır; yanıtın yanıtı KÖK gönderiye
+  // bağlanır (`ust_id` tek seviye kalır — "ust_id IS NULL = gönderi" sözleşmesi
+  // bu dosyada 20'den fazla sorguda geçiyor). DOĞRUDAN yanıtlanan yorum ayrı
+  // sütunda (`yanit_id`, 13 Eyl 2026) saklanır: istemci girintiyi ondan çizer,
+  // bildirim ondan yönlenir. Gerekçe: migrasyon-2026-09-13.sql.
   let gercekUst = null;
+  let yanitHedefi = null; // doğrudan yanıtlanan yorum (kökün kendisiyse NULL)
+  let yanitlananSahip = null; // bildirimi ALACAK kişi = yanıtlananın sahibi
   if (ust_id != null) {
     if (!Number.isInteger(ust_id)) {
       return res.status(400).json({ hata: 'Geçersiz ust_id' });
@@ -19940,6 +19952,8 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
       return res.status(404).json({ hata: 'Yanıtlanan yorum bulunamadı' });
     }
     gercekUst = u.ust_id || u.id;
+    yanitHedefi = u.ust_id ? u.id : null;
+    yanitlananSahip = u.kullanici_id;
     tur = u.tur;
     tmdb_id = u.tmdb_id;
     sezon = u.sezon;
@@ -19975,10 +19989,10 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
     }
   }
   const { rows } = await havuz.query(
-    `INSERT INTO yorumlar (kullanici_id, tur, tmdb_id, sezon, bolum, metin, medya, ust_id, spoiler, kaynak_dil)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id, tarih`,
+    `INSERT INTO yorumlar (kullanici_id, tur, tmdb_id, sezon, bolum, metin, medya, ust_id, spoiler, kaynak_dil, yanit_id)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id, tarih`,
     [req.kullanici.id, tur, tmdb_id, sezon, bolum, temiz, medya, gercekUst, spoiler,
-     dilTespit(temiz)],
+     dilTespit(temiz), yanitHedefi],
   );
   const yorumId = rows[0].id;
 
@@ -20018,11 +20032,13 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
     );
   }
 
-  let yanitlananSahip = null;
-  if (gercekUst) {
-    const sahip = await havuz.query(
-      'SELECT kullanici_id FROM yorumlar WHERE id=$1', [gercekUst]);
-    yanitlananSahip = sahip.rows[0]?.kullanici_id ?? null;
+  // BİLDİRİM DOĞRUDAN YANITLANAN KİŞİYE (13 Eyl 2026). Eskiden burada
+  // `gercekUst` (KÖK gönderi) sahibi sorgulanıyordu: birinin yorumuna yanıt
+  // yazınca haber gönderi sahibine düşüyor, yanıtlanan kişinin hiç haberi
+  // olmuyordu — kullanıcının "gönderiye yorum yapmış gibi oluyorum"
+  // şikâyetinin görünmeyen yarısı buydu. Sahip zaten yukarıdaki `ust`
+  // sorgusundan biliniyor; fazladan SELECT de kalktı.
+  if (yanitlananSahip) {
     bildirimEkle(yanitlananSahip, 'yanit', req.kullanici.id, rows[0].id);
   }
   // @etiketlenen kullanıcılara bildirim (yanıtlanan zaten 'yanit' aldıysa hariç)

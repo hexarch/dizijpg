@@ -517,6 +517,14 @@ CREATE TABLE IF NOT EXISTS izleme_kaynaklari (
 ALTER TABLE yorumlar ADD COLUMN IF NOT EXISTS ust_id INT REFERENCES yorumlar(id) ON DELETE CASCADE;
 CREATE INDEX IF NOT EXISTS yorumlar_ust ON yorumlar (ust_id);
 CREATE INDEX IF NOT EXISTS yorumlar_ust_null_id ON yorumlar (id DESC) WHERE ust_id IS NULL;
+-- 2026-09-13: yanıtın yanıtı. `ust_id` KÖK gönderiyi gösterir (bu dosyada ve
+-- server.js'te 20'den fazla sorgu "ust_id IS NULL = gönderi" sözleşmesine
+-- bağlı), `yanit_id` ise DOĞRUDAN yanıtlanan yorumu — istemci Reddit kalıbı
+-- girintiyi bundan kurar, bildirim de doğru kişiye düşer.
+-- SET NULL: hedef silinince yanıtlar bugünkü gibi hayatta kalır, yalnız
+-- girintisini yitirip gönderinin altına düzlenir (gerekçe: migrasyon-2026-09-13.sql).
+ALTER TABLE yorumlar ADD COLUMN IF NOT EXISTS yanit_id INT REFERENCES yorumlar(id) ON DELETE SET NULL;
+CREATE INDEX IF NOT EXISTS yorumlar_yanit ON yorumlar (yanit_id);
 -- 2026-07-21c: bildirimler + özel mesajlar + şifre sıfırlama
 
 CREATE TABLE IF NOT EXISTS bildirimler (
