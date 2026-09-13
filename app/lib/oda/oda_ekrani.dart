@@ -1920,15 +1920,33 @@ class _OdaEkraniState extends State<OdaEkrani> with WidgetsBindingObserver {
             // sığar. Tavan devreye girince yanlarda siyah bant kalır
             // (letterbox) — kırpmaktansa bant: kadraj bozulmasın.
             _dokunmaKatmani(
-              cocuk: Container(
+              // ***KUTU VİDEONUN BOYUNU ALIR — TAVANIN BOYUNU DEĞİL.***
+              //
+              // Eskiden burada `Container(alignment: center, constraints:
+              // maxHeight)` vardı. `alignment` dolu bir Container, SINIRLI bir
+              // maxHeight gördüğünde çocuğuna sarılmaz, TAVANA KADAR BÜYÜR
+              // (`Align`, `heightFactor` null + sınırlı kısıt → en büyüğü
+              // alır). Sonuç: dikey telefonda 16:9 video 228 dp yer istiyor,
+              // kutu 357 dp oluyor ve aradaki ~130 dp ÖLÜ SİYAH BANT olarak
+              // videonun altına/üstüne düşüyordu — hem çirkin hem sohbetten
+              // çalınmış yer (13 Eyl 2026'da emülatörde ölçüldü).
+              //
+              // `heightFactor: 1` kutuyu videonun boyuna sabitler. Tavan hâlâ
+              // geçerli: yatayda video tavana sığmıyorsa `AspectRatio` boydan
+              // küçülür ve yanlarda siyah bant kalır — kadraj yine bozulmaz.
+              cocuk: ConstrainedBox(
                 key: odaVideoYuzeyiAnahtari,
-                width: double.infinity,
-                color: Colors.black,
                 constraints: BoxConstraints(maxHeight: videoTavan),
-                alignment: Alignment.center,
-                child: AspectRatio(
-                  aspectRatio: _enBoy(d),
-                  child: _videoYuzeyi(oda, d),
+                child: ColoredBox(
+                  color: Colors.black,
+                  child: Align(
+                    alignment: Alignment.center,
+                    heightFactor: 1,
+                    child: AspectRatio(
+                      aspectRatio: _enBoy(d),
+                      child: _videoYuzeyi(oda, d),
+                    ),
+                  ),
                 ),
               ),
             ),

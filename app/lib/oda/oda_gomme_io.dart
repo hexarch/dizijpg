@@ -16,6 +16,7 @@ library;
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -71,6 +72,15 @@ class _OdaGommeYuzeyiState extends State<OdaGommeYuzeyi> {
   }
 
   Future<void> _denetciKur() async {
+    // HATA AYIKLAMA DERLEMESİNDE WebView UZAKTAN İNCELENEBİLİR.
+    //
+    // 13 Eyl 2026'da siyah ekranın sebebi ancak `chrome://inspect` üzerinden
+    // ölçülerek bulundu (`video` yüksekliği 0 px). Bayrak olmadan gömme
+    // sayfası kapalı bir kutu; yalnız hata ayıklama derlemesinde açık, yayın
+    // derlemesine hiç girmiyor.
+    if (kDebugMode) {
+      await AndroidWebViewController.enableDebugging(true);
+    }
     late final PlatformWebViewControllerCreationParams params;
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
       params = WebKitWebViewControllerCreationParams(
@@ -313,7 +323,33 @@ const _enjekte = r'''
       // kendiliğinden gizlenmiş oluyor.
       '.html5-video-player > *:not(.html5-video-container)',
       ':not(.ytp-caption-window-container){display:none!important;}',
-      'html,body{margin:0!important;padding:0!important;overflow:hidden!important;background:#000!important;}',
+      'html,body{width:100%!important;height:100%!important;',
+      'margin:0!important;padding:0!important;overflow:hidden!important;',
+      'background:#000!important;}',
+      // ***KAPLARA YÜKSEKLİK VERMEK ŞART — YOKSA VİDEO 0 PİKSEL OLUR.***
+      //
+      // 13 Eyl 2026, emülatörde CDP ile ÖLÇÜLDÜ: `video` 406×**0**,
+      // `.html5-video-container` 406×**0**. Belirti tam olarak kullanıcının
+      // bildirdiği şeydi — ses akıyor, `currentTime` ilerliyor, `readyState`
+      // 4, ama ekran SİMSİYAH.
+      //
+      // Sebep aşağıdaki `video{position:absolute;height:100%}` kuralının
+      // kendisi: mutlak konumlu bir öğenin yüzdesi, konumlanmış en yakın
+      // atasına (`.html5-video-container`, `position:relative`) göre çözülür.
+      // O kabın yüksekliği `auto` ve İÇİNDEKİ TEK ÖĞE akıştan çıkmış video
+      // olduğu için kap 0 oluyor; video da 0'ın %100'ü, yani 0. Döngü kendini
+      // besliyor ve hiçbir hata vermiyor.
+      //
+      // Fragman oynatıcısı bu iki satırı 4 Eyl 2026'dan beri taşıyor
+      // (`ekranlar/fragman_gom_io.dart#_gizleJs`); oda kopyalanırken YALNIZ
+      // bunlar atlanmıştı. 8 Eyl'de siyahlık Hybrid Composition'a yorulup
+      // öyle "düzeltilmişti" — o değişiklik yanlış değil ama siyahlığın
+      // sebebi O DEĞİLDİ, bu yüzden telefonda siyah ekran sürdü.
+      '#player,.html5-video-player,.html5-video-container',
+      '{width:100%!important;height:100%!important;margin:0!important;',
+      'padding:0!important;overflow:hidden!important;background:#000!important;}',
+      '.html5-video-container{position:absolute!important;top:0!important;',
+      'left:0!important;}',
       'video{position:absolute!important;top:0!important;left:0!important;',
       'width:100%!important;height:100%!important;object-fit:contain!important;}'
     ].join('');
@@ -324,8 +360,39 @@ const _enjekte = r'''
   window.odaSar = function(s){ var e=document.querySelector('video'); if(e) e.currentTime = s; };
   window.odaHiz = function(r){ var e=document.querySelector('video'); if(e) e.playbackRate = r; };
   window.odaSessiz = function(m){ var e=document.querySelector('video'); if(e){ e.muted = !!m; if(!m) e.volume = 1; } };
+  // GÖVDE DÜZEYİNDEKİ KROM — CSS'in ULAŞAMADIĞI YER (13 Eyl 2026).
+  //
+  // YouTube'un mobil gömmesi kendi arayüzünü oynatıcının İÇİNDE değil,
+  // doğrudan `<body>` altında kuruyor: `#player-controls` → kapak resmi,
+  // dev "oynat" düğmesi, başlık, kanal adı + logosu, paylaş ve "İzlemek
+  // için YouTube" şeridi. Sınıf adları da artık `ytp-*` değil `ytm*`
+  // (13 Eyl 2026'da emülatörde DOM'dan okundu). Yukarıdaki
+  // `.html5-video-player > *` kuralı oynatıcının İÇİNİ temizliyor ama bu
+  // katmana hiç değmiyordu — kullanıcının "tasarımlar iç içe geçmiş"
+  // dediği görüntü tam olarak buydu.
+  //
+  // SINIF ADI KOVALAMIYORUZ: kural yapısal — VİDEOYU TAŞIMAYAN her gövde
+  // çocuğu gizlenir. YouTube yarın arayüzü yeniden adlandırsa da geçerli.
+  var odaSupur = function(){
+    var e = document.querySelector('video');
+    if (!e || !document.body) return;
+    var c = document.body.children;
+    for (var i = 0; i < c.length; i++) {
+      var el = c[i];
+      var t = el.tagName;
+      if (t === 'SCRIPT' || t === 'STYLE' || t === 'NOSCRIPT' || t === 'LINK') continue;
+      if (el.contains(e)) continue;
+      el.style.setProperty('display', 'none', 'important');
+    }
+  };
+  odaSupur();
   if (window.__odaKur) return;
   window.__odaKur = true;
+  // Enjekte döngüsü "hazır" haberiyle duruyor; YouTube ise kromu SONRADAN da
+  // ekliyor (duraklatma kartı, bitiş ekranı). Gözlemci o yüzden kalıcı.
+  try {
+    new MutationObserver(odaSupur).observe(document.body, {childList: true});
+  } catch (_) {}
   var yolla = function(){
     var e = document.querySelector('video');
     if (!e || !window.Oda) return;

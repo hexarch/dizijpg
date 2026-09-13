@@ -553,9 +553,39 @@ const _gizleJs = r'''
       }));
     }
   }
+  // GÖVDE DÜZEYİNDEKİ KROM — CSS'in ULAŞAMADIĞI YER (13 Eyl 2026).
+  //
+  // YouTube'un mobil gömmesi artık kendi arayüzünü oynatıcının İÇİNDE değil,
+  // doğrudan `<body>` altında (`#player-controls`) kuruyor: kapak, dev
+  // "oynat" düğmesi, başlık, kanal adı + logosu, paylaş ve "YouTube" şeridi.
+  // Sınıf adları da `ytp-*` değil `ytm*`. Yukarıdaki `ytp-*` listesi ve
+  // `#player` kırpması oraya DEĞMİYOR: emülatörde fragman oynatılırken
+  // YouTube'un başlığı ve düğmeleri bizim çubuğumuzun ÜSTÜNE biniyordu
+  // (kullanıcının "tasarımlar iç içe geçmiş" dediği görüntü).
+  //
+  // SINIF ADI KOVALAMIYORUZ: kural yapısal — VİDEOYU TAŞIMAYAN her gövde
+  // çocuğu gizlenir. Aynı kural odada da var (`oda/oda_gomme_io.dart`).
+  function supur(){
+    var v = video();
+    if (!v || !document.body) return;
+    var c = document.body.children;
+    for (var i = 0; i < c.length; i++) {
+      var el = c[i];
+      var t = el.tagName;
+      if (t === 'SCRIPT' || t === 'STYLE' || t === 'NOSCRIPT' || t === 'LINK') continue;
+      if (el.contains(v)) continue;
+      el.style.setProperty('display', 'none', 'important');
+    }
+  }
+  supur();
   nabiz();
   if (!window.__fragmanNabiz) {
     window.__fragmanNabiz = setInterval(nabiz, 250);
+    // Enjekte döngüsü 8 saniyede duruyor; YouTube kromu SONRADAN da ekliyor
+    // (duraklatma kartı, bitiş ekranı). Gözlemci o yüzden kalıcı.
+    try {
+      new MutationObserver(supur).observe(document.body, {childList: true});
+    } catch (e) {}
   }
 })();
 ''';

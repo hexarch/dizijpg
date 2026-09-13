@@ -117,6 +117,49 @@ taranmadı kuyruğu 61.079. Tıklamanın %91'i Türkiye'den. Kişi haritası tr+
 daraltılmış, bölüm hâlâ 46 dilde. Kullanıcı 12 Eyl'de "boşver tarasın google"
 dedi — daraltma YAPILMADI, bilinçli karar.
 
+## 2026-09-13 — 🐞 BİRLİKTE İZLE: SİYAH EKRAN + YOUTUBE KROMUNUN İÇ İÇE GEÇMESİ
+
+**Tetik (kullanıcı):** *"birlikte izlede hala siyah ekran var ve oranın
+tasarımları hala iç içe geçmiş"* — YouTube bağlantısı, Android uygulaması.
+
+**Yöntem:** emülatörde oda açıldı, WebView `chrome://inspect` (CDP) ile
+ÖLÇÜLDÜ. Tahmin yok; iki ayrı hata çıktı ve ikisi de canlıda doğrulandı.
+
+- ✅ **SİYAH EKRAN — `video` yüksekliği 0 PİKSELDİ.** CDP ölçümü: `video`
+  406×**0**, `.html5-video-container` 406×**0**, buna karşılık `paused:false`,
+  `currentTime` ilerliyor, `readyState:4`. Yani ses akıyor, görüntü yok.
+  Kök sebep enjekte edilen `video{position:absolute;height:100%}` kuralının
+  kendisi: mutlak konumlu öğenin yüzdesi konumlanmış atasına göre çözülür, o
+  kabın yüksekliği `auto` ve içindeki tek öğe akıştan çıkmış video olduğu için
+  kap 0, video da 0'ın %100'ü. Fragman oynatıcısındaki kap kuralları
+  (`#player,.html5-video-player,.html5-video-container{height:100%}`) odaya
+  kopyalanırken atlanmış. **8 Eyl'deki Hybrid Composition değişikliği yanlış
+  değildi ama siyahlığın sebebi O DEĞİLDİ** — o yüzden telefonda siyah sürdü.
+- ✅ **"İÇ İÇE GEÇMİŞ TASARIM" — YouTube'un YENİ mobil kromu.** Gömme artık
+  kendi arayüzünü oynatıcının içinde değil, doğrudan `<body>` altında
+  (`#player-controls`) kuruyor ve sınıf adları `ytp-*` değil `ytm*`: kapak,
+  dev oynat düğmesi, başlık, kanal + logo, paylaş, "İzlemek için YouTube".
+  `.html5-video-player > *` kuralı oraya DEĞMİYOR. Kural artık YAPISAL:
+  *videoyu taşımayan her gövde çocuğu gizlenir* + `MutationObserver` (krom
+  sonradan da ekleniyor: duraklatma kartı, bitiş ekranı).
+- ✅ **AYNI HATA FRAGMAN OYNATICISINDA DA VARDI** ve emülatörde görüldü
+  (GoT fragmanında YouTube başlığı/kanalı bizim çubuğun üstündeydi) — aynı
+  süpürme `ekranlar/fragman_gom_io.dart`a da eklendi, düzeldiği doğrulandı.
+- ✅ **ÖLÜ SİYAH BANT.** `_videoBolumu`daki `Container(alignment:center,
+  constraints:maxHeight)` çocuğuna sarılmıyor, TAVANA kadar büyüyordu
+  (`Align`, heightFactor null + sınırlı kısıt → en büyüğü alır): dikey
+  telefonda 16:9 video 228 dp isterken kutu 357 dp oluyor, aradaki ~130 dp
+  videonun altına/üstüne ölü siyah bant olarak düşüyor ve sohbetten yer
+  çalıyordu. `heightFactor:1` ile kutu videonun boyunu alıyor.
+- ✅ **Hata ayıklama kolaylığı:** `kDebugMode`da WebView uzaktan incelenebilir
+  (`AndroidWebViewController.enableDebugging`). Bu hata ancak öyle bulundu.
+- Kanıt: emülatörde uçtan uca (oda + fragman) el ile geçildi, ekran
+  görüntüleri alındı; `flutter test` oda+fragman paketleri **132 yeşil**,
+  `flutter analyze lib` 0 error.
+- ⬜ **Kullanıcı telefonunda doğrulanacak** — gerçek cihazda siyahlığın ikinci
+  bir sebebi (SurfaceTexture) daha vardı, Hybrid Composition düzeltmesi
+  yerinde duruyor.
+
 ## 2026-09-12 — 🚀 YENİLİKLER SAYFASI 1.149.0 + "güncelle" tuzağı kapandı (1.149.0+228)
 
 **Tetik:** 227 (1.148.2) duyurusu gönderilmek üzereyken görüldü ki
