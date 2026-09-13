@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (pa).
 const Map<String, String> cevirilerPa = {
+  'dizi.jpg uygulamasını indir': 'dizi.jpg ਐਪ ਡਾਊਨਲੋਡ ਕਰੋ',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'ਤੇਜ਼ ਬ੍ਰਾਊਜ਼ਿੰਗ, ਸੂਚਨਾਵਾਂ ਅਤੇ ਫੁੱਲ-ਸਕ੍ਰੀਨ ਅਨੁਭਵ ਐਪ ਵਿੱਚ ਹਨ।',
+  'Uygulamayı indir': 'ਐਪ ਡਾਊਨਲੋਡ ਕਰੋ',
+  'Tarayıcıda devam et': 'ਬ੍ਰਾਊਜ਼ਰ ਵਿੱਚ ਜਾਰੀ ਰੱਖੋ',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'ਲਿੰਕ ਪੇਸਟ ਕਰੋ ਜਾਂ ਵੀਡੀਓ ਅੱਪਲੋਡ ਕਰੋ, ਦੋਸਤਾਂ ਨੂੰ ਸੱਦੋ ਅਤੇ ਇਕੱਠੇ ਦੇਖੋ।',
   'URL yapıştır': 'ਲਿੰਕ ਪੇਸਟ ਕਰੋ',

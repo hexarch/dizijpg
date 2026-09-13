@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (ro).
 const Map<String, String> cevirilerRo = {
+  'dizi.jpg uygulamasını indir': 'Descarcă aplicația dizi.jpg',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Navigarea mai rapidă, notificările și modul pe tot ecranul sunt în aplicație.',
+  'Uygulamayı indir': 'Descarcă aplicația',
+  'Tarayıcıda devam et': 'Continuă în browser',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Lipește un link sau încarcă un videoclip, invită prieteni și priviți împreună.',
   'URL yapıştır': 'Lipește URL-ul',

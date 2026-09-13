@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (bn).
 const Map<String, String> cevirilerBn = {
+  'dizi.jpg uygulamasını indir': 'dizi.jpg অ্যাপ ডাউনলোড করুন',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'দ্রুত ব্রাউজিং, নোটিফিকেশন আর ফুল-স্ক্রিন অভিজ্ঞতা অ্যাপে আছে।',
+  'Uygulamayı indir': 'অ্যাপ ডাউনলোড করুন',
+  'Tarayıcıda devam et': 'ব্রাউজারে চালিয়ে যান',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'লিঙ্ক পেস্ট করুন বা ভিডিও আপলোড করুন, বন্ধুদের আমন্ত্রণ জানান, একসাথে দেখুন।',
   'URL yapıştır': 'লিঙ্ক পেস্ট করুন',

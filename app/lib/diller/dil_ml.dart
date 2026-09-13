@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (ml).
 const Map<String, String> cevirilerMl = {
+  'dizi.jpg uygulamasını indir': 'dizi.jpg ആപ്പ് ഡൗൺലോഡ് ചെയ്യുക',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'വേഗതയേറിയ ബ്രൗസിങ്, അറിയിപ്പുകൾ, ഫുൾ സ്ക്രീൻ അനുഭവം ആപ്പിലുണ്ട്.',
+  'Uygulamayı indir': 'ആപ്പ് ഡൗൺലോഡ് ചെയ്യുക',
+  'Tarayıcıda devam et': 'ബ്രൗസറിൽ തുടരുക',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'ലിങ്ക് ഒട്ടിക്കുക അല്ലെങ്കിൽ വീഡിയോ അപ്‌ലോഡ് ചെയ്യുക, സുഹൃത്തുക്കളെ ക്ഷണിക്കുക, ഒരുമിച്ച് കാണുക.',
   'URL yapıştır': 'ലിങ്ക് ഒട്ടിക്കുക',

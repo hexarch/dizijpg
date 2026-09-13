@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (am).
 const Map<String, String> cevirilerAm = {
+  'dizi.jpg uygulamasını indir': 'የ dizi.jpg መተግበሪያን አውርድ',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'ፈጣን አሰሳ፣ ማሳወቂያዎች እና ሙሉ ማያ ገጽ ተሞክሮ በመተግበሪያው ውስጥ ናቸው።',
+  'Uygulamayı indir': 'መተግበሪያውን አውርድ',
+  'Tarayıcıda devam et': 'በአሳሹ ውስጥ ቀጥል',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'አገናኝ ይለጥፉ ወይም ቪዲዮ ይጫኑ፣ ጓደኞችዎን ይጋብዙ እና በአንድ ላይ ይመልከቱ።',
   'URL yapıştır': 'አገናኝ ለጥፍ',

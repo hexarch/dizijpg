@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (my).
 const Map<String, String> cevirilerMy = {
+  'dizi.jpg uygulamasını indir': 'dizi.jpg အက်ပ်ကို ဒေါင်းလုဒ်လုပ်ပါ',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'ပိုမြန်သော ရှာဖွေကြည့်ရှုမှု၊ အကြောင်းကြားချက်များနှင့် မျက်နှာပြင်အပြည့် အတွေ့အကြုံသည် အက်ပ်တွင် ရှိသည်။',
+  'Uygulamayı indir': 'အက်ပ်ကို ဒေါင်းလုဒ်လုပ်ပါ',
+  'Tarayıcıda devam et': 'ဘရောက်ဆာတွင် ဆက်လက်သုံးပါ',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'လင့်ခ်ကူးထည့်ပါ သို့မဟုတ် ဗီဒီယိုတင်ပါ၊ သူငယ်ချင်းများကိုဖိတ်ခေါ်ပြီး အတူကြည့်ပါ။',
   'URL yapıştır': 'လင့်ခ်ကူးထည့်ပါ',

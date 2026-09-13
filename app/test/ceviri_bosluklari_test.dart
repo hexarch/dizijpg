@@ -302,6 +302,15 @@ const _yeniAnahtarlar = [
   'Dosya boş',
   'Bu dosya tanınmadı: TV Time, Letterboxd ya da dizi.jpg dosyası yükle',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle',
+  // UYGULAMA DAVETİ (13 Eyl 2026). Mobil/tablet TARAYICIDA açılan indirme
+  // penceresi (uygulama_daveti.dart). Bu metinleri gören ziyaretçi
+  // uygulamayı HENÜZ kurmamıştır: ilk izlenim tam da bu dört cümledir,
+  // biri Türkçe'ye düşerse davet yabancı dilde okunamaz olur.
+  // Mağaza adları (Google Play / App Store) marka olduğu için haritada YOK.
+  'dizi.jpg uygulamasını indir',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.',
+  'Uygulamayı indir',
+  'Tarayıcıda devam et',
 ];
 
 /// Türkçe hariç bütün dil kodları (Türkçe'nin haritası yoktur: anahtar zaten o).

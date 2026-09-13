@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (sw).
 const Map<String, String> cevirilerSw = {
+  'dizi.jpg uygulamasını indir': 'Pakua programu ya dizi.jpg',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Kuvinjari kwa haraka, arifa na hali ya skrini nzima vipo kwenye programu.',
+  'Uygulamayı indir': 'Pakua programu',
+  'Tarayıcıda devam et': 'Endelea kwenye kivinjari',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Bandika kiungo au pakia video, alika marafiki, na tazameni pamoja.',
   'URL yapıştır': 'Bandika kiungo',

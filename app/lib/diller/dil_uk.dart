@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (uk).
 const Map<String, String> cevirilerUk = {
+  'dizi.jpg uygulamasını indir': 'Завантажити застосунок dizi.jpg',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Швидша навігація, сповіщення та повноекранний режим — у застосунку.',
+  'Uygulamayı indir': 'Завантажити застосунок',
+  'Tarayıcıda devam et': 'Продовжити у браузері',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Вставте посилання або завантажте відео, запросіть друзів і дивіться разом.',
   'URL yapıştır': 'Вставити посилання',

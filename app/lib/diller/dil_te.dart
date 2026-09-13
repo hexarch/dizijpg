@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (te).
 const Map<String, String> cevirilerTe = {
+  'dizi.jpg uygulamasını indir': 'dizi.jpg యాప్‌ను డౌన్‌లోడ్ చేయండి',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'వేగవంతమైన బ్రౌజింగ్, నోటిఫికేషన్లు, పూర్తి స్క్రీన్ అనుభవం యాప్‌లో ఉన్నాయి.',
+  'Uygulamayı indir': 'యాప్‌ను డౌన్‌లోడ్ చేయండి',
+  'Tarayıcıda devam et': 'బ్రౌజర్‌లో కొనసాగించండి',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'లింక్ అతికించండి లేదా వీడియో అప్‌లోడ్ చేయండి, స్నేహితులను ఆహ్వానించి కలిసి చూడండి.',
   'URL yapıştır': 'లింక్ అతికించండి',

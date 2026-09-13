@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (th).
 const Map<String, String> cevirilerTh = {
+  'dizi.jpg uygulamasını indir': 'ดาวน์โหลดแอป dizi.jpg',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'การเรียกดูที่เร็วขึ้น การแจ้งเตือน และประสบการณ์เต็มหน้าจออยู่ในแอป',
+  'Uygulamayı indir': 'ดาวน์โหลดแอป',
+  'Tarayıcıda devam et': 'ดำเนินการต่อในเบราว์เซอร์',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'วางลิงก์หรืออัปโหลดวิดีโอ ชวนเพื่อน แล้วดูไปพร้อมกัน',
   'URL yapıştır': 'วางลิงก์',

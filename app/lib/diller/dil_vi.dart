@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (vi).
 const Map<String, String> cevirilerVi = {
+  'dizi.jpg uygulamasını indir': 'Tải ứng dụng dizi.jpg',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Duyệt nhanh hơn, thông báo và trải nghiệm toàn màn hình đều có trong ứng dụng.',
+  'Uygulamayı indir': 'Tải ứng dụng',
+  'Tarayıcıda devam et': 'Tiếp tục trên trình duyệt',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Dán liên kết hoặc tải video lên, mời bạn bè và cùng xem.',
   'URL yapıştır': 'Dán liên kết',

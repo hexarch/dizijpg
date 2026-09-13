@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (ta).
 const Map<String, String> cevirilerTa = {
+  'dizi.jpg uygulamasını indir': 'dizi.jpg செயலியைப் பதிவிறக்குக',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'வேகமான உலாவல், அறிவிப்புகள், முழுத்திரை அனுபவம் செயலியில் உள்ளன.',
+  'Uygulamayı indir': 'செயலியைப் பதிவிறக்குக',
+  'Tarayıcıda devam et': 'உலாவியில் தொடரவும்',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'இணைப்பை ஒட்டவும் அல்லது வீடியோவைப் பதிவேற்றவும், நண்பர்களை அழைத்து ஒன்றாகப் பாருங்கள்.',
   'URL yapıştır': 'இணைப்பை ஒட்டவும்',

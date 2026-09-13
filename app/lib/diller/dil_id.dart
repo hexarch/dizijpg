@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (id).
 const Map<String, String> cevirilerId = {
+  'dizi.jpg uygulamasını indir': 'Unduh aplikasi dizi.jpg',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Penjelajahan lebih cepat, notifikasi, dan pengalaman layar penuh ada di aplikasi.',
+  'Uygulamayı indir': 'Unduh aplikasi',
+  'Tarayıcıda devam et': 'Lanjutkan di browser',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Tempel tautan atau unggah video, undang teman, dan tonton bersama.',
   'URL yapıştır': 'Tempel tautan',

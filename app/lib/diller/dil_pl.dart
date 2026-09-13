@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (pl).
 const Map<String, String> cevirilerPl = {
+  'dizi.jpg uygulamasını indir': 'Pobierz aplikację dizi.jpg',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Szybsze przeglądanie, powiadomienia i tryb pełnoekranowy są w aplikacji.',
+  'Uygulamayı indir': 'Pobierz aplikację',
+  'Tarayıcıda devam et': 'Kontynuuj w przeglądarce',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Wklej link lub prześlij wideo, zaproś znajomych i oglądajcie razem.',
   'URL yapıştır': 'Wklej link',

@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (fa).
 const Map<String, String> cevirilerFa = {
+  'dizi.jpg uygulamasını indir': 'دانلود اپلیکیشن dizi.jpg',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'مرور سریع‌تر، اعلان‌ها و تجربه تمام‌صفحه در اپلیکیشن است.',
+  'Uygulamayı indir': 'دانلود اپلیکیشن',
+  'Tarayıcıda devam et': 'ادامه در مرورگر',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'پیوندی بچسبانید یا ویدیویی بارگذاری کنید، دوستان را دعوت کنید و با هم تماشا کنید.',
   'URL yapıştır': 'چسباندن پیوند',

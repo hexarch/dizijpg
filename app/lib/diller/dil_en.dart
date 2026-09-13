@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (en).
 const Map<String, String> cevirilerEn = {
+  'dizi.jpg uygulamasını indir': 'Download the dizi.jpg app',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Faster browsing, notifications and a full-screen experience are in the app.',
+  'Uygulamayı indir': 'Download the app',
+  'Tarayıcıda devam et': 'Continue in browser',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Paste a link or upload a video, invite friends, and watch together.',
   'URL yapıştır': 'Paste URL',

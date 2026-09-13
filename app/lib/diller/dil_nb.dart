@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (nb).
 const Map<String, String> cevirilerNb = {
+  'dizi.jpg uygulamasını indir': 'Last ned dizi.jpg-appen',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Raskere surfing, varsler og fullskjermopplevelse finnes i appen.',
+  'Uygulamayı indir': 'Last ned appen',
+  'Tarayıcıda devam et': 'Fortsett i nettleseren',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Lim inn en lenke eller last opp en video, inviter venner, og se sammen.',
   'URL yapıştır': 'Lim inn lenke',

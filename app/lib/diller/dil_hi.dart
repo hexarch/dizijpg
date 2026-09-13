@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (hi).
 const Map<String, String> cevirilerHi = {
+  'dizi.jpg uygulamasını indir': 'dizi.jpg ऐप डाउनलोड करें',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'तेज़ ब्राउज़िंग, सूचनाएं और फ़ुल-स्क्रीन अनुभव ऐप में हैं।',
+  'Uygulamayı indir': 'ऐप डाउनलोड करें',
+  'Tarayıcıda devam et': 'ब्राउज़र में जारी रखें',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'लिंक पेस्ट करें या वीडियो अपलोड करें, दोस्तों को बुलाएँ और साथ देखें।',
   'URL yapıştır': 'लिंक पेस्ट करें',

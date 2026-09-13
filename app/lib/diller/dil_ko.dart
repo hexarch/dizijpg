@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (ko).
 const Map<String, String> cevirilerKo = {
+  'dizi.jpg uygulamasını indir': 'dizi.jpg 앱 다운로드',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      '더 빠른 탐색, 알림, 전체 화면 경험은 앱에 있습니다.',
+  'Uygulamayı indir': '앱 다운로드',
+  'Tarayıcıda devam et': '브라우저에서 계속하기',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       '링크를 붙여넣거나 동영상을 올리고, 친구를 초대해 함께 보세요.',
   'URL yapıştır': '링크 붙여넣기',

@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (kn).
 const Map<String, String> cevirilerKn = {
+  'dizi.jpg uygulamasını indir': 'dizi.jpg ಅಪ್ಲಿಕೇಶನ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'ವೇಗದ ಬ್ರೌಸಿಂಗ್, ಅಧಿಸೂಚನೆಗಳು ಮತ್ತು ಪೂರ್ಣ ಪರದೆಯ ಅನುಭವ ಅಪ್ಲಿಕೇಶನ್‌ನಲ್ಲಿದೆ.',
+  'Uygulamayı indir': 'ಅಪ್ಲಿಕೇಶನ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
+  'Tarayıcıda devam et': 'ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮುಂದುವರಿಸಿ',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'ಲಿಂಕ್ ಅಂಟಿಸಿ ಅಥವಾ ವಿಡಿಯೊ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ಸ್ನೇಹಿತರನ್ನು ಆಹ್ವಾನಿಸಿ, ಒಟ್ಟಿಗೆ ನೋಡಿ.',
   'URL yapıştır': 'ಲಿಂಕ್ ಅಂಟಿಸಿ',

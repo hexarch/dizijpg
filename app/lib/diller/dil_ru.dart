@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (ru).
 const Map<String, String> cevirilerRu = {
+  'dizi.jpg uygulamasını indir': 'Скачать приложение dizi.jpg',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Быстрая навигация, уведомления и полноэкранный режим — в приложении.',
+  'Uygulamayı indir': 'Скачать приложение',
+  'Tarayıcıda devam et': 'Продолжить в браузере',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Вставьте ссылку или загрузите видео, пригласите друзей и смотрите вместе.',
   'URL yapıştır': 'Вставить URL',

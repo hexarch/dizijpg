@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (nl).
 const Map<String, String> cevirilerNl = {
+  'dizi.jpg uygulamasını indir': 'dizi.jpg-app downloaden',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Sneller browsen, meldingen en volledig scherm vind je in de app.',
+  'Uygulamayı indir': 'App downloaden',
+  'Tarayıcıda devam et': 'Doorgaan in browser',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Plak een link of upload een video, nodig vrienden uit en kijk samen.',
   'URL yapıştır': 'Link plakken',

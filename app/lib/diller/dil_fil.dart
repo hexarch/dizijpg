@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (fil).
 const Map<String, String> cevirilerFil = {
+  'dizi.jpg uygulamasını indir': 'I-download ang dizi.jpg app',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Nasa app ang mas mabilis na pag-browse, mga notification at full-screen na karanasan.',
+  'Uygulamayı indir': 'I-download ang app',
+  'Tarayıcıda devam et': 'Magpatuloy sa browser',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Mag-paste ng link o mag-upload ng video, mag-imbita ng mga kaibigan, at manood nang sabay.',
   'URL yapıştır': 'I-paste ang link',

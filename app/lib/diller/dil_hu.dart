@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (hu).
 const Map<String, String> cevirilerHu = {
+  'dizi.jpg uygulamasını indir': 'A dizi.jpg alkalmazás letöltése',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'A gyorsabb böngészés, az értesítések és a teljes képernyős élmény az alkalmazásban van.',
+  'Uygulamayı indir': 'Alkalmazás letöltése',
+  'Tarayıcıda devam et': 'Folytatás a böngészőben',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Illessz be egy linket vagy tölts fel videót, hívd meg a barátaidat, és nézzétek együtt.',
   'URL yapıştır': 'Link beillesztése',

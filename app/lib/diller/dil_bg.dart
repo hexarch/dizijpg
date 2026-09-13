@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (bg).
 const Map<String, String> cevirilerBg = {
+  'dizi.jpg uygulamasını indir': 'Изтегли приложението dizi.jpg',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'По-бързото разглеждане, известията и режимът на цял екран са в приложението.',
+  'Uygulamayı indir': 'Изтегли приложението',
+  'Tarayıcıda devam et': 'Продължи в браузъра',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Поставете връзка или качете видео, поканете приятели и гледайте заедно.',
   'URL yapıştır': 'Поставете връзка',

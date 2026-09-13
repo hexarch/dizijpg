@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (gu).
 const Map<String, String> cevirilerGu = {
+  'dizi.jpg uygulamasını indir': 'dizi.jpg એપ ડાઉનલોડ કરો',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'ઝડપી બ્રાઉઝિંગ, સૂચનાઓ અને ફુલ-સ્ક્રીન અનુભવ એપમાં છે.',
+  'Uygulamayı indir': 'એપ ડાઉનલોડ કરો',
+  'Tarayıcıda devam et': 'બ્રાઉઝરમાં ચાલુ રાખો',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'લિંક પેસ્ટ કરો અથવા વિડિયો અપલોડ કરો, મિત્રોને આમંત્રિત કરો અને સાથે જુઓ.',
   'URL yapıştır': 'લિંક પેસ્ટ કરો',

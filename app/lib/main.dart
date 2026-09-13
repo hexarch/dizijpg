@@ -25,6 +25,7 @@ import 'sira_tercihi.dart';
 import 'spoiler_tercihi.dart';
 import 'surum_kapisi.dart';
 import 'tema.dart';
+import 'uygulama_daveti.dart';
 import 'veri_tasarrufu.dart';
 import 'dil_onekli_adres.dart';
 import 'yonlendirme.dart';
@@ -263,7 +264,13 @@ class _DiziJpgAppState extends State<DiziJpgApp> {
           // ekranda "önceki ekrandan kalma" renk kalmaz.
           builder: (context, cocuk) => AnnotatedRegion<SystemUiOverlayStyle>(
             value: sistemCubukStili(tema.scaffoldBackgroundColor),
-            child: SurumKapisi(cocuk: cocuk ?? const SizedBox.shrink()),
+            child: SurumKapisi(
+              // Uygulama daveti sürüm kapısının ALTINDA: zorunlu güncelleme
+              // ekranı varken indirme penceresi onun üstüne çıkmamalı.
+              // Web dışında ve masaüstü tarayıcıda hiç çizilmez
+              // (bkz. uygulama_daveti_web.dart).
+              cocuk: UygulamaDaveti(cocuk: cocuk ?? const SizedBox.shrink()),
+            ),
           ),
         ),
       ),

@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (sv).
 const Map<String, String> cevirilerSv = {
+  'dizi.jpg uygulamasını indir': 'Ladda ner dizi.jpg-appen',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      'Snabbare surfande, aviseringar och helskärmsläge finns i appen.',
+  'Uygulamayı indir': 'Ladda ner appen',
+  'Tarayıcıda devam et': 'Fortsätt i webbläsaren',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       'Klistra in en länk eller ladda upp en video, bjud in vänner och titta tillsammans.',
   'URL yapıştır': 'Klistra in länk',

@@ -1,5 +1,10 @@
 /// Otomatik üretilen çeviri haritası (zh).
 const Map<String, String> cevirilerZh = {
+  'dizi.jpg uygulamasını indir': '下载 dizi.jpg 应用',
+  'Daha hızlı gezinme, bildirimler ve tam ekran deneyim uygulamada.':
+      '更快的浏览、通知和全屏体验都在应用里。',
+  'Uygulamayı indir': '下载应用',
+  'Tarayıcıda devam et': '在浏览器中继续',
   'Bir bağlantı yapıştır ya da video yükle, arkadaşlarını davet et, aynı anda izleyin.':
       '粘贴链接或上传视频，邀请好友，一起观看。',
   'URL yapıştır': '粘贴 URL',
