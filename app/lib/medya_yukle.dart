@@ -91,11 +91,18 @@ class MedyaYuklemeSonuc {
 ///
 /// [adim] her dosyadan sonra (başarılı ya da değil) kaçının bittiğiyle
 /// çağrılır; çağıran ilerleme çubuğunu buradan besler.
+///
+/// [oran] TÜM turun 0..1 arası gerçek BAYT ilerlemesini bildirir (biten
+/// dosyalar + o an giden dosyanın gönderilen kısmı). `adim` yalnız "3/5"
+/// diyebiliyordu: tek dosyalık bir gönderimde (sohbete video) bu sonuna kadar
+/// 0 kalıyor, halka belirsiz dönüyordu (13 Eyl 2026 kullanıcı bildirimi).
+/// Tekrar denenen dosyada oran o dosyanın başına döner — dürüst olan budur.
 Future<MedyaYuklemeSonuc> medyalariYukle(
   List<XFile> dosyalar, {
   int azamiBayt = medyaAzamiBayt,
   int? toplamAzamiBayt = medyaToplamAzamiBayt,
   void Function(int biten)? adim,
+  void Function(double oran)? oran,
 }) async {
   final yuklenen = <Map<String, dynamic>>[];
   var toplamBayt = 0;
@@ -117,7 +124,12 @@ Future<MedyaYuklemeSonuc> medyalariYukle(
           ]),
         );
       }
-      final d = await _yukleDenemeli(veri);
+      final d = await _yukleDenemeli(
+        veri,
+        oran == null
+            ? null
+            : (o) => oran((biten + o.clamp(0.0, 1.0)) / dosyalar.length),
+      );
       yuklenen.add({'yol': d['yol'], 'video': d['video']});
     } on ApiHata catch (e) {
       // Sunucunun bilinçli reddi (kota, tür, boyut): metni zaten anlamlı.
@@ -130,7 +142,12 @@ Future<MedyaYuklemeSonuc> medyalariYukle(
       // ([_yukleDenemeli]); yine düştüyse dürüst ve çevrili tek cümle kalır.
       hata ??= 'Bağlantı koptu'.c;
     }
-    adim?.call(++biten);
+    // AYRI SATIR: `adim?.call(++biten)` yazılırsa `adim` null olduğunda
+    // null-kısa devre ARGÜMANI DA atlar, yani sayaç hiç artmaz. 13 Eyl 2026'da
+    // yüzde testi yakaladı: `adim` verilmeyen (yalnız `oran` dinleyen) bir
+    // çağrıda ikinci dosyanın oranı 0,5'te tavan yapıyordu.
+    biten++;
+    adim?.call(biten);
   }
   return MedyaYuklemeSonuc(
     yuklenen: yuklenen,
@@ -150,9 +167,12 @@ Future<MedyaYuklemeSonuc> medyalariYukle(
 ///
 /// NEDEN 1 TEKRAR: dosya onlarca MB olabilir; üç-beş kez yeniden göndermek
 /// kullanıcıyı dakikalarca bekletir ve saatlik yükleme bütçesini boşa yakar.
-Future<Map<String, dynamic>> _yukleDenemeli(Uint8List veri) async {
+Future<Map<String, dynamic>> _yukleDenemeli(
+  Uint8List veri,
+  void Function(double oran)? ilerleme,
+) async {
   try {
-    return await Api.medyaYukle(veri);
+    return await Api.medyaYukle(veri, ilerleme: ilerleme);
   } on AgHatasi {
     // [ApiHata]'DAN ÖNCE gelmeli: `AgHatasi` onun alt sınıfıdır (1 Eyl 2026,
     // ham `ClientException` metni ekrana sızmasın diye tüm taşıma hataları
@@ -160,11 +180,11 @@ Future<Map<String, dynamic>> _yukleDenemeli(Uint8List veri) async {
     // da yakalar, buradaki tekrar SESSİZCE ÖLÜRDÜ — yani düzeltme, çözdüğü
     // hatanın (23 Ağu, yarıda kalan videolu yorum) çaresini götürürdü.
     await Future<void>.delayed(const Duration(seconds: 2));
-    return Api.medyaYukle(veri);
+    return Api.medyaYukle(veri, ilerleme: ilerleme);
   } on ApiHata {
     rethrow;
   } catch (_) {
     await Future<void>.delayed(const Duration(seconds: 2));
-    return Api.medyaYukle(veri);
+    return Api.medyaYukle(veri, ilerleme: ilerleme);
   }
 }

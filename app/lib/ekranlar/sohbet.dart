@@ -970,12 +970,29 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   final Map<String, dynamic> _icerikler = {};
   final Map<String, dynamic> _gonderiler = {};
   bool _yuklendi = false;
-  bool _gonderiliyor = false;
+
+  /// Sunucuya GİTMEKTE olan mesaj sayısı.
+  ///
+  /// NEDEN SAYAÇ, NEDEN KİLİT DEĞİL (13 Eyl 2026 kullanıcı bildirimi: "video
+  /// gönderilene kadar mesaj gönderemiyorum"): eskiden tek bir `_gonderiliyor`
+  /// bayrağı vardı ve Gönder düğmesini kapatıyordu. Video eki dakikalarca
+  /// sürebildiği için sohbet o süre boyunca **yazılamaz** hâle geliyordu —
+  /// oysa iyimser satır zaten her mesajı bağımsız çiziyor, gönderimler
+  /// paralel gidebilir (WhatsApp/Telegram da böyle yapar). Çift dokunuşu artık
+  /// bayrak değil, `_gonder` içindeki BOŞ MESAJ kapısı eliyor: kutu dokunur
+  /// dokunmaz boşaldığı için ikinci dokunuşun gönderecek bir şeyi kalmıyor.
+  int _ucustaGonderim = 0;
+
+  /// Düzenleme kaydı (PATCH) uçuşta mı — düzenleme kipinde çift kaydı önler.
+  bool _duzenlemeKaydediliyor = false;
   bool _ekYukleniyor = false;
 
   /// Albüm yüklemesinde "3/5" göstergesi (sıralı yükleme, medya_yukle.dart).
   int _ekIlerleme = 0;
   int _ekToplam = 0;
+
+  /// Giden ekin GERÇEK bayt yüzdesi (0-100). Halka artık boşuna dönmüyor.
+  int _ekYuzde = 0;
   String? _karsiDurum; // karşı taraf: yaziyor | kayit
   String? _hata; // ilk yükleme hatası
   Map<String, dynamic>? _partner; // avatar + son_gorulme
@@ -2107,7 +2124,6 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     String? dosyaTur,
     String? yerelAnahtar,
   }) async {
-    if (_gonderiliyor) return;
     // Düzenleme modunda: metni PATCH ile güncelle, yeni mesaj atma
     if (_duzenlenenId != null) {
       await _duzenlemeyiKaydet(metin ?? '');
@@ -2124,6 +2140,17 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     final ilkMedya =
         medya ??
         (medyalar != null && medyalar.isNotEmpty ? medyalar.first : null);
+    // BOŞ MESAJ KAPISI: Gönder'e çift dokunmanın ikincisi buraya boş metinle
+    // gelir (kutu ilk dokunuşta temizleniyor). Eski "tek gönderim kilidi"nin
+    // yerini bu alıyor — kilit, uzun süren video yüklemesinde sohbeti de
+    // kilitliyordu.
+    if ((metin == null || metin.trim().isEmpty) &&
+        ilkMedya == null &&
+        dosya == null &&
+        sesDalga == null &&
+        !icerikVar) {
+      return;
+    }
     // İYİMSER SATIR: çağıran (medya/belge akışı) kendi satırını verdiyse o
     // kullanılır; yoksa burada kurulur (metin, GIF, içerik kartı, ses).
     final yanitKopya = _yanitlanan;
@@ -2163,7 +2190,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     // Kutu hemen boşalır (Telegram): yazı balonda görünüyor zaten.
     _metin.clear();
     setState(() {
-      _gonderiliyor = true;
+      _ucustaGonderim++;
       _yanitlanan = null;
       _bekleyenIcerik = null;
     });
@@ -2195,7 +2222,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
-      if (mounted) setState(() => _gonderiliyor = false);
+      if (mounted) setState(() => _ucustaGonderim--);
     }
   }
 
@@ -2231,7 +2258,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     final id = _duzenlenenId;
     if (id == null) return;
     if (metin.trim().isEmpty) return;
-    setState(() => _gonderiliyor = true);
+    if (_duzenlemeKaydediliyor) return;
+    setState(() => _duzenlemeKaydediliyor = true);
     try {
       await Api.patch('/mesajlar/$id', {'metin': metin.trim()});
       _metin.clear();
@@ -2243,7 +2271,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
-      if (mounted) setState(() => _gonderiliyor = false);
+      if (mounted) setState(() => _duzenlemeKaydediliyor = false);
     }
   }
 
@@ -2282,6 +2310,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       _ekYukleniyor = true;
       _ekIlerleme = 0;
       _ekToplam = secim.length;
+      _ekYuzde = 0;
     });
     MedyaYuklemeSonuc sonuc;
     try {
@@ -2293,11 +2322,27 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         adim: (biten) {
           if (!mounted) return;
           setState(() => _ekIlerleme = biten);
-          _yerelGuncelle(anahtar, {'_ilerleme': biten / secim.length});
+        },
+        // GERÇEK BAYT İLERLEMESİ: eskiden yalnız `adim` vardı, yani tek
+        // dosyalık gönderimde oran bitene kadar 0 kalıyor ve halka belirsiz
+        // (sonsuz) dönüyordu — kullanıcı "hep dönüyor" diye bildirdi.
+        // Yüzde DEĞİŞTİKÇE çiziyoruz: 64 KB'lık her dilimde `setState`
+        // çağırmak 12 MB'lık videoda 190 gereksiz kare demekti.
+        oran: (o) {
+          if (!mounted) return;
+          final yuzde = (o * 100).clamp(0, 100).round();
+          if (yuzde == _ekYuzde) return;
+          _ekYuzde = yuzde;
+          _yerelGuncelle(anahtar, {'_ilerleme': o});
         },
       );
     } finally {
-      if (mounted) setState(() => _ekYukleniyor = false);
+      if (mounted) {
+        setState(() {
+          _ekYukleniyor = false;
+          _ekYuzde = 0;
+        });
+      }
     }
     if (!mounted) return;
     final bildirim = sonuc.bildirim;
@@ -2874,13 +2919,17 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                       // Ataç yazarken de KALIR: "medya + altyazı" akışı kutudaki
                       // yazıyla gider. Düzenleme kipinde kapalı: düzenlenen mesaja
                       // yeni ek bağlanamaz.
-                      // Albüm yüklenirken "2/5": sıralı yükleme dakikalar sürebilir,
-                      // dönen tek spinner "takıldı" dedirtir (üç hâl kuralı).
-                      if (_ekYukleniyor && _ekToplam > 1)
+                      // Yüklenirken "%42" (albümde "2/5 · %42"): yükleme
+                      // dakikalar sürebilir, dönen tek spinner "takıldı"
+                      // dedirtir (üç hâl kuralı).
+                      if (_ekYukleniyor)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 14),
                           child: Text(
-                            '$_ekIlerleme/$_ekToplam',
+                            _ekToplam > 1
+                                ? '$_ekIlerleme/$_ekToplam · '
+                                      '${'%{}'.cf([_ekYuzde])}'
+                                : '%{}'.cf([_ekYuzde]),
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
@@ -2924,7 +2973,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
             _duzenlenenId != null ||
             _bekleyenIcerik != null ||
             kIsWeb);
-    final kapali = _gonderiliyor || _ekYukleniyor;
+    // YÜKLEME KİLİTLEMEZ (13 Eyl 2026): ek yüklenirken de yazıp gönderebilmek
+    // gerekir; kapalı olan tek hâl, düzenlemenin kaydediliyor olması.
+    final kapali = _duzenlemeKaydediliyor;
     if (gonder) {
       return Semantics(
         button: true,
@@ -3085,10 +3136,25 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       if (metin.isNotEmpty) 'metin': metin,
     }, tekrar: _dosyaGonder);
     _metin.clear();
-    setState(() => _ekYukleniyor = true);
+    setState(() {
+      _ekYukleniyor = true;
+      _ekToplam = 1;
+      _ekIlerleme = 0;
+      _ekYuzde = 0;
+    });
     try {
       final bayt = d.bytes ?? await dosyaOku(d.path!);
-      final sonuc = await Api.dosyaYukle(bayt, ad: d.name);
+      final sonuc = await Api.dosyaYukle(
+        bayt,
+        ad: d.name,
+        ilerleme: (o) {
+          if (!mounted) return;
+          final yuzde = (o * 100).clamp(0, 100).round();
+          if (yuzde == _ekYuzde) return;
+          _ekYuzde = yuzde;
+          _yerelGuncelle(anahtar, {'_ilerleme': o});
+        },
+      );
       await _gonder(
         dosya: sonuc['yol'] as String,
         dosyaAd: d.name,
@@ -3104,7 +3170,12 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       _yerelGuncelle(anahtar, {'_bekliyor': false, '_hata': true});
       if (mounted) _uyar('Dosya gönderilemedi'.c);
     } finally {
-      if (mounted) setState(() => _ekYukleniyor = false);
+      if (mounted) {
+        setState(() {
+          _ekYukleniyor = false;
+          _ekYuzde = 0;
+        });
+      }
     }
   }
 
@@ -4413,16 +4484,57 @@ class _AlbumIzgarasi extends StatelessWidget {
         Positioned.fill(
           child: ColoredBox(color: Colors.black.withValues(alpha: 0.35)),
         ),
-        SizedBox(
-          width: 40,
-          height: 40,
-          child: CircularProgressIndicator(
-            value: ilerleme! <= 0 ? null : ilerleme,
-            strokeWidth: 3,
-            color: Colors.white,
-          ),
-        ),
+        _YuklemeHalkasi(ilerleme: ilerleme!),
       ],
+    );
+  }
+}
+
+/// Yükleme halkası + ORTASINDA yüzde.
+///
+/// NEDEN YAZI DA VAR (13 Eyl 2026 kullanıcı bildirimi): yalnız halka, bir
+/// videonun 12 MB'ını mobil veriyle yüklerken "ilerliyor mu, takıldı mı"
+/// sorusunu cevaplamıyordu. Rakam, halkanın kendisi yavaş dolarken bile
+/// ilerlemeyi okunur kılar (ui-ux-pro-max, Feedback/Progress Indicators).
+/// Oran 0 iken halka BELİRSİZ döner ve rakam basılmaz: dosya okunuyordur,
+/// "%0" yazmak "takıldı" demekten farksızdır.
+class _YuklemeHalkasi extends StatelessWidget {
+  final double ilerleme;
+  final double cap;
+
+  const _YuklemeHalkasi({required this.ilerleme, this.cap = 46});
+
+  @override
+  Widget build(BuildContext context) {
+    final baslandi = ilerleme > 0;
+    return SizedBox(
+      width: cap,
+      height: cap,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox.expand(
+            child: CircularProgressIndicator(
+              value: baslandi ? ilerleme.clamp(0.0, 1.0) : null,
+              strokeWidth: 3,
+              color: Colors.white,
+              backgroundColor: Colors.white24,
+            ),
+          ),
+          if (baslandi)
+            Text(
+              // Yüzde İŞARETİNİN YERİ dile göre değişir ('%42' / '42%'):
+              // ortak `'%{}'` anahtarı 45 dilde zaten karşılıklı.
+              '%{}'.cf([(ilerleme * 100).clamp(0, 100).round()]),
+              style: TextStyle(
+                fontSize: cap <= 34 ? 9 : 12,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -4613,15 +4725,7 @@ class _BelgeKutusu extends StatelessWidget {
                             ),
                     ),
                     if (ilerleme != null)
-                      SizedBox(
-                        width: 26,
-                        height: 26,
-                        child: CircularProgressIndicator(
-                          value: ilerleme! <= 0 ? null : ilerleme,
-                          strokeWidth: 2.5,
-                          color: Colors.white,
-                        ),
-                      ),
+                      _YuklemeHalkasi(ilerleme: ilerleme!, cap: 30),
                   ],
                 ),
               ),
@@ -4643,7 +4747,13 @@ class _BelgeKutusu extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      boyut == null ? '' : boyutMetni(boyut!),
+                      // Yüklenirken boyutun yanında yüzde: karodaki halka
+                      // 30 dp'de rakamı zor okutur, satır okutur.
+                      [
+                        if (boyut != null) boyutMetni(boyut!),
+                        if (ilerleme != null && ilerleme! > 0)
+                          '%{}'.cf([(ilerleme! * 100).clamp(0, 100).round()]),
+                      ].join(' · '),
                       style: TextStyle(
                         fontSize: 11,
                         color: yaziRengi.withValues(alpha: 0.6),

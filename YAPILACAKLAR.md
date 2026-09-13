@@ -1,6 +1,55 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-13 — 🚀 SOHBET EKİ: GERÇEK YÜZDE + KİLİTSİZ KUTU (1.156.0+235)
+
+**Tetik:** kullanıcı — *"dizi jpg de birisine video gönderirken video
+gönderilene kadar mesaj gönderemiyorum ve videonun gönderim yüzdesini hiç
+göremiyorum hep dönüyor tam gönderilene kadar"*
+
+### 1) Yükleme artık BAYT BAYT ilerleme bildiriyor
+- **Kök sebep:** `http` paketinin kısa yolu (`Client.post(body: …)`) gövdeyi
+  tek parça verir; "ne kadarı gitti" diye sorulacak kanca yoktur. İlerleme
+  yalnız `medyalariYukle`nin `adim` geri çağrısından geliyordu, o da DOSYA
+  sayardı — tek videoda oran sonuna kadar 0 kalıyor, `CircularProgressIndicator`
+  `value: null` ile **belirsiz** (sonsuz) dönüyordu.
+- Yeni sap `lib/yukleme_ilerleme.dart`:
+  * **io:** gövde 64 KB'lık dilimlerle akıtılır; `IOClient` akışı soket kabul
+    ettikçe çeker, yani "yazılan bayt" ≈ "giden bayt".
+  * **web:** `XMLHttpRequest.upload` `progress` olayı (BrowserClient bunu
+    dışarı açmıyor; `fetch` yükleme ilerlemesi taşımıyor).
+- `Api.medyaYukle`/`Api.dosyaYukle` yeni `ilerleme` parametresi alır; VERİLMEZSE
+  eski kısa yol korunur (GIF arşivi, kısa ses notu akış kurmasın).
+- `medyalariYukle` yeni `oran` geri çağrısı TÜM turu kapsar (biten dosyalar +
+  o an gidenin kısmı).
+- **Yan bulgu (testin yakaladığı):** `adim?.call(++biten)` — `adim` null ise
+  null-kısa devre ARGÜMANI da atlıyor, sayaç hiç artmıyordu. Ayrıldı.
+
+### 2) Yüzde EKRANDA: halkanın ortasında ve kutuda
+- Bekleyen medya balonunda halka artık BELİRLİ + ortasında `%42`
+  (`_YuklemeHalkasi`). Oran 0 iken rakam basılmaz (dosya okunuyordur; "%0"
+  "takıldı" gibi okunur).
+- Giriş kutusunda `%42`, albümde `2/5 · %42`.
+- Belge baloncuğunda boyut satırı `1,2 MB · %42`.
+- Metin ÇEVİRİ İSTEMEDİ: mevcut `'%{}'` anahtarı 45 dilde zaten karşılıklı
+  (yüzde işaretinin yeri dile göre değişiyor).
+
+### 3) Yükleme sohbeti KİLİTLEMİYOR
+- **Kök sebep:** tek bir `_gonderiliyor` bayrağı hem POST'u hem Gönder
+  düğmesini kapatıyordu; `_ekYukleniyor` da düğmeyi kilitliyordu. Video eki
+  dakikalarca sürdüğü için sohbet o süre boyunca yazılamaz hâle geliyordu.
+- Bayrağın yerine `_ucustaGonderim` SAYACI geldi; gönderimler paralel gider
+  (iyimser satır zaten her mesajı bağımsız çiziyor). Çift dokunuşu artık
+  `_gonder` içindeki **boş mesaj kapısı** eliyor.
+- Düzenleme kaydı ayrı bayrakta (`_duzenlemeKaydediliyor`) — çift PATCH yok.
+- Ataç düğmesi yükleme sürerken kapalı KALIYOR: paralel iki büyük yükleme
+  düşük bellekli Android'i öldürür (medya_yukle.dart'taki sıralı akış notu).
+
+**Kanıt:** `test/yukleme_yuzdesi_test.dart` — oran kademe kademe yükselip 1,0
+ile biter, iki dosyada tur ortasından geçer, `oran` verilmeyince eski kısa yol
+kullanılır; uçuştaki gönderim ikinci mesajı ENGELLEMEZ, boş mesaj gitmez.
+Tüm takım: 2.918 test geçti. APK telefona kuruldu (1.156.0+235, çökme yok).
+
 ## 2026-09-13 — 🚀 PROFİLDEKİ LİSTE TAM SAYFA AÇILIR (1.154.0+233)
 
 **Tetik:** kullanıcı — *"profilimdeki en sevdiklerim listesinde (… böyle bir

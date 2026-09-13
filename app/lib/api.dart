@@ -13,6 +13,7 @@ import 'kitaplik_durumu.dart';
 import 'onbellek.dart';
 import 'puan.dart';
 import 'puan_favori_deposu.dart';
+import 'yukleme_ilerleme.dart';
 
 /// dizi.jpg API istemcisi (nginx + Cloudflare arkasında, TLS'li).
 const String apiTaban = 'https://dizijpg.com/api';
@@ -684,7 +685,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.155.0+234';
+  static const surum = '1.156.0+235';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.
@@ -773,20 +774,48 @@ class Api {
   }
 
   /// Yorum eki (fotoğraf/video) yükler; sunucu yolunu döndürür.
-  static Future<Map<String, dynamic>> medyaYukle(Uint8List veri) async =>
+  ///
+  /// [ilerleme] verilirse gövde parça parça gönderilir ve her dilimde 0..1
+  /// arası oran bildirilir — çağıran bunu yüzdeye çevirip gösterir. Verilmezse
+  /// eski kısa yol (tek gövde) kullanılır: ilerleme göstermeyen çağrılar
+  /// (arşiv GIF'i, kısa ses notu) fazladan akış kurmasın.
+  static Future<Map<String, dynamic>> medyaYukle(
+    Uint8List veri, {
+    void Function(double oran)? ilerleme,
+  }) async =>
       await _yanit(
-            () => _istemci
-                .post(
-                  Uri.parse('$apiTaban/medya'),
-                  headers: {
-                    'Content-Type': 'application/octet-stream',
-                    if (_token != null) 'Authorization': 'Bearer $_token',
-                  },
-                  body: veri,
-                )
-                .timeout(const Duration(minutes: 5)),
+            () => _yukle(
+              '$apiTaban/medya',
+              veri,
+              ilerleme: ilerleme,
+            ).timeout(const Duration(minutes: 5)),
           )
           as Map<String, dynamic>;
+
+  /// Yükleme gövdesini gönderir: [ilerleme] varsa yüzde bildiren hattan
+  /// (`yukleme_ilerleme.dart`), yoksa `http`nin kısa yolundan.
+  static Future<http.Response> _yukle(
+    String adres,
+    Uint8List veri, {
+    void Function(double oran)? ilerleme,
+    Map<String, String> ekBaslik = const {},
+  }) {
+    final basliklar = {
+      'Content-Type': 'application/octet-stream',
+      ...ekBaslik,
+      if (_token != null) 'Authorization': 'Bearer $_token',
+    };
+    if (ilerleme == null) {
+      return _istemci.post(Uri.parse(adres), headers: basliklar, body: veri);
+    }
+    return ilerlemeliGonder(
+      istemci: _istemci,
+      adres: Uri.parse(adres),
+      veri: veri,
+      basliklar: basliklar,
+      ilerleme: ilerleme,
+    );
+  }
 
   /// Belge (dosya) yükleme — `/dosya` ucu. Görsel/videodan AYRI uç: sunucu
   /// belgeyi diske `.bin` uzantısıyla, özgün adı/MIME'ı yalnız mesaj satırında
@@ -796,19 +825,15 @@ class Api {
   static Future<Map<String, dynamic>> dosyaYukle(
     Uint8List veri, {
     required String ad,
+    void Function(double oran)? ilerleme,
   }) async =>
       await _yanit(
-            () => _istemci
-                .post(
-                  Uri.parse('$apiTaban/dosya'),
-                  headers: {
-                    'Content-Type': 'application/octet-stream',
-                    'X-Dosya-Ad': Uri.encodeComponent(ad),
-                    if (_token != null) 'Authorization': 'Bearer $_token',
-                  },
-                  body: veri,
-                )
-                .timeout(const Duration(minutes: 5)),
+            () => _yukle(
+              '$apiTaban/dosya',
+              veri,
+              ilerleme: ilerleme,
+              ekBaslik: {'X-Dosya-Ad': Uri.encodeComponent(ad)},
+            ).timeout(const Duration(minutes: 5)),
           )
           as Map<String, dynamic>;
 
