@@ -65,12 +65,15 @@ Future<void> _kur(WidgetTester tester, Widget cocuk) async {
 }
 
 void main() {
-  testWidgets('şerit ad+sayı basar ve öğeler için MiniIcerik çizer', (
+  // SAYI YOK (13 Eyl 2026): başlıkta " (2)" eki vardı; "En sevdiklerim" gibi
+  // uzunca bir adı taşırıp "En sevdiklerim (…" diye kırptırıyordu.
+  testWidgets('şerit yalnız adı basar ve öğeler için MiniIcerik çizer', (
     tester,
   ) async {
     _sunucu();
     await _kur(tester, ListeSeridi(liste: _liste, onAc: () {}));
-    expect(find.text('Bilimkurgu (2)'), findsOneWidget);
+    expect(find.text('Bilimkurgu'), findsOneWidget);
+    expect(find.textContaining('(2)'), findsNothing);
     expect(find.byType(MiniIcerik), findsNWidgets(2));
   });
 
@@ -106,7 +109,7 @@ void main() {
         onAc: () {},
       ),
     );
-    expect(find.text('Boş (0)'), findsOneWidget);
+    expect(find.text('Boş'), findsOneWidget);
     expect(find.byType(MiniIcerik), findsNothing);
   });
 }

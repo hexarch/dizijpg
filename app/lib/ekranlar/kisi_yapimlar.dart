@@ -26,7 +26,7 @@ import 'ortak.dart';
 ///  * DERİN BAĞLANTI (ui-ux-pro-max, Navigation/Deep Linking): kendi adresi
 ///    olan bir ekran web'de paylaşılabilir ve F5'te yerinde kalır. Modalın
 ///    adresi yoktur.
-/// Projede ikisinin de örneği var (`ListeSheet` modal, `liste.dart` tam sayfa);
+/// Projede ikisinin de örneği var (modal sayfalar, `liste.dart` tam sayfa);
 /// burada tam sayfa kalıbı seçildi.
 /// ---------------------------------------------------------------------------
 class KisiYapimlariEkrani extends StatefulWidget {

@@ -157,9 +157,9 @@ void main() {
     await _kur(tester);
 
     expect(find.text('Listelerim'), findsOneWidget);
-    // [ListeSeridi] başlığı "ad (öğe sayısı)" biçiminde yazar.
+    // [ListeSeridi] başlığı YALNIZ adı yazar (13 Eyl 2026: sayı eki kalktı).
     expect(
-      find.text('Kendi listem (0)'),
+      find.text('Kendi listem'),
       findsOneWidget,
       reason: 'kullanıcının kendi listeleri de silinmiş',
     );

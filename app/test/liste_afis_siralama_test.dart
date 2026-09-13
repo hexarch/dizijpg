@@ -21,7 +21,7 @@
 import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
-import 'package:dizijpg/ekranlar/ortak.dart';
+import 'package:dizijpg/ekranlar/liste.dart';
 import 'package:dizijpg/ekranlar/siralanabilir_izgara.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
@@ -94,7 +94,7 @@ Future<void> _kur(WidgetTester tester, {bool sahibiyim = true}) async {
       value: Oturum(),
       child: MaterialApp(
         theme: diziTema(acik: false),
-        home: Scaffold(body: ListeSheet(listeId: 7, ad: 'Favorilerim')),
+        home: const ListeEkrani(listeId: 7),
       ),
     ),
   );

@@ -1,6 +1,46 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-13 — 🚀 PROFİLDEKİ LİSTE TAM SAYFA AÇILIR (1.154.0+233)
+
+**Tetik:** kullanıcı — *"profilimdeki en sevdiklerim listesinde (… böyle bir
+şey var onu kaldır ve o listeye tıklayınca da diğer listeler gibi açılsın;
+böyle açılınca çevirme çarkına tıklayıp aşağı doğru kaydırınca liste
+kapanıyor, kapanmasın diye tam ekran açılmalı"*
+
+### 1) Şerit başlığındaki "(N)" eki kalktı (`ekranlar/ortak.dart`)
+- `ListeSeridi` başlığı `ad (öğe sayısı)` yazıyordu. "En sevdiklerim" gibi
+  uzunca bir adda ek satıra sığmayıp başlık **"En sevdiklerim (…"** diye
+  kırpılıyordu — ekranda yarım bir parantez duruyordu. Artık YALNIZ ad.
+- Sayı zaten iki yerden okunuyor: şeritteki posterler ve liste açılınca ızgara.
+
+### 2) Liste MODAL DEĞİL, TAM SAYFA
+- **Kök sebep:** liste `showModalBottomSheet` ile ekranın %75'ini kaplayan alt
+  sayfada açılıyordu. Alt sayfa aşağı sürükleyince KAPANIR; ızgaranın en
+  üstündeyken yapılan her aşağı kaydırma jesti (kullanıcı "ne izlesem" çarkını
+  açıp kapattıktan sonra tam da bunu yapıyordu) listeyi kapatıyordu.
+- `ListeSheet` **tamamen kaldırıldı**; iki profil de zaten var olan tam sayfa
+  [`ListeEkrani`]'yi (`ekranlar/liste.dart`) açıyor. İki kopya ekran yok.
+- Rotalar **kabuğun İÇİNDE** (skill md. 4 — alt gezinme çubuğu kaybolmasın):
+  kendi profilinde `/profil/liste/:id`, ziyaretçi profilinde
+  `/kullanici/:ad/liste/:id`. Paylaşım/SSR adresi `/listeler/:id` (kabuk dışı,
+  oturumsuz açılır) AYNI ekranı çizmeye devam ediyor.
+- Ölü bayrak temizliği: `ListeIcerigi.modalIcinde` artık hiçbir yerde true
+  değildi → alan, "Keşfet'e dön" dalı ve postere dokununca yapılan
+  `Navigator.pop` kaldırıldı.
+
+### Testler
+- Yeni `test/liste_tam_sayfa_acilis_test.dart`: gerçek yönlendiriciyle profil
+  kurulur, şeride dokunulur → `ListeEkrani` var, `BottomSheet` YOK,
+  `NavigationBar` duruyor, başlıkta "(3)" yok.
+  **TUZAK (yine):** `context.push` GoRouter'ın `currentConfiguration.uri`sini
+  değiştirmiyor → kanıt adresten değil EKRANDAKİ WIDGET'tan okunuyor.
+- `modal_alt_guvenli_test.dart` grubu tam sayfaya taşındı; 12 öğe tam sayfada
+  ekrana SIĞIP `maxScrollExtent` 0 verdiği için fikstür 24 öğeye çıktı
+  (testin kendi "boş test" iddiası yakaladı), kabuk içi vakası da telefon
+  ölçüsüne alındı (ızgara sütun sayısını genişlikten türetiyor).
+- `flutter test`: 2897 test geçiyor.
+
 ## 2026-09-13 — 🚀 BİLDİRİMDE PROFİL BAĞI + YORUMU ARKADAŞA GÖNDERME (1.153.0+232)
 
 **Tetik:** kullanıcı — *"dizi jpg de birisi paylaştığım yorumu beğendiğinde

@@ -93,14 +93,10 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
     );
   }
 
-  void _listeAc(int id, String? ad) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: DiziRenkler.koyuGri,
-      builder: (_) => ListeSheet(listeId: id, ad: ad ?? ''),
-    );
-  }
+  /// Liste TAM SAYFA açılır (13 Eyl 2026 isteği) — kendi profilindeki
+  /// şeritle aynı davranış; modal alt sayfa aşağı kaydırınca kapanıyordu.
+  void _listeAc(int id) =>
+      context.push('/kullanici/${widget.kullaniciAdi}/liste/$id');
 
   /// Ziyaretçi profilinde izlediklerinin ızgarası (sayaç ve şerit başlığından).
   ///
@@ -629,8 +625,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       for (final l in listeler)
                         ListeSeridi(
                           liste: l as Map<String, dynamic>,
-                          onAc: () =>
-                              _listeAc(l['id'] as int, l['ad'] as String?),
+                          onAc: () => _listeAc(l['id'] as int),
                         ),
                     ],
                     // Hiç izlemesi/listesi/rozeti olmayan kullanıcıda sekme

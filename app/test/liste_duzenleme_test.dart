@@ -21,7 +21,7 @@
 import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
-import 'package:dizijpg/ekranlar/ortak.dart';
+import 'package:dizijpg/ekranlar/liste.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -86,7 +86,7 @@ Future<void> _kur(WidgetTester tester, {bool sahibiyim = true}) async {
       value: Oturum(),
       child: MaterialApp(
         theme: diziTema(acik: false),
-        home: Scaffold(body: ListeSheet(listeId: 7, ad: 'Favorilerim')),
+        home: const ListeEkrani(listeId: 7),
       ),
     ),
   );
@@ -114,7 +114,7 @@ List<int> _sonSira() {
 void main() {
   // İKİ AYRI TEST, tek testte iki `_kur` DEĞİL: aynı testte ikinci kez
   // `pumpWidget` çağrılınca Flutter eleman ağacını YENİDEN KULLANIR
-  // (`ListeSheet` tipi ve konumu aynı), `initState` bir daha koşmaz ve
+  // (`ListeEkrani` tipi ve konumu aynı), `initState` bir daha koşmaz ve
   // sahiplik yeniden sorulmaz. Yani ikinci iddia her hâlükârda düşerdi.
   testWidgets('BAŞKASININ listesinde düzenle düğmesi YOK', (tester) async {
     await _kur(tester, sahibiyim: false);

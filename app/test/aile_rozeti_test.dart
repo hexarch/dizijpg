@@ -495,7 +495,7 @@ void main() {
   testWidgets(
     'MODAL: SafeArea var (alt içerik gezinme çubuğu altında kalmaz)',
     (tester) async {
-      // Bu hafta üç modalde (ListeSheet, takvim gün detayı, puan verme) alt
+      // Bu hafta üç yerde (liste ızgarası, takvim gün detayı, puan verme) alt
       // içerik sistem gezinme çubuğunun altında kalmıştı. Burası o hatayı
       // tekrarlamadığımızı kilitler.
       await _baskasi(tester, ulke: 'Türkiye', testci: true);

@@ -62,7 +62,7 @@ Future<void> yorumPaylas(BuildContext context, Map<String, dynamic> yorum) {
 
 /// Liste adının yanındaki paylaş düğmesi.
 ///
-/// ORTAK: hem modalde ([ListeSheet]) hem tam sayfada (`liste.dart`) —
+/// ORTAK: liste tam sayfası (`liste.dart`) ve onu kullanan her yer —
 /// [ListeDuzenleDugmesi] ile aynı gerekçe. Bağlantı tam sayfa listeye
 /// (`/listeler/:id`) gider: rota oturumsuz açılır ve `/og/listeler/:id`
 /// SSR'ı sayesinde WhatsApp/Twitter önizleme kartı basar.

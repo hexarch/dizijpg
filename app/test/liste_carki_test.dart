@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/izlem_carki.dart';
 import 'package:dizijpg/ekranlar/liste.dart';
-import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -15,8 +14,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// oluşturduğum listemde neden çark yok?"). Kilitler:
 ///   1. Tam sayfa listede (/listeler/:id) öğeler yüklenince çark düğmesi
 ///      belirir; dokununca çark açılır.
-///   2. Profil modalindeki listede ([ListeSheet]) de aynı düğme var.
-///   3. Boş listede düğme çizilmez.
+///   2. Boş listede düğme çizilmez.
+///
+/// 13 Eyl 2026: profil modali ([ListeSheet]) kaldırıldı — profildeki liste de
+/// artık AYNI tam sayfayı açıyor, o yüzden ayrı bir modal vakası yok.
 http.Response _json(Object govde) => http.Response(
   jsonEncode(govde),
   200,
@@ -91,17 +92,6 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.byType(IzlemCarki), findsOneWidget);
-  });
-
-  testWidgets('liste modalinde de çark düğmesi var', (tester) async {
-    _sunucu();
-    // Modal gerçekte showModalBottomSheet içinde açılır (Material atası
-    // oradan gelir); testte aynı zemini Scaffold sağlar.
-    await _kur(
-      tester,
-      const Scaffold(body: ListeSheet(listeId: 8, ad: 'Bilimkurgu')),
-    );
-    expect(find.byKey(const Key('liste-sheet-izlem-carki')), findsOneWidget);
   });
 
   testWidgets('boş listede çark düğmesi çizilmez', (tester) async {

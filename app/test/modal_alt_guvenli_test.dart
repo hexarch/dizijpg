@@ -16,13 +16,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// ALTTAN AÇILAN MODALLERİN ALT GÜVENLİ ALANI.
 ///
 /// HATA (360x800 / 48 dp sistem gezinme çubuğu, güvenli sınır y=752):
-///   * [ListeSheet] ızgarasının son sırası          → 780
+///   * liste ızgarasının ([ListeIcerigi]) son sırası → 780
 ///   * takvimdeki [BolumModali] listesinin sonu     → 776
 ///   * [puanlaVeKaydet] "Kaydet" düğmesi            → 763
 /// Üçü de çubuğun ALTINDA kalıyordu, yani dokunulamıyordu.
 ///
 /// KÖK NEDEN: hepsinde alt boşluk SABİT yazılmıştı. Kaydırma listelerinde
-/// (`ListeSheet`, `BolumModali`) ayrıca şu tuzak var: bir BoxScrollView'e AÇIK
+/// (`ListeIcerigi`, `BolumModali`) ayrıca şu tuzak var: bir BoxScrollView'e AÇIK
 /// `padding` verildiği an Flutter MediaQuery alt güvenli alanını KENDİLİĞİNDEN
 /// EKLEMEZ (yalnız `padding == null` iken ekler) — ayarlar.dart ve
 /// arama_cubugu.dart'ta iki kez düzeltilen aynı sınıf hata.
@@ -60,9 +60,14 @@ void _telefon(
   addTearDown(tester.view.reset);
 }
 
-/// 12 öğe = 3'lü ızgarada 4 sıra → 0.75 yükseklikli sheet'e sığmaz, kayar.
-const int _ogeSayisi = 12;
-const String _sonOge = 'Dizi 12';
+/// 24 öğe = 3'lü ızgarada 8 sıra → TAM SAYFAYA da sığmaz, kayar.
+///
+/// 13 Eyl 2026: liste modal alt sayfa (ekranın 0.75'i) iken 12 öğe yetiyordu;
+/// tam sayfada ([ListeEkrani]) 4 sıra ekrana SIĞIYOR ve `maxScrollExtent` 0
+/// çıkıyordu — yani test sessizce boşa dönüyordu (kendi "boş test" iddiası
+/// yakaladı). Sayı bu yüzden iki katına çıktı.
+const int _ogeSayisi = 24;
+const String _sonOge = 'Dizi 24';
 
 /// Son ızgara KARTI (metin değil): kart hücrenin tamamını kaplayan dokunma
 /// hedefidir; metin hücrenin ORTASINDA durduğu için onunla ölçmek hatayı
@@ -167,10 +172,19 @@ void main() {
   });
 
   // -------------------------------------------------------------------
-  // 1) ListeSheet (ortak.dart) — GridView, eski sabit dolgu 20 → alt 780
+  // 1) Liste ızgarası (ListeIcerigi) — GridView, eski sabit dolgu 20 → alt 780
+  //
+  // 13 Eyl 2026: liste artık modal alt sayfa DEĞİL, itilen tam sayfa
+  // ([ListeEkrani]) — ama dolgu tuzağı aynen duruyor (açık `padding` veren
+  // BoxScrollView alt güvenli alanı KENDİLİĞİNDEN eklemez), o yüzden vakalar
+  // kalıyor, yalnız açılış biçimi değişti.
   // -------------------------------------------------------------------
-  group('ListeSheet', () {
-    void ac(BuildContext c) => ListeSheet.ac(c, listeId: 1, ad: 'Listem');
+  group('Liste ızgarası', () {
+    void ac(BuildContext c) => Navigator.of(c).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const Scaffold(body: ListeIcerigi(listeId: 1)),
+      ),
+    );
 
     testWidgets('kabuk DIŞI: son poster sırası sistem çubuğunun ÜSTÜNDE', (
       tester,
@@ -215,10 +229,14 @@ void main() {
 
     testWidgets('kabuk İÇİ çağıran: FAZLADAN boşluk yok, son sıra alt '
         'menünün ÜSTÜNDE', (tester) async {
-      // Aynı sheet hem profil sekmesinden (kabuk içi) hem de başka bir
+      // Aynı sayfa hem profil sekmesinden (kabuk içi) hem de başka bir
       // kullanıcının profilinden açılıyor; altGuvenli MediaQuery'ye baktığı
       // için parametresiz olarak iki çağıranda da doğru davranmalı.
-      _telefon(tester, genislik: 1440, yukseklik: 900, altPay: _altPay);
+      // TELEFON ÖLÇÜSÜ (13 Eyl 2026): eskiden 1440x900 idi; ızgara sütun
+      // sayısını GENİŞLİKTEN türetiyor ([PosterIzgarasi]), o yüzden geniş
+      // ekranda 24 öğe 5 sıraya sığıp `maxScrollExtent` 0 kalıyordu. Zaten
+      // modellenen durum telefon: alt gezinme çubuğu taşıyan kabuk.
+      _telefon(tester, altPay: _altPay);
       await _ac(tester, _kabukIci(ac));
       await _sonaKaydir(tester, GridView);
 

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/liste.dart';
-import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -14,9 +13,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// paylaşılabilsin"). Kilitler:
 ///   1. Tam sayfa listede (/listeler/:id) paylaş düğmesi var; dokununca
 ///      paylaşım sayfası (kişilere gönder + bağlantıyı kopyala) açılır.
-///   2. Profil modalindeki listede ([ListeSheet]) de aynı düğme var.
-///   3. GİZLİ (herkese_acik=false) listede düğme çizilmez: bağlantıyı alan
+///   2. GİZLİ (herkese_acik=false) listede düğme çizilmez: bağlantıyı alan
 ///      yabancı 404 görürdü.
+///
+/// 13 Eyl 2026: profil modali ([ListeSheet]) kaldırıldı — profildeki liste de
+/// artık AYNI tam sayfayı açıyor, o yüzden ayrı bir modal vakası yok.
 http.Response _json(Object govde) => http.Response(
   jsonEncode(govde),
   200,
@@ -92,15 +93,6 @@ void main() {
     // Paylaşım sayfasının kanıtı dile bağlanmaz (test cihazın diliyle koşar):
     // "bağlantıyı kopyala" düğmesinin ikonu aranır.
     expect(find.byIcon(Icons.link), findsOneWidget);
-  });
-
-  testWidgets('liste modalinde de paylaş düğmesi var', (tester) async {
-    _sunucu();
-    await _kur(
-      tester,
-      const Scaffold(body: ListeSheet(listeId: 8, ad: 'Bilimkurgu')),
-    );
-    expect(find.byKey(const Key('liste-paylas')), findsOneWidget);
   });
 
   testWidgets('gizli listede paylaş düğmesi çizilmez', (tester) async {

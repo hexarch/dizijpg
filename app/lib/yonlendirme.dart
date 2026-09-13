@@ -411,6 +411,18 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
                       takipciler: false,
                     ),
                   ),
+                  // Başkasının listesi TAM SAYFA (13 Eyl 2026) — kendi
+                  // profilindeki `/profil/liste/:id` ile aynı ekran, kabuk
+                  // içinde kalsın diye ziyaretçi profilinin ALT rotası.
+                  GoRoute(
+                    path: 'liste/:id',
+                    builder: (_, s) {
+                      final id = int.tryParse(s.pathParameters['id'] ?? '');
+                      return id == null
+                          ? const _GecersizBaglanti()
+                          : ListeEkrani(listeId: id);
+                    },
+                  ),
                   // Kitaplık listesi paylaşım sayfası (salt okunur) —
                   // kitaplık ekranındaki paylaş düğmesi buraya bağlantı verir.
                   GoRoute(
@@ -506,6 +518,21 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
                 path: '/kitaplik/:durum',
                 builder: (_, s) =>
                     KitaplikListesiEkrani(durum: s.pathParameters['durum']!),
+              ),
+              // Kendi listen TAM SAYFA (13 Eyl 2026 isteği) — eskiden modal
+              // alt sayfaydı ve ızgaranın tepesindeyken aşağı kaydırmak
+              // listeyi kapatıyordu. Kabuğun İÇİNDE: `/kitaplik/:durum` ile
+              // aynı kalıp, alt gezinme çubuğu kalır, geri tuşu profile döner.
+              // Paylaşılan `/listeler/:id` rotası (kabuk dışı, oturumsuz
+              // açılır) AYNI ekranı çizer; iki yol tek [ListeEkrani].
+              GoRoute(
+                path: '/profil/liste/:id',
+                builder: (_, s) {
+                  final id = int.tryParse(s.pathParameters['id'] ?? '');
+                  return id == null
+                      ? const _GecersizBaglanti()
+                      : ListeEkrani(listeId: id);
+                },
               ),
               // Favori oyuncular: profil sekmesinin İÇİNDE (alt gezinme
               // çubuğu kaybolmasın, geri tuşu profile dönsün) —

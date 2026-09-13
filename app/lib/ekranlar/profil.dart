@@ -389,16 +389,19 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     // açıyor. "Listelerim" artık YALNIZ kullanıcının KENDİ kurduğu listeleri
     // gösteriyor — bölümün adı da bunu söylüyordu.
     // Listeler poster ŞERİDİ olarak — İzliyorum/İzlediğim'le aynı görünüm
-    // (31 Ağu 2026 isteği). Dokununca modal açılır (başkasının
-    // profilindekiyle aynı).
+    // (31 Ağu 2026 isteği).
+    //
+    // TAM SAYFA AÇILIR, MODAL DEĞİL (13 Eyl 2026 isteği): liste alt sayfa
+    // (`showModalBottomSheet`) olarak açılırken ızgaranın en üstündeyken
+    // aşağı kaydırmak sayfayı kapatıyordu — kullanıcı "ne izlesem" çarkını
+    // açıp kapattıktan sonra listeye dönüp kaydırınca liste elinde
+    // kayboluyordu. Artık İzliyorum/İzlediğim şeritleri (`/kitaplik/:durum`)
+    // ile AYNI kalıp: rota push'u, tam ekran, geri tuşuyla çıkılır. Rota
+    // kabuğun İÇİNDE (`/profil/liste/:id`) — alt gezinme çubuğu kaybolmaz.
     for (final l in _listeler)
       ListeSeridi(
         liste: l as Map<String, dynamic>,
-        onAc: () => ListeSheet.ac(
-          context,
-          listeId: (l['id'] as num).toInt(),
-          ad: l['ad'] as String,
-        ),
+        onAc: () => context.push('/profil/liste/${(l['id'] as num).toInt()}'),
         onSil: () async {
           // Silmeden önce onay iste; hatayı kullanıcıya göster
           final onay = await showDialog<bool>(
@@ -2315,7 +2318,7 @@ class _YorumlarSheetState extends State<_YorumlarSheet> {
       );
     } else {
       govde = ListView(
-        // ALT GÜVENLİ ALAN: ListeSheet ile aynı hata — açık `padding` verilince
+        // ALT GÜVENLİ ALAN: liste ızgarasıyla aynı hata — açık `padding` verilince
         // Flutter alt sistem payını kendiliğinden eklemez, son yorum kartı
         // navi çubuğunun altında kalıyordu.
         padding: EdgeInsets.fromLTRB(

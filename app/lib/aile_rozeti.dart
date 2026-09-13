@@ -140,7 +140,7 @@ class MiniRozet extends StatelessWidget {
 ///
 /// Projedeki alt sayfa kalıbının aynısı (`begenenler.dart`, `paylas.dart`):
 /// yuvarlatılmış üst köşeler, sürükleme tutamağı ve **SafeArea**. SafeArea
-/// şart: bu hafta üç modalde (ListeSheet, takvim gün detayı, puan verme) alt
+/// şart: bu hafta üç modalde (liste ızgarası, takvim gün detayı, puan verme) alt
 /// içerik sistem gezinme çubuğunun altında kalmıştı.
 ///
 /// Kapanma yolları: tutamaktan aşağı sürükleme, dışına dokunma (barrier) ve

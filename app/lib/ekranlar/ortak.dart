@@ -22,9 +22,7 @@ import '../veri_tasarrufu.dart';
 import '../video_konum.dart';
 import '../video_kova.dart';
 import '../video_secenekleri.dart';
-import 'izlem_carki.dart';
 import 'medya_goster.dart';
-import 'paylas.dart';
 import 'siralanabilir_izgara.dart';
 
 /// Yorum/akış postlarındaki fotoğraf-video galerisi.
@@ -2129,15 +2127,11 @@ class RozetliIkon extends StatelessWidget {
 /// Liste içeriği: 3'lü poster ızgarası + yükleniyor / hata / bulunamadı-gizli
 /// / boş hâlleri.
 ///
-/// TEK KAYNAK: hem profil modalindeki [ListeSheet] hem `/listeler/:id` tam
+/// TEK KAYNAK: `/listeler/:id` tam
 /// sayfası ([ListeEkrani], ekranlar/liste.dart) bunu kullanır. İki ayrı kopya
 /// tutulsaydı "gizli liste" hâli yalnız birinde düzelirdi.
 class ListeIcerigi extends StatefulWidget {
   final int listeId;
-
-  /// Modal içinde mi çiziliyor? Poster dokunuşunda modalin kapanması gerekir,
-  /// ve "Keşfet'e dön" çıkışı modalde anlamsızdır (kapatmak zaten yeterli).
-  final bool modalIcinde;
 
   /// Liste kaydı çözülünce çağrılır — tam sayfa başlığı buradan beslenir.
   final ValueChanged<Map<String, dynamic>>? onListe;
@@ -2145,8 +2139,8 @@ class ListeIcerigi extends StatefulWidget {
   /// DÜZENLEME MODU açık mı? (19 Ağu 2026 isteği)
   ///
   /// Bayrağı bu widget DEĞİL, onu çizen ekran tutar: düzenle düğmesi liste
-  /// ADININ yanında olmalı ve o ad burada değil, [ListeSheet] başlığında ya
-  /// da [ListeEkrani]'nin AppBar'ında yaşıyor.
+  /// ADININ yanında olmalı ve o ad burada değil, [ListeEkrani]'nin
+  /// AppBar'ında yaşıyor.
   final bool duzenleme;
 
   /// "Bu liste bana mı ait" bilgisini yukarı taşır. Düzenle düğmesi ancak
@@ -2157,7 +2151,6 @@ class ListeIcerigi extends StatefulWidget {
   const ListeIcerigi({
     super.key,
     required this.listeId,
-    this.modalIcinde = false,
     this.onListe,
     this.duzenleme = false,
     this.onSahiplik,
@@ -2334,12 +2327,10 @@ class _ListeIcerigiState extends State<ListeIcerigi> {
       return BosDurum(
         ikon: Icons.link_off,
         baslik: 'Bağlantı geçersiz veya sayfa bulunamadı'.c,
-        aksiyon: widget.modalIcinde
-            ? null
-            : FilledButton(
-                onPressed: () => GoRouter.of(context).go('/kesfet'),
-                child: Text('Keşfet\'e dön'.c),
-              ),
+        aksiyon: FilledButton(
+          onPressed: () => GoRouter.of(context).go('/kesfet'),
+          child: Text('Keşfet\'e dön'.c),
+        ),
       );
     }
     if (_hata != null) return HataGorunumu(mesaj: _hata!, tekrar: _yukle);
@@ -2383,7 +2374,6 @@ class _ListeIcerigiState extends State<ListeIcerigi> {
       final kart = _ListeOgeKart(
         tur: o['tur'] as String,
         tmdbId: (o['tmdb_id'] as num).toInt(),
-        modalIcinde: widget.modalIcinde,
       );
       if (o['gizli'] != true) return kart;
       return Stack(
@@ -2623,122 +2613,11 @@ class _ListeDuzenSatirState extends State<_ListeDuzenSatir> {
   }
 }
 
-/// Liste içeriği modalı: [ListeIcerigi]'ni başlıklı bir alt sayfaya sarar.
-/// Hem kendi profilinden hem başkasının profilinden açılır.
-///
-/// DÜZENLE DÜĞMESİ BURADA (19 Ağu 2026 isteği: "liste isminin yanında edit
-/// ikonu"): liste adı bu başlıkta yaşıyor, düzenleme bayrağı da onunla
-/// birlikte. [ListeIcerigi] bayrağı alır, sahiplik bilgisini geri verir.
-class ListeSheet extends StatefulWidget {
-  final int listeId;
-  final String ad;
-
-  const ListeSheet({super.key, required this.listeId, required this.ad});
-
-  static void ac(
-    BuildContext context, {
-    required int listeId,
-    required String ad,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: DiziRenkler.koyuGri,
-      builder: (_) => ListeSheet(listeId: listeId, ad: ad),
-    );
-  }
-
-  @override
-  State<ListeSheet> createState() => _ListeSheetState();
-}
-
-class _ListeSheetState extends State<ListeSheet> {
-  bool _duzenleme = false;
-  bool _sahibiyim = false;
-
-  /// Paylaş düğmesi yalnız HERKESE AÇIK listede — sunucudan gelene kadar
-  /// çizilmez ki gizli listede belirip kaybolmasın.
-  bool _herkeseAcik = false;
-
-  /// Çark için liste öğeleri (tur + tmdb_id) — [ListeIcerigi.onListe]
-  /// yüklenince doldurur; boşken çark düğmesi çizilmez.
-  List<dynamic> _ogeler = const [];
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.75,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
-            child: Row(
-              children: [
-                const Icon(Icons.playlist_play, color: DiziRenkler.sari),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    widget.ad,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-                // "Ne izlesem çarkı" burada da (24 Ağu 2026 isteği) —
-                // tam sayfa liste (liste.dart) ile aynı davranış.
-                if (_ogeler.isNotEmpty)
-                  IconButton(
-                    key: const Key('liste-sheet-izlem-carki'),
-                    tooltip: 'Ne izlesem?'.c,
-                    onPressed: () => izlemCarkiniAc(
-                      context,
-                      _ogeler.cast<Map<String, dynamic>>(),
-                    ),
-                    icon: const Icon(Icons.attractions),
-                  ),
-                if (_herkeseAcik)
-                  ListePaylasDugmesi(listeId: widget.listeId, ad: widget.ad),
-                // Düğme YALNIZ SAHİBİNE çizilir; sahiplik sunucudan gelir
-                // (`GET /listeler/:id` → `sahibiyim`), istemcide tahmin
-                // edilmez.
-                if (_sahibiyim)
-                  ListeDuzenleDugmesi(
-                    duzenleme: _duzenleme,
-                    onDegis: () => setState(() => _duzenleme = !_duzenleme),
-                  ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: ListeIcerigi(
-              listeId: widget.listeId,
-              modalIcinde: true,
-              duzenleme: _duzenleme,
-              onListe: (l) {
-                if (!mounted) return;
-                setState(() {
-                  _ogeler = (l['ogeler'] as List<dynamic>?) ?? const [];
-                  _herkeseAcik = l['herkese_acik'] != false;
-                });
-              },
-              onSahiplik: (v) {
-                if (mounted && v != _sahibiyim) {
-                  setState(() => _sahibiyim = v);
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 /// Liste adının yanındaki düzenle/bitti düğmesi.
 ///
-/// ORTAK: hem modalde ([ListeSheet]) hem tam sayfada (`liste.dart`) aynı
-/// düğme. İki kopya, bugün aynı yarın farklı davranan iki düğme demekti.
+/// ORTAK: liste tam sayfası (`liste.dart`) ve onu kullanan her yer aynı
+/// düğmeyi alır. İki kopya, bugün aynı yarın farklı davranan iki düğme
+/// demekti.
 ///
 /// DURUM ÜÇ KANALDAN: ikon (kalem/onay), tooltip ve `Semantics.toggled`.
 /// Yalnız ikon değişseydi ekran okuyucu hiçbir şey duymazdı.
@@ -2795,7 +2674,6 @@ class ListeSeridi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ogeler = (liste['ogeler'] as List<dynamic>?) ?? const [];
-    final sayi = (liste['oge_sayisi'] as num?)?.toInt() ?? ogeler.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -2820,7 +2698,13 @@ class ListeSeridi extends StatelessWidget {
                       const SizedBox(width: 6),
                       Flexible(
                         child: Text(
-                          '${liste['ad']} ($sayi)',
+                          // SAYI YOK (13 Eyl 2026 isteği): "En sevdiklerim"
+                          // gibi uzunca bir adda " (3)" eki adı taşırıyor ve
+                          // başlık "En sevdiklerim (…" diye kırpılıyordu —
+                          // kullanıcı ekranda yarım bir parantez görüyordu.
+                          // Öğe sayısı zaten şeritteki posterlerden ve liste
+                          // açılınca ızgaradan görülüyor.
+                          '${liste['ad']}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -2880,15 +2764,7 @@ class _ListeOgeKart extends StatefulWidget {
   final String tur;
   final int tmdbId;
 
-  /// Modalden açıldıysa detaya gitmeden ÖNCE modal kapatılır; tam sayfada
-  /// kapatılacak bir şey yoktur (pop, listenin kendisini kapatırdı).
-  final bool modalIcinde;
-
-  const _ListeOgeKart({
-    required this.tur,
-    required this.tmdbId,
-    required this.modalIcinde,
-  });
+  const _ListeOgeKart({required this.tur, required this.tmdbId});
 
   @override
   State<_ListeOgeKart> createState() => _ListeOgeKartState();
@@ -2915,12 +2791,8 @@ class _ListeOgeKartState extends State<_ListeOgeKart> {
     final poster = posterUrl(_icerik?['poster_path'] as String?, boyut: 'w185');
     final ad = (_icerik?['name'] ?? _icerik?['title'] ?? '') as String;
     return InkWell(
-      onTap: () {
-        // Yönlendiriciyi modal kapanmadan ÖNCE al (ölü context tuzağı)
-        final yonlendirici = GoRouter.of(context);
-        if (widget.modalIcinde) Navigator.pop(context);
-        yonlendirici.push('/icerik/${widget.tur}/${widget.tmdbId}');
-      },
+      onTap: () =>
+          GoRouter.of(context).push('/icerik/${widget.tur}/${widget.tmdbId}'),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: Container(
