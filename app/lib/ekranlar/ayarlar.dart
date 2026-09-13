@@ -22,6 +22,7 @@ import 'ortak.dart' show AgGorsel, DaireGorsel, altGuvenli;
 import 'sosyal.dart';
 import '../puan.dart';
 import '../tema.dart';
+import '../uyari.dart';
 import '../spoiler_tercihi.dart';
 import '../veri_tasarrufu.dart';
 
@@ -1969,7 +1970,10 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
   );
 
   void _misafirAciklamasi() {
-    ScaffoldMessenger.of(context).showSnackBar(
+    // `eylemliUyar`: "Profil" kısayolu ekrana dokunulunca kaybolmasın
+    // (bkz. uyari.dart).
+    eylemliUyar(
+      context,
       SnackBar(
         content: Text(misafirAramaSebebi.c),
         // 5 sn: iki satırlık açıklama + eylem düğmesi için 4 sn kısa kalıyor

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import '../uyari.dart';
 import 'arama_servisi.dart';
 
 /// Sohbet başlığındaki sesli/görüntülü arama düğmeleri.
@@ -113,7 +114,10 @@ class _AramaDugmeleriState extends State<AramaDugmeleri> {
     // iş olan AÇIKLAMA da gösterilemez. Kurtarma kısayolu kaybolabilir,
     // açıklama kaybolamaz — metin zaten nereye gidileceğini yazıyor.
     final yonlendirici = GoRouter.maybeOf(context);
-    ScaffoldMessenger.of(context).showSnackBar(
+    // `eylemliUyar`: eylem düğmeli bildirim ekrana dokununca KAPANMAZ
+    // (bkz. uyari.dart) — "Ayarlar" kısayolu kullanıcının elinden alınmaz.
+    eylemliUyar(
+      context,
       SnackBar(
         content: Text(mesaj),
         // 5 sn: iki satırlık bir açıklama + eylem düğmesi için varsayılan

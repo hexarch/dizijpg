@@ -9,6 +9,7 @@ import '../icerik_deposu.dart';
 import '../liste_gorunumu.dart';
 import '../puan_favori_deposu.dart';
 import '../tema.dart';
+import '../uyari.dart';
 import 'icerik_satiri.dart';
 import 'ortak.dart';
 
@@ -401,9 +402,16 @@ class _SiralanabilirPosterIzgarasiState
     }
   }
 
+  /// KUYRUĞA GİRMEYEN bildirim (13 Eyl 2026, kullanıcı bildirimi).
+  ///
+  /// "En aşağıya gönder"e hızlı hızlı basan kullanıcı eskiden her basış için
+  /// 4 saniyelik AYRI bir bildirim biriktiriyordu: 5 basış = 20 saniye art
+  /// arda "listenin en altına taşındı". [uyar] önce kuyruğu düşürüyor, yani
+  /// son mesaj kazanıyor; ekrana dokunmak da bildirimi anında kapatıyor
+  /// (UyariKatmani, bkz. uyari.dart).
   void _uyar(String mesaj) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mesaj)));
+    uyar(context, mesaj);
   }
 
   // -------------------------------------------------------------------------

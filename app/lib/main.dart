@@ -25,6 +25,7 @@ import 'sira_tercihi.dart';
 import 'spoiler_tercihi.dart';
 import 'surum_kapisi.dart';
 import 'tema.dart';
+import 'uyari.dart';
 import 'uygulama_daveti.dart';
 import 'veri_tasarrufu.dart';
 import 'dil_onekli_adres.dart';
@@ -264,12 +265,18 @@ class _DiziJpgAppState extends State<DiziJpgApp> {
           // ekranda "önceki ekrandan kalma" renk kalmaz.
           builder: (context, cocuk) => AnnotatedRegion<SystemUiOverlayStyle>(
             value: sistemCubukStili(tema.scaffoldBackgroundColor),
-            child: SurumKapisi(
-              // Uygulama daveti sürüm kapısının ALTINDA: zorunlu güncelleme
-              // ekranı varken indirme penceresi onun üstüne çıkmamalı.
-              // Web dışında ve masaüstü tarayıcıda hiç çizilmez
-              // (bkz. uygulama_daveti_web.dart).
-              cocuk: UygulamaDaveti(cocuk: cocuk ?? const SizedBox.shrink()),
+            // UyariKatmani EN DIŞTA: ekrandaki SnackBar'ı İLK DOKUNUŞTA
+            // düşürür (13 Eyl 2026 isteği, bkz. uyari.dart). Katman
+            // dokunuşu YUTMAZ; sürüm kapısı ve davet penceresi dahil her
+            // şey altında normal çalışır.
+            child: UyariKatmani(
+              cocuk: SurumKapisi(
+                // Uygulama daveti sürüm kapısının ALTINDA: zorunlu güncelleme
+                // ekranı varken indirme penceresi onun üstüne çıkmamalı.
+                // Web dışında ve masaüstü tarayıcıda hiç çizilmez
+                // (bkz. uygulama_daveti_web.dart).
+                cocuk: UygulamaDaveti(cocuk: cocuk ?? const SizedBox.shrink()),
+              ),
             ),
           ),
         ),

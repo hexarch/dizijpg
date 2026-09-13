@@ -421,6 +421,33 @@ void main() {
       expect(find.byKey(const Key('sira-alta-tv-101')), findsNothing);
     });
 
+    // 13 Eyl 2026 kullanıcı bildirimi: "çok hızlı şekilde yapınca aşağıda
+    // sürekli art arda listenin altına gönderilmiştir deniyor". Bildirimler
+    // `ScaffoldMessenger` kuyruğunda birikiyordu: üç basış = 12 saniye mesaj.
+    // Artık son mesaj kazanıyor (bkz. lib/uyari.dart).
+    testWidgets('HIZLI tekrarlanan gönderimde bildirim BİRİKMEZ', (
+      tester,
+    ) async {
+      await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
+
+      for (final anahtar in ['tv-101', 'tv-102', 'tv-103']) {
+        await _basiliTut(tester, anahtar);
+        await tester.tap(find.byKey(Key('sira-alta-$anahtar')));
+        // Kasıtlı olarak `pumpAndSettle` DEĞİL: kullanıcı bildirimin
+        // kapanmasını beklemiyor, hızlı hızlı basıyor.
+        await tester.pump(const Duration(milliseconds: 120));
+      }
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(
+        find.byType(SnackBar),
+        findsOneWidget,
+        reason: 'üç gönderim üç bildirim kuyruğu üretmemeli',
+      );
+      // Üç öğe de gerçekten sona gitti (bildirim düzeltmesi eylemi bozmadı).
+      expect(_ekrandakiSira(tester), ['tv-104', 'tv-101', 'tv-102', 'tv-103']);
+    });
+
     testWidgets('son sıradaki afişte düğme YOK (gidecek yeri yok)', (
       tester,
     ) async {

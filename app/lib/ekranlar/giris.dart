@@ -14,6 +14,7 @@ import '../ceviri.dart';
 import '../google_kapisi.dart';
 import '../push.dart';
 import '../tema.dart';
+import 'giris_istem.dart' show donusHedefi;
 import 'iki_adim_sheet.dart';
 import 'karsilama.dart' show kullaniciAdiHataMetni, kullaniciAdiKalibi;
 import 'ortak.dart' show altGuvenli;
@@ -54,6 +55,28 @@ class GirisEkrani extends StatefulWidget {
 class _GirisEkraniState extends State<GirisEkrani> {
   bool _kayitModu = false;
   bool _yukleniyor = false;
+
+  /// MİSAFİR düğmesinin kendi bekleme hâli. `_yukleniyor` tüm düğmeleri
+  /// kilitler ama HANGİSİNE basıldığını söylemez; misafir hesabı sunucuda
+  /// açılırken spinner o düğmede dönmeli (13 Eyl 2026 bildirimi: "tıkladığımda
+  /// tepki vermedi").
+  bool _misafirBekliyor = false;
+
+  /// Oturum nesnesi — bu ekran açıkken oturum AÇILIRSA ekranı terk ediyoruz
+  /// (bkz. [_oturumDegisti]). `initState`te okunur: `context.read` dinlemez.
+  late final Oturum _oturum = context.read<Oturum>();
+
+  /// Çıkış bir kez tetiklenir; oturum nesnesi giriş sonrası birkaç kez daha
+  /// haber veriyor (`tazele()` → `/profilim`) ve her birinde gezinmek
+  /// yığını iki kez değiştirirdi.
+  bool _cikiliyor = false;
+
+  /// `/giris?donus=...` sorgusundaki dönüş hedefi — ROTA KURULURKEN okunur,
+  /// giriş anında değil. Gerekçe: `go` ile açılan yolda yönlendiricinin
+  /// `redirect`i rotayı sökerken `GoRouterState` kayboluyor; o anda okumaya
+  /// kalkmak "There is no GoRouterState above the current context" ile
+  /// patlıyordu (13 Eyl 2026, testte yakalandı).
+  String? _donus;
   final _email = TextEditingController();
   final _kullaniciAdi = TextEditingController();
   final _sifre = TextEditingController();
@@ -106,10 +129,67 @@ class _GirisEkraniState extends State<GirisEkrani> {
     // Web'de giriş Google'ın kendi düğmesinden başlar ve sonuç BU AKIŞTAN
     // gelir; mobilde akış boştur (giriş `_googleGiris` ile başlar).
     _googleAbonesi = _kapi.akis.listen(_googleSunucuya, onError: _googleHatasi);
+    _oturum.addListener(_oturumDegisti);
+    // Ekran OTURUM ZATEN AÇIKKEN çizildiyse (yığında kalmış bir kopya, geri
+    // gelinen geçmiş kaydı) burada da terk edilir — oturumlu kullanıcıya
+    // giriş formu göstermek her hâlde yanlış.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _oturumDegisti());
+  }
+
+  /// GİRİŞ BAŞARILI OLDU → BU EKRAN GİTMELİ (13 Eyl 2026, kullanıcı bildirimi).
+  ///
+  /// BELİRTİ (birebir): *"misafir oturumu aç diyordum ama açmıyordu, hata da
+  /// dönmüyordu, tıkladığımda tepki vermedi; daha sonra geri tuşuna basıp
+  /// profile gittiğimde misafir oturumu açılmış oldu"*.
+  ///
+  /// KÖK NEDEN (testle üretildi — `test/misafir_girisi_test.dart`): giriş
+  /// ekranı `push` ile açıldığında yönlendiricinin `redirect`i ekranı ALMAZ.
+  /// `redirect` yalnız EŞLEŞEN konuma bakıyor; imperatif olarak yığının
+  /// tepesine konan `/giris` orada görünmüyor, yani oturum açılsa da hiçbir
+  /// yönlendirme tetiklenmiyor. Oturum gerçekten açılıyordu (kullanıcı sonra
+  /// profilde gördü), ekran olduğu yerde kalıyordu.
+  ///
+  /// SIRALAMA: iş ÖNCE yönlendiriciye bırakılır (bir kare beklenir). `go`
+  /// ile açılan normal yolda `redirect` bizi zaten söker — o zaman bu
+  /// geri çağrı `mounted == false` bulup hiç gezinmez. Bir kare sonra hâlâ
+  /// ekranda olmak "redirect koşmadı" demektir.
+  void _oturumDegisti() {
+    if (!mounted || _cikiliyor || !Api.girisli) return;
+    _cikiliyor = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return; // yönlendirici aldı, iş bitti
+      final yonlendirici = GoRouter.maybeOf(context);
+      if (yonlendirici == null) return; // yönlendiricisiz test/gömme
+      // Yeni kayıt bir kez karşılamaya gider (yönlendiricinin `redirect`i de
+      // aynı hedefi söylüyor; ikisi aynı yeri göstersin diye burada da var).
+      if (Oturum.karsilamaGerekli) {
+        yonlendirici.go('/karsilama');
+        return;
+      }
+      final donus = donusHedefi(_donus);
+      if (donus != null) {
+        yonlendirici.go(donus);
+      } else if (yonlendirici.canPop()) {
+        // `push` edilmiş kopya: geldiği ekrana dönsün, yığın bozulmasın.
+        yonlendirici.pop();
+      } else {
+        yonlendirici.go('/kesfet');
+      }
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Yönlendiricisiz kurulumda (widget testleri, gömme) GoRouterState YOK;
+    // `of` fırlatırdı.
+    if (GoRouter.maybeOf(context) == null) return;
+    _donus = GoRouterState.of(context).uri.queryParameters['donus'];
   }
 
   @override
   void dispose() {
+    _oturum.removeListener(_oturumDegisti);
     _googleAbonesi?.cancel();
     _kapi.birak();
     _email.dispose();
@@ -119,19 +199,29 @@ class _GirisEkraniState extends State<GirisEkrani> {
   }
 
   Future<void> _misafirGiris() async {
-    setState(() => _yukleniyor = true);
+    setState(() {
+      _yukleniyor = true;
+      _misafirBekliyor = true;
+    });
     try {
       final kullanici = await Api.misafirGiris();
       if (!mounted) return;
       await context.read<Oturum>().girisYapildi(kullanici);
       pushBaslat(); // push izni + token kaydı
+      // Ekrandan çıkışı [_oturumDegisti] yapıyor — oturumun açıldığı HER yol
+      // (misafir, şifre, Google, Apple, iki adım) aynı kapıdan geçsin.
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
-      if (mounted) setState(() => _yukleniyor = false);
+      if (mounted) {
+        setState(() {
+          _yukleniyor = false;
+          _misafirBekliyor = false;
+        });
+      }
     }
   }
 
@@ -588,11 +678,26 @@ class _GirisEkraniState extends State<GirisEkrani> {
                     ],
                     const SizedBox(height: 8),
                     OutlinedButton.icon(
+                      key: const Key('misafir-girisi'),
                       onPressed: _yukleniyor ? null : _misafirGiris,
-                      icon: Icon(
-                        Icons.person_outline,
-                        color: DiziRenkler.metin70,
-                      ),
+                      // İSTEK SÜRERKEN SPINNER (13 Eyl 2026): düğme eskiden
+                      // yalnız pasifleşiyordu, ekranda görünür bir değişiklik
+                      // olmuyordu. Misafir hesabı SUNUCUDA açılıyor; ağ yavaş
+                      // olduğunda kullanıcı dokunuşunun işe yarayıp
+                      // yaramadığını bilmiyordu ("tepki vermedi").
+                      icon: _misafirBekliyor
+                          ? SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: DiziRenkler.metin70,
+                              ),
+                            )
+                          : Icon(
+                              Icons.person_outline,
+                              color: DiziRenkler.metin70,
+                            ),
                       label: Text(
                         'Misafir olarak devam et'.c,
                         style: TextStyle(color: DiziRenkler.metin70),

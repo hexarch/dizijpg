@@ -1,6 +1,52 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-13 — 🔨 BİLDİRİM DOKUNMAYLA KAPANIR + MİSAFİR GİRİŞİ TEPKİ VERİR
+
+**Tetik:** kullanıcı — *"profildeki listeleri açınca basılı tutunca en aşağı al
+olayı varya onu çok hızlı şekilde yapınca aşağıda sürekli art arda listenin
+altına gönderilmiştir deniyor; orada belirli süre kullanmak yerine ekrana
+tekrar tıklayınca o bildirimi hemen yok etsek daha mantıklı olmaz mı. Ve yeni
+kullanıcı girişinde dün misafir oturumu aç diyordum ama açmıyordu, hata da
+dönmüyordu, tıkladığımda tepki vermedi; daha sonra geri tuşuna basıp profile
+gittiğimde misafir oturumu açılmış oldu."*
+
+### 1) Bildirimler (`lib/uyari.dart`, YENİ)
+- **Ekrana dokunmak bildirimi anında kapatır.** `UyariKatmani`
+  `MaterialApp.builder` içinde uygulamanın tamamını sarar; ilk `PointerDown`da
+  ekrandaki SnackBar'ı ve kuyruğu düşürür. `Listener` (GestureDetector DEĞİL):
+  jest arenasına girmez, dokunuş alttaki düğmeye/kaydırmaya aynen ulaşır.
+- **`uyar()` KUYRUK YAPMAZ.** "En aşağıya gönder"e beş kez basan kullanıcı
+  eskiden 5 × 4 sn = 20 saniye art arda bildirim okuyordu (Flutter'ın
+  varsayılanı biriktirmek). Artık son mesaj kazanır, süre baştan başlar.
+- **Eylem düğmeli bildirim KORUNUR.** "Yorum profilinde gizlendi · GERİ AL"
+  karar bekliyor; ilk dokunuşta silinmesi geri alma yolunu elden almak olurdu.
+  Üç çağıran (`profil.dart` geri al, `ayarlar.dart` + `arama_dugmeleri.dart`
+  kısayolları) `eylemliUyar()`dan geçiyor. **Yeni eylem düğmeli bildirim
+  eklerken `showSnackBar`ı doğrudan çağırma** — yoksa düğmesi ilk dokunuşta
+  kaybolur.
+
+### 2) Misafir girişi (`lib/ekranlar/giris.dart`)
+- **KÖK NEDEN (testle üretildi):** giriş ekranı `push` ile açıldığında
+  yönlendiricinin `redirect`i ekranı ALMIYOR — `redirect` yalnız EŞLEŞEN
+  konuma bakıyor, imperatif yığının tepesindeki `/giris` orada görünmüyor.
+  Oturum gerçekten açılıyordu (kullanıcı sonra profilde gördü), ekran olduğu
+  yerde kalıyordu: "tıkladım, tepki vermedi" tam olarak bu.
+- **Düzeltme:** ekran artık oturumu DİNLİYOR. Oturum açılınca bir kare
+  yönlendiriciye şans verir (normal `go` yolunda `redirect` söker), hâlâ
+  ekrandaysa kendisi çıkar: `donus` varsa oraya, `push` edilmişse `pop`,
+  yoksa `/kesfet`. Oturum ZATEN açıkken çizilen giriş ekranı da kapanır.
+  Misafir/şifre/Google/Apple/iki adım — beş yolun hepsi aynı kapıdan geçiyor.
+- **Görünür geri bildirim:** misafir düğmesinde artık kendi spinner'ı var
+  (hesap SUNUCUDA açılıyor, ağ yavaşken ekranda hiçbir şey olmuyordu) ve düğme
+  istek sürerken kilitli — çift dokunma ikinci misafir hesabı açmaz.
+
+### Kanıt
+- `test/uyari_dokunmayla_kapanir_test.dart` (4 test), `test/misafir_girisi_test.dart`
+  (5 test — PUSH testi düzeltmeden önce DÜŞÜYORDU), `kitaplik_siralama_test.dart`
+  içine "hızlı tekrarlanan gönderimde bildirim BİRİKMEZ". Tüm takım: 2879 test geçti.
+- Yeni kullanıcı metni YOK → 45 dil turu gerekmedi.
+
 ## 2026-09-13 — 🚀 MOBİL WEBDE UYGULAMA DAVETİ (Instagram/TikTok tarzı pencere)
 
 **Tetik:** kullanıcı — "dizijpg.com mobil cihazdan tabletten açıldığında uygulama

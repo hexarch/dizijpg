@@ -17,6 +17,7 @@ import '../seviye.dart';
 import '../spoiler_tercihi.dart';
 import '../tarih.dart';
 import '../tema.dart';
+import '../uyari.dart';
 import 'etiket.dart' show duzMetin;
 import 'favori_oyuncular.dart' show FavoriOyuncuKarti;
 import 'gorsel_kirp.dart';
@@ -2824,7 +2825,10 @@ Future<void> yorumEylemleriAc(
       await Api.post('/yorumlar/$id/profilde-gizle', {'gizli': true});
       await onDegisti?.call();
       if (!disBaglam.mounted) return;
-      ScaffoldMessenger.of(disBaglam).showSnackBar(
+      // `eylemliUyar`: "Geri al" bildirimi ekrana dokunulunca KAPANMAZ —
+      // tek geri alma yolu bu düğme (bkz. uyari.dart).
+      eylemliUyar(
+        disBaglam,
         SnackBar(
           content: Text('Yorum profilinde gizlendi'.c),
           action: SnackBarAction(
