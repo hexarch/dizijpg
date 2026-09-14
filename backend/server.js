@@ -3282,12 +3282,26 @@ function seoAfisListesi(baslik, ogeler, tavan = SEO_AFIS_TAVAN) {
 // İkinci katman bölüm sayfasında: oraya varan bot o sezonun tamamını görür
 // (`seoSezonGezinme`). Böylece her bölüm dizi sayfasından iki tık uzakta.
 //
-// `SEO_DIZI_SEZON_TAVAN`: "diğer sezonlar" listesinin tavanı. Canlı ölçümde
-// en çok sezonlu dizi 38 sezon (Simpsonlar); 60 hem marjlı hem de bozuk bir TMDB
-// yanıtının sayfayı şişirmesine karşı sigorta (SEO_AFIS_TAVAN disiplini).
-const SEO_DIZI_SEZON_TAM = 4;
+// `SEO_DIZI_SEZON_TAVAN`: "diğer sezonlar" listesinin tavanı.
+//
+// 14 EYL 2026 — 60 → 120. Bu tavan diğer ikisi gibi "bağlantı ucuz ama sonsuz
+// değil" tavanı DEĞİL: bölüm sayfaları birbirine yalnız SEZON İÇİNDE bağlı
+// (`seoSezonGezinme`), sezonlar arasında köprü YOK. Yani bir sezon bu listeden
+// düşerse o sezonun TÜM harita URL'leri sitede bağlantısız kalır — tavan
+// doğrudan "harita ⊆ iç bağlantılı" değişmezini kesiyor. 60, yayın hayatı
+// onlarca yıl süren pembe dizilerde (TMDB'de 60+ sezonla listelenirler) canlıda
+// yetmiyor; 120 iki kat marj bırakır. Tavan yine de BİTMEZ değil: kırptığı gün
+// SESSİZ KALMAZ, `seoDiziBolumGovdesi` logla haber verir.
+// `SEO_DIZI_SEZON_TAM` 14 EYL 2026'da 4 → 6. Bu sayı sayfa BOYUNU sınırlamıyor
+// (onu `SEO_DIZI_BOLUM_TAVAN` yapıyor); 4'te takılı kalması yalnız KISA SEZONLU
+// dizilerde bütçeyi boşa bırakıyordu: Breaking Bad'in 5 sezonu 62 bölüm, yani
+// 80'lik bütçeye TAMAMI sığıyor, ama sezon sayısı 4'te kesildiği için canlı
+// ölçümde 62 bölümün 56'sı bağlantı alıyordu (araclar/olcumler/…14.json).
+// 80 / 6 ≈ 13 = bugünün tipik sezon uzunluğu. Bedeli en fazla iki ek sezon
+// yanıtı ve o yanıtlar 7 gün önbellekli, tek öbekte (8'li) çekiliyor.
+const SEO_DIZI_SEZON_TAM = 6;
 const SEO_DIZI_BOLUM_TAVAN = 80;
-const SEO_DIZI_SEZON_TAVAN = 60;
+const SEO_DIZI_SEZON_TAVAN = 120;
 
 /**
  * Sezon TMDB yükünden bölüm listesi HTML'i. Saf: TMDB çağırmaz, test edilir.
@@ -3432,6 +3446,86 @@ async function talepDiziKumesi() {
 /** Dizi yüksek talepli listede mi (kapsam süzgecinin beşinci dalı). */
 const talepDiziMi = async (id) => (await talepDiziKumesi()).has(Number(id));
 
+// ---------------------------------------------------------------------------
+// BİZİM YORUMLU BÖLÜMLER — iç bağlantının EKSİK KALAN dalı (14 Eyl 2026)
+// ---------------------------------------------------------------------------
+// Haritanın `bizim_bolum` dalı (eşiği geçen yorum/incelememiz olan bölüm) 20
+// Ağu'dan beri DİZİ DÜZEYİ kapsamdan MUAF: hangi dizi olursa olsun haritaya
+// giriyor. İç bağlantı tarafında karşılığı YOKTU. `seoDiziBolumGovdesi`nin
+// eski yorumu "bu bölümler zaten sayfadaki yorum bölümünden bağlantı alıyor"
+// diyordu; `seoDegerlendirmeGovdesi` okununca görüldü ki o blok TEK BİR `<a>`
+// basmıyor — ne bölüm URL'ine ne başka bir yere. Yani kapsam dışı bir dizinin
+// yorumlanmış bölümü haritada var, sitede bağlantısız: 27 Ağu'da kazanan
+// bölümlerde düzelttiğimiz ÖKSÜZLÜĞÜN aynısı, üstelik sitenin ÖZGÜN NESRİNİ
+// taşıyan (ve dolayısıyla en değerli) bölüm sayfalarında.
+//
+// TABLO DEĞİL SORGU, AMA AYNI ÖNBELLEK DİSİPLİNİ: küme `kazananBolumHaritasi`
+// ile birebir aynı TTL/hata davranışını kullanır; dizi başına sorgu atılmaz.
+// TAVAN: harita bu dalı 20 Ağu'da 61 satırda ölçmüştü; kullanıcı ürettiği bir
+// küme olduğu için sınırsız bırakılmıyor. Tavanı aşarsa iç bağlantı dalı
+// SESSİZCE değil, logla kırpılır.
+const SEO_BIZIM_BOLUM_TAVAN = 5000;
+const BIZIM_BOLUM_SORGU = `
+  SELECT tmdb_id, sezon, bolum FROM (
+    SELECT y.tmdb_id, y.sezon, y.bolum
+      FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+     WHERE y.tur = 'tv' AND y.sezon IS NOT NULL AND y.bolum IS NOT NULL
+       AND ${SEO_YORUM_KOSUL}
+    UNION
+    SELECT p.tmdb_id, p.sezon, p.bolum
+      FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
+     WHERE p.tur = 'tv' AND p.sezon IS NOT NULL AND p.bolum IS NOT NULL
+       AND ${SEO_INCELEME_KOSUL}
+  ) t ORDER BY tmdb_id, sezon, bolum LIMIT ${SEO_BIZIM_BOLUM_TAVAN}`;
+
+let bizimBolumOnbellek = { zaman: 0, ttl: 0, harita: new Map() };
+
+async function bizimBolumHaritasi() {
+  const simdi = Date.now();
+  if (simdi - bizimBolumOnbellek.zaman < bizimBolumOnbellek.ttl) {
+    return bizimBolumOnbellek.harita;
+  }
+  try {
+    const { rows } = await havuz.query(BIZIM_BOLUM_SORGU);
+    if (rows.length >= SEO_BIZIM_BOLUM_TAVAN) {
+      logYaz({ olay: 'seo_bizim_bolum_tavani', tavan: SEO_BIZIM_BOLUM_TAVAN });
+    }
+    const harita = new Map();
+    for (const r of rows) {
+      if (!harita.has(r.tmdb_id)) harita.set(r.tmdb_id, []);
+      harita.get(r.tmdb_id).push({ sezon: r.sezon, bolum: r.bolum });
+    }
+    bizimBolumOnbellek = { zaman: simdi, ttl: KAZANAN_BOLUM_TTL_MS, harita };
+  } catch {
+    bizimBolumOnbellek = {
+      zaman: simdi, ttl: KAZANAN_BOLUM_HATA_TTL_MS,
+      harita: bizimBolumOnbellek.harita,
+    };
+  }
+  return bizimBolumOnbellek.harita;
+}
+
+/** Dizinin eşikli yorum/incelememiz olan bölümleri; yoksa boş dizi. */
+const bizimBolumler = async (id) =>
+  (await bizimBolumHaritasi()).get(Number(id)) || [];
+
+/**
+ * İki muafiyet dalının bölüm listesini TEKİLLEŞTİREREK birleştirir.
+ * Aynı bölüm hem kazanan hem yorumlu olabilir; sayfaya iki kez basmak zararsız
+ * ama gereksiz — ve tavan (`SEO_DIZI_BOLUM_TAVAN`) boşa harcanırdı.
+ */
+function seoBolumBirlestir(...listeler) {
+  const g = new Map();
+  for (const l of listeler) {
+    for (const k of l || []) {
+      if (Number.isInteger(k?.sezon) && Number.isInteger(k?.bolum)) {
+        g.set(`${k.sezon}-${k.bolum}`, k);
+      }
+    }
+  }
+  return [...g.values()].sort((a, b) => a.sezon - b.sezon || a.bolum - b.bolum);
+}
+
 /**
  * Kazanan bölümler için iç bağlantı bloğu.
  *
@@ -3470,8 +3564,11 @@ function seoKurtarilanBolumHtml(id, diziAd, kazanan, dil = 'tr') {
  *   · TR YAPIMI dizi → eski davranış (son sezonlar tek tek + diğer sezonlar),
  *   · YAYINDA dizi   → yalnız `next_episode_to_air.season_number` sezonu,
  *   · diğerleri      → bölüm bloğu HİÇ basılmaz.
- * Eşikli yorum/incelemesi olan bölümler (haritanın `bizim_bolum` dalı) zaten
- * sayfadaki yorum bölümünden bağlantı alıyor; burada ayrıca ele alınmıyor.
+ * 14 EYL 2026 — BURADAKİ ESKİ CÜMLE YANLIŞTI: "eşikli yorum/incelemesi olan
+ * bölümler (haritanın `bizim_bolum` dalı) zaten sayfadaki yorum bölümünden
+ * bağlantı alıyor" deniyordu. `seoDegerlendirmeGovdesi` okunduğunda görüldü ki
+ * o blok TEK BİR `<a>` basmıyor. O dal artık `kurtarilan` bloğunda
+ * (`bizimBolumler`) — gerekçe `bizimBolumHaritasi` başlığında.
  *
  * 29 Ağu 2026 — TALEP DALI BURAYA DA GELDİ. Harita 20.167 URL genişledi;
  * bu gövde eski dar hâlinde kalsaydı o URL'lerin tamamı "sitemap'te var,
@@ -3480,8 +3577,22 @@ function seoKurtarilanBolumHtml(id, diziAd, kazanan, dil = 'tr') {
  * davranır (tüm sezonlar), çünkü listenin 202'si bitmiş dizi: "yalnız yayında
  * olan sezon" süzgeci onlarda HİÇBİR sezon bırakmazdı.
  *
+ * 14 EYL 2026 — DEĞİŞMEZ YAZIYA DÖKÜLDÜ: "HARİTA ⊆ İÇ BAĞLANTILI".
+ * Canlı ölçüm (40 dizilik örneklem, araclar/olcumler/bolum_kesif_2026-09-14.json):
+ * haritadaki 2.518 bölümün 1.278'i (%50,75) dizi sayfasından DOĞRUDAN bağlantı
+ * alıyor; dizi başına medyan %100, yani kayıp UZUN dizilerde toplanıyor
+ * (46298: 13/148, 1416: 65/465). Tavan BİLEREK korunuyor — kalan URL'ler
+ * `seoSezonGezinme` merdiveniyle iki tıklık uzakta — ama tavanın ZİNCİRİ
+ * KOPARMADIĞI artık varsayım değil, test: `seo_bolum_ic_baglanti.test.js`
+ * dizi sayfasının ürettiği bağlantı kümesinden başlayıp bölüm sayfalarının
+ * gezinmesini YÜRÜYEREK haritanın tamamına ulaşıldığını doğruluyor.
+ * O test üç gerçek kopmayı ortaya çıkardı ve üçü de bu turda kapandı:
+ *   · `episode_count` alanı eksik olan sezon süzgeçte düşüyordu,
+ *   · tavanın hiç bastırmadığı sezon yine de `basilan` sayılıyordu,
+ *   · haritanın `bizim_bolum` dalı iç bağlantıda HİÇ yoktu.
+ *
  * BAĞLANTI SAYISI PATLAMAZ: `SEO_DIZI_BOLUM_TAVAN` (80) ve
- * `SEO_DIZI_SEZON_TAVAN` (60) sayfa başına sınırı zaten koyuyor. Haritadaki
+ * `SEO_DIZI_SEZON_TAVAN` (120) sayfa başına sınırı zaten koyuyor. Haritadaki
  * bölümün TAMAMINA sayfadan tek tek bağlantı verilmiyor, verilmesi de
  * gerekmiyor: bölüm sayfaları birbirine `seoSezonGezinme` merdiveniyle
  * (önceki/sonraki bölüm) bağlı — bot bir bölüme girince sezonu yürüyebiliyor.
@@ -3492,11 +3603,19 @@ async function seoDiziBolumGovdesi(id, v, dil = 'tr') {
   const talepli = await talepDiziMi(id);
   const diziAd = seoMetin(v?.name) || 'Dizi';
   // Kapsam dışı dizide bile basılır: kazanan bölüm ÖKSÜZ KALMAMALI (27 Ağu).
-  const kurtarilan = seoKurtarilanBolumHtml(id, diziAd, await kazananBolumler(id), dil);
+  // 14 Eyl 2026: aynı blok haritanın `bizim_bolum` dalını da taşıyor —
+  // gerekçe `bizimBolumHaritasi` başlığında (o dal iç bağlantıda YOKTU).
+  const kurtarilan = seoKurtarilanBolumHtml(id, diziAd,
+    seoBolumBirlestir(await kazananBolumler(id), await bizimBolumler(id)), dil);
   if (!trYapim && !sonrakiSezon && !talepli) return kurtarilan;
+  // `episode_count` BİLİNMİYORSA SEZON DÜŞMEZ (14 Eyl 2026). Eski süzgeç alanı
+  // `Number.isInteger` ile şart koşuyordu; TMDB'nin alanı eksik gönderdiği
+  // sezon, haritada bölümleri olmasına rağmen sayfadan HİÇ bağlantı almıyordu
+  // (modelde 12 URL tam öksüz). Yalnız TMDB'nin AÇIKÇA "boş" dediği sezon
+  // (`episode_count <= 0`) elenir — olmayan sezona bağlantı vermeyiz.
   let sezonlar = (Array.isArray(v?.seasons) ? v.seasons : [])
     .filter((s) => Number.isInteger(s?.season_number) && s.season_number >= 1
-      && Number.isInteger(s?.episode_count) && s.episode_count > 0)
+      && !(Number.isInteger(s?.episode_count) && s.episode_count <= 0))
     .sort((a, b) => a.season_number - b.season_number);
   if (!trYapim && !talepli) {
     sezonlar = sezonlar.filter((s) => s.season_number === sonrakiSezon);
@@ -3511,28 +3630,62 @@ async function seoDiziBolumGovdesi(id, v, dil = 'tr') {
   for (let i = sezonlar.length - 1; i >= 0; i--) {
     if (tam.length >= SEO_DIZI_SEZON_TAM) break;
     const s = sezonlar[i];
-    if (tam.length && toplam + s.episode_count > SEO_DIZI_BOLUM_TAVAN) break;
+    // Sayım bilinmiyorsa 0 sayılır: seçim kestirimdir, GERÇEK tavan aşağıda
+    // çekilen bölüm listesine uygulanır.
+    const sayi = Number.isInteger(s.episode_count) ? s.episode_count : 0;
+    if (tam.length && toplam + sayi > SEO_DIZI_BOLUM_TAVAN) break;
     tam.unshift(s.season_number);
-    toplam += s.episode_count;
+    toplam += sayi;
   }
   const yollar = tam.map((n) => `/tv/${id}/season/${n}`);
   const harita = yollar.length
     ? await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun)
     : new Map();
+  // TAVAN BURADA UYGULANIR, `basilan` GERÇEĞİ SÖYLESİN (14 Eyl 2026).
+  // Eski hâlde tavanı `seoDiziBolumHtml` uyguluyordu ama `basilan` seçilen TÜM
+  // sezonları "basıldı" sayıyordu: tavan bir sezonu hiç bastırmadan bitirirse
+  // o sezon ne tek tek listede ne de "diğer sezonlar"da yer alıyordu — sıfır
+  // bağlantı, yani haritadaki bölümleri ÖKSÜZ. (Seçim `episode_count`e,
+  // basım gerçek `episodes[]` listesine bakıyor; ikisi ayrışabilir.)
+  // Bütçe EN YENİDEN geriye harcanır: kesilecek sezon en eski olsun.
   const sezonVerileri = [];
   const basilan = new Set();
-  for (const n of tam) {
+  const ilkBolum = new Map();
+  let butce = SEO_DIZI_BOLUM_TAVAN;
+  for (let i = tam.length - 1; i >= 0; i--) {
+    const n = tam[i];
     const bolumler = (harita.get(`/tv/${id}/season/${n}`)?.episodes || [])
       .filter((e) => Number.isInteger(e?.episode_number) && e.episode_number >= 1);
     // Sezon yanıtı çekilemediyse o sezon SESSİZCE DÜŞMEZ: aşağıdaki "diğer
-    // sezonlar" listesinde 1. bölümüne bağlanır (giriş noktası kaybolmasın).
+    // sezonlar" listesinde bir bölümüne bağlanır (giriş noktası kaybolmasın).
+    // Bütçesi kalmayan sezon da AYNI yola düşer.
     if (!bolumler.length) continue;
+    ilkBolum.set(n, Math.min(...bolumler.map((e) => e.episode_number)));
+    if (butce <= 0) continue;
     basilan.add(n);
-    sezonVerileri.push({ season_number: n, episodes: bolumler });
+    const dilim = bolumler.slice(0, butce);
+    butce -= dilim.length;
+    sezonVerileri.unshift({ season_number: n, episodes: dilim });
   }
   const kalanlar = sezonlar
     .filter((s) => !basilan.has(s.season_number))
-    .map((s) => s.season_number);
+    // ÇEKİLMİŞ AMA BASILMAMIŞ sezonun GERÇEK ilk bölümü biliniyor; kör
+    // `/bolum/1` yerine o kullanılır. Numaralandırması 1'den başlamayan
+    // sezonda kör bağlantı soft 404 üretir ve sezonun TAMAMI öksüz kalır
+    // (modelde ölçüldü). Hiç çekilmemiş sezonda elde veri yok: orada kör
+    // `/bolum/1` sürüyor — fazladan TMDB isteği atmamak bilinçli.
+    .map((s) => (ilkBolum.has(s.season_number)
+      ? { season_number: s.season_number, episode_number: ilkBolum.get(s.season_number) }
+      : s.season_number));
+  // SESSİZ KESME YOK: "diğer sezonlar" tavanı bir sezonu düşürürse o sezonun
+  // TÜM harita URL'leri öksüz kalır (sezonlar arası köprü yok). Kırpma canlıda
+  // olursa tavan verilerle yeniden konulsun diye kayda geçer.
+  if (kalanlar.length > SEO_DIZI_SEZON_TAVAN) {
+    logYaz({
+      olay: 'seo_dizi_sezon_tavani', tmdb_id: id,
+      sezon: kalanlar.length, tavan: SEO_DIZI_SEZON_TAVAN,
+    });
+  }
   return seoDiziBolumHtml(id, diziAd, sezonVerileri, kalanlar, dil) + kurtarilan;
 }
 
@@ -6069,6 +6222,100 @@ const bolumOzgunIcerikVar = (seo, bol, ozet) =>
   || bolumIcerikOlcusu(bol, ozet);
 
 // ---------------------------------------------------------------------------
+// BÖLÜM SAYFASININ DİL VARYANTI — İNDEKS KAPISI (14 Eyl 2026)
+// ---------------------------------------------------------------------------
+// 6 Eyl SEO denetiminin kapanmamış 2. bulgusu: bölüm sayfasının bir kısım dil
+// varyantında ne o dilde bir cümle var ne de bize ait bir satır; geriye 46 dile
+// çevrilmiş ŞABLON kalıyor ve sayfa yine `index` alıyor. Kişi sayfasında bu
+// disiplin 14 Ağu'dan beri var (`kisiIndekslenir`: biyografi yoksa
+// `noindex,follow`); bölümde eksik olan tek şey buydu.
+//
+// KAPI DİLİN KİMLİĞİNE DEĞİL ALANIN DOLULUĞUNA BAKAR. 14 Eyl canlı ölçümü
+// (12 bölüm × 8 dil, Googlebot UA — araclar/olcumler/bolum_kesif_2026-09-14.json)
+// "düşük kaynaklı dil listesi" fikrini ÇÜRÜTTÜ; gerçek ad / özet sayıları:
+//   tr 4/11 · en 11/11 · de 10/10 · es 11/11 · ar 5/5 (+7 YER TUTUCU)
+//   hi 2/2 · sw 0/0 · am 0/0
+// Yani TÜRKÇE de ince tarafta: 12 bölümün yalnız 4'ünde TMDB'de Türkçe bölüm
+// adı var, Hercai S3B24 tr'de hem adsız hem özetsiz. Dil listesiyle kurulan bir
+// kapı tr'yi de yanlış tarafa atardı ve HARİTADAKİ tr URL'leri `noindex` yerdi
+// — B2 tuzağının ta kendisi.
+//
+// KELİME SAYISI ÖLÇÜ DEĞİL, aynı ölçümde elendi: SSS bloğu her dilde dolu
+// olduğu için tamamen boş sayfa bile ~230 kelime topluyor (sw medyanı 239,
+// tr medyanı 305 — iki aralık iç içe geçiyor).
+//
+// FAZLADAN İSTEK/SORGU YOK: üç sinyalin üçü de sayfanın ZATEN bastığı veriden
+// okunuyor (`bolumIcerikOlcusu` disiplini).
+
+// TMDB, adı olmayan bölüme DİLİN ŞABLONUNU yazar ve bunu 46 dilde yapar:
+// Arapça sayfalarda ad "الحلقة 22" ("22. Bölüm") geliyor ve başlık
+// "الحلقة 22 — الحلقة 22" oluyordu (ölçümde 12 Arapça sayfanın 7'si).
+// `seoOzgunBolumAdi` yalnız tr/en kalıplarını tanıdığı için bu adları GERÇEK
+// sayıyordu. YENİ ELEYİCİ YAZILMADI: mevcut eleyicinin üstüne 46 dilin kendi
+// şablonu İSKELET olarak (rakamlar '#') eklendi. İskelet karşılaştırması
+// numara eşleşmesi aramaz — "Episode 5" adlı 4. bölüm de bilgi katmaz
+// (`seoOzgunBolumAdi` başlığındaki 27 Ağu kuralı).
+const seoAdIskeleti = (s) => seoMetin(s).replace(/\d+/g, '#').toLowerCase();
+const SEO_BOLUM_SABLON_ISKELETI = new Set(
+  SEO_DILLER.map((d) => seoAdIskeleti(bic(seoDil(d).bolumSablon, { b: 0 }))));
+
+/** Bölüm adı HANGİ DİLDE olursa olsun bilgi katıyor mu ('' = katmıyor). */
+const seoYerelBolumAdi = (ad) => {
+  const t = seoOzgunBolumAdi(ad);
+  return t && !SEO_BOLUM_SABLON_ISKELETI.has(seoAdIskeleti(t)) ? t : '';
+};
+
+/**
+ * Sayfada O DİLDE gerçekten yerelleştirilmiş içerik var mı?
+ *
+ * ÜÇ YOL, `kisiIndekslenir`le aynı mantık:
+ *   · bize ait yorum/inceleme (en güçlü — özgün nesir, dilden bağımsız),
+ *   · o dildeki özet (`seoOzetZinciri`den geçmiş hâli: TMDB(dil) ya da Argos
+ *     önbelleği; `tr`/`en` dışında İngilizceye ASLA düşmez, yani "dolu" demek
+ *     "o dilde yazılmış" demek),
+ *   · yer tutucu OLMAYAN bölüm adı.
+ * Üçü de yoksa sayfa o dilde şablondan ibarettir.
+ */
+// METİN OLMAYAN GİRDİ ELENİR: `seoMetin({})` "[object Object]" döndürür ve o
+// değer kapıyı AÇARDI (aynı tuzak 27 Ağu'da `seoOzgunBolumAdi`de yakalanmıştı).
+const bolumYerelIcerikVar = ({ ad, ozet, ozgunVar }) =>
+  Boolean(ozgunVar)
+  || (typeof ozet === 'string' && Boolean(seoMetin(ozet)))
+  || Boolean(seoYerelBolumAdi(ad));
+
+/**
+ * HARİTA ⊆ İNDEKSLENEBİLİR, KAPIDAN ÖNCE GELİR: bildirdiğimiz bir URL'e
+ * `noindex` basmak GSC'de "Gönderilen URL 'noindex' ile işaretlenmiş" hatasıdır
+ * ve 26.793 URL ölçeğinde haritanın tamamının güvenilirliğini bitirir. Bu
+ * yüzden alan kapısı kapanan sayfa bir de "ben haritada mıyım" diye sorar.
+ *
+ * YANILMA YÖNÜ BİLİNÇLİ — ÜST SINIR: `harita_tv` üyeliği (dizinin kendi
+ * haritada olması) ve talep tavanı (`SEO_TALEP_BOLUM_TAVAN`) BURADA ARANMAZ,
+ * yani fonksiyon bazen "haritada" der ama URL haritada değildir. O yönde hata
+ * sayfayı indexte tutar (zararsız: haritada olmayan indekslenebilir sayfa hata
+ * değil); TERSİ yön B2 hatasını doğururdu.
+ *
+ * DİL TERİMİ HARİTANIN KENDİ LİSTESİNDEN OKUNUR (`SEO_HARITA_DILLERI`), elle
+ * yazılmış bir dil listesinden değil: bölüm ailesinin bildirilen dilleri 3 Eyl
+ * tr+en'e indi, 5 Eyl 46'ya döndü. İki taraf tek kaynağı okuduğu sürece hangi
+ * karar verilirse verilsin değişmez korunur.
+ *
+ * FAZLADAN SORGU YOK: dizi düzeyi iki sinyal `/tv/:id` yanıtında (zaten
+ * çekildi), kazanan/talep kümeleri modül önbelleğinde (5 dk TTL, tam tablo) ve
+ * dizi sayfası zaten her bot isteğinde onları okuyor — bölüm sayfası AYNI
+ * önbelleği paylaşır. Üstelik bu fonksiyon yalnız alan kapısı kapandığında
+ * çağrılır: dolu sayfanın (tr/en'in tipik yolu) maliyeti SIFIR.
+ */
+async function bolumHaritadaMi(id, dizi, s, b, dil) {
+  if (!Number.isInteger(s) || s < 1) return false;
+  if (!SEO_HARITA_DILLERI('bolum').includes(dil)) return false;
+  const trYapim = Array.isArray(dizi?.origin_country) && dizi.origin_country.includes('TR');
+  if (trYapim || s === seoPozitif(dizi?.next_episode_to_air?.season_number)) return true;
+  if (await talepDiziMi(id)) return true;
+  return (await kazananBolumler(id)).some((k) => k.sezon === s && k.bolum === b);
+}
+
+// ---------------------------------------------------------------------------
 // BÖLÜM SAYFASININ SEZON İÇİ GEZİNME BÜTÇESİ (20 Ağu 2026'da yeniden kuruldu)
 // ---------------------------------------------------------------------------
 // ÖLÇÜM: 78.725 bölüm URL'inin 78.169'u (%99,3) sitede HİÇBİR sayfadan
@@ -6383,6 +6630,12 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
         + `\n<p>${htmlKacir(ozet)}</p>` : '';
     const bolumPuani = seoOrtalamaPuan(seo);
 
+    // DİL VARYANTI KAPISI (14 Eyl 2026) — gerekçe `bolumYerelIcerikVar`da.
+    // SIRA: önce alanlar (bedava), harita sorusu YALNIZ kapı kapanınca.
+    const ozgunVar = seo.yorumlar.length > 0 || seo.incelemeler.length > 0;
+    const dilIndeksi = bolumYerelIcerikVar({ ad: bolumAd, ozet, ozgunVar })
+      || await bolumHaritadaMi(id, dizi, s, b, dil);
+
     // SIK SORULAN SORULAR (28 Ağu 2026). Tek liste, iki çıktı.
     // ÖZET SORUYA GİRMEZ: aynı metin `ozetBlok`ta zaten var; iki kez basmak
     // sayfa içi yineleme olurdu (içerik sayfasında da böyle).
@@ -6418,7 +6671,7 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
       gorsel: tmdbGorsel(bol.still_path, 'w780') || tmdbGorsel(dizi.poster_path),
       url,
       canonical: SITE_KOK + seoDilliYol(`/dizi/${id}/sezon/${s}/bolum/${b}`, dil),
-      indexle: bolumOzgunIcerikVar(seo, bol, ozet),
+      indexle: bolumOzgunIcerikVar(seo, bol, ozet) && dilIndeksi,
       dilliMi: true,
       tur: 'video.episode',
       // GÖRSEL (19 Ağu 2026): bölüm karesi (still) varsa o, yoksa dizinin
@@ -7258,6 +7511,20 @@ const BOT_ROTALARI = [
   { yol: '/kisi/:id', desen: /^\/kisi\/\d+$/ },
   { yol: '/sirket/:id', desen: /^\/sirket\/\d+$/ },
   { yol: '/listeler/:id', desen: /^\/listeler\/\d+$/ },
+  // AYNI liste ekranının profil bağlamındaki iki takma yolu (kabuk rotaları,
+  // `yonlendirme.dart`). Tabloya 14 Eyl 2026'da eklendi: `seo_soft404.test.js`
+  // ikisini de "yonlendirme.dart'ta var, BOT_ROTALARI'nda yok" diye KIRIK
+  // raporluyordu ve bu testin uyardığı şey canlıda gerçekleşmişti — bot bu iki
+  // adreste SSR değil boş Flutter kabuğu alıyordu, Google'ın "Soft 404"
+  // kovasının tanımı budur. Kanonik yol `/listeler/:id` ve SSR'ı orada
+  // (`/og/listeler/:id`); bu ikisi robots.txt ile zaten kapalı olduğu için
+  // tabloda olmaları "bu yol vardır, 404 değildir" demek — minimal
+  // `noindex,follow` sayfa döner.
+  {
+    yol: '/kullanici/:ad/liste/:id',
+    desen: /^\/kullanici\/[^/]+\/liste\/\d+$/,
+  },
+  { yol: '/profil/liste/:id', desen: /^\/profil\/liste\/\d+$/ },
   { yol: '/gonderi/:id', desen: /^\/gonderi\/\d+$/ },
   {
     yol: '/dizi/:id/sezon/:sezon/bolum/:bolum',

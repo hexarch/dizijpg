@@ -72,7 +72,24 @@ done < <(find "$KOK" -type f -name '*.br')
 
 # Sıkıştırılacak türler. Görsel/video (jpg, png, webp, mp4) BİLEREK YOK:
 # zaten sıkıştırılmış, brotli kazancı sıfıra yakın, CPU boşa gider.
-UZANTILAR=(js json css html xml svg wasm ttf otf txt map)
+#
+# 14 Eyl 2026 — ÜÇ TÜR EKLENDİ (canlıda ölçülen boşluk). `curl -sI -H
+# 'Accept-Encoding: br'` ile bakıldığında şunlar SIKIŞTIRMASIZ dönüyordu,
+# çünkü uzantıları bu listede yoktu:
+#   /assets/AssetManifest.bin   19.469 B  → br 1.565 B   (⚠ İLK YÜKTE DEĞİL:
+#       web derlemesi `AssetManifest.bin.json`u okuyor, `.bin`i DEĞİL — canlı
+#       access.log'da .bin.json 66 istek, .bin 1. İlk ölçümde .bin sanılmıştı;
+#       düzeltildi. Yine de sıkıştırıyoruz: dosya üretiliyor ve isteyen olursa
+#       sıkıştırmasız gitmesin.)
+#   /assets/NOTICES          1.479.560 B  → br 49.019 B  (lisans ekranı;
+#       tembel ama açan kişi 1,4 MB sıkıştırmasız çekiyordu)
+#   /assets/shaders/*.frag       8.890 B  (Flutter'ın ink/stretch gölgelendiricileri)
+# `wav` da eklendi: arama zil sesleri ham PCM, brotli'de çok iyi sıkışıyor ve
+# görsel/video gerekçesi (zaten sıkıştırılmış) onlar için GEÇERSİZ.
+UZANTILAR=(js json css html xml svg wasm ttf otf txt map bin frag wav)
+
+# UZANTISI OLMAYAN dosyalar (find "*.x" deseni bunları hiç görmez).
+ADLAR=(NOTICES)
 
 # 1 KB altındaki dosyaya dokunma: nginx'teki `brotli_min_length 1024` ile aynı
 # eşik; küçük dosyada brotli başlığı kazancı yiyor.
@@ -82,30 +99,43 @@ toplam_ham=0
 toplam_br=0
 sayi=0
 
+sikistir() {
+  dosya="$1"
+  ham=$(stat -c%s "$dosya")
+  # Eşik altındaki kaynakta ESKİ .br kalırsa nginx `brotli_static` onu
+  # yollar — 16 Ağu: SW sökücü 615 B, eşik 1024, eski .br CF'ye eski
+  # gövde servis etti (no-store BYPASS bile br'yi origin'den çekti).
+  if [ "$ham" -lt "$ASGARI_BAYT" ]; then
+    rm -f "${dosya}.br"
+    return
+  fi
+  gecici="${dosya}.br.gecici"
+  brotli -f -q 11 -o "$gecici" "$dosya"
+  br=$(stat -c%s "$gecici")
+  # Sıkışmayan dosya için .br tutmak anlamsız (nginx büyük olanı yollar).
+  if [ "$br" -ge "$ham" ]; then
+    rm -f "$gecici" "${dosya}.br"
+    return
+  fi
+  # Atomik geçiş: nginx ya tam eski ya tam yeni gövdeyi görür.
+  mv -f "$gecici" "${dosya}.br"
+  toplam_ham=$((toplam_ham + ham))
+  toplam_br=$((toplam_br + br))
+  sayi=$((sayi + 1))
+}
+
 for uzanti in "${UZANTILAR[@]}"; do
   while IFS= read -r dosya; do
-    ham=$(stat -c%s "$dosya")
-    # Eşik altındaki kaynakta ESKİ .br kalırsa nginx `brotli_static` onu
-    # yollar — 16 Ağu: SW sökücü 615 B, eşik 1024, eski .br CF'ye eski
-    # gövde servis etti (no-store BYPASS bile br'yi origin'den çekti).
-    if [ "$ham" -lt "$ASGARI_BAYT" ]; then
-      rm -f "${dosya}.br"
-      continue
-    fi
-    gecici="${dosya}.br.gecici"
-    brotli -f -q 11 -o "$gecici" "$dosya"
-    br=$(stat -c%s "$gecici")
-    # Sıkışmayan dosya için .br tutmak anlamsız (nginx büyük olanı yollar).
-    if [ "$br" -ge "$ham" ]; then
-      rm -f "$gecici" "${dosya}.br"
-      continue
-    fi
-    # Atomik geçiş: nginx ya tam eski ya tam yeni gövdeyi görür.
-    mv -f "$gecici" "${dosya}.br"
-    toplam_ham=$((toplam_ham + ham))
-    toplam_br=$((toplam_br + br))
-    sayi=$((sayi + 1))
+    sikistir "$dosya"
   done < <(find "$KOK" -type f -name "*.${uzanti}" ! -name '*.br')
+done
+
+# UZANTISIZ dosyalar. `find -name "*.<uzanti>"` bunları ASLA görmez, bu yüzden
+# ayrı bir adlar listesi tutuluyor.
+for ad in "${ADLAR[@]}"; do
+  while IFS= read -r dosya; do
+    sikistir "$dosya"
+  done < <(find "$KOK" -type f -name "$ad" ! -name '*.br')
 done
 
 if [ "$sayi" -eq 0 ]; then

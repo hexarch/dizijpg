@@ -92,6 +92,32 @@
 
   <link rel="manifest" href="manifest.json">
 
+  <!-- ÜÇÜNCÜ TARAF EL SIKIŞMALARI — 14 Eyl 2026, ÖLÇÜMLE eklendi.
+       Açılışta bizim sunucumuz dışında İKİ host'a gidiliyor ve ikisi de
+       kaçınılmaz:
+         * fonts.gstatic.com — CanvasKit'in varsayılan yedek fontu Roboto'yu
+           (62 KB) motor kendi indiriyor; uygulama kodundan tetiklenmiyor.
+         * accounts.google.com — `google_sign_in_web` eklentisi GIS betiğini
+           (100 KB) yapıcısında koşulsuz enjekte ediyor (gerekçe aşağıda,
+           google-signin-client_id yorumunda).
+       İkisi de DNS + TLS el sıkışmasını sıfırdan ödüyordu. `preconnect`
+       bağlantıyı HTML ayrıştırılırken açar; bayt indirmez, yani yanlış tahmin
+       maliyeti yalnız boşta duran bir sokettir.
+       KANIT: yerel laboratuvarda (araclar yok, scratchpad betiği) masaüstü
+       koşusunda Roboto 571→793 ms, GIS 815→1307 ms aralığında iniyordu;
+       ikisi de el sıkışmayla başlıyor.
+       crossorigin ŞART (yalnız fonts.gstatic.com'da): font CORS kipinde
+       çekiliyor, özniteliksiz preconnect farklı bir bağlantı havuzuna düşer
+       ve el sıkışma İKİ KEZ yapılır. accounts.google.com'daki betik klasik
+       bir betik etiketiyle indiği için orada crossorigin YAZILMAZ.
+       (Bu yorumda betik etiketinin adı DÜZ YAZILMAZ: test/csp_satir_ici_hash_
+       test.dart satır içi betiği düzenle arıyor ve yorumdaki bir örnek onu
+       yanlış yere götürüyor — 14 Eyl'de tam olarak bu oldu, test kırmızıya
+       döndü. Yukarıdaki başlık yorumunda da aynı kural yazıyor.) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://accounts.google.com">
+
+
   <!-- Google ile giriş (GIS); istemci kimliği Dart tarafında da veriliyor.
        SDK BETİĞİ BURADA YÜKLENMEZ: `google_sign_in_web` eklentisi betiği
        kendisi enjekte ediyor. Elle de eklenince sayfada İKİ kopya çalışıyordu

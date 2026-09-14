@@ -152,10 +152,16 @@ test('HER sezon en az bir bağlantı alır (yetimlik onarımının özü)', () =
   }
 });
 
+// 14 Eyl 2026: SAYI KAYNAKTAN OKUNUYOR (eskiden 60 yazılıydı). Tavan o gün
+// 60 → 120 oldu; bu testin iddiası "tavan uygulanıyor", tavanın DEĞERİ değil.
+// Değer iddiası `seo_bolum_ic_baglanti.test.js`te: tavan hiçbir sezonu
+// öksüz bırakmayacak kadar YÜKSEK olmalı (sezonlar arası köprü yok).
 test('sezon listesi tavanı: SEO_DIZI_SEZON_TAVAN\'ı aşan sezon basılmaz', () => {
-  const h = seoDiziBolumHtml(1, 'X', [], Array.from({ length: 200 }, (_, i) => i + 1));
+  const tavan = alan(['SEO_DIZI_SEZON_TAVAN'], 'SEO_DIZI_SEZON_TAVAN');
+  const h = seoDiziBolumHtml(1, 'X', [],
+    Array.from({ length: tavan + 40 }, (_, i) => i + 1));
   const link = h.match(/\/dizi\/1\/sezon\/\d+\/bolum\/1/g) || [];
-  assert.equal(link.length, 60);
+  assert.equal(link.length, tavan);
 });
 
 test('bölüm tohumu eleştirmen uzunluğunda, tekil açılış, spoiler kalıbı yok', async () => {
