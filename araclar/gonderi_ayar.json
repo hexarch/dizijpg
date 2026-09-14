@@ -12,9 +12,12 @@
 
   "_sirket_ad_not": "TMDB'deki eski şirket adını güncel adla değiştirir (logo güncel olduğunda ad da güncel olmalı). Anahtar = TMDB şirket kimliği.",
   "sirket_ad": {
-    "25": "20th Century Studios"
+    "25": "20th Century Studios",
+    "20580": "Amazon MGM Studios"
   },
 
   "_sirket_logo_not": "Elle logo ezmesi: TMDB şirket kimliği -> görsel adresi. Wikidata yanlış/eski logo verirse buraya yaz.",
-  "sirket_logo": {}
+  "sirket_logo": {
+    "20580": "https://commons.wikimedia.org/wiki/Special:FilePath/Amazon%20MGM%20Studios.svg?width=600"
+  }
 }

@@ -100,7 +100,7 @@ else:
     LOGO = os.path.join(PROJE, "logo.png")
     CIKTI_KOK = os.path.join(os.path.dirname(PROJE), "cikti", "instagram")
 
-SUNUCU = os.environ.get("DIZIJPG_SUNUCU", "root@154.53.163.3")
+SUNUCU = os.environ.get("DIZIJPG_SUNUCU", "root@87.248.157.114")
 DB_KAP = os.environ.get("DIZIJPG_DB_KAP", "dizijpg-db")
 DB_KUL = os.environ.get("DIZIJPG_DB_KUL", "dizijpg")
 DB_AD = os.environ.get("DIZIJPG_DB_AD", "dizijpg")
