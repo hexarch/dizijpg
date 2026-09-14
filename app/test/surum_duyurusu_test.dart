@@ -81,6 +81,23 @@ Future<List<String>> _bildirimEkrani(WidgetTester tester) async {
   return acilan;
 }
 
+/// Sürüm notu ucunu taklit eder. [notlar] null ise sunucuda not YOKTUR
+/// (`bulundu:false`) — ekran o zaman iki boş durumdan doğru olanına düşmeli.
+void _notSunucusu(List<Map<String, String>>? maddeler, {String? ozet}) {
+  Api.istemci = MockClient((istek) async {
+    if (istek.url.path.contains('/surum-notlari/')) {
+      if (maddeler == null) return _json({'bulundu': false});
+      return _json({
+        'bulundu': true,
+        'dil': 'tr',
+        'ozet': ozet ?? 'Bu sürümde altı yenilik var.',
+        'maddeler': maddeler,
+      });
+    }
+    return _json(const <String, dynamic>{});
+  });
+}
+
 Future<void> _yeniliklerEkrani(WidgetTester tester, String surum) async {
   tester.view
     ..devicePixelRatio = 1.0
@@ -92,6 +109,7 @@ Future<void> _yeniliklerEkrani(WidgetTester tester, String surum) async {
       home: YeniliklerEkrani(surum: surum),
     ),
   );
+  await tester.pump();
   await tester.pump();
 }
 
@@ -173,6 +191,7 @@ void main() {
     testWidgets('GERİDE kalan uygulamaya "uygulamayı güncelle" denir', (
       tester,
     ) async {
+      _notSunucusu(null);
       await _yeniliklerEkrani(tester, '9.9.9');
       expect(
         find.textContaining('uygulamayı güncelle'),
@@ -190,9 +209,46 @@ void main() {
       // kullanıcı "uygulamayı güncelle" yazısını görecekti — push ise
       // "yenilikleri görmek için dokun" diyordu. Kartı olmayan ama
       // uygulamadan ESKİ/EŞİT sürüm için doğru cümle bu değil.
+      _notSunucusu(null);
       await _yeniliklerEkrani(tester, '1.148.2');
       expect(find.textContaining('uygulamayı güncelle'), findsNothing);
       expect(find.textContaining('arka planda iyileştirmeler'), findsOneWidget);
+    });
+
+    testWidgets('SUNUCUDAN GELEN NOT çizilir (gömülü kart gerekmez)', (
+      tester,
+    ) async {
+      // 14 Eyl 2026'nın asıl düzeltmesi: kartlar uygulamaya gömülü olmasa da
+      // sayfa DOLU. Sürüm uygulamadan İLERİDE — yani kullanıcı geride — ama
+      // not sunucudan geldiği için "güncelle" değil, GERÇEK notlar görünür.
+      _notSunucusu([
+        {'baslik': 'Ondalıklı puan', 'metin': 'Yıldızı sürükleyip 4,6 ver.'},
+        {'baslik': 'Tek dosya içe aktarım', 'metin': 'ZIP şart değil.'},
+      ], ozet: 'İki yenilik var.');
+      await _yeniliklerEkrani(tester, '9.9.9');
+      expect(find.text('Ondalıklı puan'), findsOneWidget);
+      expect(find.text('Tek dosya içe aktarım'), findsOneWidget);
+      expect(find.text('İki yenilik var.'), findsOneWidget);
+      expect(
+        find.textContaining('uygulamayı güncelle'),
+        findsNothing,
+        reason: 'not sunucudan geldi; güncelleme cümlesi artık yanlış',
+      );
+    });
+
+    testWidgets('GÖMÜLÜ KART sunucu notunu EZER (maketli anlatım yeğlenir)', (
+      tester,
+    ) async {
+      // Gömülü kartlar tema duyarlı canlı maket çiziyor; sunucu notu düz
+      // metin. İkisi de varsa gömülü olan kazanır ve AĞA HİÇ ÇIKILMAZ.
+      var istekGitti = false;
+      Api.istemci = MockClient((istek) async {
+        if (istek.url.path.contains('/surum-notlari/')) istekGitti = true;
+        return _json(const <String, dynamic>{});
+      });
+      await _yeniliklerEkrani(tester, '1.158.0');
+      expect(find.text('Ondalıklı puan verebilirsin'), findsOneWidget);
+      expect(istekGitti, isFalse);
     });
 
     test('yayındaki sürümün tanıtımı GÖMÜLÜ (sürüm turu unutulmasın)', () {

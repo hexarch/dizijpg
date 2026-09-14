@@ -1521,6 +1521,24 @@ const Map<String, String> cevirilerEn = {
   'Videoda geri sarma düzeldi': 'Rewinding videos is fixed',
   'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
       'Rewinding a video no longer reloads it from scratch; playback continues instantly from where you are.',
+  'Bildirimler ekranın üstünde beliriyor': 'Notifications pop up at the top',
+  'Uygulamayı kullanırken gelen beğeni, yorum ve mesajlar artık üstten kayan küçük bir pencerede görünüyor. Dokununca ilgili yere gidiyor, yukarı sürükleyince kapanıyor.':
+      'Likes, comments and messages that arrive while you are using the app now appear in a small window that slides in from the top. Tap it to jump there, swipe it up to dismiss it.',
+  'Ondalıklı puan verebilirsin': 'You can give decimal ratings',
+  'Yıldızların üzerinde parmağını sürükle: artık 4 ya da 5 değil, aradaki 4,6 gibi puanları da verebiliyorsun.':
+      'Drag your finger across the stars: instead of only 4 or 5 you can now give the values in between, like 4.6.',
+  'Yanıtın yanıtı girintili görünüyor': 'Replies to replies are indented',
+  'Bir yanıta yazdığın yanıt artık onun altında girintili duruyor; hangi cümlenin kime yazıldığı tek bakışta anlaşılıyor.':
+      'A reply you write to another reply now sits indented under it, so you can see at a glance who each sentence was written to.',
+  'Sohbette gerçek yükleme yüzdesi': 'Real upload percentage in chat',
+  'Fotoğraf ya da video gönderirken yüzde gerçekten ilerliyor; yükleme sürerken yeni mesaj da yazabiliyorsun.':
+      'When you send a photo or a video the percentage really moves, and you can keep typing while it uploads.',
+  'İzleme odası tek satırda': 'Watch room fits in one row',
+  'Odadaki oynat, sar ve ses düğmeleri tek satıra indi. Yayın takılırsa nöbetçi bunu fark edip kendiliğinden toparlıyor.':
+      'The play, seek and volume buttons in the room now fit on a single row. If the stream stalls, a watchdog notices it and recovers on its own.',
+  'İçe aktarım için ZIP şart değil': 'No ZIP needed for imports',
+  'Başka bir uygulamadan liste aktarırken tek bir CSV ya da JSON dosyası da yeterli; arşivi açıp hazırlamana gerek yok.':
+      'When you import a list from another app, a single CSV or JSON file is enough; you do not need to unpack an archive.',
   'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
       'This version has no visible new features — it brings behind-the-scenes improvements and fixes.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
@@ -1753,4 +1771,6 @@ const Map<String, String> cevirilerEn = {
       'File not recognised: upload a TV Time, Letterboxd or dizi.jpg file',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'This file cannot be imported on its own: upload the whole archive (.zip) or the dizijpg.json file',
+  'Ort.': 'Avg.',
+  'En iyi bölüm': 'Best episode',
 };

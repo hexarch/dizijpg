@@ -1528,6 +1528,24 @@ const Map<String, String> cevirilerRu = {
   'Videoda geri sarma düzeldi': 'Перемотка назад исправлена',
   'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
       'При перемотке назад видео больше не загружается заново — воспроизведение сразу продолжается с нужного места.',
+  'Bildirimler ekranın üstünde beliriyor': 'Уведомления появляются сверху',
+  'Uygulamayı kullanırken gelen beğeni, yorum ve mesajlar artık üstten kayan küçük bir pencerede görünüyor. Dokununca ilgili yere gidiyor, yukarı sürükleyince kapanıyor.':
+      'Лайки, комментарии и сообщения, которые приходят во время работы в приложении, теперь показываются в небольшом окне, выезжающем сверху. Нажмите — откроется нужное место, смахните вверх — окно закроется.',
+  'Ondalıklı puan verebilirsin': 'Можно ставить дробные оценки',
+  'Yıldızların üzerinde parmağını sürükle: artık 4 ya da 5 değil, aradaki 4,6 gibi puanları da verebiliyorsun.':
+      'Проведите пальцем по звёздам: вместо только 4 или 5 теперь можно поставить и промежуточную оценку, например 4,6.',
+  'Yanıtın yanıtı girintili görünüyor': 'Ответы на ответы с отступом',
+  'Bir yanıta yazdığın yanıt artık onun altında girintili duruyor; hangi cümlenin kime yazıldığı tek bakışta anlaşılıyor.':
+      'Ответ, который вы написали на другой ответ, теперь стоит под ним с отступом — сразу видно, кому адресована фраза.',
+  'Sohbette gerçek yükleme yüzdesi': 'Настоящий процент загрузки в чате',
+  'Fotoğraf ya da video gönderirken yüzde gerçekten ilerliyor; yükleme sürerken yeni mesaj da yazabiliyorsun.':
+      'При отправке фото или видео процент действительно растёт, а писать новое сообщение можно прямо во время загрузки.',
+  'İzleme odası tek satırda': 'Комната просмотра в одну строку',
+  'Odadaki oynat, sar ve ses düğmeleri tek satıra indi. Yayın takılırsa nöbetçi bunu fark edip kendiliğinden toparlıyor.':
+      'Кнопки воспроизведения, перемотки и звука в комнате уместились в одну строку. Если видео зависнет, сторож это заметит и восстановит поток сам.',
+  'İçe aktarım için ZIP şart değil': 'Для импорта ZIP не нужен',
+  'Başka bir uygulamadan liste aktarırken tek bir CSV ya da JSON dosyası da yeterli; arşivi açıp hazırlamana gerek yok.':
+      'При переносе списка из другого приложения достаточно одного файла CSV или JSON — распаковывать архив не нужно.',
   'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
       'В этой версии нет заметных новинок — она приносит улучшения и исправления «под капотом».',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
@@ -1762,4 +1780,6 @@ const Map<String, String> cevirilerRu = {
       'Файл не распознан: загрузите файл из TV Time, Letterboxd или dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Этот файл нельзя импортировать отдельно: загрузите весь архив (.zip) или файл dizijpg.json',
+  'Ort.': 'Ср.',
+  'En iyi bölüm': 'Лучшая серия',
 };

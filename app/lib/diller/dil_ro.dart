@@ -1547,6 +1547,24 @@ const Map<String, String> cevirilerRo = {
   'Videoda geri sarma düzeldi': 'Derularea înapoi a fost reparată',
   'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
       'Când derulezi înapoi, videoclipul nu se mai reîncarcă de la zero; redarea continuă instant din punctul respectiv.',
+  'Bildirimler ekranın üstünde beliriyor': 'Notificările apar în partea de sus',
+  'Uygulamayı kullanırken gelen beğeni, yorum ve mesajlar artık üstten kayan küçük bir pencerede görünüyor. Dokununca ilgili yere gidiyor, yukarı sürükleyince kapanıyor.':
+      'Aprecierile, comentariile și mesajele care sosesc în timp ce folosești aplicația apar acum într-o fereastră mică ce alunecă de sus. Atinge-o ca să ajungi acolo, trage-o în sus ca să o închizi.',
+  'Ondalıklı puan verebilirsin': 'Poți da note cu zecimale',
+  'Yıldızların üzerinde parmağını sürükle: artık 4 ya da 5 değil, aradaki 4,6 gibi puanları da verebiliyorsun.':
+      'Trage degetul peste stele: în loc de doar 4 sau 5, acum poți da și valori intermediare, ca 4,6.',
+  'Yanıtın yanıtı girintili görünüyor': 'Răspunsul la răspuns apare indentat',
+  'Bir yanıta yazdığın yanıt artık onun altında girintili duruyor; hangi cümlenin kime yazıldığı tek bakışta anlaşılıyor.':
+      'Răspunsul pe care îl scrii la alt răspuns stă acum indentat sub el; vezi dintr-o privire cui i-a fost scrisă fiecare frază.',
+  'Sohbette gerçek yükleme yüzdesi': 'Procent real de încărcare în chat',
+  'Fotoğraf ya da video gönderirken yüzde gerçekten ilerliyor; yükleme sürerken yeni mesaj da yazabiliyorsun.':
+      'Când trimiți o poză sau un clip, procentul chiar avansează, iar tu poți scrie mai departe în timpul încărcării.',
+  'İzleme odası tek satırda': 'Camera de vizionare pe un singur rând',
+  'Odadaki oynat, sar ve ses düğmeleri tek satıra indi. Yayın takılırsa nöbetçi bunu fark edip kendiliğinden toparlıyor.':
+      'Butoanele de redare, derulare și volum din cameră încap acum pe un rând. Dacă transmisia se blochează, un supraveghetor observă și o repune singură.',
+  'İçe aktarım için ZIP şart değil': 'Importul nu mai cere ZIP',
+  'Başka bir uygulamadan liste aktarırken tek bir CSV ya da JSON dosyası da yeterli; arşivi açıp hazırlamana gerek yok.':
+      'Când imporți o listă din altă aplicație e de ajuns un singur fișier CSV sau JSON; nu trebuie să dezarhivezi nimic.',
   'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
       'Această versiune nu are noutăți vizibile; aduce îmbunătățiri și remedieri în fundal.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
@@ -1781,4 +1799,6 @@ const Map<String, String> cevirilerRo = {
       'Fișierul nu a fost recunoscut: încarcă un fișier TV Time, Letterboxd sau dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Acest fișier nu poate fi importat singur: încarcă arhiva completă (.zip) sau fișierul dizijpg.json',
+  'Ort.': 'Med.',
+  'En iyi bölüm': 'Cel mai bun episod',
 };

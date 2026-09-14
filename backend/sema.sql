@@ -1908,3 +1908,15 @@ ALTER TABLE bildirimler ADD CONSTRAINT bildirimler_tur_check
   CHECK (tur IN ('yanit', 'begeni', 'takip', 'mesaj', 'etiket',
                  'kacirilan_arama', 'bolum', 'kisi', 'geri_bildirim',
                  'surum', 'oda_davet', 'takip_istegi', 'takip_kabul'));
+
+-- Sürüm notları (14 Eyl 2026): `/yenilikler/<surum>` sayfasının içeriği ve
+-- sürüm duyurusu push'unun gövdesi. Notlar burada olduğu için yeni sürüm
+-- notu yayınlamak YENİ DERLEME GEREKTİRMEZ (bkz. migrasyon-2026-09-14.sql).
+CREATE TABLE IF NOT EXISTS surum_notlari (
+  surum       text        NOT NULL,
+  dil         text        NOT NULL,
+  ozet        text        NOT NULL,
+  maddeler    jsonb       NOT NULL DEFAULT '[]'::jsonb,
+  guncelleme  timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (surum, dil)
+);

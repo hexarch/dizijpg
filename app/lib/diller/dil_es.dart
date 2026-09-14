@@ -1543,6 +1543,25 @@ const Map<String, String> cevirilerEs = {
   'Videoda geri sarma düzeldi': 'Arreglado el rebobinado de vídeos',
   'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
       'Al rebobinar, el vídeo ya no se recarga desde cero: la reproducción sigue al instante desde donde estás.',
+  'Bildirimler ekranın üstünde beliriyor': 'Las notificaciones aparecen arriba',
+  'Uygulamayı kullanırken gelen beğeni, yorum ve mesajlar artık üstten kayan küçük bir pencerede görünüyor. Dokununca ilgili yere gidiyor, yukarı sürükleyince kapanıyor.':
+      'Los me gusta, comentarios y mensajes que llegan mientras usas la app salen ahora en una pequeña ventana desde arriba. Tócala para ir al sitio; deslízala hacia arriba para cerrarla.',
+  'Ondalıklı puan verebilirsin': 'Puedes puntuar con decimales',
+  'Yıldızların üzerinde parmağını sürükle: artık 4 ya da 5 değil, aradaki 4,6 gibi puanları da verebiliyorsun.':
+      'Arrastra el dedo sobre las estrellas: en vez de solo 4 o 5, ahora puedes dar valores intermedios como 4,6.',
+  'Yanıtın yanıtı girintili görünüyor':
+      'Las respuestas a respuestas van con sangría',
+  'Bir yanıta yazdığın yanıt artık onun altında girintili duruyor; hangi cümlenin kime yazıldığı tek bakışta anlaşılıyor.':
+      'La respuesta que escribes a otra respuesta queda con sangría debajo de ella; de un vistazo ves a quién va dirigida cada frase.',
+  'Sohbette gerçek yükleme yüzdesi': 'Porcentaje real de subida en el chat',
+  'Fotoğraf ya da video gönderirken yüzde gerçekten ilerliyor; yükleme sürerken yeni mesaj da yazabiliyorsun.':
+      'Al enviar una foto o un vídeo el porcentaje avanza de verdad, y puedes seguir escribiendo mientras se sube.',
+  'İzleme odası tek satırda': 'Sala de visionado en una sola fila',
+  'Odadaki oynat, sar ve ses düğmeleri tek satıra indi. Yayın takılırsa nöbetçi bunu fark edip kendiliğinden toparlıyor.':
+      'Los botones de reproducción, avance y volumen de la sala caben ahora en una fila. Si el vídeo se atasca, un vigilante lo detecta y lo recupera solo.',
+  'İçe aktarım için ZIP şart değil': 'No hace falta un ZIP para importar',
+  'Başka bir uygulamadan liste aktarırken tek bir CSV ya da JSON dosyası da yeterli; arşivi açıp hazırlamana gerek yok.':
+      'Al importar una lista de otra app basta con un solo archivo CSV o JSON; no necesitas descomprimir nada.',
   'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
       'Esta versión no trae novedades visibles: incluye mejoras y correcciones internas.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
@@ -1777,4 +1796,6 @@ const Map<String, String> cevirilerEs = {
       'Archivo no reconocido: sube un archivo de TV Time, Letterboxd o dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Este archivo no se puede importar por sí solo: sube el archivo completo (.zip) o el dizijpg.json',
+  'Ort.': 'Prom.',
+  'En iyi bölüm': 'Mejor episodio',
 };

@@ -1491,6 +1491,24 @@ const Map<String, String> cevirilerAr = {
   'Videoda geri sarma düzeldi': 'تم إصلاح الإرجاع في الفيديو',
   'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
       'عند الإرجاع لم يعد الفيديو يُحمّل من جديد؛ يستمر التشغيل فوراً من الموضع الذي أنت فيه.',
+  'Bildirimler ekranın üstünde beliriyor': 'الإشعارات تظهر في أعلى الشاشة',
+  'Uygulamayı kullanırken gelen beğeni, yorum ve mesajlar artık üstten kayan küçük bir pencerede görünüyor. Dokununca ilgili yere gidiyor, yukarı sürükleyince kapanıyor.':
+      'الإعجابات والتعليقات والرسائل التي تصل أثناء استخدامك للتطبيق تظهر الآن في نافذة صغيرة تنزلق من الأعلى. اضغط عليها للانتقال إلى مكانها، واسحبها للأعلى لإغلاقها.',
+  'Ondalıklı puan verebilirsin': 'يمكنك منح تقييم عشري',
+  'Yıldızların üzerinde parmağını sürükle: artık 4 ya da 5 değil, aradaki 4,6 gibi puanları da verebiliyorsun.':
+      'اسحب إصبعك على النجوم: بدل 4 أو 5 فقط، يمكنك الآن منح القيم بينهما مثل 4٫6.',
+  'Yanıtın yanıtı girintili görünüyor': 'الردود على الردود تظهر بمسافة بادئة',
+  'Bir yanıta yazdığın yanıt artık onun altında girintili duruyor; hangi cümlenin kime yazıldığı tek bakışta anlaşılıyor.':
+      'الرد الذي تكتبه على رد آخر يظهر الآن أسفله بمسافة بادئة، فتعرف من نظرة واحدة لمن كُتبت كل جملة.',
+  'Sohbette gerçek yükleme yüzdesi': 'نسبة رفع حقيقية في الدردشة',
+  'Fotoğraf ya da video gönderirken yüzde gerçekten ilerliyor; yükleme sürerken yeni mesaj da yazabiliyorsun.':
+      'عند إرسال صورة أو فيديو تتقدم النسبة فعلياً، ويمكنك كتابة رسالة جديدة أثناء الرفع.',
+  'İzleme odası tek satırda': 'غرفة المشاهدة في سطر واحد',
+  'Odadaki oynat, sar ve ses düğmeleri tek satıra indi. Yayın takılırsa nöbetçi bunu fark edip kendiliğinden toparlıyor.':
+      'أزرار التشغيل والتقديم والصوت في الغرفة صارت في سطر واحد. وإذا توقف البث، يلاحظ الحارس ذلك ويستعيده تلقائياً.',
+  'İçe aktarım için ZIP şart değil': 'الاستيراد لا يحتاج ملف ZIP',
+  'Başka bir uygulamadan liste aktarırken tek bir CSV ya da JSON dosyası da yeterli; arşivi açıp hazırlamana gerek yok.':
+      'عند استيراد قائمة من تطبيق آخر يكفي ملف CSV أو JSON واحد؛ لا حاجة لفك ضغط أرشيف.',
   'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
       'لا توجد ميزات ظاهرة في هذا الإصدار؛ فهو يحمل تحسينات وإصلاحات في الخلفية.',
   'Bu sürümün notlarını görmek için uygulamayı güncelle':
@@ -1722,4 +1740,6 @@ const Map<String, String> cevirilerAr = {
       'لم يتم التعرف على هذا الملف: ارفع ملف TV Time أو Letterboxd أو dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'لا يمكن استيراد هذا الملف وحده: ارفع الأرشيف كاملًا (.zip) أو ملف dizijpg.json',
+  'Ort.': 'المعدل',
+  'En iyi bölüm': 'أفضل حلقة',
 };

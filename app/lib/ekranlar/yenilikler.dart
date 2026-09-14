@@ -30,12 +30,21 @@ bool surumIleri(String a, String b) {
 /// SÜRÜM TANITIM SAYFASI — `/yenilikler/:surum` (2 Eyl 2026 isteği: "tıklayınca
 /// yeni sayfada gelen güncellemeleri tanıtan yazı ve görseller olmalı").
 ///
-/// İÇERİK UYGULAMADA GÖMÜLÜ, SUNUCUDA DEĞİL: bildirim satırı yalnız sürüm
-/// numarası taşır (bkz. migrasyon-2026-09-02.sql). Sunucuda tutulsaydı 45 dil
-/// × N sürüm metni panelden yönetilmek zorunda kalırdı; burada metinler
-/// standart çeviri mekanizmasından geçer ve GERÇEK kullanıcı dillerine
-/// çevrilir (2 Eyl ölçümü: tr, en, ru, ar, es, zh, ro — diğer diller Türkçe
-/// kaynağa düşer, o dillerde bugün kullanıcı yok).
+/// İÇERİK İKİ KAYNAKTAN GELİR (14 Eyl 2026'da ikincisi eklendi):
+///  1. GÖMÜLÜ KARTLAR — [taniticiOlanlar] + `_kartlar` switch'i. Canlı mini
+///     maketli, tema duyarlı, çeviriden geçen en iyi anlatım. Varsa kazanır.
+///  2. SUNUCU NOTU — `/surum-notlari/<surum>`, `surum_notlari` tablosu.
+///
+/// 2'NİN VAR OLMA SEBEBİ: içerik YALNIZ gömülü olduğu sürece, X sürümünün
+/// tanıtımını ancak X'i kurmuş kullanıcı görebiliyordu. 14 Eyl provası bunu
+/// canlıda gösterdi: 1.158.0 duyurusu 1.158.0 KURULU telefona gitti ve sayfa
+/// "bu sürümde görünür bir yenilik yok" dedi — kartlar o akşam yazılmıştı,
+/// 237 derlemesinin içinde yoktu. Artık notu sunucuya yazmak yetiyor; duyuru
+/// için yeni derleme beklenmiyor (bkz. migrasyon-2026-09-14.sql).
+///
+/// DİL: gömülü metinler standart çeviri mekanizmasından geçer (2 Eyl ölçümü:
+/// tr, en, ru, ar, es, zh, ro — diğer diller Türkçe kaynağa düşer). Sunucu
+/// notunda dil seçimi SUNUCUDA yapılır: istenen dil > en > tr.
 ///
 /// GÖRSELLER EKRAN GÖRÜNTÜSÜ DEĞİL, CANLI MİNİ MAKETLER: her kart özelliğin
 /// küçük bir taklidini gerçek widget'larla çizer (bildirim satırı, rozetli ad,
@@ -51,13 +60,13 @@ bool surumIleri(String a, String b) {
 ///     güncelle" denecekti — push "yenilikleri görmek için dokun" derken.
 ///     Bu hale "görünür yenilik yok, arka planda iyileştirmeler var" denir.
 /// Ayrımı [surumIleri] yapar; sessiz boşluk ya da yanlış cümle yasak.
-class YeniliklerEkrani extends StatelessWidget {
+class YeniliklerEkrani extends StatefulWidget {
   final String surum;
   const YeniliklerEkrani({super.key, required this.surum});
 
   /// Tanıtımı gömülü olan sürümler. Yeni sürüm çıkarken buraya numara
   /// eklenir VE [_kartlar] dalı yazılır; testler ikisini birden kilitler.
-  static const List<String> taniticiOlanlar = ['1.114.0', '1.149.0'];
+  static const List<String> taniticiOlanlar = ['1.114.0', '1.149.0', '1.158.0'];
 
   /// Sürüm → kart listesi. [taniticiOlanlar] ile birebir aynı kümeyi
   /// kapsamalı (`surum_duyurusu_test` boş kart listesi bırakılmasını da
@@ -65,6 +74,7 @@ class YeniliklerEkrani extends StatelessWidget {
   List<Widget> _kartlar() => switch (surum) {
     '1.114.0' => _kartlar114(),
     '1.149.0' => _kartlar149(),
+    '1.158.0' => _kartlar158(),
     _ => const <Widget>[],
   };
 
@@ -74,54 +84,11 @@ class YeniliklerEkrani extends StatelessWidget {
   int get kartSayisi => _kartlar().length;
 
   @override
-  Widget build(BuildContext context) {
-    final biliniyor = taniticiOlanlar.contains(surum);
-    final geride = surumIleri(surum, Api.surum);
-    return Scaffold(
-      appBar: AppBar(title: Text('Yenilikler'.c)),
-      body: OrtaKolon(
-        azami: masaustuKolonGenisligi,
-        cocuk: biliniyor
-            ? ListView(
-                padding: EdgeInsets.fromLTRB(16, 8, 16, altGuvenli(context)),
-                children: [
-                  _baslik(context),
-                  const SizedBox(height: 18),
-                  ..._kartlar(),
-                ],
-              )
-            : Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        geride
-                            ? Icons.system_update_alt
-                            : Icons.check_circle_outline,
-                        size: 44,
-                        color: DiziRenkler.metin24,
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        geride
-                            ? 'Bu sürümün notlarını görmek için uygulamayı güncelle'
-                                  .c
-                            : 'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.'
-                                  .c,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: DiziRenkler.metin54),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-      ),
-    );
-  }
+  State<YeniliklerEkrani> createState() => _YeniliklerDurumu();
 
-  Widget _baslik(BuildContext context) => Column(
+  /// [ozet] verilirse alt satırda o yazar (sunucudan gelen notun özeti,
+  /// kullanıcının dilinde); verilmezse gömülü kartların genel cümlesi.
+  Widget _baslik(BuildContext context, {String? ozet}) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       const SizedBox(height: 8),
@@ -139,7 +106,10 @@ class YeniliklerEkrani extends StatelessWidget {
       ),
       const SizedBox(height: 6),
       Text(
-        'Bu sürümde neler değişti, aşağıda.'.c,
+        // Sunucu özeti ZATEN kullanıcının dilinde geliyor — `.c`den geçirmek
+        // onu ikinci kez çevirmeye kalkardı (haritada yoksa aynen döner ama
+        // niyet yanlış olur). Gömülü cümle ise normal çeviri anahtarı.
+        ozet ?? 'Bu sürümde neler değişti, aşağıda.'.c,
         style: TextStyle(fontSize: 13, color: DiziRenkler.metin54),
       ),
     ],
@@ -238,6 +208,162 @@ class YeniliklerEkrani extends StatelessWidget {
               .c,
     ),
   ];
+
+  // ---------------------------------------------------------------------
+  // 1.158.0 kartları
+  //
+  // KAPSAM: 1.149.0 duyurusundan bu yana çıkan, KULLANICININ GÖZÜNE GÖRÜNEN
+  // işler — Play sürüm notu (surum-notu-1.158.0.txt) ile aynı altı madde,
+  // aynı sırayla. Notta olmayan hiçbir şey buraya yazılmaz: mağaza notu ile
+  // uygulama içi tanıtım tek metindir, ikisi ayrışırsa kullanıcı hangisine
+  // inanacağını bilemez.
+  // ---------------------------------------------------------------------
+  List<Widget> _kartlar158() => [
+    _YenilikKarti(
+      ikon: Icons.notifications_active_outlined,
+      baslik: 'Bildirimler ekranın üstünde beliriyor'.c,
+      metin:
+          'Uygulamayı kullanırken gelen beğeni, yorum ve mesajlar artık üstten kayan küçük bir pencerede görünüyor. Dokununca ilgili yere gidiyor, yukarı sürükleyince kapanıyor.'
+              .c,
+      gorsel: const _UstPencereMaket(),
+    ),
+    _YenilikKarti(
+      ikon: Icons.star_half,
+      baslik: 'Ondalıklı puan verebilirsin'.c,
+      metin:
+          'Yıldızların üzerinde parmağını sürükle: artık 4 ya da 5 değil, aradaki 4,6 gibi puanları da verebiliyorsun.'
+              .c,
+      gorsel: const _OndalikMaket(),
+    ),
+    _YenilikKarti(
+      ikon: Icons.forum_outlined,
+      baslik: 'Yanıtın yanıtı girintili görünüyor'.c,
+      metin:
+          'Bir yanıta yazdığın yanıt artık onun altında girintili duruyor; hangi cümlenin kime yazıldığı tek bakışta anlaşılıyor.'
+              .c,
+      gorsel: const _AgacMaket(),
+    ),
+    _YenilikKarti(
+      ikon: Icons.cloud_upload_outlined,
+      baslik: 'Sohbette gerçek yükleme yüzdesi'.c,
+      metin:
+          'Fotoğraf ya da video gönderirken yüzde gerçekten ilerliyor; yükleme sürerken yeni mesaj da yazabiliyorsun.'
+              .c,
+      gorsel: const _YuklemeMaket(),
+    ),
+    _YenilikKarti(
+      ikon: Icons.smart_display_outlined,
+      baslik: 'İzleme odası tek satırda'.c,
+      metin:
+          'Odadaki oynat, sar ve ses düğmeleri tek satıra indi. Yayın takılırsa nöbetçi bunu fark edip kendiliğinden toparlıyor.'
+              .c,
+    ),
+    _YenilikKarti(
+      ikon: Icons.upload_file_outlined,
+      baslik: 'İçe aktarım için ZIP şart değil'.c,
+      metin:
+          'Başka bir uygulamadan liste aktarırken tek bir CSV ya da JSON dosyası da yeterli; arşivi açıp hazırlamana gerek yok.'
+              .c,
+    ),
+  ];
+}
+
+/// Ekranın durumu: İÇERİK ÜÇ KAYNAKTAN, BU SIRAYLA gelir.
+///  1. GÖMÜLÜ KARTLAR ([YeniliklerEkrani.taniticiOlanlar]) — canlı mini
+///     maketli, en iyi görünen anlatım. Varsa ağ beklenmez, anında çizilir.
+///  2. SUNUCU NOTU (`/surum-notlari/<surum>`) — 14 Eyl 2026'da eklendi.
+///     Gömülü kartın OLMADIĞI her sürüm buradan anlatılır; yeni sürüm notu
+///     yayınlamak için artık yeni derleme gerekmiyor.
+///  3. İKİ BOŞ DURUM — ikisi de yoksa: kullanıcı GERİDEYSE "güncelle",
+///     GÜNCELSE "görünür yenilik yok". (11 Eyl 2026 ayrımı, aynen duruyor.)
+class _YeniliklerDurumu extends State<YeniliklerEkrani> {
+  /// Tek sefer kurulur: FutureBuilder'a her build'de yeni future verilirse
+  /// tema/dil değişiminde istek TEKRARLANIR.
+  Future<Map<String, dynamic>?>? _not;
+
+  @override
+  void initState() {
+    super.initState();
+    // Gömülü kart varsa ağa hiç çıkma.
+    if (!YeniliklerEkrani.taniticiOlanlar.contains(widget.surum)) {
+      _not = Api.surumNotu(widget.surum);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Yenilikler'.c)),
+      body: OrtaKolon(
+        azami: masaustuKolonGenisligi,
+        cocuk: _not == null
+            ? _liste(context, widget._kartlar())
+            : FutureBuilder<Map<String, dynamic>?>(
+                future: _not,
+                builder: (context, anlik) {
+                  if (anlik.connectionState != ConnectionState.done) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final not = anlik.data;
+                  final maddeler = (not?['maddeler'] as List?) ?? const [];
+                  if (not == null || maddeler.isEmpty) {
+                    return _bosDurum(context);
+                  }
+                  return _liste(context, [
+                    for (final m in maddeler)
+                      if (m is Map)
+                        _YenilikKarti(
+                          // Sunucu notunda ikon YOK: tek tip yıldız ikonu
+                          // kullanılır. İkon adını sunucudan almak, adı
+                          // bilinmeyen bir ikonda sessiz boşluk demekti.
+                          ikon: Icons.auto_awesome,
+                          baslik: '${m['baslik'] ?? ''}',
+                          metin: '${m['metin'] ?? ''}',
+                        ),
+                  ], ozet: '${not['ozet'] ?? ''}');
+                },
+              ),
+      ),
+    );
+  }
+
+  Widget _liste(BuildContext context, List<Widget> kartlar, {String? ozet}) =>
+      ListView(
+        padding: EdgeInsets.fromLTRB(16, 8, 16, altGuvenli(context)),
+        children: [
+          widget._baslik(context, ozet: ozet),
+          const SizedBox(height: 18),
+          ...kartlar,
+        ],
+      );
+
+  Widget _bosDurum(BuildContext context) {
+    final geride = surumIleri(widget.surum, Api.surum);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              geride ? Icons.system_update_alt : Icons.check_circle_outline,
+              size: 44,
+              color: DiziRenkler.metin24,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              geride
+                  ? 'Bu sürümün notlarını görmek için uygulamayı güncelle'.c
+                  : 'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.'
+                        .c,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: DiziRenkler.metin54),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 /// Tek yenilik kartı: renkli ikon karesi + başlık + açıklama + (varsa) canlı
@@ -714,6 +840,264 @@ class _CubukMaket extends StatelessWidget {
     );
     return _MaketCercevesi(
       cocuk: Column(children: [cubuk(0.2), cubuk(0.5), cubuk(0.9)]),
+    );
+  }
+}
+
+/// Üstten kayan anlık bildirim penceresinin mini maketi: yükseltilmiş kart +
+/// avatar + gerçek bildirim cümlesi + sağda tutamak çizgisi (yukarı sürükle).
+class _UstPencereMaket extends StatelessWidget {
+  const _UstPencereMaket();
+
+  @override
+  Widget build(BuildContext context) {
+    return _MaketCercevesi(
+      cocuk: Column(
+        children: [
+          // Tutamak: gerçek pencerede yukarı sürükleyip kapatma göstergesi.
+          Container(
+            width: 30,
+            height: 3,
+            margin: const EdgeInsets.only(bottom: 8),
+            decoration: BoxDecoration(
+              color: DiziRenkler.metin24,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+            decoration: BoxDecoration(
+              color: DiziRenkler.kart,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.22),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 14,
+                  backgroundColor: DiziRenkler.metin12,
+                  child: Icon(
+                    Icons.person,
+                    size: 15,
+                    color: DiziRenkler.metin38,
+                  ),
+                ),
+                const SizedBox(width: 9),
+                Expanded(
+                  child: Text(
+                    // Gerçek bildirim satırıyla AYNI anahtar — maket de dile uyar.
+                    '{} ve {} kişi yorumunu beğendi'.cf([
+                      '@alcelik, @melisa',
+                      10,
+                    ]),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 12.5),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ondalıklı puanın mini maketi: dört dolu yıldız, beşincisi %60 dolu
+/// (4,6'nın görünüşü) ve altında sürükleme izi. SAYI YAZILMAZ — ondalık
+/// ayracı dile göre değişir, kart metni zaten "4,6" diyor.
+class _OndalikMaket extends StatelessWidget {
+  const _OndalikMaket();
+
+  @override
+  Widget build(BuildContext context) {
+    const olcu = 26.0;
+    Widget yildiz(double dolu) => SizedBox(
+      width: olcu,
+      height: olcu,
+      child: Stack(
+        children: [
+          Icon(Icons.star, size: olcu, color: DiziRenkler.metin12),
+          // Kısmi yıldız: glif genişliğine göre kırpılır (gerçek puan
+          // widget'ındaki yöntemin aynısı).
+          ClipRect(
+            clipper: _DoluluKirpici(dolu),
+            child: const Icon(Icons.star, size: olcu, color: DiziRenkler.sari),
+          ),
+        ],
+      ),
+    );
+    return _MaketCercevesi(
+      cocuk: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [yildiz(1), yildiz(1), yildiz(1), yildiz(1), yildiz(0.6)],
+          ),
+          const SizedBox(height: 6),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.swipe, size: 14, color: DiziRenkler.metin38),
+              const SizedBox(width: 6),
+              Container(
+                width: 74,
+                height: 3,
+                decoration: BoxDecoration(
+                  color: DiziRenkler.sari.withValues(alpha: 0.45),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Yıldızın soldan [oran] kadarını açan kırpıcı.
+class _DoluluKirpici extends CustomClipper<Rect> {
+  final double oran;
+  const _DoluluKirpici(this.oran);
+
+  @override
+  Rect getClip(Size olcu) =>
+      Rect.fromLTWH(0, 0, olcu.width * oran, olcu.height);
+
+  @override
+  bool shouldReclip(_DoluluKirpici eski) => eski.oran != oran;
+}
+
+/// Yanıt ağacının mini maketi: bir yorum, altında girintili iki yanıt.
+/// Metin yerine gri çubuklar — maket cümle uydurmaz, YERLEŞİMİ gösterir.
+class _AgacMaket extends StatelessWidget {
+  const _AgacMaket();
+
+  @override
+  Widget build(BuildContext context) {
+    Widget satir({required double girinti, required double genislik}) =>
+        Padding(
+          padding: EdgeInsetsDirectional.only(start: girinti, bottom: 8),
+          child: Row(
+            children: [
+              if (girinti > 0) ...[
+                Container(width: 2, height: 22, color: DiziRenkler.metin12),
+                const SizedBox(width: 8),
+              ],
+              CircleAvatar(
+                radius: 10,
+                backgroundColor: DiziRenkler.metin12,
+                child: Icon(Icons.person, size: 11, color: DiziRenkler.metin38),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 52,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: DiziRenkler.metin24,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    FractionallySizedBox(
+                      widthFactor: genislik,
+                      child: Container(
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: DiziRenkler.metin12,
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+    return _MaketCercevesi(
+      cocuk: Column(
+        children: [
+          satir(girinti: 0, genislik: 0.95),
+          satir(girinti: 18, genislik: 0.8),
+          satir(girinti: 36, genislik: 0.6),
+        ],
+      ),
+    );
+  }
+}
+
+/// Sohbet ekindeki gerçek yükleme yüzdesinin mini maketi: küçük görsel
+/// yer tutucusu + ilerleme çubuğu + '%{}' (45 dilde var olan anahtar).
+class _YuklemeMaket extends StatelessWidget {
+  const _YuklemeMaket();
+
+  @override
+  Widget build(BuildContext context) {
+    const oran = 0.62;
+    return _MaketCercevesi(
+      cocuk: Row(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: DiziRenkler.metin12,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(
+              Icons.play_circle_outline,
+              size: 18,
+              color: DiziRenkler.metin38,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(3),
+              child: SizedBox(
+                height: 5,
+                child: ColoredBox(
+                  color: DiziRenkler.metin12,
+                  child: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: FractionallySizedBox(
+                      widthFactor: oran,
+                      heightFactor: 1,
+                      child: const ColoredBox(color: DiziRenkler.sari),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 38,
+            child: Text(
+              '%{}'.cf([(oran * 100).round()]),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: DiziRenkler.sariMetin,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

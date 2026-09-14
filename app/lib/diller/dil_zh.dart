@@ -1432,6 +1432,24 @@ const Map<String, String> cevirilerZh = {
   'Videoda geri sarma düzeldi': '视频回退已修复',
   'Videoyu geri sardığında baştan yüklenmiyor; oynatma kaldığın yerden anında devam ediyor.':
       '回退时视频不再重新加载，播放会立即从当前位置继续。',
+  'Bildirimler ekranın üstünde beliriyor': '通知从屏幕顶部弹出',
+  'Uygulamayı kullanırken gelen beğeni, yorum ve mesajlar artık üstten kayan küçük bir pencerede görünüyor. Dokununca ilgili yere gidiyor, yukarı sürükleyince kapanıyor.':
+      '使用应用时收到的赞、评论和消息，现在会在从顶部滑入的小窗口中显示。点按即可跳转，向上轻扫即可关闭。',
+  'Ondalıklı puan verebilirsin': '可以打小数评分',
+  'Yıldızların üzerinde parmağını sürükle: artık 4 ya da 5 değil, aradaki 4,6 gibi puanları da verebiliyorsun.':
+      '在星星上拖动手指：不再只有 4 或 5，现在也能给出 4.6 这样的中间分数。',
+  'Yanıtın yanıtı girintili görünüyor': '回复的回复带缩进显示',
+  'Bir yanıta yazdığın yanıt artık onun altında girintili duruyor; hangi cümlenin kime yazıldığı tek bakışta anlaşılıyor.':
+      '你对某条回复写的回复，现在会缩进显示在它下面，一眼就能看出每句话是写给谁的。',
+  'Sohbette gerçek yükleme yüzdesi': '聊天中显示真实上传百分比',
+  'Fotoğraf ya da video gönderirken yüzde gerçekten ilerliyor; yükleme sürerken yeni mesaj da yazabiliyorsun.':
+      '发送照片或视频时百分比是真实推进的，上传过程中还能继续输入新消息。',
+  'İzleme odası tek satırda': '观影房控制条只占一行',
+  'Odadaki oynat, sar ve ses düğmeleri tek satıra indi. Yayın takılırsa nöbetçi bunu fark edip kendiliğinden toparlıyor.':
+      '房间里的播放、快进和音量按钮现在收进了一行。如果画面卡住，守护程序会发现并自动恢复。',
+  'İçe aktarım için ZIP şart değil': '导入不再需要 ZIP',
+  'Başka bir uygulamadan liste aktarırken tek bir CSV ya da JSON dosyası da yeterli; arşivi açıp hazırlamana gerek yok.':
+      '从其他应用导入列表时，一个 CSV 或 JSON 文件就够了，不必解压压缩包。',
   'Bu sürümde görünür bir yenilik yok; arka planda iyileştirmeler ve düzeltmeler var.':
       '此版本没有可见的新功能，带来的是后台改进与修复。',
   'Bu sürümün notlarını görmek için uygulamayı güncelle': '更新应用以查看此版本的说明',
@@ -1649,4 +1667,6 @@ const Map<String, String> cevirilerZh = {
       '无法识别此文件：请上传 TV Time、Letterboxd 或 dizi.jpg 的文件',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       '仅这个文件无法导入：请上传整个压缩包（.zip）或 dizijpg.json 文件',
+  'Ort.': '均分',
+  'En iyi bölüm': '最佳一集',
 };

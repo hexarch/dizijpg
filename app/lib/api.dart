@@ -640,6 +640,32 @@ class Api {
     }
   }
 
+  /// SÜRÜM NOTU — sunucudan (14 Eyl 2026). Tanıtım kartları eskiden yalnız
+  /// uygulamaya gömülüydü; X sürümünün notunu ancak X'i kurmuş kullanıcı
+  /// görebiliyordu. Artık notlar `surum_notlari` tablosunda: duyuru için yeni
+  /// derleme beklenmiyor. Dil seçimi SUNUCUDA yapılır (istenen > en > tr),
+  /// burada yalnız seçili dil kodu gönderilir.
+  ///
+  /// Not yoksa `null` döner — ekran bunu "sunucuda da yok" diye okur ve
+  /// kullanıcının geride olup olmadığına göre doğru boş duruma düşer.
+  static Future<Map<String, dynamic>?> surumNotu(String surum) async {
+    try {
+      final y = await _istemci
+          .get(
+            Uri.parse('$apiTaban/surum-notlari/$surum?dil=${Ceviri.dil.value}'),
+          )
+          .timeout(const Duration(seconds: 8));
+      if (y.statusCode != 200) return null;
+      final govde = jsonDecode(y.body);
+      if (govde is! Map<String, dynamic> || govde['bulundu'] != true) {
+        return null;
+      }
+      return govde;
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// FCM cihaz token'ını sunucudan siler.
   static Future<void> cihazTokenSil(String token) => _yanit(
     () => _istemci
@@ -685,7 +711,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.158.0+237';
+  static const surum = '1.159.0+238';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

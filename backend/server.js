@@ -2644,6 +2644,43 @@ app.get('/surum-kontrol', sarici(async (req, res) => {
   });
 }));
 
+// ---------- SÜRÜM NOTLARI (14 Eyl 2026) ----------
+//
+// NEDEN SUNUCUDA: 14 Eyl provası — 1.158.0 duyurusu 1.158.0 KURULU telefona
+// gitti ve sayfa "bu sürümde görünür bir yenilik yok" dedi, çünkü tanıtım
+// kartları uygulamaya gömülüydü ve o derlemede yoktu. Notlar artık burada:
+// duyuru için yeni derleme beklenmiyor (bkz. migrasyon-2026-09-14.sql).
+//
+// DİL SEÇİMİ SUNUCUDA: istemci yalnız kendi dil kodunu söyler; istediği dil
+// yoksa en'e, o da yoksa tr'ye düşeriz. Eski istemciye "hangi dile düşeyim"
+// mantığı göndermek zorunda kalmayalım diye böyle.
+app.get('/surum-notlari/:surum', sarici(async (req, res) => {
+  const surum = String(req.params.surum || '').trim();
+  if (!/^\d+\.\d+\.\d+$/.test(surum)) {
+    return res.status(400).json({ hata: 'Geçersiz sürüm' });
+  }
+  const istenen = String(req.query.dil || '').trim().toLowerCase();
+  // Dil kodu doğrudan SQL parametresi; yine de biçimi daraltıyoruz ki
+  // 60 karakterlik çöp bir değer sorguya girmesin.
+  const dil = /^[a-z]{2,3}$/.test(istenen) ? istenen : 'tr';
+  const { rows } = await havuz.query(
+    `SELECT dil, ozet, maddeler FROM surum_notlari
+      WHERE surum=$1 AND dil = ANY($2)`,
+    [surum, [dil, 'en', 'tr']]);
+  if (!rows.length) return res.json({ surum, bulundu: false });
+  // Tercih sırası: istenen dil > en > tr.
+  const sec = rows.find((r) => r.dil === dil)
+    || rows.find((r) => r.dil === 'en')
+    || rows[0];
+  res.json({
+    surum,
+    bulundu: true,
+    dil: sec.dil,
+    ozet: sec.ozet,
+    maddeler: Array.isArray(sec.maddeler) ? sec.maddeler : [],
+  });
+}));
+
 // ---------- OG / link önizleme (bot'lar için) ----------
 // Flutter SPA'nın index.html'inde içerik-özel meta yok; WhatsApp/Twitter/
 // Facebook gibi botlar JS çalıştırmaz. nginx bot User-Agent'ını /og/...'e
@@ -24560,6 +24597,47 @@ const SURUM_PUSH_GOVDE = {
   zh: '点按查看新功能',
   ro: 'Atinge ca să vezi noutățile',
 };
+// ---------- sürüm notu yazma (14 Eyl 2026) ----------
+//
+// `POST /admin/surum-notu {surum, notlar:{<dil>:{ozet, maddeler:[{baslik,metin}]}}}`
+// Aynı sürüm için tekrar çağrılırsa ÜZERİNE yazar (yazım düzeltmesi, yeni dil
+// eklemek için ikinci bir uç gerekmesin). Duyuru gönderilmeden ÖNCE çağrılır;
+// `/admin/surum-duyuru` notu bulamazsa zaten eski sabit push gövdesine düşer.
+app.post('/admin/surum-notu', adminKisit, sarici(async (req, res) => {
+  const surum = String(req.body?.surum || '').trim();
+  if (!/^\d+\.\d+\.\d+$/.test(surum)) {
+    return res.status(400).json({ hata: 'Geçersiz sürüm (örn. 1.158.0)' });
+  }
+  const notlar = req.body?.notlar;
+  if (!notlar || typeof notlar !== 'object' || Array.isArray(notlar)) {
+    return res.status(400).json({ hata: 'notlar {dil: {ozet, maddeler}} olmalı' });
+  }
+  const yazilan = [];
+  for (const [ham, deger] of Object.entries(notlar)) {
+    const dil = String(ham).trim().toLowerCase();
+    if (!/^[a-z]{2,3}$/.test(dil)) {
+      return res.status(400).json({ hata: `Geçersiz dil kodu: ${ham}` });
+    }
+    const ozet = String(deger?.ozet || '').trim().slice(0, 300);
+    if (!ozet) return res.status(400).json({ hata: `${dil}: ozet boş` });
+    const ham_maddeler = Array.isArray(deger?.maddeler) ? deger.maddeler : [];
+    // Madde biçimi SABİT: {baslik, metin}. Serbest HTML/markdown YOK —
+    // istemci bunu düz metin olarak çiziyor, kaçırma derdi doğmasın.
+    const maddeler = ham_maddeler.slice(0, 20).map((m) => ({
+      baslik: String(m?.baslik || '').trim().slice(0, 120),
+      metin: String(m?.metin || '').trim().slice(0, 600),
+    })).filter((m) => m.baslik);
+    await havuz.query(
+      `INSERT INTO surum_notlari (surum, dil, ozet, maddeler, guncelleme)
+       VALUES ($1,$2,$3,$4::jsonb, now())
+       ON CONFLICT (surum, dil) DO UPDATE
+         SET ozet=EXCLUDED.ozet, maddeler=EXCLUDED.maddeler, guncelleme=now()`,
+      [surum, dil, ozet, JSON.stringify(maddeler)]);
+    yazilan.push({ dil, madde: maddeler.length });
+  }
+  res.json({ durum: 'ok', surum, yazilan });
+}));
+
 app.post('/admin/surum-duyuru', adminKisit, sarici(async (req, res) => {
   const surum = String(req.body?.surum || '').trim();
   // Sürüm biçimi derin bağlantıya giriyor (/yenilikler/<surum>) — serbest
@@ -24597,21 +24675,34 @@ app.post('/admin/surum-duyuru', adminKisit, sarici(async (req, res) => {
       `SELECT token, COALESCE(dil,'tr') dil FROM cihaz_tokenlari
        WHERE kullanici_id = ANY($1)`,
       [eklenen.map((r) => r.kullanici_id)]);
-    // Dil dile ayrı paket: başlık kullanıcının dilinde. Bilinmeyen dil → en.
+    // PUSH GÖVDESİ ARTIK GERÇEK NOT (14 Eyl 2026): eskiden 7 dilde SABİT
+    // "Yenilikleri görmek için dokun" yazıyordu. Kullanıcıların ezici
+    // çoğunluğu eski bir derlemede olduğu için tanıtım sayfasını AÇAMIYOR —
+    // push gövdesi onlara ulaşan TEK yüzey, o yüzden neyin değiştiğini
+    // söylesin. Not yoksa eski sabit cümleye düşülür.
+    const { rows: notSatirlari } = await havuz.query(
+      'SELECT dil, ozet FROM surum_notlari WHERE surum=$1', [surum]);
+    const notlar = new Map(notSatirlari.map((r) => [r.dil, r.ozet]));
+    const govde = (dil) =>
+      notlar.get(dil) || notlar.get('en') || notlar.get('tr')
+      || SURUM_PUSH_GOVDE[SURUM_PUSH_BASLIK[dil] ? dil : 'en'];
+
+    // Dil dile ayrı paket: başlık kullanıcının dilinde (sabit metin 7 dilde),
+    // gövde kullanıcının dilinde (not kaç dile yazıldıysa o kadar).
     const gruplar = new Map();
     for (const c of cihazlar) {
-      const dil = SURUM_PUSH_BASLIK[c.dil] ? c.dil : 'en';
-      if (!gruplar.has(dil)) gruplar.set(dil, []);
-      gruplar.get(dil).push(c.token);
+      if (!gruplar.has(c.dil)) gruplar.set(c.dil, []);
+      gruplar.get(c.dil).push(c.token);
     }
     for (const [dil, tokenListe] of gruplar) {
+      const baslikDil = SURUM_PUSH_BASLIK[dil] ? dil : 'en';
       for (let i = 0; i < tokenListe.length; i += 500) {
         const parca = tokenListe.slice(i, i + 500);
         const yanit = await admin.messaging().sendEachForMulticast({
           tokens: parca,
           notification: {
-            title: SURUM_PUSH_BASLIK[dil].replace('{surum}', surum),
-            body: SURUM_PUSH_GOVDE[dil],
+            title: SURUM_PUSH_BASLIK[baslikDil].replace('{surum}', surum),
+            body: govde(dil),
           },
           // Dokununca /yenilikler/<surum> (istemci push.dart → bildirimHedefi).
           data: { tur: 'surum', surum },
