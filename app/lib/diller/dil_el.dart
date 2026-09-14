@@ -1753,4 +1753,6 @@ const Map<String, String> cevirilerEl = {
       'Το αρχείο δεν αναγνωρίστηκε: ανέβασε αρχείο από TV Time, Letterboxd ή dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Αυτό το αρχείο δεν εισάγεται μόνο του: ανέβασε ολόκληρο το αρχείο (.zip) ή το dizijpg.json',
+  'Ort.': 'Μ.Ο.',
+  'En iyi bölüm': 'Καλύτερο επεισόδιο',
 };

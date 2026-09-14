@@ -1736,4 +1736,6 @@ const Map<String, String> cevirilerMy = {
       'ဤဖိုင်ကို မသိရှိပါ။ TV Time၊ Letterboxd သို့မဟုတ် dizi.jpg ဖိုင် တင်ပါ',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'ဤဖိုင်တစ်ခုတည်းဖြင့် ထည့်သွင်း၍ မရပါ။ မှတ်တမ်းတစ်ခုလုံး (.zip) သို့မဟုတ် dizijpg.json ဖိုင် တင်ပါ',
+  'Ort.': 'ပျမ်းမျှ',
+  'En iyi bölüm': 'အကောင်းဆုံးအပိုင်း',
 };

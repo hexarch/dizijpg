@@ -1715,4 +1715,6 @@ const Map<String, String> cevirilerVi = {
       'Không nhận diện được tệp: hãy tải lên tệp TV Time, Letterboxd hoặc dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Không thể nhập riêng tệp này: hãy tải lên toàn bộ kho lưu trữ (.zip) hoặc tệp dizijpg.json',
+  'Ort.': 'TB',
+  'En iyi bölüm': 'Tập hay nhất',
 };

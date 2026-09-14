@@ -200,21 +200,26 @@ void main() {
     // kutuda puan yazılı. (Ara turda burada `findsNothing` iddiası vardı;
     // iddia zayıflamadı, TERSİNE döndü — istek de tam bu.)
     expect(_kutular(), findsNWidgets(4));
-    final izgara = find.byType(Scrollbar);
+    // KUTU İÇİNDE aranır: ızgaranın altındaki "Ort." satırı (14 Eyl 2026)
+    // aynı sayıyı tekrar edebilir (S1 ortalaması da 7.6) — o pul kutu değil.
     for (final beklenen in ['7.6', '7.5', '7.1']) {
       expect(
-        find.descendant(of: izgara, matching: find.text(beklenen)),
+        find.descendant(of: _kutular(), matching: find.text(beklenen)),
         findsOneWidget,
         reason: 'kutuda puan yazmıyor: $beklenen',
       );
     }
     // Oyu olmayan bölüm ızgarada "—" der; göstergedeki "—" pulu ayrı.
     expect(
-      find.descendant(of: izgara, matching: find.text('—')),
+      find.descendant(of: _kutular(), matching: find.text('—')),
       findsOneWidget,
       reason: 'oysuz hücrede tire yok',
     );
     expect(find.text('—'), findsNWidgets(2), reason: 'hücre + gösterge pulu');
+    // Sezon ortalaması satırı: etiket + her sezon için bir pul.
+    expect(find.text('Ort.'), findsOneWidget);
+    expect(find.bySemanticsLabel('S1 Ort. 7.6'), findsOneWidget);
+    expect(find.bySemanticsLabel('S2 Ort. 7.1'), findsOneWidget);
   });
 
   // ---------------------------------------------------------------------
@@ -290,18 +295,22 @@ void main() {
     expect(11 * _araAdim, 242.0);
     expect(21 * _araAdim, 462.0);
 
-    // ŞİMDİ: aynı ızgara 363 × 693.
+    // ŞİMDİ: aynı ızgara 363 × 693 — artı 14 Eyl 2026'da eklenen "Ort."
+    // satırı (bir adım daha, 33 dp). Ölçü kıyası BÖLÜM BÖLGESİ üzerinden:
+    // eski ızgarada ortalama satırı yoktu, onu düşüp kıyaslamak adil olan.
     final boyut = tester.getSize(_govde());
+    final bolumBoyu = boyut.height - _adim;
     expect(boyut.width, closeTo(11 * _adim, 0.5));
-    expect(boyut.height, closeTo(21 * _adim, 0.5));
+    expect(boyut.height, closeTo(22 * _adim, 0.5));
+    expect(bolumBoyu, closeTo(21 * _adim, 0.5));
     expect(boyut.width, closeTo(363, 0.5));
-    expect(boyut.height, closeTo(693, 0.5));
+    expect(bolumBoyu, closeTo(693, 0.5));
 
     // Kazanç: her kenarda %25, alanda %43,75.
     expect(boyut.width / oncekiEn, closeTo(0.75, 0.005));
-    expect(boyut.height / oncekiBoy, closeTo(0.75, 0.005));
+    expect(bolumBoyu / oncekiBoy, closeTo(0.75, 0.005));
     expect(
-      (boyut.width * boyut.height) / (oncekiEn * oncekiBoy),
+      (boyut.width * bolumBoyu) / (oncekiEn * oncekiBoy),
       closeTo(0.5625, 0.01),
     );
 
@@ -485,7 +494,13 @@ void main() {
         findsOneWidget,
         reason: 'balon puanı yazmıyor',
       );
-      expect(find.text('9.2'), findsNWidgets(3), reason: '2 hücre + balon');
+      // Kutuda 2, balonda 1. (Toplam sayım kullanılmıyor: "Ort." satırı da
+      // 9.2 yazabilir ve o pul ne hücre ne balondur.)
+      expect(
+        find.descendant(of: _kutular(), matching: find.text('9.2')),
+        findsNWidgets(2),
+        reason: '2 hücre',
+      );
 
       // 3) GERÇEK gezinme hedefi balon ve 44 dp: kural burada geçerli.
       final balon = find.ancestor(
@@ -567,12 +582,14 @@ void main() {
     );
     await _ac(tester);
 
-    // Oysuz S2'nin ÜÇ hücresi de ızgarada "—" yazıyor (gri kutu + tire).
+    // Oysuz S2'nin ÜÇ hücresi de ızgarada "—" yazıyor (gri kutu + tire);
+    // sezonun "Ort." pulu da "—" (puanlı bölüm yok).
     final izgara = find.byType(Scrollbar);
     expect(
-      find.descendant(of: izgara, matching: find.text('—')),
+      find.descendant(of: _kutular(), matching: find.text('—')),
       findsNWidgets(3),
     );
+    expect(find.bySemanticsLabel('S2 Ort. —'), findsOneWidget);
 
     await tester.tapAt(_hucreMerkezi(tester, 1, 3));
     await tester.pump();
@@ -590,9 +607,10 @@ void main() {
       findsOneWidget,
       reason: 'puan yok = "—"',
     );
+    // 3 hücre + balon + S2'nin "Ort." pulu (14 Eyl 2026) = 5.
     expect(
       find.descendant(of: izgara, matching: find.text('—')),
-      findsNWidgets(4),
+      findsNWidgets(5),
     );
 
     // Chevron yok ve dokunuş gezindirmiyor.
@@ -620,9 +638,10 @@ void main() {
     );
     await _ac(tester);
 
-    // Başlık satırı + 12 bölüm satırı = 13 × 33 = 429 dp; ekran 500 dp olsa da
-    // ızgara kırpılmıyor (eskiden `maxHeight` tavanı vardı).
-    expect(tester.getSize(_govde()).height, closeTo(13 * _adim, 0.5));
+    // Başlık satırı + 12 bölüm satırı + "Ort." satırı = 14 × 33 = 462 dp;
+    // ekran 500 dp olsa da ızgara kırpılmıyor (eskiden `maxHeight` tavanı
+    // vardı).
+    expect(tester.getSize(_govde()).height, closeTo(14 * _adim, 0.5));
 
     // İç dikey kaydırma yok: yalnız sayfanın kendi kaydırması + ızgaranın
     // YATAY kaydırması var.

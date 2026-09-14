@@ -7,14 +7,44 @@ import 'tema.dart';
 /// haritasında o numarada KAYIT bulunmaz ve hücre bomboş çizilir.)
 class TmdbBolumPuani {
   final int bolumNo;
+
+  /// 0-10 ölçeğinde puan — RENK ve sıralama bu değerden okunur. dizi.jpg
+  /// kaynağında kanonik 1-100 ortalamanın onda biri (14 Eyl 2026).
   final double? puan;
   final int oy;
+
+  /// dizi.jpg kaynağı: kanonik (1-100) ortalama. Hücre metni kullanıcının
+  /// ölçeğine ([yildizOrtalamaMetni]) bununla çevrilir; TMDB'de null.
+  final num? ham;
+
+  /// dizi.jpg kaynağı: kullanıcının KENDİ bölüm puanı (kanonik 1-100).
+  final int? benim;
 
   const TmdbBolumPuani({
     required this.bolumNo,
     required this.puan,
     required this.oy,
+    this.ham,
+    this.benim,
   });
+}
+
+/// Izgaranın puan kaynağı (14 Eyl 2026, kullanıcı: *"TMDB puanına tıklayınca
+/// açılan yapıyı diğer puanlamalara tıklayınca da onların puanıyla göster"*).
+///
+/// YALNIZ İKİ KAYNAK ve bu bilinçli: IMDb / Rotten Tomatoes / Metacritic
+/// rozetleri MDBList'ten geliyor ve MDBList'in bölüm ya da sezon ucu YOK
+/// (14 Eyl canlı deneme: `/tmdb/show/{id}/season/{n}[/episode/{e}]` → 404
+/// "API Endpoint Not Found"). RT ve Metacritic zaten bölüm puanı tutmaz;
+/// IMDb'nin bölüm puanları yalnız lisansı siteye uymayan veri dosyalarında
+/// (bkz. backend/dis_puan.js başlığı). O rozetler kaynak sayfasını açmaya
+/// devam eder.
+enum PuanKaynagi {
+  tmdb,
+  dizijpg;
+
+  /// Rozet/sekme etiketi — marka adı, çeviri anahtarı değil.
+  String get etiket => this == PuanKaynagi.tmdb ? 'TMDB' : 'dizi.jpg';
 }
 
 /// Bir sezonun bölüm puanları (bölüm numarası → kayıt).
@@ -41,6 +71,106 @@ List<int> tmdbSezonNolari(Map<String, dynamic> icerik) {
   if (nolar.isNotEmpty) return nolar;
   final adet = (icerik['number_of_seasons'] as num?)?.toInt() ?? 0;
   return [for (var i = 1; i <= adet; i++) i];
+}
+
+/// TMDB `seasons` listesinden sezon numarası → bölüm sayısı (`episode_count`).
+/// Özel sezon (0) ve sayısı olmayan sezon atlanır. dizi.jpg kaynağı bununla
+/// "bölüm VAR ama puanı yok" (gri —) ile "bölüm yok" (boş) ayrımını yapar —
+/// TMDB sezon isteği atmadan, detay yanıtında zaten duran veriyle.
+Map<int, int> tmdbSezonBolumSayilari(Map<String, dynamic> icerik) {
+  final ham = icerik['seasons'];
+  final out = <int, int>{};
+  if (ham is! List) return out;
+  for (final s in ham) {
+    if (s is! Map) continue;
+    final n = s['season_number'];
+    final adet = s['episode_count'];
+    if (n is num && n.toInt() > 0 && adet is num && adet.toInt() > 0) {
+      out[n.toInt()] = adet.toInt();
+    }
+  }
+  return out;
+}
+
+/// `GET /bolum-puanlari/:tmdbId/:sezon` yanıtındaki `bolumler` nesnesini
+/// ([bolumSayisi] kadar) bölüm haritasına çevirir. Anahtarlar METİN
+/// ("3"), değer `{ortalama: 1-100, adet, benim}`.
+///
+/// [bolumSayisi] 0 ise yalnız puanı olan bölümler kayda girer (sezon
+/// listesi elde yoksa "bölüm var mı" bilinemez; en azından puanlılar
+/// görünsün). Ortalama 1-100 → [TmdbBolumPuani.puan] 0-10 (renk için);
+/// kanonik değer [TmdbBolumPuani.ham]'da kalır.
+Map<int, TmdbBolumPuani> dizijpgBolumleriOku(
+  Object? bolumler,
+  int bolumSayisi,
+) {
+  final out = <int, TmdbBolumPuani>{};
+  for (var b = 1; b <= bolumSayisi; b++) {
+    out[b] = TmdbBolumPuani(bolumNo: b, puan: null, oy: 0);
+  }
+  if (bolumler is! Map) return out;
+  for (final e in bolumler.entries) {
+    final no = int.tryParse('${e.key}');
+    final v = e.value;
+    if (no == null || no <= 0 || v is! Map) continue;
+    final ort = v['ortalama'];
+    final adet = (v['adet'] as num?)?.toInt() ?? 0;
+    final benimHam = v['benim'];
+    final benim = benimHam is num && benimHam > 0 ? benimHam.toInt() : null;
+    final puanli = ort is num && ort > 0 && adet > 0;
+    out[no] = TmdbBolumPuani(
+      bolumNo: no,
+      puan: puanli ? (ort.toDouble() / 10).clamp(0.0, 10.0) : null,
+      oy: adet,
+      ham: puanli ? ort : null,
+      benim: benim,
+    );
+  }
+  return out;
+}
+
+/// Sezonun ortalaması (0-10): oy sayısı biliniyorsa OYLA AĞIRLIKLI, yoksa
+/// bölüm ortalamalarının düz ortalaması. Puanlı bölüm yoksa null.
+///
+/// Ağırlık NEDEN: 50 oylu 9.0 ile 2 oylu 5.0'ın sezonu 7.0 değil ~8.8'dir;
+/// düz ortalama az oylu uç bölümü sezona egemen kılar.
+double? tmdbSezonOrtalamasi(TmdbSezonPuani sezon) {
+  var toplam = 0.0;
+  var agirlik = 0.0;
+  var duz = 0.0;
+  var n = 0;
+  for (final b in sezon.bolumler.values) {
+    final p = b.puan;
+    if (p == null) continue;
+    n++;
+    duz += p;
+    if (b.oy > 0) {
+      toplam += p * b.oy;
+      agirlik += b.oy;
+    }
+  }
+  if (n == 0) return null;
+  return agirlik > 0 ? toplam / agirlik : duz / n;
+}
+
+/// En yüksek puanlı bölüm (eşitlikte ÖNCE gelen: küçük sezon, küçük bölüm).
+/// Hiç puan yoksa null.
+({int sezon, TmdbBolumPuani bolum})? tmdbEnIyiBolum(
+  Iterable<TmdbSezonPuani> sezonlar,
+) {
+  ({int sezon, TmdbBolumPuani bolum})? enIyi;
+  for (final s in sezonlar) {
+    final nolar = s.bolumler.keys.toList()..sort();
+    for (final n in nolar) {
+      final b = s.bolumler[n]!;
+      final p = b.puan;
+      if (p == null) continue;
+      if (enIyi == null || p > enIyi.bolum.puan!) {
+        enIyi = (sezon: s.sezonNo, bolum: b);
+      }
+    }
+  }
+  return enIyi;
 }
 
 /// TMDB sezon yanıtındaki `episodes` dizisini haritaya çevirir.

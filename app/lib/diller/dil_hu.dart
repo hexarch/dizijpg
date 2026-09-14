@@ -1729,4 +1729,6 @@ const Map<String, String> cevirilerHu = {
       'A fájl nem ismerhető fel: tölts fel TV Time-, Letterboxd- vagy dizi.jpg-fájlt',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Ez a fájl önmagában nem importálható: töltsd fel a teljes archívumot (.zip) vagy a dizijpg.json fájlt',
+  'Ort.': 'Átl.',
+  'En iyi bölüm': 'Legjobb epizód',
 };

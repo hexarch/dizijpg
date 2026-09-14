@@ -1718,4 +1718,6 @@ const Map<String, String> cevirilerKn = {
       'ಈ ಫೈಲ್ ಗುರುತಿಸಲಾಗಿಲ್ಲ: TV Time, Letterboxd ಅಥವಾ dizi.jpg ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡು',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'ಈ ಫೈಲ್ ಒಂಟಿಯಾಗಿ ಆಮದು ಆಗುವುದಿಲ್ಲ: ಪೂರ್ಣ ಆರ್ಕೈವ್ (.zip) ಅಥವಾ dizijpg.json ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡು',
+  'Ort.': 'ಸರಾಸರಿ',
+  'En iyi bölüm': 'ಅತ್ಯುತ್ತಮ ಎಪಿಸೋಡ್',
 };

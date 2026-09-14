@@ -1746,4 +1746,6 @@ const Map<String, String> cevirilerTa = {
       'இந்தக் கோப்பு அடையாளம் காணப்படவில்லை: TV Time, Letterboxd அல்லது dizi.jpg கோப்பைப் பதிவேற்று',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'இந்தக் கோப்பை மட்டும் இறக்குமதி செய்ய முடியாது: முழு காப்பகத்தையும் (.zip) அல்லது dizijpg.json கோப்பைப் பதிவேற்று',
+  'Ort.': 'சராசரி',
+  'En iyi bölüm': 'சிறந்த எபிசோட்',
 };

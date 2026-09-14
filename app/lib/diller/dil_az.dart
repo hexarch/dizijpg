@@ -1708,4 +1708,6 @@ const Map<String, String> cevirilerAz = {
       'Bu fayl tanınmadı: TV Time, Letterboxd və ya dizi.jpg faylı yüklə',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Bu fayl tək başına idxal edilə bilmir: arxivin hamısını (.zip) və ya dizijpg.json faylını yüklə',
+  'Ort.': 'Orta',
+  'En iyi bölüm': 'Ən yaxşı seriya',
 };

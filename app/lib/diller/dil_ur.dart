@@ -1717,4 +1717,6 @@ const Map<String, String> cevirilerUr = {
       'یہ فائل پہچانی نہیں گئی: TV Time، Letterboxd یا dizi.jpg فائل اپ لوڈ کریں',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'یہ فائل تنہا درآمد نہیں ہو سکتی: پورا آرکائیو (.zip) یا dizijpg.json فائل اپ لوڈ کریں',
+  'Ort.': 'اوسط',
+  'En iyi bölüm': 'بہترین قسط',
 };

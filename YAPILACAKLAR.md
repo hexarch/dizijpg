@@ -10845,3 +10845,32 @@ edince takip ettiğimin bildirimi gitmiyor ama android'de gidiyor"*.
   · `web_brotli.sh` KOŞARKEN eski hash'li paketi silme: betik o dosyayı
     sıkıştırırken `stat` hatası alıp ölüyor ve `index.html.br` BAYAT kalıyor
     (canlı curl hâlâ eski paketi verir).
+
+## 14 Eyl 2026 — Bölüm puanı paneli: iki kaynak + yeni tasarım (1.159.0+238) ✅
+Kullanıcı: *"dizilerde tmdb puanına tıklayınca s1 e1 s2 e2 diye puan yapısı
+açılıyor ya onu hem diğer puanlamalara tıklayınca da onların puanı ile göster
+ve oranın tasarımını daha güzel yapabilirsin"*.
+- ✅ Panel artık KART: üstte kaynak sekmeleri (★ TMDB / dizi.jpg), sağda
+  kapat; dizi.jpg kaynağında "Puan dağılımı" (bar_chart) kestirmesi.
+- ✅ dizi.jpg rozeti (sarı pul) diziде paneli KENDİ kaynağıyla açar
+  (`PuanHaritasiKumandasi`), oku panel durumunu izler; filmde eskisi gibi
+  dağılım sheet'ini açar.
+- ✅ dizi.jpg kaynağı `/bolum-puanlari/:id/:sezon` (sezon başına 1 istek);
+  hücre metni kullanıcının ÖLÇEĞİNDE (5'likte 4.2, 100'lükte 83), renk 0-10
+  kovasından; `episode_count` ile puansız bölüm gri "—". Balonda "N kişi
+  puanladı · Sen 4.5".
+- ✅ Izgaranın altında "Ort." satırı (oyla ağırlıklı sezon ortalaması, alçak
+  pul), üstünde "En iyi bölüm" özeti (dokununca hücre seçilir).
+- ❌ IMDb / RT / Metacritic için bölüm ızgarası YOK ve yapılamıyor: MDBList'in
+  bölüm/sezon ucu yok (14 Eyl canlı deneme → 404 "API Endpoint Not Found"),
+  RT ve Metacritic bölüm puanı tutmaz, IMDb bölüm verisi yalnız lisansı
+  uymayan veri dosyalarında. Rozetler kaynak sayfasını açmaya devam eder.
+  Alternatif: OMDb `&Season=N` tek istekte tüm bölümlerin IMDb puanını verir
+  ama lisansı CC BY-NC (backend/dis_puan.js başlığındaki ret gerekçesi).
+- Testler: `test/puan_paneli_test.dart` (yeni, 9) + `tmdb_puan_izgara_test`
+  ölçü kilitleri "Ort." satırına göre güncellendi (bölüm bölgesi 693 dp aynı).
+- TUZAKLAR: Semantics(label) altındaki çocuk düğümler `explicitChildNodes`
+  olmadan ebeveyne karışır ("En iyi bölüm" etiketi bulunamadı); `-U0` git
+  yaması dil dosyalarında yanlış satıra düşer — betiği koş. Çalışma ağacında
+  başka oturumun yarım kodu vardı (yenilikler.dart derlenmiyor) → dağıtım
+  HEAD+kendi dosyalarım ile ayrı worktree'den derlendi.

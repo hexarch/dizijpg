@@ -589,6 +589,10 @@ class _DetayEkraniState extends State<DetayEkrani>
   /// birkaç saniye sürebilir, sayfa onu beklemez.
   Map<String, dynamic>? _dis;
 
+  /// Bölüm puanı panelinin dış kumandası: dizi.jpg rozeti paneli kendi
+  /// kaynağıyla açar (tmdb_puan_izgara.dart, 14 Eyl 2026).
+  final _puanKumanda = PuanHaritasiKumandasi();
+
   /// Başlıktaki kapak görselleri; ilki yapımın ANA kapağıdır (backdrop_path).
   List<String> _kapaklar = const [];
   String? _hata;
@@ -615,6 +619,12 @@ class _DetayEkraniState extends State<DetayEkrani>
       '/tmdb/${widget.tur}/${widget.tmdbId}'
       '?append_to_response=$_ekVeri&include_image_language=null'
       '&${tmdbVideoDilParametre()}';
+
+  @override
+  void dispose() {
+    _puanKumanda.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -1510,7 +1520,12 @@ class _DetayEkraniState extends State<DetayEkrani>
                         tmdbId: widget.tmdbId,
                         ortalama: ((c['vote_average'] as num?) ?? 0).toDouble(),
                         sezonNolari: tmdbSezonNolari(c),
-                        yan: _puanSatiriYani(),
+                        sezonBolumSayilari: tmdbSezonBolumSayilari(c),
+                        kumanda: _puanKumanda,
+                        onDagilim: _incelemeler?['ortalama'] == null
+                            ? null
+                            : _dagilimAc,
+                        yan: _puanSatiriYani(harita: true),
                       )
                     else
                       Wrap(
@@ -2221,7 +2236,17 @@ class _DetayEkraniState extends State<DetayEkrani>
   /// TMDB yazısının sağındaki rozetler: dış puanlar (IMDb / domates /
   /// patlamış mısır / Metacritic — yalnız simge + sayı, `dis_puanlar.dart`),
   /// sonra dizi.jpg dağılımı, en sonda izleyen sayısı.
-  List<Widget> _puanSatiriYani() => [
+  void _dagilimAc() => puanDagilimiAc(
+    context,
+    dagilim: _incelemeler?['dagilim'],
+    ortalama: _incelemeler?['ortalama'],
+    benimDbPuani: _benim?['puan']?['puan'] as int?,
+  );
+
+  /// [harita] true (dizi): dizi.jpg rozeti bölüm puanı panelini KENDİ
+  /// kaynağıyla açar (dağılım sheet'i panelin başlığından açılır); false
+  /// (film): rozet doğrudan dağılım sheet'ini açar — bölüm yok.
+  List<Widget> _puanSatiriYani({bool harita = false}) => [
     // SIRA (kullanıcı, 6 Eyl): TMDB · IMDb · domates · patlamış mısır ·
     // Metacritic · dizi.jpg · göz. Dış puanlar ÖNCE, dizi.jpg ve izleyen
     // sayısı EN SONDA — mobilde tek satıra sığmayınca dizi.jpg ile göz ikinci
@@ -2230,13 +2255,11 @@ class _DetayEkraniState extends State<DetayEkrani>
     if (_incelemeler?['ortalama'] != null) ...[
       const SizedBox(width: 12),
       InkWell(
+        key: const Key('dizijpg-rozeti'),
         borderRadius: BorderRadius.circular(8),
-        onTap: () => puanDagilimiAc(
-          context,
-          dagilim: _incelemeler?['dagilim'],
-          ortalama: _incelemeler?['ortalama'],
-          benimDbPuani: _benim?['puan']?['puan'] as int?,
-        ),
+        onTap: harita
+            ? () => _puanKumanda.acKapa(PuanKaynagi.dizijpg)
+            : _dagilimAc,
         child: SizedBox(
           height: dokunmaHedefi,
           child: Center(
@@ -2261,7 +2284,21 @@ class _DetayEkraniState extends State<DetayEkrani>
                     ),
                   ),
                   const SizedBox(width: 3),
-                  const Icon(Icons.bar_chart, size: 13, color: Colors.black),
+                  if (harita)
+                    // Ok yönü panelin durumunu izler (TMDB satırıyla aynı
+                    // dil): açıkken yukarı, kapalıyken aşağı.
+                    ListenableBuilder(
+                      listenable: _puanKumanda,
+                      builder: (_, _) => Icon(
+                        _puanKumanda.acik == PuanKaynagi.dizijpg
+                            ? Icons.expand_less
+                            : Icons.expand_more,
+                        size: 16,
+                        color: Colors.black,
+                      ),
+                    )
+                  else
+                    const Icon(Icons.bar_chart, size: 13, color: Colors.black),
                 ],
               ),
             ),

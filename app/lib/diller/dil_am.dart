@@ -1660,4 +1660,6 @@ const Map<String, String> cevirilerAm = {
       'ይህ ፋይል አልታወቀም፦ የTV Time፣ Letterboxd ወይም dizi.jpg ፋይል ይጫኑ',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'ይህ ፋይል ብቻውን መግባት አይችልም፦ ሙሉውን መዝገብ (.zip) ወይም dizijpg.json ፋይል ይጫኑ',
+  'Ort.': 'አማካይ',
+  'En iyi bölüm': 'ምርጥ ክፍል',
 };

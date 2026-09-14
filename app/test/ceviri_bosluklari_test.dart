@@ -33,6 +33,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // tmdb_puan_izgara.dart — iki kaynaklı bölüm puanı paneli (14 Eyl 2026):
+  // sezon ortalaması satırının etiketi + en iyi bölüm özeti.
+  'Ort.',
+  'En iyi bölüm',
   // fragman_kontrol.dart — oynatıcı kromu (4 Eyl 2026): üst şerit rozeti,
   // tam ekrandan çıkış düğmesi, bitince tekrar oynat.
   'Fragman',

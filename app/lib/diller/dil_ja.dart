@@ -1634,4 +1634,6 @@ const Map<String, String> cevirilerJa = {
       'このファイルを認識できませんでした。TV Time、Letterboxd、dizi.jpg のファイルをアップロードしてください',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'このファイルだけではインポートできません。アーカイブ全体（.zip）か dizijpg.json をアップロードしてください',
+  'Ort.': '平均',
+  'En iyi bölüm': 'ベストエピソード',
 };

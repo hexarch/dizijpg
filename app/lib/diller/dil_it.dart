@@ -1732,4 +1732,6 @@ const Map<String, String> cevirilerIt = {
       'File non riconosciuto: carica un file TV Time, Letterboxd o dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Questo file non si può importare da solo: carica l’intero archivio (.zip) o il file dizijpg.json',
+  'Ort.': 'Media',
+  'En iyi bölüm': 'Miglior episodio',
 };

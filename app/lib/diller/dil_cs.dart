@@ -1714,4 +1714,6 @@ const Map<String, String> cevirilerCs = {
       'Soubor nebyl rozpoznán: nahraj soubor z TV Time, Letterboxdu nebo dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Tento soubor nelze naimportovat samostatně: nahraj celý archiv (.zip) nebo soubor dizijpg.json',
+  'Ort.': 'Prům.',
+  'En iyi bölüm': 'Nejlepší díl',
 };

@@ -1737,4 +1737,6 @@ const Map<String, String> cevirilerPl = {
       'Nie rozpoznano pliku: wgraj plik z TV Time, Letterboxda lub dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Tego pliku nie da się zaimportować samego: wgraj całe archiwum (.zip) albo plik dizijpg.json',
+  'Ort.': 'Śr.',
+  'En iyi bölüm': 'Najlepszy odcinek',
 };

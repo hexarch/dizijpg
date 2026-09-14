@@ -1638,4 +1638,6 @@ const Map<String, String> cevirilerKo = {
       '파일을 인식하지 못했습니다. TV Time, Letterboxd 또는 dizi.jpg 파일을 올려주세요',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       '이 파일만으로는 가져올 수 없습니다. 전체 아카이브(.zip) 또는 dizijpg.json 파일을 올려주세요',
+  'Ort.': '평균',
+  'En iyi bölüm': '최고 에피소드',
 };

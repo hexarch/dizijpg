@@ -1688,4 +1688,6 @@ const Map<String, String> cevirilerTh = {
       'ไม่รู้จักไฟล์นี้ อัปโหลดไฟล์จาก TV Time, Letterboxd หรือ dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'ไฟล์นี้นำเข้าเดี่ยว ๆ ไม่ได้ อัปโหลดไฟล์เก็บถาวรทั้งชุด (.zip) หรือไฟล์ dizijpg.json',
+  'Ort.': 'เฉลี่ย',
+  'En iyi bölüm': 'ตอนที่ดีที่สุด',
 };

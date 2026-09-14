@@ -1713,4 +1713,6 @@ const Map<String, String> cevirilerHi = {
       'यह फ़ाइल पहचानी नहीं गई: TV Time, Letterboxd या dizi.jpg फ़ाइल अपलोड करो',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'यह फ़ाइल अकेले इंपोर्ट नहीं हो सकती: पूरा आर्काइव (.zip) या dizijpg.json फ़ाइल अपलोड करो',
+  'Ort.': 'औसत',
+  'En iyi bölüm': 'सर्वश्रेष्ठ एपिसोड',
 };

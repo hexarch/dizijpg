@@ -1723,4 +1723,6 @@ const Map<String, String> cevirilerMs = {
       'Fail tidak dikenali: muat naik fail TV Time, Letterboxd atau dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Fail ini tidak boleh diimport bersendirian: muat naik keseluruhan arkib (.zip) atau fail dizijpg.json',
+  'Ort.': 'Purata',
+  'En iyi bölüm': 'Episod terbaik',
 };

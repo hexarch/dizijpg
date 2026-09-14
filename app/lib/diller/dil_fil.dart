@@ -1751,4 +1751,6 @@ const Map<String, String> cevirilerFil = {
       'Hindi nakilala ang file: mag-upload ng file mula sa TV Time, Letterboxd o dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Hindi puwedeng i-import ang file na ito nang mag-isa: i-upload ang buong archive (.zip) o ang dizijpg.json',
+  'Ort.': 'Avg.',
+  'En iyi bölüm': 'Pinakamagandang episode',
 };

@@ -1681,4 +1681,6 @@ const Map<String, String> cevirilerHe = {
       'הקובץ לא זוהה: העלה קובץ של TV Time, Letterboxd או dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'אי אפשר לייבא את הקובץ הזה לבדו: העלה את כל הארכיון (.zip) או את הקובץ dizijpg.json',
+  'Ort.': 'ממוצע',
+  'En iyi bölüm': 'הפרק הטוב ביותר',
 };

@@ -1724,4 +1724,6 @@ const Map<String, String> cevirilerUk = {
       'Файл не розпізнано: завантаж файл із TV Time, Letterboxd або dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Цей файл не можна імпортувати окремо: завантаж увесь архів (.zip) або файл dizijpg.json',
+  'Ort.': 'Сер.',
+  'En iyi bölüm': 'Найкраща серія',
 };

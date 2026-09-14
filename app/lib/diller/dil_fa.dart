@@ -1700,4 +1700,6 @@ const Map<String, String> cevirilerFa = {
       'این فایل شناسایی نشد: فایل TV Time، Letterboxd یا dizi.jpg بارگذاری کن',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'این فایل به تنهایی وارد نمی‌شود: کل آرشیو (.zip) یا فایل dizijpg.json را بارگذاری کن',
+  'Ort.': 'میانگین',
+  'En iyi bölüm': 'بهترین قسمت',
 };

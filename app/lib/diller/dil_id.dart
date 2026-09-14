@@ -1717,4 +1717,6 @@ const Map<String, String> cevirilerId = {
       'File tidak dikenali: unggah file TV Time, Letterboxd, atau dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'File ini tidak bisa diimpor sendirian: unggah seluruh arsip (.zip) atau file dizijpg.json',
+  'Ort.': 'Rerata',
+  'En iyi bölüm': 'Episode terbaik',
 };

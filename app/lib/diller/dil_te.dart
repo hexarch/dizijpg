@@ -1717,4 +1717,6 @@ const Map<String, String> cevirilerTe = {
       'ఈ ఫైల్ గుర్తించబడలేదు: TV Time, Letterboxd లేదా dizi.jpg ఫైల్‌ను అప్‌లోడ్ చేయి',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'ఈ ఫైల్‌ను ఒంటరిగా దిగుమతి చేయలేం: పూర్తి ఆర్కైవ్ (.zip) లేదా dizijpg.json ఫైల్‌ను అప్‌లోడ్ చేయి',
+  'Ort.': 'సగటు',
+  'En iyi bölüm': 'ఉత్తమ ఎపిసోడ్',
 };

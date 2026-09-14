@@ -1725,4 +1725,6 @@ const Map<String, String> cevirilerFi = {
       'Tiedostoa ei tunnistettu: lataa TV Timen, Letterboxdin tai dizi.jpg:n tiedosto',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Tätä tiedostoa ei voi tuoda yksinään: lataa koko arkisto (.zip) tai dizijpg.json-tiedosto',
+  'Ort.': 'Ka.',
+  'En iyi bölüm': 'Paras jakso',
 };

@@ -1728,4 +1728,6 @@ const Map<String, String> cevirilerNl = {
       'Bestand niet herkend: upload een bestand van TV Time, Letterboxd of dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Dit bestand kan niet los worden geïmporteerd: upload het hele archief (.zip) of het bestand dizijpg.json',
+  'Ort.': 'Gem.',
+  'En iyi bölüm': 'Beste aflevering',
 };

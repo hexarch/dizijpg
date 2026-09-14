@@ -1719,4 +1719,6 @@ const Map<String, String> cevirilerNb = {
       'Filen ble ikke gjenkjent: last opp en fil fra TV Time, Letterboxd eller dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Denne filen kan ikke importeres alene: last opp hele arkivet (.zip) eller filen dizijpg.json',
+  'Ort.': 'Snitt',
+  'En iyi bölüm': 'Beste episode',
 };

@@ -1725,4 +1725,6 @@ const Map<String, String> cevirilerSw = {
       'Faili haikutambuliwa: pakia faili ya TV Time, Letterboxd au dizi.jpg',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'Faili hii haiwezi kuingizwa peke yake: pakia kumbukumbu nzima (.zip) au faili la dizijpg.json',
+  'Ort.': 'Wastani',
+  'En iyi bölüm': 'Kipindi bora',
 };

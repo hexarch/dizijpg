@@ -1704,4 +1704,6 @@ const Map<String, String> cevirilerGu = {
       'આ ફાઇલ ઓળખાઈ નથી: TV Time, Letterboxd કે dizi.jpg ફાઇલ અપલોડ કરો',
   'Bu dosya tek başına aktarılamıyor: arşivin tamamını (.zip) ya da dizijpg.json dosyasını yükle':
       'આ ફાઇલ એકલી ઇમ્પોર્ટ થઈ શકતી નથી: આખું આર્કાઇવ (.zip) કે dizijpg.json ફાઇલ અપલોડ કરો',
+  'Ort.': 'સરેરાશ',
+  'En iyi bölüm': 'શ્રેષ્ઠ એપિસોડ',
 };
