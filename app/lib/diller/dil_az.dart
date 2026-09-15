@@ -1711,4 +1711,7 @@ const Map<String, String> cevirilerAz = {
   'Ort.': 'Orta',
   'En iyi bölüm': 'Ən yaxşı seriya',
   'Sezonun bölümleri': 'Mövsümün seriyaları',
+  'Ekran görüntüsü aldın': 'Ekran şəkli çəkdin',
+  '{} ekran görüntüsü aldı': '{} ekran şəkli çəkdi',
+  'Gönderiliyor': 'Göndərilir',
 };

@@ -1749,4 +1749,7 @@ const Map<String, String> cevirilerTa = {
   'Ort.': 'சராசரி',
   'En iyi bölüm': 'சிறந்த எபிசோட்',
   'Sezonun bölümleri': 'இந்த சீசனின் எபிசோட்கள்',
+  'Ekran görüntüsü aldın': 'நீங்கள் ஸ்கிரீன்ஷாட் எடுத்தீர்கள்',
+  '{} ekran görüntüsü aldı': '{} ஸ்கிரீன்ஷாட் எடுத்தார்',
+  'Gönderiliyor': 'அனுப்புகிறது',
 };

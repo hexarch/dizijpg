@@ -1743,4 +1743,7 @@ const Map<String, String> cevirilerAr = {
   'Ort.': 'المعدل',
   'En iyi bölüm': 'أفضل حلقة',
   'Sezonun bölümleri': 'حلقات الموسم',
+  'Ekran görüntüsü aldın': 'التقطت لقطة شاشة',
+  '{} ekran görüntüsü aldı': 'التقط {} لقطة شاشة',
+  'Gönderiliyor': 'جارٍ الإرسال',
 };

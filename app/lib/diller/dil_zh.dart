@@ -1670,4 +1670,7 @@ const Map<String, String> cevirilerZh = {
   'Ort.': '均分',
   'En iyi bölüm': '最佳一集',
   'Sezonun bölümleri': '本季各集',
+  'Ekran görüntüsü aldın': '你截屏了',
+  '{} ekran görüntüsü aldı': '{} 截屏了',
+  'Gönderiliyor': '正在发送',
 };

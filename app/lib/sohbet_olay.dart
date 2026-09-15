@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
@@ -49,6 +51,25 @@ class SohbetOlaylari {
 
   static void mesajGeldi([String? ad]) {
     partner = ad;
+    // ROZET ANINDA (15 Eyl 2026 isteği: "mesaj gelir gelmez alt bardaki
+    // sayı görünmeli"). Eskiden sayaç YALNIZ iki yerde tazeleniyordu:
+    // Mesajlar'dan geri dönerken (kabuk) ve web'in 20 sn'lik canlı
+    // yoklamasında. Mobilde FCM mesajı geldiğinde `mesajGeldi` liste ile
+    // açık sohbeti tazeliyor ama sayacı ATLIYORDU — alt çubuktaki rozet
+    // kullanıcı Mesajlar'a girip çıkana kadar eski sayıda kalıyordu.
+    //
+    // Önce YEREL artış: rozet ağ turunu beklemeden, mesajla AYNI ANDA
+    // belirir. Sonra sunucudan doğrulama: aynı mesajı hem push hem canlı
+    // yoklama bildirirse (ya da birden çok mesaj tek turda gelirse) yerel
+    // sayı şişer/eksik kalır, gerçek sayı onu düzeltir.
+    //
+    // Açık konuşmanın mesajı SAYILMAZ: ekranda okunuyor, sunucu da onu
+    // okundu işaretler — artırmak rozeti bir an için yalancı yapardı
+    // (kendi gönderdiğim mesaj da buradan geçer, bkz. sohbet.dart).
+    if (!buSohbetAcik(ad)) {
+      okunmamis.value++;
+      unawaited(okunmamisYenile());
+    }
     nesil.value++;
   }
 

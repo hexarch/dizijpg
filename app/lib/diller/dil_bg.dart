@@ -1729,4 +1729,7 @@ const Map<String, String> cevirilerBg = {
   'Ort.': 'Ср.',
   'En iyi bölüm': 'Най-добър епизод',
   'Sezonun bölümleri': 'Епизоди от сезона',
+  'Ekran görüntüsü aldın': 'Направи екранна снимка',
+  '{} ekran görüntüsü aldı': '{} направи екранна снимка',
+  'Gönderiliyor': 'Изпраща се',
 };

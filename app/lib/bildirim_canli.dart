@@ -111,9 +111,10 @@ class BildirimCanli {
       }
       if (sonGonderen != null) {
         // Pencere tek başına yetmez: sohbet listesi ve zarf rozeti de
-        // tazelensin (web'de bunu yapan başka bir kanal yok).
+        // tazelensin (web'de bunu yapan başka bir kanal yok). Sayacı
+        // `mesajGeldi`nin kendisi hem yerel artırır hem sunucudan
+        // doğrular — buradan ayrıca istemek aynı turu ikiye katlardı.
         SohbetOlaylari.mesajGeldi(sonGonderen);
-        unawaited(SohbetOlaylari.okunmamisYenile());
       }
     } catch (_) {
       // Ağ yoksa / 429 geldiyse sessiz geç: bir sonraki tur dener.

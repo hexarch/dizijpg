@@ -1774,4 +1774,7 @@ const Map<String, String> cevirilerEn = {
   'Ort.': 'Avg.',
   'En iyi bölüm': 'Best episode',
   'Sezonun bölümleri': 'Episodes this season',
+  'Ekran görüntüsü aldın': 'You took a screenshot',
+  '{} ekran görüntüsü aldı': '{} took a screenshot',
+  'Gönderiliyor': 'Sending',
 };

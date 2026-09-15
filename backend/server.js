@@ -17012,6 +17012,44 @@ app.post('/sohbet-efekt', girisZorunlu, sohbetEfektLimiti, sarici(async (req, re
   res.json({ tamam: true });
 }));
 
+// ---------- Ekran görüntüsü bildirimi (15 Eyl 2026) ----------
+// "Instagram'daki gibi": ekran görüntüsü alan tarafın sohbetinde ortada gri
+// bir satır belirir ve AYNI satır karşı tarafa da gider.
+//
+// KALICI DEĞİL, bilinçli: mesaj tablosuna yazılmaz, yalnız efektle aynı
+// bellek+yayın kalıbından 8 sn'lik pencereyle taşınır. Gerekçe: satır bir
+// AN'ın bildirimi; geçmişe kalıcı "şu kişi şu an ss aldı" kaydı yazmak hem
+// sohbeti kirletir hem de silinemeyen bir suçlama üretirdi. Karşı taraf o
+// sırada sohbete bakmıyorsa kaçırır — Instagram da böyle davranır.
+//
+// TESPİTİN SINIRI: Android 14+ ve iOS. Web ve eski Android'de istemci
+// tarafında olay YOKTUR, yani bu uç hiç çağrılmaz (bkz. ekran_goruntusu.dart).
+const ekranGoruntuleri = new Map();
+abone('sohbet_ss', (v) => {
+  if (!v || typeof v.a !== 'string' || !Number.isFinite(v.z)) return;
+  sohbetEfektYaz(ekranGoruntuleri, v.a, 'ss', v.z);
+});
+// Ekran görüntüsü emoji efektinden seyrek bir olaydır; dakikada 30 fazlasıyla
+// yeter ve elde kalan tek maliyet bellekteki damgadır.
+const ekranGoruntusuLimiti = hizLimitiMerkezi(30, (req) => `eg:${req.kullanici.id}`);
+app.post('/sohbet-ekran-goruntusu', girisZorunlu, ekranGoruntusuLimiti,
+  sarici(async (req, res) => {
+    const k = await havuz.query(
+      'SELECT id FROM kullanicilar WHERE kullanici_adi=$1',
+      [String(req.body?.kullanici_adi || '')]);
+    if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+    const partnerId = k.rows[0].id;
+    // Engelli çifte bildirim de gitmez (efekt/mesaj kapılarıyla aynı kural).
+    if (await engelliMi(req.kullanici.id, partnerId)) {
+      return res.status(403).json({ hata: 'Bu kullanıcıyla iletişim kapalı' });
+    }
+    const anahtar = `${req.kullanici.id}:${partnerId}`;
+    const zaman = Date.now();
+    sohbetEfektYaz(ekranGoruntuleri, anahtar, 'ss', zaman);
+    yayinla('sohbet_ss', { a: anahtar, z: zaman });
+    res.json({ tamam: true });
+  }));
+
 // ---------- özel mesajlara emoji tepkisi (istek listesi md. 43) ----------
 //
 // ***** TEPKİ EMOJİSİ BİLEREK ŞİFRELENMEZ (AÇIK ÜSTVERİ) *****
@@ -17384,6 +17422,9 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     istek,
     // Karşı tarafın son 8 sn içindeki emoji efekti ({emoji, z}) ya da null.
     efekt: sohbetEfektOku(efektler, `${partnerId}:${req.kullanici.id}`),
+    // Karşı taraf son 8 sn içinde ekran görüntüsü aldıysa ({emoji:'ss', z}).
+    ekran_goruntusu: sohbetEfektOku(
+      ekranGoruntuleri, `${partnerId}:${req.kullanici.id}`),
   });
 }));
 

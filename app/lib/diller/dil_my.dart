@@ -1739,4 +1739,7 @@ const Map<String, String> cevirilerMy = {
   'Ort.': 'ပျမ်းမျှ',
   'En iyi bölüm': 'အကောင်းဆုံးအပိုင်း',
   'Sezonun bölümleri': 'ဤရာသီ၏ အပိုင်းများ',
+  'Ekran görüntüsü aldın': 'သင် ဖန်သားပြင်ဓာတ်ပုံ ရိုက်ခဲ့သည်',
+  '{} ekran görüntüsü aldı': '{} က ဖန်သားပြင်ဓာတ်ပုံ ရိုက်ခဲ့သည်',
+  'Gönderiliyor': 'ပို့နေသည်',
 };

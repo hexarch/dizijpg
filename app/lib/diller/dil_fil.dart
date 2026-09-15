@@ -1754,4 +1754,7 @@ const Map<String, String> cevirilerFil = {
   'Ort.': 'Avg.',
   'En iyi bölüm': 'Pinakamagandang episode',
   'Sezonun bölümleri': 'Mga episode ngayong season',
+  'Ekran görüntüsü aldın': 'Kumuha ka ng screenshot',
+  '{} ekran görüntüsü aldı': 'Kumuha ng screenshot si {}',
+  'Gönderiliyor': 'Ipinapadala',
 };

@@ -1728,4 +1728,7 @@ const Map<String, String> cevirilerSw = {
   'Ort.': 'Wastani',
   'En iyi bölüm': 'Kipindi bora',
   'Sezonun bölümleri': 'Vipindi vya msimu',
+  'Ekran görüntüsü aldın': 'Umepiga picha ya skrini',
+  '{} ekran görüntüsü aldı': '{} amepiga picha ya skrini',
+  'Gönderiliyor': 'Inatuma',
 };

@@ -1707,4 +1707,7 @@ const Map<String, String> cevirilerGu = {
   'Ort.': 'સરેરાશ',
   'En iyi bölüm': 'શ્રેષ્ઠ એપિસોડ',
   'Sezonun bölümleri': 'આ સીઝનના એપિસોડ',
+  'Ekran görüntüsü aldın': 'તમે સ્ક્રીનશોટ લીધો',
+  '{} ekran görüntüsü aldı': '{} એ સ્ક્રીનશોટ લીધો',
+  'Gönderiliyor': 'મોકલાઈ રહ્યું છે',
 };

@@ -1729,4 +1729,7 @@ const Map<String, String> cevirilerMl = {
   'Ort.': 'ശരാശരി',
   'En iyi bölüm': 'മികച്ച എപ്പിസോഡ്',
   'Sezonun bölümleri': 'ഈ സീസണിലെ എപ്പിസോഡുകൾ',
+  'Ekran görüntüsü aldın': 'നിങ്ങൾ സ്ക്രീൻഷോട്ട് എടുത്തു',
+  '{} ekran görüntüsü aldı': '{} സ്ക്രീൻഷോട്ട് എടുത്തു',
+  'Gönderiliyor': 'അയയ്ക്കുന്നു',
 };

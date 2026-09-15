@@ -1703,4 +1703,7 @@ const Map<String, String> cevirilerFa = {
   'Ort.': 'میانگین',
   'En iyi bölüm': 'بهترین قسمت',
   'Sezonun bölümleri': 'قسمت‌های این فصل',
+  'Ekran görüntüsü aldın': 'از صفحه عکس گرفتی',
+  '{} ekran görüntüsü aldı': '{} از صفحه عکس گرفت',
+  'Gönderiliyor': 'در حال ارسال',
 };

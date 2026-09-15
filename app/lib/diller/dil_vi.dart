@@ -1718,4 +1718,7 @@ const Map<String, String> cevirilerVi = {
   'Ort.': 'TB',
   'En iyi bölüm': 'Tập hay nhất',
   'Sezonun bölümleri': 'Các tập trong mùa',
+  'Ekran görüntüsü aldın': 'Bạn đã chụp màn hình',
+  '{} ekran görüntüsü aldı': '{} đã chụp màn hình',
+  'Gönderiliyor': 'Đang gửi',
 };

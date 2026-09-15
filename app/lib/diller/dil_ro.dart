@@ -1802,4 +1802,7 @@ const Map<String, String> cevirilerRo = {
   'Ort.': 'Med.',
   'En iyi bölüm': 'Cel mai bun episod',
   'Sezonun bölümleri': 'Episoadele sezonului',
+  'Ekran görüntüsü aldın': 'Ai făcut o captură de ecran',
+  '{} ekran görüntüsü aldı': '{} a făcut o captură de ecran',
+  'Gönderiliyor': 'Se trimite',
 };

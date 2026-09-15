@@ -21,6 +21,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../oda/oda_sheet.dart';
 import '../dosya_oku.dart';
+import '../ekran_goruntusu.dart';
 import '../emoji_efekti.dart';
 import '../gorsel_basliklari.dart';
 import '../gorusme/arama_dugmeleri.dart';
@@ -1130,6 +1131,19 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// yeniden oynamasın; ilk yüklemede eski efekt oynatılmaz.
   int? _sonEfektZ;
 
+  /// Ekran görüntüsü olay aboneliği (bkz. [EkranGoruntusu]).
+  StreamSubscription<void>? _ssAbonelik;
+
+  /// Karşı taraftan son alınan ekran görüntüsü bildiriminin damgası; aynı
+  /// bildirim her yoklamada yeniden satır açmasın.
+  int? _sonSsZ;
+
+  /// Son efektin emojisi ve kaçıncı vuruş olduğu. Balonlara geçer: aynı
+  /// emojiyi taşıyan büyük emoji mesajları BAŞTAN oynar, böylece karşı
+  /// tarafın dokunuşu benim ekranımda da görülür (15 Eyl 2026 isteği).
+  String? _efektEmoji;
+  int _efektVurus = 0;
+
   /// Bu sohbet bekleyen bir MESAJ İSTEĞİ mi? Sunucudan gelir:
   /// 'bekliyor' | 'red' | null. Null değilse yanıt kutusu yerine
   /// Kabul et / Reddet çubuğu çizilir (24 Ağu 2026 kullanıcı isteği:
@@ -1389,11 +1403,52 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   void _efektOynat(String emoji, {Offset? kaynak, bool gonder = false}) {
     if (!mounted) return;
     EmojiEfekti.oynat(context, emoji, kaynak: kaynak);
+    // Patlamanın yanında BALON da oynasın: karşı taraftan gelen efektte tek
+    // görünen şey ekran süsüydü, dokunulan emojinin kendisi kımıldamıyordu.
+    setState(() {
+      _efektEmoji = emoji;
+      _efektVurus++;
+    });
     if (!gonder) return;
     Api.post('/sohbet-efekt', {
       'kullanici_adi': widget.kullaniciAdi,
       'emoji': emoji,
     }).catchError((_) => null);
+  }
+
+  /// EKRAN GÖRÜNTÜSÜ ALINDI (15 Eyl 2026 isteği, Instagram düzeni).
+  ///
+  /// Sohbetin ortasına gri bir sistem satırı düşer ve AYNI bilgi karşı
+  /// tarafa gider (o da sohbetteyse aynı satırı görür). Satır kalıcı
+  /// değildir: yerel listede durur, sohbet kapanınca gider — sunucuda da
+  /// 8 sn'lik bir damgadan ibarettir (bkz. POST /sohbet-ekran-goruntusu).
+  void _ekranGoruntusuAlindi() {
+    if (!mounted) return;
+    _sistemSatiri('Ekran görüntüsü aldın'.c);
+    Api.post('/sohbet-ekran-goruntusu', {
+      'kullanici_adi': widget.kullaniciAdi,
+    }).catchError((_) => null);
+  }
+
+  /// Listeye ortada duran gri bilgi satırı ekler.
+  ///
+  /// `_yerel` işaretini taşır: `_yukle` tam yüklemede yerel satırları
+  /// KORUR (bkz. iyimser gönderim), yani yoklama satırı silmez. `id` yok,
+  /// `gonderen_id` yok — çizimde balon değil rozet olur.
+  void _sistemSatiri(String yazi) {
+    final anahtar =
+        's${DateTime.now().microsecondsSinceEpoch}-${_yerelSayac++}';
+    setState(() {
+      _mesajlar = [
+        ..._mesajlar,
+        <String, dynamic>{
+          '_yerel': anahtar,
+          '_sistem': yazi,
+          'tarih': DateTime.now().toUtc().toIso8601String(),
+        },
+      ];
+    });
+    _sonaKaydir();
   }
 
   /// Kutu doluluk bayrağını günceller (ikon gizleme — bkz. [_yaziVar]).
@@ -1430,6 +1485,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     WidgetsBinding.instance.addObserver(this);
     SohbetOlaylari.nesil.addListener(_sohbetOlayi);
     SohbetOlaylari.acikPartner = widget.kullaniciAdi;
+    // Ekran görüntüsü (15 Eyl 2026): olay yalnız bu ekran açıkken
+    // ilgilendirir, abonelik ekranla birlikte doğar ve ölür.
+    _ssAbonelik = EkranGoruntusu.akis.listen((_) => _ekranGoruntusuAlindi());
     // Bu sohbetin biriken mesaj bildirimini kapat, geçmişini sıfırla
     mesajBildirimleriniTemizle(widget.kullaniciAdi);
   }
@@ -1509,6 +1567,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     }
     if (_bakisGonderildi) _sohbetBakisiniAyarla(false);
     _durumDurdur();
+    _ssAbonelik?.cancel();
     _kayitSayaci?.cancel();
     _seviyeAbonelik?.cancel();
     _kaydedici?.dispose();
@@ -1936,6 +1995,20 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         final efektEmoji = efekt?['emoji'] as String?;
         if (!ilk && efektEmoji != null && efektEmoji.isNotEmpty) {
           _efektOynat(efektEmoji);
+        }
+      }
+
+      // Karşı taraf ekran görüntüsü aldı mı? Efektle aynı kalıp: damga
+      // yeniyse satır düşer, İLK yüklemede yalnız kaydedilir (sohbeti
+      // açınca 8 sn'lik eski bir damga satır açmasın).
+      final ss = d['ekran_goruntusu'] as Map<String, dynamic>?;
+      final ssZ = (ss?['z'] as num?)?.toInt();
+      if (ssZ != null && ssZ != _sonSsZ) {
+        _sonSsZ = ssZ;
+        if (!ilk) {
+          _sistemSatiri(
+            '{} ekran görüntüsü aldı'.cf(['@${widget.kullaniciAdi}']),
+          );
         }
       }
 
@@ -2839,6 +2912,18 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                     final i = _mesajlar.length - 1 - tersIndeks;
                                     final m =
                                         _mesajlar[i] as Map<String, dynamic>;
+                                    // SİSTEM SATIRI (ekran görüntüsü):
+                                    // balon değil, tarih ayracıyla aynı
+                                    // ortadaki gri rozet. Gruplama, saat
+                                    // sütunu ve kaydırarak yanıtlama bu
+                                    // satır için ANLAMSIZ — hepsi atlanır.
+                                    final sistem = m['_sistem'] as String?;
+                                    if (sistem != null) {
+                                      return Center(
+                                        key: ValueKey(m['_yerel']),
+                                        child: _TarihRozeti(sistem),
+                                      );
+                                    }
                                     final gun = (m['tarih'] as String? ?? '')
                                         .split('T')
                                         .first;
@@ -2922,6 +3007,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                         kaynak: kaynak,
                                         gonder: true,
                                       ),
+                                      disVurusEmoji: _efektEmoji,
+                                      disVurus: _efektVurus,
                                       tekrarDene: m['_hata'] == true
                                           ? () => _yerelTekrarDene(m)
                                           : null,
@@ -3305,6 +3392,24 @@ class _SohbetEkraniState extends State<SohbetEkrani>
 
   /// Basılı-tut kaydı sürerken hapın yerine geçen şerit: nabız + süre +
   /// "kaydırarak iptal" ipucu + kilit ipucu. Parmak hâlâ mikrofonda.
+  /// Kayıt sırasında akan canlı çubuklar: son [dalgaOrnekSayisi] örnek,
+  /// PENCERENİN KENDİ tepesine göre gerilmiş.
+  ///
+  /// 15 Eyl 2026 ("ses hep sabit çubukta gidiyor"): ham genlik mutlak
+  /// ölçekteydi (bkz. [dalgaKovala]), normal konuşma 0,2-0,4 bandında
+  /// sıkışıp neredeyse düz bir şerit çiziyordu. Pencerenin tepesine germek
+  /// şekli açar: hece araları ve sessizlikler görünür olur.
+  List<double> _canliDalga() {
+    // Başta soldan doldurmak için sıfırlarla tamamlanır.
+    final son = _seviyeler.length > dalgaOrnekSayisi
+        ? _seviyeler.sublist(_seviyeler.length - dalgaOrnekSayisi)
+        : [
+            ..._seviyeler,
+            ...List.filled(dalgaOrnekSayisi - _seviyeler.length, 0.0),
+          ];
+    return dalgaGer(son);
+  }
+
   Widget _kayitHapi() {
     final dk = _kayitSn ~/ 60;
     final sn = (_kayitSn % 60).toString().padLeft(2, '0');
@@ -3326,7 +3431,18 @@ class _SohbetEkraniState extends State<SohbetEkrani>
               fontFeatures: [FontFeature.tabularFigures()],
             ),
           ),
-          const Spacer(),
+          const SizedBox(width: 10),
+          // Basılı tutarken de canlı seviye görünsün: kilitlemeden konuşan
+          // kullanıcı eskiden yalnız saniyeyi görüyordu, mikrofonun sesi
+          // alıp almadığını anlayamıyordu.
+          Expanded(
+            child: SesDalga(
+              seviyeler: _canliDalga(),
+              renk: DiziRenkler.sari,
+              yukseklik: 22,
+            ),
+          ),
+          const SizedBox(width: 10),
           Icon(Icons.chevron_left, size: 18, color: DiziRenkler.metin54),
           Text(
             'Kaydırarak iptal'.c,
@@ -3442,13 +3558,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   Widget _kayitCubugu() {
     final dk = _kayitSn ~/ 60;
     final sn = (_kayitSn % 60).toString().padLeft(2, '0');
-    // Son 40 örnek akar; başta soldan doldurmak için sıfırlarla tamamlanır.
-    final son = _seviyeler.length > dalgaOrnekSayisi
-        ? _seviyeler.sublist(_seviyeler.length - dalgaOrnekSayisi)
-        : [
-            ..._seviyeler,
-            ...List.filled(dalgaOrnekSayisi - _seviyeler.length, 0.0),
-          ];
+    final son = _canliDalga();
     return Row(
       children: [
         IconButton(
@@ -3918,6 +4028,15 @@ class _MesajBaloncugu extends StatelessWidget {
   /// patlama. `kaynak` dokunma noktası (global) ya da null (ekran ortası).
   final void Function(String emoji, Offset? kaynak)? efekt;
 
+  /// DIŞARIDAN GELEN VURUŞ (15 Eyl 2026 isteği: "emojiye tıklayınca karşı
+  /// tarafta da o animasyon gözüksün"). Karşı taraf büyük emojiye dokununca
+  /// yalnız ekran patlaması geliyordu; balondaki Lottie dokunanın
+  /// ekranında oynayıp burada duruyordu. Sohbet ekranı efekti alınca
+  /// [disVurusEmoji]'yi yazar ve [disVurus]'u artırır: AYNI emojiyi taşıyan
+  /// büyük emoji balonları baştan oynar (Telegram etkileşimli emojisi).
+  final String? disVurusEmoji;
+  final int disVurus;
+
   const _MesajBaloncugu({
     super.key,
     required this.mesaj,
@@ -3937,6 +4056,8 @@ class _MesajBaloncugu extends StatelessWidget {
     this.grupBasi = true,
     this.grupSonu = true,
     this.efekt,
+    this.disVurusEmoji,
+    this.disVurus = 0,
   });
 
   /// Kullanıcının bu mesaja verdiği tepki (yoksa null).
@@ -4141,13 +4262,16 @@ class _MesajBaloncugu extends StatelessWidget {
             yanitId == null);
     // Alt satır (15 Eyl 2026): SAAT balondan ÇIKTI (liste boşluğunu sola
     // çekince sağda belirir, bkz. _SaatSutunu) ve "Görüldü" yazısı balonun
-    // ALTINA göz ikonu oldu. Balonun içinde yalnız "düzenlendi", bekleme
-    // ikonu ya da hata kaldı — hiçbiri yoksa satır HİÇ kurulmaz ki tek
+    // ALTINA göz ikonu oldu. Balonun içinde yalnız "düzenlendi" ya da
+    // hata kaldı — hiçbiri yoksa satır HİÇ kurulmaz ki tek
     // harflik mesajın balonu boş bir satır kadar uzamasın.
     // Rengi: çıplak mesajda balon yok, yani balonun yazı rengi (sarı üstü
     // siyah) sohbet zemininde kaybolurdu — orada tema metni kullanılır.
     final altYaziRengi = ciplak ? DiziRenkler.metin : yaziRengi;
-    final altSatirVar = gonderimHatasi || duzenlendi || bekliyor;
+    // BEKLEME İKONU DA ÇIKTI (15 Eyl 2026 isteği: "mesaj gidene kadarki
+    // yüklenme ikonu mesajla aynı divde olmasın, altına koy") — balonun
+    // ALTINDA, görüldü gözüyle aynı yerde duruyor (aşağıda [altIsaret]).
+    final altSatirVar = gonderimHatasi || duzenlendi;
     // Md. 43 — sunucudan mesajla BİRLİKTE gelen tepkiler (ayrı istek yok).
     final tepkiler = <Map<String, dynamic>>[
       for (final t in (m['tepkiler'] as List<dynamic>? ?? const []))
@@ -4428,6 +4552,8 @@ class _MesajBaloncugu extends StatelessWidget {
                   onDokun: efekt == null
                       ? null
                       : (kaynak) => efekt!(tekEmoji, kaynak),
+                  // Karşı taraf AYNI emojiye dokunduysa bu balon da oynar.
+                  disVurus: disVurusEmoji == tekEmoji ? disVurus : 0,
                 )
               else if (metin != null && metin.isNotEmpty)
                 Text(
@@ -4478,12 +4604,12 @@ class _MesajBaloncugu extends StatelessWidget {
                     ],
                   ),
                 ),
-              // EN ALT SATIR: "düzenlendi" / bekleme ikonu / hata.
+              // EN ALT SATIR: "düzenlendi" / hata.
               //
               // TİK YOK (1 Eyl 2026 isteği). SAAT YOK, "Görüldü" YOK (15 Eyl
               // 2026 isteği: "görüldü yazısı mesajın altında olmalı, iç
               // divinde değil; 'a' da yazsa div uzuyor — göz ikonu olsun").
-              // Saat: _SaatSutunu; görüldü: balonun altındaki göz (aşağıda).
+              // Saat: _SaatSutunu; görüldü ve "gönderiliyor": balonun ALTI.
               if (altSatirVar)
                 Padding(
                   padding: EdgeInsets.only(top: ciplak ? 3 : 2),
@@ -4523,14 +4649,6 @@ class _MesajBaloncugu extends StatelessWidget {
                                 color: altYaziRengi.withValues(alpha: 0.5),
                               ),
                             ),
-                          if (duzenlendi && bekliyor) const SizedBox(width: 5),
-                          // Bekleyen satırda küçük saat ikonu (gönderiliyor).
-                          if (bekliyor)
-                            Icon(
-                              Icons.schedule,
-                              size: 11,
-                              color: altYaziRengi.withValues(alpha: 0.55),
-                            ),
                         ],
                       ],
                     ),
@@ -4542,31 +4660,48 @@ class _MesajBaloncugu extends StatelessWidget {
       ),
     );
 
-    // GÖRÜLDÜ = balonun ALTINDA göz ikonu (15 Eyl 2026). Balonun içinde
-    // değil: iç satır tek harflik mesajı bile bir satır uzatıyordu. YALNIZ
-    // SON OKUNAN kendi mesajımda ([gorulduGoster]): her okunmuş balonun
-    // altına göz basmak uzun sohbette aynı işareti onlarca kez tekrarlamak
-    // olurdu; Instagram DM de yalnız sondakinde gösterir.
+    // BALONUN ALTI (15 Eyl 2026). Balonun içinde değil: iç satır tek
+    // harflik mesajı bile bir satır uzatıyordu.
+    //   · GÖNDERİLİYOR: mesaj sunucuya gidene kadar saat ikonu. Balonun
+    //     içindeydi, isteğe göre ("yüklenme ikonu mesajla aynı divde
+    //     olmasın") buraya indi — balonun boyu artık gidiş gelişte
+    //     DEĞİŞMİYOR, yani onay anında satır zıplamıyor.
+    //   · GÖRÜLDÜ: yalnız SON OKUNAN kendi mesajımda ([gorulduGoster]);
+    //     her okunmuş balonun altına göz basmak uzun sohbette aynı
+    //     işareti onlarca kez tekrarlamak olurdu (Instagram DM de yalnız
+    //     sondakinde gösterir).
+    // İkisi aynı yeri kullanır ama ÇAKIŞMAZ: gönderilmemiş mesaj okunmuş
+    // olamaz. Yine de bekleme öncelikli.
+    final Widget? altIsaret = benim && bekliyor
+        ? Icon(
+            Icons.schedule,
+            size: 13,
+            color: DiziRenkler.metin54,
+            semanticLabel: 'Gönderiliyor'.c,
+          )
+        : benim && gorulduGoster
+        ? Icon(
+            Icons.visibility,
+            size: 13,
+            color: DiziRenkler.metin54,
+            semanticLabel: 'Görüldü'.c,
+          )
+        : null;
     return Align(
       alignment: benim ? Alignment.centerRight : Alignment.centerLeft,
-      child: benim && gorulduGoster
-          ? Column(
+      child: altIsaret == null
+          ? govde
+          : Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 govde,
                 Padding(
                   padding: const EdgeInsets.only(right: 4, bottom: 2),
-                  child: Icon(
-                    Icons.visibility,
-                    size: 13,
-                    color: DiziRenkler.metin54,
-                    semanticLabel: 'Görüldü'.c,
-                  ),
+                  child: altIsaret,
                 ),
               ],
-            )
-          : govde,
+            ),
     );
   }
 }
@@ -4578,7 +4713,12 @@ class _BuyukEmoji extends StatefulWidget {
   final String emoji;
   final void Function(Offset kaynak)? onDokun;
 
-  const _BuyukEmoji({required this.emoji, this.onDokun});
+  /// Karşı tarafın dokunuşu (bkz. `_MesajBaloncugu.disVurus`). Değeri her
+  /// arttığında Lottie baştan oynar — kendi dokunuşumla TOPLANIR ki ikisi
+  /// aynı anda gelse bile sayı geri gitmesin (geri giden sayı = oynatmaz).
+  final int disVurus;
+
+  const _BuyukEmoji({required this.emoji, this.onDokun, this.disVurus = 0});
 
   @override
   State<_BuyukEmoji> createState() => _BuyukEmojiState();
@@ -4605,7 +4745,7 @@ class _BuyukEmojiState extends State<_BuyukEmoji> {
             widget.emoji,
             boyut: 72,
             acilistaOynat: true,
-            vurus: _vurus,
+            vurus: _vurus + widget.disVurus,
           ),
         ),
       ),

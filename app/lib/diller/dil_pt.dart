@@ -1751,4 +1751,7 @@ const Map<String, String> cevirilerPt = {
   'Ort.': 'Méd.',
   'En iyi bölüm': 'Melhor episódio',
   'Sezonun bölümleri': 'Episódios da temporada',
+  'Ekran görüntüsü aldın': 'Você fez uma captura de tela',
+  '{} ekran görüntüsü aldı': '{} fez uma captura de tela',
+  'Gönderiliyor': 'Enviando',
 };

@@ -1721,4 +1721,7 @@ const Map<String, String> cevirilerKn = {
   'Ort.': 'ಸರಾಸರಿ',
   'En iyi bölüm': 'ಅತ್ಯುತ್ತಮ ಎಪಿಸೋಡ್',
   'Sezonun bölümleri': 'ಈ ಸೀಸನ್‌ನ ಎಪಿಸೋಡ್‌ಗಳು',
+  'Ekran görüntüsü aldın': 'ನೀವು ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ತೆಗೆದಿದ್ದೀರಿ',
+  '{} ekran görüntüsü aldı': '{} ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ತೆಗೆದರು',
+  'Gönderiliyor': 'ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ',
 };

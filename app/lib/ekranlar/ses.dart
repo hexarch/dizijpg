@@ -19,21 +19,58 @@ const String _alfabe = '0123456789abcdefghijklmnopqrstuv';
 /// Oynatıcıda/kayıt çubuğunda gösterilen çubuk sayısı.
 const int dalgaOrnekSayisi = 40;
 
-/// Ham genlik listesini (0..1) 40 kovaya indirip kodlar. Boşsa boş dize döner.
-String dalgaKodla(List<double> seviyeler, int saniye) {
-  if (seviyeler.isEmpty) return '';
-  final tampon = StringBuffer('${saniye.clamp(0, 999)}:');
+/// Ham genlik listesini [dalgaOrnekSayisi] kovaya indirir ve kaydın KENDİ
+/// tepesine göre 0..1'e gerer.
+///
+/// 15 Eyl 2026 ("ses hep sabit çubukta gidiyor, seviyeye göre dalgalanmalı"):
+/// iki ayrı sebepten dalga DÜZ çıkıyordu.
+///  1. Kova TEPE değeriyle dolduruluyordu. 2 dakikalık kayıtta bir kova 30
+///     örnektir (3 sn); konuşurken 3 saniyenin içinde neredeyse hep bir
+///     yüksek tepe bulunur, yani 40 kovanın 40'ı tavana yapışıyordu.
+///     ORTALAMA, o dilimde ne kadar konuşulduğunu gösterir: hece araları,
+///     nefes ve sessizlikler çubuklara iner.
+///  2. Ölçek MUTLAKTI. `genlikNormalle` -45 dBFS'i 0 sayar; normal bir ses
+///     -25 dBFS civarında, yani ortalamalar 0,2-0,4 bandında sıkışıp birbirine
+///     benziyordu. Kaydın en yüksek kovasını 1 kabul edince şekil açılır —
+///     fısıltı da bağırma da kendi içinde dalgalanır (Telegram/WhatsApp da
+///     göreli çizer; amaç ses ŞİDDETİNİ ölçmek değil, konuşmanın ritmini
+///     göstermek).
+List<double> dalgaKovala(List<double> seviyeler) {
+  if (seviyeler.isEmpty) return const [];
+  final kovalar = <double>[];
   for (var i = 0; i < dalgaOrnekSayisi; i++) {
     final bas = (i * seviyeler.length / dalgaOrnekSayisi).floor();
     final son = ((i + 1) * seviyeler.length / dalgaOrnekSayisi).ceil().clamp(
       bas + 1,
       seviyeler.length,
     );
-    var tepe = 0.0;
+    var toplam = 0.0;
     for (var j = bas; j < son; j++) {
-      if (seviyeler[j] > tepe) tepe = seviyeler[j];
+      toplam += seviyeler[j].clamp(0.0, 1.0);
     }
-    tampon.write(_alfabe[(tepe.clamp(0.0, 1.0) * 31).round()]);
+    kovalar.add(toplam / (son - bas));
+  }
+  return dalgaGer(kovalar);
+}
+
+/// Listeyi kendi tepesine göre 0..1'e gerer. Tepe yok denecek kadar küçükse
+/// (mikrofon kapalı, izin yok, tam sessizlik) OLDUĞU GİBİ bırakılır: 0,001'i
+/// 1'e germek sessizliği bağırma gibi çizerdi.
+List<double> dalgaGer(List<double> kovalar) {
+  var tepe = 0.0;
+  for (final v in kovalar) {
+    if (v > tepe) tepe = v;
+  }
+  if (tepe < 0.02) return kovalar;
+  return [for (final v in kovalar) (v / tepe).clamp(0.0, 1.0)];
+}
+
+/// Ham genlik listesini (0..1) 40 kovaya indirip kodlar. Boşsa boş dize döner.
+String dalgaKodla(List<double> seviyeler, int saniye) {
+  if (seviyeler.isEmpty) return '';
+  final tampon = StringBuffer('${saniye.clamp(0, 999)}:');
+  for (final v in dalgaKovala(seviyeler)) {
+    tampon.write(_alfabe[(v.clamp(0.0, 1.0) * 31).round()]);
   }
   return tampon.toString();
 }

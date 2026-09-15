@@ -1663,4 +1663,7 @@ const Map<String, String> cevirilerAm = {
   'Ort.': 'አማካይ',
   'En iyi bölüm': 'ምርጥ ክፍል',
   'Sezonun bölümleri': 'የዚህ ወቅት ክፍሎች',
+  'Ekran görüntüsü aldın': 'ቅጽበታዊ ገጽ እይታ አንስተሃል',
+  '{} ekran görüntüsü aldı': '{} ቅጽበታዊ ገጽ እይታ አነሳ',
+  'Gönderiliyor': 'በመላክ ላይ',
 };

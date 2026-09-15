@@ -1720,4 +1720,7 @@ const Map<String, String> cevirilerUr = {
   'Ort.': 'اوسط',
   'En iyi bölüm': 'بہترین قسط',
   'Sezonun bölümleri': 'اس سیزن کی اقساط',
+  'Ekran görüntüsü aldın': 'آپ نے اسکرین شاٹ لیا',
+  '{} ekran görüntüsü aldı': '{} نے اسکرین شاٹ لیا',
+  'Gönderiliyor': 'بھیجا جا رہا ہے',
 };

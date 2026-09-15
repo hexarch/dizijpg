@@ -1728,4 +1728,7 @@ const Map<String, String> cevirilerFi = {
   'Ort.': 'Ka.',
   'En iyi bölüm': 'Paras jakso',
   'Sezonun bölümleri': 'Kauden jaksot',
+  'Ekran görüntüsü aldın': 'Otit kuvakaappauksen',
+  '{} ekran görüntüsü aldı': '{} otti kuvakaappauksen',
+  'Gönderiliyor': 'Lähetetään',
 };

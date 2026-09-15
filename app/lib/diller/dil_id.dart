@@ -1720,4 +1720,7 @@ const Map<String, String> cevirilerId = {
   'Ort.': 'Rerata',
   'En iyi bölüm': 'Episode terbaik',
   'Sezonun bölümleri': 'Episode musim ini',
+  'Ekran görüntüsü aldın': 'Kamu mengambil tangkapan layar',
+  '{} ekran görüntüsü aldı': '{} mengambil tangkapan layar',
+  'Gönderiliyor': 'Mengirim',
 };

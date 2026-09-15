@@ -1717,4 +1717,7 @@ const Map<String, String> cevirilerCs = {
   'Ort.': 'Prům.',
   'En iyi bölüm': 'Nejlepší díl',
   'Sezonun bölümleri': 'Díly této řady',
+  'Ekran görüntüsü aldın': 'Pořídil(a) jsi snímek obrazovky',
+  '{} ekran görüntüsü aldı': '{} pořídil(a) snímek obrazovky',
+  'Gönderiliyor': 'Odesílá se',
 };

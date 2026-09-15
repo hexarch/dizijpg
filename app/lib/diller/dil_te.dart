@@ -1720,4 +1720,7 @@ const Map<String, String> cevirilerTe = {
   'Ort.': 'సగటు',
   'En iyi bölüm': 'ఉత్తమ ఎపిసోడ్',
   'Sezonun bölümleri': 'ఈ సీజన్ ఎపిసోడ్‌లు',
+  'Ekran görüntüsü aldın': 'మీరు స్క్రీన్‌షాట్ తీశారు',
+  '{} ekran görüntüsü aldı': '{} స్క్రీన్‌షాట్ తీశారు',
+  'Gönderiliyor': 'పంపుతోంది',
 };

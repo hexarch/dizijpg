@@ -1714,4 +1714,7 @@ const Map<String, String> cevirilerMr = {
   'Ort.': 'सरासरी',
   'En iyi bölüm': 'सर्वोत्तम एपिसोड',
   'Sezonun bölümleri': 'या सीझनचे एपिसोड',
+  'Ekran görüntüsü aldın': 'तुम्ही स्क्रीनशॉट घेतला',
+  '{} ekran görüntüsü aldı': '{} ने स्क्रीनशॉट घेतला',
+  'Gönderiliyor': 'पाठवत आहे',
 };

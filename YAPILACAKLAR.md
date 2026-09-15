@@ -10960,3 +10960,33 @@ doğru diz 4'lü 4'lü iner; en azından aşağı kaydırdıkça modal yukarı �
 - Dağıtım ayrık worktree'den (paylaşılan ağaçta başka oturumun commit'lenmemiş
   değişiklikleri vardı).
 
+
+## 15 Eyl 2026 — Sohbet turu: bekleme ikonu, ekran görüntüsü, emoji, dalga, rozet (1.164.0+244) ✅
+Kullanıcı beş istek arka arkaya verdi; hepsi aynı derlemede.
+- ✅ **Bekleme ikonu balonun ALTINDA** (*"mesaj gidene kadarki yüklenme ikonunu
+  mesajla aynı dive koyma, altına koy"*): `Icons.schedule` balonun iç alt
+  satırından çıktı, görüldü gözüyle aynı yere indi (`altIsaret`). Yan kazanç:
+  balonun boyu gönderim onayında DEĞİŞMİYOR, satır zıplamıyor.
+- ✅ **Ekran görüntüsü alındı** (*"Instagram'daki gibi, sohbetin ortasında gri
+  ufak yazı"*): Android 14+ `registerScreenCaptureCallback` (MainActivity.kt +
+  `DETECT_SCREEN_CAPTURE`), iOS `userDidTakeScreenshotNotification`
+  (AppDelegate.swift — AYRI DOSYA DEĞİL, pbxproj tuzağı). Dart kapısı
+  `ekran_goruntusu.dart`; satır `_TarihRozeti` ile çizilir. Karşı tarafa da
+  gider: `POST /sohbet-ekran-goruntusu` + `GET /mesajlar` → `ekran_goruntusu`
+  (efektin 8 sn'lik bellek+yayın kalıbı, KALICI KAYIT YOK).
+  Web ve Android 13-'te tespit yoktur, sessiz kalır.
+- ✅ **Emoji animasyonu karşı tarafta** (*"emojiye tıklayınca karşı tarafta da o
+  animasyon gözüksün"*): efekt zaten gidiyordu ama yalnız ekran patlaması
+  oynuyordu; artık aynı emojiyi taşıyan büyük emoji balonu da baştan oynar
+  (`disVurusEmoji`/`disVurus` → `TepkiIkonu.vurus`).
+- ✅ **Ses dalgası seviyeye göre** (*"ses hep sabit çubukta gidiyor"*): kova TEPE
+  yerine ORTALAMA alıyor ve kaydın kendi tepesine geriliyor (`dalgaKovala`,
+  `dalgaGer`). Kayıt çubuğu da gerilir; basılı tutma hapına canlı dalga eklendi.
+- ✅ **Rozet mesajla aynı anda** (*"sayı mesajlar kısmına gidene kadar
+  gözükmüyor"*): `SohbetOlaylari.mesajGeldi` sayacı ATLIYORDU (yalnız
+  Mesajlar'dan dönüşte ve web'in 20 sn'lik turunda tazeleniyordu). Artık yerel
+  +1 (anında) + sunucudan doğrulama; açık konuşmanın mesajı sayılmaz.
+- Çeviri: 3 yeni anahtar × 45 dil (135 satır).
+- Test `sohbet_ss_ve_dalga_test.dart` (7) + tüm paket (2978) ve backend (2509) yeşil.
+- TUZAK: dağıtım sırasında başka oturum da 244 ile web yükledi; paketler
+  birbirini sildi (bkz. paylaşılan ağaç notu).

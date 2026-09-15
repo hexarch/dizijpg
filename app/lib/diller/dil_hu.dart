@@ -1732,4 +1732,7 @@ const Map<String, String> cevirilerHu = {
   'Ort.': 'Átl.',
   'En iyi bölüm': 'Legjobb epizód',
   'Sezonun bölümleri': 'Az évad epizódjai',
+  'Ekran görüntüsü aldın': 'Képernyőképet készítettél',
+  '{} ekran görüntüsü aldı': '{} képernyőképet készített',
+  'Gönderiliyor': 'Küldés',
 };

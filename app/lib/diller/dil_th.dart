@@ -1691,4 +1691,7 @@ const Map<String, String> cevirilerTh = {
   'Ort.': 'เฉลี่ย',
   'En iyi bölüm': 'ตอนที่ดีที่สุด',
   'Sezonun bölümleri': 'ตอนในซีซันนี้',
+  'Ekran görüntüsü aldın': 'คุณจับภาพหน้าจอ',
+  '{} ekran görüntüsü aldı': '{} จับภาพหน้าจอ',
+  'Gönderiliyor': 'กำลังส่ง',
 };

@@ -1637,4 +1637,7 @@ const Map<String, String> cevirilerJa = {
   'Ort.': '平均',
   'En iyi bölüm': 'ベストエピソード',
   'Sezonun bölümleri': 'このシーズンのエピソード',
+  'Ekran görüntüsü aldın': 'スクリーンショットを撮影しました',
+  '{} ekran görüntüsü aldı': '{} がスクリーンショットを撮影しました',
+  'Gönderiliyor': '送信中',
 };

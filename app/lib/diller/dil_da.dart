@@ -1723,4 +1723,7 @@ const Map<String, String> cevirilerDa = {
   'Ort.': 'Gns.',
   'En iyi bölüm': 'Bedste afsnit',
   'Sezonun bölümleri': 'Sæsonens afsnit',
+  'Ekran görüntüsü aldın': 'Du tog et skærmbillede',
+  '{} ekran görüntüsü aldı': '{} tog et skærmbillede',
+  'Gönderiliyor': 'Sender',
 };

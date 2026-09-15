@@ -1716,4 +1716,7 @@ const Map<String, String> cevirilerHi = {
   'Ort.': 'औसत',
   'En iyi bölüm': 'सर्वश्रेष्ठ एपिसोड',
   'Sezonun bölümleri': 'इस सीज़न के एपिसोड',
+  'Ekran görüntüsü aldın': 'आपने स्क्रीनशॉट लिया',
+  '{} ekran görüntüsü aldı': '{} ने स्क्रीनशॉट लिया',
+  'Gönderiliyor': 'भेजा जा रहा है',
 };
