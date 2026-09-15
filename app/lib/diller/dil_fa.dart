@@ -1745,4 +1745,32 @@ const Map<String, String> cevirilerFa = {
   'Tema karşı tarafa iletilemedi': 'پوسته به طرف مقابل ارسال نشد',
   'Seçtiğin tema karşı tarafta da görünür':
       'پوسته‌ای که انتخاب می‌کنید برای طرف مقابل هم نمایش داده می‌شود',
+  'Alıcı bir kez görebilir': 'گیرنده می‌تواند یک بار ببیند',
+  'Açıldı': 'باز شد',
+  'Flaş': 'فلاش',
+  'Fotoğraf çekilemedi': 'عکس گرفته نشد',
+  'Galeri izni gerekli': 'دسترسی به گالری لازم است',
+  'Galeride medya yok': 'رسانه‌ای در گالری نیست',
+  'Galeriden seç': 'انتخاب از گالری',
+  'Görmek için dokun': 'برای دیدن ضربه بزنید',
+  'Konum': 'موقعیت',
+  'Konum alınamadı': 'موقعیت دریافت نشد',
+  'Konum izni gerekli': 'مجوز موقعیت لازم است',
+  'Konum servisi kapalı': 'سرویس موقعیت خاموش است',
+  'Konumum': 'موقعیت من',
+  'Mesaj ekle...': 'پیام اضافه کنید...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'برای نمایش عکس‌های اخیر در اینجا دسترسی به گالری لازم است.',
+  'Tek kullanımlık': 'یک‌بار دیدن',
+  'Tek kullanımlık fotoğraf': 'عکس یک‌بارمصرف',
+  'Tek kullanımlık medya': 'رسانه یک‌بارمصرف',
+  'Tek kullanımlık video': 'ویدیوی یک‌بارمصرف',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'یک‌بار دیدن فقط با یک عکس یا ویدیو کار می‌کند',
+  'Video kaydedilemedi': 'ویدیو ذخیره نشد',
+  'Video kaydı başlamadı': 'ضبط ویدیو شروع نشد',
+  'Çek': 'گرفتن',
+  'Çekmek için dokun, video için basılı tut':
+      'برای عکس ضربه بزنید، برای ویدیو نگه دارید',
+  'İzin ver': 'اجازه دادن',
 };

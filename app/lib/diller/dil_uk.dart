@@ -1769,4 +1769,32 @@ const Map<String, String> cevirilerUk = {
   'Tema karşı tarafa iletilemedi': 'Не вдалося надіслати тему співрозмовнику',
   'Seçtiğin tema karşı tarafta da görünür':
       'Обрана тема відображається і в співрозмовника',
+  'Alıcı bir kez görebilir': 'Одержувач зможе переглянути один раз',
+  'Açıldı': 'Відкрито',
+  'Flaş': 'Спалах',
+  'Fotoğraf çekilemedi': 'Не вдалося зробити фото',
+  'Galeri izni gerekli': 'Потрібен доступ до галереї',
+  'Galeride medya yok': 'У галереї немає медіа',
+  'Galeriden seç': 'Вибрати з галереї',
+  'Görmek için dokun': 'Торкнись, щоб переглянути',
+  'Konum': 'Місцезнаходження',
+  'Konum alınamadı': 'Не вдалося отримати місцезнаходження',
+  'Konum izni gerekli': 'Потрібен дозвіл на місцезнаходження',
+  'Konum servisi kapalı': 'Служби геолокації вимкнено',
+  'Konumum': 'Моє місцезнаходження',
+  'Mesaj ekle...': 'Додати повідомлення...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Щоб показати тут останні фото, потрібен доступ до галереї.',
+  'Tek kullanımlık': 'Одноразовий перегляд',
+  'Tek kullanımlık fotoğraf': 'Одноразове фото',
+  'Tek kullanımlık medya': 'Одноразове медіа',
+  'Tek kullanımlık video': 'Одноразове відео',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Одноразовий перегляд працює лише з одним фото або відео',
+  'Video kaydedilemedi': 'Не вдалося зберегти відео',
+  'Video kaydı başlamadı': 'Запис відео не розпочався',
+  'Çek': 'Зняти',
+  'Çekmek için dokun, video için basılı tut':
+      'Торкнись для фото, утримуй для відео',
+  'İzin ver': 'Дозволити',
 };

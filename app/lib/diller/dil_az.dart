@@ -1752,4 +1752,32 @@ const Map<String, String> cevirilerAz = {
   'Tema karşı tarafa iletilemedi': 'Mövzu qarşı tərəfə göndərilə bilmədi',
   'Seçtiğin tema karşı tarafta da görünür':
       'Seçdiyin mövzu qarşı tərəfdə də görünür',
+  'Alıcı bir kez görebilir': 'Alıcı bir dəfə baxa bilər',
+  'Açıldı': 'Açılıb',
+  'Flaş': 'Fləş',
+  'Fotoğraf çekilemedi': 'Şəkil çəkilmədi',
+  'Galeri izni gerekli': 'Qalereya icazəsi lazımdır',
+  'Galeride medya yok': 'Qalereyada media yoxdur',
+  'Galeriden seç': 'Qalereyadan seç',
+  'Görmek için dokun': 'Baxmaq üçün toxun',
+  'Konum': 'Məkan',
+  'Konum alınamadı': 'Məkan alınmadı',
+  'Konum izni gerekli': 'Məkan icazəsi lazımdır',
+  'Konum servisi kapalı': 'Məkan xidmətləri bağlıdır',
+  'Konumum': 'Mənim məkanım',
+  'Mesaj ekle...': 'Mesaj əlavə et...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Son şəkillərin burada görünməsi üçün qalereya icazəsi lazımdır.',
+  'Tek kullanımlık': 'Bir dəfəlik',
+  'Tek kullanımlık fotoğraf': 'Bir dəfəlik şəkil',
+  'Tek kullanımlık medya': 'Bir dəfəlik media',
+  'Tek kullanımlık video': 'Bir dəfəlik video',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Bir dəfəlik yalnız tək şəkil və ya video ilə işləyir',
+  'Video kaydedilemedi': 'Video yadda saxlanmadı',
+  'Video kaydı başlamadı': 'Video çəkilişi başlamadı',
+  'Çek': 'Çək',
+  'Çekmek için dokun, video için basılı tut':
+      'Şəkil üçün toxun, video üçün basılı saxla',
+  'İzin ver': 'İcazə ver',
 };

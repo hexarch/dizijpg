@@ -8,6 +8,7 @@ import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/sohbet.dart';
+import 'package:dizijpg/ekranlar/sohbet_medya_paneli.dart';
 import 'package:dizijpg/ekranlar/sohbet_detay.dart';
 import 'package:dizijpg/sohbet_tema.dart';
 import 'package:flutter/material.dart';
@@ -235,12 +236,20 @@ void main() {
       expect(find.byIcon(Icons.mic_none), findsOneWidget);
       expect(find.byIcon(Icons.send_rounded), findsNothing);
 
-      // Ataç paneli: Galeri / Kamera / Dosya / GIF / Dizi-Film kutucukları.
+      // Ataç paneli (15 Eyl 2026, Telegram düzeni): galeri ızgarası +
+      // kamera karesi + Galeri / Dosya / Konum / GIF / Dizi-Film şeridi.
+      galeriSahte = () async => const [];
+      kameraOnizlemeKapali = true;
+      addTearDown(() {
+        galeriSahte = null;
+        kameraOnizlemeKapali = false;
+      });
       await tester.tap(find.byIcon(Icons.attach_file));
       await tester.pumpAndSettle();
-      for (final ad in ['Galeri', 'Kamera', 'Dosya', 'GIF', 'Dizi / Film']) {
+      for (final ad in ['Galeri', 'Dosya', 'Konum', 'GIF', 'Dizi / Film']) {
         expect(find.text(ad), findsOneWidget, reason: ad);
       }
+      expect(find.byKey(const Key('panel-kamera')), findsOneWidget);
       // Mikrofona tek dokunuş kaydetmez; SnackBar da basmaz (15 Eyl 2026:
       // klavyenin üstüne biniyordu), düğme sağa-sola sallanır.
       await tester.tapAt(const Offset(10, 10)); // paneli kapat

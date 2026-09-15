@@ -1798,4 +1798,32 @@ const Map<String, String> cevirilerEl = {
   'Tema karşı tarafa iletilemedi': 'Το θέμα δεν στάλθηκε στην άλλη πλευρά',
   'Seçtiğin tema karşı tarafta da görünür':
       'Το θέμα που διαλέγεις φαίνεται και στην άλλη πλευρά',
+  'Alıcı bir kez görebilir': 'Ο παραλήπτης μπορεί να το δει μία φορά',
+  'Açıldı': 'Ανοίχτηκε',
+  'Flaş': 'Φλας',
+  'Fotoğraf çekilemedi': 'Δεν ήταν δυνατή η λήψη φωτογραφίας',
+  'Galeri izni gerekli': 'Απαιτείται πρόσβαση στη συλλογή',
+  'Galeride medya yok': 'Δεν υπάρχουν μέσα στη συλλογή',
+  'Galeriden seç': 'Επιλογή από συλλογή',
+  'Görmek için dokun': 'Πάτησε για προβολή',
+  'Konum': 'Τοποθεσία',
+  'Konum alınamadı': 'Δεν ήταν δυνατή η λήψη τοποθεσίας',
+  'Konum izni gerekli': 'Απαιτείται άδεια τοποθεσίας',
+  'Konum servisi kapalı': 'Οι υπηρεσίες τοποθεσίας είναι απενεργοποιημένες',
+  'Konumum': 'Η τοποθεσία μου',
+  'Mesaj ekle...': 'Πρόσθεσε μήνυμα...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Για να εμφανίζονται εδώ οι πρόσφατες φωτογραφίες σου, απαιτείται πρόσβαση στη συλλογή.',
+  'Tek kullanımlık': 'Μία προβολή',
+  'Tek kullanımlık fotoğraf': 'Φωτογραφία μίας προβολής',
+  'Tek kullanımlık medya': 'Μέσο μίας προβολής',
+  'Tek kullanımlık video': 'Βίντεο μίας προβολής',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Η μία προβολή λειτουργεί μόνο με μία φωτογραφία ή βίντεο',
+  'Video kaydedilemedi': 'Δεν ήταν δυνατή η αποθήκευση του βίντεο',
+  'Video kaydı başlamadı': 'Η εγγραφή βίντεο δεν ξεκίνησε',
+  'Çek': 'Λήψη',
+  'Çekmek için dokun, video için basılı tut':
+      'Πάτησε για φωτογραφία, κράτησε για βίντεο',
+  'İzin ver': 'Επιτρέπεται',
 };

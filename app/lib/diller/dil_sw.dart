@@ -1771,4 +1771,32 @@ const Map<String, String> cevirilerSw = {
       'Mandhari hayakuweza kutumwa kwa upande mwingine',
   'Seçtiğin tema karşı tarafta da görünür':
       'Mandhari unayochagua yanaonekana pia upande mwingine',
+  'Alıcı bir kez görebilir': 'Mpokeaji anaweza kuona mara moja',
+  'Açıldı': 'Imefunguliwa',
+  'Flaş': 'Mwanga',
+  'Fotoğraf çekilemedi': 'Picha haikupigwa',
+  'Galeri izni gerekli': 'Ruhusa ya ghala inahitajika',
+  'Galeride medya yok': 'Hakuna picha kwenye ghala',
+  'Galeriden seç': 'Chagua kutoka ghala',
+  'Görmek için dokun': 'Gusa kuona',
+  'Konum': 'Mahali',
+  'Konum alınamadı': 'Mahali hapakupatikana',
+  'Konum izni gerekli': 'Ruhusa ya mahali inahitajika',
+  'Konum servisi kapalı': 'Huduma za mahali zimezimwa',
+  'Konumum': 'Mahali pangu',
+  'Mesaj ekle...': 'Ongeza ujumbe...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Ruhusa ya ghala inahitajika ili kuonyesha picha zako za hivi karibuni hapa.',
+  'Tek kullanımlık': 'Ona mara moja',
+  'Tek kullanımlık fotoğraf': 'Picha ya mara moja',
+  'Tek kullanımlık medya': 'Media ya mara moja',
+  'Tek kullanımlık video': 'Video ya mara moja',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Ona mara moja hufanya kazi na picha au video moja tu',
+  'Video kaydedilemedi': 'Video haikuhifadhiwa',
+  'Video kaydı başlamadı': 'Kurekodi video hakukuanza',
+  'Çek': 'Piga',
+  'Çekmek için dokun, video için basılı tut':
+      'Gusa kupiga picha, shikilia kwa video',
+  'İzin ver': 'Ruhusu',
 };

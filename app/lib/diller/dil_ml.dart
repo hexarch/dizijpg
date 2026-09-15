@@ -1771,4 +1771,32 @@ const Map<String, String> cevirilerMl = {
   'Tema karşı tarafa iletilemedi': 'തീം മറുഭാഗത്തേക്ക് അയയ്ക്കാനായില്ല',
   'Seçtiğin tema karşı tarafta da görünür':
       'നിങ്ങൾ തിരഞ്ഞെടുക്കുന്ന തീം മറുഭാഗത്തും കാണാം',
+  'Alıcı bir kez görebilir': 'സ്വീകർത്താവിന് ഒരിക്കൽ മാത്രം കാണാം',
+  'Açıldı': 'തുറന്നു',
+  'Flaş': 'ഫ്ലാഷ്',
+  'Fotoğraf çekilemedi': 'ഫോട്ടോ എടുക്കാനായില്ല',
+  'Galeri izni gerekli': 'ഗാലറി അനുമതി ആവശ്യമാണ്',
+  'Galeride medya yok': 'ഗാലറിയിൽ മീഡിയയില്ല',
+  'Galeriden seç': 'ഗാലറിയിൽ നിന്ന് തിരഞ്ഞെടുക്കുക',
+  'Görmek için dokun': 'കാണാൻ ടാപ്പ് ചെയ്യുക',
+  'Konum': 'ലൊക്കേഷൻ',
+  'Konum alınamadı': 'ലൊക്കേഷൻ ലഭിച്ചില്ല',
+  'Konum izni gerekli': 'ലൊക്കേഷൻ അനുമതി ആവശ്യമാണ്',
+  'Konum servisi kapalı': 'ലൊക്കേഷൻ സേവനങ്ങൾ ഓഫാണ്',
+  'Konumum': 'എന്റെ ലൊക്കേഷൻ',
+  'Mesaj ekle...': 'സന്ദേശം ചേർക്കുക...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'സമീപകാല ഫോട്ടോകൾ ഇവിടെ കാണിക്കാൻ ഗാലറി അനുമതി ആവശ്യമാണ്.',
+  'Tek kullanımlık': 'ഒരിക്കൽ കാണുക',
+  'Tek kullanımlık fotoğraf': 'ഒരിക്കൽ കാണാവുന്ന ഫോട്ടോ',
+  'Tek kullanımlık medya': 'ഒരിക്കൽ കാണാവുന്ന മീഡിയ',
+  'Tek kullanımlık video': 'ഒരിക്കൽ കാണാവുന്ന വീഡിയോ',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'ഒരിക്കൽ കാണൽ ഒരൊറ്റ ഫോട്ടോയോ വീഡിയോയോ കൊണ്ട് മാത്രം പ്രവർത്തിക്കും',
+  'Video kaydedilemedi': 'വീഡിയോ സേവ് ചെയ്യാനായില്ല',
+  'Video kaydı başlamadı': 'വീഡിയോ റെക്കോർഡിംഗ് തുടങ്ങിയില്ല',
+  'Çek': 'എടുക്കുക',
+  'Çekmek için dokun, video için basılı tut':
+      'ഫോട്ടോയ്ക്ക് ടാപ്പ് ചെയ്യുക, വീഡിയോയ്ക്ക് അമർത്തിപ്പിടിക്കുക',
+  'İzin ver': 'അനുവദിക്കുക',
 };

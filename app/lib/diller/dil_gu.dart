@@ -1749,4 +1749,32 @@ const Map<String, String> cevirilerGu = {
   'Tema karşı tarafa iletilemedi': 'થીમ સામેની વ્યક્તિને મોકલી શકાઈ નથી',
   'Seçtiğin tema karşı tarafta da görünür':
       'તમે પસંદ કરેલી થીમ સામેની વ્યક્તિને પણ દેખાય છે',
+  'Alıcı bir kez görebilir': 'મેળવનાર તેને એક વાર જોઈ શકે છે',
+  'Açıldı': 'ખોલ્યું',
+  'Flaş': 'ફ્લેશ',
+  'Fotoğraf çekilemedi': 'ફોટો લઈ શકાયો નથી',
+  'Galeri izni gerekli': 'ગેલેરીની પરવાનગી જરૂરી છે',
+  'Galeride medya yok': 'ગેલેરીમાં કોઈ મીડિયા નથી',
+  'Galeriden seç': 'ગેલેરીમાંથી પસંદ કરો',
+  'Görmek için dokun': 'જોવા માટે ટેપ કરો',
+  'Konum': 'સ્થાન',
+  'Konum alınamadı': 'સ્થાન મેળવી શકાયું નથી',
+  'Konum izni gerekli': 'સ્થાનની પરવાનગી જરૂરી છે',
+  'Konum servisi kapalı': 'સ્થાન સેવાઓ બંધ છે',
+  'Konumum': 'મારું સ્થાન',
+  'Mesaj ekle...': 'સંદેશ ઉમેરો...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'તાજેતરના ફોટા અહીં બતાવવા માટે ગેલેરીની પરવાનગી જરૂરી છે.',
+  'Tek kullanımlık': 'એક વાર જુઓ',
+  'Tek kullanımlık fotoğraf': 'એક વાર જોવાનો ફોટો',
+  'Tek kullanımlık medya': 'એક વાર જોવાનું મીડિયા',
+  'Tek kullanımlık video': 'એક વાર જોવાનો વિડિઓ',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'એક વાર જોવાનું ફક્ત એક ફોટો કે વિડિઓ સાથે કામ કરે છે',
+  'Video kaydedilemedi': 'વિડિઓ સાચવી શકાયો નથી',
+  'Video kaydı başlamadı': 'વિડિઓ રેકોર્ડિંગ શરૂ થયું નથી',
+  'Çek': 'લો',
+  'Çekmek için dokun, video için basılı tut':
+      'ફોટો માટે ટેપ કરો, વિડિઓ માટે દબાવી રાખો',
+  'İzin ver': 'પરવાનગી આપો',
 };

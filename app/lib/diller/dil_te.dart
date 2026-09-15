@@ -1762,4 +1762,32 @@ const Map<String, String> cevirilerTe = {
   'Tema karşı tarafa iletilemedi': 'థీమ్‌ను అవతలి వైపు పంపలేకపోయాం',
   'Seçtiğin tema karşı tarafta da görünür':
       'మీరు ఎంచుకున్న థీమ్ అవతలి వైపు కూడా కనిపిస్తుంది',
+  'Alıcı bir kez görebilir': 'స్వీకర్త ఒక్కసారి మాత్రమే చూడగలరు',
+  'Açıldı': 'తెరిచారు',
+  'Flaş': 'ఫ్లాష్',
+  'Fotoğraf çekilemedi': 'ఫోటో తీయలేకపోయాం',
+  'Galeri izni gerekli': 'గ్యాలరీ అనుమతి అవసరం',
+  'Galeride medya yok': 'గ్యాలరీలో మీడియా లేదు',
+  'Galeriden seç': 'గ్యాలరీ నుండి ఎంచుకోండి',
+  'Görmek için dokun': 'చూడటానికి నొక్కండి',
+  'Konum': 'స్థానం',
+  'Konum alınamadı': 'స్థానం పొందలేకపోయాం',
+  'Konum izni gerekli': 'స్థాన అనుమతి అవసరం',
+  'Konum servisi kapalı': 'స్థాన సేవలు ఆఫ్‌లో ఉన్నాయి',
+  'Konumum': 'నా స్థానం',
+  'Mesaj ekle...': 'సందేశం జోడించండి...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'ఇటీవలి ఫోటోలను ఇక్కడ చూపడానికి గ్యాలరీ అనుమతి అవసరం.',
+  'Tek kullanımlık': 'ఒకసారి చూడండి',
+  'Tek kullanımlık fotoğraf': 'ఒకసారి చూసే ఫోటో',
+  'Tek kullanımlık medya': 'ఒకసారి చూసే మీడియా',
+  'Tek kullanımlık video': 'ఒకసారి చూసే వీడియో',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'ఒకసారి చూడటం ఒకే ఫోటో లేదా వీడియోతో మాత్రమే పనిచేస్తుంది',
+  'Video kaydedilemedi': 'వీడియో సేవ్ చేయలేకపోయాం',
+  'Video kaydı başlamadı': 'వీడియో రికార్డింగ్ ప్రారంభం కాలేదు',
+  'Çek': 'తీయండి',
+  'Çekmek için dokun, video için basılı tut':
+      'ఫోటోకు నొక్కండి, వీడియోకు నొక్కి పట్టుకోండి',
+  'İzin ver': 'అనుమతించండి',
 };

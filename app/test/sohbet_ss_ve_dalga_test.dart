@@ -69,6 +69,9 @@ void _sunucu(List<Map<String, dynamic>> mesajlar) {
   Api.istemci = MockClient((istek) async {
     if (istek.method == 'POST') {
       _postlar.add(istek.url.path);
+      if (istek.url.path.endsWith('/tek-acildi')) {
+        return _json({'tamam': true, 'tek_acildi': '2026-08-05T10:30:00Z'});
+      }
       if (istek.url.path.endsWith('/mesajlar')) {
         if (_gonderimKapisi != null) await _gonderimKapisi!.future;
         return _json({'id': 901, 'tarih': '2026-08-05T11:00:00Z'});
@@ -247,6 +250,60 @@ void main() {
       await _kapat(tester);
     },
   );
+
+  testWidgets(
+    'TEK KULLANIMLIK: alıcıda pul, açınca sunucuya bildirilir ve "Açıldı"',
+    (tester) async {
+      // 15 Eyl 2026: Telegram/WhatsApp kalıbı. Önizleme YOK, pul var.
+      final m = _mesaj(1, benim: false)
+        ..['medya'] = '/medya/tek.jpg'
+        ..['tek_kullanimlik'] = true;
+      await _kur(tester, [m]);
+      expect(find.text('Tek kullanımlık fotoğraf'), findsOneWidget);
+      expect(find.text('Görmek için dokun'), findsOneWidget);
+      // Pula dokun → tam ekran görüntüleyici → kapat → POST tek-acildi.
+      // `pumpAndSettle` YOK: görüntüleyicinin yer tutucusu sonsuz döner.
+      // Balonda çift dokunma tanıyıcısı var (emoji vuruşu): tek dokunuş
+      // ancak çift dokunma süresi (300 ms) dolunca kesinleşir.
+      await tester.tap(find.byKey(const Key('tek-kullanimlik-pul')));
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.byIcon(Icons.close), findsWidgets);
+      await tester.tap(find.byIcon(Icons.close).first);
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      expect(
+        _postlar.where((y) => y.endsWith('/mesajlar/1/tek-acildi')),
+        hasLength(1),
+      );
+      expect(find.text('Açıldı'), findsOneWidget);
+      expect(find.text('Görmek için dokun'), findsNothing);
+      expect(tester.takeException(), isNull);
+      await _kapat(tester);
+    },
+  );
+
+  testWidgets('TEK KULLANIMLIK: gönderen yalnız durumu görür, dokunamaz', (
+    tester,
+  ) async {
+    // Sunucu gönderene yolu vermez (medya null) — pul "medya" der.
+    final m = _mesaj(1, benim: true)..['tek_kullanimlik'] = true;
+    await _kur(tester, [m]);
+    expect(find.text('Tek kullanımlık medya'), findsOneWidget);
+    expect(find.text('Alıcı bir kez görebilir'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('tek-kullanimlik-pul')));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(_postlar.where((y) => y.contains('tek-acildi')), isEmpty);
+    // Açılmış hâli.
+    final a = _mesaj(2, benim: true)
+      ..['tek_kullanimlik'] = true
+      ..['tek_acildi'] = '2026-08-05T10:20:00Z';
+    await _kapat(tester);
+    await _kur(tester, [a]);
+    expect(find.text('Açıldı'), findsOneWidget);
+    await _kapat(tester);
+  });
 
   testWidgets('PAYLAŞILAN TEMA: yoklamada gelen tema yerele işlenir', (
     tester,

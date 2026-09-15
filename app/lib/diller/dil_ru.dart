@@ -1825,4 +1825,32 @@ const Map<String, String> cevirilerRu = {
   'Tema karşı tarafa iletilemedi': 'Не удалось отправить тему собеседнику',
   'Seçtiğin tema karşı tarafta da görünür':
       'Выбранная тема отображается и у собеседника',
+  'Alıcı bir kez görebilir': 'Получатель сможет посмотреть один раз',
+  'Açıldı': 'Открыто',
+  'Flaş': 'Вспышка',
+  'Fotoğraf çekilemedi': 'Не удалось сделать фото',
+  'Galeri izni gerekli': 'Нужен доступ к галерее',
+  'Galeride medya yok': 'В галерее нет медиа',
+  'Galeriden seç': 'Выбрать из галереи',
+  'Görmek için dokun': 'Нажми, чтобы посмотреть',
+  'Konum': 'Геопозиция',
+  'Konum alınamadı': 'Не удалось получить геопозицию',
+  'Konum izni gerekli': 'Нужно разрешение на геопозицию',
+  'Konum servisi kapalı': 'Службы геолокации выключены',
+  'Konumum': 'Моя геопозиция',
+  'Mesaj ekle...': 'Добавить сообщение...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Чтобы показать здесь недавние фото, нужен доступ к галерее.',
+  'Tek kullanımlık': 'Одноразовый просмотр',
+  'Tek kullanımlık fotoğraf': 'Одноразовое фото',
+  'Tek kullanımlık medya': 'Одноразовое медиа',
+  'Tek kullanımlık video': 'Одноразовое видео',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Одноразовый просмотр работает только с одним фото или видео',
+  'Video kaydedilemedi': 'Не удалось сохранить видео',
+  'Video kaydı başlamadı': 'Запись видео не началась',
+  'Çek': 'Снять',
+  'Çekmek için dokun, video için basılı tut':
+      'Нажми для фото, удерживай для видео',
+  'İzin ver': 'Разрешить',
 };

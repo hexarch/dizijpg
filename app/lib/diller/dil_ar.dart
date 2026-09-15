@@ -1784,4 +1784,32 @@ const Map<String, String> cevirilerAr = {
   'Tema karşı tarafa iletilemedi': 'تعذر إرسال السمة إلى الطرف الآخر',
   'Seçtiğin tema karşı tarafta da görünür':
       'السمة التي تختارها تظهر للطرف الآخر أيضًا',
+  'Alıcı bir kez görebilir': 'يمكن للمستلم مشاهدته مرة واحدة',
+  'Açıldı': 'تم الفتح',
+  'Flaş': 'الفلاش',
+  'Fotoğraf çekilemedi': 'تعذر التقاط الصورة',
+  'Galeri izni gerekli': 'مطلوب الوصول إلى المعرض',
+  'Galeride medya yok': 'لا توجد وسائط في المعرض',
+  'Galeriden seç': 'اختر من المعرض',
+  'Görmek için dokun': 'انقر للعرض',
+  'Konum': 'الموقع',
+  'Konum alınamadı': 'تعذر الحصول على الموقع',
+  'Konum izni gerekli': 'مطلوب إذن الموقع',
+  'Konum servisi kapalı': 'خدمات الموقع متوقفة',
+  'Konumum': 'موقعي',
+  'Mesaj ekle...': 'أضف رسالة...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'مطلوب الوصول إلى المعرض لعرض صورك الأخيرة هنا.',
+  'Tek kullanımlık': 'عرض لمرة واحدة',
+  'Tek kullanımlık fotoğraf': 'صورة لمرة واحدة',
+  'Tek kullanımlık medya': 'وسائط لمرة واحدة',
+  'Tek kullanımlık video': 'فيديو لمرة واحدة',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'العرض لمرة واحدة يعمل مع صورة أو فيديو واحد فقط',
+  'Video kaydedilemedi': 'تعذر حفظ الفيديو',
+  'Video kaydı başlamadı': 'لم يبدأ تسجيل الفيديو',
+  'Çek': 'التقاط',
+  'Çekmek için dokun, video için basılı tut':
+      'انقر للتصوير، اضغط مطولاً للفيديو',
+  'İzin ver': 'السماح',
 };

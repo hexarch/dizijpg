@@ -1783,4 +1783,32 @@ const Map<String, String> cevirilerPl = {
       'Nie udało się wysłać motywu drugiej stronie',
   'Seçtiğin tema karşı tarafta da görünür':
       'Wybrany motyw widzi też druga strona',
+  'Alıcı bir kez görebilir': 'Odbiorca może to zobaczyć raz',
+  'Açıldı': 'Otwarto',
+  'Flaş': 'Lampa błyskowa',
+  'Fotoğraf çekilemedi': 'Nie udało się zrobić zdjęcia',
+  'Galeri izni gerekli': 'Potrzebny dostęp do galerii',
+  'Galeride medya yok': 'Brak multimediów w galerii',
+  'Galeriden seç': 'Wybierz z galerii',
+  'Görmek için dokun': 'Dotknij, aby zobaczyć',
+  'Konum': 'Lokalizacja',
+  'Konum alınamadı': 'Nie udało się pobrać lokalizacji',
+  'Konum izni gerekli': 'Potrzebne uprawnienie do lokalizacji',
+  'Konum servisi kapalı': 'Usługi lokalizacyjne są wyłączone',
+  'Konumum': 'Moja lokalizacja',
+  'Mesaj ekle...': 'Dodaj wiadomość...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Aby pokazać tu ostatnie zdjęcia, potrzebny jest dostęp do galerii.',
+  'Tek kullanımlık': 'Jednorazowy podgląd',
+  'Tek kullanımlık fotoğraf': 'Zdjęcie jednorazowe',
+  'Tek kullanımlık medya': 'Multimedia jednorazowe',
+  'Tek kullanımlık video': 'Wideo jednorazowe',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Jednorazowy podgląd działa tylko z jednym zdjęciem lub wideo',
+  'Video kaydedilemedi': 'Nie udało się zapisać wideo',
+  'Video kaydı başlamadı': 'Nagrywanie wideo nie rozpoczęło się',
+  'Çek': 'Zrób',
+  'Çekmek için dokun, video için basılı tut':
+      'Dotknij, aby zrobić zdjęcie; przytrzymaj, aby nagrać wideo',
+  'İzin ver': 'Zezwól',
 };

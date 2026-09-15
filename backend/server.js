@@ -16664,7 +16664,7 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
             -- icerik_tur yok) — kullanici "bir postu birine gonderince
             -- mesajlar kisminda bos gozukuyor" diye bildirdi (1 Eyl 2026).
             m.id, m.metin, m.medya, m.icerik_tur, m.yorum_id, m.tarih, m.gonderen_id,
-            m.dosya_ad,
+            m.dosya_ad, m.tek_kullanimlik,
             k.id AS partner_id, k.kullanici_adi AS partner, k.avatar AS partner_avatar,
             ta.takma_ad AS partner_takma_ad,
             -- Çevrimiçi HESABI SUNUCUDA yapılır: gizleyen kullanıcının
@@ -17261,6 +17261,7 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
             m.yorum_id, m.okundu, m.iletildi, m.duzenlendi, m.yanit_id, m.tarih,
             -- ALBÜM + BELGE (2 Eyl 2026)
             m.medyalar, m.dosya, m.dosya_ad, m.dosya_boyut, m.dosya_tur,
+            m.tek_kullanimlik, m.tek_acildi,
             y.metin AS yanit_metin, y.gonderen_id AS yanit_gonderen,
             y.medya AS yanit_medya, y.icerik_tur AS yanit_icerik_tur,
             y.dosya_ad AS yanit_dosya_ad,
@@ -17294,6 +17295,13 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   for (const r of rows) {
     r.metin = cozGoster(r.metin);
     r.yanit_metin = cozGoster(r.yanit_metin);
+    // TEK KULLANIMLIK: açıldıysa yol İKİ TARAFA da gitmez (dosya zaten
+    // silindi); açılmadıysa yalnız ALICI görür — gönderen kendi
+    // fotoğrafını yeniden açamaz (WhatsApp kalıbı).
+    if (r.tek_kullanimlik && (r.tek_acildi || r.gonderen_id === req.kullanici.id)) {
+      r.medya = null;
+      r.medyalar = null;
+    }
     // DM medyası İMZALI-SÜRELİ yolla gider (denetim §2.1). İmza YOL SEGMENTİ
     // olduğu için yol hâlâ uzantıyla biter -> yayındaki istemcilerin
     // `endsWith('.mp4')` / `endsWith('.ogg')` türü tür tespiti bozulmaz.
@@ -17462,6 +17470,9 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
     // alanları medyadan ayrı kolonlarda.
     medyalar: medyalarHam = null, dosya: dosyaHam = null,
     dosya_ad = null, dosya_boyut = null, dosya_tur = null,
+    // TEK KULLANIMLIK (15 Eyl 2026, migrasyon-2026-09-15b): yalnız tek
+    // medyalı mesajda; alıcı açınca dosya silinir, yol iki tarafa da gitmez.
+    tek_kullanimlik: tekKullanimlikHam = false,
   } = req.body || {};
   // İmzalı yolu KANONİK hâle getir. Bugünün istemcisi yükleme ucundan aldığı
   // imzasız yolu gönderiyor, ama okuma uçları artık imzalı yol döndürdüğü için
@@ -17563,16 +17574,21 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
     );
     if (y.rows.length) gecerliYanit = yanit_id;
   }
+  const tekKullanimlik = tekKullanimlikHam === true || tekKullanimlikHam === 'true';
+  if (tekKullanimlik && (!ilkMedya || medyalar || sesMi)) {
+    return res.status(400).json({ hata: 'Tek kullanımlık yalnız tek fotoğraf/video ile olur' });
+  }
   const { rows } = await havuz.query(
     `INSERT INTO mesajlar (gonderen_id, alici_id, metin, medya, ses_dalga,
                            icerik_tur, icerik_id, yanit_id, yorum_id,
-                           medyalar, dosya, dosya_ad, dosya_boyut, dosya_tur)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING id, tarih`,
+                           medyalar, dosya, dosya_ad, dosya_boyut, dosya_tur,
+                           tek_kullanimlik)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING id, tarih`,
     // temiz.length > 2000 doğrulaması YUKARIDA, şifrelemeden ÖNCE yapılır:
     // DB'deki CHECK kısıtı zarf uzunluğu yüzünden kalktı, tek savunma o.
     [req.kullanici.id, aliciId, sifrele(temiz || null), ilkMedya, sesMi ? ses_dalga : null,
      icerikVar ? icerik_tur : null, icerikVar ? icerik_id : null, gecerliYanit,
-     yorum_id ?? null, medyalar, dosya, dosyaAd, dosyaBoyut, dosyaTur],
+     yorum_id ?? null, medyalar, dosya, dosyaAd, dosyaBoyut, dosyaTur, tekKullanimlik],
   );
   // Dosya bu andan itibaren ÖZEL: bir sonraki isteğinde public önbelleğe
   // girmesin. Kümeye eklemek yalnız bellek işidir; açılışta DB'den yeniden
@@ -17826,6 +17842,30 @@ app.patch('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
   );
   if (!rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı veya düzenlenemez' });
   res.json({ tamam: true });
+}));
+
+// TEK KULLANIMLIK MEDYA AÇILDI (15 Eyl 2026): yalnız ALICI, yalnız bir kez.
+// Damga yazılır ve dosya diskten SİLİNİR; sonraki okumalar yolu döndürmez.
+// İmzalı-süreli eski URL disk boş olduğu için 404 verir.
+app.post('/mesajlar/:id/tek-acildi', girisZorunlu, sarici(async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const { rows } = await havuz.query(
+    `UPDATE mesajlar SET tek_acildi=now()
+     WHERE id=$1 AND alici_id=$2 AND tek_kullanimlik AND tek_acildi IS NULL
+     RETURNING medya, tek_acildi`,
+    [id, req.kullanici.id],
+  );
+  if (!rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı' });
+  if (rows[0].medya) {
+    const ad = path.basename(rows[0].medya);
+    fs.unlink(path.join(MEDYA_DIZIN, ad), () => {});
+    fs.unlink(path.join(MEDYA_DIZIN, `${ad}.jpg`), () => {});
+    OZEL_MEDYA.delete(ad);
+    OZEL_MEDYA.delete(`${ad}.jpg`);
+    yayinla('ozel_medya_sil', ad);
+  }
+  res.json({ tamam: true, tek_acildi: rows[0].tek_acildi });
 }));
 
 // Kendi mesajını sil (iki taraftan da kalkar; medyası varsa dosyayı da temizler)

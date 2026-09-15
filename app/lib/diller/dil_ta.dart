@@ -1791,4 +1791,32 @@ const Map<String, String> cevirilerTa = {
   'Tema karşı tarafa iletilemedi': 'தீமை மறுபக்கத்திற்கு அனுப்ப முடியவில்லை',
   'Seçtiğin tema karşı tarafta da görünür':
       'நீங்கள் தேர்ந்தெடுக்கும் தீம் மறுபக்கத்திலும் தெரியும்',
+  'Alıcı bir kez görebilir': 'பெறுநர் ஒரு முறை மட்டுமே பார்க்க முடியும்',
+  'Açıldı': 'திறக்கப்பட்டது',
+  'Flaş': 'ஃபிளாஷ்',
+  'Fotoğraf çekilemedi': 'புகைப்படம் எடுக்க முடியவில்லை',
+  'Galeri izni gerekli': 'கேலரி அனுமதி தேவை',
+  'Galeride medya yok': 'கேலரியில் ஊடகம் இல்லை',
+  'Galeriden seç': 'கேலரியிலிருந்து தேர்வு',
+  'Görmek için dokun': 'பார்க்க தட்டவும்',
+  'Konum': 'இருப்பிடம்',
+  'Konum alınamadı': 'இருப்பிடத்தைப் பெற முடியவில்லை',
+  'Konum izni gerekli': 'இருப்பிட அனுமதி தேவை',
+  'Konum servisi kapalı': 'இருப்பிடச் சேவைகள் அணைக்கப்பட்டுள்ளன',
+  'Konumum': 'என் இருப்பிடம்',
+  'Mesaj ekle...': 'செய்தி சேர்க்கவும்...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'சமீபத்திய புகைப்படங்களை இங்கே காட்ட கேலரி அனுமதி தேவை.',
+  'Tek kullanımlık': 'ஒரு முறை பார்க்க',
+  'Tek kullanımlık fotoğraf': 'ஒரு முறை பார்க்கும் புகைப்படம்',
+  'Tek kullanımlık medya': 'ஒரு முறை பார்க்கும் ஊடகம்',
+  'Tek kullanımlık video': 'ஒரு முறை பார்க்கும் வீடியோ',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'ஒரு முறை பார்த்தல் ஒரே ஒரு புகைப்படம் அல்லது வீடியோவுடன் மட்டுமே செயல்படும்',
+  'Video kaydedilemedi': 'வீடியோவைச் சேமிக்க முடியவில்லை',
+  'Video kaydı başlamadı': 'வீடியோ பதிவு தொடங்கவில்லை',
+  'Çek': 'எடு',
+  'Çekmek için dokun, video için basılı tut':
+      'புகைப்படத்திற்கு தட்டவும், வீடியோவிற்கு அழுத்திப் பிடிக்கவும்',
+  'İzin ver': 'அனுமதி',
 };

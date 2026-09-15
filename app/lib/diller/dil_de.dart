@@ -1794,4 +1794,32 @@ const Map<String, String> cevirilerDe = {
       'Design konnte nicht an die Gegenseite gesendet werden',
   'Seçtiğin tema karşı tarafta da görünür':
       'Das gewählte Design sieht auch die Gegenseite',
+  'Alıcı bir kez görebilir': 'Der Empfänger kann es einmal ansehen',
+  'Açıldı': 'Geöffnet',
+  'Flaş': 'Blitz',
+  'Fotoğraf çekilemedi': 'Foto konnte nicht aufgenommen werden',
+  'Galeri izni gerekli': 'Galeriezugriff nötig',
+  'Galeride medya yok': 'Keine Medien in der Galerie',
+  'Galeriden seç': 'Aus Galerie wählen',
+  'Görmek için dokun': 'Zum Ansehen tippen',
+  'Konum': 'Standort',
+  'Konum alınamadı': 'Standort konnte nicht ermittelt werden',
+  'Konum izni gerekli': 'Standortberechtigung nötig',
+  'Konum servisi kapalı': 'Standortdienste sind aus',
+  'Konumum': 'Mein Standort',
+  'Mesaj ekle...': 'Nachricht hinzufügen...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Für deine letzten Fotos hier ist Galeriezugriff nötig.',
+  'Tek kullanımlık': 'Einmalansicht',
+  'Tek kullanımlık fotoğraf': 'Einmal-Foto',
+  'Tek kullanımlık medya': 'Einmal-Medium',
+  'Tek kullanımlık video': 'Einmal-Video',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Einmalansicht geht nur mit einem einzelnen Foto oder Video',
+  'Video kaydedilemedi': 'Video konnte nicht gespeichert werden',
+  'Video kaydı başlamadı': 'Videoaufnahme hat nicht gestartet',
+  'Çek': 'Aufnehmen',
+  'Çekmek için dokun, video için basılı tut':
+      'Tippen für Foto, halten für Video',
+  'İzin ver': 'Erlauben',
 };

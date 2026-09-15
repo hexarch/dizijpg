@@ -1774,4 +1774,32 @@ const Map<String, String> cevirilerNl = {
       'Thema kon niet naar de ander worden gestuurd',
   'Seçtiğin tema karşı tarafta da görünür':
       'Het gekozen thema ziet de ander ook',
+  'Alıcı bir kez görebilir': 'De ontvanger kan het één keer bekijken',
+  'Açıldı': 'Geopend',
+  'Flaş': 'Flits',
+  'Fotoğraf çekilemedi': 'Kon geen foto maken',
+  'Galeri izni gerekli': 'Toegang tot galerij nodig',
+  'Galeride medya yok': 'Geen media in galerij',
+  'Galeriden seç': 'Kies uit galerij',
+  'Görmek için dokun': 'Tik om te bekijken',
+  'Konum': 'Locatie',
+  'Konum alınamadı': 'Kon locatie niet ophalen',
+  'Konum izni gerekli': 'Locatietoestemming nodig',
+  'Konum servisi kapalı': 'Locatieservices staan uit',
+  'Konumum': 'Mijn locatie',
+  'Mesaj ekle...': 'Bericht toevoegen...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Toegang tot de galerij is nodig om je recente foto\'s hier te tonen.',
+  'Tek kullanımlık': 'Eenmalig bekijken',
+  'Tek kullanımlık fotoğraf': 'Eenmalige foto',
+  'Tek kullanımlık medya': 'Eenmalig medium',
+  'Tek kullanımlık video': 'Eenmalige video',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Eenmalig bekijken werkt alleen met één foto of video',
+  'Video kaydedilemedi': 'Kon video niet opslaan',
+  'Video kaydı başlamadı': 'Video-opname is niet gestart',
+  'Çek': 'Vastleggen',
+  'Çekmek için dokun, video için basılı tut':
+      'Tik voor foto, houd vast voor video',
+  'İzin ver': 'Toestaan',
 };

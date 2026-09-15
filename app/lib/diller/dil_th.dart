@@ -1733,4 +1733,32 @@ const Map<String, String> cevirilerTh = {
   'Tema karşı tarafa iletilemedi': 'ส่งธีมให้อีกฝ่ายไม่สำเร็จ',
   'Seçtiğin tema karşı tarafta da görünür':
       'ธีมที่คุณเลือกจะแสดงให้อีกฝ่ายเห็นด้วย',
+  'Alıcı bir kez görebilir': 'ผู้รับดูได้ครั้งเดียว',
+  'Açıldı': 'เปิดแล้ว',
+  'Flaş': 'แฟลช',
+  'Fotoğraf çekilemedi': 'ถ่ายรูปไม่สำเร็จ',
+  'Galeri izni gerekli': 'ต้องการสิทธิ์เข้าถึงคลังภาพ',
+  'Galeride medya yok': 'ไม่มีสื่อในคลังภาพ',
+  'Galeriden seç': 'เลือกจากคลังภาพ',
+  'Görmek için dokun': 'แตะเพื่อดู',
+  'Konum': 'ตำแหน่ง',
+  'Konum alınamadı': 'ไม่สามารถรับตำแหน่งได้',
+  'Konum izni gerekli': 'ต้องการสิทธิ์ตำแหน่ง',
+  'Konum servisi kapalı': 'บริการตำแหน่งปิดอยู่',
+  'Konumum': 'ตำแหน่งของฉัน',
+  'Mesaj ekle...': 'เพิ่มข้อความ...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'ต้องการสิทธิ์เข้าถึงคลังภาพเพื่อแสดงรูปล่าสุดที่นี่',
+  'Tek kullanımlık': 'ดูครั้งเดียว',
+  'Tek kullanımlık fotoğraf': 'รูปดูครั้งเดียว',
+  'Tek kullanımlık medya': 'สื่อดูครั้งเดียว',
+  'Tek kullanımlık video': 'วิดีโอดูครั้งเดียว',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'ดูครั้งเดียวใช้ได้กับรูปหรือวิดีโอเพียงรายการเดียว',
+  'Video kaydedilemedi': 'บันทึกวิดีโอไม่สำเร็จ',
+  'Video kaydı başlamadı': 'การบันทึกวิดีโอไม่เริ่ม',
+  'Çek': 'ถ่าย',
+  'Çekmek için dokun, video için basılı tut':
+      'แตะเพื่อถ่ายรูป กดค้างเพื่อถ่ายวิดีโอ',
+  'İzin ver': 'อนุญาต',
 };

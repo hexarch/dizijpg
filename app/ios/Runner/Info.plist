@@ -49,6 +49,8 @@
 	<string>Sohbette sesli mesaj kaydedebilmen için mikrofonu kullanırız.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Yorumlarına fotoğraf ve video ekleyebilmen için galerini gösteririz.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Sohbette konumunu paylaşmak istediğinde konumun bir kez okunur.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Sohbetteki fotoğraf ve videoları galerine kaydedebilmen için izin gerekir.</string>
 	<key>UIApplicationSceneManifest</key>

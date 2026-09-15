@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/kesfet_akis.dart';
 import 'package:dizijpg/ekranlar/medya_inceleme.dart';
+import 'package:dizijpg/ekranlar/sohbet_medya_paneli.dart';
 import 'package:dizijpg/ekranlar/sohbet.dart';
 import 'package:dizijpg/ekranlar/video_duzenle.dart';
 import 'package:dizijpg/medya_yukle.dart';
@@ -153,9 +154,16 @@ Future<void> _kapat(WidgetTester tester) async {
   await tester.pump(const Duration(seconds: 1));
 }
 
-/// DM'deki ataç (2 Eyl 2026, Telegram düzeni): ataç → alt panel → Galeri.
-/// Panel `_EkPaneli` (sohbet.dart), Galeri kutucuğu sistem seçicisini açar.
+/// DM'deki ataç (15 Eyl 2026, Telegram düzeni): ataç → medya paneli
+/// (galeri ızgarası + şerit) → şeritteki Galeri sistem seçicisini açar.
+/// Panelin galeri/kamera eklentileri testte yok: sahte boş galeri verilir.
 Future<void> _dmAtacAc(WidgetTester tester) async {
+  galeriSahte = () async => const [];
+  kameraOnizlemeKapali = true;
+  addTearDown(() {
+    galeriSahte = null;
+    kameraOnizlemeKapali = false;
+  });
   await tester.tap(find.byIcon(Icons.attach_file));
   await tester.pumpAndSettle();
   await tester.tap(find.text('Galeri'));
@@ -264,7 +272,7 @@ void main() {
 
     await _dmAtacAc(tester);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('İleri'));
+    await tester.tap(find.text('Gönder'));
     await tester.pumpAndSettle();
 
     expect(defter.yukleme, 1, reason: 'dosya /medya ucuna yüklendi');
@@ -286,7 +294,7 @@ void main() {
     await tester.pump();
     await _dmAtacAc(tester);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('İleri'));
+    await tester.tap(find.text('Gönder'));
     await tester.pumpAndSettle();
 
     expect(defter.mesajlar.single['metin'], 'şuna bak');
@@ -340,7 +348,7 @@ void main() {
     expect(_makas(), findsNothing);
 
     // Yine de gönderilebiliyor — GIF ilk baytlarıyla olduğu gibi yüklenir.
-    await tester.tap(find.text('İleri'));
+    await tester.tap(find.text('Gönder'));
     await tester.pumpAndSettle();
     expect(defter.mesajlar, hasLength(1));
     await _kapat(tester);
@@ -381,7 +389,7 @@ void main() {
 
     await _dmAtacAc(tester);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('İleri'));
+    await tester.tap(find.text('Gönder'));
     await tester.pumpAndSettle();
 
     expect(find.byType(SnackBar), findsOneWidget);
@@ -735,6 +743,12 @@ Future<void> _icerikSec(
     'first_air_date': '2008-01-20',
   };
   // 2 Eyl 2026: Dizi/Film kutucuğu ataç panelinde.
+  galeriSahte = () async => const [];
+  kameraOnizlemeKapali = true;
+  addTearDown(() {
+    galeriSahte = null;
+    kameraOnizlemeKapali = false;
+  });
   await tester.tap(find.byIcon(Icons.attach_file));
   await tester.pumpAndSettle();
   await tester.tap(find.text('Dizi / Film'));

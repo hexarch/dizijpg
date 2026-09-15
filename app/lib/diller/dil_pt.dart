@@ -1794,4 +1794,32 @@ const Map<String, String> cevirilerPt = {
       'Não foi possível enviar o tema para a outra pessoa',
   'Seçtiğin tema karşı tarafta da görünür':
       'O tema que você escolher aparece também para a outra pessoa',
+  'Alıcı bir kez görebilir': 'O destinatário pode ver uma vez',
+  'Açıldı': 'Aberto',
+  'Flaş': 'Flash',
+  'Fotoğraf çekilemedi': 'Não foi possível tirar a foto',
+  'Galeri izni gerekli': 'Acesso à galeria necessário',
+  'Galeride medya yok': 'Nenhuma mídia na galeria',
+  'Galeriden seç': 'Escolher da galeria',
+  'Görmek için dokun': 'Toque para ver',
+  'Konum': 'Localização',
+  'Konum alınamadı': 'Não foi possível obter a localização',
+  'Konum izni gerekli': 'Permissão de localização necessária',
+  'Konum servisi kapalı': 'Serviços de localização desativados',
+  'Konumum': 'Minha localização',
+  'Mesaj ekle...': 'Adicionar uma mensagem...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'O acesso à galeria é necessário para mostrar suas fotos recentes aqui.',
+  'Tek kullanımlık': 'Ver uma vez',
+  'Tek kullanımlık fotoğraf': 'Foto de visualização única',
+  'Tek kullanımlık medya': 'Mídia de visualização única',
+  'Tek kullanımlık video': 'Vídeo de visualização única',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Ver uma vez só funciona com uma única foto ou vídeo',
+  'Video kaydedilemedi': 'Não foi possível salvar o vídeo',
+  'Video kaydı başlamadı': 'A gravação de vídeo não começou',
+  'Çek': 'Capturar',
+  'Çekmek için dokun, video için basılı tut':
+      'Toque para foto, segure para vídeo',
+  'İzin ver': 'Permitir',
 };

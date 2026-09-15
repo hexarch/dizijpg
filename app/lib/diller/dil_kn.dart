@@ -1763,4 +1763,32 @@ const Map<String, String> cevirilerKn = {
   'Tema karşı tarafa iletilemedi': 'ಥೀಮ್ ಅನ್ನು ಎದುರು ಪಕ್ಷಕ್ಕೆ ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ',
   'Seçtiğin tema karşı tarafta da görünür':
       'ನೀವು ಆಯ್ಕೆ ಮಾಡಿದ ಥೀಮ್ ಎದುರು ಪಕ್ಷಕ್ಕೂ ಕಾಣುತ್ತದೆ',
+  'Alıcı bir kez görebilir': 'ಸ್ವೀಕರಿಸುವವರು ಒಮ್ಮೆ ಮಾತ್ರ ನೋಡಬಹುದು',
+  'Açıldı': 'ತೆರೆಯಲಾಗಿದೆ',
+  'Flaş': 'ಫ್ಲ್ಯಾಶ್',
+  'Fotoğraf çekilemedi': 'ಫೋಟೋ ತೆಗೆಯಲಾಗಲಿಲ್ಲ',
+  'Galeri izni gerekli': 'ಗ್ಯಾಲರಿ ಅನುಮತಿ ಅಗತ್ಯ',
+  'Galeride medya yok': 'ಗ್ಯಾಲರಿಯಲ್ಲಿ ಮಾಧ್ಯಮವಿಲ್ಲ',
+  'Galeriden seç': 'ಗ್ಯಾಲರಿಯಿಂದ ಆರಿಸಿ',
+  'Görmek için dokun': 'ನೋಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ',
+  'Konum': 'ಸ್ಥಳ',
+  'Konum alınamadı': 'ಸ್ಥಳ ಪಡೆಯಲಾಗಲಿಲ್ಲ',
+  'Konum izni gerekli': 'ಸ್ಥಳ ಅನುಮತಿ ಅಗತ್ಯ',
+  'Konum servisi kapalı': 'ಸ್ಥಳ ಸೇವೆಗಳು ಆಫ್ ಆಗಿವೆ',
+  'Konumum': 'ನನ್ನ ಸ್ಥಳ',
+  'Mesaj ekle...': 'ಸಂದೇಶ ಸೇರಿಸಿ...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'ಇತ್ತೀಚಿನ ಫೋಟೋಗಳನ್ನು ಇಲ್ಲಿ ತೋರಿಸಲು ಗ್ಯಾಲರಿ ಅನುಮತಿ ಅಗತ್ಯ.',
+  'Tek kullanımlık': 'ಒಮ್ಮೆ ನೋಡಿ',
+  'Tek kullanımlık fotoğraf': 'ಒಮ್ಮೆ ನೋಡುವ ಫೋಟೋ',
+  'Tek kullanımlık medya': 'ಒಮ್ಮೆ ನೋಡುವ ಮಾಧ್ಯಮ',
+  'Tek kullanımlık video': 'ಒಮ್ಮೆ ನೋಡುವ ವೀಡಿಯೊ',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'ಒಮ್ಮೆ ನೋಡುವುದು ಒಂದೇ ಫೋಟೋ ಅಥವಾ ವೀಡಿಯೊದೊಂದಿಗೆ ಮಾತ್ರ ಕೆಲಸ ಮಾಡುತ್ತದೆ',
+  'Video kaydedilemedi': 'ವೀಡಿಯೊ ಉಳಿಸಲಾಗಲಿಲ್ಲ',
+  'Video kaydı başlamadı': 'ವೀಡಿಯೊ ರೆಕಾರ್ಡಿಂಗ್ ಪ್ರಾರಂಭವಾಗಲಿಲ್ಲ',
+  'Çek': 'ತೆಗೆಯಿರಿ',
+  'Çekmek için dokun, video için basılı tut':
+      'ಫೋಟೋಗೆ ಟ್ಯಾಪ್ ಮಾಡಿ, ವೀಡಿಯೊಗೆ ಒತ್ತಿ ಹಿಡಿಯಿರಿ',
+  'İzin ver': 'ಅನುಮತಿಸಿ',
 };

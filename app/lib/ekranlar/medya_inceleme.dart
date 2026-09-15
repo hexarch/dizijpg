@@ -118,6 +118,45 @@ Future<List<XFile>> medyaSec(BuildContext context, {int azami = 10}) async {
   return sonuc ?? const [];
 }
 
+/// SOHBET GÖNDERİMİ (15 Eyl 2026): inceleme ekranı sohbet kipinde dosyaların
+/// yanında ALTYAZI ve TEK KULLANIMLIK kararını da döner.
+class MedyaGonderim {
+  final List<XFile> dosyalar;
+  final String metin;
+
+  /// Alıcı bir kez açar, sonra dosya silinir. Yalnız TEK fotoğraf/video.
+  final bool tekKullanimlik;
+
+  const MedyaGonderim({
+    required this.dosyalar,
+    this.metin = '',
+    this.tekKullanimlik = false,
+  });
+}
+
+/// Sohbet için inceleme: galeri paneli / kamera / sistem seçicisinden gelen
+/// dosyaları [MedyaIncelemeEkrani]nın sohbet kipinden geçirir. Vazgeçilirse
+/// `null`. Kutudaki yazı ([ilkMetin]) altyazı alanına taşınır.
+Future<MedyaGonderim?> sohbetMedyaIncele(
+  BuildContext context,
+  List<XFile> dosyalar, {
+  String ilkMetin = '',
+  int azami = 10,
+}) {
+  if (dosyalar.isEmpty) return Future.value(null);
+  return Navigator.of(context, rootNavigator: true).push<MedyaGonderim>(
+    MaterialPageRoute(
+      builder: (_) => MedyaIncelemeEkrani(
+        dosyalar: dosyalar,
+        azami: azami,
+        sohbet: true,
+        ilkMetin: ilkMetin,
+      ),
+      fullscreenDialog: true,
+    ),
+  );
+}
+
 /// Mikro etkileşim süresi. Kullanıcı "hareketi azalt" dediyse SIFIR döner.
 ///
 /// ui-ux-pro-max: Animation/Reduced Motion (severity HIGH) ve Duration Timing
@@ -167,10 +206,19 @@ class MedyaIncelemeEkrani extends StatefulWidget {
   /// En çok kaç öğe gönderilebilir ("daha fazla ekle" tavanı).
   final int azami;
 
+  /// SOHBET KİPİ (15 Eyl 2026): altta altyazı kutusu + tek kullanımlık
+  /// düğmesi; "İleri" yerine "Gönder"; sonuç [MedyaGonderim] olarak döner.
+  final bool sohbet;
+
+  /// Sohbet kutusunda yazılmış metin altyazıya taşınır.
+  final String ilkMetin;
+
   const MedyaIncelemeEkrani({
     super.key,
     required this.dosyalar,
     this.azami = 10,
+    this.sohbet = false,
+    this.ilkMetin = '',
   });
 
   @override
@@ -209,10 +257,29 @@ class _MedyaIncelemeEkraniState extends State<MedyaIncelemeEkrani> {
   int _hazirlanan = 0; // onay sırasında kaçıncı dosya (ilerleme göstergesi)
   int _sayac = 0; // kimlik üreteci
 
+  /// Sohbet kipi: altyazı + tek kullanımlık kararı.
+  late final TextEditingController _altyazi = TextEditingController(
+    text: widget.ilkMetin,
+  );
+  bool _tekKullanimlik = false;
+
+  /// Tek kullanımlık yalnız TEK fotoğraf/videoda (sunucu kuralıyla aynı).
+  bool get _tekKullanimlikOlur =>
+      widget.sohbet &&
+      _liste.length == 1 &&
+      (_liste.first.tur == MedyaTur.gorsel ||
+          _liste.first.tur == MedyaTur.video);
+
   @override
   void initState() {
     super.initState();
     _ekle(widget.dosyalar);
+  }
+
+  @override
+  void dispose() {
+    _altyazi.dispose();
+    super.dispose();
   }
 
   /// Dosyaları listeye katar ve tür tanımasını başlatır.
@@ -559,7 +626,83 @@ class _MedyaIncelemeEkraniState extends State<MedyaIncelemeEkrani> {
     final eksik = _liste.length - dosyalar.length;
     // SnackBar uygulama düzeyindeki ScaffoldMessenger'da: pop sonrası görünür.
     if (eksik > 0) _uyar('{} dosya okunamadı'.cf([eksik]));
+    if (widget.sohbet) {
+      Navigator.of(context).pop(
+        MedyaGonderim(
+          dosyalar: dosyalar,
+          metin: _altyazi.text.trim(),
+          tekKullanimlik: _tekKullanimlik && _tekKullanimlikOlur,
+        ),
+      );
+      return;
+    }
     Navigator.of(context).pop(dosyalar);
+  }
+
+  /// Sohbet kipi satırı: TEK KULLANIMLIK düğmesi + altyazı kutusu.
+  /// Düğme yalnız tek fotoğraf/videoda etkin; albümde pasif ve ipucu verir.
+  Widget _sohbetSatiri() {
+    final olur = _tekKullanimlikOlur;
+    final acik = _tekKullanimlik && olur;
+    return Container(
+      color: DiziRenkler.markaKoyu,
+      padding: const EdgeInsets.fromLTRB(6, 6, 10, 6),
+      child: Row(
+        children: [
+          Tooltip(
+            message: olur
+                ? 'Tek kullanımlık'.c
+                : 'Tek kullanımlık yalnız tek fotoğraf veya videoda'.c,
+            child: IconButton(
+              key: const Key('tek-kullanimlik'),
+              isSelected: acik,
+              onPressed: olur
+                  ? () => setState(() => _tekKullanimlik = !_tekKullanimlik)
+                  : null,
+              style: IconButton.styleFrom(
+                backgroundColor: acik ? DiziRenkler.sari : Colors.transparent,
+                foregroundColor: acik ? Colors.black : Colors.white,
+                disabledForegroundColor: Colors.white38,
+              ),
+              icon: const Icon(Icons.looks_one_outlined),
+            ),
+          ),
+          Expanded(
+            child: TextField(
+              key: const Key('altyazi-kutu'),
+              controller: _altyazi,
+              minLines: 1,
+              maxLines: 3,
+              maxLength: 2000,
+              buildCounter:
+                  (
+                    _, {
+                    required currentLength,
+                    maxLength,
+                    required isFocused,
+                  }) => null,
+              textCapitalization: TextCapitalization.sentences,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Mesaj ekle...'.c,
+                hintStyle: const TextStyle(color: Colors.white54),
+                isDense: true,
+                filled: true,
+                fillColor: Colors.white10,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -657,6 +800,7 @@ class _MedyaIncelemeEkraniState extends State<MedyaIncelemeEkrani> {
           ],
         ),
       ),
+      if (widget.sohbet) _sohbetSatiri(),
       _Serit(
         liste: _liste,
         azami: widget.azami,
@@ -741,7 +885,7 @@ class _MedyaIncelemeEkraniState extends State<MedyaIncelemeEkrani> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'İleri'.c,
+                    widget.sohbet ? 'Gönder'.c : 'İleri'.c,
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,

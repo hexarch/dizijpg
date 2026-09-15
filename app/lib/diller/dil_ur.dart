@@ -1762,4 +1762,32 @@ const Map<String, String> cevirilerUr = {
   'Tema karşı tarafa iletilemedi': 'تھیم دوسری طرف نہیں بھیجی جا سکی',
   'Seçtiğin tema karşı tarafta da görünür':
       'آپ کی منتخب کردہ تھیم دوسری طرف بھی نظر آتی ہے',
+  'Alıcı bir kez görebilir': 'وصول کنندہ اسے ایک بار دیکھ سکتا ہے',
+  'Açıldı': 'کھولا گیا',
+  'Flaş': 'فلیش',
+  'Fotoğraf çekilemedi': 'تصویر نہیں لی جا سکی',
+  'Galeri izni gerekli': 'گیلری تک رسائی درکار ہے',
+  'Galeride medya yok': 'گیلری میں کوئی میڈیا نہیں',
+  'Galeriden seç': 'گیلری سے منتخب کریں',
+  'Görmek için dokun': 'دیکھنے کے لیے ٹیپ کریں',
+  'Konum': 'مقام',
+  'Konum alınamadı': 'مقام حاصل نہیں ہو سکا',
+  'Konum izni gerekli': 'مقام کی اجازت درکار ہے',
+  'Konum servisi kapalı': 'مقام کی سروسز بند ہیں',
+  'Konumum': 'میرا مقام',
+  'Mesaj ekle...': 'پیغام شامل کریں...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'حالیہ تصاویر یہاں دکھانے کے لیے گیلری تک رسائی درکار ہے۔',
+  'Tek kullanımlık': 'ایک بار دیکھیں',
+  'Tek kullanımlık fotoğraf': 'ایک بار دیکھنے والی تصویر',
+  'Tek kullanımlık medya': 'ایک بار دیکھنے والا میڈیا',
+  'Tek kullanımlık video': 'ایک بار دیکھنے والی ویڈیو',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'ایک بار دیکھنا صرف ایک تصویر یا ویڈیو کے ساتھ کام کرتا ہے',
+  'Video kaydedilemedi': 'ویڈیو محفوظ نہیں ہو سکی',
+  'Video kaydı başlamadı': 'ویڈیو ریکارڈنگ شروع نہیں ہوئی',
+  'Çek': 'لیں',
+  'Çekmek için dokun, video için basılı tut':
+      'تصویر کے لیے ٹیپ کریں، ویڈیو کے لیے دبائے رکھیں',
+  'İzin ver': 'اجازت دیں',
 };

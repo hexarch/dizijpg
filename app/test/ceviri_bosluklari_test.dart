@@ -33,6 +33,33 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // sohbet_medya_paneli / kamera_ekrani / medya_inceleme / sohbet.dart —
+  // Telegram medya paneli, uygulama içi kamera, tek kullanımlık (15 Eyl 2026).
+  'Alıcı bir kez görebilir',
+  'Açıldı',
+  'Flaş',
+  'Fotoğraf çekilemedi',
+  'Galeri izni gerekli',
+  'Galeride medya yok',
+  'Galeriden seç',
+  'Görmek için dokun',
+  'Konum',
+  'Konum alınamadı',
+  'Konum izni gerekli',
+  'Konum servisi kapalı',
+  'Konumum',
+  'Mesaj ekle...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.',
+  'Tek kullanımlık',
+  'Tek kullanımlık fotoğraf',
+  'Tek kullanımlık medya',
+  'Tek kullanımlık video',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda',
+  'Video kaydedilemedi',
+  'Video kaydı başlamadı',
+  'Çek',
+  'Çekmek için dokun, video için basılı tut',
+  'İzin ver',
   // sohbet_detay.dart — takma ad + paylaşılan tema (15 Eyl 2026).
   'Takma ad',
   'Bu adı yalnız sen görürsün',

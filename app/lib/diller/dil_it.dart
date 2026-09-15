@@ -1778,4 +1778,32 @@ const Map<String, String> cevirilerIt = {
       'Impossibile inviare il tema all\'altra persona',
   'Seçtiğin tema karşı tarafta da görünür':
       'Il tema scelto lo vede anche l\'altra persona',
+  'Alıcı bir kez görebilir': 'Il destinatario può vederlo una volta',
+  'Açıldı': 'Aperto',
+  'Flaş': 'Flash',
+  'Fotoğraf çekilemedi': 'Impossibile scattare la foto',
+  'Galeri izni gerekli': 'Serve l\'accesso alla galleria',
+  'Galeride medya yok': 'Nessun contenuto nella galleria',
+  'Galeriden seç': 'Scegli dalla galleria',
+  'Görmek için dokun': 'Tocca per vedere',
+  'Konum': 'Posizione',
+  'Konum alınamadı': 'Impossibile ottenere la posizione',
+  'Konum izni gerekli': 'Serve il permesso di localizzazione',
+  'Konum servisi kapalı': 'Servizi di localizzazione disattivati',
+  'Konumum': 'La mia posizione',
+  'Mesaj ekle...': 'Aggiungi un messaggio...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Serve l\'accesso alla galleria per mostrare qui le tue foto recenti.',
+  'Tek kullanımlık': 'Visualizza una volta',
+  'Tek kullanımlık fotoğraf': 'Foto a visualizzazione singola',
+  'Tek kullanımlık medya': 'Media a visualizzazione singola',
+  'Tek kullanımlık video': 'Video a visualizzazione singola',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Visualizza una volta funziona solo con una singola foto o un video',
+  'Video kaydedilemedi': 'Impossibile salvare il video',
+  'Video kaydı başlamadı': 'La registrazione video non è partita',
+  'Çek': 'Scatta',
+  'Çekmek için dokun, video için basılı tut':
+      'Tocca per scattare, tieni premuto per il video',
+  'İzin ver': 'Consenti',
 };

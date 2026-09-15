@@ -1752,4 +1752,32 @@ const Map<String, String> cevirilerBn = {
   'Tema karşı tarafa iletilemedi': 'থিম অপর পক্ষকে পাঠানো যায়নি',
   'Seçtiğin tema karşı tarafta da görünür':
       'আপনার বেছে নেওয়া থিম অপর পক্ষও দেখতে পাবে',
+  'Alıcı bir kez görebilir': 'প্রাপক এটি একবার দেখতে পারবেন',
+  'Açıldı': 'খোলা হয়েছে',
+  'Flaş': 'ফ্ল্যাশ',
+  'Fotoğraf çekilemedi': 'ছবি তোলা যায়নি',
+  'Galeri izni gerekli': 'গ্যালারির অনুমতি প্রয়োজন',
+  'Galeride medya yok': 'গ্যালারিতে কোনো মিডিয়া নেই',
+  'Galeriden seç': 'গ্যালারি থেকে বেছে নিন',
+  'Görmek için dokun': 'দেখতে ট্যাপ করুন',
+  'Konum': 'অবস্থান',
+  'Konum alınamadı': 'অবস্থান পাওয়া যায়নি',
+  'Konum izni gerekli': 'অবস্থানের অনুমতি প্রয়োজন',
+  'Konum servisi kapalı': 'অবস্থান পরিষেবা বন্ধ',
+  'Konumum': 'আমার অবস্থান',
+  'Mesaj ekle...': 'বার্তা যোগ করুন...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'সাম্প্রতিক ছবি এখানে দেখাতে গ্যালারির অনুমতি প্রয়োজন।',
+  'Tek kullanımlık': 'একবার দেখুন',
+  'Tek kullanımlık fotoğraf': 'একবার দেখার ছবি',
+  'Tek kullanımlık medya': 'একবার দেখার মিডিয়া',
+  'Tek kullanımlık video': 'একবার দেখার ভিডিও',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'একবার দেখা শুধু একটি ছবি বা ভিডিওর সাথে কাজ করে',
+  'Video kaydedilemedi': 'ভিডিও সংরক্ষণ করা যায়নি',
+  'Video kaydı başlamadı': 'ভিডিও রেকর্ডিং শুরু হয়নি',
+  'Çek': 'তুলুন',
+  'Çekmek için dokun, video için basılı tut':
+      'ছবির জন্য ট্যাপ করুন, ভিডিওর জন্য ধরে রাখুন',
+  'İzin ver': 'অনুমতি দিন',
 };

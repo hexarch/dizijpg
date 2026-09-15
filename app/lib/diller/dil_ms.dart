@@ -1769,4 +1769,32 @@ const Map<String, String> cevirilerMs = {
       'Tema tidak dapat dihantar kepada pihak satu lagi',
   'Seçtiğin tema karşı tarafta da görünür':
       'Tema yang anda pilih turut dilihat oleh pihak satu lagi',
+  'Alıcı bir kez görebilir': 'Penerima hanya boleh melihat sekali',
+  'Açıldı': 'Dibuka',
+  'Flaş': 'Denyar',
+  'Fotoğraf çekilemedi': 'Gagal mengambil foto',
+  'Galeri izni gerekli': 'Akses galeri diperlukan',
+  'Galeride medya yok': 'Tiada media dalam galeri',
+  'Galeriden seç': 'Pilih dari galeri',
+  'Görmek için dokun': 'Ketik untuk melihat',
+  'Konum': 'Lokasi',
+  'Konum alınamadı': 'Gagal mendapatkan lokasi',
+  'Konum izni gerekli': 'Kebenaran lokasi diperlukan',
+  'Konum servisi kapalı': 'Perkhidmatan lokasi dimatikan',
+  'Konumum': 'Lokasi saya',
+  'Mesaj ekle...': 'Tambah mesej...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Akses galeri diperlukan untuk memaparkan foto terkini di sini.',
+  'Tek kullanımlık': 'Lihat sekali',
+  'Tek kullanımlık fotoğraf': 'Foto lihat sekali',
+  'Tek kullanımlık medya': 'Media lihat sekali',
+  'Tek kullanımlık video': 'Video lihat sekali',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Lihat sekali hanya untuk satu foto atau video',
+  'Video kaydedilemedi': 'Gagal menyimpan video',
+  'Video kaydı başlamadı': 'Rakaman video tidak bermula',
+  'Çek': 'Ambil',
+  'Çekmek için dokun, video için basılı tut':
+      'Ketik untuk foto, tahan untuk video',
+  'İzin ver': 'Benarkan',
 };

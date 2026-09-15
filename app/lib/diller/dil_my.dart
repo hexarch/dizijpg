@@ -1782,4 +1782,32 @@ const Map<String, String> cevirilerMy = {
   'Tema karşı tarafa iletilemedi': 'အပြင်အဆင်ကို တစ်ဖက်သို့ ပို့၍မရပါ',
   'Seçtiğin tema karşı tarafta da görünür':
       'သင်ရွေးသော အပြင်အဆင်ကို တစ်ဖက်ကလည်း မြင်ရသည်',
+  'Alıcı bir kez görebilir': 'လက်ခံသူသည် တစ်ကြိမ်သာ ကြည့်နိုင်သည်',
+  'Açıldı': 'ဖွင့်ပြီး',
+  'Flaş': 'ဖလက်ရှ်',
+  'Fotoğraf çekilemedi': 'ဓာတ်ပုံ မရိုက်နိုင်ပါ',
+  'Galeri izni gerekli': 'ဓာတ်ပုံပြခန်း ခွင့်ပြုချက် လိုအပ်သည်',
+  'Galeride medya yok': 'ဓာတ်ပုံပြခန်းတွင် မီဒီယာ မရှိပါ',
+  'Galeriden seç': 'ဓာတ်ပုံပြခန်းမှ ရွေးရန်',
+  'Görmek için dokun': 'ကြည့်ရန် နှိပ်ပါ',
+  'Konum': 'တည်နေရာ',
+  'Konum alınamadı': 'တည်နေရာ မရရှိပါ',
+  'Konum izni gerekli': 'တည်နေရာ ခွင့်ပြုချက် လိုအပ်သည်',
+  'Konum servisi kapalı': 'တည်နေရာ ဝန်ဆောင်မှု ပိတ်ထားသည်',
+  'Konumum': 'ကျွန်ုပ်၏ တည်နေရာ',
+  'Mesaj ekle...': 'စာတိုထည့်ရန်...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'မကြာသေးမီက ဓာတ်ပုံများကို ဤနေရာတွင် ပြရန် ဓာတ်ပုံပြခန်း ခွင့်ပြုချက် လိုအပ်သည်။',
+  'Tek kullanımlık': 'တစ်ကြိမ်သာ ကြည့်ရန်',
+  'Tek kullanımlık fotoğraf': 'တစ်ကြိမ်သာကြည့် ဓာတ်ပုံ',
+  'Tek kullanımlık medya': 'တစ်ကြိမ်သာကြည့် မီဒီယာ',
+  'Tek kullanımlık video': 'တစ်ကြိမ်သာကြည့် ဗီဒီယို',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'တစ်ကြိမ်သာကြည့်ခြင်းသည် ဓာတ်ပုံ သို့မဟုတ် ဗီဒီယို တစ်ခုတည်းနှင့်သာ အလုပ်လုပ်သည်',
+  'Video kaydedilemedi': 'ဗီဒီယို မသိမ်းနိုင်ပါ',
+  'Video kaydı başlamadı': 'ဗီဒီယို ရိုက်ကူးမှု မစတင်ပါ',
+  'Çek': 'ရိုက်ရန်',
+  'Çekmek için dokun, video için basılı tut':
+      'ဓာတ်ပုံအတွက် နှိပ်ပါ၊ ဗီဒီယိုအတွက် ဖိထားပါ',
+  'İzin ver': 'ခွင့်ပြုရန်',
 };

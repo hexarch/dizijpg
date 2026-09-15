@@ -1756,4 +1756,32 @@ const Map<String, String> cevirilerMr = {
   'Tema karşı tarafa iletilemedi': 'थीम समोरच्या व्यक्तीला पाठवता आली नाही',
   'Seçtiğin tema karşı tarafta da görünür':
       'तुम्ही निवडलेली थीम समोरच्या व्यक्तीलाही दिसते',
+  'Alıcı bir kez görebilir': 'प्राप्तकर्ता ते एकदाच पाहू शकतो',
+  'Açıldı': 'उघडले',
+  'Flaş': 'फ्लॅश',
+  'Fotoğraf çekilemedi': 'फोटो काढता आला नाही',
+  'Galeri izni gerekli': 'गॅलरी परवानगी आवश्यक',
+  'Galeride medya yok': 'गॅलरीत मीडिया नाही',
+  'Galeriden seç': 'गॅलरीतून निवडा',
+  'Görmek için dokun': 'पाहण्यासाठी टॅप करा',
+  'Konum': 'स्थान',
+  'Konum alınamadı': 'स्थान मिळवता आले नाही',
+  'Konum izni gerekli': 'स्थान परवानगी आवश्यक',
+  'Konum servisi kapalı': 'स्थान सेवा बंद आहेत',
+  'Konumum': 'माझे स्थान',
+  'Mesaj ekle...': 'संदेश जोडा...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'अलीकडील फोटो येथे दाखवण्यासाठी गॅलरी परवानगी आवश्यक आहे.',
+  'Tek kullanımlık': 'एकदा पहा',
+  'Tek kullanımlık fotoğraf': 'एकदा पाहण्याचा फोटो',
+  'Tek kullanımlık medya': 'एकदा पाहण्याचा मीडिया',
+  'Tek kullanımlık video': 'एकदा पाहण्याचा व्हिडिओ',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'एकदा पाहणे फक्त एका फोटो किंवा व्हिडिओसह चालते',
+  'Video kaydedilemedi': 'व्हिडिओ जतन करता आला नाही',
+  'Video kaydı başlamadı': 'व्हिडिओ रेकॉर्डिंग सुरू झाले नाही',
+  'Çek': 'काढा',
+  'Çekmek için dokun, video için basılı tut':
+      'फोटोसाठी टॅप करा, व्हिडिओसाठी दाबून ठेवा',
+  'İzin ver': 'परवानगी द्या',
 };

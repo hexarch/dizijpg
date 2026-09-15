@@ -1771,4 +1771,32 @@ const Map<String, String> cevirilerBg = {
   'Tema karşı tarafa iletilemedi': 'Темата не можа да бъде изпратена на другия',
   'Seçtiğin tema karşı tarafta da görünür':
       'Избраната тема се вижда и от другата страна',
+  'Alıcı bir kez görebilir': 'Получателят може да го види веднъж',
+  'Açıldı': 'Отворено',
+  'Flaş': 'Светкавица',
+  'Fotoğraf çekilemedi': 'Снимката не можа да бъде направена',
+  'Galeri izni gerekli': 'Нужен е достъп до галерията',
+  'Galeride medya yok': 'Няма медия в галерията',
+  'Galeriden seç': 'Избери от галерията',
+  'Görmek için dokun': 'Докосни, за да видиш',
+  'Konum': 'Местоположение',
+  'Konum alınamadı': 'Местоположението не можа да бъде взето',
+  'Konum izni gerekli': 'Нужно е разрешение за местоположение',
+  'Konum servisi kapalı': 'Услугите за местоположение са изключени',
+  'Konumum': 'Моето местоположение',
+  'Mesaj ekle...': 'Добави съобщение...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'За да се покажат тук скорошните ти снимки, е нужен достъп до галерията.',
+  'Tek kullanımlık': 'Еднократен преглед',
+  'Tek kullanımlık fotoğraf': 'Еднократна снимка',
+  'Tek kullanımlık medya': 'Еднократна медия',
+  'Tek kullanımlık video': 'Еднократно видео',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Еднократният преглед работи само с една снимка или видео',
+  'Video kaydedilemedi': 'Видеото не можа да бъде запазено',
+  'Video kaydı başlamadı': 'Записът на видео не започна',
+  'Çek': 'Снимай',
+  'Çekmek için dokun, video için basılı tut':
+      'Докосни за снимка, задръж за видео',
+  'İzin ver': 'Разреши',
 };

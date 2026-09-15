@@ -1758,4 +1758,32 @@ const Map<String, String> cevirilerPa = {
   'Tema karşı tarafa iletilemedi': 'ਥੀਮ ਦੂਜੇ ਪਾਸੇ ਨਹੀਂ ਭੇਜੀ ਜਾ ਸਕੀ',
   'Seçtiğin tema karşı tarafta da görünür':
       'ਤੁਹਾਡੀ ਚੁਣੀ ਥੀਮ ਦੂਜੇ ਪਾਸੇ ਵੀ ਦਿਖਦੀ ਹੈ',
+  'Alıcı bir kez görebilir': 'ਪ੍ਰਾਪਤਕਰਤਾ ਇਸਨੂੰ ਇੱਕ ਵਾਰ ਦੇਖ ਸਕਦਾ ਹੈ',
+  'Açıldı': 'ਖੋਲ੍ਹਿਆ ਗਿਆ',
+  'Flaş': 'ਫਲੈਸ਼',
+  'Fotoğraf çekilemedi': 'ਫੋਟੋ ਨਹੀਂ ਖਿੱਚੀ ਜਾ ਸਕੀ',
+  'Galeri izni gerekli': 'ਗੈਲਰੀ ਦੀ ਇਜਾਜ਼ਤ ਲੋੜੀਂਦੀ ਹੈ',
+  'Galeride medya yok': 'ਗੈਲਰੀ ਵਿੱਚ ਕੋਈ ਮੀਡੀਆ ਨਹੀਂ',
+  'Galeriden seç': 'ਗੈਲਰੀ ਤੋਂ ਚੁਣੋ',
+  'Görmek için dokun': 'ਦੇਖਣ ਲਈ ਟੈਪ ਕਰੋ',
+  'Konum': 'ਟਿਕਾਣਾ',
+  'Konum alınamadı': 'ਟਿਕਾਣਾ ਨਹੀਂ ਮਿਲ ਸਕਿਆ',
+  'Konum izni gerekli': 'ਟਿਕਾਣੇ ਦੀ ਇਜਾਜ਼ਤ ਲੋੜੀਂਦੀ ਹੈ',
+  'Konum servisi kapalı': 'ਟਿਕਾਣਾ ਸੇਵਾਵਾਂ ਬੰਦ ਹਨ',
+  'Konumum': 'ਮੇਰਾ ਟਿਕਾਣਾ',
+  'Mesaj ekle...': 'ਸੁਨੇਹਾ ਜੋੜੋ...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'ਹਾਲੀਆ ਫੋਟੋਆਂ ਇੱਥੇ ਦਿਖਾਉਣ ਲਈ ਗੈਲਰੀ ਦੀ ਇਜਾਜ਼ਤ ਲੋੜੀਂਦੀ ਹੈ।',
+  'Tek kullanımlık': 'ਇੱਕ ਵਾਰ ਦੇਖੋ',
+  'Tek kullanımlık fotoğraf': 'ਇੱਕ ਵਾਰ ਦੇਖਣ ਵਾਲੀ ਫੋਟੋ',
+  'Tek kullanımlık medya': 'ਇੱਕ ਵਾਰ ਦੇਖਣ ਵਾਲਾ ਮੀਡੀਆ',
+  'Tek kullanımlık video': 'ਇੱਕ ਵਾਰ ਦੇਖਣ ਵਾਲਾ ਵੀਡੀਓ',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'ਇੱਕ ਵਾਰ ਦੇਖਣਾ ਸਿਰਫ਼ ਇੱਕ ਫੋਟੋ ਜਾਂ ਵੀਡੀਓ ਨਾਲ ਕੰਮ ਕਰਦਾ ਹੈ',
+  'Video kaydedilemedi': 'ਵੀਡੀਓ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ',
+  'Video kaydı başlamadı': 'ਵੀਡੀਓ ਰਿਕਾਰਡਿੰਗ ਸ਼ੁਰੂ ਨਹੀਂ ਹੋਈ',
+  'Çek': 'ਖਿੱਚੋ',
+  'Çekmek için dokun, video için basılı tut':
+      'ਫੋਟੋ ਲਈ ਟੈਪ ਕਰੋ, ਵੀਡੀਓ ਲਈ ਦਬਾ ਕੇ ਰੱਖੋ',
+  'İzin ver': 'ਇਜਾਜ਼ਤ ਦਿਓ',
 };

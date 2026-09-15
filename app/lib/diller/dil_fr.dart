@@ -1791,4 +1791,32 @@ const Map<String, String> cevirilerFr = {
       'Le thème n\'a pas pu être envoyé à l\'autre personne',
   'Seçtiğin tema karşı tarafta da görünür':
       'Le thème choisi apparaît aussi chez l\'autre personne',
+  'Alıcı bir kez görebilir': 'Le destinataire peut le voir une fois',
+  'Açıldı': 'Ouvert',
+  'Flaş': 'Flash',
+  'Fotoğraf çekilemedi': 'Impossible de prendre la photo',
+  'Galeri izni gerekli': 'Accès à la galerie requis',
+  'Galeride medya yok': 'Aucun média dans la galerie',
+  'Galeriden seç': 'Choisir dans la galerie',
+  'Görmek için dokun': 'Touche pour voir',
+  'Konum': 'Position',
+  'Konum alınamadı': 'Position introuvable',
+  'Konum izni gerekli': 'Autorisation de localisation requise',
+  'Konum servisi kapalı': 'Services de localisation désactivés',
+  'Konumum': 'Ma position',
+  'Mesaj ekle...': 'Ajouter un message...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'L\'accès à la galerie est requis pour afficher tes photos récentes ici.',
+  'Tek kullanımlık': 'Vue unique',
+  'Tek kullanımlık fotoğraf': 'Photo à vue unique',
+  'Tek kullanımlık medya': 'Média à vue unique',
+  'Tek kullanımlık video': 'Vidéo à vue unique',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'La vue unique ne fonctionne qu\'avec une seule photo ou vidéo',
+  'Video kaydedilemedi': 'Impossible d\'enregistrer la vidéo',
+  'Video kaydı başlamadı': 'L\'enregistrement vidéo n\'a pas démarré',
+  'Çek': 'Capturer',
+  'Çekmek için dokun, video için basılı tut':
+      'Touche pour photographier, maintiens pour filmer',
+  'İzin ver': 'Autoriser',
 };

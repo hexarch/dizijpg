@@ -4,6 +4,7 @@ import 'dart:ui' show FontFeature;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart'
     show HapticFeedback, HardwareKeyboard, KeyDownEvent, LogicalKeyboardKey;
@@ -41,6 +42,8 @@ import 'medya_goster.dart';
 import 'medya_inceleme.dart';
 import 'icerik_sec.dart';
 import 'gif_sec.dart';
+import 'kamera_ekrani.dart';
+import 'sohbet_medya_paneli.dart';
 import 'emoji_paneli.dart';
 import 'ortak.dart';
 import 'ses.dart';
@@ -2451,6 +2454,34 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     });
   }
 
+  /// TEK KULLANIMLIK medya açıldı: sunucuya bildir (dosya silinir), yerelde
+  /// balon "Açıldı"ya döner. Sunucu reddederse yerel de dokunulmaz.
+  Future<void> _tekAcildi(Map<String, dynamic> m) async {
+    final id = (m['id'] as num?)?.toInt();
+    if (id == null) return;
+    try {
+      final d = await Api.post('/mesajlar/$id/tek-acildi', const {});
+      if (!mounted) return;
+      setState(() {
+        _mesajlar = [
+          for (final x in _mesajlar)
+            if (x is Map<String, dynamic> && x['id'] == m['id'])
+              {
+                ...x,
+                'tek_acildi':
+                    d['tek_acildi'] ?? DateTime.now().toUtc().toIso8601String(),
+                'medya': null,
+                'medya_kapak': null,
+              }
+            else
+              x,
+        ];
+      });
+    } catch (_) {
+      // sessiz: bir sonraki yoklama sunucunun durumunu getirir
+    }
+  }
+
   Future<void> _yerelTekrarDene(Map<String, dynamic> m) async {
     final anahtar = m['_yerel'] as String?;
     if (anahtar == null) return;
@@ -2471,6 +2502,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     int? dosyaBoyut,
     String? dosyaTur,
     String? yerelAnahtar,
+    bool tekKullanimlik = false,
   }) async {
     // Düzenleme modunda: metni PATCH ile güncelle, yeni mesaj atma
     if (_duzenlenenId != null) {
@@ -2509,6 +2541,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
             if (metin != null && metin.isNotEmpty) 'metin': metin,
             if (ilkMedya != null) 'medya': ilkMedya,
             if (medyalar != null && medyalar.length > 1) 'medyalar': medyalar,
+            if (tekKullanimlik) 'tek_kullanimlik': true,
             if (dosyaAd != null) 'dosya_ad': dosyaAd,
             if (dosyaBoyut != null) 'dosya_boyut': dosyaBoyut,
             if (dosyaTur != null) 'dosya_tur': dosyaTur,
@@ -2533,6 +2566,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
             dosyaAd: dosyaAd,
             dosyaBoyut: dosyaBoyut,
             dosyaTur: dosyaTur,
+            tekKullanimlik: tekKullanimlik,
           ),
         );
     // Kutu hemen boşalır (Telegram): yazı balonda görünüyor zaten.
@@ -2548,6 +2582,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         if (metin != null && metin.isNotEmpty) 'metin': metin,
         if (ilkMedya != null) 'medya': ilkMedya,
         if (medyalar != null && medyalar.length > 1) 'medyalar': medyalar,
+        if (tekKullanimlik) 'tek_kullanimlik': true,
         if (dosya != null) 'dosya': dosya,
         if (dosyaAd != null) 'dosya_ad': dosyaAd,
         if (dosyaBoyut != null) 'dosya_boyut': dosyaBoyut,
@@ -2639,24 +2674,37 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// Seçim sisteme (Android Fotoğraf Seçici) devredildiği için geniş galeri
   /// izni İSTENMEZ — `medya_inceleme.dart` başındaki Play reddi notu.
   Future<void> _fotoGonder() async {
-    final secim = await medyaSec(context, azami: albumAzami);
+    final secim = await sistemSecici(albumAzami);
     if (secim.isEmpty || !mounted) return;
-    await _medyalariGonder(secim);
+    await _medyaIncelemeVeGonder(secim);
   }
 
   /// Seçilmiş dosyaları sırayla yükler ve tek mesaj (albüm) olarak gönderir.
   /// Kısmi başarıda yüklenenler gider, düşenler SnackBar ile söylenir —
   /// kullanıcı 5 seçip 3'ünü bulursa nedenini bilir.
-  Future<void> _medyalariGonder(List<XFile> secim) async {
+  Future<void> _medyalariGonder(
+    List<XFile> secim, {
+    String? metin,
+    bool tekKullanimlik = false,
+  }) async {
     // Yazılmış metin de gitsin: eskiden fotoğraf/video eklenince kutudaki
-    // yazı sessizce kayboluyordu.
-    final metin = _metin.text.trim();
+    // yazı sessizce kayboluyordu. İnceleme ekranı altyazı verdiyse o kazanır.
+    metin = (metin ?? _metin.text).trim();
     // İyimser satır: cihaz yolları önizlenir, yükleme halkası biner. Web'de
     // yol boş olabilir (bellek içi XFile) — o zaman halka tek başına durur.
-    final anahtar = _yerelEkle({
-      'medya_yerel': [for (final d in secim) d.path],
-      if (metin.isNotEmpty) 'metin': metin,
-    }, tekrar: () => _medyalariGonder(secim));
+    final metinSon = metin;
+    final anahtar = _yerelEkle(
+      {
+        'medya_yerel': [for (final d in secim) d.path],
+        if (metinSon.isNotEmpty) 'metin': metinSon,
+        if (tekKullanimlik) 'tek_kullanimlik': true,
+      },
+      tekrar: () => _medyalariGonder(
+        secim,
+        metin: metinSon,
+        tekKullanimlik: tekKullanimlik,
+      ),
+    );
     _metin.clear();
     setState(() {
       _ekYukleniyor = true;
@@ -2706,8 +2754,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     if (bildirim != null) _uyar(bildirim);
     await _gonder(
       medyalar: [for (final y in sonuc.yuklenen) y['yol'] as String],
-      metin: metin,
+      metin: metinSon,
       yerelAnahtar: anahtar,
+      tekKullanimlik: tekKullanimlik && sonuc.yuklenen.length == 1,
     );
   }
 
@@ -3057,6 +3106,13 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                       benim: benimMi,
                                       icerikler: _icerikler,
                                       gonderiler: _gonderiler,
+                                      tekAcildi:
+                                          !benimMi &&
+                                              m['id'] != null &&
+                                              m['tek_kullanimlik'] == true &&
+                                              m['tek_acildi'] == null
+                                          ? () => _tekAcildi(m)
+                                          : null,
                                       // "Görüldü" YALNIZ son okunan kendi mesajımda.
                                       gorulduGoster: i == gorulduIndeksi,
                                       yanitla: m['id'] != null
@@ -3456,33 +3512,100 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// 7 Ağu'da medya iznini reddetti, bkz. medya_inceleme.dart), Kamera, Dosya,
   /// GIF, Dizi/Film. Konum ve Kişi BİLEREK yok: konum izni Play incelemesi
   /// açar, kişi paylaşımı yeni bir mesaj türü ister — ayrı iş.
+  /// Ataç: MOBİLDE Telegram düzeni medya paneli (galeri ızgarası + canlı
+  /// kamera + şerit, 15 Eyl 2026 — sohbet_medya_paneli.dart); WEB'DE eski
+  /// düğme paneli (tarayıcıda galeri/kamera eklentisi yok).
   Future<void> _ekPaneliAc() async {
     _metinOdak.unfocus();
-    // KENARDAN KENARA (2 Eyl 2026 isteği): M3 modal varsayılanı iki yanda
-    // 7 dp boşluk bırakıyor; genişlik ekran genişliğine (masaüstünde sohbet
-    // kolonu tavanı 800) sabitlenir.
-    final en = math.min(MediaQuery.sizeOf(context).width, 800.0);
-    final secim = await showModalBottomSheet<_EkTuru>(
-      context: context,
-      constraints: BoxConstraints(minWidth: en, maxWidth: en),
-      backgroundColor: DiziRenkler.koyuGri,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => const _EkPaneli(),
+    SohbetEkSonucu? sonuc;
+    if (kIsWeb) {
+      // KENARDAN KENARA (2 Eyl 2026 isteği): M3 modal varsayılanı iki yanda
+      // 7 dp boşluk bırakıyor; genişlik ekran genişliğine (masaüstünde
+      // sohbet kolonu tavanı 800) sabitlenir.
+      final en = math.min(MediaQuery.sizeOf(context).width, 800.0);
+      final secim = await showModalBottomSheet<SohbetEkTuru>(
+        context: context,
+        constraints: BoxConstraints(minWidth: en, maxWidth: en),
+        backgroundColor: DiziRenkler.koyuGri,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (_) => const _EkPaneli(),
+      );
+      if (secim != null) sonuc = SohbetEkSecenek(secim);
+    } else {
+      sonuc = await sohbetMedyaPaneliAc(context);
+    }
+    if (sonuc == null || !mounted) return;
+    switch (sonuc) {
+      case SohbetEkMedya(:final dosyalar):
+        await _medyaIncelemeVeGonder(dosyalar);
+      case SohbetEkSecenek(:final tur):
+        switch (tur) {
+          case SohbetEkTuru.galeri:
+            await _fotoGonder();
+          case SohbetEkTuru.kamera:
+            await _kameraGonder();
+          case SohbetEkTuru.dosya:
+            await _dosyaGonder();
+          case SohbetEkTuru.konum:
+            await _konumGonder();
+          case SohbetEkTuru.gif:
+            await _gifGonder();
+          case SohbetEkTuru.icerik:
+            await _icerikPaylas();
+        }
+    }
+  }
+
+  /// Seçilen/çekilen dosyaları SOHBET kipindeki inceleme ekranından geçirir
+  /// (altyazı + tek kullanımlık) ve gönderir. Kutudaki yazı altyazıya taşınır.
+  Future<void> _medyaIncelemeVeGonder(List<XFile> dosyalar) async {
+    final g = await sohbetMedyaIncele(
+      context,
+      dosyalar,
+      ilkMetin: _metin.text,
+      azami: albumAzami,
     );
-    if (secim == null || !mounted) return;
-    switch (secim) {
-      case _EkTuru.galeri:
-        await _fotoGonder();
-      case _EkTuru.kamera:
-        await _kameraGonder();
-      case _EkTuru.dosya:
-        await _dosyaGonder();
-      case _EkTuru.gif:
-        await _gifGonder();
-      case _EkTuru.icerik:
-        await _icerikPaylas();
+    if (g == null || !mounted) return;
+    await _medyalariGonder(
+      g.dosyalar,
+      metin: g.metin,
+      tekKullanimlik: g.tekKullanimlik,
+    );
+  }
+
+  /// KONUM (15 Eyl 2026): ön planda tek seferlik okunur, harita bağlantısı
+  /// olarak gider (ayrı mesaj türü yok: eski istemci de bağlantıyı görür).
+  Future<void> _konumGonder() async {
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) {
+        _uyar('Konum servisi kapalı'.c);
+        return;
+      }
+      var izin = await Geolocator.checkPermission();
+      if (izin == LocationPermission.denied) {
+        izin = await Geolocator.requestPermission();
+      }
+      if (izin == LocationPermission.denied ||
+          izin == LocationPermission.deniedForever) {
+        _uyar('Konum izni gerekli'.c);
+        return;
+      }
+      final k = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 15),
+        ),
+      );
+      if (!mounted) return;
+      final lat = k.latitude.toStringAsFixed(6);
+      final lon = k.longitude.toStringAsFixed(6);
+      await _gonder(
+        metin: '${'Konumum'.c}: https://maps.google.com/?q=$lat,$lon',
+      );
+    } catch (_) {
+      if (mounted) _uyar('Konum alınamadı'.c);
     }
   }
 
@@ -3554,20 +3677,24 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// Kamera: fotoğraf çekip AYNI yükleme hattına verir. Video çekimi bilerek
   /// yok — galeri yolu videoyu kapsıyor, ikinci bir kamera kipi paneli
   /// kalabalıklaştırırdı.
+  /// Kamera: mobilde UYGULAMA İÇİ kamera (flaş / çek / basılı tut = video,
+  /// 15 Eyl 2026), web'de sistem kamerası. Çekim inceleme ekranına düşer.
   Future<void> _kameraGonder() async {
-    final XFile? foto;
+    XFile? cekim;
     try {
-      foto = await ImagePicker().pickImage(
-        source: ImageSource.camera,
-        imageQuality: 92,
-        maxWidth: 2560,
-      );
+      cekim = kIsWeb
+          ? await ImagePicker().pickImage(
+              source: ImageSource.camera,
+              imageQuality: 92,
+              maxWidth: 2560,
+            )
+          : await kameraEkraniAc(context);
     } catch (_) {
       if (mounted) _uyar('Kamera açılamadı'.c);
       return;
     }
-    if (foto == null || !mounted) return;
-    await _medyalariGonder([foto]);
+    if (cekim == null || !mounted) return;
+    await _medyaIncelemeVeGonder([cekim]);
   }
 
   /// Dosya (belge): sistem dosya seçici → `/dosya` yüklemesi → belge mesajı.
@@ -3872,8 +3999,107 @@ class _MikrofonDugmesiState extends State<_MikrofonDugmesi>
   }
 }
 
-/// Ataç panelindeki seçenekler.
-enum _EkTuru { galeri, kamera, dosya, gif, icerik }
+/// Tek kullanımlık medya pulu (WhatsApp kalıbı). Alıcı açılmamışsa dokunur
+/// ve tam ekranda görür; kapatınca "Açıldı" olur. Gönderen yalnız durumu
+/// görür (kendi fotoğrafını yeniden açamaz).
+class _TekKullanimlikKutusu extends StatelessWidget {
+  final bool benim;
+  final bool acildi;
+  final bool video;
+
+  /// Yol gelmedi (gönderen ya da açılmış): tür bilinmez.
+  final bool bilinmiyor;
+  final Color yaziRengi;
+  final VoidCallback? onTap;
+
+  const _TekKullanimlikKutusu({
+    required this.benim,
+    required this.acildi,
+    required this.video,
+    required this.bilinmiyor,
+    required this.yaziRengi,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final baslik = acildi
+        ? 'Açıldı'.c
+        : bilinmiyor
+        ? 'Tek kullanımlık medya'.c
+        : (video ? 'Tek kullanımlık video'.c : 'Tek kullanımlık fotoğraf'.c);
+    final alt = acildi
+        ? null
+        : (benim ? 'Alıcı bir kez görebilir'.c : 'Görmek için dokun'.c);
+    return Semantics(
+      button: onTap != null,
+      label: baslik,
+      child: InkWell(
+        key: const Key('tek-kullanimlik-pul'),
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Container(
+          width: 220,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: yaziRengi.withValues(alpha: 0.35)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: yaziRengi.withValues(alpha: 0.12),
+                ),
+                child: Icon(
+                  acildi
+                      ? Icons.check_circle_outline
+                      : Icons.looks_one_outlined,
+                  color: acildi ? yaziRengi.withValues(alpha: 0.6) : yaziRengi,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      baslik,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: acildi
+                            ? yaziRengi.withValues(alpha: 0.6)
+                            : yaziRengi,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                    if (alt != null)
+                      Text(
+                        alt,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: yaziRengi.withValues(alpha: 0.7),
+                          fontSize: 12,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 /// Ataç paneli — Telegram'ın "+" alt sayfası: renkli daire ikonlu kutucuklar.
 ///
@@ -3884,39 +4110,46 @@ class _EkPaneli extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final secenekler = <({_EkTuru tur, IconData ikon, Color renk, String ad})>[
-      (
-        tur: _EkTuru.galeri,
-        ikon: Icons.photo_library_outlined,
-        renk: const Color(0xFF6C5CE7),
-        ad: 'Galeri'.c,
-      ),
-      if (!kIsWeb)
-        (
-          tur: _EkTuru.kamera,
-          ikon: Icons.photo_camera_outlined,
-          renk: const Color(0xFFE17055),
-          ad: 'Kamera'.c,
-        ),
-      (
-        tur: _EkTuru.dosya,
-        ikon: Icons.insert_drive_file_outlined,
-        renk: const Color(0xFF0984E3),
-        ad: 'Dosya'.c,
-      ),
-      (
-        tur: _EkTuru.gif,
-        ikon: Icons.gif_box_outlined,
-        renk: const Color(0xFF00B894),
-        ad: 'GIF'.c,
-      ),
-      (
-        tur: _EkTuru.icerik,
-        ikon: Icons.local_movies_outlined,
-        renk: DiziRenkler.sari,
-        ad: 'Dizi / Film'.c,
-      ),
-    ];
+    final secenekler =
+        <({SohbetEkTuru tur, IconData ikon, Color renk, String ad})>[
+          (
+            tur: SohbetEkTuru.galeri,
+            ikon: Icons.photo_library_outlined,
+            renk: const Color(0xFF6C5CE7),
+            ad: 'Galeri'.c,
+          ),
+          if (!kIsWeb)
+            (
+              tur: SohbetEkTuru.kamera,
+              ikon: Icons.photo_camera_outlined,
+              renk: const Color(0xFFE17055),
+              ad: 'Kamera'.c,
+            ),
+          (
+            tur: SohbetEkTuru.dosya,
+            ikon: Icons.insert_drive_file_outlined,
+            renk: const Color(0xFF0984E3),
+            ad: 'Dosya'.c,
+          ),
+          (
+            tur: SohbetEkTuru.konum,
+            ikon: Icons.location_on_outlined,
+            renk: const Color(0xFF60C255),
+            ad: 'Konum'.c,
+          ),
+          (
+            tur: SohbetEkTuru.gif,
+            ikon: Icons.gif_box_outlined,
+            renk: const Color(0xFF00B894),
+            ad: 'GIF'.c,
+          ),
+          (
+            tur: SohbetEkTuru.icerik,
+            ikon: Icons.local_movies_outlined,
+            renk: DiziRenkler.sari,
+            ad: 'Dizi / Film'.c,
+          ),
+        ];
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
@@ -4078,6 +4311,9 @@ int sonGorulenIndeks(List<dynamic> mesajlar, Object? benimId) {
   if (dosyaAd != null && dosyaAd.isNotEmpty) {
     return (ikon: Icons.insert_drive_file_outlined, metin: dosyaAd);
   }
+  if (m['tek_kullanimlik'] == true) {
+    return (ikon: Icons.looks_one_outlined, metin: 'Tek kullanımlık'.c);
+  }
   final medya = m['medya'] as String? ?? m['yanit_medya'] as String?;
   if (medya != null) {
     if (sesDosyasi(medya)) {
@@ -4183,7 +4419,12 @@ class _MesajBaloncugu extends StatelessWidget {
     this.efekt,
     this.disVurusEmoji,
     this.disVurus = 0,
+    this.tekAcildi,
   });
+
+  /// TEK KULLANIMLIK (15 Eyl 2026): alıcı medyayı tam ekranda kapatınca
+  /// çağrılır. Null → dokunulamaz (gönderen, açılmış, ya da yerel satır).
+  final Future<void> Function()? tekAcildi;
 
   /// Galeriye kaydedilebilir medyaların TAM ADRESLERİ (15 Eyl 2026).
   ///
@@ -4631,8 +4872,29 @@ class _MesajBaloncugu extends StatelessWidget {
                     ilerleme: bekliyor ? ilerleme : null,
                   ),
                 ),
+              // TEK KULLANIMLIK (15 Eyl 2026): önizleme yok, pul var.
+              if (m['tek_kullanimlik'] == true && yerel.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: _TekKullanimlikKutusu(
+                    benim: benim,
+                    acildi: m['tek_acildi'] != null,
+                    video: video,
+                    bilinmiyor: medya == null,
+                    yaziRengi: yaziRengi,
+                    onTap: !benim && tekAcildi != null && medya != null
+                        ? () async {
+                            await medyaGoster(context, [dosyaUrl(medya)!]);
+                            await tekAcildi!();
+                          }
+                        : null,
+                  ),
+                ),
               // Fotoğraf / GIF / video (tek)
-              if (medya != null && !ses && album.length <= 1)
+              if (m['tek_kullanimlik'] != true &&
+                  medya != null &&
+                  !ses &&
+                  album.length <= 1)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 4),
                   // Foto/GIF ve video: dokununca tam ekran görüntüleyici

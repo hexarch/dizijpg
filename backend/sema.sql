@@ -546,7 +546,9 @@ CREATE TABLE IF NOT EXISTS mesajlar (
   okundu BOOLEAN DEFAULT false,
   yanit_id INT REFERENCES mesajlar(id) ON DELETE SET NULL, -- alıntılanan mesaj
   duzenlendi BOOLEAN DEFAULT false,                        -- düzenlenmiş mi
-  tarih TIMESTAMPTZ DEFAULT now()
+  tarih TIMESTAMPTZ DEFAULT now(),
+  tek_kullanimlik BOOLEAN NOT NULL DEFAULT false,          -- migrasyon-2026-09-15b
+  tek_acildi TIMESTAMPTZ                                   -- alıcı açtı (dosya silindi)
 );
 CREATE INDEX IF NOT EXISTS mesajlar_cift
   ON mesajlar (LEAST(gonderen_id, alici_id), GREATEST(gonderen_id, alici_id), id DESC);

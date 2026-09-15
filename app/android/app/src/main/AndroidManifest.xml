@@ -40,6 +40,22 @@
          "gösterim videosu" beyanı istiyor. Bugünkü davranış — uygulama arka
          plana alınınca arama düşebilir — eksik bir özelliktir, sessiz bir
          arıza değil; F2'de beyanla birlikte gelir. -->
+    <!-- GALERİ IZGARASI (15 Eyl 2026): sohbetin Telegram düzeni medya paneli
+         son fotoğrafları UYGULAMA İÇİNDE listeler (photo_manager). 7 Ağu'da
+         Play bu izinler yüzünden reddetmişti; kullanıcı 15 Eyl'de bilerek
+         geri istedi. Play Console'da "Fotoğraf ve video izinleri" beyanı:
+         temel işlev = sohbette medya paylaşımı (mesajlaşma). Android 14+
+         kısmi erişim (USER_SELECTED) de tanınır; 12 ve altı için
+         READ_EXTERNAL_STORAGE maxSdk 32. -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"/>
+    <!-- KONUM PAYLAŞIMI (15 Eyl 2026): yalnız ÖN PLANDA, kullanıcı "Konum"
+         düğmesine basınca tek seferlik okunur; arka plan konumu YOK. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>

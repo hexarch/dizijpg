@@ -1775,4 +1775,32 @@ const Map<String, String> cevirilerHu = {
       'A témát nem sikerült elküldeni a másik félnek',
   'Seçtiğin tema karşı tarafta da görünür':
       'A választott témát a másik fél is látja',
+  'Alıcı bir kez görebilir': 'A címzett egyszer nézheti meg',
+  'Açıldı': 'Megnyitva',
+  'Flaş': 'Vaku',
+  'Fotoğraf çekilemedi': 'Nem sikerült fotót készíteni',
+  'Galeri izni gerekli': 'Galéria-hozzáférés szükséges',
+  'Galeride medya yok': 'Nincs média a galériában',
+  'Galeriden seç': 'Választás a galériából',
+  'Görmek için dokun': 'Koppints a megtekintéshez',
+  'Konum': 'Helyzet',
+  'Konum alınamadı': 'Nem sikerült lekérni a helyzetet',
+  'Konum izni gerekli': 'Helymeghatározási engedély szükséges',
+  'Konum servisi kapalı': 'A helymeghatározás ki van kapcsolva',
+  'Konumum': 'A helyzetem',
+  'Mesaj ekle...': 'Üzenet hozzáadása...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'A legutóbbi fotóid megjelenítéséhez galéria-hozzáférés szükséges.',
+  'Tek kullanımlık': 'Egyszeri megtekintés',
+  'Tek kullanımlık fotoğraf': 'Egyszer megtekinthető fotó',
+  'Tek kullanımlık medya': 'Egyszer megtekinthető média',
+  'Tek kullanımlık video': 'Egyszer megtekinthető videó',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Az egyszeri megtekintés csak egyetlen fotóval vagy videóval működik',
+  'Video kaydedilemedi': 'Nem sikerült menteni a videót',
+  'Video kaydı başlamadı': 'A videófelvétel nem indult el',
+  'Çek': 'Felvétel',
+  'Çekmek için dokun, video için basılı tut':
+      'Koppints a fotóhoz, tartsd lenyomva a videóhoz',
+  'İzin ver': 'Engedélyezés',
 };

@@ -1845,4 +1845,32 @@ const Map<String, String> cevirilerRo = {
       'Tema nu a putut fi trimisă celeilalte părți',
   'Seçtiğin tema karşı tarafta da görünür':
       'Tema aleasă se vede și la cealaltă parte',
+  'Alıcı bir kez görebilir': 'Destinatarul îl poate vedea o singură dată',
+  'Açıldı': 'Deschis',
+  'Flaş': 'Bliț',
+  'Fotoğraf çekilemedi': 'Nu s-a putut face fotografia',
+  'Galeri izni gerekli': 'Este necesar accesul la galerie',
+  'Galeride medya yok': 'Nu există media în galerie',
+  'Galeriden seç': 'Alege din galerie',
+  'Görmek için dokun': 'Atinge pentru a vedea',
+  'Konum': 'Locație',
+  'Konum alınamadı': 'Nu s-a putut obține locația',
+  'Konum izni gerekli': 'Este necesară permisiunea de locație',
+  'Konum servisi kapalı': 'Serviciile de locație sunt oprite',
+  'Konumum': 'Locația mea',
+  'Mesaj ekle...': 'Adaugă un mesaj...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Pentru a-ți afișa aici fotografiile recente este necesar accesul la galerie.',
+  'Tek kullanımlık': 'Vizualizare unică',
+  'Tek kullanımlık fotoğraf': 'Fotografie cu vizualizare unică',
+  'Tek kullanımlık medya': 'Media cu vizualizare unică',
+  'Tek kullanımlık video': 'Video cu vizualizare unică',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Vizualizarea unică funcționează doar cu o singură fotografie sau un video',
+  'Video kaydedilemedi': 'Nu s-a putut salva videoclipul',
+  'Video kaydı başlamadı': 'Înregistrarea video nu a început',
+  'Çek': 'Fotografiază',
+  'Çekmek için dokun, video için basılı tut':
+      'Atinge pentru fotografie, ține apăsat pentru video',
+  'İzin ver': 'Permite',
 };

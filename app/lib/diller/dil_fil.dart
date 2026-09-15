@@ -1796,4 +1796,32 @@ const Map<String, String> cevirilerFil = {
   'Tema karşı tarafa iletilemedi': 'Hindi naipadala ang tema sa kabilang panig',
   'Seçtiğin tema karşı tarafta da görünür':
       'Makikita rin ng kabilang panig ang temang pipiliin mo',
+  'Alıcı bir kez görebilir': 'Isang beses lang makikita ng tatanggap',
+  'Açıldı': 'Nabuksan',
+  'Flaş': 'Flash',
+  'Fotoğraf çekilemedi': 'Hindi makuhanan ng litrato',
+  'Galeri izni gerekli': 'Kailangan ng access sa gallery',
+  'Galeride medya yok': 'Walang media sa gallery',
+  'Galeriden seç': 'Pumili mula sa gallery',
+  'Görmek için dokun': 'I-tap para makita',
+  'Konum': 'Lokasyon',
+  'Konum alınamadı': 'Hindi makuha ang lokasyon',
+  'Konum izni gerekli': 'Kailangan ng pahintulot sa lokasyon',
+  'Konum servisi kapalı': 'Naka-off ang location services',
+  'Konumum': 'Ang lokasyon ko',
+  'Mesaj ekle...': 'Magdagdag ng mensahe...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Kailangan ng access sa gallery para ipakita rito ang mga kamakailang litrato.',
+  'Tek kullanımlık': 'Isang beses lang',
+  'Tek kullanımlık fotoğraf': 'Litratong isang beses lang',
+  'Tek kullanımlık medya': 'Media na isang beses lang',
+  'Tek kullanımlık video': 'Video na isang beses lang',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Ang isang beses lang ay para sa iisang litrato o video',
+  'Video kaydedilemedi': 'Hindi ma-save ang video',
+  'Video kaydı başlamadı': 'Hindi nagsimula ang pag-record ng video',
+  'Çek': 'Kunan',
+  'Çekmek için dokun, video için basılı tut':
+      'I-tap para kumuha, pindutin nang matagal para sa video',
+  'İzin ver': 'Payagan',
 };

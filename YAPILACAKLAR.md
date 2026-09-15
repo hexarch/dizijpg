@@ -11089,3 +11089,59 @@ Kullanıcı istekleri (akşam turu):
   heredoc'u Bash aracı "denetim karakteri" diye reddediyor → Write ile yaz.
   Canlı dağıtım (migrasyon + docker-compose --build) sınıflandırıcıda engelli
   → kullanıcı `!` ile koşar; dosyalar scp ile /opt/dizijpg'ye kondu.
+
+## 15 Eyl 2026 — Sohbet medya paneli TELEGRAM DÜZENİ + uygulama içi kamera + tek kullanımlık + konum (1.169.0+250)
+Kullanıcı: *"dosya paylaş kısmına tıklayınca yarım ekranı kaplayacak modal;
+3'lü sütun galeri; en soldaki sütun 2 satır birleşik ve arka kamera açık;
+altta şeffaf gezinme çubuğunun üstünde galeri/dosya/konum/gif/dizi-film, galeri
+seçili; kameraya dokununca flaş / çek (basılı tut = video) / ön-arka; görsel
+seçince bizim edit modu + tek kullanımlık + metin ekleme"*. Play izin riskini
+bilerek ÜSTLENDİ ("ben tariz edeceğim").
+- ✅ `app/lib/ekranlar/sohbet_medya_paneli.dart`: `DraggableScrollableSheet`
+  (0.55 → 0.95), 3 sütun (2 dp boşluk), sol üstte 2 satırlık canlı arka
+  kamera karesi (`camera`, low preset, sessiz), galeri `photo_manager`
+  (60'lık sayfalar, kaydırınca devamı), video karesinde süre rozeti, sağ üst
+  daire = SIRALI çoklu seçim + "Gönder N"; kareye dokunmak tek medyayı
+  inceleme ekranına götürür. Alt şerit gradyanla ızgaranın üstüne biner,
+  gezinme çubuğu payı `MediaQuery.padding.bottom` (useSafeArea:false).
+  İzin yoksa "Galeri izni gerekli / İzin ver / Galeriden seç" durumu;
+  kamera karesi yine çalışır. Web'de ESKİ düğme paneli (eklentiler yok).
+- ✅ `kamera_ekrani.dart`: tam ekran kamera; flaş kapalı→otomatik→açık, çek
+  = fotoğraf, basılı tut = video (bırakınca biter, `videoAzamiGirdiSure`de
+  kendiliğinden), ön/arka geçiş, arka planda kamera bırakılır.
+- ✅ `medya_inceleme.dart` SOHBET KİPİ: altta "Mesaj ekle..." altyazı kutusu
+  (kutudaki yazı taşınır) + TEK KULLANIMLIK düğmesi (yalnız tek foto/video;
+  albümde pasif + ipucu); "İleri" yerine "Gönder"; `MedyaGonderim` döner.
+  Galeri düğmesi (sistem seçicisi) ve kamera çekimi de aynı kipe düşer.
+- ✅ TEK KULLANIMLIK uçtan uca: `migrasyon-2026-09-15b.sql`
+  (`mesajlar.tek_kullanimlik`, `tek_acildi`), POST /mesajlar bayrağı (yalnız
+  tek medya, ses değil), GET /mesajlar açılınca ya da GÖNDERENE yolu
+  vermez, `POST /mesajlar/:id/tek-acildi` (yalnız alıcı, bir kez, dosya
+  diskten SİLİNİR + özel medya kümesinden düşer). Balon: önizleme yok, pul
+  ("Tek kullanımlık fotoğraf / Görmek için dokun" → tam ekran → kapatınca
+  bildirilir → "Açıldı"); gönderende "Alıcı bir kez görebilir". Liste/alıntı
+  özeti "Tek kullanımlık".
+- ✅ KONUM: `geolocator` ön planda tek okuma → "Konumum: https://maps.google.
+  com/?q=lat,lon" metin mesajı (ayrı tür yok, eski istemci de görür).
+  Servis kapalı / izin yok / zaman aşımı → uyarı.
+- İZİNLER: Android `READ_MEDIA_IMAGES/VIDEO/VISUAL_USER_SELECTED` +
+  `READ_EXTERNAL_STORAGE`(≤32) + `ACCESS_COARSE/FINE_LOCATION` GERİ GELDİ
+  (manifest yorumu 7 Ağu kararını ve 15 Eyl kararını anlatır). iOS
+  `NSLocationWhenInUseUsageDescription`. **PLAY CONSOLE'DA "Fotoğraf ve video
+  izinleri" BEYANI DOLDURULMALI** (temel işlev: sohbette medya paylaşımı);
+  konum için beyan yok (ön plan). Bağımlılıklar: photo_manager 3.12,
+  camera 0.12, geolocator 14.
+- Çeviri: 25 anahtar × 45 dil (az'da 'Açıldı'/'Flaş' Türkçeyle özdeş çıktı →
+  'Açılıb'/'Fləş'; test özdeş çeviriyi reddediyor).
+- Test: `sohbet_medya_paneli_test` (7: ızgara geometrisi, tek dokunuş, sıralı
+  çoklu seçim, şerit/kamera seçenekleri, izin yok, boş galeri, kamera yok),
+  `sohbet_medya_inceleme_test` (3), `sohbet_ss_ve_dalga_test` +2 (alıcı pul →
+  görüntüleyici → POST → Açıldı; gönderen), backend `tek_kullanimlik.test.js`.
+- TUZAKLAR: (1) balonda `onDoubleTap` (emoji vuruşu) var → testte tek
+  dokunuş 300 ms sonra kesinleşir, `tap` ardından `pump(400 ms)` şart; yoksa
+  "onTap çalışmıyor" yanılgısı. (2) görüntüleyici yer tutucusu sonsuz döner →
+  `pumpAndSettle` yerine `pump(1 s)`. (3) `python3 - <<EOF` içindeki
+  Unicode bazen "Non-UTF-8" hatası veriyor → betiği Write ile dosyaya yaz,
+  `# -*- coding: utf-8 -*-` ile koş. (4) Panel testinde yardımcı paneli
+  AÇTIKTAN sonra Future döndürmeli (`Future<Future<T>>`), yoksa dokunuşlar
+  panel çizilmeden gider.

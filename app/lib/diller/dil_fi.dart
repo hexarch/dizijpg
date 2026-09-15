@@ -1771,4 +1771,32 @@ const Map<String, String> cevirilerFi = {
       'Teemaa ei voitu lähettää toiselle osapuolelle',
   'Seçtiğin tema karşı tarafta da görünür':
       'Valitsemasi teema näkyy myös toiselle osapuolelle',
+  'Alıcı bir kez görebilir': 'Vastaanottaja voi katsoa sen kerran',
+  'Açıldı': 'Avattu',
+  'Flaş': 'Salama',
+  'Fotoğraf çekilemedi': 'Kuvaa ei voitu ottaa',
+  'Galeri izni gerekli': 'Galleriaan tarvitaan pääsy',
+  'Galeride medya yok': 'Galleriassa ei ole mediaa',
+  'Galeriden seç': 'Valitse galleriasta',
+  'Görmek için dokun': 'Napauta katsoaksesi',
+  'Konum': 'Sijainti',
+  'Konum alınamadı': 'Sijaintia ei saatu',
+  'Konum izni gerekli': 'Sijaintilupa tarvitaan',
+  'Konum servisi kapalı': 'Sijaintipalvelut ovat pois päältä',
+  'Konumum': 'Sijaintini',
+  'Mesaj ekle...': 'Lisää viesti...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Viimeisimpien kuviesi näyttämiseen tässä tarvitaan pääsy galleriaan.',
+  'Tek kullanımlık': 'Katso kerran',
+  'Tek kullanımlık fotoğraf': 'Kertakatselukuva',
+  'Tek kullanımlık medya': 'Kertakatselumedia',
+  'Tek kullanımlık video': 'Kertakatseluvideo',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Kertakatselu toimii vain yhdellä kuvalla tai videolla',
+  'Video kaydedilemedi': 'Videota ei voitu tallentaa',
+  'Video kaydı başlamadı': 'Videon tallennus ei alkanut',
+  'Çek': 'Kuvaa',
+  'Çekmek için dokun, video için basılı tut':
+      'Napauta kuvaan, pidä pohjassa videoon',
+  'İzin ver': 'Salli',
 };

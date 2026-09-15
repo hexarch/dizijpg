@@ -1759,4 +1759,32 @@ const Map<String, String> cevirilerCs = {
   'Tema karşı tarafa iletilemedi': 'Motiv se nepodařilo odeslat druhé straně',
   'Seçtiğin tema karşı tarafta da görünür':
       'Vybraný motiv uvidí i druhá strana',
+  'Alıcı bir kez görebilir': 'Příjemce to může zobrazit jednou',
+  'Açıldı': 'Otevřeno',
+  'Flaş': 'Blesk',
+  'Fotoğraf çekilemedi': 'Fotku se nepodařilo pořídit',
+  'Galeri izni gerekli': 'Je potřeba přístup ke galerii',
+  'Galeride medya yok': 'V galerii nejsou žádná média',
+  'Galeriden seç': 'Vybrat z galerie',
+  'Görmek için dokun': 'Klepnutím zobrazíš',
+  'Konum': 'Poloha',
+  'Konum alınamadı': 'Polohu se nepodařilo zjistit',
+  'Konum izni gerekli': 'Je potřeba oprávnění k poloze',
+  'Konum servisi kapalı': 'Polohové služby jsou vypnuté',
+  'Konumum': 'Moje poloha',
+  'Mesaj ekle...': 'Přidat zprávu...',
+  'Son fotoğrafların burada görünsün diye galerine erişim gerekir.':
+      'Aby se zde zobrazily tvé nedávné fotky, je potřeba přístup ke galerii.',
+  'Tek kullanımlık': 'Jednorázové zobrazení',
+  'Tek kullanımlık fotoğraf': 'Jednorázová fotka',
+  'Tek kullanımlık medya': 'Jednorázové médium',
+  'Tek kullanımlık video': 'Jednorázové video',
+  'Tek kullanımlık yalnız tek fotoğraf veya videoda':
+      'Jednorázové zobrazení funguje jen s jednou fotkou nebo videem',
+  'Video kaydedilemedi': 'Video se nepodařilo uložit',
+  'Video kaydı başlamadı': 'Nahrávání videa nezačalo',
+  'Çek': 'Vyfotit',
+  'Çekmek için dokun, video için basılı tut':
+      'Klepnutím vyfotíš, podržením natočíš video',
+  'İzin ver': 'Povolit',
 };
