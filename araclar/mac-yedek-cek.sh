@@ -37,7 +37,9 @@
 
 set -uo pipefail
 
-SUNUCU="${DIZIJPG_SUNUCU:-root@154.53.163.3}"
+# 11 Eyl 2026'da sunucu 87.248.157.114'e taşındı (ssh takma adı `keyubu`);
+# eski adres 15 Eyl'e kadar burada kaldığı için çekme 4 gece üst üste düştü.
+SUNUCU="${DIZIJPG_SUNUCU:-root@87.248.157.114}"
 HEDEF="${1:-$HOME/dizijpg-yedekler}"
 UZAK_YEDEK="/opt/dizijpg/yedekler/"
 UZAK_MEDYA="/var/lib/docker/volumes/dizijpg_dizijpg_dosyalar/_data/"
@@ -107,6 +109,18 @@ else
 fi
 
 [ "$hata" -ne 0 ] && oldu "bir veya daha fazla aktarım başarısız"
+
+# --- 3) Yerel önbellek dökümlerini buda -------------------------------------
+# 15 Eyl 2026'dan beri sunucu haftada bir ~15 GB'lik `dizijpg-onbellek-*`
+# (TMDB önbelleği) dökümü üretiyor ve kendinde 4 tane tutuyor. Ayna `--delete`
+# kullanmadığı için bunlar burada SONSUZA DEK birikir: 7 haftada 100 GB.
+# Yalnız BU kalıp sayıyla budanır (en yeni 6 kalır); günlük kullanıcı verisi
+# dökümlerine ve medyaya dokunulmaz — "SİLME YOK" ilkesi onlar için geçerli.
+ONBELLEK_SAKLA=6
+ls -1t "$HEDEF"/veritabani/dizijpg-onbellek-*.sql.gz* 2>/dev/null \
+  | tail -n +"$((ONBELLEK_SAKLA + 1))" | while IFS= read -r eski; do
+    rm -f -- "$eski" && log "eski önbellek dökümü silindi: $(basename "$eski")"
+  done
 
 # --- Doğrulama: yerel sayım uzak sayımla tutuyor mu ---
 yerel_yedek=$(ls -1 "$HEDEF/veritabani/" 2>/dev/null | wc -l | tr -d ' ')

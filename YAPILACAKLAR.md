@@ -1,6 +1,29 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-15 — ✅ DİSK %90 → %41: yedek ikiye ayrıldı, Mac çekmesi onarıldı
+
+**Tetik:** *"sunucunun diski dolmak üzere, eski yedekleri silsek mi veya bu
+cihaza çekip silelim"* + **KURAL:** *"tmdb önbelleğini silme; tekrar çekmek
+istemiyorum, kullanıcı arttıkça çekme limitimiz yetmeyecek."*
+
+- **Teşhis:** 256 GB'nin 221'i dolu; 150 GB `/opt/dizijpg/yedekler` (günlük
+  tam döküm 31 Ağu 3,7 GB → 15 Eyl 15 GB). Veritabanı 26 GB'nin 26 GB'si
+  `tmdb_onbellek` (2,3 M satır); kullanıcı verisi < 300 MB. 14 günlük saklama
+  ZATEN vardı, sorun boyuttu. Mac çekme betiği 11 Eyl'den beri eski adrese
+  (154.53.163.3) bağlanamıyordu.
+- **Yapılan:** 31 Ağu–13 Eyl 14 döküm silindi (kullanıcı onayı; 31 Ağu–5 Eyl
+  kopyaları Mac'te). `backend/yedek.sh`: GÜNLÜK döküm `--exclude-table-data=
+  tmdb_onbellek` (45 MB), HAFTALIK `dizijpg-onbellek-<ts>` `--data-only
+  --table` (~15 GB, en yeni 4 kalır), günlük saklama 14 → 30 gün. Geri yükleme
+  sırası betik başlığında (önce günlük, sonra önbellek; dolu tabloya TRUNCATE).
+  `araclar/mac-yedek-cek.sh`: adres 87.248.157.114, yerelde önbellek dökümü
+  en yeni 6 (ayna `--delete`siz olduğu için birikirdi); çalışan kopya
+  `~/.dizijpg/` tazelendi.
+- **Açık:** `tmdb_onbellek` 16 Ağu'dan beri günde ~1 GB büyüyor (süresi dolan
+  satır YOK, kullanıcı kuralı gereği silinmez) — disk büyümesini izle.
+  Mac'te 31 Ağu–5 Eyl'in 34 GB'lik eski tam dökümleri duruyor (dokunulmadı).
+
 ## 2026-09-15 — 🔨 AKIŞTA GÖRELİ ZAMAN + TAKVİMDE ÇEKEREK AY GEÇİŞİ (1.170.0+252)
 
 **Tetik (iki istek):** *"akışta paylaşılanlarda tarih yazmak yerine önce dakika

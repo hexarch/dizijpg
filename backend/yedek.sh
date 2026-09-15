@@ -89,54 +89,99 @@ chmod 700 "$DIZIN"
 
 TS=$(date +%Y%m%d-%H%M)
 
-if [ "$SIFRELE" = "1" ]; then
-  if [ ! -r "$ANAHTAR" ]; then
-    echo "HATA: anahtar dosyası yok/okunamıyor: $ANAHTAR" >&2
-    echo "      Kurulum: head -c 32 /dev/urandom | base64 > $ANAHTAR" >&2
-    echo "      ve anahtarı parola yöneticisine de KAYDET (yoksa yedekler açılamaz)." >&2
-    exit 1
-  fi
-  HEDEF="$DIZIN/dizijpg-$TS.sql.gz.gpg"
-  docker exec dizijpg-db pg_dump -U dizijpg dizijpg \
-    | gzip \
-    | gpg "${GPG_ORTAK[@]}" "${GPG_SIFRELE[@]}" -o "$HEDEF"
-else
-  HEDEF="$DIZIN/dizijpg-$TS.sql.gz"
-  docker exec dizijpg-db pg_dump -U dizijpg dizijpg | gzip > "$HEDEF"
-fi
-
-chmod 600 "$HEDEF"
-
-# --- DOĞRULAMA: "yedek aldım" demeden önce yedeğin AÇILDIĞINI kanıtla --------
-# Sessiz bozulma bu işin en sinsi hatasıdır: dosya vardır, boyutu makuldür,
-# ama geri yüklenemez. Her gece açılıp gzip başlığına kadar okunur.
-BOYUT=$(stat -c %s "$HEDEF")
-if [ "$BOYUT" -lt "$ASGARI_BOYUT" ]; then
-  echo "HATA: yedek çok küçük ($BOYUT bayt < $ASGARI_BOYUT) — pg_dump yarıda kesilmiş olabilir: $HEDEF" >&2
+if [ "$SIFRELE" = "1" ] && [ ! -r "$ANAHTAR" ]; then
+  echo "HATA: anahtar dosyası yok/okunamıyor: $ANAHTAR" >&2
+  echo "      Kurulum: head -c 32 /dev/urandom | base64 > $ANAHTAR" >&2
+  echo "      ve anahtarı parola yöneticisine de KAYDET (yoksa yedekler açılamaz)." >&2
   exit 1
 fi
 
-if [ "$SIFRELE" = "1" ]; then
-  # Çöz → gunzip → ilk satırı oku. Boru erken kapandığı için gpg/gunzip
-  # SIGPIPE alabilir; bu yüzden çıkış kodu yerine İÇERİĞE bakıyoruz.
-  BAS=$(gpg "${GPG_ORTAK[@]}" --decrypt "$HEDEF" 2>/dev/null \
-        | gunzip 2>/dev/null | head -c 200 || true)
-else
-  BAS=$(gunzip -c "$HEDEF" 2>/dev/null | head -c 200 || true)
+# =============================================================================
+# İKİ DÖKÜM: GÜNLÜK kullanıcı verisi + HAFTALIK TMDB önbelleği (15 Eyl 2026)
+# =============================================================================
+# NEDEN: `tmdb_onbellek` (TMDB API yanıtlarının önbelleği) 15 Eyl 2026'da
+# 26 GB / 2,3 M satırdı ve veritabanının neredeyse TAMAMIYDI; gerçek kullanıcı
+# verisi (izlemeler, yorumlar, mesajlar, çeviriler…) 300 MB'nin altında. Tek
+# tam döküm her gece 15 GB üretiyor, 14 günlük saklama diski %90'a taşıdı
+# (150 GB yedek). Önbellek yeniden çekilebilir ama KULLANICI KARARI: "silme,
+# tekrar çekmek istemiyorum; kullanıcı arttıkça TMDB limiti yetmez" — yani
+# önbellek de yedeklenir, yalnız daha SEYREK.
+#
+#   dizijpg-<ts>.sql.gz.gpg          her gece: TÜM şema + önbellek DIŞINDAKİ
+#                                     tüm veri (--exclude-table-data). ~100 MB.
+#   dizijpg-onbellek-<ts>.sql.gz.gpg 7 günde bir: YALNIZ tmdb_onbellek
+#                                     satırları (--data-only). ~15 GB, ~1 saat.
+#
+# GERİ YÜKLEME SIRASI: önce günlük döküm (tabloyu ve indeksleri de kurar),
+# sonra önbellek dökümü (yalnız INSERT/COPY). Önbellek dökümü en fazla bir
+# hafta geridir; aradaki fark TMDB'den kendiliğinden tamamlanır.
+#   /opt/dizijpg/yedek-ac.sh dizijpg-<ts>.sql.gz.gpg          | psql …
+#   /opt/dizijpg/yedek-ac.sh dizijpg-onbellek-<ts>.sql.gz.gpg | psql …
+# Önbellek dökümünü BOŞ OLMAYAN tabloya yüklemek anahtar çakışması verir;
+# gerekirse önce `TRUNCATE tmdb_onbellek`.
+ONBELLEK_TABLO=tmdb_onbellek
+ONBELLEK_ARALIK_GUN=${ONBELLEK_ARALIK_GUN:-7}   # bu kadar günde bir
+ONBELLEK_SAKLA=${ONBELLEK_SAKLA:-4}             # en yeni N önbellek dökümü kalır
+ONBELLEK_ASGARI_BOYUT=${ONBELLEK_ASGARI_BOYUT:-100000000}  # 100 MB altı = yarım
+
+# Tek bir dökümü üretip doğrulayan yardımcı: dok <ad-öneki> <asgari-bayt> <pg_dump argümanları…>
+# "yedek aldım" demeden önce yedeğin AÇILDIĞINI kanıtlar. Sessiz bozulma bu
+# işin en sinsi hatasıdır: dosya vardır, boyutu makuldür, ama geri yüklenemez.
+dok() {
+  local onek=$1 asgari=$2; shift 2
+  local hedef boyut bas
+  if [ "$SIFRELE" = "1" ]; then
+    hedef="$DIZIN/$onek-$TS.sql.gz.gpg"
+    docker exec dizijpg-db pg_dump -U dizijpg "$@" dizijpg \
+      | gzip \
+      | gpg "${GPG_ORTAK[@]}" "${GPG_SIFRELE[@]}" -o "$hedef"
+  else
+    hedef="$DIZIN/$onek-$TS.sql.gz"
+    docker exec dizijpg-db pg_dump -U dizijpg "$@" dizijpg | gzip > "$hedef"
+  fi
+  chmod 600 "$hedef"
+  boyut=$(stat -c %s "$hedef")
+  if [ "$boyut" -lt "$asgari" ]; then
+    echo "HATA: yedek çok küçük ($boyut bayt < $asgari) — pg_dump yarıda kesilmiş olabilir: $hedef" >&2
+    exit 1
+  fi
+  if [ "$SIFRELE" = "1" ]; then
+    # Çöz → gunzip → ilk satırı oku. Boru erken kapandığı için gpg/gunzip
+    # SIGPIPE alabilir; bu yüzden çıkış kodu yerine İÇERİĞE bakıyoruz.
+    bas=$(gpg "${GPG_ORTAK[@]}" --decrypt "$hedef" 2>/dev/null \
+          | gunzip 2>/dev/null | head -c 200 || true)
+  else
+    bas=$(gunzip -c "$hedef" 2>/dev/null | head -c 200 || true)
+  fi
+  case "$bas" in
+    *PostgreSQL*|*pg_dump*|*SET\ *)
+      : ;;   # geçerli döküm başlığı
+    *)
+      echo "HATA: yedek doğrulanamadı (çözülüp okunamadı): $hedef" >&2
+      exit 1 ;;
+  esac
+  echo "$(date '+%Y-%m-%d %H:%M') yedek OK: $(basename "$hedef") ($boyut bayt, dogrulandi)"
+}
+
+# 1) Günlük: her şey, önbellek SATIRLARI hariç (şeması dahil).
+dok dizijpg "$ASGARI_BOYUT" --exclude-table-data="$ONBELLEK_TABLO"
+
+# 2) Haftalık önbellek: son önbellek dökümü ARALIK'tan eskiyse (ya da hiç yoksa).
+if [ -z "$(find "$DIZIN" -name 'dizijpg-onbellek-*.sql.gz*' -mtime -"$ONBELLEK_ARALIK_GUN" -print -quit)" ]; then
+  dok dizijpg-onbellek "$ONBELLEK_ASGARI_BOYUT" --data-only --table="$ONBELLEK_TABLO"
 fi
-case "$BAS" in
-  *PostgreSQL*|*pg_dump*|*SET\ *)
-    : ;;   # geçerli döküm başlığı
-  *)
-    echo "HATA: yedek doğrulanamadı (çözülüp okunamadı): $HEDEF" >&2
-    exit 1 ;;
-esac
 
 # --- Temizlik ----------------------------------------------------------------
-# 14 günden eski yedekleri sil. ŞİFRELİ ve şifresiz adları AYRI AYRI eşle:
-# tek kalıpla ilerlerken göç döneminde eski `.sql.gz`ler hiç silinmezdi.
-find "$DIZIN" -name 'dizijpg-*.sql.gz'     -mtime +14 -delete
-find "$DIZIN" -name 'dizijpg-*.sql.gz.gpg' -mtime +14 -delete
+# Günlük dökümler artık küçük: 30 gün saklanır (eski 14). ŞİFRELİ ve şifresiz
+# adları AYRI AYRI eşle: tek kalıpla ilerlerken göç döneminde eski `.sql.gz`ler
+# hiç silinmezdi. Önbellek dökümleri bu kalıba GİRMEZ (adı `dizijpg-onbellek-`),
+# onlar sayıyla budanır: en yeni ONBELLEK_SAKLA tanesi kalır.
+# NOT: 15 Eyl 2026 öncesinin tam dökümleri (`dizijpg-2026091[45]-…`, 15 GB)
+# günlük kalıba uyar ve 30 gün sonra kendiliğinden gider.
+find "$DIZIN" -name 'dizijpg-[0-9]*.sql.gz'     -mtime +30 -delete
+find "$DIZIN" -name 'dizijpg-[0-9]*.sql.gz.gpg' -mtime +30 -delete
+ls -1t "$DIZIN"/dizijpg-onbellek-*.sql.gz* 2>/dev/null \
+  | tail -n +"$((ONBELLEK_SAKLA + 1))" | xargs -r rm -f --
 
 # Göç emniyeti: dizinde eski/elle bırakılmış ne varsa izni sıkılaştır.
 # (Panelden alınan `-elle` yedekleri ve denetim öncesi kalan 644 dosyalar.)
@@ -166,4 +211,4 @@ fi
 docker exec dizijpg-db psql -U dizijpg -d dizijpg -c \
   "DELETE FROM hatalar WHERE tarih < now() - interval '30 days'" >/dev/null
 
-echo "$(date '+%Y-%m-%d %H:%M') yedek OK: $(basename "$HEDEF") ($BOYUT bayt, dogrulandi)"
+echo "$(date '+%Y-%m-%d %H:%M') temizlik OK: $(ls -1 "$DIZIN"/dizijpg-*.sql.gz* | wc -l) döküm, $(du -sh "$DIZIN" | cut -f1)"
