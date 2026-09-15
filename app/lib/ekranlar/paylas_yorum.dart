@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart' show XFile;
 import 'package:provider/provider.dart';
 
 import '../api.dart';
@@ -126,6 +127,12 @@ const double _ekKaresi = 128;
 /// İkisinin küçüğü. (`dart:math`i tek bir çağrı için içeri almıyoruz.)
 double _enKucuk(double a, double b) => a < b ? a : b;
 
+/// Testte ele geçirilebilsin diye üst düzey ve değiştirilebilir
+/// (`dis_puanlar.dart` `disBaglantiAc` kalıbı): sistem seçicisi ve inceleme
+/// ekranı widget testinde açılamaz.
+Future<List<XFile>> Function(BuildContext context, {int azami}) medyaSecici =
+    medyaSec;
+
 class PaylasYorumEkrani extends StatefulWidget {
   /// Ekran açılırken HAZIR gelen etiketler (3 Eyl 2026, kullanıcı isteği:
   /// *"oradaki yorum yapma kısmına tıklayınca akıştaki gibi olsun, dizi ve
@@ -162,6 +169,11 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
   bool _ekYukleniyor = false;
   int _ekToplam = 0;
   int _ekBiten = 0;
+
+  /// Yükleme turunun GERÇEK bayt yüzdesi (0-100). Eskiden yalnız "0/1
+  /// yükleniyor" sayacı vardı: tek videoda dosya bitene kadar 0 kalıyor,
+  /// kullanıcı "takıldı, yüklemiyor" sanıyordu (15 Eyl 2026 bildirimi).
+  int _ekYuzde = 0;
   bool _spoiler = false;
   bool _gonderiliyor = false;
 
@@ -269,23 +281,34 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
     if (!girisGerekli(context)) return;
     final kalan = 10 - _ekler.length;
     if (kalan <= 0 || _ekYukleniyor) return;
-    final secim = await medyaSec(context, azami: kalan);
+    final secim = await medyaSecici(context, azami: kalan);
     if (secim.isEmpty || !mounted) return;
     setState(() {
       _ekYukleniyor = true;
       _ekToplam = secim.length;
       _ekBiten = 0;
+      _ekYuzde = 0;
     });
     final sonuc = await medyalariYukle(
       secim,
       adim: (biten) {
         if (mounted) setState(() => _ekBiten = biten);
       },
+      // Sohbet ekiyle aynı hat (medya_yukle.dart `oran`): biten dosyalar +
+      // giden dosyanın gönderilen kısmı. Yüzde DEĞİŞTİKÇE çizilir; 64 KB'lık
+      // her dilimde setState 12 MB videoda 190 gereksiz kare demekti.
+      oran: (o) {
+        if (!mounted) return;
+        final yuzde = (o * 100).clamp(0, 100).round();
+        if (yuzde == _ekYuzde) return;
+        setState(() => _ekYuzde = yuzde);
+      },
     );
     if (!mounted) return;
     setState(() {
       _ekler.addAll(sonuc.yuklenen);
       _ekYukleniyor = false;
+      _ekYuzde = 0;
     });
     // `bildirim`, `hata` DEĞİL (3 Eyl 2026): `hata` ilk ham sunucu metnidir;
     // kısmi başarıda kullanıcıya "sunucu hatası" deyip kaç dosyanın
@@ -858,11 +881,55 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
           ),
           const Spacer(),
           if (_ekYukleniyor)
+            // SAYAÇ + YÜZDE + ÇUBUK: "0/1 yükleniyor" tek başına dosya bitene
+            // kadar kıpırdamıyordu; çubuk ve yüzde gerçek bayt ilerlemesini
+            // gösterir (ux md.3: her eylemin görünür bir yükleniyor hâli).
             Padding(
               padding: const EdgeInsets.only(right: 10),
-              child: Text(
-                '{}/{} yükleniyor'.cf(['$_ekBiten', '$_ekToplam']),
-                style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
+              child: Semantics(
+                key: const Key('ek-ilerleme'),
+                label: '%{}'.cf([_ekYuzde]),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '{}/{} yükleniyor'.cf(['$_ekBiten', '$_ekToplam']),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: DiziRenkler.metin54,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 72,
+                          height: 4,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(2),
+                            child: LinearProgressIndicator(
+                              value: _ekYuzde > 0 ? _ekYuzde / 100 : null,
+                              color: DiziRenkler.sari,
+                              backgroundColor: DiziRenkler.metin12,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '%{}'.cf([_ekYuzde]),
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: DiziRenkler.sariMetin,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             )
           // Sayaç yalnız SON 100 KARAKTERDE çıkar: sürekli görünen bir sayaç

@@ -10891,3 +10891,17 @@ sayfalarını da güncel tasarıma çek"*.
 - Test: `bolum_sayfasi_tasarim_test.dart` (8). TUZAK: `SeritBasligi` ekli
   başlığı tek Text.rich → `find.text` değil `textContaining`; CustomScrollView
   görünmeyen sliver'ı kurmaz → test yüzeyi 2600 dp.
+
+## 15 Eyl 2026 — Yorum paylaşımında ek yüklemesine gerçek yüzde (1.160.1+240) ✅
+Kullanıcı: *"akışta yorum yap kısmına tıklıyorum sonra video yüklüyorum sağda
+0/1 yükleniyor diyor öyle kalıyor ... yüzde kaçının yüklendiğini görmek istiyorum"*.
+- Teşhis: sunucu logunda son 24 saatteki 6 `/api/medya` POST'unun hepsi 200
+  (23:35–00:58, dart:io) — yükleme BİTİYOR ama sayaç dosya bitene kadar "0/1"
+  kalıyor; 720p/5 Mbps sıkıştırılmış video mobil veride dakikalar sürebiliyor.
+- ✅ `paylas_yorum.dart`: sohbet ekiyle aynı bayt hattı (`medyalariYukle`
+  `oran`) → sayaç + sarı ilerleme çubuğu + "%N" (Key `ek-ilerleme`).
+- ✅ Test kancası `medyaSecici` (dis_puanlar `disBaglantiAc` kalıbı); test
+  `paylas_yorum_yukleme_yuzdesi_test.dart` (2): gövde gidince %100, yanıt
+  gelince ek şeride girer.
+- Açık: video sıkıştırma hedefi (5 Mbps) mobil yükleme için yüksek olabilir;
+  ayrı karar.
