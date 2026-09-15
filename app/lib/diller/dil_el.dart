@@ -1761,13 +1761,8 @@ const Map<String, String> cevirilerEl = {
   'Gönderiliyor': 'Αποστολή',
   'İzlediğin her şeyi tek yerde takip et':
       'Παρακολούθησε ό,τι βλέπεις σε ένα μέρος',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Σημείωσε τις σειρές σου επεισόδιο προς επεισόδιο, κράτα λίστα ταινιών, βαθμολόγησε και γράψε κριτικές, δες τι βλέπουν οι φίλοι σου. Δωρεάν, στο web και σε κινητό.',
-  'Ücretsiz başla': 'Ξεκίνα δωρεάν',
   'Keşfet\'e göz at': 'Δες το Ανακάλυψε',
   'Giriş yap': 'Σύνδεση',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Δωρεάν. Σε 45 γλώσσες. Web, Android και iOS.',
   'Neler yapabilirsin?': 'Τι μπορείς να κάνεις;',
   'Bölüm bölüm takip': 'Παρακολούθηση επεισόδιο προς επεισόδιο',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1793,4 +1788,8 @@ const Map<String, String> cevirilerEl = {
   'Kaydedilemedi': 'Δεν αποθηκεύτηκε',
   '{} medyayı galeriye kaydet': 'Αποθήκευση {} αρχείων στη συλλογή',
   '{}/{} kaydedildi': 'Αποθηκεύτηκαν {}/{}',
+  'Hemen kaydol': 'Εγγραφή τώρα',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Σημείωσε τις σειρές σου επεισόδιο προς επεισόδιο, κράτα λίστα ταινιών, βαθμολόγησε και γράψε κριτικές, δες τι βλέπουν οι φίλοι σου. Στο web και σε κινητό.',
+  '45 dilde. Web, Android ve iOS.': 'Σε 45 γλώσσες. Web, Android και iOS.',
 };

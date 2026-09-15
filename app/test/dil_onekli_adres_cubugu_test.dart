@@ -16,6 +16,8 @@ import 'package:go_router/go_router.dart';
 GoRouter _sahteRota() => GoRouter(
   initialLocation: '/kesfet',
   routes: [
+    // Kök = açılış vitrini (15 Eyl 2026); `/de` artık buraya düşer.
+    GoRoute(path: '/', builder: (_, _) => const Text('acilis')),
     GoRoute(path: '/kesfet', builder: (_, _) => const Text('kesfet')),
     GoRoute(path: '/giris', builder: (_, _) => const Text('giris')),
     GoRoute(
@@ -129,7 +131,9 @@ void main() {
 
     y.go('/de');
     await tester.pumpAndSettle();
-    expect(find.text('kesfet'), findsOneWidget);
+    // Dil kökü açılış vitrinine düşer (oturumlu yönlendirme gerçek
+    // yönlendiricide `/kesfet`e alır; burada rota ağacı sahte).
+    expect(find.text('acilis'), findsOneWidget);
     expect(adresCubugu(y, a), '/de');
   });
 

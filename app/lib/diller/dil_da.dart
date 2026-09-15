@@ -1727,13 +1727,8 @@ const Map<String, String> cevirilerDa = {
   '{} ekran görüntüsü aldı': '{} tog et skærmbillede',
   'Gönderiliyor': 'Sender',
   'İzlediğin her şeyi tek yerde takip et': 'Hold styr på alt, du ser, ét sted',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Afkryds dine serier afsnit for afsnit, hold en filmliste, bedøm og anmeld, og se hvad dine venner ser. Gratis, på web og mobil.',
-  'Ücretsiz başla': 'Kom i gang gratis',
   'Keşfet\'e göz at': 'Gennemse Opdag',
   'Giriş yap': 'Log ind',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Gratis. På 45 sprog. Web, Android og iOS.',
   'Neler yapabilirsin?': 'Hvad kan du gøre?',
   'Bölüm bölüm takip': 'Afsnit for afsnit',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1759,4 +1754,8 @@ const Map<String, String> cevirilerDa = {
   'Kaydedilemedi': 'Kunne ikke gemmes',
   '{} medyayı galeriye kaydet': 'Gem {} medier i galleriet',
   '{}/{} kaydedildi': '{}/{} gemt',
+  'Hemen kaydol': 'Tilmeld dig nu',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Afkryds dine serier afsnit for afsnit, hold en filmliste, bedøm og anmeld, og se hvad dine venner ser. På web og mobil.',
+  '45 dilde. Web, Android ve iOS.': 'På 45 sprog. Web, Android og iOS.',
 };

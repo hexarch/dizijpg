@@ -1708,13 +1708,8 @@ const Map<String, String> cevirilerFa = {
   'Gönderiliyor': 'در حال ارسال',
   'İzlediğin her şeyi tek yerde takip et':
       'هر چیزی را که تماشا می‌کنی در یک جا دنبال کن',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'سریال‌هایت را قسمت‌به‌قسمت علامت بزن، فهرست فیلم‌هایت را نگه دار، امتیاز بده و نقد بنویس، و ببین دوستانت چه می‌بینند. رایگان، در وب و موبایل.',
-  'Ücretsiz başla': 'رایگان شروع کن',
   'Keşfet\'e göz at': 'مرور بخش کاوش',
   'Giriş yap': 'ورود',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'رایگان. به ۴۵ زبان. وب، Android و iOS.',
   'Neler yapabilirsin?': 'چه کارهایی می‌توانی بکنی؟',
   'Bölüm bölüm takip': 'دنبال کردن قسمت‌به‌قسمت',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1740,4 +1735,8 @@ const Map<String, String> cevirilerFa = {
   'Kaydedilemedi': 'ذخیره نشد',
   '{} medyayı galeriye kaydet': 'ذخیره {} رسانه در گالری',
   '{}/{} kaydedildi': '{}/{} ذخیره شد',
+  'Hemen kaydol': 'همین حالا ثبت‌نام کن',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'سریال‌هایت را قسمت‌به‌قسمت علامت بزن، فهرست فیلم‌هایت را نگه دار، امتیاز بده و نقد بنویس، و ببین دوستانت چه می‌بینند. در وب و موبایل.',
+  '45 dilde. Web, Android ve iOS.': 'به ۴۵ زبان. وب، Android و iOS.',
 };

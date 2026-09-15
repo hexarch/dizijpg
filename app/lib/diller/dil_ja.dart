@@ -1641,12 +1641,8 @@ const Map<String, String> cevirilerJa = {
   '{} ekran görüntüsü aldı': '{} がスクリーンショットを撮影しました',
   'Gönderiliyor': '送信中',
   'İzlediğin her şeyi tek yerde takip et': '観たものをすべてひとつの場所で記録',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'ドラマをエピソードごとにチェック、映画リストを管理、評価とレビューを投稿し、友だちが何を観ているかチェック。無料、ウェブとモバイルで。',
-  'Ücretsiz başla': '無料で始める',
   'Keşfet\'e göz at': '「発見」を見る',
   'Giriş yap': 'ログイン',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.': '無料。45言語対応。ウェブ、Android、iOS。',
   'Neler yapabilirsin?': 'できること',
   'Bölüm bölüm takip': 'エピソードごとの記録',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1671,4 +1667,8 @@ const Map<String, String> cevirilerJa = {
   'Kaydedilemedi': '保存できませんでした',
   '{} medyayı galeriye kaydet': '{} 件をギャラリーに保存',
   '{}/{} kaydedildi': '{}/{} 件を保存しました',
+  'Hemen kaydol': '今すぐ登録',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'ドラマをエピソードごとにチェック、映画リストを管理、評価とレビューを投稿し、友だちが何を観ているかチェック。ウェブとモバイルで。',
+  '45 dilde. Web, Android ve iOS.': '45言語対応。ウェブ、Android、iOS。',
 };

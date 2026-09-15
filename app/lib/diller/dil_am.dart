@@ -1667,13 +1667,8 @@ const Map<String, String> cevirilerAm = {
   '{} ekran görüntüsü aldı': '{} ቅጽበታዊ ገጽ እይታ አነሳ',
   'Gönderiliyor': 'በመላክ ላይ',
   'İzlediğin her şeyi tek yerde takip et': 'የምታየውን ሁሉ በአንድ ቦታ ተከታተል',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'ተከታታዮችህን ክፍል በክፍል ምልክት አድርግ፣ የፊልም ዝርዝር ያዝ፣ ደረጃ ስጥ እና አስተያየት ጻፍ፣ ጓደኞችህ ምን እንደሚያዩ ተመልከት። ነጻ፣ በድር እና በሞባይል።',
-  'Ücretsiz başla': 'በነጻ ጀምር',
   'Keşfet\'e göz at': 'አግኝን ተመልከት',
   'Giriş yap': 'ግባ',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'ነጻ። በ45 ቋንቋዎች። ድር፣ Android እና iOS።',
   'Neler yapabilirsin?': 'ምን ማድረግ ትችላለህ?',
   'Bölüm bölüm takip': 'ክፍል በክፍል መከታተል',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1699,4 +1694,8 @@ const Map<String, String> cevirilerAm = {
   'Kaydedilemedi': 'ማስቀመጥ አልተቻለም',
   '{} medyayı galeriye kaydet': '{} ሚዲያ ወደ ጋለሪ አስቀምጥ',
   '{}/{} kaydedildi': '{}/{} ተቀምጧል',
+  'Hemen kaydol': 'አሁን ተመዝገብ',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'ተከታታዮችህን ክፍል በክፍል ምልክት አድርግ፣ የፊልም ዝርዝር ያዝ፣ ደረጃ ስጥ እና አስተያየት ጻፍ፣ ጓደኞችህ ምን እንደሚያዩ ተመልከት። በድር እና በሞባይል።',
+  '45 dilde. Web, Android ve iOS.': 'በ45 ቋንቋዎች። ድር፣ Android እና iOS።',
 };

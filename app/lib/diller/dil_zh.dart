@@ -1674,12 +1674,8 @@ const Map<String, String> cevirilerZh = {
   '{} ekran görüntüsü aldı': '{} 截屏了',
   'Gönderiliyor': '正在发送',
   'İzlediğin her şeyi tek yerde takip et': '在一个地方追踪你看过的一切',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      '逐集标记你的剧集，维护电影清单，打分和评论，看看朋友们在看什么。免费，支持网页和手机。',
-  'Ücretsiz başla': '免费开始',
   'Keşfet\'e göz at': '浏览「发现」',
   'Giriş yap': '登录',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.': '免费。支持 45 种语言。网页、Android 和 iOS。',
   'Neler yapabilirsin?': '你可以做什么？',
   'Bölüm bölüm takip': '逐集追踪',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1704,4 +1700,8 @@ const Map<String, String> cevirilerZh = {
   'Kaydedilemedi': '保存失败',
   '{} medyayı galeriye kaydet': '保存 {} 个媒体到相册',
   '{}/{} kaydedildi': '已保存 {}/{}',
+  'Hemen kaydol': '立即注册',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      '逐集标记你的剧集，维护电影清单，打分和评论，看看朋友们在看什么。支持网页和手机。',
+  '45 dilde. Web, Android ve iOS.': '支持 45 种语言。网页、Android 和 iOS。',
 };

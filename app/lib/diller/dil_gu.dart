@@ -1712,13 +1712,8 @@ const Map<String, String> cevirilerGu = {
   'Gönderiliyor': 'મોકલાઈ રહ્યું છે',
   'İzlediğin her şeyi tek yerde takip et':
       'તું જે જુએ છે તે બધું એક જ જગ્યાએ ટ્રૅક કર',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'તારી સિરીઝ એપિસોડ-દર-એપિસોડ માર્ક કર, ફિલ્મોની યાદી રાખ, રેટિંગ અને રિવ્યૂ આપ, અને જો કે તારા મિત્રો શું જુએ છે. મફત, વેબ અને મોબાઇલ પર.',
-  'Ücretsiz başla': 'મફત શરૂ કર',
   'Keşfet\'e göz at': 'ડિસ્કવર જુઓ',
   'Giriş yap': 'લૉગ ઇન',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'મફત. 45 ભાષાઓમાં. વેબ, Android અને iOS.',
   'Neler yapabilirsin?': 'તું શું કરી શકે?',
   'Bölüm bölüm takip': 'એપિસોડ-દર-એપિસોડ ટ્રૅકિંગ',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1744,4 +1739,8 @@ const Map<String, String> cevirilerGu = {
   'Kaydedilemedi': 'સાચવી શકાયું નહીં',
   '{} medyayı galeriye kaydet': '{} મીડિયા ગૅલેરીમાં સાચવો',
   '{}/{} kaydedildi': '{}/{} સાચવ્યાં',
+  'Hemen kaydol': 'હમણાં જ સાઇન અપ કર',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'તારી સિરીઝ એપિસોડ-દર-એપિસોડ માર્ક કર, ફિલ્મોની યાદી રાખ, રેટિંગ અને રિવ્યૂ આપ, અને જો કે તારા મિત્રો શું જુએ છે. વેબ અને મોબાઇલ પર.',
+  '45 dilde. Web, Android ve iOS.': '45 ભાષાઓમાં. વેબ, Android અને iOS.',
 };

@@ -1754,13 +1754,8 @@ const Map<String, String> cevirilerTa = {
   'Gönderiliyor': 'அனுப்புகிறது',
   'İzlediğin her şeyi tek yerde takip et':
       'நீ பார்ப்பதை எல்லாம் ஒரே இடத்தில் கண்காணி',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'உன் தொடர்களை எபிசோடு வாரியாகக் குறி, படப் பட்டியலை வைத்திரு, மதிப்பிட்டு விமர்சனம் எழுது, நண்பர்கள் என்ன பார்க்கிறார்கள் என்று பார். இலவசம், வலை மற்றும் மொபைலில்.',
-  'Ücretsiz başla': 'இலவசமாகத் தொடங்கு',
   'Keşfet\'e göz at': 'டிஸ்கவரைப் பார்',
   'Giriş yap': 'உள்நுழை',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'இலவசம். 45 மொழிகளில். வலை, Android மற்றும் iOS.',
   'Neler yapabilirsin?': 'நீ என்ன செய்யலாம்?',
   'Bölüm bölüm takip': 'எபிசோடு வாரியான கண்காணிப்பு',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1786,4 +1781,8 @@ const Map<String, String> cevirilerTa = {
   'Kaydedilemedi': 'சேமிக்க முடியவில்லை',
   '{} medyayı galeriye kaydet': '{} மீடியாவை கேலரியில் சேமி',
   '{}/{} kaydedildi': '{}/{} சேமிக்கப்பட்டது',
+  'Hemen kaydol': 'இப்போதே பதிவு செய்',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'உன் தொடர்களை எபிசோடு வாரியாகக் குறி, படப் பட்டியலை வைத்திரு, மதிப்பிட்டு விமர்சனம் எழுது, நண்பர்கள் என்ன பார்க்கிறார்கள் என்று பார். வலை மற்றும் மொபைலில்.',
+  '45 dilde. Web, Android ve iOS.': '45 மொழிகளில். வலை, Android மற்றும் iOS.',
 };

@@ -1721,13 +1721,8 @@ const Map<String, String> cevirilerPa = {
   'Gönderiliyor': 'ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ',
   'İzlediğin her şeyi tek yerde takip et':
       'ਜੋ ਵੀ ਦੇਖਦੇ ਹੋ ਸਭ ਇੱਕ ਥਾਂ ਟ੍ਰੈਕ ਕਰੋ',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'ਆਪਣੇ ਸ਼ੋਅ ਐਪੀਸੋਡ-ਦਰ-ਐਪੀਸੋਡ ਮਾਰਕ ਕਰੋ, ਫ਼ਿਲਮਾਂ ਦੀ ਸੂਚੀ ਰੱਖੋ, ਰੇਟਿੰਗ ਤੇ ਰਿਵਿਊ ਦਿਓ, ਤੇ ਦੇਖੋ ਦੋਸਤ ਕੀ ਦੇਖ ਰਹੇ ਨੇ। ਮੁਫ਼ਤ, ਵੈੱਬ ਤੇ ਮੋਬਾਈਲ ਉੱਤੇ।',
-  'Ücretsiz başla': 'ਮੁਫ਼ਤ ਸ਼ੁਰੂ ਕਰੋ',
   'Keşfet\'e göz at': 'ਡਿਸਕਵਰ ਦੇਖੋ',
   'Giriş yap': 'ਲੌਗ ਇਨ',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'ਮੁਫ਼ਤ। 45 ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ। ਵੈੱਬ, Android ਤੇ iOS।',
   'Neler yapabilirsin?': 'ਤੁਸੀਂ ਕੀ ਕਰ ਸਕਦੇ ਹੋ?',
   'Bölüm bölüm takip': 'ਐਪੀਸੋਡ-ਦਰ-ਐਪੀਸੋਡ ਟ੍ਰੈਕਿੰਗ',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1753,4 +1748,8 @@ const Map<String, String> cevirilerPa = {
   'Kaydedilemedi': 'ਸੇਵ ਨਹੀਂ ਹੋ ਸਕਿਆ',
   '{} medyayı galeriye kaydet': '{} ਮੀਡੀਆ ਗੈਲਰੀ ਵਿੱਚ ਸੇਵ ਕਰੋ',
   '{}/{} kaydedildi': '{}/{} ਸੇਵ ਹੋਏ',
+  'Hemen kaydol': 'ਹੁਣੇ ਸਾਈਨ ਅੱਪ ਕਰੋ',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'ਆਪਣੇ ਸ਼ੋਅ ਐਪੀਸੋਡ-ਦਰ-ਐਪੀਸੋਡ ਮਾਰਕ ਕਰੋ, ਫ਼ਿਲਮਾਂ ਦੀ ਸੂਚੀ ਰੱਖੋ, ਰੇਟਿੰਗ ਤੇ ਰਿਵਿਊ ਦਿਓ, ਤੇ ਦੇਖੋ ਦੋਸਤ ਕੀ ਦੇਖ ਰਹੇ ਨੇ। ਵੈੱਬ ਤੇ ਮੋਬਾਈਲ ਉੱਤੇ।',
+  '45 dilde. Web, Android ve iOS.': '45 ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ। ਵੈੱਬ, Android ਤੇ iOS।',
 };

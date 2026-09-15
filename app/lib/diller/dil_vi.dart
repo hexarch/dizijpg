@@ -1722,13 +1722,8 @@ const Map<String, String> cevirilerVi = {
   '{} ekran görüntüsü aldı': '{} đã chụp màn hình',
   'Gönderiliyor': 'Đang gửi',
   'İzlediğin her şeyi tek yerde takip et': 'Theo dõi mọi thứ bạn xem ở một nơi',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Đánh dấu phim bộ theo từng tập, giữ danh sách phim, chấm điểm và viết nhận xét, xem bạn bè đang xem gì. Miễn phí, trên web và di động.',
-  'Ücretsiz başla': 'Bắt đầu miễn phí',
   'Keşfet\'e göz at': 'Xem mục Khám phá',
   'Giriş yap': 'Đăng nhập',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Miễn phí. 45 ngôn ngữ. Web, Android và iOS.',
   'Neler yapabilirsin?': 'Bạn có thể làm gì?',
   'Bölüm bölüm takip': 'Theo dõi từng tập',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1754,4 +1749,8 @@ const Map<String, String> cevirilerVi = {
   'Kaydedilemedi': 'Không thể lưu',
   '{} medyayı galeriye kaydet': 'Lưu {} mục vào thư viện',
   '{}/{} kaydedildi': 'Đã lưu {}/{}',
+  'Hemen kaydol': 'Đăng ký ngay',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Đánh dấu phim bộ theo từng tập, giữ danh sách phim, chấm điểm và viết nhận xét, xem bạn bè đang xem gì. Trên web và di động.',
+  '45 dilde. Web, Android ve iOS.': '45 ngôn ngữ. Web, Android và iOS.',
 };

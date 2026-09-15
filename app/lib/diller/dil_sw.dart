@@ -1733,13 +1733,8 @@ const Map<String, String> cevirilerSw = {
   'Gönderiliyor': 'Inatuma',
   'İzlediğin her şeyi tek yerde takip et':
       'Fuatilia kila kitu unachotazama mahali pamoja',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Weka alama vipindi vyako kipindi kwa kipindi, weka orodha ya filamu, kadiria na andika maoni, na uone marafiki zako wanatazama nini. Bure, kwenye wavuti na simu.',
-  'Ücretsiz başla': 'Anza bure',
   'Keşfet\'e göz at': 'Angalia Gundua',
   'Giriş yap': 'Ingia',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Bure. Katika lugha 45. Wavuti, Android na iOS.',
   'Neler yapabilirsin?': 'Unaweza kufanya nini?',
   'Bölüm bölüm takip': 'Ufuatiliaji kipindi kwa kipindi',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1765,4 +1760,8 @@ const Map<String, String> cevirilerSw = {
   'Kaydedilemedi': 'Haikuhifadhiwa',
   '{} medyayı galeriye kaydet': 'Hifadhi media {} kwenye matunzio',
   '{}/{} kaydedildi': '{}/{} zimehifadhiwa',
+  'Hemen kaydol': 'Jisajili sasa',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Weka alama vipindi vyako kipindi kwa kipindi, weka orodha ya filamu, kadiria na andika maoni, na uone marafiki zako wanatazama nini. Kwenye wavuti na simu.',
+  '45 dilde. Web, Android ve iOS.': 'Katika lugha 45. Wavuti, Android na iOS.',
 };

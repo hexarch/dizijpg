@@ -1726,13 +1726,8 @@ const Map<String, String> cevirilerKn = {
   'Gönderiliyor': 'ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ',
   'İzlediğin her şeyi tek yerde takip et':
       'ನೀನು ನೋಡುವ ಎಲ್ಲವನ್ನೂ ಒಂದೇ ಕಡೆ ಟ್ರ್ಯಾಕ್ ಮಾಡು',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'ನಿನ್ನ ಸರಣಿಗಳನ್ನು ಸಂಚಿಕೆವಾರು ಗುರುತಿಸು, ಚಲನಚಿತ್ರ ಪಟ್ಟಿ ಇಟ್ಟುಕೊ, ರೇಟಿಂಗ್ ಮತ್ತು ವಿಮರ್ಶೆ ನೀಡು, ಸ್ನೇಹಿತರು ಏನು ನೋಡುತ್ತಿದ್ದಾರೆ ನೋಡು. ಉಚಿತ, ವೆಬ್ ಮತ್ತು ಮೊಬೈಲ್‌ನಲ್ಲಿ.',
-  'Ücretsiz başla': 'ಉಚಿತವಾಗಿ ಪ್ರಾರಂಭಿಸು',
   'Keşfet\'e göz at': 'ಡಿಸ್ಕವರ್ ನೋಡು',
   'Giriş yap': 'ಲಾಗಿನ್',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'ಉಚಿತ. 45 ಭಾಷೆಗಳಲ್ಲಿ. ವೆಬ್, Android ಮತ್ತು iOS.',
   'Neler yapabilirsin?': 'ನೀನು ಏನು ಮಾಡಬಹುದು?',
   'Bölüm bölüm takip': 'ಸಂಚಿಕೆವಾರು ಟ್ರ್ಯಾಕಿಂಗ್',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1758,4 +1753,8 @@ const Map<String, String> cevirilerKn = {
   'Kaydedilemedi': 'ಉಳಿಸಲಾಗಲಿಲ್ಲ',
   '{} medyayı galeriye kaydet': '{} ಮಾಧ್ಯಮವನ್ನು ಗ್ಯಾಲರಿಗೆ ಉಳಿಸಿ',
   '{}/{} kaydedildi': '{}/{} ಉಳಿಸಲಾಗಿದೆ',
+  'Hemen kaydol': 'ಈಗಲೇ ಸೈನ್ ಅಪ್ ಮಾಡು',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'ನಿನ್ನ ಸರಣಿಗಳನ್ನು ಸಂಚಿಕೆವಾರು ಗುರುತಿಸು, ಚಲನಚಿತ್ರ ಪಟ್ಟಿ ಇಟ್ಟುಕೊ, ರೇಟಿಂಗ್ ಮತ್ತು ವಿಮರ್ಶೆ ನೀಡು, ಸ್ನೇಹಿತರು ಏನು ನೋಡುತ್ತಿದ್ದಾರೆ ನೋಡು. ವೆಬ್ ಮತ್ತು ಮೊಬೈಲ್‌ನಲ್ಲಿ.',
+  '45 dilde. Web, Android ve iOS.': '45 ಭಾಷೆಗಳಲ್ಲಿ. ವೆಬ್, Android ಮತ್ತು iOS.',
 };

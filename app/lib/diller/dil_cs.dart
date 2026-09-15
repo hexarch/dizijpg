@@ -1722,13 +1722,8 @@ const Map<String, String> cevirilerCs = {
   'Gönderiliyor': 'Odesílá se',
   'İzlediğin her şeyi tek yerde takip et':
       'Sleduj vše, co sleduješ, na jednom místě',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Odškrtávej seriály díl po dílu, veď si seznam filmů, hodnoť a recenzuj a sleduj, co sledují tvoji přátelé. Zdarma, na webu i v mobilu.',
-  'Ücretsiz başla': 'Začni zdarma',
   'Keşfet\'e göz at': 'Prohlédnout Objevovat',
   'Giriş yap': 'Přihlásit se',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Zdarma. Ve 45 jazycích. Web, Android a iOS.',
   'Neler yapabilirsin?': 'Co můžeš dělat?',
   'Bölüm bölüm takip': 'Sledování díl po dílu',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1754,4 +1749,8 @@ const Map<String, String> cevirilerCs = {
   'Kaydedilemedi': 'Nepodařilo se uložit',
   '{} medyayı galeriye kaydet': 'Uložit {} médií do galerie',
   '{}/{} kaydedildi': 'Uloženo {}/{}',
+  'Hemen kaydol': 'Zaregistruj se',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Odškrtávej seriály díl po dílu, veď si seznam filmů, hodnoť a recenzuj a sleduj, co sledují tvoji přátelé. Na webu i v mobilu.',
+  '45 dilde. Web, Android ve iOS.': 'Ve 45 jazycích. Web, Android a iOS.',
 };

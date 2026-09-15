@@ -1733,13 +1733,8 @@ const Map<String, String> cevirilerFi = {
   'Gönderiliyor': 'Lähetetään',
   'İzlediğin her şeyi tek yerde takip et':
       'Seuraa kaikkea katsomaasi yhdessä paikassa',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Merkitse sarjasi jakso jaksolta, pidä elokuvalistaa, arvioi ja arvostele, ja katso mitä ystäväsi katsovat. Ilmainen, verkossa ja mobiilissa.',
-  'Ücretsiz başla': 'Aloita ilmaiseksi',
   'Keşfet\'e göz at': 'Selaa Löydä-osiota',
   'Giriş yap': 'Kirjaudu sisään',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Ilmainen. 45 kielellä. Web, Android ja iOS.',
   'Neler yapabilirsin?': 'Mitä voit tehdä?',
   'Bölüm bölüm takip': 'Seuranta jakso jaksolta',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1765,4 +1760,8 @@ const Map<String, String> cevirilerFi = {
   'Kaydedilemedi': 'Tallennus epäonnistui',
   '{} medyayı galeriye kaydet': 'Tallenna {} mediaa galleriaan',
   '{}/{} kaydedildi': '{}/{} tallennettu',
+  'Hemen kaydol': 'Rekisteröidy nyt',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Merkitse sarjasi jakso jaksolta, pidä elokuvalistaa, arvioi ja arvostele, ja katso mitä ystäväsi katsovat. Verkossa ja mobiilissa.',
+  '45 dilde. Web, Android ve iOS.': '45 kielellä. Web, Android ja iOS.',
 };

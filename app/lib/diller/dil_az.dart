@@ -1715,13 +1715,8 @@ const Map<String, String> cevirilerAz = {
   '{} ekran görüntüsü aldı': '{} ekran şəkli çəkdi',
   'Gönderiliyor': 'Göndərilir',
   'İzlediğin her şeyi tek yerde takip et': 'İzlədiyin hər şeyi bir yerdə izlə',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Serialları seriya-seriya qeyd et, film siyahını saxla, qiymətləndir və rəy yaz, dostlarının nə izlədiyini gör. Pulsuz, vebdə və mobildə.',
-  'Ücretsiz başla': 'Pulsuz başla',
   'Keşfet\'e göz at': 'Kəşf et bölməsinə bax',
   'Giriş yap': 'Daxil ol',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Pulsuz. 45 dildə. Veb, Android və iOS.',
   'Neler yapabilirsin?': 'Nələr edə bilərsən?',
   'Bölüm bölüm takip': 'Seriya-seriya izləmə',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1747,4 +1742,8 @@ const Map<String, String> cevirilerAz = {
   'Kaydedilemedi': 'Yadda saxlanılmadı',
   '{} medyayı galeriye kaydet': '{} medianı qalereyaya saxla',
   '{}/{} kaydedildi': '{}/{} saxlanıldı',
+  'Hemen kaydol': 'İndi qeydiyyatdan keç',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Serialları seriya-seriya qeyd et, film siyahını saxla, qiymətləndir və rəy yaz, dostlarının nə izlədiyini gör. Vebdə və mobildə.',
+  '45 dilde. Web, Android ve iOS.': '45 dildə. Veb, Android və iOS.',
 };

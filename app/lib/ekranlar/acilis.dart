@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import '../uygulama_daveti_hedef.dart' show DavetMagaza;
 
@@ -147,7 +148,7 @@ class _UstCubuk extends StatelessWidget {
             FilledButton(
               key: const Key('acilis-basla-ust'),
               onPressed: () => context.go('/giris'),
-              child: Text('Ücretsiz başla'.c),
+              child: Text('Hemen kaydol'.c),
             ),
           ],
         ],
@@ -230,7 +231,7 @@ class _KahramanMetni extends StatelessWidget {
         ),
         const SizedBox(height: 18),
         Text(
-          'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.'
+          'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.'
               .c,
           textAlign: metinHizasi,
           style: TextStyle(
@@ -257,7 +258,7 @@ class _KahramanMetni extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                child: Text('Ücretsiz başla'.c),
+                child: Text('Hemen kaydol'.c),
               ),
             ),
             SizedBox(
@@ -282,7 +283,7 @@ class _KahramanMetni extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         Text(
-          'Ücretsiz. 45 dilde. Web, Android ve iOS.'.c,
+          '45 dilde. Web, Android ve iOS.'.c,
           textAlign: metinHizasi,
           style: TextStyle(fontSize: 13, color: DiziRenkler.metin54),
         ),
@@ -332,6 +333,8 @@ class _AfisDuvari extends StatelessWidget {
                       ? ColoredBox(color: DiziRenkler.kart)
                       : CachedNetworkImage(
                           imageUrl: posterUrl(yol)!,
+                          // TMDB'ye WebP kabul başlığı (gorsel_webp_test kilidi).
+                          httpHeaders: gorselBasliklari(posterUrl(yol)),
                           fit: BoxFit.cover,
                           fadeInDuration: const Duration(milliseconds: 250),
                           placeholder: (_, __) =>

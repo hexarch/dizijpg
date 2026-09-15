@@ -1759,13 +1759,8 @@ const Map<String, String> cevirilerFil = {
   'Gönderiliyor': 'Ipinapadala',
   'İzlediğin her şeyi tek yerde takip et':
       'I-track ang lahat ng pinapanood mo sa iisang lugar',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Markahan ang mga serye mo bawat episode, mag-ingat ng listahan ng pelikula, mag-rate at mag-review, at tingnan kung ano ang pinapanood ng mga kaibigan mo. Libre, sa web at mobile.',
-  'Ücretsiz başla': 'Magsimula nang libre',
   'Keşfet\'e göz at': 'Tingnan ang Discover',
   'Giriş yap': 'Mag-log in',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Libre. Sa 45 wika. Web, Android at iOS.',
   'Neler yapabilirsin?': 'Ano ang magagawa mo?',
   'Bölüm bölüm takip': 'Pag-track bawat episode',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1791,4 +1786,8 @@ const Map<String, String> cevirilerFil = {
   'Kaydedilemedi': 'Hindi na-save',
   '{} medyayı galeriye kaydet': 'I-save ang {} media sa gallery',
   '{}/{} kaydedildi': '{}/{} ang na-save',
+  'Hemen kaydol': 'Mag-sign up ngayon',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Markahan ang mga serye mo bawat episode, mag-ingat ng listahan ng pelikula, mag-rate at mag-review, at tingnan kung ano ang pinapanood ng mga kaibigan mo. Sa web at mobile.',
+  '45 dilde. Web, Android ve iOS.': 'Sa 45 wika. Web, Android at iOS.',
 };

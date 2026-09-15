@@ -1744,13 +1744,8 @@ const Map<String, String> cevirilerMy = {
   'Gönderiliyor': 'ပို့နေသည်',
   'İzlediğin her şeyi tek yerde takip et':
       'ကြည့်သမျှအားလုံးကို နေရာတစ်ခုတည်းမှာ မှတ်တမ်းတင်ပါ',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'ဇာတ်လမ်းတွဲများကို အပိုင်းလိုက် အမှတ်အသားပြုပါ၊ ရုပ်ရှင်စာရင်း သိမ်းပါ၊ အဆင့်သတ်မှတ်ပြီး သုံးသပ်ချက်ရေးပါ၊ သူငယ်ချင်းများ ဘာကြည့်နေလဲ ကြည့်ပါ။ အခမဲ့၊ ဝက်ဘ်နှင့် မိုဘိုင်းတွင်။',
-  'Ücretsiz başla': 'အခမဲ့ စတင်ပါ',
   'Keşfet\'e göz at': 'ရှာဖွေရန်ကို ကြည့်ပါ',
   'Giriş yap': 'ဝင်ရောက်ရန်',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'အခမဲ့။ ဘာသာစကား ၄၅ မျိုး။ ဝက်ဘ်၊ Android နှင့် iOS။',
   'Neler yapabilirsin?': 'ဘာတွေ လုပ်နိုင်လဲ?',
   'Bölüm bölüm takip': 'အပိုင်းလိုက် မှတ်တမ်းတင်ခြင်း',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1776,4 +1771,9 @@ const Map<String, String> cevirilerMy = {
   'Kaydedilemedi': 'မသိမ်းနိုင်ပါ',
   '{} medyayı galeriye kaydet': 'မီဒီယာ {} ခုကို ဂယ်လာရီသို့ သိမ်းရန်',
   '{}/{} kaydedildi': '{}/{} သိမ်းပြီး',
+  'Hemen kaydol': 'ယခုပဲ စာရင်းသွင်းပါ',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'ဇာတ်လမ်းတွဲများကို အပိုင်းလိုက် အမှတ်အသားပြုပါ၊ ရုပ်ရှင်စာရင်း သိမ်းပါ၊ အဆင့်သတ်မှတ်ပြီး သုံးသပ်ချက်ရေးပါ၊ သူငယ်ချင်းများ ဘာကြည့်နေလဲ ကြည့်ပါ။ ဝက်ဘ်နှင့် မိုဘိုင်းတွင်။',
+  '45 dilde. Web, Android ve iOS.':
+      'ဘာသာစကား ၄၅ မျိုး။ ဝက်ဘ်၊ Android နှင့် iOS။',
 };

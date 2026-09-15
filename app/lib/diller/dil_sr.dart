@@ -1729,13 +1729,8 @@ const Map<String, String> cevirilerSr = {
   'Gönderiliyor': 'Шаље се',
   'İzlediğin her şeyi tek yerde takip et':
       'Prati sve što gledaš na jednom mestu',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Označavaj serije epizodu po epizodu, vodi listu filmova, ocenjuj i piši recenzije, vidi šta gledaju tvoji prijatelji. Besplatno, na vebu i mobilnom.',
-  'Ücretsiz başla': 'Počni besplatno',
   'Keşfet\'e göz at': 'Pregledaj Otkrij',
   'Giriş yap': 'Prijavi se',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Besplatno. Na 45 jezika. Veb, Android i iOS.',
   'Neler yapabilirsin?': 'Šta možeš da radiš?',
   'Bölüm bölüm takip': 'Praćenje epizodu po epizodu',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1761,4 +1756,8 @@ const Map<String, String> cevirilerSr = {
   'Kaydedilemedi': 'Није сачувано',
   '{} medyayı galeriye kaydet': 'Сачувај {} медија у галерију',
   '{}/{} kaydedildi': 'Сачувано {}/{}',
+  'Hemen kaydol': 'Registruj se',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Označavaj serije epizodu po epizodu, vodi listu filmova, ocenjuj i piši recenzije, vidi šta gledaju tvoji prijatelji. Na vebu i mobilnom.',
+  '45 dilde. Web, Android ve iOS.': 'Na 45 jezika. Veb, Android i iOS.',
 };

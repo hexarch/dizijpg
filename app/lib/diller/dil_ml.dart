@@ -1734,13 +1734,8 @@ const Map<String, String> cevirilerMl = {
   'Gönderiliyor': 'അയയ്ക്കുന്നു',
   'İzlediğin her şeyi tek yerde takip et':
       'നീ കാണുന്നതെല്ലാം ഒരിടത്ത് ട്രാക്ക് ചെയ്യൂ',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'നിന്റെ സീരീസുകൾ എപ്പിസോഡ് തിരിച്ച് അടയാളപ്പെടുത്തൂ, സിനിമാ ലിസ്റ്റ് സൂക്ഷിക്കൂ, റേറ്റ് ചെയ്ത് റിവ്യൂ എഴുതൂ, സുഹൃത്തുക്കൾ എന്ത് കാണുന്നുവെന്ന് കാണൂ. സൗജന്യം, വെബിലും മൊബൈലിലും.',
-  'Ücretsiz başla': 'സൗജന്യമായി തുടങ്ങൂ',
   'Keşfet\'e göz at': 'ഡിസ്കവർ കാണൂ',
   'Giriş yap': 'ലോഗിൻ',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'സൗജന്യം. 45 ഭാഷകളിൽ. വെബ്, Android, iOS.',
   'Neler yapabilirsin?': 'നിനക്ക് എന്തൊക്കെ ചെയ്യാം?',
   'Bölüm bölüm takip': 'എപ്പിസോഡ് തിരിച്ചുള്ള ട്രാക്കിംഗ്',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1766,4 +1761,8 @@ const Map<String, String> cevirilerMl = {
   'Kaydedilemedi': 'സേവ് ചെയ്യാനായില്ല',
   '{} medyayı galeriye kaydet': '{} മീഡിയ ഗാലറിയിൽ സേവ് ചെയ്യുക',
   '{}/{} kaydedildi': '{}/{} സേവ് ചെയ്തു',
+  'Hemen kaydol': 'ഇപ്പോൾ തന്നെ സൈൻ അപ്പ് ചെയ്യൂ',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'നിന്റെ സീരീസുകൾ എപ്പിസോഡ് തിരിച്ച് അടയാളപ്പെടുത്തൂ, സിനിമാ ലിസ്റ്റ് സൂക്ഷിക്കൂ, റേറ്റ് ചെയ്ത് റിവ്യൂ എഴുതൂ, സുഹൃത്തുക്കൾ എന്ത് കാണുന്നുവെന്ന് കാണൂ. വെബിലും മൊബൈലിലും.',
+  '45 dilde. Web, Android ve iOS.': '45 ഭാഷകളിൽ. വെബ്, Android, iOS.',
 };

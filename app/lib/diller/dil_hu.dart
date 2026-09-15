@@ -1737,13 +1737,8 @@ const Map<String, String> cevirilerHu = {
   'Gönderiliyor': 'Küldés',
   'İzlediğin her şeyi tek yerde takip et':
       'Kövess mindent, amit nézel, egy helyen',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Pipáld ki a sorozataidat epizódonként, vezess filmlistát, értékelj és írj kritikát, nézd meg, mit néznek a barátaid. Ingyenes, weben és mobilon.',
-  'Ücretsiz başla': 'Kezdd el ingyen',
   'Keşfet\'e göz at': 'Felfedezés böngészése',
   'Giriş yap': 'Bejelentkezés',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Ingyenes. 45 nyelven. Web, Android és iOS.',
   'Neler yapabilirsin?': 'Mit tehetsz?',
   'Bölüm bölüm takip': 'Epizódonkénti követés',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1769,4 +1764,8 @@ const Map<String, String> cevirilerHu = {
   'Kaydedilemedi': 'Nem sikerült menteni',
   '{} medyayı galeriye kaydet': '{} elem mentése a galériába',
   '{}/{} kaydedildi': '{}/{} mentve',
+  'Hemen kaydol': 'Regisztrálj most',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Pipáld ki a sorozataidat epizódonként, vezess filmlistát, értékelj és írj kritikát, nézd meg, mit néznek a barátaid. Weben és mobilon.',
+  '45 dilde. Web, Android ve iOS.': '45 nyelven. Web, Android és iOS.',
 };

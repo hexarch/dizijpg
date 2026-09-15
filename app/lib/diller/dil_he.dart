@@ -1689,13 +1689,8 @@ const Map<String, String> cevirilerHe = {
   'Gönderiliyor': 'שולח',
   'İzlediğin her şeyi tek yerde takip et':
       'עקוב אחרי כל מה שאתה צופה בו במקום אחד',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'סמן את הסדרות שלך פרק אחרי פרק, נהל רשימת סרטים, דרג וכתוב ביקורות, וראה מה החברים שלך רואים. בחינם, באינטרנט ובנייד.',
-  'Ücretsiz başla': 'התחל בחינם',
   'Keşfet\'e göz at': 'עיין בגלה',
   'Giriş yap': 'התחברות',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'בחינם. ב־45 שפות. אינטרנט, Android ו־iOS.',
   'Neler yapabilirsin?': 'מה אפשר לעשות?',
   'Bölüm bölüm takip': 'מעקב פרק אחרי פרק',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1721,4 +1716,8 @@ const Map<String, String> cevirilerHe = {
   'Kaydedilemedi': 'לא ניתן לשמור',
   '{} medyayı galeriye kaydet': 'שמירת {} פריטים בגלריה',
   '{}/{} kaydedildi': 'נשמרו {}/{}',
+  'Hemen kaydol': 'הירשם עכשיו',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'סמן את הסדרות שלך פרק אחרי פרק, נהל רשימת סרטים, דרג וכתוב ביקורות, וראה מה החברים שלך רואים. באינטרנט ובנייד.',
+  '45 dilde. Web, Android ve iOS.': 'ב־45 שפות. אינטרנט, Android ו־iOS.',
 };

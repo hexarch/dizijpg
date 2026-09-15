@@ -1753,13 +1753,8 @@ const Map<String, String> cevirilerFr = {
   'Gönderiliyor': 'Envoi en cours',
   'İzlediğin her şeyi tek yerde takip et':
       'Suis tout ce que tu regardes au même endroit',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Coche tes séries épisode par épisode, tiens ta liste de films, note et commente, et vois ce que regardent tes amis. Gratuit, sur le web et sur mobile.',
-  'Ücretsiz başla': 'Commencer gratuitement',
   'Keşfet\'e göz at': 'Parcourir Découvrir',
   'Giriş yap': 'Se connecter',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Gratuit. En 45 langues. Web, Android et iOS.',
   'Neler yapabilirsin?': 'Que peux-tu faire ?',
   'Bölüm bölüm takip': 'Suivi épisode par épisode',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1785,4 +1780,8 @@ const Map<String, String> cevirilerFr = {
   'Kaydedilemedi': 'Enregistrement impossible',
   '{} medyayı galeriye kaydet': 'Enregistrer {} médias dans la galerie',
   '{}/{} kaydedildi': '{}/{} enregistrés',
+  'Hemen kaydol': 'S’inscrire maintenant',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Coche tes séries épisode par épisode, tiens ta liste de films, note et commente, et vois ce que regardent tes amis. Sur le web et sur mobile.',
+  '45 dilde. Web, Android ve iOS.': 'En 45 langues. Web, Android et iOS.',
 };

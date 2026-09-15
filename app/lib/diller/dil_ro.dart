@@ -1807,13 +1807,8 @@ const Map<String, String> cevirilerRo = {
   'Gönderiliyor': 'Se trimite',
   'İzlediğin her şeyi tek yerde takip et':
       'Urmărește tot ce vezi într-un singur loc',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Bifează serialele episod cu episod, ține-ți lista de filme, notează și recenzează, vezi ce urmăresc prietenii tăi. Gratuit, pe web și mobil.',
-  'Ücretsiz başla': 'Începe gratuit',
   'Keşfet\'e göz at': 'Răsfoiește Descoperă',
   'Giriş yap': 'Autentifică-te',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Gratuit. În 45 de limbi. Web, Android și iOS.',
   'Neler yapabilirsin?': 'Ce poți face?',
   'Bölüm bölüm takip': 'Urmărire episod cu episod',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1839,4 +1834,8 @@ const Map<String, String> cevirilerRo = {
   'Kaydedilemedi': 'Nu s-a putut salva',
   '{} medyayı galeriye kaydet': 'Salvează {} fișiere în galerie',
   '{}/{} kaydedildi': '{}/{} salvate',
+  'Hemen kaydol': 'Înregistrează-te acum',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Bifează serialele episod cu episod, ține-ți lista de filme, notează și recenzează, vezi ce urmăresc prietenii tăi. Pe web și mobil.',
+  '45 dilde. Web, Android ve iOS.': 'În 45 de limbi. Web, Android și iOS.',
 };

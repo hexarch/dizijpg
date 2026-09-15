@@ -1721,13 +1721,8 @@ const Map<String, String> cevirilerHi = {
   'Gönderiliyor': 'भेजा जा रहा है',
   'İzlediğin her şeyi tek yerde takip et':
       'जो कुछ देखते हो, सब एक जगह ट्रैक करो',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'अपने शो एपिसोड-दर-एपिसोड मार्क करो, फ़िल्मों की लिस्ट रखो, रेटिंग और रिव्यू दो, और देखो तुम्हारे दोस्त क्या देख रहे हैं। मुफ़्त, वेब और मोबाइल पर।',
-  'Ücretsiz başla': 'मुफ़्त शुरू करो',
   'Keşfet\'e göz at': 'डिस्कवर देखो',
   'Giriş yap': 'लॉग इन',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'मुफ़्त। 45 भाषाओं में। वेब, Android और iOS।',
   'Neler yapabilirsin?': 'तुम क्या कर सकते हो?',
   'Bölüm bölüm takip': 'एपिसोड-दर-एपिसोड ट्रैकिंग',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1753,4 +1748,8 @@ const Map<String, String> cevirilerHi = {
   'Kaydedilemedi': 'सहेजा नहीं जा सका',
   '{} medyayı galeriye kaydet': '{} मीडिया गैलरी में सहेजें',
   '{}/{} kaydedildi': '{}/{} सहेजे गए',
+  'Hemen kaydol': 'अभी साइन अप करो',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'अपने शो एपिसोड-दर-एपिसोड मार्क करो, फ़िल्मों की लिस्ट रखो, रेटिंग और रिव्यू दो, और देखो तुम्हारे दोस्त क्या देख रहे हैं। वेब और मोबाइल पर।',
+  '45 dilde. Web, Android ve iOS.': '45 भाषाओं में। वेब, Android और iOS।',
 };

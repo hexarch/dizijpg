@@ -1719,13 +1719,8 @@ const Map<String, String> cevirilerMr = {
   'Gönderiliyor': 'पाठवत आहे',
   'İzlediğin her şeyi tek yerde takip et':
       'तू जे पाहतोस ते सगळं एकाच ठिकाणी ट्रॅक कर',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'तुझ्या मालिका भागानुसार मार्क कर, चित्रपटांची यादी ठेव, रेटिंग आणि रिव्ह्यू दे, आणि मित्र काय पाहतायत ते बघ. मोफत, वेब आणि मोबाइलवर.',
-  'Ücretsiz başla': 'मोफत सुरू कर',
   'Keşfet\'e göz at': 'डिस्कव्हर पाहा',
   'Giriş yap': 'लॉग इन',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'मोफत. ४५ भाषांमध्ये. वेब, Android आणि iOS.',
   'Neler yapabilirsin?': 'तू काय करू शकतोस?',
   'Bölüm bölüm takip': 'भागानुसार ट्रॅकिंग',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1751,4 +1746,8 @@ const Map<String, String> cevirilerMr = {
   'Kaydedilemedi': 'सेव्ह करता आले नाही',
   '{} medyayı galeriye kaydet': '{} मीडिया गॅलरीमध्ये सेव्ह करा',
   '{}/{} kaydedildi': '{}/{} सेव्ह केले',
+  'Hemen kaydol': 'आत्ताच साइन अप कर',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'तुझ्या मालिका भागानुसार मार्क कर, चित्रपटांची यादी ठेव, रेटिंग आणि रिव्ह्यू दे, आणि मित्र काय पाहतायत ते बघ. वेब आणि मोबाइलवर.',
+  '45 dilde. Web, Android ve iOS.': '४५ भाषांमध्ये. वेब, Android आणि iOS.',
 };

@@ -1725,13 +1725,8 @@ const Map<String, String> cevirilerId = {
   'Gönderiliyor': 'Mengirim',
   'İzlediğin her şeyi tek yerde takip et':
       'Lacak semua yang kamu tonton di satu tempat',
-  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
-      'Tandai serialmu episode demi episode, simpan daftar film, beri nilai dan ulasan, lihat apa yang ditonton teman-temanmu. Gratis, di web dan seluler.',
-  'Ücretsiz başla': 'Mulai gratis',
   'Keşfet\'e göz at': 'Lihat Jelajahi',
   'Giriş yap': 'Masuk',
-  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
-      'Gratis. Dalam 45 bahasa. Web, Android, dan iOS.',
   'Neler yapabilirsin?': 'Apa yang bisa kamu lakukan?',
   'Bölüm bölüm takip': 'Pelacakan episode demi episode',
   'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
@@ -1757,4 +1752,8 @@ const Map<String, String> cevirilerId = {
   'Kaydedilemedi': 'Tidak dapat disimpan',
   '{} medyayı galeriye kaydet': 'Simpan {} media ke galeri',
   '{}/{} kaydedildi': '{}/{} disimpan',
+  'Hemen kaydol': 'Daftar sekarang',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
+      'Tandai serialmu episode demi episode, simpan daftar film, beri nilai dan ulasan, lihat apa yang ditonton teman-temanmu. Di web dan seluler.',
+  '45 dilde. Web, Android ve iOS.': 'Dalam 45 bahasa. Web, Android, dan iOS.',
 };
