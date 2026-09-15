@@ -1640,4 +1640,5 @@ const Map<String, String> cevirilerKo = {
       '이 파일만으로는 가져올 수 없습니다. 전체 아카이브(.zip) 또는 dizijpg.json 파일을 올려주세요',
   'Ort.': '평균',
   'En iyi bölüm': '최고 에피소드',
+  'Sezonun bölümleri': '이번 시즌 에피소드',
 };

@@ -1716,4 +1716,5 @@ const Map<String, String> cevirilerCs = {
       'Tento soubor nelze naimportovat samostatně: nahraj celý archiv (.zip) nebo soubor dizijpg.json',
   'Ort.': 'Prům.',
   'En iyi bölüm': 'Nejlepší díl',
+  'Sezonun bölümleri': 'Díly této řady',
 };

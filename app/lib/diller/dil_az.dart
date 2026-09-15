@@ -1710,4 +1710,5 @@ const Map<String, String> cevirilerAz = {
       'Bu fayl tək başına idxal edilə bilmir: arxivin hamısını (.zip) və ya dizijpg.json faylını yüklə',
   'Ort.': 'Orta',
   'En iyi bölüm': 'Ən yaxşı seriya',
+  'Sezonun bölümleri': 'Mövsümün seriyaları',
 };

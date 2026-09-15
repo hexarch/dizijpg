@@ -1725,4 +1725,5 @@ const Map<String, String> cevirilerMs = {
       'Fail ini tidak boleh diimport bersendirian: muat naik keseluruhan arkib (.zip) atau fail dizijpg.json',
   'Ort.': 'Purata',
   'En iyi bölüm': 'Episod terbaik',
+  'Sezonun bölümleri': 'Episod musim ini',
 };

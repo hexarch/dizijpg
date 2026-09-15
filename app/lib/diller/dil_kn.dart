@@ -1720,4 +1720,5 @@ const Map<String, String> cevirilerKn = {
       'ಈ ಫೈಲ್ ಒಂಟಿಯಾಗಿ ಆಮದು ಆಗುವುದಿಲ್ಲ: ಪೂರ್ಣ ಆರ್ಕೈವ್ (.zip) ಅಥವಾ dizijpg.json ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡು',
   'Ort.': 'ಸರಾಸರಿ',
   'En iyi bölüm': 'ಅತ್ಯುತ್ತಮ ಎಪಿಸೋಡ್',
+  'Sezonun bölümleri': 'ಈ ಸೀಸನ್‌ನ ಎಪಿಸೋಡ್‌ಗಳು',
 };

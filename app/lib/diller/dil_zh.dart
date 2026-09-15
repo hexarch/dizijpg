@@ -1669,4 +1669,5 @@ const Map<String, String> cevirilerZh = {
       '仅这个文件无法导入：请上传整个压缩包（.zip）或 dizijpg.json 文件',
   'Ort.': '均分',
   'En iyi bölüm': '最佳一集',
+  'Sezonun bölümleri': '本季各集',
 };

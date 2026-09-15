@@ -1706,4 +1706,5 @@ const Map<String, String> cevirilerGu = {
       'આ ફાઇલ એકલી ઇમ્પોર્ટ થઈ શકતી નથી: આખું આર્કાઇવ (.zip) કે dizijpg.json ફાઇલ અપલોડ કરો',
   'Ort.': 'સરેરાશ',
   'En iyi bölüm': 'શ્રેષ્ઠ એપિસોડ',
+  'Sezonun bölümleri': 'આ સીઝનના એપિસોડ',
 };

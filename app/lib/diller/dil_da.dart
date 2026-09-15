@@ -1722,4 +1722,5 @@ const Map<String, String> cevirilerDa = {
       'Denne fil kan ikke importeres alene: upload hele arkivet (.zip) eller filen dizijpg.json',
   'Ort.': 'Gns.',
   'En iyi bölüm': 'Bedste afsnit',
+  'Sezonun bölümleri': 'Sæsonens afsnit',
 };

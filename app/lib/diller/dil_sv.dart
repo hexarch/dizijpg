@@ -1733,4 +1733,5 @@ const Map<String, String> cevirilerSv = {
       'Den här filen kan inte importeras ensam: ladda upp hela arkivet (.zip) eller filen dizijpg.json',
   'Ort.': 'Snitt',
   'En iyi bölüm': 'Bästa avsnitt',
+  'Sezonun bölümleri': 'Säsongens avsnitt',
 };

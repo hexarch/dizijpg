@@ -1683,4 +1683,5 @@ const Map<String, String> cevirilerHe = {
       'אי אפשר לייבא את הקובץ הזה לבדו: העלה את כל הארכיון (.zip) או את הקובץ dizijpg.json',
   'Ort.': 'ממוצע',
   'En iyi bölüm': 'הפרק הטוב ביותר',
+  'Sezonun bölümleri': 'פרקי העונה',
 };

@@ -1723,4 +1723,5 @@ const Map<String, String> cevirilerSr = {
       'Овај фајл не може да се увезе сам: отпреми цео архив (.zip) или фајл dizijpg.json',
   'Ort.': 'Прос.',
   'En iyi bölüm': 'Најбоља епизода',
+  'Sezonun bölümleri': 'Епизоде сезоне',
 };

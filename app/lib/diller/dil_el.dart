@@ -1755,4 +1755,5 @@ const Map<String, String> cevirilerEl = {
       'Αυτό το αρχείο δεν εισάγεται μόνο του: ανέβασε ολόκληρο το αρχείο (.zip) ή το dizijpg.json',
   'Ort.': 'Μ.Ο.',
   'En iyi bölüm': 'Καλύτερο επεισόδιο',
+  'Sezonun bölümleri': 'Επεισόδια της σεζόν',
 };

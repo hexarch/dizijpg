@@ -1798,4 +1798,5 @@ const Map<String, String> cevirilerEs = {
       'Este archivo no se puede importar por sí solo: sube el archivo completo (.zip) o el dizijpg.json',
   'Ort.': 'Prom.',
   'En iyi bölüm': 'Mejor episodio',
+  'Sezonun bölümleri': 'Episodios de la temporada',
 };

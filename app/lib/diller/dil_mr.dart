@@ -1713,4 +1713,5 @@ const Map<String, String> cevirilerMr = {
       'ही फाइल एकटी इंपोर्ट होऊ शकत नाही: संपूर्ण आर्काइव्ह (.zip) किंवा dizijpg.json फाइल अपलोड करा',
   'Ort.': 'सरासरी',
   'En iyi bölüm': 'सर्वोत्तम एपिसोड',
+  'Sezonun bölümleri': 'या सीझनचे एपिसोड',
 };

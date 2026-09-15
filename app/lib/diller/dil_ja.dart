@@ -1636,4 +1636,5 @@ const Map<String, String> cevirilerJa = {
       'このファイルだけではインポートできません。アーカイブ全体（.zip）か dizijpg.json をアップロードしてください',
   'Ort.': '平均',
   'En iyi bölüm': 'ベストエピソード',
+  'Sezonun bölümleri': 'このシーズンのエピソード',
 };

@@ -1719,4 +1719,5 @@ const Map<String, String> cevirilerUr = {
       'یہ فائل تنہا درآمد نہیں ہو سکتی: پورا آرکائیو (.zip) یا dizijpg.json فائل اپ لوڈ کریں',
   'Ort.': 'اوسط',
   'En iyi bölüm': 'بہترین قسط',
+  'Sezonun bölümleri': 'اس سیزن کی اقساط',
 };

@@ -1702,4 +1702,5 @@ const Map<String, String> cevirilerFa = {
       'این فایل به تنهایی وارد نمی‌شود: کل آرشیو (.zip) یا فایل dizijpg.json را بارگذاری کن',
   'Ort.': 'میانگین',
   'En iyi bölüm': 'بهترین قسمت',
+  'Sezonun bölümleri': 'قسمت‌های این فصل',
 };

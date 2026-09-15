@@ -1801,4 +1801,5 @@ const Map<String, String> cevirilerRo = {
       'Acest fișier nu poate fi importat singur: încarcă arhiva completă (.zip) sau fișierul dizijpg.json',
   'Ort.': 'Med.',
   'En iyi bölüm': 'Cel mai bun episod',
+  'Sezonun bölümleri': 'Episoadele sezonului',
 };

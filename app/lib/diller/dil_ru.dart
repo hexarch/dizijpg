@@ -1782,4 +1782,5 @@ const Map<String, String> cevirilerRu = {
       'Этот файл нельзя импортировать отдельно: загрузите весь архив (.zip) или файл dizijpg.json',
   'Ort.': 'Ср.',
   'En iyi bölüm': 'Лучшая серия',
+  'Sezonun bölümleri': 'Серии сезона',
 };

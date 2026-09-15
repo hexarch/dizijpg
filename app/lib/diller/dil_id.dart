@@ -1719,4 +1719,5 @@ const Map<String, String> cevirilerId = {
       'File ini tidak bisa diimpor sendirian: unggah seluruh arsip (.zip) atau file dizijpg.json',
   'Ort.': 'Rerata',
   'En iyi bölüm': 'Episode terbaik',
+  'Sezonun bölümleri': 'Episode musim ini',
 };

@@ -1730,4 +1730,5 @@ const Map<String, String> cevirilerNl = {
       'Dit bestand kan niet los worden geïmporteerd: upload het hele archief (.zip) of het bestand dizijpg.json',
   'Ort.': 'Gem.',
   'En iyi bölüm': 'Beste aflevering',
+  'Sezonun bölümleri': 'Afleveringen van dit seizoen',
 };

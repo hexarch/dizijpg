@@ -1715,4 +1715,5 @@ const Map<String, String> cevirilerPa = {
       'ਇਹ ਫਾਈਲ ਇਕੱਲੀ ਇੰਪੋਰਟ ਨਹੀਂ ਹੋ ਸਕਦੀ: ਪੂਰਾ ਆਰਕਾਈਵ (.zip) ਜਾਂ dizijpg.json ਫਾਈਲ ਅੱਪਲੋਡ ਕਰੋ',
   'Ort.': 'ਔਸਤ',
   'En iyi bölüm': 'ਸਭ ਤੋਂ ਵਧੀਆ ਐਪੀਸੋਡ',
+  'Sezonun bölümleri': 'ਇਸ ਸੀਜ਼ਨ ਦੇ ਐਪੀਸੋਡ',
 };

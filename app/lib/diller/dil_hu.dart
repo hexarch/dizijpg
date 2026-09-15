@@ -1731,4 +1731,5 @@ const Map<String, String> cevirilerHu = {
       'Ez a fájl önmagában nem importálható: töltsd fel a teljes archívumot (.zip) vagy a dizijpg.json fájlt',
   'Ort.': 'Átl.',
   'En iyi bölüm': 'Legjobb epizód',
+  'Sezonun bölümleri': 'Az évad epizódjai',
 };

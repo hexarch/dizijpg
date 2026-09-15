@@ -1727,4 +1727,5 @@ const Map<String, String> cevirilerFi = {
       'Tätä tiedostoa ei voi tuoda yksinään: lataa koko arkisto (.zip) tai dizijpg.json-tiedosto',
   'Ort.': 'Ka.',
   'En iyi bölüm': 'Paras jakso',
+  'Sezonun bölümleri': 'Kauden jaksot',
 };

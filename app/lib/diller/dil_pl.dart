@@ -1739,4 +1739,5 @@ const Map<String, String> cevirilerPl = {
       'Tego pliku nie da się zaimportować samego: wgraj całe archiwum (.zip) albo plik dizijpg.json',
   'Ort.': 'Śr.',
   'En iyi bölüm': 'Najlepszy odcinek',
+  'Sezonun bölümleri': 'Odcinki sezonu',
 };

@@ -1727,4 +1727,5 @@ const Map<String, String> cevirilerSw = {
       'Faili hii haiwezi kuingizwa peke yake: pakia kumbukumbu nzima (.zip) au faili la dizijpg.json',
   'Ort.': 'Wastani',
   'En iyi bölüm': 'Kipindi bora',
+  'Sezonun bölümleri': 'Vipindi vya msimu',
 };

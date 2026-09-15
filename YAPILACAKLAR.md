@@ -10874,3 +10874,20 @@ ve oranın tasarımını daha güzel yapabilirsin"*.
   yaması dil dosyalarında yanlış satıra düşer — betiği koş. Çalışma ağacında
   başka oturumun yarım kodu vardı (yenilikler.dart derlenmiyor) → dağıtım
   HEAD+kendi dosyalarım ile ayrı worktree'den derlendi.
+
+## 15 Eyl 2026 — Bölüm sayfası dizi sayfasının tasarımına çekildi (1.160.0+239) ✅
+Kullanıcı: *"dizilerde bölüm sayfaları tasarımsal olarak geri kalmış, bölüm
+sayfalarını da güncel tasarıma çek"*.
+- ✅ Sabit SliverAppBar + kahraman; başlık bloğunda DİZİNİN AFİŞİ ve adı
+  (dizi sayfasına götürür), sarı `S1B3` rozeti + tarih + süre + ★ TMDB Wrap'te.
+- ✅ Tam genişlik İzledim, puan şeridi, tepkiler, özet — dizi sayfasındaki sıra.
+- ✅ Önceki / Sonraki bölüm düğmeleri (uçta pasif) + "Sezonun bölümleri"
+  şeridi (açık bölüm sarı çerçeveli, açılışta görünür konuma kayar);
+  geçiş `pushReplacement`. `/benim` izlenmişi düğmeye yansıtır.
+- ✅ Bölüm ekibi (Yönetmen/Senaryo, `ekibiCikar` ile) + konuk oyuncular
+  karakter alt satırıyla, aynı kişi kartı.
+- Veri: +2 istek (`/tmdb/tv/:id`, `/tmdb/tv/:id/season/:s`), ikisi de
+  isteğe bağlı (gelmezse ilgili parça çizilmez). 1 yeni anahtar 45 dilde.
+- Test: `bolum_sayfasi_tasarim_test.dart` (8). TUZAK: `SeritBasligi` ekli
+  başlığı tek Text.rich → `find.text` değil `textContaining`; CustomScrollView
+  görünmeyen sliver'ı kurmaz → test yüzeyi 2600 dp.

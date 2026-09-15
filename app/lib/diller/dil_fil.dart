@@ -1753,4 +1753,5 @@ const Map<String, String> cevirilerFil = {
       'Hindi puwedeng i-import ang file na ito nang mag-isa: i-upload ang buong archive (.zip) o ang dizijpg.json',
   'Ort.': 'Avg.',
   'En iyi bölüm': 'Pinakamagandang episode',
+  'Sezonun bölümleri': 'Mga episode ngayong season',
 };

@@ -1710,4 +1710,5 @@ const Map<String, String> cevirilerBn = {
       'এই ফাইলটি একা আমদানি করা যায় না: পুরো আর্কাইভ (.zip) বা dizijpg.json ফাইল আপলোড করো',
   'Ort.': 'গড়',
   'En iyi bölüm': 'সেরা এপিসোড',
+  'Sezonun bölümleri': 'এই সিজনের এপিসোড',
 };

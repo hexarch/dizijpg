@@ -1690,4 +1690,5 @@ const Map<String, String> cevirilerTh = {
       'ไฟล์นี้นำเข้าเดี่ยว ๆ ไม่ได้ อัปโหลดไฟล์เก็บถาวรทั้งชุด (.zip) หรือไฟล์ dizijpg.json',
   'Ort.': 'เฉลี่ย',
   'En iyi bölüm': 'ตอนที่ดีที่สุด',
+  'Sezonun bölümleri': 'ตอนในซีซันนี้',
 };

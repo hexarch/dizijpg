@@ -1717,4 +1717,5 @@ const Map<String, String> cevirilerVi = {
       'Không thể nhập riêng tệp này: hãy tải lên toàn bộ kho lưu trữ (.zip) hoặc tệp dizijpg.json',
   'Ort.': 'TB',
   'En iyi bölüm': 'Tập hay nhất',
+  'Sezonun bölümleri': 'Các tập trong mùa',
 };

@@ -1719,4 +1719,5 @@ const Map<String, String> cevirilerTe = {
       'ఈ ఫైల్‌ను ఒంటరిగా దిగుమతి చేయలేం: పూర్తి ఆర్కైవ్ (.zip) లేదా dizijpg.json ఫైల్‌ను అప్‌లోడ్ చేయి',
   'Ort.': 'సగటు',
   'En iyi bölüm': 'ఉత్తమ ఎపిసోడ్',
+  'Sezonun bölümleri': 'ఈ సీజన్ ఎపిసోడ్‌లు',
 };

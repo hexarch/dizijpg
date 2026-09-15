@@ -1662,4 +1662,5 @@ const Map<String, String> cevirilerAm = {
       'ይህ ፋይል ብቻውን መግባት አይችልም፦ ሙሉውን መዝገብ (.zip) ወይም dizijpg.json ፋይል ይጫኑ',
   'Ort.': 'አማካይ',
   'En iyi bölüm': 'ምርጥ ክፍል',
+  'Sezonun bölümleri': 'የዚህ ወቅት ክፍሎች',
 };

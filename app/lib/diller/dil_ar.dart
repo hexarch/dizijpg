@@ -1742,4 +1742,5 @@ const Map<String, String> cevirilerAr = {
       'لا يمكن استيراد هذا الملف وحده: ارفع الأرشيف كاملًا (.zip) أو ملف dizijpg.json',
   'Ort.': 'المعدل',
   'En iyi bölüm': 'أفضل حلقة',
+  'Sezonun bölümleri': 'حلقات الموسم',
 };

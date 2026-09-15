@@ -33,6 +33,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // bolum.dart — bölüm sayfası yeni tasarım (15 Eyl 2026): sezon şeridi başlığı.
+  'Sezonun bölümleri',
   // tmdb_puan_izgara.dart — iki kaynaklı bölüm puanı paneli (14 Eyl 2026):
   // sezon ortalaması satırının etiketi + en iyi bölüm özeti.
   'Ort.',

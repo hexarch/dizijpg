@@ -1728,4 +1728,5 @@ const Map<String, String> cevirilerBg = {
       'Този файл не може да се внесе сам: качи целия архив (.zip) или файла dizijpg.json',
   'Ort.': 'Ср.',
   'En iyi bölüm': 'Най-добър епизод',
+  'Sezonun bölümleri': 'Епизоди от сезона',
 };
