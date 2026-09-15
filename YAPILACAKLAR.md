@@ -10905,3 +10905,24 @@ Kullanıcı: *"akışta yorum yap kısmına tıklıyorum sonra video yüklüyoru
   gelince ek şeride girer.
 - Açık: video sıkıştırma hedefi (5 Mbps) mobil yükleme için yüksek olabilir;
   ayrı karar.
+
+## 15 Eyl 2026 — Gönderi paylaşımında kişi arama + 4'lü ızgara (1.161.0+241) ✅
+Kullanıcı: *"akışta veya keşfette bir postu paylaşırken kime gideceğini
+arayamıyorum, oraya arama özelliği getir ve sola çekmeli yapacağına aşağı
+doğru diz 4'lü 4'lü iner; en azından aşağı kaydırdıkça modal yukarı çıkar"*.
+- ✅ `paylas.dart` (Akış, Keşfet, Reels, yorum, liste — hepsi aynı sheet):
+  yatay 84 dp'lik kişi şeridi → `DraggableScrollableSheet` (%62 açılış, %95
+  azami) içinde 4 sütunlu `SliverGrid`; ızgarayı kaydırınca önce sayfa
+  yükselir, sonra liste kayar. Masaüstünde 720 kolon (`masaustuKolonGenisligi`).
+- ✅ Arama kutusu (Key `paylas-kisi-ara`): hedef listesi (`/paylas-hedefler`,
+  60 kişi) yerel + ANINDA süzülür; 2+ karakterde 300 ms sonra `/kullanici-ara`
+  da sorulur, listede olmayan kişi eklenir (`ben_mi` atlanır). Kutuya odak →
+  sayfa tam yüksekliğe çıkar (klavye altında tek satır kalmasın).
+- Gönderim durumu id yerine KULLANICI ADIYLA tutulur: arama ucu id döndürmüyor,
+  ortak anahtar ad. Temizle düğmesi suffixIcon'da DEĞİL satır kardeşi (ANR kuralı).
+- Yeni çeviri anahtarı YOK ('Kişi ara', 'Sonuç bulunamadı', 'Temizle' 45 dilde vardı).
+- Test `paylas_kisi_ara_test.dart` (5): 4 sütun/2. satır, yerel süzgeç +
+  sunucu birleştirme, boş durum + temizle, id'siz kişiye DM (`yorum_id`), sürükleyince yükselme.
+- Dağıtım ayrık worktree'den (paylaşılan ağaçta başka oturumun commit'lenmemiş
+  değişiklikleri vardı).
+

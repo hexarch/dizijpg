@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,9 +13,11 @@ import '../yonlendirme.dart' show gonderiYolu;
 import 'giris_istem.dart';
 import 'ortak.dart';
 
-/// Gönderi paylaşma sayfası: üstte kişilere (mesajlaştıkların, takip
-/// ettiklerin, takipçilerin) DM ile gönder, altta telefonun kendi paylaşım
-/// sayfası (WhatsApp, e-posta, Instagram...) ve bağlantıyı kopyala.
+/// Gönderi paylaşma sayfası: üstte kişi arama kutusu ve kişiler
+/// (mesajlaştıkların, takip ettiklerin, takipçilerin; aramada sunucudan
+/// başkaları da) 4'lü ızgarada, dokununca DM ile gider; altta telefonun
+/// kendi paylaşım sayfası (WhatsApp, e-posta, Instagram...) ve bağlantıyı
+/// kopyala. Izgarayı aşağı kaydırdıkça sayfa yükselir (DraggableScrollableSheet).
 Future<void> paylasSheet(
   BuildContext context, {
   required String url,
@@ -22,6 +26,11 @@ Future<void> paylasSheet(
 }) => showModalBottomSheet(
   context: context,
   isScrollControlled: true,
+  // Sayfa sürüklenince %95'e kadar çıkar; durum çubuğuna girmesin.
+  useSafeArea: true,
+  // 4 sütunlu kişi ızgarası masaüstünde tam genişlikte hücre başına
+  // yüzlerce dp'ye yayılırdı — yorum/etiket sheet'leriyle aynı 720 kolon.
+  constraints: const BoxConstraints(maxWidth: masaustuKolonGenisligi),
   backgroundColor: DiziRenkler.koyuGri,
   shape: const RoundedRectangleBorder(
     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -103,16 +112,63 @@ class _PaylasSheet extends StatefulWidget {
   State<_PaylasSheet> createState() => _PaylasSheetState();
 }
 
+/// Sayfanın açılış / azami yüksekliği (ekran oranı). Kişi ızgarasını
+/// aşağı kaydırdıkça sayfa önce [_azamiOran]a kadar yükselir, sonra ızgara
+/// kendi içinde kayar (15 Eyl 2026 isteği: *"sola çekmeli yapacağına aşağı
+/// doğru diz, 4'lü 4'lü iner; aşağı kaydırdıkça modal yukarı çıkar"*).
+const double _acilisOran = 0.62;
+const double _azamiOran = 0.95;
+
+/// Izgara sütun sayısı — kullanıcı isteği "4'lü 4'lü".
+const int _sutun = 4;
+
 class _PaylasSheetState extends State<_PaylasSheet> {
   List<dynamic>? _kisiler;
   String? _hata;
-  final _gonderilen = <int>{}; // DM gönderilen kullanıcı id'leri
-  final _gonderiliyor = <int>{};
+  // Gönderim durumu KULLANICI ADIYLA tutulur, id ile değil: hedef listesi
+  // (`/paylas-hedefler`) id taşır ama arama sonucu (`/kullanici-ara`) taşımaz;
+  // ikisinin ortak anahtarı kullanıcı adı. DM ucu da adla çalışıyor.
+  final _gonderilen = <String>{};
+  final _gonderiliyor = <String>{};
+
+  // Arama: hedef listesi anında yerel süzülür; 2+ karakterde 300 ms sonra
+  // sunucu da sorulur ki listede olmayan (takip etmediğin) kişi bulunsun.
+  final _aramaKontrol = TextEditingController();
+  final _aramaOdak = FocusNode();
+  final _sayfaKontrol = DraggableScrollableController();
+  Timer? _gecikme;
+  String _sorgu = '';
+  List<dynamic>? _aramaSonucu;
+  bool _araniyor = false;
+  int _aramaSira = 0;
 
   @override
   void initState() {
     super.initState();
     _yukle();
+    // Kutuya dokununca sayfa tam yüksekliğe çıkar: klavye açılınca kalan
+    // alanda açılış oranı tek satır bile göstermiyordu.
+    _aramaOdak.addListener(() {
+      if (_aramaOdak.hasFocus) _tamAc();
+    });
+  }
+
+  @override
+  void dispose() {
+    _gecikme?.cancel();
+    _aramaKontrol.dispose();
+    _aramaOdak.dispose();
+    _sayfaKontrol.dispose();
+    super.dispose();
+  }
+
+  void _tamAc() {
+    if (!_sayfaKontrol.isAttached || _sayfaKontrol.size >= _azamiOran) return;
+    _sayfaKontrol.animateTo(
+      _azamiOran,
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOut,
+    );
   }
 
   Future<void> _yukle() async {
@@ -130,13 +186,72 @@ class _PaylasSheetState extends State<_PaylasSheet> {
     }
   }
 
+  void _aramaDegisti(String v) {
+    final q = v.trim();
+    _gecikme?.cancel();
+    setState(() {
+      _sorgu = q;
+      _aramaSonucu = null;
+      _araniyor = q.length >= 2;
+    });
+    if (q.length < 2) return;
+    _gecikme = Timer(const Duration(milliseconds: 300), () => _sunucudaAra(q));
+  }
+
+  Future<void> _sunucudaAra(String q) async {
+    final sira = ++_aramaSira;
+    List<dynamic> sonuc;
+    try {
+      final d = await Api.get(
+        '/kullanici-ara?q=${Uri.encodeQueryComponent(q)}',
+      );
+      sonuc = d['kullanicilar'] as List<dynamic>? ?? const [];
+    } catch (_) {
+      // Sunucu araması her tuş vuruşunda koşar; hatada SnackBar seli
+      // olmasın. Yerel süzgeç zaten ekranda, yalnız "listede olmayan
+      // kişiler" eksik kalır.
+      sonuc = const [];
+    }
+    if (!mounted || sira != _aramaSira) return; // eski yanıt yenisini ezmesin
+    setState(() {
+      _aramaSonucu = sonuc;
+      _araniyor = false;
+    });
+  }
+
+  void _aramaTemizle() {
+    _aramaKontrol.clear();
+    _aramaDegisti('');
+  }
+
+  /// Ekranda çizilecek kişiler: sorgu boşsa hedef listesi; doluysa yerel
+  /// eşleşenler ÖNCE (mesajlaştıkların/takip ettiklerin), ardından sunucu
+  /// sonuçlarından listede olmayanlar. Kendin hiç girmez.
+  List<Map<String, dynamic>> get _gosterilen {
+    final hedefler = (_kisiler ?? const <dynamic>[])
+        .cast<Map<String, dynamic>>();
+    if (_sorgu.isEmpty) return hedefler;
+    final q = _sorgu.toLowerCase();
+    bool uyar(Map<String, dynamic> k) =>
+        (k['kullanici_adi'] as String? ?? '').toLowerCase().contains(q) ||
+        (k['ad'] as String? ?? '').toLowerCase().contains(q);
+    final liste = hedefler.where(uyar).toList();
+    final adlar = liste.map((k) => k['kullanici_adi'] as String?).toSet();
+    for (final s in _aramaSonucu ?? const <dynamic>[]) {
+      final k = s as Map<String, dynamic>;
+      if (k['ben_mi'] == true) continue;
+      if (adlar.add(k['kullanici_adi'] as String?)) liste.add(k);
+    }
+    return liste;
+  }
+
   Future<void> _dmGonder(Map<String, dynamic> k) async {
-    final id = (k['id'] as num).toInt();
-    if (_gonderilen.contains(id) || _gonderiliyor.contains(id)) return;
-    setState(() => _gonderiliyor.add(id));
+    final ad = k['kullanici_adi'] as String;
+    if (_gonderilen.contains(ad) || _gonderiliyor.contains(ad)) return;
+    setState(() => _gonderiliyor.add(ad));
     try {
       await Api.post('/mesajlar', {
-        'kullanici_adi': k['kullanici_adi'],
+        'kullanici_adi': ad,
         // Gönderi paylaşımında link DEĞİL postun kendisi gider: sohbette
         // kart görünür, dokununca Reels'te açılır.
         if (widget.yorumId != null) 'yorum_id': widget.yorumId,
@@ -147,12 +262,12 @@ class _PaylasSheetState extends State<_PaylasSheet> {
       GonderiOlcu.bildir(widget.yorumId, GonderiOlcu.paylasim);
       if (!mounted) return;
       setState(() {
-        _gonderiliyor.remove(id);
-        _gonderilen.add(id);
+        _gonderiliyor.remove(ad);
+        _gonderilen.add(ad);
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _gonderiliyor.remove(id));
+      setState(() => _gonderiliyor.remove(ad));
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -194,166 +309,278 @@ class _PaylasSheetState extends State<_PaylasSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 10),
-          Container(
-            width: 38,
-            height: 4,
-            decoration: BoxDecoration(
-              color: DiziRenkler.metin24,
-              borderRadius: BorderRadius.circular(2),
+    // showModalBottomSheet klavye payı EKLEMEZ: alt pay klavye kadar ki
+    // arama kutusu ve ızgara klavyenin ÜSTÜNDE kalsın.
+    final klavye = MediaQuery.viewInsetsOf(context).bottom;
+    return Padding(
+      padding: EdgeInsets.only(bottom: klavye),
+      child: DraggableScrollableSheet(
+        key: const Key('paylas-sayfa'),
+        controller: _sayfaKontrol,
+        expand: false,
+        initialChildSize: _acilisOran,
+        minChildSize: 0.35,
+        maxChildSize: _azamiOran,
+        builder: (context, kontrol) => Column(
+          children: [
+            const SizedBox(height: 10),
+            Container(
+              width: 38,
+              height: 4,
+              decoration: BoxDecoration(
+                color: DiziRenkler.metin24,
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 14, 20, 6),
-            child: Row(
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 6),
+              child: Row(
+                children: [
+                  Icon(Icons.send_outlined, size: 20, color: DiziRenkler.sari),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Paylaş'.c,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (Api.girisli) _aramaKutusu(),
+            // Kişiler: dokununca DM olarak gönderilir
+            Expanded(child: _govde(kontrol)),
+            Divider(color: DiziRenkler.metin12, height: 12),
+            // Telefonun paylaşım sayfası + bağlantıyı kopyala
+            // Düğmeler Flexible: uzun çevirili dilde (Almanca vb.) dar
+            // telefonda etiketler satırı taşırıyordu — etiket kısalır, taşmaz.
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Icon(Icons.send_outlined, size: 20, color: DiziRenkler.sari),
-                const SizedBox(width: 8),
-                Text(
-                  'Paylaş'.c,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w800,
+                if (!kIsWeb)
+                  Flexible(
+                    child: _PaylasDugme(
+                      ikon: Icons.ios_share,
+                      etiket: 'Diğer uygulamalar'.c,
+                      onTap: _sistemPaylas,
+                    ),
+                  ),
+                Flexible(
+                  child: _PaylasDugme(
+                    ikon: Icons.link,
+                    etiket: 'Bağlantıyı kopyala'.c,
+                    onTap: _kopyala,
                   ),
                 ),
               ],
             ),
-          ),
-          // Kişiler: dokununca DM olarak gönderilir
-          if (!Api.girisli)
-            GirisIstemiKarti(metin: 'Kişilere göndermek için giriş yap'.c)
-          else
-            SizedBox(
-              height: 132,
-              child: _hata != null
-                  ? Center(
-                      child: Text(
-                        _hata!,
-                        style: TextStyle(color: DiziRenkler.metin54),
-                      ),
-                    )
-                  : _kisiler == null
-                  ? const Center(
-                      child: CircularProgressIndicator(color: DiziRenkler.sari),
-                    )
-                  : _kisiler!.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Text(
-                          'Henüz kimseyi takip etmiyorsun.'.c,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: DiziRenkler.metin54),
-                        ),
-                      ),
-                    )
-                  : ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      itemCount: _kisiler!.length,
-                      itemBuilder: (context, i) {
-                        final k = _kisiler![i] as Map<String, dynamic>;
-                        final id = (k['id'] as num).toInt();
-                        final avatar = dosyaUrl(k['avatar'] as String?);
-                        final gonderildi = _gonderilen.contains(id);
-                        final gidiyor = _gonderiliyor.contains(id);
-                        return SizedBox(
-                          width: 84,
-                          child: InkWell(
-                            onTap: () => _dmGonder(k),
-                            borderRadius: BorderRadius.circular(12),
-                            child: Column(
-                              children: [
-                                const SizedBox(height: 8),
-                                Stack(
-                                  children: [
-                                    KullaniciAvatari(
-                                      url: avatar,
-                                      kullaniciAdi:
-                                          k['kullanici_adi'] as String?,
-                                      yaricap: 28,
-                                      arkaplan: DiziRenkler.kart,
-                                    ),
-                                    if (gonderildi || gidiyor)
-                                      Positioned.fill(
-                                        child: DecoratedBox(
-                                          decoration: const BoxDecoration(
-                                            color: Colors.black54,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Center(
-                                            child: gidiyor
-                                                ? const SizedBox(
-                                                    width: 18,
-                                                    height: 18,
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                          strokeWidth: 2,
-                                                          color:
-                                                              DiziRenkler.sari,
-                                                        ),
-                                                  )
-                                                : const Icon(
-                                                    Icons.check,
-                                                    color: DiziRenkler.sari,
-                                                  ),
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  '@${k['kullanici_adi']}',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontSize: 11),
-                                ),
-                                if (gonderildi)
-                                  Text(
-                                    'Gönderildi'.c,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: DiziRenkler.sariMetin,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+            SizedBox(height: altGuvenli(context, ekstra: 8)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _aramaKutusu() => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 2, 8, 6),
+    child: Row(
+      children: [
+        Expanded(
+          child: TextField(
+            key: const Key('paylas-kisi-ara'),
+            controller: _aramaKontrol,
+            focusNode: _aramaOdak,
+            onChanged: _aramaDegisti,
+            textInputAction: TextInputAction.search,
+            style: const TextStyle(fontSize: 14),
+            decoration: InputDecoration(
+              hintText: 'Kişi ara'.c,
+              isDense: true,
+              prefixIcon: Icon(
+                Icons.search,
+                size: 20,
+                color: DiziRenkler.metin54,
+              ),
             ),
-          Divider(color: DiziRenkler.metin12, height: 20),
-          // Telefonun paylaşım sayfası + bağlantıyı kopyala
-          // Düğmeler Flexible: uzun çevirili dilde (Almanca vb.) dar
-          // telefonda etiketler satırı taşırıyordu — etiket kısalır, taşmaz.
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          ),
+        ),
+        // Temizle düğmesi suffixIcon'da DEĞİL, satır kardeşi: suffixIcon
+        // içindeki düğme erişilebilirlik ağacında sonsuz özyinelemeyle ANR
+        // yaptı (sohbet video arızası, 1.115.0) — kural: suffixIcon'a düğme
+        // koyma.
+        SizedBox(
+          width: dokunmaHedefi,
+          child: _sorgu.isEmpty
+              ? null
+              : IconButton(
+                  key: const Key('paylas-ara-temizle'),
+                  tooltip: 'Temizle'.c,
+                  onPressed: _aramaTemizle,
+                  icon: Icon(Icons.close, size: 20, color: DiziRenkler.metin54),
+                ),
+        ),
+      ],
+    ),
+  );
+
+  Widget _govde(ScrollController kontrol) {
+    // Boş/yükleniyor/hata durumları da AYNI kaydırma denetleyicisine bağlı:
+    // sayfa yalnız ızgara varken değil, her durumda parmakla büyütülebilir.
+    Widget mesaj(Widget cocuk) => CustomScrollView(
+      controller: kontrol,
+      slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: cocuk,
+            ),
+          ),
+        ),
+      ],
+    );
+    Widget sonukMetni(String metin) => Text(
+      metin,
+      textAlign: TextAlign.center,
+      style: TextStyle(color: DiziRenkler.metin54),
+    );
+    const spinner = SizedBox(
+      width: 28,
+      height: 28,
+      child: CircularProgressIndicator(
+        strokeWidth: 2.5,
+        color: DiziRenkler.sari,
+      ),
+    );
+
+    if (!Api.girisli) {
+      return mesaj(
+        GirisIstemiKarti(metin: 'Kişilere göndermek için giriş yap'.c),
+      );
+    }
+    if (_hata != null) return mesaj(sonukMetni(_hata!));
+    if (_kisiler == null) return mesaj(spinner);
+    final liste = _gosterilen;
+    if (liste.isEmpty) {
+      if (_araniyor) return mesaj(spinner);
+      return mesaj(
+        sonukMetni(
+          _sorgu.isEmpty
+              ? 'Henüz kimseyi takip etmiyorsun.'.c
+              : 'Sonuç bulunamadı'.c,
+        ),
+      );
+    }
+    return CustomScrollView(
+      key: const Key('paylas-kisi-izgara'),
+      controller: kontrol,
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(10, 2, 10, 8),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _sutun,
+              mainAxisExtent: _KisiHucresi.boy,
+            ),
+            delegate: SliverChildBuilderDelegate((context, i) {
+              final k = liste[i];
+              final ad = k['kullanici_adi'] as String? ?? '';
+              return _KisiHucresi(
+                kisi: k,
+                gonderildi: _gonderilen.contains(ad),
+                gidiyor: _gonderiliyor.contains(ad),
+                onTap: () => _dmGonder(k),
+              );
+            }, childCount: liste.length),
+          ),
+        ),
+        // Yerel eşleşmeler çizilmişken sunucu hâlâ aranıyor: altta ince ilerleme
+        if (_araniyor)
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(24, 0, 24, 12),
+              child: LinearProgressIndicator(minHeight: 2),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// Izgaradaki tek kişi: avatar + `@ad`, gönderilince avatar üstünde tik ve
+/// altında "Gönderildi". Hücrenin tamamı dokunma hedefi (≥44 dp).
+class _KisiHucresi extends StatelessWidget {
+  static const double boy = 104;
+  final Map<String, dynamic> kisi;
+  final bool gonderildi;
+  final bool gidiyor;
+  final VoidCallback onTap;
+  const _KisiHucresi({
+    required this.kisi,
+    required this.gonderildi,
+    required this.gidiyor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final avatar = dosyaUrl(kisi['avatar'] as String?);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Column(
+        children: [
+          const SizedBox(height: 8),
+          Stack(
             children: [
-              if (!kIsWeb)
-                Flexible(
-                  child: _PaylasDugme(
-                    ikon: Icons.ios_share,
-                    etiket: 'Diğer uygulamalar'.c,
-                    onTap: _sistemPaylas,
+              KullaniciAvatari(
+                url: avatar,
+                kullaniciAdi: kisi['kullanici_adi'] as String?,
+                yaricap: 28,
+                arkaplan: DiziRenkler.kart,
+              ),
+              if (gonderildi || gidiyor)
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: gidiyor
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: DiziRenkler.sari,
+                              ),
+                            )
+                          : const Icon(Icons.check, color: DiziRenkler.sari),
+                    ),
                   ),
                 ),
-              Flexible(
-                child: _PaylasDugme(
-                  ikon: Icons.link,
-                  etiket: 'Bağlantıyı kopyala'.c,
-                  onTap: _kopyala,
-                ),
-              ),
             ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(
+              '@${kisi['kullanici_adi']}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 11),
+            ),
+          ),
+          if (gonderildi)
+            Text(
+              'Gönderildi'.c,
+              maxLines: 1,
+              style: TextStyle(fontSize: 10, color: DiziRenkler.sariMetin),
+            ),
         ],
       ),
     );
