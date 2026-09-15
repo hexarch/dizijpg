@@ -1799,4 +1799,13 @@ const Map<String, String> cevirilerFi = {
   'Çekmek için dokun, video için basılı tut':
       'Napauta kuvaan, pidä pohjassa videoon',
   'İzin ver': 'Salli',
+  'az önce': 'juuri nyt',
+  '{} dk önce': '{} min sitten',
+  '{} dk önce~tekil': '{} min sitten',
+  '{} saat önce': '{} tuntia sitten',
+  '{} saat önce~tekil': '{} tunti sitten',
+  '{} gün önce': '{} päivää sitten',
+  '{} gün önce~tekil': '{} päivä sitten',
+  '{} hafta önce': '{} viikkoa sitten',
+  '{} hafta önce~tekil': '{} viikko sitten',
 };

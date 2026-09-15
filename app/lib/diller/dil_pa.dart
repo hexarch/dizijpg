@@ -1786,4 +1786,13 @@ const Map<String, String> cevirilerPa = {
   'Çekmek için dokun, video için basılı tut':
       'ਫੋਟੋ ਲਈ ਟੈਪ ਕਰੋ, ਵੀਡੀਓ ਲਈ ਦਬਾ ਕੇ ਰੱਖੋ',
   'İzin ver': 'ਇਜਾਜ਼ਤ ਦਿਓ',
+  'az önce': 'ਹੁਣੇ ਹੀ',
+  '{} dk önce': '{} ਮਿੰਟ ਪਹਿਲਾਂ',
+  '{} dk önce~tekil': '{} ਮਿੰਟ ਪਹਿਲਾਂ',
+  '{} saat önce': '{} ਘੰਟੇ ਪਹਿਲਾਂ',
+  '{} saat önce~tekil': '{} ਘੰਟਾ ਪਹਿਲਾਂ',
+  '{} gün önce': '{} ਦਿਨ ਪਹਿਲਾਂ',
+  '{} gün önce~tekil': '{} ਦਿਨ ਪਹਿਲਾਂ',
+  '{} hafta önce': '{} ਹਫ਼ਤੇ ਪਹਿਲਾਂ',
+  '{} hafta önce~tekil': '{} ਹਫ਼ਤਾ ਪਹਿਲਾਂ',
 };

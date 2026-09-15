@@ -1799,4 +1799,13 @@ const Map<String, String> cevirilerSw = {
   'Çekmek için dokun, video için basılı tut':
       'Gusa kupiga picha, shikilia kwa video',
   'İzin ver': 'Ruhusu',
+  'az önce': 'sasa hivi',
+  '{} dk önce': 'dakika {} zilizopita',
+  '{} dk önce~tekil': 'dakika {} iliyopita',
+  '{} saat önce': 'saa {} zilizopita',
+  '{} saat önce~tekil': 'saa {} iliyopita',
+  '{} gün önce': 'siku {} zilizopita',
+  '{} gün önce~tekil': 'siku {} iliyopita',
+  '{} hafta önce': 'wiki {} zilizopita',
+  '{} hafta önce~tekil': 'wiki {} iliyopita',
 };

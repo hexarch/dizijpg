@@ -1791,4 +1791,13 @@ const Map<String, String> cevirilerNb = {
   'Çek': 'Ta',
   'Çekmek için dokun, video için basılı tut': 'Trykk for bilde, hold for video',
   'İzin ver': 'Tillat',
+  'az önce': 'akkurat nå',
+  '{} dk önce': 'for {} min siden',
+  '{} dk önce~tekil': 'for {} min siden',
+  '{} saat önce': 'for {} timer siden',
+  '{} saat önce~tekil': 'for {} time siden',
+  '{} gün önce': 'for {} dager siden',
+  '{} gün önce~tekil': 'for {} dag siden',
+  '{} hafta önce': 'for {} uker siden',
+  '{} hafta önce~tekil': 'for {} uke siden',
 };

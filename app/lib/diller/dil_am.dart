@@ -1730,4 +1730,13 @@ const Map<String, String> cevirilerAm = {
   'Çek': 'አንሳ',
   'Çekmek için dokun, video için basılı tut': 'ለፎቶ ይንኩ፣ ለቪዲዮ ተጭነው ይያዙ',
   'İzin ver': 'ፍቀድ',
+  'az önce': 'ልክ አሁን',
+  '{} dk önce': 'ከ{} ደቂቃ በፊት',
+  '{} dk önce~tekil': 'ከ{} ደቂቃ በፊት',
+  '{} saat önce': 'ከ{} ሰዓት በፊት',
+  '{} saat önce~tekil': 'ከ{} ሰዓት በፊት',
+  '{} gün önce': 'ከ{} ቀን በፊት',
+  '{} gün önce~tekil': 'ከ{} ቀን በፊት',
+  '{} hafta önce': 'ከ{} ሳምንት በፊት',
+  '{} hafta önce~tekil': 'ከ{} ሳምንት በፊት',
 };

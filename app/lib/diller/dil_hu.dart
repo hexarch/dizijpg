@@ -1803,4 +1803,13 @@ const Map<String, String> cevirilerHu = {
   'Çekmek için dokun, video için basılı tut':
       'Koppints a fotóhoz, tartsd lenyomva a videóhoz',
   'İzin ver': 'Engedélyezés',
+  'az önce': 'az imént',
+  '{} dk önce': '{} perce',
+  '{} dk önce~tekil': '{} perce',
+  '{} saat önce': '{} órája',
+  '{} saat önce~tekil': '{} órája',
+  '{} gün önce': '{} napja',
+  '{} gün önce~tekil': '{} napja',
+  '{} hafta önce': '{} hete',
+  '{} hafta önce~tekil': '{} hete',
 };

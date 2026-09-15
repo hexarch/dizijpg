@@ -1786,4 +1786,13 @@ const Map<String, String> cevirilerVi = {
   'Çek': 'Chụp',
   'Çekmek için dokun, video için basılı tut': 'Chạm để chụp, giữ để quay video',
   'İzin ver': 'Cho phép',
+  'az önce': 'vừa xong',
+  '{} dk önce': '{} phút trước',
+  '{} dk önce~tekil': '{} phút trước',
+  '{} saat önce': '{} giờ trước',
+  '{} saat önce~tekil': '{} giờ trước',
+  '{} gün önce': '{} ngày trước',
+  '{} gün önce~tekil': '{} ngày trước',
+  '{} hafta önce': '{} tuần trước',
+  '{} hafta önce~tekil': '{} tuần trước',
 };

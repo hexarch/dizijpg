@@ -217,11 +217,14 @@ void main() {
         reason: '360 dp ay ızgarasında taşma olmamalı',
       );
       // Gün hücresinin dokunma alanı küçülmedi (rozet punto'su etkilemedi).
+      // `.first` = en YAKIN ata (dıştaki sağa-sola çekiş tanıyıcısı değil).
       final hucre = tester.getSize(
-        find.ancestor(
-          of: find.byKey(ValueKey('takvim-gun-${_bugunAnahtar(2)}')),
-          matching: find.byType(GestureDetector),
-        ),
+        find
+            .ancestor(
+              of: find.byKey(ValueKey('takvim-gun-${_bugunAnahtar(2)}')),
+              matching: find.byType(GestureDetector),
+            )
+            .first,
       );
       expect(hucre.width, greaterThanOrEqualTo(dokunmaAsgari));
       expect(hucre.height, greaterThanOrEqualTo(dokunmaAsgari));

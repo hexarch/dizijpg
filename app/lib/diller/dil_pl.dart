@@ -1811,4 +1811,13 @@ const Map<String, String> cevirilerPl = {
   'Çekmek için dokun, video için basılı tut':
       'Dotknij, aby zrobić zdjęcie; przytrzymaj, aby nagrać wideo',
   'İzin ver': 'Zezwól',
+  'az önce': 'przed chwilą',
+  '{} dk önce': '{} min temu',
+  '{} dk önce~tekil': '{} min temu',
+  '{} saat önce': '{} godz. temu',
+  '{} saat önce~tekil': '{} godz. temu',
+  '{} gün önce': '{} dni temu',
+  '{} gün önce~tekil': '{} dzień temu',
+  '{} hafta önce': '{} tyg. temu',
+  '{} hafta önce~tekil': '{} tydzień temu',
 };

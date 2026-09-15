@@ -1761,4 +1761,13 @@ const Map<String, String> cevirilerTh = {
   'Çekmek için dokun, video için basılı tut':
       'แตะเพื่อถ่ายรูป กดค้างเพื่อถ่ายวิดีโอ',
   'İzin ver': 'อนุญาต',
+  'az önce': 'เมื่อสักครู่',
+  '{} dk önce': '{} นาทีที่แล้ว',
+  '{} dk önce~tekil': '{} นาทีที่แล้ว',
+  '{} saat önce': '{} ชั่วโมงที่แล้ว',
+  '{} saat önce~tekil': '{} ชั่วโมงที่แล้ว',
+  '{} gün önce': '{} วันที่แล้ว',
+  '{} gün önce~tekil': '{} วันที่แล้ว',
+  '{} hafta önce': '{} สัปดาห์ที่แล้ว',
+  '{} hafta önce~tekil': '{} สัปดาห์ที่แล้ว',
 };

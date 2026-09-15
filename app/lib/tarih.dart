@@ -139,3 +139,39 @@ String dogumYasMetni(Object? dogum, {Object? olum, DateTime? bugun}) {
   final aralik = o.isEmpty ? d : '$d – $o';
   return yas == null ? aralik : '$aralik ($yas)';
 }
+
+/// Gönderi/yorum damgasını GÖRELİ zamana çevirir: "az önce", "12 dk önce",
+/// "3 saat önce", "5 gün önce", "2 hafta önce".
+///
+/// NEDEN (15 Eyl 2026, kullanıcı isteği): "akışta paylaşılanlarda tarih
+/// yazmak yerine önce dakika sonra saat sonra gün sonra hafta kullan".
+/// Sosyal akışta "14 Ağustos" okurun kafasında bir çıkarma işlemi ister;
+/// "5 gün önce" cevabın kendisidir.
+///
+/// EŞİKLER: 60 dk'ya kadar dakika, 24 saate kadar saat, 7 güne kadar gün,
+/// 5 haftaya kadar hafta ("4 hafta önce"). Daha eskisi [tarihBicimle] ile
+/// TAKVİM tarihine döner ("14 Ağustos", geçmiş yılda "14 Ağustos 2025") —
+/// "37 hafta önce" kimseye bir şey söylemez, tarih söyler. Ay/yıl birimi
+/// bilerek YOK: kullanıcı listesi haftada bitiyor.
+///
+/// Sunucu damgası UTC ISO ("…Z"); `DateTime.parse` bunu UTC üstünden okur,
+/// [simdi] ile farkı dilimden bağımsızdır. Saat kayması (istemci saati
+/// geride) negatif fark üretebilir; o durumda "az önce" basılır, "-3 dk
+/// önce" değil. Çözülemeyen değerde girdinin TARİH kısmı döner (öteki
+/// yardımcılarla aynı disiplin: ham metin, sessiz boşluktan iyidir).
+///
+/// ÇOĞUL: birim anahtarları [CeviriMetin.cs] ile tekil/çoğul seçer
+/// ("1 hour ago" / "2 hours ago"); dakika her dilde kısaltma ("min").
+String goreliZaman(Object? ham, {DateTime? simdi}) {
+  final metin = ham?.toString() ?? '';
+  if (metin.isEmpty) return '';
+  final an = DateTime.tryParse(metin);
+  if (an == null) return metin.split('T').first;
+  final fark = (simdi ?? DateTime.now()).difference(an);
+  if (fark.inMinutes < 1) return 'az önce'.c;
+  if (fark.inMinutes < 60) return '{} dk önce'.cs(fark.inMinutes);
+  if (fark.inHours < 24) return '{} saat önce'.cs(fark.inHours);
+  if (fark.inDays < 7) return '{} gün önce'.cs(fark.inDays);
+  if (fark.inDays < 35) return '{} hafta önce'.cs(fark.inDays ~/ 7);
+  return tarihBicimle(metin);
+}

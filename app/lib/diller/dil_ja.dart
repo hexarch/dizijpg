@@ -1702,4 +1702,13 @@ const Map<String, String> cevirilerJa = {
   'Çek': '撮影',
   'Çekmek için dokun, video için basılı tut': 'タップで撮影、長押しで動画',
   'İzin ver': '許可',
+  'az önce': 'たった今',
+  '{} dk önce': '{}分前',
+  '{} dk önce~tekil': '{}分前',
+  '{} saat önce': '{}時間前',
+  '{} saat önce~tekil': '{}時間前',
+  '{} gün önce': '{}日前',
+  '{} gün önce~tekil': '{}日前',
+  '{} hafta önce': '{}週間前',
+  '{} hafta önce~tekil': '{}週間前',
 };

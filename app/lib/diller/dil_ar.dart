@@ -1812,4 +1812,13 @@ const Map<String, String> cevirilerAr = {
   'Çekmek için dokun, video için basılı tut':
       'انقر للتصوير، اضغط مطولاً للفيديو',
   'İzin ver': 'السماح',
+  'az önce': 'قبل قليل',
+  '{} dk önce': 'قبل {} دقيقة',
+  '{} dk önce~tekil': 'قبل {} دقيقة',
+  '{} saat önce': 'قبل {} ساعة',
+  '{} saat önce~tekil': 'قبل {} ساعة',
+  '{} gün önce': 'قبل {} يوم',
+  '{} gün önce~tekil': 'قبل {} يوم',
+  '{} hafta önce': 'قبل {} أسبوع',
+  '{} hafta önce~tekil': 'قبل {} أسبوع',
 };

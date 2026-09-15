@@ -1806,4 +1806,13 @@ const Map<String, String> cevirilerIt = {
   'Çekmek için dokun, video için basılı tut':
       'Tocca per scattare, tieni premuto per il video',
   'İzin ver': 'Consenti',
+  'az önce': 'proprio ora',
+  '{} dk önce': '{} min fa',
+  '{} dk önce~tekil': '{} min fa',
+  '{} saat önce': '{} ore fa',
+  '{} saat önce~tekil': '{} ora fa',
+  '{} gün önce': '{} giorni fa',
+  '{} gün önce~tekil': '{} giorno fa',
+  '{} hafta önce': '{} settimane fa',
+  '{} hafta önce~tekil': '{} settimana fa',
 };

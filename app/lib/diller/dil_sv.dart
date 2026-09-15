@@ -1803,4 +1803,13 @@ const Map<String, String> cevirilerSv = {
   'Çek': 'Ta',
   'Çekmek için dokun, video için basılı tut': 'Tryck för foto, håll för video',
   'İzin ver': 'Tillåt',
+  'az önce': 'just nu',
+  '{} dk önce': 'för {} min sedan',
+  '{} dk önce~tekil': 'för {} min sedan',
+  '{} saat önce': 'för {} timmar sedan',
+  '{} saat önce~tekil': 'för {} timme sedan',
+  '{} gün önce': 'för {} dagar sedan',
+  '{} gün önce~tekil': 'för {} dag sedan',
+  '{} hafta önce': 'för {} veckor sedan',
+  '{} hafta önce~tekil': 'för {} vecka sedan',
 };

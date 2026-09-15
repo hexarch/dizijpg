@@ -1,6 +1,35 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-15 — 🔨 AKIŞTA GÖRELİ ZAMAN + TAKVİMDE ÇEKEREK AY GEÇİŞİ (1.170.0+252)
+
+**Tetik (iki istek):** *"akışta paylaşılanlarda tarih yazmak yerine önce dakika
+sonra saat sonra gün sonra hafta kullan; 1 saat önce, 1 gün önce, 5 gün önce,
+1 hafta önce"* ve *"takvim kısmında sağa sola çekerek aylar arası geçiş
+yapılabilmeli"*.
+
+- **`tarih.dart` → `goreliZaman`:** <1 dk "az önce", <60 dk "12 dk önce",
+  <24 sa "3 saat önce", <7 gün "5 gün önce", <35 gün "2 hafta önce"; daha
+  eskisi `tarihBicimle` ile takvim tarihi ("14 Ağustos", geçmiş yılda yıl da).
+  Ay/yıl birimi bilerek yok. Negatif fark (istemci saati geride) "az önce".
+  Çoğul `.cs` ile ("1 hour ago"/"2 hours ago"); 5 anahtar + 4 tekil, 45 dil.
+- **Kullanan yüzeyler:** akış kartı (`akis.dart`), Reels kartı ve yanıt satırı
+  (`kesfet_akis.dart`), gönderi kartı + yanıt sheet'i (`yorumlar.dart`).
+  Profil gönderileri, bildirimler ve gizlenen yorumlar takvim tarihinde
+  KALDI (istek akış içindi).
+- **Takvim (`takvim_ay.dart`, dar ekran):** başlık+ızgara bloğu yatay çekişi
+  dinler; sola fiske sonraki ay, sağa önceki (hız 300 px/sn VEYA mesafe 60 dp
+  eşiği — yalnız hıza bakınca yavaş çekiş yutuluyordu). Panel gidilen yöne
+  0,25 kayıp solarak değişir (`AnimatedSwitcher`, 220 ms). Masaüstünde altı
+  aylık panelde ok düğmeleri aynen; çekiş yok (fare sürüklemesi beklenmiyor).
+- **Testler:** `goreli_zaman_test.dart` (4), `takvim_kaydirma_test.dart` (4);
+  `akis_karti_test` damgayı yardımcıdan bekler; takvim ölçü testlerinde hücre
+  artık en YAKIN `GestureDetector` (`.first`) — dıştaki çekiş tanıyıcısı da
+  ata. Tam paket 3013 geçti.
+- **Dağıtım:** ayrık worktree'den web paketi `main.450effb8358f.dart.js` +
+  `main.dart.js_1.004257363425.part.js`, sunucuda `/opt/dizijpg/web-252-hazir`
+  hazır; yerleştirme + brotli `dagit-252.sh` ile (kullanıcı `!` ile koşar).
+
 ## 2026-09-15 — 🔨 AÇILIŞ VİTRİNİ: oturumsuz kök sayfa (1.165.0+245)
 
 **Tetik:** *"dizijpg.com açınca bağlantı kırık diyor; dizi.jpg için güzel bir

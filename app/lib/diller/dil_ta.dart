@@ -1819,4 +1819,13 @@ const Map<String, String> cevirilerTa = {
   'Çekmek için dokun, video için basılı tut':
       'புகைப்படத்திற்கு தட்டவும், வீடியோவிற்கு அழுத்திப் பிடிக்கவும்',
   'İzin ver': 'அனுமதி',
+  'az önce': 'இப்போதுதான்',
+  '{} dk önce': '{} நிமிடம் முன்',
+  '{} dk önce~tekil': '{} நிமிடம் முன்',
+  '{} saat önce': '{} மணிநேரம் முன்',
+  '{} saat önce~tekil': '{} மணிநேரம் முன்',
+  '{} gün önce': '{} நாள் முன்',
+  '{} gün önce~tekil': '{} நாள் முன்',
+  '{} hafta önce': '{} வாரம் முன்',
+  '{} hafta önce~tekil': '{} வாரம் முன்',
 };

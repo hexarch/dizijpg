@@ -1790,4 +1790,13 @@ const Map<String, String> cevirilerId = {
   'Çekmek için dokun, video için basılı tut':
       'Ketuk untuk foto, tahan untuk video',
   'İzin ver': 'Izinkan',
+  'az önce': 'baru saja',
+  '{} dk önce': '{} mnt lalu',
+  '{} dk önce~tekil': '{} mnt lalu',
+  '{} saat önce': '{} jam lalu',
+  '{} saat önce~tekil': '{} jam lalu',
+  '{} gün önce': '{} hari lalu',
+  '{} gün önce~tekil': '{} hari lalu',
+  '{} hafta önce': '{} minggu lalu',
+  '{} hafta önce~tekil': '{} minggu lalu',
 };

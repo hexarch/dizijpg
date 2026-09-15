@@ -3223,7 +3223,7 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
         ),
         const SizedBox(height: 10),
         Text(
-          tarihBicimle(y['tarih']),
+          goreliZaman(y['tarih']),
           style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
         ),
         const SizedBox(height: 10),
@@ -3943,7 +3943,7 @@ class _KesfetYanitSatiriState extends State<_KesfetYanitSatiri> {
   Widget build(BuildContext context) {
     final c = widget.yanit;
     final av = dosyaUrl(c['avatar'] as String?);
-    final tarih = (c['tarih'] as String? ?? '').split('T').first;
+    final tarih = goreliZaman(c['tarih']);
     final goruntulenme = (c['goruntulenme'] as int?) ?? 0;
     // BASILI TUTUNCA ARKADAŞA GÖNDER (13 Eyl 2026 isteği): Instagram'daki
     // gibi yorumun kendisi DM'e gider. Jest satırın GÖVDESİNDE: beğeni

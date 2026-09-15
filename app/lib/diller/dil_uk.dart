@@ -1797,4 +1797,13 @@ const Map<String, String> cevirilerUk = {
   'Çekmek için dokun, video için basılı tut':
       'Торкнись для фото, утримуй для відео',
   'İzin ver': 'Дозволити',
+  'az önce': 'щойно',
+  '{} dk önce': '{} хв тому',
+  '{} dk önce~tekil': '{} хв тому',
+  '{} saat önce': '{} год тому',
+  '{} saat önce~tekil': '{} год тому',
+  '{} gün önce': '{} дн. тому',
+  '{} gün önce~tekil': '{} дн. тому',
+  '{} hafta önce': '{} тиж. тому',
+  '{} hafta önce~tekil': '{} тиж. тому',
 };

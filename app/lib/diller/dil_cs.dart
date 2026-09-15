@@ -1787,4 +1787,13 @@ const Map<String, String> cevirilerCs = {
   'Çekmek için dokun, video için basılı tut':
       'Klepnutím vyfotíš, podržením natočíš video',
   'İzin ver': 'Povolit',
+  'az önce': 'před chvílí',
+  '{} dk önce': 'před {} min',
+  '{} dk önce~tekil': 'před {} min',
+  '{} saat önce': 'před {} hod.',
+  '{} saat önce~tekil': 'před {} hod.',
+  '{} gün önce': 'před {} dny',
+  '{} gün önce~tekil': 'před {} dnem',
+  '{} hafta önce': 'před {} týdny',
+  '{} hafta önce~tekil': 'před {} týdnem',
 };

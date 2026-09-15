@@ -1790,4 +1790,13 @@ const Map<String, String> cevirilerUr = {
   'Çekmek için dokun, video için basılı tut':
       'تصویر کے لیے ٹیپ کریں، ویڈیو کے لیے دبائے رکھیں',
   'İzin ver': 'اجازت دیں',
+  'az önce': 'ابھی ابھی',
+  '{} dk önce': '{} منٹ پہلے',
+  '{} dk önce~tekil': '{} منٹ پہلے',
+  '{} saat önce': '{} گھنٹے پہلے',
+  '{} saat önce~tekil': '{} گھنٹہ پہلے',
+  '{} gün önce': '{} دن پہلے',
+  '{} gün önce~tekil': '{} دن پہلے',
+  '{} hafta önce': '{} ہفتے پہلے',
+  '{} hafta önce~tekil': '{} ہفتہ پہلے',
 };

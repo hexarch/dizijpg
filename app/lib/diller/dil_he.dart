@@ -1753,4 +1753,13 @@ const Map<String, String> cevirilerHe = {
   'Çek': 'צילום',
   'Çekmek için dokun, video için basılı tut': 'הקש/י לצילום, החזק/י לווידאו',
   'İzin ver': 'אישור',
+  'az önce': 'הרגע',
+  '{} dk önce': 'לפני {} דק׳',
+  '{} dk önce~tekil': 'לפני {} דק׳',
+  '{} saat önce': 'לפני {} שעות',
+  '{} saat önce~tekil': 'לפני {} שעה',
+  '{} gün önce': 'לפני {} ימים',
+  '{} gün önce~tekil': 'לפני {} יום',
+  '{} hafta önce': 'לפני {} שבועות',
+  '{} hafta önce~tekil': 'לפני {} שבוע',
 };

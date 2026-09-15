@@ -81,6 +81,15 @@ const double takvimGunYuksekligiDar = 44;
 /// şimdi (320-8)/7 = 44.6 dp.
 const double takvimYatayDolguDar = 4;
 
+/// Dar ekranda sağa-sola çekerek ay geçişi (15 Eyl 2026).
+/// Hız eşiği px/sn: kısa hızlı fiske bunu kolayca aşar; mesafe eşiği dp:
+/// yavaş çekişte ekranın yaklaşık altıda biri. Kayma oranı panel genişliğinin
+/// kesri (SlideTransition birimi); 0,25 yönü hissettirir, sayfayı "uçurmaz".
+const double takvimKaydirmaHizEsigi = 300;
+const double takvimKaydirmaMesafeEsigi = 60;
+const Duration takvimAyGecisSuresi = Duration(milliseconds: 220);
+const double takvimAyGecisKaymasi = 0.25;
+
 /// Dar ekranda ay başlığı/ok satırının yüksekliği (eski 58 = 48 ikon + 10 dolgu).
 /// Oklar da birer dokunma hedefi, o yüzden burada da taban 44.
 const double takvimGezinmeYuksekligiDar = 44;
@@ -145,6 +154,13 @@ class _AyTakvimiState extends State<AyTakvimi> {
   late DateTime _ay; // gösterilen ayın 1'i
   late DateTime _secili; // seçili gün
 
+  /// Son ay geçişinin yönü (+1 sonraki, -1 önceki): dar ekrandaki ay paneli
+  /// bu yöne doğru kayarak değişir. 0 = ilk kuruluş (animasyon yok).
+  int _gecisYonu = 0;
+
+  /// Dar ekranda süregelen yatay sürüklemenin toplam mesafesi (dp).
+  double _surukleDx = 0;
+
   @override
   void initState() {
     super.initState();
@@ -170,6 +186,33 @@ class _AyTakvimiState extends State<AyTakvimi> {
           : DateTime.parse(doluGunler.first);
     });
   }
+
+  /// SAĞA-SOLA ÇEKEREK AY GEÇİŞİ (15 Eyl 2026 isteği: "takvim kısmında sağa
+  /// sola çekerek aylar arası geçiş yapılabilmeli"). Parmak SOLA giderse
+  /// sonraki ay (içerik sola kayar), SAĞA giderse önceki — kitap sayfası
+  /// gibi. Karar iki ölçütün BİRİYLE verilir: hızlı fiske (hız eşiği) ya da
+  /// yavaş ama yeterince uzun sürükleme (mesafe eşiği); yalnız hıza bakan
+  /// ilk deneme yavaş çekişleri yutuyordu.
+  void _surukleBitti(DragEndDetails d) {
+    final hiz = d.primaryVelocity ?? 0;
+    final dx = _surukleDx;
+    _surukleDx = 0;
+    if (hiz < -takvimKaydirmaHizEsigi || dx < -takvimKaydirmaMesafeEsigi) {
+      _ayKaydir(1);
+    } else if (hiz > takvimKaydirmaHizEsigi || dx > takvimKaydirmaMesafeEsigi) {
+      _ayKaydir(-1);
+    }
+  }
+
+  /// Ayı [yon] kadar kaydırır (dar ekran: seçim o ayın ilk dolu gününe).
+  void _ayKaydir(int yon) {
+    _gecisYonu = yon;
+    _ayaGit(DateTime(_ay.year, _ay.month + yon, 1));
+  }
+
+  String _ayKeyi(DateTime d) =>
+      'takvim-ay-${d.year.toString().padLeft(4, '0')}-'
+      '${d.month.toString().padLeft(2, '0')}';
 
   String _anahtar(DateTime d) =>
       '${d.year.toString().padLeft(4, '0')}-'
@@ -239,10 +282,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
     final basliklar = [for (var i = 0; i < 7; i++) narrow[(haftaBasi + i) % 7]];
     final yatay = kompakt ? 2.0 : takvimYatayDolguDar;
     return Column(
-      key: ValueKey(
-        'takvim-ay-${ay.year.toString().padLeft(4, '0')}-'
-        '${ay.month.toString().padLeft(2, '0')}',
-      ),
+      key: ValueKey(_ayKeyi(ay)),
       mainAxisSize: MainAxisSize.min,
       children: [
         baslik,
@@ -415,11 +455,10 @@ class _AyTakvimiState extends State<AyTakvimi> {
             sayi: oncekiSayi,
             tooltip: 'Önceki ay'.c,
             onTap: () {
-              final yeni = DateTime(_ay.year, _ay.month - 1, 1);
               if (genis) {
-                setState(() => _ay = yeni);
+                setState(() => _ay = DateTime(_ay.year, _ay.month - 1, 1));
               } else {
-                _ayaGit(yeni);
+                _ayKaydir(-1);
               }
             },
           ),
@@ -455,11 +494,10 @@ class _AyTakvimiState extends State<AyTakvimi> {
             sayi: sonrakiSayi,
             tooltip: 'Sonraki ay'.c,
             onTap: () {
-              final yeni = DateTime(_ay.year, _ay.month + 1, 1);
               if (genis) {
-                setState(() => _ay = yeni);
+                setState(() => _ay = DateTime(_ay.year, _ay.month + 1, 1));
               } else {
-                _ayaGit(yeni);
+                _ayKaydir(1);
               }
             },
           ),
@@ -500,14 +538,57 @@ class _AyTakvimiState extends State<AyTakvimi> {
 
     // DAR EKRAN: eskisi gibi tek ay, altında seçili günün listesi.
     if (!genis) {
+      final panel = _ayPaneli(
+        aylar.first,
+        gunler,
+        baslik: const SizedBox.shrink(),
+        kompakt: false,
+      );
+      // Başlık + ızgara bloğu yatay çekişi dinler; alttaki gün listesi
+      // DIŞARIDA (dikey kaydırması var, iki eksen tek tanıyıcıda çekişmesin).
+      // `translucent`: hücre aralarındaki boşluktan başlayan çekiş de sayılır.
+      // Ay değişince panel gidilen yöne kayıp solarak yenilenir; ilk kuruluşta
+      // (_gecisYonu 0) kayma sıfır, yalnız solma — göz kırpmaz.
       return Column(
         children: [
-          gezinme,
-          _ayPaneli(
-            aylar.first,
-            gunler,
-            baslik: const SizedBox.shrink(),
-            kompakt: false,
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onHorizontalDragStart: (_) => _surukleDx = 0,
+            onHorizontalDragUpdate: (d) => _surukleDx += d.delta.dx,
+            onHorizontalDragEnd: _surukleBitti,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                gezinme,
+                AnimatedSwitcher(
+                  duration: takvimAyGecisSuresi,
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
+                  layoutBuilder: (gelen, gidenler) => Stack(
+                    alignment: Alignment.topCenter,
+                    children: [...gidenler, if (gelen != null) gelen],
+                  ),
+                  transitionBuilder: (cocuk, anim) {
+                    final gelenMi = cocuk.key == ValueKey(_ayKeyi(_ay));
+                    final kayma = takvimAyGecisKaymasi * _gecisYonu;
+                    // Gelen panel gidilen yönün ötesinden merkeze; giden
+                    // panel merkezden ters yöne (animasyon tersine akar).
+                    final baslangic = Offset(gelenMi ? kayma : -kayma, 0);
+                    return FadeTransition(
+                      opacity: anim,
+                      child: SlideTransition(
+                        position: Tween(
+                          begin: baslangic,
+                          end: Offset.zero,
+                        ).animate(anim),
+                        child: cocuk,
+                      ),
+                    );
+                  },
+                  child: panel,
+                ),
+              ],
+            ),
           ),
           const Divider(height: takvimAyiriciYuksekligiDar),
           Expanded(child: gunListesi),

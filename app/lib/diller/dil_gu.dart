@@ -1777,4 +1777,13 @@ const Map<String, String> cevirilerGu = {
   'Çekmek için dokun, video için basılı tut':
       'ફોટો માટે ટેપ કરો, વિડિઓ માટે દબાવી રાખો',
   'İzin ver': 'પરવાનગી આપો',
+  'az önce': 'હમણાં જ',
+  '{} dk önce': '{} મિનિટ પહેલાં',
+  '{} dk önce~tekil': '{} મિનિટ પહેલાં',
+  '{} saat önce': '{} કલાક પહેલાં',
+  '{} saat önce~tekil': '{} કલાક પહેલાં',
+  '{} gün önce': '{} દિવસ પહેલાં',
+  '{} gün önce~tekil': '{} દિવસ પહેલાં',
+  '{} hafta önce': '{} અઠવાડિયા પહેલાં',
+  '{} hafta önce~tekil': '{} અઠવાડિયું પહેલાં',
 };

@@ -1,6 +1,7 @@
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/akis.dart';
 import 'package:dizijpg/ekranlar/etiket.dart';
+import 'package:dizijpg/tarih.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -186,7 +187,12 @@ void main() {
       DiziRenkler.gonderiEylem,
     );
     expect(
-      tester.widget<Text>(find.text('2026-08-02')).style?.color,
+      // Damga GÖRELİ yazılır (15 Eyl 2026: "5 gün önce"; eski gönderide
+      // takvim tarihi) — kartın bastığı metin yardımcının ürettiğidir.
+      tester
+          .widget<Text>(find.text(goreliZaman('2026-08-02T10:00:00Z')))
+          .style
+          ?.color,
       DiziRenkler.gonderiEylem,
     );
   });

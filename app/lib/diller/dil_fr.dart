@@ -1819,4 +1819,13 @@ const Map<String, String> cevirilerFr = {
   'Çekmek için dokun, video için basılı tut':
       'Touche pour photographier, maintiens pour filmer',
   'İzin ver': 'Autoriser',
+  'az önce': 'à l’instant',
+  '{} dk önce': 'il y a {} min',
+  '{} dk önce~tekil': 'il y a {} min',
+  '{} saat önce': 'il y a {} heures',
+  '{} saat önce~tekil': 'il y a {} heure',
+  '{} gün önce': 'il y a {} jours',
+  '{} gün önce~tekil': 'il y a {} jour',
+  '{} hafta önce': 'il y a {} semaines',
+  '{} hafta önce~tekil': 'il y a {} semaine',
 };

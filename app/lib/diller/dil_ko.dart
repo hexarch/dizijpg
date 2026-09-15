@@ -1707,4 +1707,13 @@ const Map<String, String> cevirilerKo = {
   'Çek': '촬영',
   'Çekmek için dokun, video için basılı tut': '탭하면 사진, 길게 누르면 동영상',
   'İzin ver': '허용',
+  'az önce': '방금 전',
+  '{} dk önce': '{}분 전',
+  '{} dk önce~tekil': '{}분 전',
+  '{} saat önce': '{}시간 전',
+  '{} saat önce~tekil': '{}시간 전',
+  '{} gün önce': '{}일 전',
+  '{} gün önce~tekil': '{}일 전',
+  '{} hafta önce': '{}주 전',
+  '{} hafta önce~tekil': '{}주 전',
 };

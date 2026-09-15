@@ -1810,4 +1810,13 @@ const Map<String, String> cevirilerMy = {
   'Çekmek için dokun, video için basılı tut':
       'ဓာတ်ပုံအတွက် နှိပ်ပါ၊ ဗီဒီယိုအတွက် ဖိထားပါ',
   'İzin ver': 'ခွင့်ပြုရန်',
+  'az önce': 'ယခုလေးတင်',
+  '{} dk önce': 'လွန်ခဲ့သော {} မိနစ်',
+  '{} dk önce~tekil': 'လွန်ခဲ့သော {} မိနစ်',
+  '{} saat önce': 'လွန်ခဲ့သော {} နာရီ',
+  '{} saat önce~tekil': 'လွန်ခဲ့သော {} နာရီ',
+  '{} gün önce': 'လွန်ခဲ့သော {} ရက်',
+  '{} gün önce~tekil': 'လွန်ခဲ့သော {} ရက်',
+  '{} hafta önce': 'လွန်ခဲ့သော {} ပတ်',
+  '{} hafta önce~tekil': 'လွန်ခဲ့သော {} ပတ်',
 };

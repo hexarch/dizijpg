@@ -1873,4 +1873,13 @@ const Map<String, String> cevirilerRo = {
   'Çekmek için dokun, video için basılı tut':
       'Atinge pentru fotografie, ține apăsat pentru video',
   'İzin ver': 'Permite',
+  'az önce': 'chiar acum',
+  '{} dk önce': 'acum {} min',
+  '{} dk önce~tekil': 'acum {} min',
+  '{} saat önce': 'acum {} ore',
+  '{} saat önce~tekil': 'acum {} oră',
+  '{} gün önce': 'acum {} zile',
+  '{} gün önce~tekil': 'acum {} zi',
+  '{} hafta önce': 'acum {} săptămâni',
+  '{} hafta önce~tekil': 'acum {} săptămână',
 };

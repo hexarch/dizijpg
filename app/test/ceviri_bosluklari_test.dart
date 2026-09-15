@@ -33,6 +33,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // tarih.dart goreliZaman — akış/Reels/yorum damgası göreli zaman (15 Eyl 2026).
+  'az önce',
+  '{} dk önce',
+  '{} saat önce',
+  '{} gün önce',
+  '{} hafta önce',
   // sohbet_medya_paneli / kamera_ekrani / medya_inceleme / sohbet.dart —
   // Telegram medya paneli, uygulama içi kamera, tek kullanımlık (15 Eyl 2026).
   'Alıcı bir kez görebilir',

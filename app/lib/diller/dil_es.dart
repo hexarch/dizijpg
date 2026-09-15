@@ -1870,4 +1870,13 @@ const Map<String, String> cevirilerEs = {
   'Çekmek için dokun, video için basılı tut':
       'Toca para foto, mantén para vídeo',
   'İzin ver': 'Permitir',
+  'az önce': 'justo ahora',
+  '{} dk önce': 'hace {} min',
+  '{} dk önce~tekil': 'hace {} min',
+  '{} saat önce': 'hace {} horas',
+  '{} saat önce~tekil': 'hace {} hora',
+  '{} gün önce': 'hace {} días',
+  '{} gün önce~tekil': 'hace {} día',
+  '{} hafta önce': 'hace {} semanas',
+  '{} hafta önce~tekil': 'hace {} semana',
 };

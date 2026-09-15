@@ -1790,4 +1790,13 @@ const Map<String, String> cevirilerTe = {
   'Çekmek için dokun, video için basılı tut':
       'ఫోటోకు నొక్కండి, వీడియోకు నొక్కి పట్టుకోండి',
   'İzin ver': 'అనుమతించండి',
+  'az önce': 'ఇప్పుడే',
+  '{} dk önce': '{} నిమిషాల క్రితం',
+  '{} dk önce~tekil': '{} నిమిషం క్రితం',
+  '{} saat önce': '{} గంటల క్రితం',
+  '{} saat önce~tekil': '{} గంట క్రితం',
+  '{} gün önce': '{} రోజుల క్రితం',
+  '{} gün önce~tekil': '{} రోజు క్రితం',
+  '{} hafta önce': '{} వారాల క్రితం',
+  '{} hafta önce~tekil': '{} వారం క్రితం',
 };

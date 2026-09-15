@@ -1824,4 +1824,13 @@ const Map<String, String> cevirilerFil = {
   'Çekmek için dokun, video için basılı tut':
       'I-tap para kumuha, pindutin nang matagal para sa video',
   'İzin ver': 'Payagan',
+  'az önce': 'ngayon lang',
+  '{} dk önce': '{} min ang nakalipas',
+  '{} dk önce~tekil': '{} min ang nakalipas',
+  '{} saat önce': '{} oras ang nakalipas',
+  '{} saat önce~tekil': '{} oras ang nakalipas',
+  '{} gün önce': '{} araw ang nakalipas',
+  '{} gün önce~tekil': '{} araw ang nakalipas',
+  '{} hafta önce': '{} linggo ang nakalipas',
+  '{} hafta önce~tekil': '{} linggo ang nakalipas',
 };

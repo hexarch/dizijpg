@@ -126,11 +126,15 @@ double _izgara(WidgetTester tester) =>
     tester.getSize(find.byType(GridView)).height;
 
 /// Bir gün hücresinin GERÇEK dokunma kutusu.
+/// `.first` = en YAKIN ata: 15 Eyl 2026'dan beri ızgaranın üstünde bir de
+/// sağa-sola çekiş tanıyıcısı (ay geçişi) duruyor; o da GestureDetector.
 Size _hucre(WidgetTester tester, DateTime gun) => tester.getSize(
-  find.ancestor(
-    of: find.byKey(ValueKey('takvim-sayi-${_k(gun)}')),
-    matching: find.byType(GestureDetector),
-  ),
+  find
+      .ancestor(
+        of: find.byKey(ValueKey('takvim-sayi-${_k(gun)}')),
+        matching: find.byType(GestureDetector),
+      )
+      .first,
 );
 
 /// Alttaki bölüm listesinin görünür yüksekliği (GridView ListView değil).
@@ -361,10 +365,12 @@ void main() {
       final bugunKutu = tester.widget<Container>(
         find
             .descendant(
-              of: find.ancestor(
-                of: find.text('${bugun.day}'),
-                matching: find.byType(GestureDetector),
-              ),
+              of: find
+                  .ancestor(
+                    of: find.text('${bugun.day}'),
+                    matching: find.byType(GestureDetector),
+                  )
+                  .first,
               matching: find.byType(Container),
             )
             .first,

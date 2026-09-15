@@ -1735,4 +1735,13 @@ const Map<String, String> cevirilerZh = {
   'Çek': '拍摄',
   'Çekmek için dokun, video için basılı tut': '点按拍照，长按录像',
   'İzin ver': '允许',
+  'az önce': '刚刚',
+  '{} dk önce': '{}分钟前',
+  '{} dk önce~tekil': '{}分钟前',
+  '{} saat önce': '{}小时前',
+  '{} saat önce~tekil': '{}小时前',
+  '{} gün önce': '{}天前',
+  '{} gün önce~tekil': '{}天前',
+  '{} hafta önce': '{}周前',
+  '{} hafta önce~tekil': '{}周前',
 };

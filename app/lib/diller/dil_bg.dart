@@ -1799,4 +1799,13 @@ const Map<String, String> cevirilerBg = {
   'Çekmek için dokun, video için basılı tut':
       'Докосни за снимка, задръж за видео',
   'İzin ver': 'Разреши',
+  'az önce': 'преди малко',
+  '{} dk önce': 'преди {} мин',
+  '{} dk önce~tekil': 'преди {} мин',
+  '{} saat önce': 'преди {} часа',
+  '{} saat önce~tekil': 'преди {} час',
+  '{} gün önce': 'преди {} дни',
+  '{} gün önce~tekil': 'преди {} ден',
+  '{} hafta önce': 'преди {} седмици',
+  '{} hafta önce~tekil': 'преди {} седмица',
 };

@@ -9,6 +9,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../aile_rozeti.dart' show MiniRozet;
 import '../api.dart';
 import '../ceviri.dart';
+import '../tarih.dart';
 import '../gonderi_olcu.dart';
 import '../gorsel_basliklari.dart';
 import '../onbellek.dart';
@@ -1094,7 +1095,9 @@ class _AkisKartiState extends State<AkisKarti> {
     final posterYolu = bolumlu
         ? '/dizi/${y['tmdb_id']}/sezon/${y['sezon']}/bolum/${y['bolum']}'
         : icerikYolu;
-    final tarih = (y['tarih'] as String? ?? '').split('T').first;
+    // GÖRELİ ZAMAN (15 Eyl 2026 isteği): "12 dk önce / 3 saat önce / 5 gün
+    // önce / 2 hafta önce"; daha eskisi takvim tarihine döner ([goreliZaman]).
+    final tarih = goreliZaman(y['tarih']);
     final metin = (y['metin'] as String?) ?? '';
     final benim = y['kullanici_id'] == context.read<Oturum>().kullanici?['id'];
     // Takip düğmesi: sunucu durumu bildirdiyse, takip ETMİYORSAN ve gönderi

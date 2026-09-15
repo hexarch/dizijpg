@@ -1797,4 +1797,13 @@ const Map<String, String> cevirilerMs = {
   'Çekmek için dokun, video için basılı tut':
       'Ketik untuk foto, tahan untuk video',
   'İzin ver': 'Benarkan',
+  'az önce': 'baru saja',
+  '{} dk önce': '{} min lalu',
+  '{} dk önce~tekil': '{} min lalu',
+  '{} saat önce': '{} jam lalu',
+  '{} saat önce~tekil': '{} jam lalu',
+  '{} gün önce': '{} hari lalu',
+  '{} gün önce~tekil': '{} hari lalu',
+  '{} hafta önce': '{} minggu lalu',
+  '{} hafta önce~tekil': '{} minggu lalu',
 };

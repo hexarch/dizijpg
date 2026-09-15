@@ -5,6 +5,7 @@ import 'package:video_player/video_player.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../tarih.dart';
 import '../gonderi_olcu.dart';
 import '../icerik_deposu.dart';
 import '../medya_yukle.dart';
@@ -546,7 +547,7 @@ class _YorumKartiState extends State<YorumKarti> {
     final yorum = widget.yorum;
     final benim = widget.benim;
     final avatar = dosyaUrl(yorum['avatar'] as String?);
-    final tarih = (yorum['tarih'] as String? ?? '').split('T').first;
+    final tarih = goreliZaman(yorum['tarih']);
     final medya = (yorum['medya'] as List<dynamic>? ?? []).cast<String>();
     final goruntulenme = (yorum['goruntulenme'] as int?) ?? 0;
     // SAYFANIN KENDİ varlığı elenir; kalanlar rozet şeridine gider. Akıştaki
@@ -1210,7 +1211,7 @@ class _YanitSatiriState extends State<_YanitSatiri> {
   Widget build(BuildContext context) {
     final y = widget.yanit;
     final avatar = dosyaUrl(y['avatar'] as String?);
-    final tarih = (y['tarih'] as String? ?? '').split('T').first;
+    final tarih = goreliZaman(y['tarih']);
     final medya = (y['medya'] as List<dynamic>? ?? []).cast<String>();
     // BASILI TUTUNCA ARKADAŞA GÖNDER (13 Eyl 2026) — yanıt sheet'indeki
     // satırla AYNI jest; iki yüzeyden birinde olmayınca kullanıcı "bazen

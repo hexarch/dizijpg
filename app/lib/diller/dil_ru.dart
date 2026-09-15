@@ -1853,4 +1853,13 @@ const Map<String, String> cevirilerRu = {
   'Çekmek için dokun, video için basılı tut':
       'Нажми для фото, удерживай для видео',
   'İzin ver': 'Разрешить',
+  'az önce': 'только что',
+  '{} dk önce': '{} мин назад',
+  '{} dk önce~tekil': '{} мин назад',
+  '{} saat önce': '{} ч назад',
+  '{} saat önce~tekil': '{} ч назад',
+  '{} gün önce': '{} дн. назад',
+  '{} gün önce~tekil': '{} дн. назад',
+  '{} hafta önce': '{} нед. назад',
+  '{} hafta önce~tekil': '{} нед. назад',
 };

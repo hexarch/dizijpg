@@ -1802,4 +1802,13 @@ const Map<String, String> cevirilerNl = {
   'Çekmek için dokun, video için basılı tut':
       'Tik voor foto, houd vast voor video',
   'İzin ver': 'Toestaan',
+  'az önce': 'zojuist',
+  '{} dk önce': '{} min geleden',
+  '{} dk önce~tekil': '{} min geleden',
+  '{} saat önce': '{} uur geleden',
+  '{} saat önce~tekil': '{} uur geleden',
+  '{} gün önce': '{} dagen geleden',
+  '{} gün önce~tekil': '{} dag geleden',
+  '{} hafta önce': '{} weken geleden',
+  '{} hafta önce~tekil': '{} week geleden',
 };
