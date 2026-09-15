@@ -365,14 +365,22 @@ class _Ozellik {
 }
 
 /// Yalnız ÜRÜNDE OLAN özellikler; her cümle canlı bir ekrana karşılık gelir.
+///
+/// İKON SEÇİMİ (15 Eyl 2026): yalnız uygulamanın BAŞKA ekranlarında zaten
+/// kullanılan ikonlar. `/assets/fonts/MaterialIcons-Regular.otf` hash'siz ve
+/// Cloudflare + tarayıcıda 1 saat önbellekli; her derleme fontu yeniden
+/// budadığı için yalnız bu sayfaya özgü bir ikon, dağıtımdan sonraki 1 saat
+/// boyunca ESKİ fontta bulunmaz ve boş kare olarak çizilir (canlıda görüldü:
+/// `*_rounded` sürümlerinin 5'i eksikti). Yeni ikon ekleyeceksen önce
+/// `ortak.dart`/`kesfet.dart`te geçen bir eşdeğer ara.
 const _ozellikler = <_Ozellik>[
   _Ozellik(
-    Icons.playlist_add_check_rounded,
+    Icons.playlist_add_check,
     'Bölüm bölüm takip',
     'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.',
   ),
   _Ozellik(
-    Icons.calendar_month_rounded,
+    Icons.calendar_month,
     'Takvim',
     'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.',
   ),
@@ -382,17 +390,17 @@ const _ozellikler = <_Ozellik>[
     'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.',
   ),
   _Ozellik(
-    Icons.list_alt_rounded,
+    Icons.playlist_play,
     'Kendi listelerin',
     'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.',
   ),
   _Ozellik(
-    Icons.people_alt_rounded,
+    Icons.group,
     'Arkadaşlarınla',
     'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.',
   ),
   _Ozellik(
-    Icons.live_tv_rounded,
+    Icons.tv,
     'Birlikte izle',
     'İzleme odasında aynı anda izleyin ve sohbet edin.',
   ),
