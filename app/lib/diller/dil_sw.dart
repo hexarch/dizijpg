@@ -1731,4 +1731,31 @@ const Map<String, String> cevirilerSw = {
   'Ekran görüntüsü aldın': 'Umepiga picha ya skrini',
   '{} ekran görüntüsü aldı': '{} amepiga picha ya skrini',
   'Gönderiliyor': 'Inatuma',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Fuatilia kila kitu unachotazama mahali pamoja',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Weka alama vipindi vyako kipindi kwa kipindi, weka orodha ya filamu, kadiria na andika maoni, na uone marafiki zako wanatazama nini. Bure, kwenye wavuti na simu.',
+  'Ücretsiz başla': 'Anza bure',
+  'Keşfet\'e göz at': 'Angalia Gundua',
+  'Giriş yap': 'Ingia',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Bure. Katika lugha 45. Wavuti, Android na iOS.',
+  'Neler yapabilirsin?': 'Unaweza kufanya nini?',
+  'Bölüm bölüm takip': 'Ufuatiliaji kipindi kwa kipindi',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Usipoteze mahali ulipofikia: weka alama misimu na vipindi kwa mguso mmoja na uone maendeleo yako.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Vipindi vipya na tarehe za kutolewa kwenye kalenda yako; usikose kipindi chochote.',
+  'Puanla ve yorumla': 'Kadiria na andika maoni',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Toa alama za desimali, andika maoni; ona alama za IMDb, Rotten Tomatoes na Metacritic sambamba.',
+  'Kendi listelerin': 'Orodha zako mwenyewe',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Unda, panga na shiriki orodha; orodha yako ya kutazama iko nawe kwenye kila kifaa.',
+  'Arkadaşlarınla': 'Pamoja na marafiki zako',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Ona kwenye mlisho marafiki zako wanatazama nini, jibu maoni yao, tuma ujumbe.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Tazameni kwa wakati mmoja kwenye chumba cha kutazama na mpige gumzo.',
+  'Yapım verileri: TMDB': 'Data ya vichwa: TMDB',
 };

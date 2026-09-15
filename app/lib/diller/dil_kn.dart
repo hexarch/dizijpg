@@ -1724,4 +1724,31 @@ const Map<String, String> cevirilerKn = {
   'Ekran görüntüsü aldın': 'ನೀವು ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ತೆಗೆದಿದ್ದೀರಿ',
   '{} ekran görüntüsü aldı': '{} ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ತೆಗೆದರು',
   'Gönderiliyor': 'ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ',
+  'İzlediğin her şeyi tek yerde takip et':
+      'ನೀನು ನೋಡುವ ಎಲ್ಲವನ್ನೂ ಒಂದೇ ಕಡೆ ಟ್ರ್ಯಾಕ್ ಮಾಡು',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'ನಿನ್ನ ಸರಣಿಗಳನ್ನು ಸಂಚಿಕೆವಾರು ಗುರುತಿಸು, ಚಲನಚಿತ್ರ ಪಟ್ಟಿ ಇಟ್ಟುಕೊ, ರೇಟಿಂಗ್ ಮತ್ತು ವಿಮರ್ಶೆ ನೀಡು, ಸ್ನೇಹಿತರು ಏನು ನೋಡುತ್ತಿದ್ದಾರೆ ನೋಡು. ಉಚಿತ, ವೆಬ್ ಮತ್ತು ಮೊಬೈಲ್‌ನಲ್ಲಿ.',
+  'Ücretsiz başla': 'ಉಚಿತವಾಗಿ ಪ್ರಾರಂಭಿಸು',
+  'Keşfet\'e göz at': 'ಡಿಸ್ಕವರ್ ನೋಡು',
+  'Giriş yap': 'ಲಾಗಿನ್',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'ಉಚಿತ. 45 ಭಾಷೆಗಳಲ್ಲಿ. ವೆಬ್, Android ಮತ್ತು iOS.',
+  'Neler yapabilirsin?': 'ನೀನು ಏನು ಮಾಡಬಹುದು?',
+  'Bölüm bölüm takip': 'ಸಂಚಿಕೆವಾರು ಟ್ರ್ಯಾಕಿಂಗ್',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'ಎಲ್ಲಿ ನಿಲ್ಲಿಸಿದೆ ಎಂಬುದನ್ನು ಎಂದಿಗೂ ಮರೆಯಬೇಡ: ಒಂದೇ ಟ್ಯಾಪ್‌ನಲ್ಲಿ ಸೀಸನ್ ಮತ್ತು ಸಂಚಿಕೆಗಳನ್ನು ಗುರುತಿಸಿ ಪ್ರಗತಿ ನೋಡು.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'ಹೊಸ ಸಂಚಿಕೆಗಳು ಮತ್ತು ಬಿಡುಗಡೆ ದಿನಾಂಕಗಳು ನಿನ್ನ ಕ್ಯಾಲೆಂಡರ್‌ನಲ್ಲಿ; ಯಾವ ಸಂಚಿಕೆಯನ್ನೂ ತಪ್ಪಿಸಿಕೊಳ್ಳಬೇಡ.',
+  'Puanla ve yorumla': 'ರೇಟಿಂಗ್ ಮತ್ತು ವಿಮರ್ಶೆ',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'ದಶಮಾಂಶ ರೇಟಿಂಗ್ ನೀಡು, ವಿಮರ್ಶೆ ಬರೆ; IMDb, Rotten Tomatoes ಮತ್ತು Metacritic ಅಂಕಗಳನ್ನು ಅಕ್ಕಪಕ್ಕ ನೋಡು.',
+  'Kendi listelerin': 'ನಿನ್ನ ಸ್ವಂತ ಪಟ್ಟಿಗಳು',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'ಪಟ್ಟಿಗಳನ್ನು ರಚಿಸು, ಜೋಡಿಸು ಮತ್ತು ಹಂಚಿಕೊ; ನಿನ್ನ ವಾಚ್‌ಲಿಸ್ಟ್ ಪ್ರತಿ ಸಾಧನದಲ್ಲೂ ನಿನ್ನೊಂದಿಗೆ.',
+  'Arkadaşlarınla': 'ಸ್ನೇಹಿತರೊಂದಿಗೆ',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'ಫೀಡ್‌ನಲ್ಲಿ ಸ್ನೇಹಿತರು ಏನು ನೋಡುತ್ತಿದ್ದಾರೆ ನೋಡು, ಅವರ ವಿಮರ್ಶೆಗಳಿಗೆ ಪ್ರತಿಕ್ರಿಯಿಸು, ಸಂದೇಶ ಕಳುಹಿಸು.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'ವಾಚ್ ರೂಮ್‌ನಲ್ಲಿ ಒಂದೇ ಸಮಯದಲ್ಲಿ ನೋಡಿ ಮತ್ತು ಚಾಟ್ ಮಾಡಿ.',
+  'Yapım verileri: TMDB': 'ಶೀರ್ಷಿಕೆ ಡೇಟಾ: TMDB',
 };

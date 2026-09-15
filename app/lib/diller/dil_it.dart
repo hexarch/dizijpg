@@ -1738,4 +1738,31 @@ const Map<String, String> cevirilerIt = {
   'Ekran görüntüsü aldın': 'Hai fatto uno screenshot',
   '{} ekran görüntüsü aldı': '{} ha fatto uno screenshot',
   'Gönderiliyor': 'Invio in corso',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Tieni traccia di tutto ciò che guardi in un unico posto',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Segna le tue serie episodio per episodio, tieni la lista dei film, vota e recensisci, e scopri cosa guardano i tuoi amici. Gratis, su web e mobile.',
+  'Ücretsiz başla': 'Inizia gratis',
+  'Keşfet\'e göz at': 'Sfoglia Scopri',
+  'Giriş yap': 'Accedi',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Gratis. In 45 lingue. Web, Android e iOS.',
+  'Neler yapabilirsin?': 'Cosa puoi fare?',
+  'Bölüm bölüm takip': 'Tracciamento episodio per episodio',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Non perdere mai il segno: segna stagioni ed episodi con un tocco e guarda i tuoi progressi.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Nuovi episodi e date di uscita nel tuo calendario; non perdere nessun episodio.',
+  'Puanla ve yorumla': 'Vota e recensisci',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Dai voti decimali, scrivi recensioni; confronta IMDb, Rotten Tomatoes e Metacritic fianco a fianco.',
+  'Kendi listelerin': 'Le tue liste',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Crea, ordina e condividi liste; la tua lista da vedere ti segue su ogni dispositivo.',
+  'Arkadaşlarınla': 'Con i tuoi amici',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Vedi nel feed cosa guardano i tuoi amici, reagisci alle loro recensioni, scrivi loro.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Guardate contemporaneamente in una stanza e chattate.',
+  'Yapım verileri: TMDB': 'Dati dei titoli: TMDB',
 };

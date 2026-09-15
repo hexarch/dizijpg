@@ -1725,4 +1725,31 @@ const Map<String, String> cevirilerNb = {
   'Ekran görüntüsü aldın': 'Du tok et skjermbilde',
   '{} ekran görüntüsü aldı': '{} tok et skjermbilde',
   'Gönderiliyor': 'Sender',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Hold oversikt over alt du ser, på ett sted',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Kryss av seriene dine episode for episode, hold en filmliste, vurder og anmeld, og se hva vennene dine ser på. Gratis, på nett og mobil.',
+  'Ücretsiz başla': 'Kom i gang gratis',
+  'Keşfet\'e göz at': 'Bla i Utforsk',
+  'Giriş yap': 'Logg inn',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Gratis. På 45 språk. Web, Android og iOS.',
+  'Neler yapabilirsin?': 'Hva kan du gjøre?',
+  'Bölüm bölüm takip': 'Episode for episode',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Mist aldri oversikten: merk sesonger og episoder med ett trykk og se fremgangen din.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Nye episoder og premieredatoer i kalenderen din; gå aldri glipp av en episode.',
+  'Puanla ve yorumla': 'Vurder og anmeld',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Gi desimalvurderinger, skriv anmeldelser; se IMDb, Rotten Tomatoes og Metacritic side om side.',
+  'Kendi listelerin': 'Dine egne lister',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Lag, sorter og del lister; se-senere-listen din følger med på alle enhetene dine.',
+  'Arkadaşlarınla': 'Med vennene dine',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Se i feeden hva vennene dine ser på, reager på anmeldelsene deres, send meldinger.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Se samtidig i et visningsrom og chat.',
+  'Yapım verileri: TMDB': 'Titteldata: TMDB',
 };

@@ -1777,4 +1777,31 @@ const Map<String, String> cevirilerEn = {
   'Ekran görüntüsü aldın': 'You took a screenshot',
   '{} ekran görüntüsü aldı': '{} took a screenshot',
   'Gönderiliyor': 'Sending',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Track everything you watch in one place',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Mark your shows episode by episode, keep a movie list, rate and review, and see what your friends are watching. Free, on web and mobile.',
+  'Ücretsiz başla': 'Get started free',
+  'Keşfet\'e göz at': 'Browse Discover',
+  'Giriş yap': 'Log in',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Free. In 45 languages. Web, Android and iOS.',
+  'Neler yapabilirsin?': 'What can you do?',
+  'Bölüm bölüm takip': 'Episode-by-episode tracking',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Never lose your place: mark seasons and episodes with one tap and see your progress.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'New episodes and release dates on your calendar; never miss an episode.',
+  'Puanla ve yorumla': 'Rate and review',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Give decimal ratings, write reviews; see IMDb, Rotten Tomatoes and Metacritic scores side by side.',
+  'Kendi listelerin': 'Your own lists',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Create, sort and share lists; your watchlist is with you on every device.',
+  'Arkadaşlarınla': 'With your friends',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'See what your friends are watching in your feed, react to their reviews, message them.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Watch at the same time in a watch room and chat.',
+  'Yapım verileri: TMDB': 'Title data: TMDB',
 };

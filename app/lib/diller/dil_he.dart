@@ -1687,4 +1687,31 @@ const Map<String, String> cevirilerHe = {
   'Ekran görüntüsü aldın': 'צילמת מסך',
   '{} ekran görüntüsü aldı': '{} צילם/ה מסך',
   'Gönderiliyor': 'שולח',
+  'İzlediğin her şeyi tek yerde takip et':
+      'עקוב אחרי כל מה שאתה צופה בו במקום אחד',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'סמן את הסדרות שלך פרק אחרי פרק, נהל רשימת סרטים, דרג וכתוב ביקורות, וראה מה החברים שלך רואים. בחינם, באינטרנט ובנייד.',
+  'Ücretsiz başla': 'התחל בחינם',
+  'Keşfet\'e göz at': 'עיין בגלה',
+  'Giriş yap': 'התחברות',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'בחינם. ב־45 שפות. אינטרנט, Android ו־iOS.',
+  'Neler yapabilirsin?': 'מה אפשר לעשות?',
+  'Bölüm bölüm takip': 'מעקב פרק אחרי פרק',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'לעולם לא תאבד את המקום: סמן עונות ופרקים בנגיעה אחת וראה את ההתקדמות שלך.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'פרקים חדשים ותאריכי יציאה בלוח השנה שלך; אל תפספס אף פרק.',
+  'Puanla ve yorumla': 'דרג וכתוב ביקורת',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'תן דירוגים עשרוניים, כתוב ביקורות; ראה את IMDb, Rotten Tomatoes ו־Metacritic זה לצד זה.',
+  'Kendi listelerin': 'הרשימות שלך',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'צור, מיין ושתף רשימות; רשימת הצפייה שלך איתך בכל מכשיר.',
+  'Arkadaşlarınla': 'עם החברים שלך',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'ראה בפיד מה החברים שלך רואים, הגב לביקורות שלהם, שלח להם הודעות.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'צפו בו־זמנית בחדר צפייה ושוחחו.',
+  'Yapım verileri: TMDB': 'נתוני יצירות: TMDB',
 };

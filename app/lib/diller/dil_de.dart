@@ -1754,4 +1754,31 @@ const Map<String, String> cevirilerDe = {
   'Ekran görüntüsü aldın': 'Du hast einen Screenshot gemacht',
   '{} ekran görüntüsü aldı': '{} hat einen Screenshot gemacht',
   'Gönderiliyor': 'Wird gesendet',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Verfolge alles, was du schaust, an einem Ort',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Markiere deine Serien Folge für Folge, führe eine Filmliste, bewerte und rezensiere und sieh, was deine Freunde schauen. Kostenlos, im Web und mobil.',
+  'Ücretsiz başla': 'Kostenlos starten',
+  'Keşfet\'e göz at': 'Entdecken ansehen',
+  'Giriş yap': 'Anmelden',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Kostenlos. In 45 Sprachen. Web, Android und iOS.',
+  'Neler yapabilirsin?': 'Was kannst du tun?',
+  'Bölüm bölüm takip': 'Folge für Folge verfolgen',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Verliere nie den Überblick: markiere Staffeln und Folgen mit einem Tipp und sieh deinen Fortschritt.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Neue Folgen und Starttermine in deinem Kalender; verpasse keine Folge.',
+  'Puanla ve yorumla': 'Bewerten und rezensieren',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Vergib Dezimalbewertungen, schreibe Rezensionen; sieh IMDb-, Rotten-Tomatoes- und Metacritic-Wertungen nebeneinander.',
+  'Kendi listelerin': 'Deine eigenen Listen',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Erstelle, sortiere und teile Listen; deine Watchlist ist auf jedem Gerät dabei.',
+  'Arkadaşlarınla': 'Mit deinen Freunden',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Sieh im Feed, was deine Freunde schauen, reagiere auf ihre Rezensionen, schreib ihnen.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Schaut im Watch-Raum gleichzeitig und chattet dabei.',
+  'Yapım verileri: TMDB': 'Titeldaten: TMDB',
 };

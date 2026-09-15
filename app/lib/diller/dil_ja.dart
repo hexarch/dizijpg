@@ -1640,4 +1640,28 @@ const Map<String, String> cevirilerJa = {
   'Ekran görüntüsü aldın': 'スクリーンショットを撮影しました',
   '{} ekran görüntüsü aldı': '{} がスクリーンショットを撮影しました',
   'Gönderiliyor': '送信中',
+  'İzlediğin her şeyi tek yerde takip et': '観たものをすべてひとつの場所で記録',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'ドラマをエピソードごとにチェック、映画リストを管理、評価とレビューを投稿し、友だちが何を観ているかチェック。無料、ウェブとモバイルで。',
+  'Ücretsiz başla': '無料で始める',
+  'Keşfet\'e göz at': '「発見」を見る',
+  'Giriş yap': 'ログイン',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.': '無料。45言語対応。ウェブ、Android、iOS。',
+  'Neler yapabilirsin?': 'できること',
+  'Bölüm bölüm takip': 'エピソードごとの記録',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'どこまで観たか忘れない：シーズンとエピソードをワンタップでチェックして進捗を確認。',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      '新しいエピソードや公開日をカレンダーで管理；見逃しゼロ。',
+  'Puanla ve yorumla': '評価とレビュー',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      '小数点評価とレビュー投稿；IMDb、Rotten Tomatoes、Metacriticのスコアを並べて確認。',
+  'Kendi listelerin': '自分だけのリスト',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'リストを作成・並べ替え・共有；ウォッチリストはどの端末でも一緒。',
+  'Arkadaşlarınla': '友だちと',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'フィードで友だちが観ているものを見て、レビューにリアクションし、メッセージを送ろう。',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.': 'ウォッチルームで同時に観ながらチャット。',
+  'Yapım verileri: TMDB': '作品データ：TMDB',
 };

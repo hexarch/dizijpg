@@ -1726,4 +1726,30 @@ const Map<String, String> cevirilerDa = {
   'Ekran görüntüsü aldın': 'Du tog et skærmbillede',
   '{} ekran görüntüsü aldı': '{} tog et skærmbillede',
   'Gönderiliyor': 'Sender',
+  'İzlediğin her şeyi tek yerde takip et': 'Hold styr på alt, du ser, ét sted',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Afkryds dine serier afsnit for afsnit, hold en filmliste, bedøm og anmeld, og se hvad dine venner ser. Gratis, på web og mobil.',
+  'Ücretsiz başla': 'Kom i gang gratis',
+  'Keşfet\'e göz at': 'Gennemse Opdag',
+  'Giriş yap': 'Log ind',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Gratis. På 45 sprog. Web, Android og iOS.',
+  'Neler yapabilirsin?': 'Hvad kan du gøre?',
+  'Bölüm bölüm takip': 'Afsnit for afsnit',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Mist aldrig overblikket: markér sæsoner og afsnit med ét tryk, og se din fremgang.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Nye afsnit og premieredatoer i din kalender; gå aldrig glip af et afsnit.',
+  'Puanla ve yorumla': 'Bedøm og anmeld',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Giv decimalbedømmelser, skriv anmeldelser; se IMDb, Rotten Tomatoes og Metacritic side om side.',
+  'Kendi listelerin': 'Dine egne lister',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Opret, sortér og del lister; din se-senere-liste følger med på alle dine enheder.',
+  'Arkadaşlarınla': 'Med dine venner',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Se i dit feed, hvad dine venner ser, reagér på deres anmeldelser, skriv til dem.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Se samtidig i et visningsrum, og chat imens.',
+  'Yapım verileri: TMDB': 'Titeldata: TMDB',
 };

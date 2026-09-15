@@ -1759,4 +1759,31 @@ const Map<String, String> cevirilerEl = {
   'Ekran görüntüsü aldın': 'Τράβηξες στιγμιότυπο οθόνης',
   '{} ekran görüntüsü aldı': 'Ο/Η {} τράβηξε στιγμιότυπο οθόνης',
   'Gönderiliyor': 'Αποστολή',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Παρακολούθησε ό,τι βλέπεις σε ένα μέρος',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Σημείωσε τις σειρές σου επεισόδιο προς επεισόδιο, κράτα λίστα ταινιών, βαθμολόγησε και γράψε κριτικές, δες τι βλέπουν οι φίλοι σου. Δωρεάν, στο web και σε κινητό.',
+  'Ücretsiz başla': 'Ξεκίνα δωρεάν',
+  'Keşfet\'e göz at': 'Δες το Ανακάλυψε',
+  'Giriş yap': 'Σύνδεση',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Δωρεάν. Σε 45 γλώσσες. Web, Android και iOS.',
+  'Neler yapabilirsin?': 'Τι μπορείς να κάνεις;',
+  'Bölüm bölüm takip': 'Παρακολούθηση επεισόδιο προς επεισόδιο',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Μη χάσεις ποτέ πού έμεινες: σημείωσε σεζόν και επεισόδια με ένα άγγιγμα και δες την πρόοδό σου.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Νέα επεισόδια και ημερομηνίες κυκλοφορίας στο ημερολόγιό σου· μη χάσεις κανένα επεισόδιο.',
+  'Puanla ve yorumla': 'Βαθμολόγησε και γράψε κριτική',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Δώσε δεκαδικές βαθμολογίες, γράψε κριτικές· δες IMDb, Rotten Tomatoes και Metacritic δίπλα δίπλα.',
+  'Kendi listelerin': 'Οι δικές σου λίστες',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Δημιούργησε, ταξινόμησε και μοιράσου λίστες· η λίστα σου σε συνοδεύει σε κάθε συσκευή.',
+  'Arkadaşlarınla': 'Με τους φίλους σου',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Δες στη ροή τι βλέπουν οι φίλοι σου, αντίδρασε στις κριτικές τους, στείλε τους μήνυμα.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Δείτε ταυτόχρονα σε ένα δωμάτιο προβολής και συζητήστε.',
+  'Yapım verileri: TMDB': 'Δεδομένα τίτλων: TMDB',
 };

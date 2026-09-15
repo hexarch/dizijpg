@@ -1721,4 +1721,30 @@ const Map<String, String> cevirilerVi = {
   'Ekran görüntüsü aldın': 'Bạn đã chụp màn hình',
   '{} ekran görüntüsü aldı': '{} đã chụp màn hình',
   'Gönderiliyor': 'Đang gửi',
+  'İzlediğin her şeyi tek yerde takip et': 'Theo dõi mọi thứ bạn xem ở một nơi',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Đánh dấu phim bộ theo từng tập, giữ danh sách phim, chấm điểm và viết nhận xét, xem bạn bè đang xem gì. Miễn phí, trên web và di động.',
+  'Ücretsiz başla': 'Bắt đầu miễn phí',
+  'Keşfet\'e göz at': 'Xem mục Khám phá',
+  'Giriş yap': 'Đăng nhập',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Miễn phí. 45 ngôn ngữ. Web, Android và iOS.',
+  'Neler yapabilirsin?': 'Bạn có thể làm gì?',
+  'Bölüm bölüm takip': 'Theo dõi từng tập',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Không bao giờ quên đã xem đến đâu: đánh dấu mùa và tập chỉ với một chạm, xem tiến độ.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Tập mới và ngày phát hành trong lịch của bạn; không bỏ lỡ tập nào.',
+  'Puanla ve yorumla': 'Chấm điểm và nhận xét',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Chấm điểm thập phân, viết nhận xét; xem điểm IMDb, Rotten Tomatoes và Metacritic cạnh nhau.',
+  'Kendi listelerin': 'Danh sách của riêng bạn',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Tạo, sắp xếp và chia sẻ danh sách; danh sách chờ xem luôn theo bạn trên mọi thiết bị.',
+  'Arkadaşlarınla': 'Cùng bạn bè',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Xem trên bảng tin bạn bè đang xem gì, bày tỏ cảm xúc với nhận xét của họ, nhắn tin.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Cùng xem một lúc trong phòng xem và trò chuyện.',
+  'Yapım verileri: TMDB': 'Dữ liệu tác phẩm: TMDB',
 };

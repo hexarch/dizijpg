@@ -1710,4 +1710,31 @@ const Map<String, String> cevirilerGu = {
   'Ekran görüntüsü aldın': 'તમે સ્ક્રીનશોટ લીધો',
   '{} ekran görüntüsü aldı': '{} એ સ્ક્રીનશોટ લીધો',
   'Gönderiliyor': 'મોકલાઈ રહ્યું છે',
+  'İzlediğin her şeyi tek yerde takip et':
+      'તું જે જુએ છે તે બધું એક જ જગ્યાએ ટ્રૅક કર',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'તારી સિરીઝ એપિસોડ-દર-એપિસોડ માર્ક કર, ફિલ્મોની યાદી રાખ, રેટિંગ અને રિવ્યૂ આપ, અને જો કે તારા મિત્રો શું જુએ છે. મફત, વેબ અને મોબાઇલ પર.',
+  'Ücretsiz başla': 'મફત શરૂ કર',
+  'Keşfet\'e göz at': 'ડિસ્કવર જુઓ',
+  'Giriş yap': 'લૉગ ઇન',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'મફત. 45 ભાષાઓમાં. વેબ, Android અને iOS.',
+  'Neler yapabilirsin?': 'તું શું કરી શકે?',
+  'Bölüm bölüm takip': 'એપિસોડ-દર-એપિસોડ ટ્રૅકિંગ',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'ક્યાં અટક્યો તે ક્યારેય ન ભૂલ: એક ટૅપમાં સીઝન અને એપિસોડ માર્ક કર અને પ્રગતિ જો.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'નવા એપિસોડ અને રિલીઝ તારીખો તારા કૅલેન્ડરમાં; કોઈ એપિસોડ ચૂકીશ નહીં.',
+  'Puanla ve yorumla': 'રેટિંગ અને રિવ્યૂ',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'દશાંશ રેટિંગ આપ, રિવ્યૂ લખ; IMDb, Rotten Tomatoes અને Metacritic ના સ્કોર સાથે-સાથે જો.',
+  'Kendi listelerin': 'તારી પોતાની યાદીઓ',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'યાદીઓ બનાવ, ગોઠવ અને શેર કર; તારી વૉચલિસ્ટ દરેક ડિવાઇસ પર તારી સાથે.',
+  'Arkadaşlarınla': 'તારા મિત્રો સાથે',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'ફીડમાં જો કે મિત્રો શું જુએ છે, તેમના રિવ્યૂ પર રિએક્ટ કર, મેસેજ કર.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'વૉચ રૂમમાં એક સાથે જુઓ અને ચૅટ કરો.',
+  'Yapım verileri: TMDB': 'ટાઇટલ ડેટા: TMDB',
 };

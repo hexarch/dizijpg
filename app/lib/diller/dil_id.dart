@@ -1723,4 +1723,31 @@ const Map<String, String> cevirilerId = {
   'Ekran görüntüsü aldın': 'Kamu mengambil tangkapan layar',
   '{} ekran görüntüsü aldı': '{} mengambil tangkapan layar',
   'Gönderiliyor': 'Mengirim',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Lacak semua yang kamu tonton di satu tempat',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Tandai serialmu episode demi episode, simpan daftar film, beri nilai dan ulasan, lihat apa yang ditonton teman-temanmu. Gratis, di web dan seluler.',
+  'Ücretsiz başla': 'Mulai gratis',
+  'Keşfet\'e göz at': 'Lihat Jelajahi',
+  'Giriş yap': 'Masuk',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Gratis. Dalam 45 bahasa. Web, Android, dan iOS.',
+  'Neler yapabilirsin?': 'Apa yang bisa kamu lakukan?',
+  'Bölüm bölüm takip': 'Pelacakan episode demi episode',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Jangan pernah lupa sampai mana: tandai musim dan episode dengan satu ketukan, lihat progresmu.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Episode baru dan tanggal rilis di kalendermu; jangan lewatkan satu episode pun.',
+  'Puanla ve yorumla': 'Beri nilai dan ulasan',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Beri nilai desimal, tulis ulasan; lihat skor IMDb, Rotten Tomatoes, dan Metacritic berdampingan.',
+  'Kendi listelerin': 'Daftar milikmu sendiri',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Buat, urutkan, dan bagikan daftar; daftar tontonanmu ikut di setiap perangkat.',
+  'Arkadaşlarınla': 'Bersama teman-temanmu',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Lihat di beranda apa yang ditonton temanmu, beri reaksi pada ulasan mereka, kirim pesan.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Nonton bersamaan di ruang tonton dan mengobrol.',
+  'Yapım verileri: TMDB': 'Data judul: TMDB',
 };

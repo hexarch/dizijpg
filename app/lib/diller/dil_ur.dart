@@ -1723,4 +1723,31 @@ const Map<String, String> cevirilerUr = {
   'Ekran görüntüsü aldın': 'آپ نے اسکرین شاٹ لیا',
   '{} ekran görüntüsü aldı': '{} نے اسکرین شاٹ لیا',
   'Gönderiliyor': 'بھیجا جا رہا ہے',
+  'İzlediğin her şeyi tek yerde takip et':
+      'جو کچھ دیکھتے ہو سب ایک جگہ ٹریک کرو',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'اپنے ڈرامے قسط بہ قسط نشان زد کرو، فلموں کی فہرست رکھو، ریٹنگ اور تبصرہ دو، اور دیکھو تمہارے دوست کیا دیکھ رہے ہیں۔ مفت، ویب اور موبائل پر۔',
+  'Ücretsiz başla': 'مفت شروع کرو',
+  'Keşfet\'e göz at': 'دریافت کریں دیکھیں',
+  'Giriş yap': 'لاگ ان',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'مفت۔ 45 زبانوں میں۔ ویب، Android اور iOS۔',
+  'Neler yapabilirsin?': 'تم کیا کر سکتے ہو؟',
+  'Bölüm bölüm takip': 'قسط بہ قسط ٹریکنگ',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'اپنی جگہ کبھی نہ کھوؤ: سیزن اور قسطیں ایک ٹیپ سے نشان زد کرو اور اپنی پیش رفت دیکھو۔',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'نئی قسطیں اور ریلیز کی تاریخیں تمہارے کیلنڈر میں؛ کوئی قسط نہ چھوٹے۔',
+  'Puanla ve yorumla': 'ریٹنگ اور تبصرہ',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'اعشاری ریٹنگ دو، تبصرہ لکھو؛ IMDb، Rotten Tomatoes اور Metacritic کے اسکور ساتھ ساتھ دیکھو۔',
+  'Kendi listelerin': 'تمہاری اپنی فہرستیں',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'فہرستیں بناؤ، ترتیب دو اور شیئر کرو؛ تمہاری واچ لسٹ ہر ڈیوائس پر تمہارے ساتھ۔',
+  'Arkadaşlarınla': 'اپنے دوستوں کے ساتھ',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'فیڈ میں دیکھو دوست کیا دیکھ رہے ہیں، ان کے تبصروں پر ردعمل دو، پیغام بھیجو۔',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'واچ روم میں ایک ساتھ دیکھو اور چیٹ کرو۔',
+  'Yapım verileri: TMDB': 'عنوانات کا ڈیٹا: TMDB',
 };

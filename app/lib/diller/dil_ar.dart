@@ -1746,4 +1746,30 @@ const Map<String, String> cevirilerAr = {
   'Ekran görüntüsü aldın': 'التقطت لقطة شاشة',
   '{} ekran görüntüsü aldı': 'التقط {} لقطة شاشة',
   'Gönderiliyor': 'جارٍ الإرسال',
+  'İzlediğin her şeyi tek yerde takip et': 'تابع كل ما تشاهده في مكان واحد',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'علّم مسلسلاتك حلقةً حلقة، واحتفظ بقائمة أفلامك، وقيّم واكتب مراجعات، وشاهد ما يتابعه أصدقاؤك. مجانًا على الويب والجوال.',
+  'Ücretsiz başla': 'ابدأ مجانًا',
+  'Keşfet\'e göz at': 'تصفّح صفحة الاستكشاف',
+  'Giriş yap': 'تسجيل الدخول',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'مجاني. بـ 45 لغة. الويب وAndroid وiOS.',
+  'Neler yapabilirsin?': 'ماذا يمكنك أن تفعل؟',
+  'Bölüm bölüm takip': 'متابعة حلقةً حلقة',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'لا تفقد مكانك أبدًا: علّم المواسم والحلقات بلمسة واحدة وتابع تقدمك.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'الحلقات الجديدة ومواعيد العرض في تقويمك؛ لا تفوّت أي حلقة.',
+  'Puanla ve yorumla': 'قيّم واكتب مراجعة',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'أعطِ تقييمات عشرية واكتب مراجعات؛ شاهد تقييمات IMDb وRotten Tomatoes وMetacritic جنبًا إلى جنب.',
+  'Kendi listelerin': 'قوائمك الخاصة',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'أنشئ القوائم ورتّبها وشاركها؛ قائمة المشاهدة معك على كل أجهزتك.',
+  'Arkadaşlarınla': 'مع أصدقائك',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'شاهد في صفحتك ما يتابعه أصدقاؤك، وتفاعل مع مراجعاتهم، وراسلهم.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'شاهدوا في الوقت نفسه في غرفة مشاهدة وتحدثوا.',
+  'Yapım verileri: TMDB': 'بيانات الأعمال: TMDB',
 };

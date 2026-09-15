@@ -1706,4 +1706,31 @@ const Map<String, String> cevirilerFa = {
   'Ekran görüntüsü aldın': 'از صفحه عکس گرفتی',
   '{} ekran görüntüsü aldı': '{} از صفحه عکس گرفت',
   'Gönderiliyor': 'در حال ارسال',
+  'İzlediğin her şeyi tek yerde takip et':
+      'هر چیزی را که تماشا می‌کنی در یک جا دنبال کن',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'سریال‌هایت را قسمت‌به‌قسمت علامت بزن، فهرست فیلم‌هایت را نگه دار، امتیاز بده و نقد بنویس، و ببین دوستانت چه می‌بینند. رایگان، در وب و موبایل.',
+  'Ücretsiz başla': 'رایگان شروع کن',
+  'Keşfet\'e göz at': 'مرور بخش کاوش',
+  'Giriş yap': 'ورود',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'رایگان. به ۴۵ زبان. وب، Android و iOS.',
+  'Neler yapabilirsin?': 'چه کارهایی می‌توانی بکنی؟',
+  'Bölüm bölüm takip': 'دنبال کردن قسمت‌به‌قسمت',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'هرگز جایت را گم نکن: فصل‌ها و قسمت‌ها را با یک لمس علامت بزن و پیشرفتت را ببین.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'قسمت‌های جدید و تاریخ‌های اکران در تقویمت؛ هیچ قسمتی را از دست نده.',
+  'Puanla ve yorumla': 'امتیاز بده و نقد بنویس',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'امتیاز اعشاری بده، نقد بنویس؛ امتیازهای IMDb، Rotten Tomatoes و Metacritic را کنار هم ببین.',
+  'Kendi listelerin': 'فهرست‌های خودت',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'فهرست بساز، مرتب کن و به اشتراک بگذار؛ فهرست تماشایت در هر دستگاهی همراهت است.',
+  'Arkadaşlarınla': 'با دوستانت',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'در خوراک ببین دوستانت چه می‌بینند، به نقدهایشان واکنش نشان بده، پیام بفرست.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'در اتاق تماشا هم‌زمان ببینید و گپ بزنید.',
+  'Yapım verileri: TMDB': 'داده‌های آثار: TMDB',
 };

@@ -1719,4 +1719,31 @@ const Map<String, String> cevirilerPa = {
   'Ekran görüntüsü aldın': 'ਤੁਸੀਂ ਸਕ੍ਰੀਨਸ਼ਾਟ ਲਿਆ',
   '{} ekran görüntüsü aldı': '{} ਨੇ ਸਕ੍ਰੀਨਸ਼ਾਟ ਲਿਆ',
   'Gönderiliyor': 'ਭੇਜਿਆ ਜਾ ਰਿਹਾ ਹੈ',
+  'İzlediğin her şeyi tek yerde takip et':
+      'ਜੋ ਵੀ ਦੇਖਦੇ ਹੋ ਸਭ ਇੱਕ ਥਾਂ ਟ੍ਰੈਕ ਕਰੋ',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'ਆਪਣੇ ਸ਼ੋਅ ਐਪੀਸੋਡ-ਦਰ-ਐਪੀਸੋਡ ਮਾਰਕ ਕਰੋ, ਫ਼ਿਲਮਾਂ ਦੀ ਸੂਚੀ ਰੱਖੋ, ਰੇਟਿੰਗ ਤੇ ਰਿਵਿਊ ਦਿਓ, ਤੇ ਦੇਖੋ ਦੋਸਤ ਕੀ ਦੇਖ ਰਹੇ ਨੇ। ਮੁਫ਼ਤ, ਵੈੱਬ ਤੇ ਮੋਬਾਈਲ ਉੱਤੇ।',
+  'Ücretsiz başla': 'ਮੁਫ਼ਤ ਸ਼ੁਰੂ ਕਰੋ',
+  'Keşfet\'e göz at': 'ਡਿਸਕਵਰ ਦੇਖੋ',
+  'Giriş yap': 'ਲੌਗ ਇਨ',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'ਮੁਫ਼ਤ। 45 ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ। ਵੈੱਬ, Android ਤੇ iOS।',
+  'Neler yapabilirsin?': 'ਤੁਸੀਂ ਕੀ ਕਰ ਸਕਦੇ ਹੋ?',
+  'Bölüm bölüm takip': 'ਐਪੀਸੋਡ-ਦਰ-ਐਪੀਸੋਡ ਟ੍ਰੈਕਿੰਗ',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'ਕਦੇ ਆਪਣੀ ਥਾਂ ਨਾ ਗੁਆਓ: ਇੱਕ ਟੈਪ ਨਾਲ ਸੀਜ਼ਨ ਤੇ ਐਪੀਸੋਡ ਮਾਰਕ ਕਰੋ ਤੇ ਤਰੱਕੀ ਦੇਖੋ।',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'ਨਵੇਂ ਐਪੀਸੋਡ ਤੇ ਰਿਲੀਜ਼ ਤਾਰੀਖ਼ਾਂ ਤੁਹਾਡੇ ਕੈਲੰਡਰ ਵਿੱਚ; ਕੋਈ ਐਪੀਸੋਡ ਨਾ ਖੁੰਝਾਓ।',
+  'Puanla ve yorumla': 'ਰੇਟਿੰਗ ਤੇ ਰਿਵਿਊ',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'ਦਸ਼ਮਲਵ ਰੇਟਿੰਗ ਦਿਓ, ਰਿਵਿਊ ਲਿਖੋ; IMDb, Rotten Tomatoes ਤੇ Metacritic ਦੇ ਸਕੋਰ ਨਾਲ-ਨਾਲ ਦੇਖੋ।',
+  'Kendi listelerin': 'ਤੁਹਾਡੀਆਂ ਆਪਣੀਆਂ ਸੂਚੀਆਂ',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'ਸੂਚੀਆਂ ਬਣਾਓ, ਤਰਤੀਬ ਦਿਓ ਤੇ ਸਾਂਝੀਆਂ ਕਰੋ; ਤੁਹਾਡੀ ਵਾਚਲਿਸਟ ਹਰ ਡਿਵਾਈਸ ਉੱਤੇ ਤੁਹਾਡੇ ਨਾਲ।',
+  'Arkadaşlarınla': 'ਦੋਸਤਾਂ ਨਾਲ',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'ਫ਼ੀਡ ਵਿੱਚ ਦੇਖੋ ਦੋਸਤ ਕੀ ਦੇਖ ਰਹੇ ਨੇ, ਉਨ੍ਹਾਂ ਦੇ ਰਿਵਿਊ ਉੱਤੇ ਰਿਐਕਟ ਕਰੋ, ਮੈਸੇਜ ਕਰੋ।',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'ਵਾਚ ਰੂਮ ਵਿੱਚ ਇੱਕੋ ਸਮੇਂ ਦੇਖੋ ਤੇ ਚੈਟ ਕਰੋ।',
+  'Yapım verileri: TMDB': 'ਟਾਈਟਲ ਡੇਟਾ: TMDB',
 };

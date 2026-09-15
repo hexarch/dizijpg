@@ -1735,4 +1735,31 @@ const Map<String, String> cevirilerHu = {
   'Ekran görüntüsü aldın': 'Képernyőképet készítettél',
   '{} ekran görüntüsü aldı': '{} képernyőképet készített',
   'Gönderiliyor': 'Küldés',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Kövess mindent, amit nézel, egy helyen',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Pipáld ki a sorozataidat epizódonként, vezess filmlistát, értékelj és írj kritikát, nézd meg, mit néznek a barátaid. Ingyenes, weben és mobilon.',
+  'Ücretsiz başla': 'Kezdd el ingyen',
+  'Keşfet\'e göz at': 'Felfedezés böngészése',
+  'Giriş yap': 'Bejelentkezés',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Ingyenes. 45 nyelven. Web, Android és iOS.',
+  'Neler yapabilirsin?': 'Mit tehetsz?',
+  'Bölüm bölüm takip': 'Epizódonkénti követés',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Soha ne veszítsd el a fonalat: jelöld az évadokat és epizódokat egy érintéssel, és lásd a haladásod.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Új epizódok és megjelenési dátumok a naptáradban; egyetlen epizódot se hagyj ki.',
+  'Puanla ve yorumla': 'Értékelj és írj kritikát',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Adj tizedes értékelést, írj kritikát; nézd egymás mellett az IMDb, a Rotten Tomatoes és a Metacritic pontszámait.',
+  'Kendi listelerin': 'Saját listáid',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Hozz létre, rendezz és ossz meg listákat; a nézendő listád minden eszközödön veled van.',
+  'Arkadaşlarınla': 'A barátaiddal',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Nézd meg a hírfolyamban, mit néznek a barátaid, reagálj a kritikáikra, üzenj nekik.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Nézzétek egyszerre egy nézőszobában, és csevegjetek.',
+  'Yapım verileri: TMDB': 'Címadatok: TMDB',
 };

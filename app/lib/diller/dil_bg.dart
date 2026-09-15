@@ -1732,4 +1732,31 @@ const Map<String, String> cevirilerBg = {
   'Ekran görüntüsü aldın': 'Направи екранна снимка',
   '{} ekran görüntüsü aldı': '{} направи екранна снимка',
   'Gönderiliyor': 'Изпраща се',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Следи всичко, което гледаш, на едно място',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Отбелязвай сериалите епизод по епизод, води списък с филми, оценявай и пиши ревюта, виж какво гледат приятелите ти. Безплатно, в уеб и на мобилно.',
+  'Ücretsiz başla': 'Започни безплатно',
+  'Keşfet\'e göz at': 'Разгледай „Открий“',
+  'Giriş yap': 'Вход',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Безплатно. На 45 езика. Уеб, Android и iOS.',
+  'Neler yapabilirsin?': 'Какво можеш да правиш?',
+  'Bölüm bölüm takip': 'Проследяване епизод по епизод',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Никога не губи докъде си стигнал: отбелязвай сезони и епизоди с едно докосване и виж напредъка си.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Нови епизоди и дати на премиери в календара ти; не пропускай нито един епизод.',
+  'Puanla ve yorumla': 'Оценявай и пиши ревюта',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Давай десетични оценки, пиши ревюта; виж IMDb, Rotten Tomatoes и Metacritic едно до друго.',
+  'Kendi listelerin': 'Твоите списъци',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Създавай, подреждай и споделяй списъци; списъкът ти за гледане е с теб на всяко устройство.',
+  'Arkadaşlarınla': 'С приятелите ти',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Виж в потока какво гледат приятелите ти, реагирай на ревютата им, пиши им.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Гледайте едновременно в стая за гледане и чатете.',
+  'Yapım verileri: TMDB': 'Данни за заглавията: TMDB',
 };

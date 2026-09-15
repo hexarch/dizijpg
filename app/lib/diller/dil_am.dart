@@ -1666,4 +1666,30 @@ const Map<String, String> cevirilerAm = {
   'Ekran görüntüsü aldın': 'ቅጽበታዊ ገጽ እይታ አንስተሃል',
   '{} ekran görüntüsü aldı': '{} ቅጽበታዊ ገጽ እይታ አነሳ',
   'Gönderiliyor': 'በመላክ ላይ',
+  'İzlediğin her şeyi tek yerde takip et': 'የምታየውን ሁሉ በአንድ ቦታ ተከታተል',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'ተከታታዮችህን ክፍል በክፍል ምልክት አድርግ፣ የፊልም ዝርዝር ያዝ፣ ደረጃ ስጥ እና አስተያየት ጻፍ፣ ጓደኞችህ ምን እንደሚያዩ ተመልከት። ነጻ፣ በድር እና በሞባይል።',
+  'Ücretsiz başla': 'በነጻ ጀምር',
+  'Keşfet\'e göz at': 'አግኝን ተመልከት',
+  'Giriş yap': 'ግባ',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'ነጻ። በ45 ቋንቋዎች። ድር፣ Android እና iOS።',
+  'Neler yapabilirsin?': 'ምን ማድረግ ትችላለህ?',
+  'Bölüm bölüm takip': 'ክፍል በክፍል መከታተል',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'የት እንደደረስክ በጭራሽ አትርሳ፦ ወቅቶችንና ክፍሎችን በአንድ ንክኪ ምልክት አድርግ፣ እድገትህን ተመልከት።',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'አዲስ ክፍሎችና የመውጫ ቀኖች በቀን መቁጠሪያህ ውስጥ፤ ምንም ክፍል አታምልጥ።',
+  'Puanla ve yorumla': 'ደረጃ ስጥ እና አስተያየት ጻፍ',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'የአስርዮሽ ደረጃ ስጥ፣ አስተያየት ጻፍ፤ የIMDb፣ Rotten Tomatoes እና Metacritic ነጥቦችን ጎን ለጎን ተመልከት።',
+  'Kendi listelerin': 'የራስህ ዝርዝሮች',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'ዝርዝሮችን ፍጠር፣ አደራጅ እና አጋራ፤ የመመልከቻ ዝርዝርህ በእያንዳንዱ መሣሪያ ላይ ካንተ ጋር ነው።',
+  'Arkadaşlarınla': 'ከጓደኞችህ ጋር',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'ጓደኞችህ ምን እንደሚያዩ በምግብ ላይ ተመልከት፣ ለአስተያየታቸው ምላሽ ስጥ፣ መልእክት ላክ።',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'በመመልከቻ ክፍል ውስጥ በአንድ ጊዜ ተመልከቱ እና ተወያዩ።',
+  'Yapım verileri: TMDB': 'የርዕስ መረጃ፦ TMDB',
 };

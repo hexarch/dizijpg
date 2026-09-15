@@ -245,8 +245,8 @@ void main() {
         dilOnekiDusur(Uri.parse('https://dizijpg.com/de/icerik/movie/559')),
         '/icerik/movie/559',
       );
-      expect(dilOnekiDusur(Uri.parse('https://dizijpg.com/en')), '/kesfet');
-      expect(dilOnekiDusur(Uri.parse('https://dizijpg.com/en/')), '/kesfet');
+      expect(dilOnekiDusur(Uri.parse('https://dizijpg.com/en')), '/');
+      expect(dilOnekiDusur(Uri.parse('https://dizijpg.com/en/')), '/');
       expect(
         dilOnekiDusur(
           Uri.parse('https://dizijpg.com/es/icerik/tv/1396?tur=tv'),
@@ -263,13 +263,15 @@ void main() {
       expect(dilOnekiDusur(Uri.parse('https://dizijpg.com/tr/kesfet')), isNull);
     });
 
-    testWidgets('OTURUMSUZ: /de giriş formuna DEĞİL keşfete açılır', (
+    testWidgets('OTURUMSUZ: /de giriş formuna DEĞİL açılış vitrinine açılır', (
       tester,
     ) async {
       final baglam = await _olcumBaglami(tester);
+      // 15 Eyl 2026'ya kadar hedef `/kesfet`ti; kök artık açılış vitrini
+      // (`/`), dil kökü de aynı yere düşer.
       expect(
         await platformHedefi(tester, baglam, url: '/de', girisli: false),
-        '/kesfet',
+        '/',
         reason: 'SEO yöneticisinin gördüğü hata: /de → /giris?donus=/de',
       );
       expect(
@@ -328,7 +330,8 @@ void main() {
       // `/giris` ve `/karsilama` oturumlu kullanıcı için bilinçli olarak
       // yönlendiren rotalardır; arama ekranları da canlı oturum oldukları
       // için yenilemeyle geri getirilmez (bkz. [yenilemeyleAcilmaz]).
-      if (yol == '/giris' || yol == '/karsilama') continue;
+      // `/` (açılış vitrini) de oturumluda bilinçli olarak keşfete gider.
+      if (yol == '/' || yol == '/giris' || yol == '/karsilama') continue;
       if (yenilemeyleAcilmaz(yol)) continue;
       final varilan = await yenilemeHedefi(
         tester,
@@ -448,7 +451,7 @@ void main() {
   });
 
   // -------------------------------------------------------------------------
-  // 6) KÖK ADRES — '/' yenilemesi keşfete düşer, sorgusu korunur
+  // 6) KÖK ADRES — oturumlu '/' keşfete düşer, oturumsuz açılış vitrininde kalır
   // -------------------------------------------------------------------------
   testWidgets('oturumlu: kök adres keşfete düşer', (tester) async {
     final baglam = await _olcumBaglami(tester);
@@ -461,6 +464,21 @@ void main() {
       '/kesfet',
     );
   });
+
+  testWidgets(
+    'oturumsuz: kök adres açılış vitrininde kalır (giriş duvarı yok)',
+    (tester) async {
+      final baglam = await _olcumBaglami(tester);
+      expect(
+        await yenilemeHedefi(tester, baglam, url: '/', girisli: false),
+        '/',
+      );
+      expect(
+        await platformHedefi(tester, baglam, url: '/', girisli: false),
+        '/',
+      );
+    },
+  );
 
   // -------------------------------------------------------------------------
   // 7) KABUK SEKMESİ — /akis yenilenince akış sekmesi seçili gelmeli
@@ -653,7 +671,7 @@ void main() {
     for (final yol in kayitliYollar(y)) {
       // Arama ekranları canlı oturumdur, sayfa değil (bkz.
       // [yenilemeyleAcilmaz]); adres çubuğuna yazılmaları anlamsız.
-      if (yol == '/giris' || yol == '/karsilama') continue;
+      if (yol == '/' || yol == '/giris' || yol == '/karsilama') continue;
       if (yenilemeyleAcilmaz(yol)) continue;
       y.go('/kesfet');
       await tester.pump();

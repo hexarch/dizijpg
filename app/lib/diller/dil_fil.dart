@@ -1757,4 +1757,31 @@ const Map<String, String> cevirilerFil = {
   'Ekran görüntüsü aldın': 'Kumuha ka ng screenshot',
   '{} ekran görüntüsü aldı': 'Kumuha ng screenshot si {}',
   'Gönderiliyor': 'Ipinapadala',
+  'İzlediğin her şeyi tek yerde takip et':
+      'I-track ang lahat ng pinapanood mo sa iisang lugar',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Markahan ang mga serye mo bawat episode, mag-ingat ng listahan ng pelikula, mag-rate at mag-review, at tingnan kung ano ang pinapanood ng mga kaibigan mo. Libre, sa web at mobile.',
+  'Ücretsiz başla': 'Magsimula nang libre',
+  'Keşfet\'e göz at': 'Tingnan ang Discover',
+  'Giriş yap': 'Mag-log in',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Libre. Sa 45 wika. Web, Android at iOS.',
+  'Neler yapabilirsin?': 'Ano ang magagawa mo?',
+  'Bölüm bölüm takip': 'Pag-track bawat episode',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Hindi mo na makakalimutan kung saan ka huminto: markahan ang season at episode sa isang tap at tingnan ang progreso mo.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Mga bagong episode at petsa ng paglabas sa kalendaryo mo; walang episode na mapapalampas.',
+  'Puanla ve yorumla': 'Mag-rate at mag-review',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Magbigay ng decimal na rating, sumulat ng review; tingnan nang magkatabi ang IMDb, Rotten Tomatoes at Metacritic.',
+  'Kendi listelerin': 'Sarili mong mga listahan',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Gumawa, mag-ayos at magbahagi ng mga listahan; kasama mo ang watchlist mo sa bawat device.',
+  'Arkadaşlarınla': 'Kasama ang mga kaibigan mo',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Tingnan sa feed kung ano ang pinapanood ng mga kaibigan mo, mag-react sa mga review nila, mag-message.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Sabay-sabay manood sa watch room at mag-chat.',
+  'Yapım verileri: TMDB': 'Datos ng mga pamagat: TMDB',
 };

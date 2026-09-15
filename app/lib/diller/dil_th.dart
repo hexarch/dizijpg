@@ -1694,4 +1694,31 @@ const Map<String, String> cevirilerTh = {
   'Ekran görüntüsü aldın': 'คุณจับภาพหน้าจอ',
   '{} ekran görüntüsü aldı': '{} จับภาพหน้าจอ',
   'Gönderiliyor': 'กำลังส่ง',
+  'İzlediğin her şeyi tek yerde takip et':
+      'ติดตามทุกอย่างที่คุณดูไว้ในที่เดียว',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'ติ๊กซีรีส์ทีละตอน เก็บลิสต์หนัง ให้คะแนนและรีวิว และดูว่าเพื่อนกำลังดูอะไร ฟรี ทั้งบนเว็บและมือถือ',
+  'Ücretsiz başla': 'เริ่มใช้ฟรี',
+  'Keşfet\'e göz at': 'ดูหน้าค้นพบ',
+  'Giriş yap': 'เข้าสู่ระบบ',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'ฟรี รองรับ 45 ภาษา เว็บ Android และ iOS',
+  'Neler yapabilirsin?': 'คุณทำอะไรได้บ้าง',
+  'Bölüm bölüm takip': 'ติดตามทีละตอน',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'ไม่มีวันลืมว่าดูถึงไหน: ติ๊กซีซันและตอนด้วยแตะครั้งเดียว แล้วดูความคืบหน้า',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'ตอนใหม่และวันฉายอยู่ในปฏิทินของคุณ ไม่พลาดสักตอน',
+  'Puanla ve yorumla': 'ให้คะแนนและรีวิว',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'ให้คะแนนแบบทศนิยม เขียนรีวิว ดูคะแนน IMDb, Rotten Tomatoes และ Metacritic เคียงข้างกัน',
+  'Kendi listelerin': 'ลิสต์ของคุณเอง',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'สร้าง จัดเรียง และแชร์ลิสต์ ลิสต์ที่จะดูอยู่กับคุณทุกอุปกรณ์',
+  'Arkadaşlarınla': 'กับเพื่อนของคุณ',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'ดูในฟีดว่าเพื่อนกำลังดูอะไร ตอบสนองต่อรีวิวของพวกเขา ส่งข้อความ',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'ดูพร้อมกันในห้องรับชมและแชท',
+  'Yapım verileri: TMDB': 'ข้อมูลผลงาน: TMDB',
 };

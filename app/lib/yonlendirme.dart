@@ -7,6 +7,7 @@ import 'ceviri.dart';
 import 'tema.dart';
 import 'gorusme/gelen_arama_ekrani.dart';
 import 'gorusme/gorusme_ekrani.dart';
+import 'ekranlar/acilis.dart';
 import 'ekranlar/akis.dart';
 import 'ekranlar/altyazi_bicem.dart';
 import 'ekranlar/arama_cubugu.dart';
@@ -129,6 +130,10 @@ const acikYolOnEkleri = <String>[
 /// Oturum gerektirmeyen tam yollar (ön ek DEĞİL: `/gizlilik-tercihleri` gibi
 /// ileride eklenebilecek kişisel bir ekran yanlışlıkla açılmasın).
 const acikTamYollar = <String>[
+  // AÇILIŞ VİTRİNİ (15 Eyl 2026): oturumsuz ziyaretçinin kökte gördüğü
+  // tanıtım sayfası (`ekranlar/acilis.dart`). Oturumlu için `redirect`
+  // `/`yi `/kesfet`e çevirir; bu satır yalnız duvarı kaldırır.
+  '/',
   '/gizlilik',
   // SEO 1.4 — keşif sayfalarının SSR'ı 6 Ağu'dan beri vardı ama Flutter
   // giriş duvarının arkasındaydı; bot içerik, insan /giris görüyordu
@@ -189,15 +194,18 @@ String baslangicRotasi(Uri? adres) {
   if (Ceviri.adresDiliKodu(adres) != null) parcalar = parcalar.sublist(1);
   var yol = parcalar.map(Uri.encodeComponent).join('/');
   yol = yol.isEmpty ? '' : '/$yol';
-  // Kök adres (`/`, `` ya da yalnız sorgu): uygulamanın ana sayfası.
-  if (yol.isEmpty) return '/kesfet';
+  // Kök adres (`/`, `` ya da yalnız sorgu): açılış vitrini. Oturumlu
+  // kullanıcıyı `redirect` oradan `/kesfet`e alır (15 Eyl 2026'ya kadar
+  // kök doğrudan `/kesfet`ti; oturumsuz ilk ziyaretçi raf sayfasına düşüp
+  // uygulamanın ne olduğunu göremiyordu).
+  if (yol.isEmpty) return '/';
   if (yenilemeyleAcilmaz(yol)) return '/sohbetler';
   return yol + (adres.hasQuery ? '?${adres.query}' : '');
 }
 
 /// Dil önekli adresi öneksiz uygulama rotasına çevirir; öneksizse null.
 ///
-/// `/de/icerik/movie/559` → `/icerik/movie/559`, `/en` → `/kesfet`,
+/// `/de/icerik/movie/559` → `/icerik/movie/559`, `/en` → `/`,
 /// `/es/icerik/tv/1396?tur=tv` → `/icerik/tv/1396?tur=tv`.
 ///
 /// NEDEN [baslangicRotasi] YETMEDİ (5 Eyl 2026, CANLIDA ÖLÇÜLDÜ): go_router
@@ -217,7 +225,8 @@ String? dilOnekiDusur(Uri adres) {
       .skip(1)
       .map(Uri.encodeComponent)
       .join('/');
-  final yol = govde.isEmpty ? '/kesfet' : '/$govde';
+  // Dil kökü (`/de`) = kök: açılış vitrini; oturumlu `redirect`le keşfete.
+  final yol = govde.isEmpty ? '/' : '/$govde';
   return yol + (adres.hasQuery ? '?${adres.query}' : '');
 }
 
@@ -300,9 +309,12 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
       if (giriste) {
         return donusHedefi(state.uri.queryParameters['donus']) ?? '/kesfet';
       }
+      // Açılış vitrini oturumluya gösterilmez: ana sayfası keşfettir.
+      if (konum == '/') return '/kesfet';
       return null;
     },
     routes: [
+      GoRoute(path: '/', builder: (_, __) => const AcilisEkrani()),
       GoRoute(path: '/giris', builder: (_, __) => const GirisEkrani()),
       GoRoute(path: '/gizlilik', builder: (_, __) => const GizlilikEkrani()),
       GoRoute(path: '/karsilama', builder: (_, __) => const KarsilamaEkrani()),

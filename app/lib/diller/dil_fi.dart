@@ -1731,4 +1731,31 @@ const Map<String, String> cevirilerFi = {
   'Ekran görüntüsü aldın': 'Otit kuvakaappauksen',
   '{} ekran görüntüsü aldı': '{} otti kuvakaappauksen',
   'Gönderiliyor': 'Lähetetään',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Seuraa kaikkea katsomaasi yhdessä paikassa',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Merkitse sarjasi jakso jaksolta, pidä elokuvalistaa, arvioi ja arvostele, ja katso mitä ystäväsi katsovat. Ilmainen, verkossa ja mobiilissa.',
+  'Ücretsiz başla': 'Aloita ilmaiseksi',
+  'Keşfet\'e göz at': 'Selaa Löydä-osiota',
+  'Giriş yap': 'Kirjaudu sisään',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Ilmainen. 45 kielellä. Web, Android ja iOS.',
+  'Neler yapabilirsin?': 'Mitä voit tehdä?',
+  'Bölüm bölüm takip': 'Seuranta jakso jaksolta',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Älä koskaan hukkaa paikkaasi: merkitse kaudet ja jaksot yhdellä napautuksella ja näe edistymisesi.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Uudet jaksot ja ensi-iltapäivät kalenterissasi; älä missaa yhtään jaksoa.',
+  'Puanla ve yorumla': 'Arvioi ja arvostele',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Anna desimaaliarvosanoja, kirjoita arvosteluja; näe IMDb-, Rotten Tomatoes- ja Metacritic-pisteet rinnakkain.',
+  'Kendi listelerin': 'Omat listasi',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Luo, järjestä ja jaa listoja; katselulistasi kulkee mukanasi kaikilla laitteillasi.',
+  'Arkadaşlarınla': 'Ystäviesi kanssa',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Näe syötteessä mitä ystäväsi katsovat, reagoi heidän arvosteluihinsa, lähetä viestejä.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Katsokaa samaan aikaan katseluhuoneessa ja jutelkaa.',
+  'Yapım verileri: TMDB': 'Nimiketiedot: TMDB',
 };

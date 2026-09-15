@@ -1734,4 +1734,31 @@ const Map<String, String> cevirilerNl = {
   'Ekran görüntüsü aldın': 'Je hebt een screenshot gemaakt',
   '{} ekran görüntüsü aldı': '{} heeft een screenshot gemaakt',
   'Gönderiliyor': 'Verzenden',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Volg alles wat je kijkt op één plek',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Vink je series aflevering voor aflevering af, houd je filmlijst bij, beoordeel en recenseer, en zie wat je vrienden kijken. Gratis, op web en mobiel.',
+  'Ücretsiz başla': 'Gratis beginnen',
+  'Keşfet\'e göz at': 'Ontdekken bekijken',
+  'Giriş yap': 'Inloggen',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Gratis. In 45 talen. Web, Android en iOS.',
+  'Neler yapabilirsin?': 'Wat kun je doen?',
+  'Bölüm bölüm takip': 'Aflevering voor aflevering volgen',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Raak nooit de draad kwijt: vink seizoenen en afleveringen met één tik af en zie je voortgang.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Nieuwe afleveringen en releasedata in je kalender; mis geen enkele aflevering.',
+  'Puanla ve yorumla': 'Beoordeel en recenseer',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Geef decimale scores, schrijf recensies; zie IMDb, Rotten Tomatoes en Metacritic naast elkaar.',
+  'Kendi listelerin': 'Je eigen lijsten',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Maak, sorteer en deel lijsten; je kijklijst reist mee op al je apparaten.',
+  'Arkadaşlarınla': 'Met je vrienden',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Zie in je feed wat je vrienden kijken, reageer op hun recensies, stuur ze een bericht.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Kijk tegelijk in een kijkkamer en chat mee.',
+  'Yapım verileri: TMDB': 'Titelgegevens: TMDB',
 };

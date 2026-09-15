@@ -1737,4 +1737,31 @@ const Map<String, String> cevirilerSv = {
   'Ekran görüntüsü aldın': 'Du tog en skärmbild',
   '{} ekran görüntüsü aldı': '{} tog en skärmbild',
   'Gönderiliyor': 'Skickar',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Håll koll på allt du tittar på, på ett ställe',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Bocka av dina serier avsnitt för avsnitt, håll en filmlista, betygsätt och recensera, och se vad dina vänner tittar på. Gratis, på webben och mobilen.',
+  'Ücretsiz başla': 'Kom igång gratis',
+  'Keşfet\'e göz at': 'Bläddra i Upptäck',
+  'Giriş yap': 'Logga in',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Gratis. På 45 språk. Webb, Android och iOS.',
+  'Neler yapabilirsin?': 'Vad kan du göra?',
+  'Bölüm bölüm takip': 'Avsnitt för avsnitt',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Tappa aldrig tråden: markera säsonger och avsnitt med ett tryck och se dina framsteg.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Nya avsnitt och premiärdatum i din kalender; missa aldrig ett avsnitt.',
+  'Puanla ve yorumla': 'Betygsätt och recensera',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Ge decimalbetyg, skriv recensioner; se IMDb, Rotten Tomatoes och Metacritic sida vid sida.',
+  'Kendi listelerin': 'Dina egna listor',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Skapa, sortera och dela listor; din att-se-lista följer med på alla dina enheter.',
+  'Arkadaşlarınla': 'Med dina vänner',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Se i flödet vad dina vänner tittar på, reagera på deras recensioner, skicka meddelanden.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Titta samtidigt i ett tittarrum och chatta.',
+  'Yapım verileri: TMDB': 'Titeldata: TMDB',
 };

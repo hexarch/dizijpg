@@ -1720,4 +1720,31 @@ const Map<String, String> cevirilerCs = {
   'Ekran görüntüsü aldın': 'Pořídil(a) jsi snímek obrazovky',
   '{} ekran görüntüsü aldı': '{} pořídil(a) snímek obrazovky',
   'Gönderiliyor': 'Odesílá se',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Sleduj vše, co sleduješ, na jednom místě',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Odškrtávej seriály díl po dílu, veď si seznam filmů, hodnoť a recenzuj a sleduj, co sledují tvoji přátelé. Zdarma, na webu i v mobilu.',
+  'Ücretsiz başla': 'Začni zdarma',
+  'Keşfet\'e göz at': 'Prohlédnout Objevovat',
+  'Giriş yap': 'Přihlásit se',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Zdarma. Ve 45 jazycích. Web, Android a iOS.',
+  'Neler yapabilirsin?': 'Co můžeš dělat?',
+  'Bölüm bölüm takip': 'Sledování díl po dílu',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Nikdy neztrať přehled: označ sezóny a díly jedním klepnutím a sleduj svůj postup.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Nové díly a data premiér v tvém kalendáři; nepropásni žádný díl.',
+  'Puanla ve yorumla': 'Hodnoť a recenzuj',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Dávej desetinná hodnocení, piš recenze; porovnávej IMDb, Rotten Tomatoes a Metacritic vedle sebe.',
+  'Kendi listelerin': 'Tvoje vlastní seznamy',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Vytvářej, řaď a sdílej seznamy; seznam ke zhlédnutí máš s sebou na každém zařízení.',
+  'Arkadaşlarınla': 'S přáteli',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Sleduj ve feedu, co sledují přátelé, reaguj na jejich recenze, piš jim.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Sledujte zároveň v místnosti a chatujte.',
+  'Yapım verileri: TMDB': 'Data o titulech: TMDB',
 };

@@ -1673,4 +1673,28 @@ const Map<String, String> cevirilerZh = {
   'Ekran görüntüsü aldın': '你截屏了',
   '{} ekran görüntüsü aldı': '{} 截屏了',
   'Gönderiliyor': '正在发送',
+  'İzlediğin her şeyi tek yerde takip et': '在一个地方追踪你看过的一切',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      '逐集标记你的剧集，维护电影清单，打分和评论，看看朋友们在看什么。免费，支持网页和手机。',
+  'Ücretsiz başla': '免费开始',
+  'Keşfet\'e göz at': '浏览「发现」',
+  'Giriş yap': '登录',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.': '免费。支持 45 种语言。网页、Android 和 iOS。',
+  'Neler yapabilirsin?': '你可以做什么？',
+  'Bölüm bölüm takip': '逐集追踪',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      '永远不会忘记看到哪儿：一键标记季和集，随时查看进度。',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      '新剧集和上映日期都在你的日历里；不错过任何一集。',
+  'Puanla ve yorumla': '打分和评论',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      '给出小数评分，撰写评论；并排查看 IMDb、Rotten Tomatoes 和 Metacritic 的分数。',
+  'Kendi listelerin': '你自己的清单',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      '创建、排序和分享清单；你的待看清单在每台设备上都随身携带。',
+  'Arkadaşlarınla': '和朋友一起',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      '在动态里看朋友们在看什么，对他们的评论做出反应，发消息。',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.': '在观影房间里同步观看并聊天。',
+  'Yapım verileri: TMDB': '影视数据：TMDB',
 };

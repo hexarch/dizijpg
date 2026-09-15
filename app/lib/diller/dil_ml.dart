@@ -1732,4 +1732,31 @@ const Map<String, String> cevirilerMl = {
   'Ekran görüntüsü aldın': 'നിങ്ങൾ സ്ക്രീൻഷോട്ട് എടുത്തു',
   '{} ekran görüntüsü aldı': '{} സ്ക്രീൻഷോട്ട് എടുത്തു',
   'Gönderiliyor': 'അയയ്ക്കുന്നു',
+  'İzlediğin her şeyi tek yerde takip et':
+      'നീ കാണുന്നതെല്ലാം ഒരിടത്ത് ട്രാക്ക് ചെയ്യൂ',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'നിന്റെ സീരീസുകൾ എപ്പിസോഡ് തിരിച്ച് അടയാളപ്പെടുത്തൂ, സിനിമാ ലിസ്റ്റ് സൂക്ഷിക്കൂ, റേറ്റ് ചെയ്ത് റിവ്യൂ എഴുതൂ, സുഹൃത്തുക്കൾ എന്ത് കാണുന്നുവെന്ന് കാണൂ. സൗജന്യം, വെബിലും മൊബൈലിലും.',
+  'Ücretsiz başla': 'സൗജന്യമായി തുടങ്ങൂ',
+  'Keşfet\'e göz at': 'ഡിസ്കവർ കാണൂ',
+  'Giriş yap': 'ലോഗിൻ',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'സൗജന്യം. 45 ഭാഷകളിൽ. വെബ്, Android, iOS.',
+  'Neler yapabilirsin?': 'നിനക്ക് എന്തൊക്കെ ചെയ്യാം?',
+  'Bölüm bölüm takip': 'എപ്പിസോഡ് തിരിച്ചുള്ള ട്രാക്കിംഗ്',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'എവിടെ നിർത്തിയെന്ന് ഒരിക്കലും മറക്കേണ്ട: ഒറ്റ ടാപ്പിൽ സീസണുകളും എപ്പിസോഡുകളും അടയാളപ്പെടുത്തി പുരോഗതി കാണൂ.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'പുതിയ എപ്പിസോഡുകളും റിലീസ് തീയതികളും നിന്റെ കലണ്ടറിൽ; ഒരു എപ്പിസോഡും നഷ്ടപ്പെടുത്തേണ്ട.',
+  'Puanla ve yorumla': 'റേറ്റ് ചെയ്ത് റിവ്യൂ എഴുതൂ',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'ദശാംശ റേറ്റിംഗ് നൽകൂ, റിവ്യൂ എഴുതൂ; IMDb, Rotten Tomatoes, Metacritic സ്കോറുകൾ അടുത്തടുത്ത് കാണൂ.',
+  'Kendi listelerin': 'നിന്റെ സ്വന്തം ലിസ്റ്റുകൾ',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'ലിസ്റ്റുകൾ ഉണ്ടാക്കൂ, ക്രമീകരിക്കൂ, പങ്കിടൂ; നിന്റെ വാച്ച്‌ലിസ്റ്റ് എല്ലാ ഉപകരണത്തിലും കൂടെ.',
+  'Arkadaşlarınla': 'സുഹൃത്തുക്കളോടൊപ്പം',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'ഫീഡിൽ സുഹൃത്തുക്കൾ എന്ത് കാണുന്നുവെന്ന് കാണൂ, അവരുടെ റിവ്യൂകളോട് പ്രതികരിക്കൂ, മെസേജ് അയയ്ക്കൂ.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'വാച്ച് റൂമിൽ ഒരേ സമയം കണ്ട് ചാറ്റ് ചെയ്യൂ.',
+  'Yapım verileri: TMDB': 'ടൈറ്റിൽ ഡാറ്റ: TMDB',
 };

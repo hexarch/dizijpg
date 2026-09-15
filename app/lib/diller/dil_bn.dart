@@ -1714,4 +1714,30 @@ const Map<String, String> cevirilerBn = {
   'Ekran görüntüsü aldın': 'আপনি স্ক্রিনশট নিয়েছেন',
   '{} ekran görüntüsü aldı': '{} স্ক্রিনশট নিয়েছে',
   'Gönderiliyor': 'পাঠানো হচ্ছে',
+  'İzlediğin her şeyi tek yerde takip et': 'যা দেখো সব এক জায়গায় ট্র্যাক করো',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'তোমার সিরিজ পর্ব ধরে ধরে মার্ক করো, সিনেমার তালিকা রাখো, রেটিং ও রিভিউ দাও, আর দেখো বন্ধুরা কী দেখছে। বিনামূল্যে, ওয়েব ও মোবাইলে।',
+  'Ücretsiz başla': 'বিনামূল্যে শুরু করো',
+  'Keşfet\'e göz at': 'ডিসকভার দেখো',
+  'Giriş yap': 'লগ ইন',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'বিনামূল্যে। ৪৫টি ভাষায়। ওয়েব, Android ও iOS।',
+  'Neler yapabilirsin?': 'তুমি কী করতে পারো?',
+  'Bölüm bölüm takip': 'পর্ব ধরে ধরে ট্র্যাকিং',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'কোথায় ছিলে কখনো ভুলো না: এক ট্যাপে সিজন ও পর্ব মার্ক করো, অগ্রগতি দেখো।',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'নতুন পর্ব ও মুক্তির তারিখ তোমার ক্যালেন্ডারে; কোনো পর্ব মিস কোরো না।',
+  'Puanla ve yorumla': 'রেটিং ও রিভিউ',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'দশমিক রেটিং দাও, রিভিউ লেখো; IMDb, Rotten Tomatoes ও Metacritic-এর স্কোর পাশাপাশি দেখো।',
+  'Kendi listelerin': 'তোমার নিজের তালিকা',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'তালিকা তৈরি করো, সাজাও ও শেয়ার করো; তোমার ওয়াচলিস্ট প্রতিটি ডিভাইসে তোমার সাথে।',
+  'Arkadaşlarınla': 'বন্ধুদের সাথে',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'ফিডে দেখো বন্ধুরা কী দেখছে, তাদের রিভিউতে রিঅ্যাক্ট করো, মেসেজ পাঠাও।',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'ওয়াচ রুমে একই সময়ে দেখো আর চ্যাট করো।',
+  'Yapım verileri: TMDB': 'শিরোনামের তথ্য: TMDB',
 };

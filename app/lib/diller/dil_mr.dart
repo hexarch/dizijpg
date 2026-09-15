@@ -1717,4 +1717,31 @@ const Map<String, String> cevirilerMr = {
   'Ekran görüntüsü aldın': 'तुम्ही स्क्रीनशॉट घेतला',
   '{} ekran görüntüsü aldı': '{} ने स्क्रीनशॉट घेतला',
   'Gönderiliyor': 'पाठवत आहे',
+  'İzlediğin her şeyi tek yerde takip et':
+      'तू जे पाहतोस ते सगळं एकाच ठिकाणी ट्रॅक कर',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'तुझ्या मालिका भागानुसार मार्क कर, चित्रपटांची यादी ठेव, रेटिंग आणि रिव्ह्यू दे, आणि मित्र काय पाहतायत ते बघ. मोफत, वेब आणि मोबाइलवर.',
+  'Ücretsiz başla': 'मोफत सुरू कर',
+  'Keşfet\'e göz at': 'डिस्कव्हर पाहा',
+  'Giriş yap': 'लॉग इन',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'मोफत. ४५ भाषांमध्ये. वेब, Android आणि iOS.',
+  'Neler yapabilirsin?': 'तू काय करू शकतोस?',
+  'Bölüm bölüm takip': 'भागानुसार ट्रॅकिंग',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'कुठे थांबलास ते कधीच विसरू नकोस: एका टॅपने सीझन आणि भाग मार्क कर, प्रगती पाहा.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'नवे भाग आणि प्रदर्शन तारखा तुझ्या कॅलेंडरमध्ये; एकही भाग चुकवू नकोस.',
+  'Puanla ve yorumla': 'रेटिंग आणि रिव्ह्यू',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'दशांश रेटिंग दे, रिव्ह्यू लिही; IMDb, Rotten Tomatoes आणि Metacritic चे स्कोअर शेजारी शेजारी पाहा.',
+  'Kendi listelerin': 'तुझ्या स्वतःच्या याद्या',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'याद्या तयार कर, क्रम लाव आणि शेअर कर; तुझी वॉचलिस्ट प्रत्येक डिव्हाइसवर तुझ्यासोबत.',
+  'Arkadaşlarınla': 'मित्रांसोबत',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'फीडमध्ये मित्र काय पाहतायत ते बघ, त्यांच्या रिव्ह्यूवर रिअ‍ॅक्ट कर, मेसेज कर.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'वॉच रूममध्ये एकाच वेळी पाहा आणि गप्पा मारा.',
+  'Yapım verileri: TMDB': 'शीर्षक डेटा: TMDB',
 };

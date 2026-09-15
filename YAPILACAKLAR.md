@@ -1,6 +1,33 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-15 — 🔨 AÇILIŞ VİTRİNİ: oturumsuz kök sayfa (1.165.0+245)
+
+**Tetik:** *"dizijpg.com açınca bağlantı kırık diyor; dizi.jpg için güzel bir
+giriş sayfası yazılmalı."* "Bağlantı kırık" 15 Eyl 18:00'de YENİDEN ÜRETİLEMEDİ:
+kök 200, paketler 200, oturumlu Chrome + temiz profilli başsız Chrome
+(masaüstü ve Android kipi) sorunsuz açtı. En yakın aday 11:17 UTC'deki
+1.162.0+242 dağıtımı (eski `index.html` + silinmiş eski paket penceresi).
+
+- **Yeni ekran `ekranlar/acilis.dart` (`AcilisEkrani`), rota `/`.** Kök adres
+  eskiden oturumsuzda doğrudan `/kesfet`e düşüyordu; ilk ziyaretçi uygulamanın
+  ne olduğunu göremeden raf sayfasına iniyordu. Şimdi: üst çubuk (logo, Giriş
+  yap, Ücretsiz başla), kahraman (başlık + iki eylem + haftanın afişlerinden
+  eğik duvar, canlı `/tmdb/trending/*` verisi), 6 özellik kartı (yalnız üründe
+  olanlar), mağaza bandı (Play + App Store), alt bilgi (gizlilik, TMDB atfı).
+  Rakam yazılmaz (kullanıcı sayısı vb.). Dar/orta/geniş üç düzen.
+- **Yönlendirme:** `/` `acikTamYollar`da; oturumlu `redirect` `/`→`/kesfet`
+  (karşılama denetiminden SONRA); `baslangicRotasi` ve `dilOnekiDusur` kökü
+  artık `/`ye çevirir (`/de` → `/`). Mobil uygulama (adres yok) `/kesfet`te
+  kalır; bot SSR'ı (`/og/ana`) değişmedi.
+- **Testler:** `acilis_ekrani_test.dart` (5: dar/geniş düzen, eylemlerin
+  `go` ile gidişi, trend ucu çökünce iskelet); `yenileme_ayni_sayfa_test` ve
+  `dil_onekli_adres_test` yeni köke göre güncellendi (+ oturumsuz kök testi).
+- **Çeviri:** 19 yeni anahtar × 45 dil (`scratchpad/ceviri_ekle.py`).
+- **Tuzak:** sayfa geçişinde çıkan sayfa animasyon boyunca ağaçta kalır;
+  `go` sonrası aynı anahtarı aramadan `pumpAndSettle` şart.
+- Dağıtım: ayrık worktree (ff460da üstüne); ana dala `git merge --ff-only`.
+
 ## 2026-09-15 — 🔨 SOHBET: SAAT GİZLİ (boşluğu çek), GÖZ İKONU, TİTREME (1.162.0+242)
 
 **Tetik:** *"mesajlarda saati kaldır sola çekince göster; mesaj alıntılama da

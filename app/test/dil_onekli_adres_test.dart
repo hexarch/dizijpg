@@ -99,8 +99,8 @@ void main() {
     });
 
     test('yalnız dil öneki olan adres ana sayfaya açılır', () {
-      expect(baslangicRotasi(Uri.parse('https://dizijpg.com/en')), '/kesfet');
-      expect(baslangicRotasi(Uri.parse('https://dizijpg.com/en/')), '/kesfet');
+      expect(baslangicRotasi(Uri.parse('https://dizijpg.com/en')), '/');
+      expect(baslangicRotasi(Uri.parse('https://dizijpg.com/en/')), '/');
     });
 
     test('SORGU DİZESİ KORUNUR (süzgeç sayfanın parçası)', () {
@@ -121,7 +121,7 @@ void main() {
         baslangicRotasi(Uri.parse('https://dizijpg.com/kesfet')),
         '/kesfet',
       );
-      expect(baslangicRotasi(Uri.parse('https://dizijpg.com/')), '/kesfet');
+      expect(baslangicRotasi(Uri.parse('https://dizijpg.com/')), '/');
       // Desteklenmeyen ön ek ATILMAZ: rota olarak denenir, olmayan rota
       // "Bağlantı geçersiz" verir — uydurma bir sayfaya YÖNLENDİRMEYİZ.
       expect(

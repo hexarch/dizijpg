@@ -1730,4 +1730,31 @@ const Map<String, String> cevirilerUk = {
   'Ekran görüntüsü aldın': 'Ви зробили знімок екрана',
   '{} ekran görüntüsü aldı': '{} зробив(ла) знімок екрана',
   'Gönderiliyor': 'Надсилання',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Відстежуй усе, що дивишся, в одному місці',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Позначай серіали серія за серією, веди список фільмів, оцінюй і пиши відгуки, дивись, що дивляться друзі. Безкоштовно, у вебі та на мобільному.',
+  'Ücretsiz başla': 'Почати безкоштовно',
+  'Keşfet\'e göz at': 'Переглянути розділ «Огляд»',
+  'Giriş yap': 'Увійти',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Безкоштовно. 45 мовами. Веб, Android та iOS.',
+  'Neler yapabilirsin?': 'Що ти можеш робити?',
+  'Bölüm bölüm takip': 'Відстеження серія за серією',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Ніколи не губи місце: позначай сезони й серії одним дотиком і стеж за прогресом.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Нові серії та дати виходу у твоєму календарі; не пропусти жодної серії.',
+  'Puanla ve yorumla': 'Оцінюй і пиши відгуки',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Став дробові оцінки, пиши відгуки; порівнюй IMDb, Rotten Tomatoes і Metacritic поруч.',
+  'Kendi listelerin': 'Твої списки',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Створюй, сортуй і ділися списками; список «подивитися» з тобою на кожному пристрої.',
+  'Arkadaşlarınla': 'З друзями',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Дивись у стрічці, що дивляться друзі, реагуй на їхні відгуки, листуйся.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Дивіться одночасно в кімнаті перегляду й спілкуйтеся в чаті.',
+  'Yapım verileri: TMDB': 'Дані про фільми й серіали: TMDB',
 };

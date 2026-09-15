@@ -1751,4 +1751,31 @@ const Map<String, String> cevirilerFr = {
   'Ekran görüntüsü aldın': 'Tu as fait une capture d’écran',
   '{} ekran görüntüsü aldı': '{} a fait une capture d’écran',
   'Gönderiliyor': 'Envoi en cours',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Suis tout ce que tu regardes au même endroit',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Coche tes séries épisode par épisode, tiens ta liste de films, note et commente, et vois ce que regardent tes amis. Gratuit, sur le web et sur mobile.',
+  'Ücretsiz başla': 'Commencer gratuitement',
+  'Keşfet\'e göz at': 'Parcourir Découvrir',
+  'Giriş yap': 'Se connecter',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Gratuit. En 45 langues. Web, Android et iOS.',
+  'Neler yapabilirsin?': 'Que peux-tu faire ?',
+  'Bölüm bölüm takip': 'Suivi épisode par épisode',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Ne perds jamais le fil : coche saisons et épisodes d’un geste et vois ta progression.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Nouveaux épisodes et dates de sortie dans ton calendrier ; ne rate aucun épisode.',
+  'Puanla ve yorumla': 'Noter et commenter',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Donne des notes décimales, écris des critiques ; compare les scores IMDb, Rotten Tomatoes et Metacritic côte à côte.',
+  'Kendi listelerin': 'Tes propres listes',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Crée, trie et partage des listes ; ta liste à voir te suit sur tous tes appareils.',
+  'Arkadaşlarınla': 'Avec tes amis',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Vois dans ton fil ce que regardent tes amis, réagis à leurs critiques, écris-leur.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Regardez en même temps dans une salle de visionnage et discutez.',
+  'Yapım verileri: TMDB': 'Données des titres : TMDB',
 };

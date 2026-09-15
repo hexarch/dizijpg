@@ -1752,4 +1752,31 @@ const Map<String, String> cevirilerTa = {
   'Ekran görüntüsü aldın': 'நீங்கள் ஸ்கிரீன்ஷாட் எடுத்தீர்கள்',
   '{} ekran görüntüsü aldı': '{} ஸ்கிரீன்ஷாட் எடுத்தார்',
   'Gönderiliyor': 'அனுப்புகிறது',
+  'İzlediğin her şeyi tek yerde takip et':
+      'நீ பார்ப்பதை எல்லாம் ஒரே இடத்தில் கண்காணி',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'உன் தொடர்களை எபிசோடு வாரியாகக் குறி, படப் பட்டியலை வைத்திரு, மதிப்பிட்டு விமர்சனம் எழுது, நண்பர்கள் என்ன பார்க்கிறார்கள் என்று பார். இலவசம், வலை மற்றும் மொபைலில்.',
+  'Ücretsiz başla': 'இலவசமாகத் தொடங்கு',
+  'Keşfet\'e göz at': 'டிஸ்கவரைப் பார்',
+  'Giriş yap': 'உள்நுழை',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'இலவசம். 45 மொழிகளில். வலை, Android மற்றும் iOS.',
+  'Neler yapabilirsin?': 'நீ என்ன செய்யலாம்?',
+  'Bölüm bölüm takip': 'எபிசோடு வாரியான கண்காணிப்பு',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'எங்கே நிறுத்தினாய் என்பதை ஒருபோதும் மறக்காதே: சீசன்களையும் எபிசோடுகளையும் ஒரே தட்டலில் குறித்து முன்னேற்றத்தைப் பார்.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'புதிய எபிசோடுகளும் வெளியீட்டுத் தேதிகளும் உன் காலண்டரில்; எந்த எபிசோடையும் தவறவிடாதே.',
+  'Puanla ve yorumla': 'மதிப்பிட்டு விமர்சி',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'தசம மதிப்பீடு கொடு, விமர்சனம் எழுது; IMDb, Rotten Tomatoes, Metacritic மதிப்பெண்களை அருகருகே பார்.',
+  'Kendi listelerin': 'உன் சொந்தப் பட்டியல்கள்',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'பட்டியல்களை உருவாக்கு, வரிசைப்படுத்து, பகிர்; உன் பார்க்க வேண்டிய பட்டியல் ஒவ்வொரு சாதனத்திலும் உன்னுடன்.',
+  'Arkadaşlarınla': 'நண்பர்களுடன்',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'ஃபீடில் நண்பர்கள் என்ன பார்க்கிறார்கள் என்று பார், அவர்களின் விமர்சனங்களுக்கு எதிர்வினை கொடு, செய்தி அனுப்பு.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'பார்வை அறையில் ஒரே நேரத்தில் பார்த்து அரட்டையடியுங்கள்.',
+  'Yapım verileri: TMDB': 'தலைப்புத் தரவு: TMDB',
 };

@@ -1802,4 +1802,31 @@ const Map<String, String> cevirilerEs = {
   'Ekran görüntüsü aldın': 'Hiciste una captura de pantalla',
   '{} ekran görüntüsü aldı': '{} hizo una captura de pantalla',
   'Gönderiliyor': 'Enviando',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Sigue todo lo que ves en un solo lugar',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Marca tus series episodio a episodio, lleva tu lista de películas, puntúa y reseña, y mira qué ven tus amigos. Gratis, en web y móvil.',
+  'Ücretsiz başla': 'Empieza gratis',
+  'Keşfet\'e göz at': 'Explorar Descubrir',
+  'Giriş yap': 'Iniciar sesión',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Gratis. En 45 idiomas. Web, Android e iOS.',
+  'Neler yapabilirsin?': '¿Qué puedes hacer?',
+  'Bölüm bölüm takip': 'Seguimiento episodio a episodio',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Nunca pierdas el hilo: marca temporadas y episodios con un toque y ve tu progreso.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Nuevos episodios y fechas de estreno en tu calendario; no te pierdas ningún episodio.',
+  'Puanla ve yorumla': 'Puntúa y reseña',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Da puntuaciones decimales, escribe reseñas; compara IMDb, Rotten Tomatoes y Metacritic lado a lado.',
+  'Kendi listelerin': 'Tus propias listas',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Crea, ordena y comparte listas; tu lista de pendientes te acompaña en todos tus dispositivos.',
+  'Arkadaşlarınla': 'Con tus amigos',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Mira en tu feed qué ven tus amigos, reacciona a sus reseñas, envíales mensajes.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Vean al mismo tiempo en una sala y chateen.',
+  'Yapım verileri: TMDB': 'Datos de títulos: TMDB',
 };

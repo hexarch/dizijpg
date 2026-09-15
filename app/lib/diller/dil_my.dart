@@ -1742,4 +1742,31 @@ const Map<String, String> cevirilerMy = {
   'Ekran görüntüsü aldın': 'သင် ဖန်သားပြင်ဓာတ်ပုံ ရိုက်ခဲ့သည်',
   '{} ekran görüntüsü aldı': '{} က ဖန်သားပြင်ဓာတ်ပုံ ရိုက်ခဲ့သည်',
   'Gönderiliyor': 'ပို့နေသည်',
+  'İzlediğin her şeyi tek yerde takip et':
+      'ကြည့်သမျှအားလုံးကို နေရာတစ်ခုတည်းမှာ မှတ်တမ်းတင်ပါ',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'ဇာတ်လမ်းတွဲများကို အပိုင်းလိုက် အမှတ်အသားပြုပါ၊ ရုပ်ရှင်စာရင်း သိမ်းပါ၊ အဆင့်သတ်မှတ်ပြီး သုံးသပ်ချက်ရေးပါ၊ သူငယ်ချင်းများ ဘာကြည့်နေလဲ ကြည့်ပါ။ အခမဲ့၊ ဝက်ဘ်နှင့် မိုဘိုင်းတွင်။',
+  'Ücretsiz başla': 'အခမဲ့ စတင်ပါ',
+  'Keşfet\'e göz at': 'ရှာဖွေရန်ကို ကြည့်ပါ',
+  'Giriş yap': 'ဝင်ရောက်ရန်',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'အခမဲ့။ ဘာသာစကား ၄၅ မျိုး။ ဝက်ဘ်၊ Android နှင့် iOS။',
+  'Neler yapabilirsin?': 'ဘာတွေ လုပ်နိုင်လဲ?',
+  'Bölüm bölüm takip': 'အပိုင်းလိုက် မှတ်တမ်းတင်ခြင်း',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'ဘယ်နေရာမှာ ရပ်ထားလဲ ဘယ်တော့မှ မမေ့ပါ- ရာသီနှင့် အပိုင်းများကို တစ်ချက်နှိပ်ရုံဖြင့် အမှတ်အသားပြုပြီး တိုးတက်မှုကို ကြည့်ပါ။',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'အပိုင်းသစ်များနှင့် ထွက်ရှိမည့်ရက်များ သင့်ပြက္ခဒိန်ထဲမှာ၊ ဘယ်အပိုင်းမှ မလွတ်ပါစေနှင့်။',
+  'Puanla ve yorumla': 'အဆင့်သတ်မှတ်ပြီး သုံးသပ်ပါ',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'ဒဿမ အဆင့်သတ်မှတ်ပါ၊ သုံးသပ်ချက်ရေးပါ၊ IMDb၊ Rotten Tomatoes နှင့် Metacritic အမှတ်များကို ယှဉ်ကြည့်ပါ။',
+  'Kendi listelerin': 'ကိုယ်ပိုင်စာရင်းများ',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'စာရင်းများ ဖန်တီး၊ စီစဉ်၊ မျှဝေပါ၊ ကြည့်ရန်စာရင်းက စက်တိုင်းမှာ သင်နှင့်အတူ။',
+  'Arkadaşlarınla': 'သူငယ်ချင်းများနှင့်အတူ',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'ဖိဒ်ထဲမှာ သူငယ်ချင်းများ ဘာကြည့်နေလဲ ကြည့်ပါ၊ သူတို့သုံးသပ်ချက်ကို တုံ့ပြန်ပါ၊ စာပို့ပါ။',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'ကြည့်ရှုခန်းထဲမှာ တစ်ပြိုင်နက် ကြည့်ပြီး စကားပြောပါ။',
+  'Yapım verileri: TMDB': 'ဇာတ်ကားဒေတာ- TMDB',
 };

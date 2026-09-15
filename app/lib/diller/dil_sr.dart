@@ -1727,4 +1727,31 @@ const Map<String, String> cevirilerSr = {
   'Ekran görüntüsü aldın': 'Направио/ла си снимак екрана',
   '{} ekran görüntüsü aldı': '{} је направио/ла снимак екрана',
   'Gönderiliyor': 'Шаље се',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Prati sve što gledaš na jednom mestu',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Označavaj serije epizodu po epizodu, vodi listu filmova, ocenjuj i piši recenzije, vidi šta gledaju tvoji prijatelji. Besplatno, na vebu i mobilnom.',
+  'Ücretsiz başla': 'Počni besplatno',
+  'Keşfet\'e göz at': 'Pregledaj Otkrij',
+  'Giriş yap': 'Prijavi se',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Besplatno. Na 45 jezika. Veb, Android i iOS.',
+  'Neler yapabilirsin?': 'Šta možeš da radiš?',
+  'Bölüm bölüm takip': 'Praćenje epizodu po epizodu',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Nikad ne izgubi gde si stao: označi sezone i epizode jednim dodirom i vidi svoj napredak.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Nove epizode i datumi premijera u tvom kalendaru; ne propusti nijednu epizodu.',
+  'Puanla ve yorumla': 'Ocenjuj i piši recenzije',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Daj decimalne ocene, piši recenzije; uporedi IMDb, Rotten Tomatoes i Metacritic jedno pored drugog.',
+  'Kendi listelerin': 'Tvoje liste',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Pravi, sortiraj i deli liste; lista za gledanje je s tobom na svakom uređaju.',
+  'Arkadaşlarınla': 'Sa prijateljima',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Vidi u fidu šta gledaju prijatelji, reaguj na njihove recenzije, piši im.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Gledajte istovremeno u sobi za gledanje i ćaskajte.',
+  'Yapım verileri: TMDB': 'Podaci o naslovima: TMDB',
 };

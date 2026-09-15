@@ -1805,4 +1805,31 @@ const Map<String, String> cevirilerRo = {
   'Ekran görüntüsü aldın': 'Ai făcut o captură de ecran',
   '{} ekran görüntüsü aldı': '{} a făcut o captură de ecran',
   'Gönderiliyor': 'Se trimite',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Urmărește tot ce vezi într-un singur loc',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Bifează serialele episod cu episod, ține-ți lista de filme, notează și recenzează, vezi ce urmăresc prietenii tăi. Gratuit, pe web și mobil.',
+  'Ücretsiz başla': 'Începe gratuit',
+  'Keşfet\'e göz at': 'Răsfoiește Descoperă',
+  'Giriş yap': 'Autentifică-te',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Gratuit. În 45 de limbi. Web, Android și iOS.',
+  'Neler yapabilirsin?': 'Ce poți face?',
+  'Bölüm bölüm takip': 'Urmărire episod cu episod',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Nu pierde niciodată firul: bifează sezoane și episoade cu o atingere și vezi progresul.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Episoade noi și date de lansare în calendarul tău; nu rata niciun episod.',
+  'Puanla ve yorumla': 'Notează și recenzează',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Dă note zecimale, scrie recenzii; vezi IMDb, Rotten Tomatoes și Metacritic una lângă alta.',
+  'Kendi listelerin': 'Listele tale',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Creează, sortează și distribuie liste; lista de vizionat te însoțește pe orice dispozitiv.',
+  'Arkadaşlarınla': 'Cu prietenii tăi',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Vezi în flux ce urmăresc prietenii, reacționează la recenziile lor, trimite-le mesaje.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Urmăriți în același timp într-o cameră de vizionare și discutați.',
+  'Yapım verileri: TMDB': 'Date despre titluri: TMDB',
 };

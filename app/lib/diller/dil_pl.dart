@@ -1743,4 +1743,31 @@ const Map<String, String> cevirilerPl = {
   'Ekran görüntüsü aldın': 'Zrobiłeś zrzut ekranu',
   '{} ekran görüntüsü aldı': '{} zrobił(a) zrzut ekranu',
   'Gönderiliyor': 'Wysyłanie',
+  'İzlediğin her şeyi tek yerde takip et':
+      'Śledź wszystko, co oglądasz, w jednym miejscu',
+  'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Ücretsiz, web ve mobilde.':
+      'Odhaczaj seriale odcinek po odcinku, prowadź listę filmów, oceniaj i recenzuj, zobacz, co oglądają znajomi. Za darmo, w sieci i na telefonie.',
+  'Ücretsiz başla': 'Zacznij za darmo',
+  'Keşfet\'e göz at': 'Przeglądaj Odkrywaj',
+  'Giriş yap': 'Zaloguj się',
+  'Ücretsiz. 45 dilde. Web, Android ve iOS.':
+      'Za darmo. W 45 językach. Web, Android i iOS.',
+  'Neler yapabilirsin?': 'Co możesz zrobić?',
+  'Bölüm bölüm takip': 'Śledzenie odcinek po odcinku',
+  'Kaldığın yeri asla kaybetme: sezonları ve bölümleri tek dokunuşla işaretle, ilerlemeni gör.':
+      'Nigdy nie zgub wątku: zaznaczaj sezony i odcinki jednym dotknięciem i śledź postępy.',
+  'Yeni bölümler ve vizyon tarihleri takviminde; hiçbir bölümü kaçırma.':
+      'Nowe odcinki i daty premier w kalendarzu; nie przegap żadnego odcinka.',
+  'Puanla ve yorumla': 'Oceniaj i recenzuj',
+  'Ondalıklı puan ver, yorum yaz; IMDb, Rotten Tomatoes ve Metacritic puanlarını yan yana gör.':
+      'Wystawiaj oceny dziesiętne, pisz recenzje; porównuj IMDb, Rotten Tomatoes i Metacritic obok siebie.',
+  'Kendi listelerin': 'Twoje własne listy',
+  'Listeler oluştur, sırala ve paylaş; izleme listen her cihazında seninle.':
+      'Twórz, sortuj i udostępniaj listy; lista do obejrzenia jest z tobą na każdym urządzeniu.',
+  'Arkadaşlarınla': 'Ze znajomymi',
+  'Akışta arkadaşlarının ne izlediğini gör, yorumlarına tepki ver, mesajlaş.':
+      'Zobacz w aktualnościach, co oglądają znajomi, reaguj na ich recenzje, pisz do nich.',
+  'İzleme odasında aynı anda izleyin ve sohbet edin.':
+      'Oglądajcie jednocześnie w pokoju i rozmawiajcie na czacie.',
+  'Yapım verileri: TMDB': 'Dane tytułów: TMDB',
 };
