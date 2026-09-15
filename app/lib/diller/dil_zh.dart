@@ -1697,4 +1697,11 @@ const Map<String, String> cevirilerZh = {
       '在动态里看朋友们在看什么，对他们的评论做出反应，发消息。',
   'İzleme odasında aynı anda izleyin ve sohbet edin.': '在观影房间里同步观看并聊天。',
   'Yapım verileri: TMDB': '影视数据：TMDB',
+  'Galeriye kaydet': '保存到相册',
+  'Galeriye kaydedildi': '已保存到相册',
+  'Galeriye kaydediliyor...': '正在保存到相册...',
+  'Galeri izni verilmedi': '未授予相册权限',
+  'Kaydedilemedi': '保存失败',
+  '{} medyayı galeriye kaydet': '保存 {} 个媒体到相册',
+  '{}/{} kaydedildi': '已保存 {}/{}',
 };

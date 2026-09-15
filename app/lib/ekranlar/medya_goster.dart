@@ -6,6 +6,8 @@ import 'package:video_player/video_player.dart';
 
 import '../altyazi.dart';
 import '../ceviri.dart';
+import '../uyari.dart';
+import '../galeriye_kaydet.dart';
 import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import '../video_secenekleri.dart';
@@ -13,17 +15,26 @@ import '../video_secenekleri.dart';
 /// Tam ekran medya görüntüleyici: fotoğrafta çimdik/sürükle yakınlaştırma,
 /// videoda oynatma + sarma çubuğu; birden çok medyada sayfa kaydırma.
 /// Akış, yorumlar ve sohbet ortak kullanır.
+/// [kaydedilebilir] üst şeride "Galeriye kaydet" düğmesi koyar (15 Eyl 2026
+/// isteği: "sohbette iletilen medyaları galeriye kaydetme özelliği olmalı").
+/// Varsayılan KAPALI: bu görüntüleyiciyi TMDB afişleri/arka planları da
+/// açıyor, onları kaydettirmek bizim vermediğimiz bir hakkı vermek olurdu —
+/// düğme yalnız KULLANICI medyasını gösteren yüzeylerde açılır.
 Future<void> medyaGoster(
   BuildContext context,
   List<String> urller, {
   int baslangic = 0,
+  bool kaydedilebilir = false,
 }) {
   return Navigator.of(context, rootNavigator: true).push(
     PageRouteBuilder(
       opaque: false,
       barrierDismissible: true,
-      pageBuilder: (_, __, ___) =>
-          _MedyaGorunumu(urller: urller, baslangic: baslangic),
+      pageBuilder: (_, __, ___) => _MedyaGorunumu(
+        urller: urller,
+        baslangic: baslangic,
+        kaydedilebilir: kaydedilebilir,
+      ),
       transitionsBuilder: (_, animasyon, __, cocuk) =>
           FadeTransition(opacity: animasyon, child: cocuk),
     ),
@@ -115,7 +126,12 @@ class TamEkranKlavye extends StatelessWidget {
 class _MedyaGorunumu extends StatefulWidget {
   final List<String> urller;
   final int baslangic;
-  const _MedyaGorunumu({required this.urller, required this.baslangic});
+  final bool kaydedilebilir;
+  const _MedyaGorunumu({
+    required this.urller,
+    required this.baslangic,
+    this.kaydedilebilir = false,
+  });
 
   @override
   State<_MedyaGorunumu> createState() => _MedyaGorunumuState();
@@ -133,8 +149,25 @@ class _MedyaGorunumuState extends State<_MedyaGorunumu> {
     super.dispose();
   }
 
+  bool _kaydediliyor = false;
+
   int get _sayfaNo =>
       _sayfa.hasClients ? (_sayfa.page?.round() ?? _aktif) : _aktif;
+
+  /// EKRANDAKİ medyayı galeriye kaydeder (albümde değil, GÖRÜNEN sayfayı:
+  /// kullanıcı hangi kareye bakıyorsa onu bekler).
+  Future<void> _kaydet() async {
+    if (_kaydediliyor) return;
+    setState(() => _kaydediliyor = true);
+    final sonuc = await galeriyeKaydet(widget.urller[_sayfaNo]);
+    if (!mounted) return;
+    setState(() => _kaydediliyor = false);
+    uyar(context, switch (sonuc) {
+      GaleriSonuc.tamam => 'Galeriye kaydedildi'.c,
+      GaleriSonuc.izinYok => 'Galeri izni verilmedi'.c,
+      GaleriSonuc.hata => 'Kaydedilemedi'.c,
+    });
+  }
 
   /// Önceki medya; ilk karede no-op.
   void _geri() => _git(_sayfaNo - 1);
@@ -247,6 +280,29 @@ class _MedyaGorunumuState extends State<_MedyaGorunumu> {
                         ),
                       ),
                     const Spacer(),
+                    if (widget.kaydedilebilir)
+                      IconButton(
+                        key: const Key('medya-kaydet'),
+                        tooltip: 'Galeriye kaydet'.c,
+                        onPressed: _kaydediliyor ? null : _kaydet,
+                        icon: _kaydediliyor
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Icon(
+                                Icons.download_rounded,
+                                color: Colors.white,
+                              ),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.black45,
+                        ),
+                      ),
+                    if (widget.kaydedilebilir) const SizedBox(width: 8),
                     IconButton(
                       tooltip: 'Kapat'.c,
                       onPressed: () => Navigator.pop(context),

@@ -1769,4 +1769,11 @@ const Map<String, String> cevirilerMy = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'ကြည့်ရှုခန်းထဲမှာ တစ်ပြိုင်နက် ကြည့်ပြီး စကားပြောပါ။',
   'Yapım verileri: TMDB': 'ဇာတ်ကားဒေတာ- TMDB',
+  'Galeriye kaydet': 'ဂယ်လာရီသို့ သိမ်းရန်',
+  'Galeriye kaydedildi': 'ဂယ်လာရီသို့ သိမ်းပြီး',
+  'Galeriye kaydediliyor...': 'ဂယ်လာရီသို့ သိမ်းနေသည်...',
+  'Galeri izni verilmedi': 'ဂယ်လာရီ ခွင့်ပြုချက် မရရှိပါ',
+  'Kaydedilemedi': 'မသိမ်းနိုင်ပါ',
+  '{} medyayı galeriye kaydet': 'မီဒီယာ {} ခုကို ဂယ်လာရီသို့ သိမ်းရန်',
+  '{}/{} kaydedildi': '{}/{} သိမ်းပြီး',
 };

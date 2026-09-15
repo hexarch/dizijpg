@@ -1761,4 +1761,11 @@ const Map<String, String> cevirilerNl = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'Kijk tegelijk in een kijkkamer en chat mee.',
   'Yapım verileri: TMDB': 'Titelgegevens: TMDB',
+  'Galeriye kaydet': 'Opslaan in galerij',
+  'Galeriye kaydedildi': 'Opgeslagen in galerij',
+  'Galeriye kaydediliyor...': 'Opslaan in galerij...',
+  'Galeri izni verilmedi': 'Toestemming voor galerij geweigerd',
+  'Kaydedilemedi': 'Kon niet worden opgeslagen',
+  '{} medyayı galeriye kaydet': '{} media opslaan in galerij',
+  '{}/{} kaydedildi': '{}/{} opgeslagen',
 };

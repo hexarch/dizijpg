@@ -1784,4 +1784,11 @@ const Map<String, String> cevirilerFil = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'Sabay-sabay manood sa watch room at mag-chat.',
   'Yapım verileri: TMDB': 'Datos ng mga pamagat: TMDB',
+  'Galeriye kaydet': 'I-save sa gallery',
+  'Galeriye kaydedildi': 'Na-save sa gallery',
+  'Galeriye kaydediliyor...': 'Sine-save sa gallery...',
+  'Galeri izni verilmedi': 'Hindi ibinigay ang pahintulot sa gallery',
+  'Kaydedilemedi': 'Hindi na-save',
+  '{} medyayı galeriye kaydet': 'I-save ang {} media sa gallery',
+  '{}/{} kaydedildi': '{}/{} ang na-save',
 };

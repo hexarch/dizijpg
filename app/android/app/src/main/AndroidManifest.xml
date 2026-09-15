@@ -8,6 +8,12 @@
          yalnız "alındı" bilgisini verir — görüntünün kendisine erişim YOK
          (bkz. MainActivity.kt). API 34 altında tespit yapılmaz. -->
     <uses-permission android:name="android.permission.DETECT_SCREEN_CAPTURE"/>
+    <!-- GALERİYE KAYDET (15 Eyl 2026). Android 10+ (API 29+) MediaStore'a
+         izinsiz yazdırır; yalnız API 28 ve altı için gerekir, bu yüzden
+         maxSdkVersion ile sınırlı — Play'in "Tüm Dosyalar" kısıtlı izni
+         DEĞİL, okuma izni de İSTENMEZ (yalnız ekleme). -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"/>
     <!-- GÖRÜNTÜLÜ ARAMA (9 Ağu 2026).
          CAMERA, Play'in "Kısıtlı İzinler" listesinde DEĞİLDİR (o liste
          SMS/Arama Kaydı/Erişilebilirlik/Tüm Dosyalar/Konum ve geniş medya

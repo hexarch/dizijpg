@@ -1781,4 +1781,11 @@ const Map<String, String> cevirilerPt = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'Assistam ao mesmo tempo em uma sala e conversem.',
   'Yapım verileri: TMDB': 'Dados dos títulos: TMDB',
+  'Galeriye kaydet': 'Salvar na galeria',
+  'Galeriye kaydedildi': 'Salvo na galeria',
+  'Galeriye kaydediliyor...': 'Salvando na galeria...',
+  'Galeri izni verilmedi': 'Permissão da galeria negada',
+  'Kaydedilemedi': 'Não foi possível salvar',
+  '{} medyayı galeriye kaydet': 'Salvar {} mídias na galeria',
+  '{}/{} kaydedildi': '{}/{} salvos',
 };

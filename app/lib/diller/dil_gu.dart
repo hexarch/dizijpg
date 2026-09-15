@@ -1737,4 +1737,11 @@ const Map<String, String> cevirilerGu = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'વૉચ રૂમમાં એક સાથે જુઓ અને ચૅટ કરો.',
   'Yapım verileri: TMDB': 'ટાઇટલ ડેટા: TMDB',
+  'Galeriye kaydet': 'ગૅલેરીમાં સાચવો',
+  'Galeriye kaydedildi': 'ગૅલેરીમાં સાચવ્યું',
+  'Galeriye kaydediliyor...': 'ગૅલેરીમાં સાચવાઈ રહ્યું છે...',
+  'Galeri izni verilmedi': 'ગૅલેરીની પરવાનગી મળી નથી',
+  'Kaydedilemedi': 'સાચવી શકાયું નહીં',
+  '{} medyayı galeriye kaydet': '{} મીડિયા ગૅલેરીમાં સાચવો',
+  '{}/{} kaydedildi': '{}/{} સાચવ્યાં',
 };

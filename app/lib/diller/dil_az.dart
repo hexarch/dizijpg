@@ -1740,4 +1740,11 @@ const Map<String, String> cevirilerAz = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'İzləmə otağında eyni anda izləyin və söhbət edin.',
   'Yapım verileri: TMDB': 'Məzmun məlumatları: TMDB',
+  'Galeriye kaydet': 'Qalereyaya yadda saxla',
+  'Galeriye kaydedildi': 'Qalereyaya yadda saxlanıldı',
+  'Galeriye kaydediliyor...': 'Qalereyaya yazılır...',
+  'Galeri izni verilmedi': 'Qalereya icazəsi verilmədi',
+  'Kaydedilemedi': 'Yadda saxlanılmadı',
+  '{} medyayı galeriye kaydet': '{} medianı qalereyaya saxla',
+  '{}/{} kaydedildi': '{}/{} saxlanıldı',
 };

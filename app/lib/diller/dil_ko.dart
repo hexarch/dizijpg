@@ -1668,4 +1668,11 @@ const Map<String, String> cevirilerKo = {
       '피드에서 친구들이 무엇을 보는지 확인하고, 리뷰에 반응하고, 메시지를 보내세요.',
   'İzleme odasında aynı anda izleyin ve sohbet edin.': '시청 방에서 동시에 보며 채팅하세요.',
   'Yapım verileri: TMDB': '작품 데이터: TMDB',
+  'Galeriye kaydet': '갤러리에 저장',
+  'Galeriye kaydedildi': '갤러리에 저장됨',
+  'Galeriye kaydediliyor...': '갤러리에 저장 중...',
+  'Galeri izni verilmedi': '갤러리 권한이 없습니다',
+  'Kaydedilemedi': '저장하지 못했습니다',
+  '{} medyayı galeriye kaydet': '미디어 {}개를 갤러리에 저장',
+  '{}/{} kaydedildi': '{}/{} 저장됨',
 };

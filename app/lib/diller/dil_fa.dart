@@ -1733,4 +1733,11 @@ const Map<String, String> cevirilerFa = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'در اتاق تماشا هم‌زمان ببینید و گپ بزنید.',
   'Yapım verileri: TMDB': 'داده‌های آثار: TMDB',
+  'Galeriye kaydet': 'ذخیره در گالری',
+  'Galeriye kaydedildi': 'در گالری ذخیره شد',
+  'Galeriye kaydediliyor...': 'در حال ذخیره در گالری...',
+  'Galeri izni verilmedi': 'اجازه دسترسی به گالری داده نشد',
+  'Kaydedilemedi': 'ذخیره نشد',
+  '{} medyayı galeriye kaydet': 'ذخیره {} رسانه در گالری',
+  '{}/{} kaydedildi': '{}/{} ذخیره شد',
 };

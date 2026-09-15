@@ -1758,4 +1758,11 @@ const Map<String, String> cevirilerSw = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'Tazameni kwa wakati mmoja kwenye chumba cha kutazama na mpige gumzo.',
   'Yapım verileri: TMDB': 'Data ya vichwa: TMDB',
+  'Galeriye kaydet': 'Hifadhi kwenye matunzio',
+  'Galeriye kaydedildi': 'Imehifadhiwa kwenye matunzio',
+  'Galeriye kaydediliyor...': 'Inahifadhi kwenye matunzio...',
+  'Galeri izni verilmedi': 'Ruhusa ya matunzio haikutolewa',
+  'Kaydedilemedi': 'Haikuhifadhiwa',
+  '{} medyayı galeriye kaydet': 'Hifadhi media {} kwenye matunzio',
+  '{}/{} kaydedildi': '{}/{} zimehifadhiwa',
 };

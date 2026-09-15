@@ -1751,4 +1751,11 @@ const Map<String, String> cevirilerKn = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'ವಾಚ್ ರೂಮ್‌ನಲ್ಲಿ ಒಂದೇ ಸಮಯದಲ್ಲಿ ನೋಡಿ ಮತ್ತು ಚಾಟ್ ಮಾಡಿ.',
   'Yapım verileri: TMDB': 'ಶೀರ್ಷಿಕೆ ಡೇಟಾ: TMDB',
+  'Galeriye kaydet': 'ಗ್ಯಾಲರಿಗೆ ಉಳಿಸಿ',
+  'Galeriye kaydedildi': 'ಗ್ಯಾಲರಿಗೆ ಉಳಿಸಲಾಗಿದೆ',
+  'Galeriye kaydediliyor...': 'ಗ್ಯಾಲರಿಗೆ ಉಳಿಸಲಾಗುತ್ತಿದೆ...',
+  'Galeri izni verilmedi': 'ಗ್ಯಾಲರಿ ಅನುಮತಿ ಸಿಗಲಿಲ್ಲ',
+  'Kaydedilemedi': 'ಉಳಿಸಲಾಗಲಿಲ್ಲ',
+  '{} medyayı galeriye kaydet': '{} ಮಾಧ್ಯಮವನ್ನು ಗ್ಯಾಲರಿಗೆ ಉಳಿಸಿ',
+  '{}/{} kaydedildi': '{}/{} ಉಳಿಸಲಾಗಿದೆ',
 };

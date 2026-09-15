@@ -1779,4 +1779,11 @@ const Map<String, String> cevirilerTa = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'பார்வை அறையில் ஒரே நேரத்தில் பார்த்து அரட்டையடியுங்கள்.',
   'Yapım verileri: TMDB': 'தலைப்புத் தரவு: TMDB',
+  'Galeriye kaydet': 'கேலரியில் சேமி',
+  'Galeriye kaydedildi': 'கேலரியில் சேமிக்கப்பட்டது',
+  'Galeriye kaydediliyor...': 'கேலரியில் சேமிக்கிறது...',
+  'Galeri izni verilmedi': 'கேலரி அனுமதி வழங்கப்படவில்லை',
+  'Kaydedilemedi': 'சேமிக்க முடியவில்லை',
+  '{} medyayı galeriye kaydet': '{} மீடியாவை கேலரியில் சேமி',
+  '{}/{} kaydedildi': '{}/{} சேமிக்கப்பட்டது',
 };

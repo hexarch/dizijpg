@@ -1770,4 +1770,11 @@ const Map<String, String> cevirilerPl = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'Oglądajcie jednocześnie w pokoju i rozmawiajcie na czacie.',
   'Yapım verileri: TMDB': 'Dane tytułów: TMDB',
+  'Galeriye kaydet': 'Zapisz w galerii',
+  'Galeriye kaydedildi': 'Zapisano w galerii',
+  'Galeriye kaydediliyor...': 'Zapisywanie w galerii...',
+  'Galeri izni verilmedi': 'Nie przyznano dostępu do galerii',
+  'Kaydedilemedi': 'Nie udało się zapisać',
+  '{} medyayı galeriye kaydet': 'Zapisz {} plików w galerii',
+  '{}/{} kaydedildi': 'Zapisano {}/{}',
 };

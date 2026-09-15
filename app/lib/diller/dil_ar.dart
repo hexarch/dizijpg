@@ -1772,4 +1772,11 @@ const Map<String, String> cevirilerAr = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'شاهدوا في الوقت نفسه في غرفة مشاهدة وتحدثوا.',
   'Yapım verileri: TMDB': 'بيانات الأعمال: TMDB',
+  'Galeriye kaydet': 'حفظ في المعرض',
+  'Galeriye kaydedildi': 'تم الحفظ في المعرض',
+  'Galeriye kaydediliyor...': 'جارٍ الحفظ في المعرض...',
+  'Galeri izni verilmedi': 'لم يتم منح إذن المعرض',
+  'Kaydedilemedi': 'تعذّر الحفظ',
+  '{} medyayı galeriye kaydet': 'حفظ {} من الوسائط في المعرض',
+  '{}/{} kaydedildi': 'تم حفظ {}/{}',
 };

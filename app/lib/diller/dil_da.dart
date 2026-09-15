@@ -1752,4 +1752,11 @@ const Map<String, String> cevirilerDa = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'Se samtidig i et visningsrum, og chat imens.',
   'Yapım verileri: TMDB': 'Titeldata: TMDB',
+  'Galeriye kaydet': 'Gem i galleriet',
+  'Galeriye kaydedildi': 'Gemt i galleriet',
+  'Galeriye kaydediliyor...': 'Gemmer i galleriet...',
+  'Galeri izni verilmedi': 'Gallerietilladelse blev ikke givet',
+  'Kaydedilemedi': 'Kunne ikke gemmes',
+  '{} medyayı galeriye kaydet': 'Gem {} medier i galleriet',
+  '{}/{} kaydedildi': '{}/{} gemt',
 };

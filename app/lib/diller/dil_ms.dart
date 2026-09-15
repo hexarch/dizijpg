@@ -1756,4 +1756,11 @@ const Map<String, String> cevirilerMs = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'Tonton serentak di bilik tontonan dan bersembang.',
   'Yapım verileri: TMDB': 'Data judul: TMDB',
+  'Galeriye kaydet': 'Simpan ke galeri',
+  'Galeriye kaydedildi': 'Disimpan ke galeri',
+  'Galeriye kaydediliyor...': 'Menyimpan ke galeri...',
+  'Galeri izni verilmedi': 'Kebenaran galeri tidak diberikan',
+  'Kaydedilemedi': 'Tidak dapat disimpan',
+  '{} medyayı galeriye kaydet': 'Simpan {} media ke galeri',
+  '{}/{} kaydedildi': '{}/{} disimpan',
 };

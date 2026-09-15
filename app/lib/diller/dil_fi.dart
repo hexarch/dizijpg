@@ -1758,4 +1758,11 @@ const Map<String, String> cevirilerFi = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'Katsokaa samaan aikaan katseluhuoneessa ja jutelkaa.',
   'Yapım verileri: TMDB': 'Nimiketiedot: TMDB',
+  'Galeriye kaydet': 'Tallenna galleriaan',
+  'Galeriye kaydedildi': 'Tallennettu galleriaan',
+  'Galeriye kaydediliyor...': 'Tallennetaan galleriaan...',
+  'Galeri izni verilmedi': 'Gallerian käyttölupaa ei annettu',
+  'Kaydedilemedi': 'Tallennus epäonnistui',
+  '{} medyayı galeriye kaydet': 'Tallenna {} mediaa galleriaan',
+  '{}/{} kaydedildi': '{}/{} tallennettu',
 };

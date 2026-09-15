@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekran_goruntusu.dart';
+import 'package:dizijpg/ekranlar/medya_goster.dart';
 import 'package:dizijpg/ekranlar/ses.dart';
 import 'package:dizijpg/ekranlar/tepki.dart';
 import 'package:dizijpg/ekranlar/sohbet.dart';
@@ -235,6 +236,72 @@ void main() {
     );
     expect(tester.takeException(), isNull);
     await _kapat(tester);
+  });
+
+  testWidgets('GALERİYE KAYDET: medya menüsünde çıkar, metinde çıkmaz', (
+    tester,
+  ) async {
+    await _kur(tester, [
+      _mesaj(1, metin: 'selam'),
+      {..._mesaj(2), 'medya': '/medya/m1-a.jpg'},
+    ]);
+    // Düz metin mesajı: menüde kaydet YOK (kaydedilecek medya yok).
+    await tester.longPress(find.text('selam'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('mesaj-galeriye-kaydet')), findsNothing);
+    Navigator.of(tester.element(find.text('Yanıtla'))).pop();
+    await tester.pumpAndSettle();
+
+    // Medya mesajı: menüde kaydet VAR.
+    await tester.longPress(find.byType(Image).first, warnIfMissed: false);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('mesaj-galeriye-kaydet')), findsOneWidget);
+    expect(find.text('Galeriye kaydet'), findsOneWidget);
+    Navigator.of(
+      tester.element(find.byKey(const Key('mesaj-galeriye-kaydet'))),
+    ).pop();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await _kapat(tester);
+  });
+
+  testWidgets('GALERİYE KAYDET: tam ekran düğmesi YALNIZ izin verilince', (
+    tester,
+  ) async {
+    // `pumpAndSettle` KULLANILMAZ: görsel yer tutucusu (CircularProgress)
+    // sonsuz döner, settle zaman aşımına uğrar.
+    // Görüntüleyiciyi doğrudan açıyoruz: sohbet medyası `kaydedilebilir`
+    // geçer, TMDB afişi (detay/bölüm sayfaları) GEÇMEZ.
+    late BuildContext ctx;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (c) {
+            ctx = c;
+            return const Scaffold(body: SizedBox.shrink());
+          },
+        ),
+      ),
+    );
+
+    medyaGoster(ctx, const [
+      'https://dizijpg.com/medya/x.jpg',
+    ], kaydedilebilir: true);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byKey(const Key('medya-kaydet')), findsOneWidget);
+    expect(find.byTooltip('Galeriye kaydet'), findsOneWidget);
+    Navigator.of(ctx, rootNavigator: true).pop();
+    await tester.pump(const Duration(seconds: 1));
+
+    // İzin verilmeyen yüzeyde (TMDB afişi) düğme ÇIKMAZ.
+    medyaGoster(ctx, const ['https://dizijpg.com/medya/x.jpg']);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byKey(const Key('medya-kaydet')), findsNothing);
+    Navigator.of(ctx, rootNavigator: true).pop();
+    await tester.pump(const Duration(seconds: 1));
+    expect(tester.takeException(), isNull);
   });
 
   test('SES DALGASI seviyeye göre dalgalanır (düz şerit değil)', () {

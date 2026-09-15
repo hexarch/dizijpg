@@ -1721,4 +1721,11 @@ const Map<String, String> cevirilerTh = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'ดูพร้อมกันในห้องรับชมและแชท',
   'Yapım verileri: TMDB': 'ข้อมูลผลงาน: TMDB',
+  'Galeriye kaydet': 'บันทึกลงแกลเลอรี',
+  'Galeriye kaydedildi': 'บันทึกลงแกลเลอรีแล้ว',
+  'Galeriye kaydediliyor...': 'กำลังบันทึกลงแกลเลอรี...',
+  'Galeri izni verilmedi': 'ไม่ได้รับสิทธิ์เข้าถึงแกลเลอรี',
+  'Kaydedilemedi': 'บันทึกไม่สำเร็จ',
+  '{} medyayı galeriye kaydet': 'บันทึกสื่อ {} รายการลงแกลเลอรี',
+  '{}/{} kaydedildi': 'บันทึกแล้ว {}/{}',
 };

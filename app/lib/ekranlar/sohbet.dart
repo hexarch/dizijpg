@@ -23,11 +23,13 @@ import '../oda/oda_sheet.dart';
 import '../dosya_oku.dart';
 import '../ekran_goruntusu.dart';
 import '../emoji_efekti.dart';
+import '../galeriye_kaydet.dart';
 import '../gorsel_basliklari.dart';
 import '../gorusme/arama_dugmeleri.dart';
 import '../hareketli_emoji.dart';
 import '../medya_yukle.dart';
 import '../yalniz_emoji.dart';
+import '../uyari.dart';
 import '../yerel_gorsel.dart';
 import '../push.dart';
 import '../sohbet_olay.dart';
@@ -4060,6 +4062,62 @@ class _MesajBaloncugu extends StatelessWidget {
     this.disVurus = 0,
   });
 
+  /// Galeriye kaydedilebilir medyaların TAM ADRESLERİ (15 Eyl 2026).
+  ///
+  /// Albümde hepsi, tek medyada bir tane. DIŞARIDA KALANLAR: sesli mesaj
+  /// (galeri ses dosyası göstermez), belge (kendi indirme yolu var) ve
+  /// HENÜZ GÖNDERİLMEMİŞ yerel satır — onun kaynağı zaten cihazda duruyor,
+  /// sunucuda karşılığı yok.
+  List<String> get _kaydedilirMedyalar {
+    if (mesaj['_yerel'] != null) return const [];
+    final album = <String>[
+      for (final y in (mesaj['medyalar'] as List<dynamic>? ?? const []))
+        if (y is String) y,
+    ];
+    if (album.length > 1) {
+      return [
+        for (final y in album)
+          if (dosyaUrl(y) case final u?) u,
+      ];
+    }
+    final tek = mesaj['medya'] as String?;
+    if (tek == null || sesDosyasi(tek)) return const [];
+    final u = dosyaUrl(tek);
+    return u == null ? const [] : [u];
+  }
+
+  /// Menüden "Galeriye kaydet": albümde hepsi SIRAYLA iner.
+  ///
+  /// KISMİ BAŞARI raporlanır (yükleme hattındaki kuralla aynı): 4 medyanın
+  /// 3'ü kaydedildiyse kullanıcı bunu bilmeli, sessiz kayıp olmamalı.
+  Future<void> _galeriyeKaydet(BuildContext context) async {
+    final urller = _kaydedilirMedyalar;
+    if (urller.isEmpty) return;
+    uyar(context, 'Galeriye kaydediliyor...'.c);
+    var basarili = 0;
+    var izinYok = false;
+    for (final u in urller) {
+      final sonuc = await galeriyeKaydet(u);
+      if (sonuc == GaleriSonuc.tamam) {
+        basarili++;
+      } else if (sonuc == GaleriSonuc.izinYok) {
+        izinYok = true;
+        break;
+      }
+    }
+    if (!context.mounted) return;
+    uyar(
+      context,
+      izinYok
+          ? 'Galeri izni verilmedi'.c
+          : basarili == 0
+          ? 'Kaydedilemedi'.c
+          : basarili == urller.length
+          ? 'Galeriye kaydedildi'.c
+          : '{}/{} kaydedildi'.cf([basarili, urller.length]),
+    );
+  }
+
   /// Kullanıcının bu mesaja verdiği tepki (yoksa null).
   String? get _benimTepkim {
     for (final t in (mesaj['tepkiler'] as List<dynamic>? ?? const [])) {
@@ -4135,6 +4193,29 @@ class _MesajBaloncugu extends StatelessWidget {
               ),
               Divider(color: DiziRenkler.metin12, height: 12),
             ],
+            // GALERİYE KAYDET (15 Eyl 2026 isteği). Tam ekranı açmadan da
+            // ulaşılsın diye menüde: albümde HEPSİ sırayla kaydedilir,
+            // tek medyada tek dosya. Ses ve belge bu listeye girmez —
+            // galeri onları göstermez (belge zaten kendi indirmesini yapar).
+            if (_kaydedilirMedyalar.isNotEmpty)
+              ListTile(
+                key: const Key('mesaj-galeriye-kaydet'),
+                leading: Icon(
+                  Icons.download_rounded,
+                  color: DiziRenkler.sariMetin,
+                ),
+                title: Text(
+                  _kaydedilirMedyalar.length > 1
+                      ? '{} medyayı galeriye kaydet'.cf([
+                          _kaydedilirMedyalar.length,
+                        ])
+                      : 'Galeriye kaydet'.c,
+                ),
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  _galeriyeKaydet(context);
+                },
+              ),
             if (yanitla != null)
               ListTile(
                 leading: Icon(Icons.reply, color: DiziRenkler.sariMetin),
@@ -4405,9 +4486,12 @@ class _MesajBaloncugu extends StatelessWidget {
                     ilerleme: bekliyor ? ilerleme : null,
                     onTap: yerel.isNotEmpty
                         ? null
-                        : (i) => medyaGoster(context, [
-                            for (final y in album) dosyaUrl(y)!,
-                          ], baslangic: i),
+                        : (i) => medyaGoster(
+                            context,
+                            [for (final y in album) dosyaUrl(y)!],
+                            baslangic: i,
+                            kaydedilebilir: true,
+                          ),
                   ),
                 ),
               // BELGE
@@ -4431,7 +4515,9 @@ class _MesajBaloncugu extends StatelessWidget {
                   // Foto/GIF ve video: dokununca tam ekran görüntüleyici
                   // (yakınlaştırma + video oynatma/sarma)
                   child: InkWell(
-                    onTap: () => medyaGoster(context, [dosyaUrl(medya)!]),
+                    onTap: () => medyaGoster(context, [
+                      dosyaUrl(medya)!,
+                    ], kaydedilebilir: true),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       // Yer tutucu SAYDAM siyahtı (black26): altındaki

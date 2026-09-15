@@ -1714,4 +1714,11 @@ const Map<String, String> cevirilerHe = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'צפו בו־זמנית בחדר צפייה ושוחחו.',
   'Yapım verileri: TMDB': 'נתוני יצירות: TMDB',
+  'Galeriye kaydet': 'שמירה בגלריה',
+  'Galeriye kaydedildi': 'נשמר בגלריה',
+  'Galeriye kaydediliyor...': 'שומר בגלריה...',
+  'Galeri izni verilmedi': 'הרשאת הגלריה לא ניתנה',
+  'Kaydedilemedi': 'לא ניתן לשמור',
+  '{} medyayı galeriye kaydet': 'שמירת {} פריטים בגלריה',
+  '{}/{} kaydedildi': 'נשמרו {}/{}',
 };

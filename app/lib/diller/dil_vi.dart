@@ -1747,4 +1747,11 @@ const Map<String, String> cevirilerVi = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'Cùng xem một lúc trong phòng xem và trò chuyện.',
   'Yapım verileri: TMDB': 'Dữ liệu tác phẩm: TMDB',
+  'Galeriye kaydet': 'Lưu vào thư viện',
+  'Galeriye kaydedildi': 'Đã lưu vào thư viện',
+  'Galeriye kaydediliyor...': 'Đang lưu vào thư viện...',
+  'Galeri izni verilmedi': 'Chưa cấp quyền thư viện',
+  'Kaydedilemedi': 'Không thể lưu',
+  '{} medyayı galeriye kaydet': 'Lưu {} mục vào thư viện',
+  '{}/{} kaydedildi': 'Đã lưu {}/{}',
 };

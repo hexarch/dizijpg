@@ -1762,4 +1762,11 @@ const Map<String, String> cevirilerHu = {
   'İzleme odasında aynı anda izleyin ve sohbet edin.':
       'Nézzétek egyszerre egy nézőszobában, és csevegjetek.',
   'Yapım verileri: TMDB': 'Címadatok: TMDB',
+  'Galeriye kaydet': 'Mentés a galériába',
+  'Galeriye kaydedildi': 'Mentve a galériába',
+  'Galeriye kaydediliyor...': 'Mentés a galériába...',
+  'Galeri izni verilmedi': 'A galéria engedélye megtagadva',
+  'Kaydedilemedi': 'Nem sikerült menteni',
+  '{} medyayı galeriye kaydet': '{} elem mentése a galériába',
+  '{}/{} kaydedildi': '{}/{} mentve',
 };

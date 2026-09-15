@@ -11017,3 +11017,25 @@ Kullanıcı beş istek arka arkaya verdi; hepsi aynı derlemede.
 - Test `sohbet_ss_ve_dalga_test.dart` (7) + tüm paket (2978) ve backend (2509) yeşil.
 - TUZAK: dağıtım sırasında başka oturum da 244 ile web yükledi; paketler
   birbirini sildi (bkz. paylaşılan ağaç notu).
+
+## 15 Eyl 2026 — Sohbet medyasını galeriye kaydetme (1.166.0+246) ✅
+Kullanıcı: *"sohbette iletilen medyaları galeriye kaydetme özelliği olmalı"*.
+- ✅ `app/lib/galeriye_kaydet.dart`: adresten indirip sistem galerisine yazar
+  (`gal` paketi, "dizi.jpg" albümü). Fotoğraf bayttan, VİDEO geçici dosyadan
+  (gal video için yol ister) — kopyalandıktan sonra geçici dosya silinir.
+  Sonuç üç hâlde raporlanır: tamam / izin yok / hata.
+- ✅ Tam ekran görüntüleyicide indirme düğmesi (`medya-kaydet`), YALNIZ
+  `medyaGoster(..., kaydedilebilir: true)` ile açılan yüzeylerde. TMDB
+  afişi/arka planı aynı görüntüleyiciden geçiyor; onları kaydettirmek
+  bizim vermediğimiz bir hakkı vermek olurdu.
+- ✅ Mesaja uzun basınca "Galeriye kaydet" (albümde "{n} medyayı galeriye
+  kaydet"); hepsi sırayla iner, kısmi başarı sayıyla bildirilir. Ses ve
+  belge listeye GİRMEZ (galeri göstermez / belgenin kendi yolu var).
+- Web: galeri yok → `<a download>` ile tarayıcı indirmesi.
+- İzinler: Android `WRITE_EXTERNAL_STORAGE` yalnız `maxSdkVersion="28"`
+  (API 29+ MediaStore'a izinsiz yazar, okuma izni İSTENMEZ); iOS
+  `NSPhotoLibraryAddUsageDescription` (yalnız ekleme).
+- TUZAK: `package:web` doğrudan import edilince `flutter test` (VM) paketi
+  derlemeye kalkıp yığınla hata veriyor → `web_indir.dart` koşullu sapı.
+- Test: `sohbet_ss_ve_dalga_test.dart` +2 (menüde çıkma/çıkmama, tam ekran
+  düğmesinin izin kapısı).
