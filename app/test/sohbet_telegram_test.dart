@@ -172,8 +172,8 @@ void main() {
     // 3 kare: üstte geniş 1 + altta 2; video karesinde oynat ikonu.
     expect(find.byType(CachedNetworkImage), findsNWidgets(2));
     expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
-    // Tek-medya yolu ÇİZİLMEZ (aynı görsel iki kez basılmasın).
-    expect(find.text('10:14'), findsOneWidget);
+    // Saat balonda YOK (15 Eyl 2026: boşluğu çekince belirir).
+    expect(find.text('10:14'), findsNothing);
     expect(tester.takeException(), isNull);
     await _kapat(tester);
   });
@@ -190,7 +190,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       expect(tester.takeException(), isNull);
       expect(find.text('selam'), findsOneWidget);
-      expect(find.text('10:15'), findsOneWidget);
+      expect(find.text('10:15'), findsNothing); // saat balonda yok (15 Eyl)
       await _kapat(tester);
     },
   );
@@ -232,32 +232,57 @@ void main() {
     await _kapat(tester);
   });
 
-  testWidgets('İYİMSER: metin gönderince satır HEMEN belirir, onayla kalkar', (
-    tester,
-  ) async {
-    await _kur(tester, [_mesaj(1, metin: 'selam', benim: false)]);
-    _gonderimKapisi = Completer<void>();
-    await tester.enterText(find.byType(TextField), 'merhaba');
-    await tester.pump();
-    await tester.tap(find.byIcon(Icons.send_rounded));
-    await tester.pump(); // POST kapıda bekliyor
-    // Bekleyen satır: metin var, saat yerine saat İKONU var.
-    expect(find.text('merhaba'), findsOneWidget);
-    expect(find.byIcon(Icons.schedule), findsOneWidget);
-    // Kutu hemen boşaldı (Telegram).
-    expect(
-      tester.widget<TextField>(find.byType(TextField)).controller!.text,
-      '',
-    );
-    _gonderimKapisi!.complete();
-    await tester.pumpAndSettle();
-    // Sunucu onayladı: yerel satır düştü, gerçek satır (saat 11:00) geldi.
-    expect(_gonderilen, hasLength(1));
-    expect(find.byIcon(Icons.schedule), findsNothing);
-    expect(find.text('merhaba'), findsOneWidget);
-    expect(find.text('11:00'), findsOneWidget);
-    await _kapat(tester);
-  });
+  testWidgets(
+    'İYİMSER: metin gönderince satır HEMEN belirir, onayda YERİNDE sunucu satırı olur',
+    (tester) async {
+      await _kur(tester, [_mesaj(1, metin: 'selam', benim: false)]);
+      _gonderimKapisi = Completer<void>();
+      await tester.enterText(find.byType(TextField), 'merhaba');
+      await tester.pump();
+      await tester.tap(find.byIcon(Icons.send_rounded));
+      await tester.pump(); // POST kapıda bekliyor
+      // Bekleyen satır: metin var, saat İKONU var.
+      expect(find.text('merhaba'), findsOneWidget);
+      expect(find.byIcon(Icons.schedule), findsOneWidget);
+      // Kutu hemen boşaldı (Telegram).
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        '',
+      );
+      // Balonun kimliği (ValueKey) yerel anahtar: onaydan sonra da AYNI
+      // kalmalı — 15 Eyl 2026 "mesajlar titriyor": eskiden yerel satır
+      // silinip sunucu satırı yeniden ekleniyordu, balon bir ağ turu
+      // boyunca kayboluyordu.
+      Key? balonAnahtari() {
+        final w = tester.widget(
+          find.ancestor(
+            of: find.text('merhaba'),
+            matching: find.byWidgetPredicate(
+              (w) => w.runtimeType.toString() == '_MesajBaloncugu',
+            ),
+          ),
+        );
+        return w.key;
+      }
+
+      final once = balonAnahtari();
+      expect(once, isA<ValueKey>());
+      _gonderimKapisi!.complete();
+      await tester.pumpAndSettle();
+      // Sunucu onayladı: bekleme ikonu düştü, satır TEK ve aynı kimlikte.
+      expect(_gonderilen, hasLength(1));
+      expect(find.byIcon(Icons.schedule), findsNothing);
+      expect(find.text('merhaba'), findsOneWidget);
+      expect(balonAnahtari(), once);
+      // Saat balonda yok (boşluğu çekince belirir).
+      expect(find.text('11:00'), findsNothing);
+      // Yoklama aynı mesajı (id 901) getirince ÇİFTLEMEZ.
+      await tester.pump(const Duration(seconds: 6));
+      await tester.pump();
+      expect(find.text('merhaba'), findsOneWidget);
+      await _kapat(tester);
+    },
+  );
 
   testWidgets('İYİMSER: sunucu 500 → satır KALIR, kırmızı; dokununca tekrar', (
     tester,

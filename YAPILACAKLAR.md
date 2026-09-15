@@ -1,6 +1,40 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-15 — 🔨 SOHBET: SAAT GİZLİ (boşluğu çek), GÖZ İKONU, TİTREME (1.162.0+242)
+
+**Tetik:** *"mesajlarda saati kaldır sola çekince göster; mesaj alıntılama da
+öyle ama onu mesajı çekince, diğerini boşluğa çekince; görüldü yazısı mesajın
+altında olmalı iç divinde değil — 'a' da yazsa div uzuyor, hatta görüldü
+yazmasın göz ikonu olsun; mesajlar titriyor (gönderince/gelince/klavye)."*
+
+- **İki yatay jest** (`sohbet.dart`): BALONUN üstünde başlayan sürükleme
+  yanıt (`_KaydirYanitla`, artık `deferToChild`); satırın BOŞLUĞUNDA başlayan
+  sürükleme listeyi saran `RawGestureDetector` + `_SaatSuruklemeTanicisi`
+  ile saat sütununu açar (`_SaatSutunu`, 5 Ağu'daki jestin geri gelişi).
+  İç içe iki yatay tanıcıda arenayı içteki kazanır → ayrım hit-test'le.
+- **Saat balondan çıktı**; balonun alt satırı yalnız düzenlendi/bekleme/hata
+  varsa kurulur (`altSatirVar`), yoksa dolgu simetrik 8/8 → "a" balonu uzamaz.
+- **Görüldü = göz ikonu** (`Icons.visibility`, `semanticLabel: 'Görüldü'`)
+  balonun ALTINDA, Align içinde Column; yine yalnız son okunan mesajda.
+- **Titreme (3 kök sebep):**
+  1. Gönderimde yerel satır SİLİNİP `_yukle` ile sunucu satırı yeniden
+     ekleniyordu (arada balon yok, liste zıplıyor) → `_yerelSunucuyaBagla`:
+     satır yerinde `id/tarih` alır, kimlik `_idAnahtari` ile korunur.
+  2. Ters listede yeni mesaj 0. indekse girince görünen her satır bir indeks
+     kayıyor; `findChildIndexCallback` yokken sliver hepsini söküp yeniden
+     kuruyordu → `_kimlikIndeksi` + `KeyedSubtree(ValueKey(kimlik))`.
+  3. `MediaQuery.of(context).size` klavye animasyonunda her karede tüm
+     balonları (IntrinsicWidth) yeniden kuruyordu → `MediaQuery.sizeOf`.
+  Ayrıca grup boşluğu yalnız ÜSTTE (8/3): bir balonun boyu sonradan gelen
+  mesaja bağlı değil.
+- **Test tuzağı:** `sohbet_kaydirma_capa_test` sabit `jumpTo(900)` satırlar
+  kısalınca azami sınırı aşıyordu; gelen mesajla büyüyen sınıra kırpılınca
+  "5 px kaydı" YANLIŞ alarmı. Hedef artık `maxScrollExtent - 80` + görünen
+  satırın konumu da denetleniyor.
+- Dağıtım: ayrık worktree (76bfc21 üstüne), ana dala kullanıcı `!` ile
+  `git merge --ff-only <commit>` taşır.
+
 ## 2026-09-14 — 🔨 İZLEME ODASI: KONTROL DÜZENİ + "GERİ GİRİNCE YAYIN DEVAM ETMİYOR"
 
 **Tetik (iki ayrı bildirim, aynı tur):**

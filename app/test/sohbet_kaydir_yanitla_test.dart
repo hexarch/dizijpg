@@ -11,18 +11,23 @@ import 'package:http/testing.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// SOHBET EKRANI — TELEGRAM DÜZENİ (2 Eyl 2026): balon içi saat + kaydırarak yanıtla.
+/// SOHBET EKRANI — İKİ YATAY JEST (15 Eyl 2026): balonu çekince YANIT,
+/// boşluğu çekince SAAT.
 ///
 /// TARİHÇE: 5 Ağu 2026'da saat balondan kaldırılmış, tüm sohbet sürüklenince
-/// sağda beliren gizli sütuna taşınmıştı (`sohbet_saat_sutunu_test.dart`).
-/// 2 Eyl 2026'da kullanıcı "sohbeti Telegram gibi yap" dedi ve seçenekler
-/// arasında "balon içi saat"i seçti: saat balonun sağ altına döndü, yatay
-/// sürükleme Telegram'daki gibi YANITLA oldu. Bu dosya o kararı kilitler:
-///   1. Saat balonun içinde, her balonda (gönderilen/alınan/medya/içerik).
-///   2. Satırı sola sürükleyip eşiği geçince YANIT şeridi açılır.
+/// sağda beliren gizli sütuna taşınmıştı. 2 Eyl 2026'da "Telegram gibi"
+/// isteğiyle saat balonun içine döndü, yatay sürükleme YANITLA oldu. 15 Eyl
+/// 2026'da kullanıcı ikisini birden istedi: "mesajlarda saati kaldır, sola
+/// çekince göster; alıntılama da öyle ama onu mesajı çekince, diğerini boşluğa
+/// çekince". Bu dosya o kararı kilitler:
+///   1. Saat balonda YOK; liste boşluğu sola çekilince sağda belirir, parmak
+///      kalkınca kaybolur. Boşluk jesti yanıt AÇMAZ.
+///   2. BALONU sola sürükleyip eşiği geçince YANIT şeridi açılır; bu jest
+///      saat sütununu açmaz.
 ///   3. Kısa sürükleme yanıt açmaz; liste yerine döner.
 ///   4. Dikey kaydırma bozulmadı — yatay jest onu yutmuyor.
-///   5. "düzenlendi" ve "Görüldü" saatle aynı satırda kalır (1 Eyl kararı: tik yok).
+///   5. "düzenlendi" balonun içinde kalır; "Görüldü" YAZISI YOK, balonun
+///      ALTINDA göz ikonu var (tek harflik mesajın balonu uzamaz).
 ///   6. 360 dp'de taşma yok.
 
 http.Response _json(Object govde, [int kod = 200]) => http.Response(
@@ -129,42 +134,83 @@ Future<void> _kapat(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('saat BALONUN İÇİNDE, her balonda (Telegram)', (tester) async {
-    await _kur(tester, [
-      _mesaj(1, metin: 'selam', benim: false),
-      _mesaj(2, metin: 'naber', saat: '10:15'),
-      _mesaj(3, medya: '/medya/m1-a.jpg', saat: '10:16'),
-      _mesaj(4, icerikTur: 'tv', icerikId: 99, saat: '10:17', benim: false),
-    ]);
-    expect(find.text('10:14'), findsOneWidget);
-    expect(find.text('10:15'), findsOneWidget);
-    expect(find.text('10:16'), findsOneWidget);
-    expect(find.text('10:17'), findsOneWidget);
-    expect(find.text('selam'), findsOneWidget);
-    // Saat balonun sağ altında: balon metninin altında ve sağında.
-    final metin = tester.getBottomRight(find.text('naber'));
-    final saat = tester.getTopRight(find.text('10:15'));
-    expect(saat.dy, greaterThanOrEqualTo(metin.dy - 2));
-    expect(tester.takeException(), isNull);
-    await _kapat(tester);
-  });
+  testWidgets(
+    'saat balonda YOK; BOŞLUĞU sola çekince sağda belirir, bırakınca gider',
+    (tester) async {
+      await _kur(tester, [
+        _mesaj(1, metin: 'selam', benim: false),
+        _mesaj(2, metin: 'naber', saat: '10:15'),
+        _mesaj(3, medya: '/medya/m1-a.jpg', saat: '10:16'),
+        _mesaj(4, icerikTur: 'tv', icerikId: 99, saat: '10:17', benim: false),
+      ]);
+      // Durağan listede hiçbir saat çizilmez.
+      expect(find.text('10:14'), findsNothing);
+      expect(find.text('10:15'), findsNothing);
+      expect(find.text('10:16'), findsNothing);
+      expect(find.text('10:17'), findsNothing);
+      expect(find.text('selam'), findsOneWidget);
 
-  testWidgets('düzenlendi + Görüldü saatle aynı satırda, tik YOK', (
-    tester,
-  ) async {
-    await _kur(tester, [
-      _mesaj(1, metin: 'selam', duzenlendi: true, okundu: true),
-    ]);
-    expect(find.text('düzenlendi'), findsOneWidget);
-    expect(find.text('Görüldü'), findsOneWidget);
-    expect(find.text('10:14'), findsOneWidget);
-    expect(find.byIcon(Icons.done_all), findsNothing);
-    expect(find.byIcon(Icons.done), findsNothing);
-    final d = tester.getCenter(find.text('düzenlendi'));
-    final s = tester.getCenter(find.text('10:14'));
-    expect((d.dy - s.dy).abs(), lessThan(4));
-    await _kapat(tester);
-  });
+      // "selam" karşı tarafın balonu (solda, dar); aynı satırın SAĞI boşluktur.
+      final balonSagi = tester.getBottomRight(find.text('selam'));
+      final bosluk = Offset(balonSagi.dx + 120, balonSagi.dy - 6);
+      final jest = await tester.startGesture(bosluk);
+      await jest.moveBy(const Offset(-40, 0));
+      await tester.pump();
+      // Sütun açıldı: LİSTENİN TAMAMI kaydı, dört saat de sağda.
+      expect(find.text('10:14'), findsOneWidget);
+      expect(find.text('10:15'), findsOneWidget);
+      expect(find.text('10:16'), findsOneWidget);
+      expect(find.text('10:17'), findsOneWidget);
+      final saat = tester.getCenter(find.text('10:15'));
+      expect(
+        saat.dx,
+        greaterThan(tester.getBottomRight(find.text('naber')).dx),
+      );
+      // Boşluk jesti eşiği geçse bile yanıt AÇMAZ.
+      await jest.moveBy(const Offset(-60, 0));
+      await tester.pump();
+      expect(find.text('Yanıtlanıyor'), findsNothing);
+      await jest.up();
+      await tester.pumpAndSettle();
+      expect(
+        find.text('10:15'),
+        findsNothing,
+        reason: 'parmak kalkınca kapanır',
+      );
+      expect(find.text('Yanıtlanıyor'), findsNothing);
+      expect(tester.takeException(), isNull);
+      await _kapat(tester);
+    },
+  );
+
+  testWidgets(
+    'düzenlendi balonun İÇİNDE; Görüldü yazısı YOK, balonun ALTINDA göz; saat yok',
+    (tester) async {
+      await _kur(tester, [
+        _mesaj(1, metin: 'selam', duzenlendi: true, okundu: true),
+        _mesaj(2, metin: 'a', okundu: true),
+      ]);
+      expect(find.text('düzenlendi'), findsOneWidget);
+      expect(find.text('Görüldü'), findsNothing);
+      expect(find.text('10:14'), findsNothing);
+      expect(find.byIcon(Icons.done_all), findsNothing);
+      expect(find.byIcon(Icons.done), findsNothing);
+      // Göz TEK (yalnız son okunan mesajda) ve o balonun ALTINDA.
+      expect(find.byIcon(Icons.visibility), findsOneWidget);
+      final goz = tester.getRect(find.byIcon(Icons.visibility));
+      final aBalonu = find.ancestor(
+        of: find.text('a'),
+        matching: find.byType(IntrinsicWidth),
+      );
+      expect(goz.top, greaterThanOrEqualTo(tester.getRect(aBalonu).bottom));
+      // Tek harflik balon UZAMAZ: iç kutu yalnız metin kadar.
+      expect(
+        tester.getSize(aBalonu).height,
+        tester.getSize(find.text('a')).height,
+      );
+      await _kapat(tester);
+    },
+  );
 
   testWidgets('sola sürükleyip EŞİĞİ GEÇİNCE yanıt şeridi açılır', (
     tester,
@@ -178,8 +224,11 @@ void main() {
     final jest = await tester.startGesture(balon);
     await jest.moveBy(const Offset(-30, 0));
     await tester.pump();
+    // Balon jesti saat sütununu AÇMAZ.
+    expect(find.text('10:15'), findsNothing);
     await jest.moveBy(const Offset(-60, 0)); // toplam 90 > 64 eşik
     await tester.pump();
+    expect(find.text('10:15'), findsNothing);
     await jest.up();
     await tester.pumpAndSettle();
     expect(find.text('Yanıtlanıyor'), findsOneWidget);

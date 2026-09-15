@@ -349,9 +349,10 @@ void main() {
       );
     });
 
-    testWidgets('tik ikonları GİTTİ, tek bir "Görüldü" yazısı kaldı', (
+    testWidgets('tik ikonları GİTTİ, tek bir GÖZ ikonu balonun altında', (
       tester,
     ) async {
+      // 15 Eyl 2026: "Görüldü" yazısı da gitti — balonun ALTINDA göz ikonu.
       await _kur(tester, [
         _metinMesaji(id: 1, metin: 'ilk', benim: true, okundu: true),
         _metinMesaji(id: 2, metin: 'ikinci', benim: true, okundu: true),
@@ -360,16 +361,18 @@ void main() {
 
       expect(find.byIcon(Icons.done), findsNothing);
       expect(find.byIcon(Icons.done_all), findsNothing);
-      // İKİ okunmuş mesaj var ama yazı TEK: sonuncunun altında.
-      expect(find.text('Görüldü'), findsOneWidget);
-      final yazi = tester.getRect(find.text('Görüldü'));
-      expect(yazi.top, greaterThan(tester.getRect(find.text('ikinci')).top));
+      expect(find.text('Görüldü'), findsNothing);
+      // İKİ okunmuş mesaj var ama göz TEK: sonuncunun altında.
+      expect(find.byIcon(Icons.visibility), findsOneWidget);
+      final goz = tester.getRect(find.byIcon(Icons.visibility));
+      expect(goz.top, greaterThan(tester.getRect(find.text('ikinci')).bottom));
       await _kapat(tester);
     });
 
     testWidgets('okunmamışsa hiçbir işaret çizilmez', (tester) async {
       await _kur(tester, [_metinMesaji(benim: true)]);
       expect(find.text('Görüldü'), findsNothing);
+      expect(find.byIcon(Icons.visibility), findsNothing);
       expect(find.byIcon(Icons.done), findsNothing);
       await _kapat(tester);
     });

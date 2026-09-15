@@ -182,8 +182,8 @@ void main() {
       (w) => w is TepkiIkonu && w.emoji == '🔥' && w.boyut == 72,
     );
     expect(ikon, findsOneWidget);
-    // Saat yine yazılır; "selam" normal balonda.
-    expect(find.text('10:14'), findsOneWidget);
+    // Saat balonda YOK (15 Eyl 2026: boşluğu çekince belirir); "selam" normal balonda.
+    expect(find.text('10:14'), findsNothing);
     expect(find.text('🔥'), findsNothing, reason: 'düz metin olarak çizilmedi');
 
     await tester.tap(ikon);

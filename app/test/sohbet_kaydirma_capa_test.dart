@@ -218,20 +218,29 @@ void main() {
     await _ac(tester);
 
     // Kullanıcı geçmişe kaydırdı (ters listede pozitif offset = ESKİ mesajlar).
-    _denetci(tester).jumpTo(900);
+    // Hedef ARALIK İÇİNDE seçilir: sabit 900, balondan saat satırı çıkınca
+    // (15 Eyl 2026) azami sınırı aşıyordu ve gelen mesajla büyüyen sınıra
+    // kırpılınca test "5 px kaydı" diye yanlış alarm veriyordu.
+    final hedef = _denetci(tester).position.maxScrollExtent - 80;
+    expect(hedef, greaterThan(300), reason: 'liste yeterince uzun olmalı');
+    _denetci(tester).jumpTo(hedef);
     await tester.pump();
-    expect(_denetci(tester).position.pixels, 900);
+    expect(_denetci(tester).position.pixels, hedef);
+    final onceUst = tester.getTopLeft(find.text('mesaj 12')).dy;
 
     await tester.pump(sohbetYoklamaAraligi);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(
       _denetci(tester).position.pixels,
-      900,
+      hedef,
       reason:
           'Kullanıcı kaydırmadıkça ekran oynamaz — gelen mesaj onu dibe '
           'çekmemeli.',
     );
+    // Yalnız offset değil, GÖRÜNEN içerik de yerinde (gelen mesaj bir
+    // öncekiyle gruplanıyor; onun boyu değişse bile ekran kaymamalı).
+    expect(tester.getTopLeft(find.text('mesaj 12')).dy, onceUst);
     await _kapat(tester);
   });
 }
