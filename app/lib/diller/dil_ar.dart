@@ -1778,4 +1778,10 @@ const Map<String, String> cevirilerAr = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'علّم مسلسلاتك حلقةً حلقة، واحتفظ بقائمة أفلامك، وقيّم واكتب مراجعات، وشاهد ما يتابعه أصدقاؤك. على الويب والجوال.',
   '45 dilde. Web, Android ve iOS.': 'بـ 45 لغة. الويب وAndroid وiOS.',
+  'Takma ad': 'اسم مستعار',
+  'Bu adı yalnız sen görürsün': 'أنت وحدك من يرى هذا الاسم',
+  'Takma ad kaydedilemedi': 'تعذر حفظ الاسم المستعار',
+  'Tema karşı tarafa iletilemedi': 'تعذر إرسال السمة إلى الطرف الآخر',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'السمة التي تختارها تظهر للطرف الآخر أيضًا',
 };

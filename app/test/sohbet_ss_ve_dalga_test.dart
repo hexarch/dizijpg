@@ -8,6 +8,7 @@ import 'package:dizijpg/ekranlar/ses.dart';
 import 'package:dizijpg/ekranlar/tepki.dart';
 import 'package:dizijpg/ekranlar/sohbet.dart';
 import 'package:dizijpg/sohbet_olay.dart';
+import 'package:dizijpg/sohbet_tema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -191,6 +192,100 @@ void main() {
       await _kapat(tester);
     },
   );
+
+  testWidgets(
+    'EKRAN GÖRÜNTÜSÜ SATIRI yeni mesaj gelince YERİNDE kalır (dibe kaymaz)',
+    (tester) async {
+      // 15 Eyl 2026: "ekran görüntüsü aldın yazısı aşağıda kalıyor, sohbetle
+      // birlikte yükselmiyor". Tam yükleme yerel satırları sunucu listesinin
+      // ARDINA diziyordu; satır artık düştüğü mesajın hemen altına çapalı.
+      final olaylar = StreamController<void>.broadcast();
+      EkranGoruntusu.testAkisi(olaylar.stream);
+      addTearDown(() {
+        EkranGoruntusu.testAkisi(null);
+        olaylar.close();
+      });
+      final sunucu = [_mesaj(1, metin: 'selam', benim: false)];
+      await _kur(tester, sunucu);
+      olaylar.add(null);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      final satir = find.text('Ekran görüntüsü aldın');
+      expect(satir, findsOneWidget);
+
+      // Sunucuya yeni mesaj düştü; uygulama öne gelince TAM yükleme olur.
+      sunucu.add(_mesaj(2, metin: 'yeni mesaj', benim: false, saat: '10:20'));
+      for (final d in [
+        AppLifecycleState.inactive,
+        AppLifecycleState.hidden,
+        AppLifecycleState.paused,
+        AppLifecycleState.hidden,
+        AppLifecycleState.inactive,
+        AppLifecycleState.resumed,
+      ]) {
+        tester.binding.handleAppLifecycleStateChanged(d);
+      }
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      // Ayrıca sıradan yoklama turu da geçsin (son satır id'siz → tam yükleme).
+      await tester.pump(const Duration(seconds: 6));
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(find.text('yeni mesaj'), findsOneWidget);
+      expect(satir, findsOneWidget);
+      // Ters listede yeni mesaj EN ALTTA; sistem satırı onun ÜSTÜNDE, eski
+      // mesajın altında.
+      expect(
+        _ust(tester, satir),
+        lessThan(_ust(tester, find.text('yeni mesaj'))),
+      );
+      expect(
+        _ust(tester, satir),
+        greaterThan(_ust(tester, find.text('selam'))),
+      );
+      expect(tester.takeException(), isNull);
+      await _kapat(tester);
+    },
+  );
+
+  testWidgets('PAYLAŞILAN TEMA: yoklamada gelen tema yerele işlenir', (
+    tester,
+  ) async {
+    // 15 Eyl 2026: karşı taraf temayı değiştirince bende de değişmeli.
+    await _kur(tester, [_mesaj(1, metin: 'selam', benim: false)]);
+    expect((await SohbetTemalari.getir('ayse')).anahtar, 'varsayilan');
+    final tema = SohbetTemalari.tamTemalar.first.anahtar;
+    _ekAlanlar = {'tema': tema};
+    await tester.pump(const Duration(seconds: 6));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect((await SohbetTemalari.getir('ayse')).anahtar, tema);
+    // Sohbet ekranı yeniden okudu: zemin bu temanın gradyanını çiziyor.
+    expect(
+      tester.widget<SohbetZemini>(find.byType(SohbetZemini)).tema.anahtar,
+      tema,
+    );
+    // Sunucu null dönerse yerel DOKUNULMAZ (eski sürümden kalan tercih).
+    _ekAlanlar = const {};
+    await tester.pump(const Duration(seconds: 6));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect((await SohbetTemalari.getir('ayse')).anahtar, tema);
+    expect(tester.takeException(), isNull);
+    await _kapat(tester);
+  });
+
+  testWidgets('TAKMA AD sohbet başlığında @ad yerine geçer', (tester) async {
+    await _kur(tester, [_mesaj(1, metin: 'selam', benim: false)]);
+    expect(find.text('@ayse'), findsOneWidget);
+    _ekAlanlar = {
+      'partner': {'son_gorulme': null, 'avatar': null, 'takma_ad': 'Kanka'},
+    };
+    await tester.pump(const Duration(seconds: 6));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Kanka'), findsOneWidget);
+    expect(find.text('@ayse'), findsNothing);
+    expect(tester.takeException(), isNull);
+    await _kapat(tester);
+  });
 
   testWidgets('EKRAN GÖRÜNTÜSÜNÜ KARŞI TARAF ALDI: satır adıyla belirir', (
     tester,

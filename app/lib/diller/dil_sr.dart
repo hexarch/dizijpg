@@ -1760,4 +1760,9 @@ const Map<String, String> cevirilerSr = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Označavaj serije epizodu po epizodu, vodi listu filmova, ocenjuj i piši recenzije, vidi šta gledaju tvoji prijatelji. Na vebu i mobilnom.',
   '45 dilde. Web, Android ve iOS.': 'Na 45 jezika. Veb, Android i iOS.',
+  'Takma ad': 'Nadimak',
+  'Bu adı yalnız sen görürsün': 'Samo ti vidiš ovo ime',
+  'Takma ad kaydedilemedi': 'Nadimak nije sačuvan',
+  'Tema karşı tarafa iletilemedi': 'Tema nije poslata drugoj strani',
+  'Seçtiğin tema karşı tarafta da görünür': 'Izabranu temu vidi i druga strana',
 };

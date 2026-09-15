@@ -1756,4 +1756,10 @@ const Map<String, String> cevirilerId = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Tandai serialmu episode demi episode, simpan daftar film, beri nilai dan ulasan, lihat apa yang ditonton teman-temanmu. Di web dan seluler.',
   '45 dilde. Web, Android ve iOS.': 'Dalam 45 bahasa. Web, Android, dan iOS.',
+  'Takma ad': 'Nama panggilan',
+  'Bu adı yalnız sen görürsün': 'Hanya kamu yang melihat nama ini',
+  'Takma ad kaydedilemedi': 'Nama panggilan tidak dapat disimpan',
+  'Tema karşı tarafa iletilemedi': 'Tema tidak dapat dikirim ke pihak lain',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Tema yang kamu pilih juga terlihat di pihak lain',
 };

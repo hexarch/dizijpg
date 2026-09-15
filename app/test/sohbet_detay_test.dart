@@ -18,6 +18,12 @@ import 'package:http/testing.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Detay yanıtındaki takma ad; testler kurulumdan önce değiştirir.
+String? _takmaAd;
+
+/// true → POST /sohbet-takma-ad 500 döner (geri alma testi).
+bool _takmaAdKapisi = false;
+
 http.Response _json(Object govde, [int kod = 200]) => http.Response(
   jsonEncode(govde),
   kod,
@@ -27,17 +33,33 @@ http.Response _json(Object govde, [int kod = 200]) => http.Response(
 late List<({String metot, String yol, String govde})> _istekler;
 
 void _sunucu() {
+  addTearDown(() {
+    _takmaAd = null;
+    _takmaAdKapisi = false;
+  });
   Api.istemci = MockClient((istek) async {
     final yol = istek.url.path.replaceFirst('/api', '');
     _istekler.add((metot: istek.method, yol: yol, govde: istek.body));
     if (yol.startsWith('/sohbet-detay/')) {
       return _json({
-        'partner': {'kullanici_adi': 'ayse', 'ad': 'Ayşe', 'avatar': null},
+        'partner': {
+          'kullanici_adi': 'ayse',
+          'ad': 'Ayşe',
+          'avatar': null,
+          'takma_ad': _takmaAd,
+        },
+        'tema': null,
         'sessiz': false,
         'medya': <dynamic>[],
       });
     }
     if (yol.startsWith('/sohbet-sessiz/')) return _json(const {'tamam': true});
+    if (yol.startsWith('/sohbet-tema/')) return _json(const {'tamam': true});
+    if (yol.startsWith('/sohbet-takma-ad/')) {
+      if (_takmaAdKapisi) return _json(const {'hata': 'yok'}, 500);
+      final ad = (jsonDecode(istek.body)['takma_ad'] as String).trim();
+      return _json({'tamam': true, 'takma_ad': ad.isEmpty ? null : ad});
+    }
     if (yol.startsWith('/sohbet-ara/')) {
       return _json({
         'sonuclar': [
@@ -180,6 +202,28 @@ void main() {
       expect(find.byIcon(Icons.gif_box_outlined), findsNothing);
       expect(find.byIcon(Icons.local_movies_outlined), findsNothing);
 
+      // 15 Eyl 2026: emoji ve ataç ikonları tek satırda kutunun DİKEY
+      // ORTASINDA (eskiden 4 px aşağı sarkıyordu); çok satırda son satırın
+      // ortasında (Telegram: ikonlar kutuyla büyümez, dipte kalır).
+      double merkezY(Finder f) => tester.getCenter(f).dy;
+      final kutu = find.byType(TextField);
+      for (final ikon in [Icons.emoji_emotions_outlined, Icons.attach_file]) {
+        expect(
+          merkezY(find.byIcon(ikon)),
+          moreOrLessEquals(merkezY(kutu), epsilon: 1),
+          reason: '$ikon tek satırda ortalı değil',
+        );
+      }
+      final tekSatirMerkez = merkezY(find.byIcon(Icons.attach_file));
+      await tester.enterText(find.byType(TextField), 'a\nb\nc');
+      await tester.pump();
+      expect(tester.getSize(kutu).height, greaterThan(60));
+      expect(
+        merkezY(find.byIcon(Icons.attach_file)),
+        moreOrLessEquals(tekSatirMerkez, epsilon: 1),
+        reason: 'çok satırda ikon dipteki satırın ortasında kalmalı',
+      );
+
       await tester.enterText(find.byType(TextField), 'selam');
       await tester.pump();
       expect(find.byIcon(Icons.send_rounded), findsOneWidget);
@@ -197,12 +241,20 @@ void main() {
       for (final ad in ['Galeri', 'Kamera', 'Dosya', 'GIF', 'Dizi / Film']) {
         expect(find.text(ad), findsOneWidget, reason: ad);
       }
-      // Mikrofona tek dokunuş kaydetmez, ipucu basar (Telegram davranışı).
+      // Mikrofona tek dokunuş kaydetmez; SnackBar da basmaz (15 Eyl 2026:
+      // klavyenin üstüne biniyordu), düğme sağa-sola sallanır.
       await tester.tapAt(const Offset(10, 10)); // paneli kapat
       await tester.pumpAndSettle();
+      double mikrofonX() => tester.getCenter(find.byIcon(Icons.mic_none)).dx;
+      final durgun = mikrofonX();
       await tester.tap(find.byIcon(Icons.mic_none));
       await tester.pump();
-      expect(find.text('Kaydetmek için basılı tut'), findsOneWidget);
+      await tester.pump(const Duration(milliseconds: 60));
+      expect(find.text('Kaydetmek için basılı tut'), findsNothing);
+      expect(find.byIcon(Icons.mic), findsNothing, reason: 'kayıt başlamadı');
+      expect(mikrofonX(), isNot(moreOrLessEquals(durgun, epsilon: 0.5)));
+      await tester.pumpAndSettle();
+      expect(mikrofonX(), moreOrLessEquals(durgun, epsilon: 0.01));
       await _kapat(tester);
     },
   );
@@ -213,6 +265,88 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text('Tema özelleştir'), findsOneWidget);
+    await _kapat(tester);
+  });
+  testWidgets(
+    'TAKMA AD: diyalogdan kaydedilir, başlık değişir, sunucuya gider',
+    (tester) async {
+      // 15 Eyl 2026: "sohbette konuştuğu kişiye takma isim koyabilmeli".
+      await _kur(tester, '/sohbet/ayse/detay');
+      expect(find.text('Takma ad'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('detay-takma-ad')));
+      await tester.pumpAndSettle();
+      // Diyalog: kutu + Kaydet; henüz ad yokken Kaldır ÇİZİLMEZ.
+      expect(find.byKey(const Key('takma-ad-kutu')), findsOneWidget);
+      expect(find.byKey(const Key('takma-ad-kaldir')), findsNothing);
+      expect(find.text('Bu adı yalnız sen görürsün'), findsOneWidget);
+      await tester.enterText(find.byKey(const Key('takma-ad-kutu')), ' Canım ');
+      await tester.tap(find.byKey(const Key('takma-ad-kaydet')));
+      await tester.pumpAndSettle();
+
+      final post = _istekler.where(
+        (i) => i.metot == 'POST' && i.yol == '/sohbet-takma-ad/ayse',
+      );
+      expect(post, hasLength(1));
+      expect(jsonDecode(post.first.govde)['takma_ad'], 'Canım');
+      // Başlık (AppBar) ve büyük ad takma ada döndü; @ad kimliği kalır.
+      expect(find.text('Canım'), findsNWidgets(2));
+      expect(find.text('Ayşe · @ayse'), findsOneWidget);
+
+      // İkinci açılışta Kaldır var; kaldırınca boş gövde gider, başlık @ad olur.
+      await tester.tap(find.byKey(const Key('detay-takma-ad')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('takma-ad-kaldir')));
+      await tester.pumpAndSettle();
+      expect(
+        _istekler.where((i) => i.yol == '/sohbet-takma-ad/ayse'),
+        hasLength(2),
+      );
+      expect(find.text('Canım'), findsNothing);
+      expect(find.text('@ayse'), findsNWidgets(2));
+      await tester.pump(const Duration(seconds: 2)); // controller dispose
+      await _kapat(tester);
+    },
+  );
+
+  testWidgets('TAKMA AD: sunucu reddederse geri alınır + uyarı', (
+    tester,
+  ) async {
+    _takmaAdKapisi = true;
+    await _kur(tester, '/sohbet/ayse/detay');
+    await tester.tap(find.byKey(const Key('detay-takma-ad')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('takma-ad-kutu')), 'Canım');
+    await tester.tap(find.byKey(const Key('takma-ad-kaydet')));
+    await tester.pumpAndSettle();
+    expect(find.text('Takma ad kaydedilemedi'), findsOneWidget);
+    expect(find.text('Canım'), findsNothing);
+    await tester.pump(const Duration(seconds: 5));
+    await _kapat(tester);
+  });
+
+  testWidgets('TAKMA AD: sunucudan gelen ad başlıkta', (tester) async {
+    _takmaAd = 'Kanka';
+    await _kur(tester, '/sohbet/ayse/detay');
+    expect(find.text('Kanka'), findsNWidgets(2));
+    expect(find.text('Ayşe · @ayse'), findsOneWidget);
+    await _kapat(tester);
+  });
+
+  testWidgets('TEMA seçimi karşı tarafa POST edilir', (tester) async {
+    // 15 Eyl 2026: "temayı ben değiştirince karşı tarafta da değişmeli".
+    await _kur(tester, '/sohbet/ayse/detay');
+    await tester.tap(find.byKey(const Key('detay-tema')));
+    await tester.pumpAndSettle();
+    expect(find.text('Seçtiğin tema karşı tarafta da görünür'), findsOneWidget);
+    final tema = SohbetTemalari.tamTemalar.first;
+    await tester.tap(find.byKey(Key('tema-${tema.anahtar}')));
+    await tester.pumpAndSettle();
+    final post = _istekler.where(
+      (i) => i.metot == 'POST' && i.yol == '/sohbet-tema/ayse',
+    );
+    expect(post, hasLength(1));
+    expect(jsonDecode(post.first.govde)['tema'], tema.anahtar);
+    expect((await SohbetTemalari.getir('ayse')).anahtar, tema.anahtar);
     await _kapat(tester);
   });
 }

@@ -1764,4 +1764,11 @@ const Map<String, String> cevirilerSw = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Weka alama vipindi vyako kipindi kwa kipindi, weka orodha ya filamu, kadiria na andika maoni, na uone marafiki zako wanatazama nini. Kwenye wavuti na simu.',
   '45 dilde. Web, Android ve iOS.': 'Katika lugha 45. Wavuti, Android na iOS.',
+  'Takma ad': 'Jina la utani',
+  'Bu adı yalnız sen görürsün': 'Ni wewe pekee unayeona jina hili',
+  'Takma ad kaydedilemedi': 'Jina la utani halikuhifadhiwa',
+  'Tema karşı tarafa iletilemedi':
+      'Mandhari hayakuweza kutumwa kwa upande mwingine',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Mandhari unayochagua yanaonekana pia upande mwingine',
 };

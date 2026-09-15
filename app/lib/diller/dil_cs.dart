@@ -1753,4 +1753,10 @@ const Map<String, String> cevirilerCs = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Odškrtávej seriály díl po dílu, veď si seznam filmů, hodnoť a recenzuj a sleduj, co sledují tvoji přátelé. Na webu i v mobilu.',
   '45 dilde. Web, Android ve iOS.': 'Ve 45 jazycích. Web, Android a iOS.',
+  'Takma ad': 'Přezdívka',
+  'Bu adı yalnız sen görürsün': 'Toto jméno vidíš jen ty',
+  'Takma ad kaydedilemedi': 'Přezdívku se nepodařilo uložit',
+  'Tema karşı tarafa iletilemedi': 'Motiv se nepodařilo odeslat druhé straně',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Vybraný motiv uvidí i druhá strana',
 };

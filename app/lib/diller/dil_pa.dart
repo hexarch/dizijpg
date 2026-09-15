@@ -1752,4 +1752,10 @@ const Map<String, String> cevirilerPa = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'ਆਪਣੇ ਸ਼ੋਅ ਐਪੀਸੋਡ-ਦਰ-ਐਪੀਸੋਡ ਮਾਰਕ ਕਰੋ, ਫ਼ਿਲਮਾਂ ਦੀ ਸੂਚੀ ਰੱਖੋ, ਰੇਟਿੰਗ ਤੇ ਰਿਵਿਊ ਦਿਓ, ਤੇ ਦੇਖੋ ਦੋਸਤ ਕੀ ਦੇਖ ਰਹੇ ਨੇ। ਵੈੱਬ ਤੇ ਮੋਬਾਈਲ ਉੱਤੇ।',
   '45 dilde. Web, Android ve iOS.': '45 ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ। ਵੈੱਬ, Android ਤੇ iOS।',
+  'Takma ad': 'ਉਪਨਾਮ',
+  'Bu adı yalnız sen görürsün': 'ਇਹ ਨਾਮ ਸਿਰਫ਼ ਤੁਸੀਂ ਦੇਖ ਸਕਦੇ ਹੋ',
+  'Takma ad kaydedilemedi': 'ਉਪਨਾਮ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ',
+  'Tema karşı tarafa iletilemedi': 'ਥੀਮ ਦੂਜੇ ਪਾਸੇ ਨਹੀਂ ਭੇਜੀ ਜਾ ਸਕੀ',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'ਤੁਹਾਡੀ ਚੁਣੀ ਥੀਮ ਦੂਜੇ ਪਾਸੇ ਵੀ ਦਿਖਦੀ ਹੈ',
 };

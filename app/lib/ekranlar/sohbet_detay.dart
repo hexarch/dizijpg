@@ -6,9 +6,11 @@ import 'package:provider/provider.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
+import '../sohbet_olay.dart';
 import '../sohbet_tema.dart';
 import '../tarih.dart';
 import '../tema.dart';
+import '../uyari.dart';
 import 'medya_goster.dart';
 import 'ortak.dart';
 
@@ -76,12 +78,106 @@ class _SohbetDetayEkraniState extends State<SohbetDetayEkrani> {
         _sessiz = d['sessiz'] == true;
         _yuklendi = true;
       });
+      // Paylaşılan tema (15 Eyl 2026): sunucudaki kayıt yereli ezer.
+      await SohbetTemalari.sunucudanUygula(
+        widget.kullaniciAdi,
+        d['tema'] as String?,
+      );
+      final t = await SohbetTemalari.getir(widget.kullaniciAdi);
+      if (mounted && t.anahtar != _tema.anahtar) setState(() => _tema = t);
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _hata = e.toString();
         _yuklendi = true;
       });
+    }
+  }
+
+  /// Taktığım ad (15 Eyl 2026): "ben ona ne diyorum". Yalnız bende görünür
+  /// (sohbet başlığı + mesaj listesi); karşı taraf bilmez. Boş = yok.
+  String? get _takmaAd {
+    final t = (_partner?['takma_ad'] as String?)?.trim();
+    return (t == null || t.isEmpty) ? null : t;
+  }
+
+  /// Takma ad diyaloğu. Boş kaydetmek KALDIRIR. İyimser: başlık hemen
+  /// değişir, sunucu reddederse geri alınır + uyarı (üç hâl kuralı).
+  /// Kaydedince [SohbetOlaylari.nesil] artar: açık sohbet ekranı ve mesaj
+  /// listesi yeni adı bir sonraki çekimde gösterir.
+  Future<void> _takmaAdDuzenle() async {
+    final kutu = TextEditingController(text: _takmaAd ?? '');
+    final sonuc = await showDialog<String?>(
+      context: context,
+      builder: (dctx) => AlertDialog(
+        title: Text('Takma ad'.c),
+        content: TextField(
+          key: const Key('takma-ad-kutu'),
+          controller: kutu,
+          autofocus: true,
+          maxLength: 32,
+          textCapitalization: TextCapitalization.words,
+          onSubmitted: (v) => Navigator.pop(dctx, v),
+          decoration: InputDecoration(
+            hintText: '@${widget.kullaniciAdi}',
+            helperText: 'Bu adı yalnız sen görürsün'.c,
+          ),
+        ),
+        actions: [
+          if (_takmaAd != null)
+            TextButton(
+              key: const Key('takma-ad-kaldir'),
+              onPressed: () => Navigator.pop(dctx, ''),
+              child: Text('Kaldır'.c),
+            ),
+          TextButton(
+            onPressed: () => Navigator.pop(dctx),
+            child: Text('İptal'.c),
+          ),
+          FilledButton(
+            key: const Key('takma-ad-kaydet'),
+            onPressed: () => Navigator.pop(dctx, kutu.text),
+            child: Text('Kaydet'.c),
+          ),
+        ],
+      ),
+    );
+    // Diyalog kapanış animasyonu bitmeden controller sökülmez
+    // (finally'de dispose tuzağı — liste sıralama notu).
+    Future<void>.delayed(const Duration(seconds: 1), kutu.dispose);
+    if (sonuc == null || !mounted) return;
+    final yeni = sonuc.trim();
+    final eski = _takmaAd;
+    setState(
+      () => _partner = {...?_partner, 'takma_ad': yeni.isEmpty ? null : yeni},
+    );
+    try {
+      final d = await Api.post(
+        '/sohbet-takma-ad/${Uri.encodeComponent(widget.kullaniciAdi)}',
+        {'takma_ad': yeni},
+      );
+      if (!mounted) return;
+      setState(() => _partner = {...?_partner, 'takma_ad': d['takma_ad']});
+      SohbetOlaylari.partner = widget.kullaniciAdi;
+      SohbetOlaylari.nesil.value++;
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _partner = {...?_partner, 'takma_ad': eski});
+      uyar(context, 'Takma ad kaydedilemedi'.c);
+    }
+  }
+
+  /// Seçilen temayı karşı tarafa da taşır (15 Eyl 2026). Yerel seçim zaten
+  /// uygulandı; sunucu reddederse yalnız uyarı — geri alma yok (kullanıcı
+  /// kendi ekranında seçtiğini görür, iletilemediğini bilir).
+  Future<void> _temaPaylas(SohbetTema t) async {
+    try {
+      await Api.post(
+        '/sohbet-tema/${Uri.encodeComponent(widget.kullaniciAdi)}',
+        {'tema': t.anahtar},
+      );
+    } catch (_) {
+      if (mounted) uyar(context, 'Tema karşı tarafa iletilemedi'.c);
     }
   }
 
@@ -161,6 +257,7 @@ class _SohbetDetayEkraniState extends State<SohbetDetayEkrani> {
         await SohbetTemalari.sec(widget.kullaniciAdi, t);
         if (mounted) setState(() => _tema = t);
         if (sheetContext.mounted) Navigator.pop(sheetContext);
+        await _temaPaylas(t);
       }
 
       Widget baslik(String metin) => Padding(
@@ -199,6 +296,13 @@ class _SohbetDetayEkraniState extends State<SohbetDetayEkrani> {
                       ),
                     ),
                   ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+                child: Text(
+                  'Seçtiğin tema karşı tarafta da görünür'.c,
+                  style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
                 ),
               ),
               baslik('Temalar'.c),
@@ -356,7 +460,7 @@ class _SohbetDetayEkraniState extends State<SohbetDetayEkrani> {
     final gorunenAd = (_partner?['ad'] as String?)?.trim() ?? '';
     final benId = context.watch<Oturum>().kullanici?['id'];
     return Scaffold(
-      appBar: AppBar(title: Text('@${widget.kullaniciAdi}')),
+      appBar: AppBar(title: Text(_takmaAd ?? '@${widget.kullaniciAdi}')),
       body: !_yuklendi
           ? const Center(
               child: CircularProgressIndicator(color: DiziRenkler.sari),
@@ -381,7 +485,17 @@ class _SohbetDetayEkraniState extends State<SohbetDetayEkrani> {
                           ikonRenk: DiziRenkler.metin54,
                         ),
                         const SizedBox(height: 10),
-                        if (gorunenAd.isNotEmpty)
+                        // Takma ad varsa büyük başlık odur; gerçek ad
+                        // kullanıcı adının yanında küçülür (kimlik kaybolmaz).
+                        if (_takmaAd != null)
+                          Text(
+                            _takmaAd!,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          )
+                        else if (gorunenAd.isNotEmpty)
                           Text(
                             gorunenAd,
                             style: const TextStyle(
@@ -390,7 +504,9 @@ class _SohbetDetayEkraniState extends State<SohbetDetayEkrani> {
                             ),
                           ),
                         Text(
-                          '@${widget.kullaniciAdi}',
+                          _takmaAd != null && gorunenAd.isNotEmpty
+                              ? '$gorunenAd · @${widget.kullaniciAdi}'
+                              : '@${widget.kullaniciAdi}',
                           style: TextStyle(
                             fontSize: 13,
                             color: DiziRenkler.metin54,
@@ -416,6 +532,14 @@ class _SohbetDetayEkraniState extends State<SohbetDetayEkrani> {
                         ikon: Icons.palette_outlined,
                         etiket: 'Tema özelleştir'.c,
                         onTap: _temaSec,
+                      ),
+                      const SizedBox(width: 10),
+                      _eylem(
+                        key: const Key('detay-takma-ad'),
+                        ikon: Icons.badge_outlined,
+                        etiket: 'Takma ad'.c,
+                        vurgulu: _takmaAd != null,
+                        onTap: _takmaAdDuzenle,
                       ),
                       const SizedBox(width: 10),
                       _eylem(

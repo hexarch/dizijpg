@@ -1750,4 +1750,10 @@ const Map<String, String> cevirilerMr = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'तुझ्या मालिका भागानुसार मार्क कर, चित्रपटांची यादी ठेव, रेटिंग आणि रिव्ह्यू दे, आणि मित्र काय पाहतायत ते बघ. वेब आणि मोबाइलवर.',
   '45 dilde. Web, Android ve iOS.': '४५ भाषांमध्ये. वेब, Android आणि iOS.',
+  'Takma ad': 'टोपणनाव',
+  'Bu adı yalnız sen görürsün': 'हे नाव फक्त तुम्हालाच दिसते',
+  'Takma ad kaydedilemedi': 'टोपणनाव जतन करता आले नाही',
+  'Tema karşı tarafa iletilemedi': 'थीम समोरच्या व्यक्तीला पाठवता आली नाही',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'तुम्ही निवडलेली थीम समोरच्या व्यक्तीलाही दिसते',
 };

@@ -1763,4 +1763,10 @@ const Map<String, String> cevirilerUk = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Позначай серіали серія за серією, веди список фільмів, оцінюй і пиши відгуки, дивись, що дивляться друзі. У вебі та на мобільному.',
   '45 dilde. Web, Android ve iOS.': '45 мовами. Веб, Android та iOS.',
+  'Takma ad': 'Псевдонім',
+  'Bu adı yalnız sen görürsün': 'Це ім\'я бачиш лише ти',
+  'Takma ad kaydedilemedi': 'Не вдалося зберегти псевдонім',
+  'Tema karşı tarafa iletilemedi': 'Не вдалося надіслати тему співрозмовнику',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Обрана тема відображається і в співрозмовника',
 };

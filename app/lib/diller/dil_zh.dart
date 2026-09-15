@@ -1704,4 +1704,9 @@ const Map<String, String> cevirilerZh = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       '逐集标记你的剧集，维护电影清单，打分和评论，看看朋友们在看什么。支持网页和手机。',
   '45 dilde. Web, Android ve iOS.': '支持 45 种语言。网页、Android 和 iOS。',
+  'Takma ad': '昵称',
+  'Bu adı yalnız sen görürsün': '只有你能看到这个名字',
+  'Takma ad kaydedilemedi': '昵称保存失败',
+  'Tema karşı tarafa iletilemedi': '主题未能发送给对方',
+  'Seçtiğin tema karşı tarafta da görünür': '你选择的主题对方也会看到',
 };

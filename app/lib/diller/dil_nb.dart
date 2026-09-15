@@ -1758,4 +1758,10 @@ const Map<String, String> cevirilerNb = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Kryss av seriene dine episode for episode, hold en filmliste, vurder og anmeld, og se hva vennene dine ser på. På nett og mobil.',
   '45 dilde. Web, Android ve iOS.': 'På 45 språk. Web, Android og iOS.',
+  'Takma ad': 'Kallenavn',
+  'Bu adı yalnız sen görürsün': 'Bare du ser dette navnet',
+  'Takma ad kaydedilemedi': 'Kallenavnet kunne ikke lagres',
+  'Tema karşı tarafa iletilemedi': 'Temaet kunne ikke sendes til den andre',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Temaet du velger vises også hos den andre',
 };

@@ -1771,4 +1771,11 @@ const Map<String, String> cevirilerIt = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Segna le tue serie episodio per episodio, tieni la lista dei film, vota e recensisci, e scopri cosa guardano i tuoi amici. Su web e mobile.',
   '45 dilde. Web, Android ve iOS.': 'In 45 lingue. Web, Android e iOS.',
+  'Takma ad': 'Soprannome',
+  'Bu adı yalnız sen görürsün': 'Solo tu vedi questo nome',
+  'Takma ad kaydedilemedi': 'Impossibile salvare il soprannome',
+  'Tema karşı tarafa iletilemedi':
+      'Impossibile inviare il tema all\'altra persona',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Il tema scelto lo vede anche l\'altra persona',
 };

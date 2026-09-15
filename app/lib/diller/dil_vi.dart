@@ -1753,4 +1753,10 @@ const Map<String, String> cevirilerVi = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Đánh dấu phim bộ theo từng tập, giữ danh sách phim, chấm điểm và viết nhận xét, xem bạn bè đang xem gì. Trên web và di động.',
   '45 dilde. Web, Android ve iOS.': '45 ngôn ngữ. Web, Android và iOS.',
+  'Takma ad': 'Biệt danh',
+  'Bu adı yalnız sen görürsün': 'Chỉ bạn nhìn thấy tên này',
+  'Takma ad kaydedilemedi': 'Không lưu được biệt danh',
+  'Tema karşı tarafa iletilemedi': 'Không gửi được chủ đề cho bên kia',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Chủ đề bạn chọn cũng hiển thị ở bên kia',
 };

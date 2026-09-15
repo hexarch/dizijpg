@@ -1819,4 +1819,10 @@ const Map<String, String> cevirilerRu = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Отмечай сериалы серия за серией, веди список фильмов, ставь оценки и пиши отзывы, смотри, что смотрят друзья. В вебе и на мобильных.',
   '45 dilde. Web, Android ve iOS.': 'На 45 языках. Веб, Android и iOS.',
+  'Takma ad': 'Псевдоним',
+  'Bu adı yalnız sen görürsün': 'Это имя видишь только ты',
+  'Takma ad kaydedilemedi': 'Не удалось сохранить псевдоним',
+  'Tema karşı tarafa iletilemedi': 'Не удалось отправить тему собеседнику',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Выбранная тема отображается и у собеседника',
 };

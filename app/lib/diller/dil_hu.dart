@@ -1768,4 +1768,11 @@ const Map<String, String> cevirilerHu = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Pipáld ki a sorozataidat epizódonként, vezess filmlistát, értékelj és írj kritikát, nézd meg, mit néznek a barátaid. Weben és mobilon.',
   '45 dilde. Web, Android ve iOS.': '45 nyelven. Web, Android és iOS.',
+  'Takma ad': 'Becenév',
+  'Bu adı yalnız sen görürsün': 'Ezt a nevet csak te látod',
+  'Takma ad kaydedilemedi': 'A becenevet nem sikerült menteni',
+  'Tema karşı tarafa iletilemedi':
+      'A témát nem sikerült elküldeni a másik félnek',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'A választott témát a másik fél is látja',
 };

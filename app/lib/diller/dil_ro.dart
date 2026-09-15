@@ -1838,4 +1838,11 @@ const Map<String, String> cevirilerRo = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Bifează serialele episod cu episod, ține-ți lista de filme, notează și recenzează, vezi ce urmăresc prietenii tăi. Pe web și mobil.',
   '45 dilde. Web, Android ve iOS.': 'În 45 de limbi. Web, Android și iOS.',
+  'Takma ad': 'Poreclă',
+  'Bu adı yalnız sen görürsün': 'Doar tu vezi acest nume',
+  'Takma ad kaydedilemedi': 'Porecla nu a putut fi salvată',
+  'Tema karşı tarafa iletilemedi':
+      'Tema nu a putut fi trimisă celeilalte părți',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Tema aleasă se vede și la cealaltă parte',
 };

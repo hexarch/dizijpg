@@ -1792,4 +1792,10 @@ const Map<String, String> cevirilerEl = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Σημείωσε τις σειρές σου επεισόδιο προς επεισόδιο, κράτα λίστα ταινιών, βαθμολόγησε και γράψε κριτικές, δες τι βλέπουν οι φίλοι σου. Στο web και σε κινητό.',
   '45 dilde. Web, Android ve iOS.': 'Σε 45 γλώσσες. Web, Android και iOS.',
+  'Takma ad': 'Ψευδώνυμο',
+  'Bu adı yalnız sen görürsün': 'Μόνο εσύ βλέπεις αυτό το όνομα',
+  'Takma ad kaydedilemedi': 'Το ψευδώνυμο δεν αποθηκεύτηκε',
+  'Tema karşı tarafa iletilemedi': 'Το θέμα δεν στάλθηκε στην άλλη πλευρά',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Το θέμα που διαλέγεις φαίνεται και στην άλλη πλευρά',
 };

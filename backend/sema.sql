@@ -581,6 +581,26 @@ CREATE TABLE IF NOT EXISTS dm_sessiz (
   CHECK (kullanici_id <> sessiz_id)
 );
 
+-- Sohbet teması paylaşımı + takma ad (migrasyon-2026-09-15.sql). Tema çift
+-- başına tek satır (a_id<b_id), iki taraf da görür; takma ad tek yönlü.
+CREATE TABLE IF NOT EXISTS sohbet_temalari (
+  a_id          INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  b_id          INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  tema          TEXT NOT NULL CHECK (tema ~ '^[a-z0-9_]{1,32}$'),
+  ayarlayan_id  INT REFERENCES kullanicilar(id) ON DELETE SET NULL,
+  tarih         TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (a_id, b_id),
+  CHECK (a_id < b_id)
+);
+CREATE TABLE IF NOT EXISTS dm_takma_adlar (
+  kullanici_id  INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  partner_id    INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  takma_ad      TEXT NOT NULL CHECK (char_length(takma_ad) BETWEEN 1 AND 32),
+  tarih         TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (kullanici_id, partner_id),
+  CHECK (kullanici_id <> partner_id)
+);
+
 CREATE TABLE IF NOT EXISTS mesaj_istek_kararlari (
   kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
   partner_id   INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,

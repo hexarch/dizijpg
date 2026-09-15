@@ -1746,4 +1746,10 @@ const Map<String, String> cevirilerAz = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Serialları seriya-seriya qeyd et, film siyahını saxla, qiymətləndir və rəy yaz, dostlarının nə izlədiyini gör. Vebdə və mobildə.',
   '45 dilde. Web, Android ve iOS.': '45 dildə. Veb, Android və iOS.',
+  'Takma ad': 'Ləqəb',
+  'Bu adı yalnız sen görürsün': 'Bu adı yalnız sən görürsən',
+  'Takma ad kaydedilemedi': 'Ləqəb yadda saxlanmadı',
+  'Tema karşı tarafa iletilemedi': 'Mövzu qarşı tərəfə göndərilə bilmədi',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Seçdiyin mövzu qarşı tərəfdə də görünür',
 };

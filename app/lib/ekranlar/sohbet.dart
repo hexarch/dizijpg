@@ -413,6 +413,14 @@ String mesajSaati(Map<String, dynamic> m) {
 /// ve `DiziRenkler.kart` zemini (koyu temada #1F1F23, ana zemin #0B0B0D'nin
 /// üstünde "hafif grimsi ton") veriyordu. İkisi de kalktı: satırlar artık
 /// zeminsiz, aralıksız, düz bir liste.
+/// Listede/başlıkta görünen ad (15 Eyl 2026, takma ad): taktığım ad varsa o,
+/// yoksa @kullanıcı adı. Takma ad yalnız bende görünür (sunucu sahibine
+/// döndürür); karşı taraf kendi ekranında benim gerçek adımı görür.
+String sohbetGorunenAd(Map<dynamic, dynamic> sohbet, String? kullaniciAdi) {
+  final t = (sohbet['partner_takma_ad'] as String?)?.trim();
+  return (t == null || t.isEmpty) ? '@${kullaniciAdi ?? ''}' : t;
+}
+
 class SohbetlerEkrani extends StatefulWidget {
   const SohbetlerEkrani({super.key});
 
@@ -909,7 +917,7 @@ class SohbetSatiri extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '@${sohbet['partner']}',
+                    sohbetGorunenAd(sohbet, sohbet['partner'] as String?),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -1437,20 +1445,65 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// `_yerel` işaretini taşır: `_yukle` tam yüklemede yerel satırları
   /// KORUR (bkz. iyimser gönderim), yani yoklama satırı silmez. `id` yok,
   /// `gonderen_id` yok — çizimde balon değil rozet olur.
+  ///
+  /// `_sonrasi`: satırın düştüğü anda listedeki SON sunucu mesajının id'si.
+  /// Tam yükleme yerel satırları sunucu listesinin ardına dizer; bu çapa
+  /// olmadan satır her yoklamada dibe kayıyordu (15 Eyl 2026: "ekran
+  /// görüntüsü aldın yazısı sohbetle birlikte yükselmiyor"). Bkz.
+  /// [_sistemSatirlariniYerlestir].
   void _sistemSatiri(String yazi) {
     final anahtar =
         's${DateTime.now().microsecondsSinceEpoch}-${_yerelSayac++}';
+    int? sonrasi;
+    for (var i = _mesajlar.length - 1; i >= 0; i--) {
+      final id = (_mesajlar[i] as Map)['id'];
+      if (id is num) {
+        sonrasi = id.toInt();
+        break;
+      }
+    }
     setState(() {
       _mesajlar = [
         ..._mesajlar,
         <String, dynamic>{
           '_yerel': anahtar,
           '_sistem': yazi,
+          '_sonrasi': sonrasi,
           'tarih': DateTime.now().toUtc().toIso8601String(),
         },
       ];
     });
     _sonaKaydir();
+  }
+
+  /// Sistem satırlarını sunucu listesinde çapalarının (`_sonrasi`) hemen
+  /// ardına yerleştirir; çapası olmayan (boş sohbette düşen) satır başa,
+  /// çapası artık listede olmayan (mesaj silinmiş) satır sona gider.
+  /// Sıra korunur: aynı çapaya bağlı satırlar düştükleri sırayla dizilir.
+  static List<dynamic> _sistemSatirlariniYerlestir(
+    List<dynamic> gelen,
+    List<Map<String, dynamic>> sistemler,
+  ) {
+    if (sistemler.isEmpty) return gelen;
+    final kalan = List<Map<String, dynamic>>.of(sistemler);
+    final sonuc = <dynamic>[
+      for (final s in sistemler)
+        if (s['_sonrasi'] == null) s,
+    ];
+    kalan.removeWhere((s) => s['_sonrasi'] == null);
+    for (final m in gelen) {
+      sonuc.add(m);
+      final id = (m as Map)['id'];
+      if (id is! num || kalan.isEmpty) continue;
+      final buraya = [
+        for (final s in kalan)
+          if (s['_sonrasi'] == id.toInt()) s,
+      ];
+      if (buraya.isEmpty) continue;
+      sonuc.addAll(buraya);
+      kalan.removeWhere(buraya.contains);
+    }
+    return [...sonuc, ...kalan];
   }
 
   /// Kutu doluluk bayrağını günceller (ikon gizleme — bkz. [_yaziVar]).
@@ -1940,7 +1993,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     final b = StringBuffer()
       ..write(durum ?? '0')
       ..write('|')
-      ..write(partner?['son_gorulme'] ?? '');
+      ..write(partner?['son_gorulme'] ?? '')
+      ..write('|')
+      ..write(partner?['takma_ad'] ?? '');
     for (final ham in mesajlar) {
       final m = ham as Map;
       b
@@ -1984,6 +2039,14 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       final durum = sohbetDurumCoz(d);
       final istek = d['istek'] as String?;
       final partner = d['partner'] as Map<String, dynamic>?;
+      // Paylaşılan tema (15 Eyl 2026): karşı taraf değiştirdiyse yerele
+      // işlenir; nesil artınca [_temaYukle] yeniden okur.
+      unawaited(
+        SohbetTemalari.sunucudanUygula(
+          widget.kullaniciAdi,
+          d['tema'] as String?,
+        ),
+      );
       final icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
       final gonderiler = d['gonderiler'] as Map<String, dynamic>? ?? {};
       final guncellemeler = d['guncellemeler'] as List<dynamic>? ?? const [];
@@ -2035,10 +2098,21 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       } else {
         // İyimser (yerel) satırlar TAM yüklemede kaybolmasın: sunucudan
         // gelmezler, bekleyen/hatalı gönderim ekranda kalmalı (2 Eyl 2026).
+        // Sistem satırları (ekran görüntüsü) çapalarına, bekleyen/hatalı
+        // gönderimler sona.
         birlesik = [
-          ...gelen,
+          ..._sistemSatirlariniYerlestir(gelen, [
+            for (final m in _mesajlar)
+              if (m is Map<String, dynamic> &&
+                  m['_yerel'] != null &&
+                  m['_sistem'] != null)
+                m,
+          ]),
           for (final m in _mesajlar)
-            if (m is Map<String, dynamic> && m['_yerel'] != null) m,
+            if (m is Map<String, dynamic> &&
+                m['_yerel'] != null &&
+                m['_sistem'] == null)
+              m,
         ];
         yeniGeldi = gelen.length != _mesajlar.length;
       }
@@ -2240,6 +2314,16 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// Yazma kutusunun içindeki kompakt eylem ikonu (foto / içerik / ses /
   /// gönder). IconButton'un 48px dokunma alanı kutuyu şişirdiği için
   /// InkWell + sıkı padding kullanılır; hedef yine ~36px kalır.
+  /// Tek satırlık mesaj kutusunun boyu: 12+12 dp içerik boşluğu + 24 dp
+  /// satır (16 sp gövde). Kutu kenarındaki ikonlar bu boyda bir yuvaya
+  /// ORTALANIR ki tek satırda kutunun ortasında dursunlar.
+  static const _kutuSatirBoyu = 48.0;
+
+  Widget _kutuYuvasi(Widget cocuk) => SizedBox(
+    height: _kutuSatirBoyu,
+    child: Center(child: cocuk),
+  );
+
   Widget _kutuIkonu({
     required String ipucu,
     required IconData ikon,
@@ -2778,7 +2862,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '@${widget.kullaniciAdi}',
+                sohbetGorunenAd({
+                  'partner_takma_ad': _partner?['takma_ad'],
+                }, widget.kullaniciAdi),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -3212,15 +3298,22 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                     children: [
                       // Gülen yüz: hareketli emoji paneli (klavye yerine).
                       // TextField'ın DIŞINDA kardeş — ANR kuralı (üstteki not).
+                      // İkon yuvası tek satırlık kutu boyunda ([_kutuSatirBoyu])
+                      // ve ortalı: tek satırda ikon kutunun TAM ortasında,
+                      // çok satırda (Row `end`) son satırın ortasında durur.
+                      // Eskiden `bottom: 2` ile 4 px aşağı sarkıyordu
+                      // (15 Eyl 2026: "aşağı kısımda, ortada değil").
                       Padding(
-                        padding: const EdgeInsets.only(left: 4, bottom: 2),
-                        child: _kutuIkonu(
-                          ipucu: _emojiPaneliAcik ? 'Klavye'.c : 'Emoji'.c,
-                          ikon: _emojiPaneliAcik
-                              ? Icons.keyboard_outlined
-                              : Icons.emoji_emotions_outlined,
-                          kapali: _ekYukleniyor,
-                          onTap: _emojiPaneliDegistir,
+                        padding: const EdgeInsets.only(left: 4),
+                        child: _kutuYuvasi(
+                          _kutuIkonu(
+                            ipucu: _emojiPaneliAcik ? 'Klavye'.c : 'Emoji'.c,
+                            ikon: _emojiPaneliAcik
+                                ? Icons.keyboard_outlined
+                                : Icons.emoji_emotions_outlined,
+                            kapali: _ekYukleniyor,
+                            onTap: _emojiPaneliDegistir,
+                          ),
                         ),
                       ),
                       Expanded(
@@ -3264,9 +3357,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                       // dakikalar sürebilir, dönen tek spinner "takıldı"
                       // dedirtir (üç hâl kuralı).
                       if (_ekYukleniyor)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 14),
-                          child: Text(
+                        _kutuYuvasi(
+                          Text(
                             _ekToplam > 1
                                 ? '$_ekIlerleme/$_ekToplam · '
                                       '${'%{}'.cf([_ekYuzde])}'
@@ -3282,13 +3374,15 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                           ),
                         ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 4, bottom: 2),
-                        child: _kutuIkonu(
-                          ipucu: 'Ekle'.c,
-                          ikon: Icons.attach_file,
-                          kapali: _ekYukleniyor || duzenleme,
-                          yukleniyor: _ekYukleniyor,
-                          onTap: _ekPaneliAc,
+                        padding: const EdgeInsets.only(right: 4),
+                        child: _kutuYuvasi(
+                          _kutuIkonu(
+                            ipucu: 'Ekle'.c,
+                            ikon: Icons.attach_file,
+                            kapali: _ekYukleniyor || duzenleme,
+                            yukleniyor: _ekYukleniyor,
+                            onTap: _ekPaneliAc,
+                          ),
                         ),
                       ),
                     ],
@@ -3640,8 +3734,10 @@ class _KayitNabziState extends State<_KayitNabzi>
 /// * Sola kaydır (> [iptalEsigi] px) → bırakınca İPTAL.
 /// * Yukarı kaydır (> [kilitEsigi] px) → KİLİT: parmak çekilse de kayıt sürer.
 /// * Bırak → gönder (1 sn altı kayıtlar [_kayitGonder] içinde zaten iptal).
-/// * Tek dokunuş → "basılı tut" ipucu (Telegram da öyle yapar; sessizce hiçbir
-///   şey olmaması kullanıcıya düğme bozuk dedirtir).
+/// * Tek dokunuş → düğme sağa-sola SALLANIR + hafif titreşim (15 Eyl 2026:
+///   "basılı tut uyarısı verme, mikrofonu titret"). Sessizce hiçbir şey
+///   olmaması kullanıcıya düğme bozuk dedirtir; SnackBar ise klavyenin
+///   üstüne biniyordu. "Hareketi azalt" açıksa yalnız titreşim.
 ///
 /// Jest kesintisiz olsun diye bu widget kayıt boyunca AĞAÇTA AYNI YERDE kalır
 /// (`_yaziCubugu` → `_eylemDugmesi`); üst çubuk yalnız kilitte değişir.
@@ -3663,12 +3759,35 @@ class _MikrofonDugmesi extends StatefulWidget {
   State<_MikrofonDugmesi> createState() => _MikrofonDugmesiState();
 }
 
-class _MikrofonDugmesiState extends State<_MikrofonDugmesi> {
+class _MikrofonDugmesiState extends State<_MikrofonDugmesi>
+    with SingleTickerProviderStateMixin {
   bool _basili = false;
   Offset _kayma = Offset.zero;
 
+  /// Tek dokunuşta sallanma: 0→1 arası ilerleme, [_sallanmaKaymasi] ile
+  /// sönen sinüs dalgasına çevrilir (3 tam salınım, en çok 6 px).
+  late final AnimationController _sallanma = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 420),
+  );
+
+  static double _sallanmaKaymasi(double t) =>
+      math.sin(t * math.pi * 6) * 6 * (1 - t);
+
   bool get _iptalde => _kayma.dx < -_MikrofonDugmesi.iptalEsigi;
   bool get _kilitte => _kayma.dy < -_MikrofonDugmesi.kilitEsigi;
+
+  void _salla() {
+    HapticFeedback.lightImpact();
+    if (MediaQuery.disableAnimationsOf(context)) return;
+    _sallanma.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _sallanma.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -3679,13 +3798,7 @@ class _MikrofonDugmesiState extends State<_MikrofonDugmesi> {
       label: etiket,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: widget.kapali
-            ? null
-            : () => ScaffoldMessenger.of(context)
-                ..clearSnackBars()
-                ..showSnackBar(
-                  SnackBar(content: Text('Kaydetmek için basılı tut'.c)),
-                ),
+        onTap: widget.kapali ? null : _salla,
         onLongPressStart: widget.kapali
             ? null
             : (_) {
@@ -3717,31 +3830,41 @@ class _MikrofonDugmesiState extends State<_MikrofonDugmesi> {
           });
           widget.onBirak(iptal: true, kilitli: false);
         },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          width: _basili ? 64 : 46,
-          height: _basili ? 64 : 46,
-          // Kayıt basılıyken düğme büyür ve sarıya döner; iptal eşiği
-          // geçilince KIRMIZI (renk tek gösterge değil: ikon da değişir).
-          decoration: BoxDecoration(
-            color: widget.kapali
-                ? DiziRenkler.metin38
-                : (_basili
-                      ? (_iptalde ? Colors.redAccent : DiziRenkler.sari)
-                      : DiziRenkler.kart),
-            shape: BoxShape.circle,
-            border: DiziRenkler.acik && !_basili
-                ? Border.all(color: const Color(0xFFDADAE0))
-                : null,
+        child: AnimatedBuilder(
+          animation: _sallanma,
+          builder: (context, cocuk) => Transform.translate(
+            offset: Offset(
+              _sallanma.isAnimating ? _sallanmaKaymasi(_sallanma.value) : 0,
+              0,
+            ),
+            child: cocuk,
           ),
-          child: Icon(
-            _basili
-                ? (_iptalde
-                      ? Icons.delete_outline
-                      : (_kilitte ? Icons.lock : Icons.mic))
-                : Icons.mic_none,
-            size: _basili ? 28 : 22,
-            color: _basili ? Colors.black : DiziRenkler.sariMetin,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 120),
+            width: _basili ? 64 : 46,
+            height: _basili ? 64 : 46,
+            // Kayıt basılıyken düğme büyür ve sarıya döner; iptal eşiği
+            // geçilince KIRMIZI (renk tek gösterge değil: ikon da değişir).
+            decoration: BoxDecoration(
+              color: widget.kapali
+                  ? DiziRenkler.metin38
+                  : (_basili
+                        ? (_iptalde ? Colors.redAccent : DiziRenkler.sari)
+                        : DiziRenkler.kart),
+              shape: BoxShape.circle,
+              border: DiziRenkler.acik && !_basili
+                  ? Border.all(color: const Color(0xFFDADAE0))
+                  : null,
+            ),
+            child: Icon(
+              _basili
+                  ? (_iptalde
+                        ? Icons.delete_outline
+                        : (_kilitte ? Icons.lock : Icons.mic))
+                  : Icons.mic_none,
+              size: _basili ? 28 : 22,
+              color: _basili ? Colors.black : DiziRenkler.sariMetin,
+            ),
           ),
         ),
       ),

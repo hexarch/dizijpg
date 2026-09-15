@@ -1810,4 +1810,10 @@ const Map<String, String> cevirilerEn = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Mark your shows episode by episode, keep a movie list, rate and review, and see what your friends are watching. On web and mobile.',
   '45 dilde. Web, Android ve iOS.': 'In 45 languages. Web, Android and iOS.',
+  'Takma ad': 'Nickname',
+  'Bu adı yalnız sen görürsün': 'Only you can see this name',
+  'Takma ad kaydedilemedi': 'Nickname could not be saved',
+  'Tema karşı tarafa iletilemedi': 'Theme could not be sent to the other side',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'The theme you pick shows on the other side too',
 };

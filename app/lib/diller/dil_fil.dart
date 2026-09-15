@@ -1790,4 +1790,10 @@ const Map<String, String> cevirilerFil = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Markahan ang mga serye mo bawat episode, mag-ingat ng listahan ng pelikula, mag-rate at mag-review, at tingnan kung ano ang pinapanood ng mga kaibigan mo. Sa web at mobile.',
   '45 dilde. Web, Android ve iOS.': 'Sa 45 wika. Web, Android at iOS.',
+  'Takma ad': 'Palayaw',
+  'Bu adı yalnız sen görürsün': 'Ikaw lang ang nakakakita ng pangalang ito',
+  'Takma ad kaydedilemedi': 'Hindi na-save ang palayaw',
+  'Tema karşı tarafa iletilemedi': 'Hindi naipadala ang tema sa kabilang panig',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Makikita rin ng kabilang panig ang temang pipiliin mo',
 };

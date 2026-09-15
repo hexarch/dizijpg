@@ -1770,4 +1770,10 @@ const Map<String, String> cevirilerSv = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Bocka av dina serier avsnitt för avsnitt, håll en filmlista, betygsätt och recensera, och se vad dina vänner tittar på. På webben och mobilen.',
   '45 dilde. Web, Android ve iOS.': 'På 45 språk. Webb, Android och iOS.',
+  'Takma ad': 'Smeknamn',
+  'Bu adı yalnız sen görürsün': 'Bara du ser det här namnet',
+  'Takma ad kaydedilemedi': 'Smeknamnet kunde inte sparas',
+  'Tema karşı tarafa iletilemedi': 'Temat kunde inte skickas till den andra',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Temat du väljer syns även hos den andra',
 };

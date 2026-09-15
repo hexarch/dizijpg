@@ -1671,4 +1671,9 @@ const Map<String, String> cevirilerJa = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'ドラマをエピソードごとにチェック、映画リストを管理、評価とレビューを投稿し、友だちが何を観ているかチェック。ウェブとモバイルで。',
   '45 dilde. Web, Android ve iOS.': '45言語対応。ウェブ、Android、iOS。',
+  'Takma ad': 'ニックネーム',
+  'Bu adı yalnız sen görürsün': 'この名前はあなただけに表示されます',
+  'Takma ad kaydedilemedi': 'ニックネームを保存できませんでした',
+  'Tema karşı tarafa iletilemedi': 'テーマを相手に送信できませんでした',
+  'Seçtiğin tema karşı tarafta da görünür': '選んだテーマは相手側にも表示されます',
 };

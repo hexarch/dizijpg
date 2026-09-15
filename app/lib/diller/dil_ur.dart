@@ -1756,4 +1756,10 @@ const Map<String, String> cevirilerUr = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'اپنے ڈرامے قسط بہ قسط نشان زد کرو، فلموں کی فہرست رکھو، ریٹنگ اور تبصرہ دو، اور دیکھو تمہارے دوست کیا دیکھ رہے ہیں۔ ویب اور موبائل پر۔',
   '45 dilde. Web, Android ve iOS.': '45 زبانوں میں۔ ویب، Android اور iOS۔',
+  'Takma ad': 'عرفی نام',
+  'Bu adı yalnız sen görürsün': 'یہ نام صرف آپ دیکھ سکتے ہیں',
+  'Takma ad kaydedilemedi': 'عرفی نام محفوظ نہیں ہو سکا',
+  'Tema karşı tarafa iletilemedi': 'تھیم دوسری طرف نہیں بھیجی جا سکی',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'آپ کی منتخب کردہ تھیم دوسری طرف بھی نظر آتی ہے',
 };

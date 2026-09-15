@@ -73,6 +73,9 @@ import {
   sohbetEfektEmoji, sohbetEfektYaz, sohbetEfektOku,
 } from './sohbet_durum.js';
 import {
+  temaAnahtariGecerli, ciftAnahtari, takmaAdTemizle,
+} from './sohbet_ayar.js';
+import {
   yapimlariCikar, izlenenAnahtarlar, izlenmeOzeti,
 } from './kisi_izlenme.js';
 // md. 52 — iki adımlı doğrulama (YALNIZ e-posta). Saf modül: sabitler, bilet
@@ -16663,6 +16666,7 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
             m.id, m.metin, m.medya, m.icerik_tur, m.yorum_id, m.tarih, m.gonderen_id,
             m.dosya_ad,
             k.id AS partner_id, k.kullanici_adi AS partner, k.avatar AS partner_avatar,
+            ta.takma_ad AS partner_takma_ad,
             -- Çevrimiçi HESABI SUNUCUDA yapılır: gizleyen kullanıcının
             -- son_gorulme damgası istemciye HİÇ gitmez (gizlilik tercihi
             -- istemci tarafında uygulansaydı ham damga sızardı).
@@ -16680,6 +16684,8 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
        ON t.takip_eden_id=$1 AND t.takip_edilen_id=k.id
      LEFT JOIN mesaj_istek_kararlari sd
        ON sd.kullanici_id=$1 AND sd.partner_id=k.id
+     LEFT JOIN dm_takma_adlar ta
+       ON ta.kullanici_id=$1 AND ta.partner_id=k.id
      LEFT JOIN (
        SELECT DISTINCT alici_id FROM mesajlar WHERE gonderen_id=$1
      ) by ON by.alici_id = k.id
@@ -17410,10 +17416,15 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   const istek = iv.o_yazdi && sohbetIstekMi({
     takip_ediyorum: iv.takip, ben_yazdim: iv.ben_yazdim, istek_karar: iv.karar,
   }) ? (iv.karar === 'red' ? 'red' : 'bekliyor') : null;
+  // Paylaşılan tema + benim taktığım ad (15 Eyl 2026, sohbet_ayar.js).
+  // Her yoklamada gelir: karşı taraf temayı değiştirince bir sonraki
+  // yoklamada bende de değişir; takma ad yalnız sahibine döner.
+  const ayar = await sohbetAyarOku(req.kullanici.id, partnerId);
   res.json({
     mesajlar: rows,
     guncellemeler,
-    partner: k.rows[0],
+    partner: { ...k.rows[0], takma_ad: ayar.takma_ad },
+    tema: ayar.tema,
     icerikler,
     gonderiler,
     yaziyor: durum != null,
@@ -17606,6 +17617,90 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
 // ekran açılmalı — tema, arama, sessize al, altta gönderilen dosyalar")
 // ---------------------------------------------------------------------------
 
+// ---------- SOHBET AYARLARI: PAYLAŞILAN TEMA + TAKMA AD (15 Eyl 2026) ----------
+// Tablolar: sohbet_temalari (çift başına tek satır) ve dm_takma_adlar (tek
+// yönlü). Bkz. sohbet_ayar.js ve migrasyon-2026-09-15.sql.
+async function sohbetAyarOku(benId, partnerId) {
+  const [a, b] = ciftAnahtari(benId, partnerId);
+  const [t, ta] = await Promise.all([
+    havuz.query('SELECT tema FROM sohbet_temalari WHERE a_id=$1 AND b_id=$2', [a, b]),
+    havuz.query(
+      'SELECT takma_ad FROM dm_takma_adlar WHERE kullanici_id=$1 AND partner_id=$2',
+      [benId, partnerId]),
+  ]);
+  return {
+    tema: t.rows[0]?.tema || null,
+    takma_ad: ta.rows[0]?.takma_ad || null,
+  };
+}
+
+async function sohbetPartnerId(req, res) {
+  const k = await havuz.query(
+    'SELECT id FROM kullanicilar WHERE kullanici_adi=$1',
+    [req.params.kullaniciAdi]);
+  if (!k.rows.length) {
+    res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+    return null;
+  }
+  const partnerId = k.rows[0].id;
+  if (partnerId === req.kullanici.id) {
+    res.status(400).json({ hata: 'Kendinle sohbet ayarı olmaz' });
+    return null;
+  }
+  return partnerId;
+}
+
+const sohbetAyarLimiti = hizLimitiMerkezi(60, (req) => `sa:${req.kullanici.id}`);
+
+// Tema: iki taraf da değiştirir, ikisi de görür. 'varsayilan' → satır silinir.
+// Engelli çiftte yazılamaz (sohbet geçmişi kuralıyla tutarlı).
+app.post('/sohbet-tema/:kullaniciAdi', girisZorunlu, sohbetAyarLimiti, sarici(async (req, res) => {
+  const partnerId = await sohbetPartnerId(req, res);
+  if (partnerId === null) return;
+  const tema = req.body?.tema;
+  if (!temaAnahtariGecerli(tema)) {
+    return res.status(400).json({ hata: 'Geçersiz tema' });
+  }
+  if (await engelliMi(req.kullanici.id, partnerId)) {
+    return res.status(403).json({ hata: 'Bu sohbette tema değiştirilemez' });
+  }
+  const [a, b] = ciftAnahtari(req.kullanici.id, partnerId);
+  if (tema === 'varsayilan') {
+    await havuz.query('DELETE FROM sohbet_temalari WHERE a_id=$1 AND b_id=$2', [a, b]);
+  } else {
+    await havuz.query(
+      `INSERT INTO sohbet_temalari (a_id, b_id, tema, ayarlayan_id)
+       VALUES ($1,$2,$3,$4)
+       ON CONFLICT (a_id, b_id) DO UPDATE
+         SET tema=EXCLUDED.tema, ayarlayan_id=EXCLUDED.ayarlayan_id, tarih=now()`,
+      [a, b, tema, req.kullanici.id]);
+  }
+  res.json({ tamam: true, tema: tema === 'varsayilan' ? null : tema });
+}));
+
+// Takma ad: "ben ona ne diyorum". Boş gövde → kaldır.
+app.post('/sohbet-takma-ad/:kullaniciAdi', girisZorunlu, sohbetAyarLimiti, sarici(async (req, res) => {
+  const partnerId = await sohbetPartnerId(req, res);
+  if (partnerId === null) return;
+  const takmaAd = takmaAdTemizle(req.body?.takma_ad);
+  if (takmaAd === undefined) {
+    return res.status(400).json({ hata: 'Geçersiz takma ad' });
+  }
+  if (takmaAd === null) {
+    await havuz.query(
+      'DELETE FROM dm_takma_adlar WHERE kullanici_id=$1 AND partner_id=$2',
+      [req.kullanici.id, partnerId]);
+  } else {
+    await havuz.query(
+      `INSERT INTO dm_takma_adlar (kullanici_id, partner_id, takma_ad)
+       VALUES ($1,$2,$3)
+       ON CONFLICT (kullanici_id, partner_id) DO UPDATE
+         SET takma_ad=EXCLUDED.takma_ad, tarih=now()`,
+      [req.kullanici.id, partnerId, takmaAd]);
+  }
+  res.json({ tamam: true, takma_ad: takmaAd });
+}));
+
 // Sohbeti sessize al / sesini aç (tablo: dm_sessiz, migrasyon-2026-08-31.sql).
 app.post('/sohbet-sessiz/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   const k = await havuz.query(
@@ -17652,12 +17747,15 @@ app.get('/sohbet-detay/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => 
        AND medya IS NOT NULL
      ORDER BY id DESC LIMIT 200`,
     [req.kullanici.id, partnerId]);
+  const ayar = await sohbetAyarOku(req.kullanici.id, partnerId);
   res.json({
     partner: {
       kullanici_adi: k.rows[0].kullanici_adi,
       ad: k.rows[0].ad,
       avatar: k.rows[0].avatar,
+      takma_ad: ayar.takma_ad,
     },
+    tema: ayar.tema,
     sessiz: sessiz.rows.length > 0,
     medya: medya.rows.map((r) => ({
       ...r, medya: medyaImzali(r.medya, MEDYA_IMZA_ANAHTARI),

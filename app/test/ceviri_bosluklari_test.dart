@@ -33,6 +33,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // sohbet_detay.dart — takma ad + paylaşılan tema (15 Eyl 2026).
+  'Takma ad',
+  'Bu adı yalnız sen görürsün',
+  'Takma ad kaydedilemedi',
+  'Tema karşı tarafa iletilemedi',
+  'Seçtiğin tema karşı tarafta da görünür',
   // bolum.dart — bölüm sayfası yeni tasarım (15 Eyl 2026): sezon şeridi başlığı.
   'Sezonun bölümleri',
   // tmdb_puan_izgara.dart — iki kaynaklı bölüm puanı paneli (14 Eyl 2026):

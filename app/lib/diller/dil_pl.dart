@@ -1776,4 +1776,11 @@ const Map<String, String> cevirilerPl = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Odhaczaj seriale odcinek po odcinku, prowadź listę filmów, oceniaj i recenzuj, zobacz, co oglądają znajomi. W sieci i na telefonie.',
   '45 dilde. Web, Android ve iOS.': 'W 45 językach. Web, Android i iOS.',
+  'Takma ad': 'Pseudonim',
+  'Bu adı yalnız sen görürsün': 'Tylko ty widzisz tę nazwę',
+  'Takma ad kaydedilemedi': 'Nie udało się zapisać pseudonimu',
+  'Tema karşı tarafa iletilemedi':
+      'Nie udało się wysłać motywu drugiej stronie',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Wybrany motyw widzi też druga strona',
 };

@@ -1764,4 +1764,11 @@ const Map<String, String> cevirilerFi = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Merkitse sarjasi jakso jaksolta, pidä elokuvalistaa, arvioi ja arvostele, ja katso mitä ystäväsi katsovat. Verkossa ja mobiilissa.',
   '45 dilde. Web, Android ve iOS.': '45 kielellä. Web, Android ja iOS.',
+  'Takma ad': 'Lempinimi',
+  'Bu adı yalnız sen görürsün': 'Vain sinä näet tämän nimen',
+  'Takma ad kaydedilemedi': 'Lempinimeä ei voitu tallentaa',
+  'Tema karşı tarafa iletilemedi':
+      'Teemaa ei voitu lähettää toiselle osapuolelle',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Valitsemasi teema näkyy myös toiselle osapuolelle',
 };

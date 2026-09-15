@@ -1762,4 +1762,11 @@ const Map<String, String> cevirilerMs = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Tandakan siri anda episod demi episod, simpan senarai filem, beri penilaian dan ulasan, lihat apa yang ditonton rakan anda. Di web dan mudah alih.',
   '45 dilde. Web, Android ve iOS.': 'Dalam 45 bahasa. Web, Android dan iOS.',
+  'Takma ad': 'Nama panggilan',
+  'Bu adı yalnız sen görürsün': 'Hanya anda yang melihat nama ini',
+  'Takma ad kaydedilemedi': 'Nama panggilan tidak dapat disimpan',
+  'Tema karşı tarafa iletilemedi':
+      'Tema tidak dapat dihantar kepada pihak satu lagi',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Tema yang anda pilih turut dilihat oleh pihak satu lagi',
 };

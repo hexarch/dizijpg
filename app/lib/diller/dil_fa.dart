@@ -1739,4 +1739,10 @@ const Map<String, String> cevirilerFa = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'سریال‌هایت را قسمت‌به‌قسمت علامت بزن، فهرست فیلم‌هایت را نگه دار، امتیاز بده و نقد بنویس، و ببین دوستانت چه می‌بینند. در وب و موبایل.',
   '45 dilde. Web, Android ve iOS.': 'به ۴۵ زبان. وب، Android و iOS.',
+  'Takma ad': 'نام مستعار',
+  'Bu adı yalnız sen görürsün': 'این نام را فقط شما می‌بینید',
+  'Takma ad kaydedilemedi': 'نام مستعار ذخیره نشد',
+  'Tema karşı tarafa iletilemedi': 'پوسته به طرف مقابل ارسال نشد',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'پوسته‌ای که انتخاب می‌کنید برای طرف مقابل هم نمایش داده می‌شود',
 };

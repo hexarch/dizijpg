@@ -12,8 +12,12 @@ import 'tema.dart';
 /// için özel efekt emojisi. Eski 6 düz renk "Renkler" grubu olarak KALDI;
 /// kayıtlı anahtarlar (`sohbet_tema_<partner>`) değişmedi.
 ///
-/// Tercih SOHBETE ÖZEL ve YERELDİR: cihazda durur; karşı taraf görmez
-/// (WhatsApp'ta da tema tek taraflıdır), sunucuya hiçbir şey yazılmaz.
+/// Tercih SOHBETE ÖZEL. 15 Eyl 2026'ya kadar YERELDİ (cihazda durur, karşı
+/// taraf görmez); kullanıcı "temayı ben değiştirince karşı tarafta da
+/// değişmeli" dedi → tema artık PAYLAŞILIR: seçim sunucuya gider
+/// (POST /sohbet-tema), her yoklamada geri gelir ve [SohbetTemalari.sunucudanUygula]
+/// yerele işler. Yerel kayıt (`sohbet_tema_<partner>`) çevrimdışı/ilk kare
+/// için önbellek olarak kalır.
 class SohbetTema {
   /// Saklanan kimlik (çeviriden bağımsız — ad değişse tercih bozulmaz).
   final String anahtar;
@@ -231,6 +235,28 @@ class SohbetTemalari {
       await p.setString('$_onek$partner', t.anahtar);
     }
     nesil.value++;
+  }
+
+  /// Sunucudan gelen paylaşılan temayı yerele işler (15 Eyl 2026: tema iki
+  /// tarafta da görünür). Yerelle aynıysa hiçbir şey yapmaz; farklıysa
+  /// kaydeder ve [nesil]i artırır (açık sohbet ekranı yeniden okur).
+  /// Bu yön yalnız "sunucu → cihaz"; POST burada YAPILMAZ (döngü olmasın).
+  /// `null` (sunucuda kayıt yok) yerele DOKUNMAZ: eski sürümden kalan tek
+  /// taraflı tercih durur ve karşı tarafa da gitmez. Tanınmayan anahtar
+  /// ([bul] varsayılana düşürür) yerel varsayılanla eşitse yine no-op.
+  static Future<bool> sunucudanUygula(String partner, String? anahtar) async {
+    if (anahtar == null) return false;
+    final t = bul(anahtar);
+    final p = await SharedPreferences.getInstance();
+    final mevcut = p.getString('$_onek$partner') ?? 'varsayilan';
+    if (mevcut == t.anahtar) return false;
+    if (t.anahtar == 'varsayilan') {
+      await p.remove('$_onek$partner');
+    } else {
+      await p.setString('$_onek$partner', t.anahtar);
+    }
+    nesil.value++;
+    return true;
   }
 }
 

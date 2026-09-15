@@ -11039,3 +11039,53 @@ Kullanıcı: *"sohbette iletilen medyaları galeriye kaydetme özelliği olmalı
   derlemeye kalkıp yığınla hata veriyor → `web_indir.dart` koşullu sapı.
 - Test: `sohbet_ss_ve_dalga_test.dart` +2 (menüde çıkma/çıkmama, tam ekran
   düğmesinin izin kapısı).
+
+## 15 Eyl 2026 — Sohbet: mikrofon sallanması, ekran görüntüsü satırı çapası, ikon hizası, PAYLAŞILAN TEMA, TAKMA AD (1.168.0+249)
+Kullanıcı istekleri (akşam turu):
+- ✅ *"mikrofona basıp çekince kaydetmek için basılı tut uyarısı verme,
+  mikrofonu titret"*: `_MikrofonDugmesi` tek dokunuşta SnackBar yerine 420 ms
+  sönen sinüs sallanması (3 salınım, ≤6 px) + `HapticFeedback.lightImpact`;
+  "hareketi azalt" açıkken yalnız titreşim. `'Kaydetmek için basılı tut'`
+  anahtarı 45 dilde duruyor ama artık çağrılmıyor.
+- ✅ *"ekran görüntüsü aldın yazısı aşağıda kalıyor, sohbetle birlikte
+  yükselmiyor"*: kök sebep, TAM yüklemenin yerel satırları sunucu listesinin
+  ARDINA dizmesi (ve sistem satırı id'siz olduğu için `_sonMesajId` null →
+  HER yoklama tam yükleme). Sistem satırı artık `_sonrasi` (düştüğü andaki
+  son sunucu id'si) çapası taşır; `_sistemSatirlariniYerlestir` onu çapanın
+  hemen ardına koyar. Bekleyen gönderimler eskisi gibi sonda.
+- ✅ *"emoji ve dosya ikonu bulundukları div'de aşağıda, ortada değil"*:
+  ikonlar `bottom: 2` ile 4 px sarkıyordu (ölçüldü: merkez 814 vs kutu 810).
+  `_kutuYuvasi`: 48 dp (tek satırlık kutu boyu) yuvada ortalı; çok satırda
+  Row `end` sayesinde son satırın ortasında kalır (Telegram davranışı).
+- ✅ *"temayı ben değiştirince karşı tarafta da değişmeli"*: tema artık
+  PAYLAŞILIR. `sohbet_temalari` (a_id<b_id, çift başına tek satır),
+  `POST /sohbet-tema/:ad` (biçim doğrulaması `sohbet_ayar.js`, engelli çift
+  403, 'varsayilan' → satır silinir), `GET /mesajlar/:ad` + `/sohbet-detay`
+  `tema` alanı. İstemci: `SohbetTemalari.sunucudanUygula` (sunucu→cihaz,
+  farklıysa yerele yazar + nesil), detay ekranı seçimden sonra POST eder,
+  reddedilirse "Tema karşı tarafa iletilemedi". Sunucu `null` dönerse yerel
+  DOKUNULMAZ (eski sürümün tek taraflı tercihi durur, karşıya gitmez).
+- ✅ *"konuştuğu kişiye takma isim koyabilmeli"*: `dm_takma_adlar` (tek yönlü,
+  dm_sessiz kalıbı; karşı taraf görmez). `POST /sohbet-takma-ad/:ad` (kırpma,
+  boşluk sıkıştırma, denetim karakteri temizliği, 32 karakter; boş → kaldır).
+  Detay ekranında 4. düğme "Takma ad" → diyalog (Kaldır/İptal/Kaydet);
+  başlıkta takma ad, altında "Gerçek Ad · @ad". Sohbet başlığı ve mesaj
+  listesi (`partner_takma_ad`, LEFT JOIN) takma adı gösterir
+  (`sohbetGorunenAd`). İyimser + geri alma + uyarı.
+- ⏳ *"medya paylaş kısmını Telegram ile birebir aynı yap"*: Telegram'ın
+  paneli (telefonda uiautomator ile okundu; ekran görüntüsü FLAG_SECURE'dan
+  siyah) = üstte 3 sütun SON FOTOĞRAFLAR ızgarası (ilk kare canlı kamera,
+  sağ üstte seçim dairesi, çoklu seçim) + altta sabit yuvarlak düğme şeridi.
+  Izgara için `READ_MEDIA_IMAGES/VIDEO` gerekir — 7 Ağu 2026'da Play tam bu
+  izin yüzünden AAB 69'u REDDETTİ, photo_manager söküldü. KARAR KULLANICIDA:
+  (a) izni geri koyup Play'e "mesajlaşma" beyanıyla başvurmak (ret riski),
+  (b) Android 15+ gömülü Fotoğraf Seçici (izinsiz, platform görünümü işi),
+  (c) mevcut düğme şeridiyle kalmak. Bu turda dokunulmadı.
+- Migrasyon: `migrasyon-2026-09-15.sql` (+ sema.sql). Çeviri: 5 anahtar × 45.
+- Test: backend `sohbet_ayar.test.js` (6), Flutter `sohbet_detay_test` (+4),
+  `sohbet_ss_ve_dalga_test` (+3), `ceviri_bosluklari_test` anahtarları.
+- TUZAK: testte yaşam döngüsü geçişi resumed→inactive→hidden→paused→hidden→
+  inactive→resumed olmalı (paused→resumed assert atar). NUL kaçışı içeren
+  heredoc'u Bash aracı "denetim karakteri" diye reddediyor → Write ile yaz.
+  Canlı dağıtım (migrasyon + docker-compose --build) sınıflandırıcıda engelli
+  → kullanıcı `!` ile koşar; dosyalar scp ile /opt/dizijpg'ye kondu.

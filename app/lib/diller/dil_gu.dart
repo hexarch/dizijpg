@@ -1743,4 +1743,10 @@ const Map<String, String> cevirilerGu = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'તારી સિરીઝ એપિસોડ-દર-એપિસોડ માર્ક કર, ફિલ્મોની યાદી રાખ, રેટિંગ અને રિવ્યૂ આપ, અને જો કે તારા મિત્રો શું જુએ છે. વેબ અને મોબાઇલ પર.',
   '45 dilde. Web, Android ve iOS.': '45 ભાષાઓમાં. વેબ, Android અને iOS.',
+  'Takma ad': 'ઉપનામ',
+  'Bu adı yalnız sen görürsün': 'આ નામ ફક્ત તમે જ જોઈ શકો છો',
+  'Takma ad kaydedilemedi': 'ઉપનામ સાચવી શકાયું નથી',
+  'Tema karşı tarafa iletilemedi': 'થીમ સામેની વ્યક્તિને મોકલી શકાઈ નથી',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'તમે પસંદ કરેલી થીમ સામેની વ્યક્તિને પણ દેખાય છે',
 };

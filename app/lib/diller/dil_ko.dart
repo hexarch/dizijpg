@@ -1675,4 +1675,9 @@ const Map<String, String> cevirilerKo = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       '드라마를 에피소드별로 체크하고, 영화 목록을 관리하고, 평점과 리뷰를 남기고, 친구들이 무엇을 보는지 확인하세요. 웹과 모바일에서.',
   '45 dilde. Web, Android ve iOS.': '45개 언어 지원. 웹, Android, iOS.',
+  'Takma ad': '별명',
+  'Bu adı yalnız sen görürsün': '이 이름은 나에게만 보입니다',
+  'Takma ad kaydedilemedi': '별명을 저장하지 못했습니다',
+  'Tema karşı tarafa iletilemedi': '테마를 상대방에게 보내지 못했습니다',
+  'Seçtiğin tema karşı tarafta da görünür': '선택한 테마는 상대방에게도 표시됩니다',
 };

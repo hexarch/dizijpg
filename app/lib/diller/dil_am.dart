@@ -1698,4 +1698,9 @@ const Map<String, String> cevirilerAm = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'ተከታታዮችህን ክፍል በክፍል ምልክት አድርግ፣ የፊልም ዝርዝር ያዝ፣ ደረጃ ስጥ እና አስተያየት ጻፍ፣ ጓደኞችህ ምን እንደሚያዩ ተመልከት። በድር እና በሞባይል።',
   '45 dilde. Web, Android ve iOS.': 'በ45 ቋንቋዎች። ድር፣ Android እና iOS።',
+  'Takma ad': 'ቅጽል ስም',
+  'Bu adı yalnız sen görürsün': 'ይህን ስም እርስዎ ብቻ ያዩታል',
+  'Takma ad kaydedilemedi': 'ቅጽል ስሙ አልተቀመጠም',
+  'Tema karşı tarafa iletilemedi': 'ገጽታው ለሌላኛው ወገን አልተላከም',
+  'Seçtiğin tema karşı tarafta da görünür': 'የመረጡት ገጽታ በሌላኛው ወገንም ይታያል',
 };

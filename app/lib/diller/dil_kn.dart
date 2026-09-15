@@ -1757,4 +1757,10 @@ const Map<String, String> cevirilerKn = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'ನಿನ್ನ ಸರಣಿಗಳನ್ನು ಸಂಚಿಕೆವಾರು ಗುರುತಿಸು, ಚಲನಚಿತ್ರ ಪಟ್ಟಿ ಇಟ್ಟುಕೊ, ರೇಟಿಂಗ್ ಮತ್ತು ವಿಮರ್ಶೆ ನೀಡು, ಸ್ನೇಹಿತರು ಏನು ನೋಡುತ್ತಿದ್ದಾರೆ ನೋಡು. ವೆಬ್ ಮತ್ತು ಮೊಬೈಲ್‌ನಲ್ಲಿ.',
   '45 dilde. Web, Android ve iOS.': '45 ಭಾಷೆಗಳಲ್ಲಿ. ವೆಬ್, Android ಮತ್ತು iOS.',
+  'Takma ad': 'ಅಡ್ಡಹೆಸರು',
+  'Bu adı yalnız sen görürsün': 'ಈ ಹೆಸರನ್ನು ನೀವು ಮಾತ್ರ ನೋಡಬಹುದು',
+  'Takma ad kaydedilemedi': 'ಅಡ್ಡಹೆಸರನ್ನು ಉಳಿಸಲಾಗಲಿಲ್ಲ',
+  'Tema karşı tarafa iletilemedi': 'ಥೀಮ್ ಅನ್ನು ಎದುರು ಪಕ್ಷಕ್ಕೆ ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'ನೀವು ಆಯ್ಕೆ ಮಾಡಿದ ಥೀಮ್ ಎದುರು ಪಕ್ಷಕ್ಕೂ ಕಾಣುತ್ತದೆ',
 };

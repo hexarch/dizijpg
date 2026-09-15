@@ -1746,4 +1746,10 @@ const Map<String, String> cevirilerBn = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'তোমার সিরিজ পর্ব ধরে ধরে মার্ক করো, সিনেমার তালিকা রাখো, রেটিং ও রিভিউ দাও, আর দেখো বন্ধুরা কী দেখছে। ওয়েব ও মোবাইলে।',
   '45 dilde. Web, Android ve iOS.': '৪৫টি ভাষায়। ওয়েব, Android ও iOS।',
+  'Takma ad': 'ডাকনাম',
+  'Bu adı yalnız sen görürsün': 'এই নামটি শুধু আপনি দেখতে পাবেন',
+  'Takma ad kaydedilemedi': 'ডাকনাম সংরক্ষণ করা যায়নি',
+  'Tema karşı tarafa iletilemedi': 'থিম অপর পক্ষকে পাঠানো যায়নি',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'আপনার বেছে নেওয়া থিম অপর পক্ষও দেখতে পাবে',
 };

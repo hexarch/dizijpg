@@ -1765,4 +1765,10 @@ const Map<String, String> cevirilerBg = {
   'Dizilerini bölüm bölüm işaretle, film listeni tut, puanla ve yorumla; arkadaşlarının ne izlediğini gör. Web ve mobilde.':
       'Отбелязвай сериалите епизод по епизод, води списък с филми, оценявай и пиши ревюта, виж какво гледат приятелите ти. В уеб и на мобилно.',
   '45 dilde. Web, Android ve iOS.': 'На 45 езика. Уеб, Android и iOS.',
+  'Takma ad': 'Прякор',
+  'Bu adı yalnız sen görürsün': 'Само ти виждаш това име',
+  'Takma ad kaydedilemedi': 'Прякорът не беше запазен',
+  'Tema karşı tarafa iletilemedi': 'Темата не можа да бъде изпратена на другия',
+  'Seçtiğin tema karşı tarafta da görünür':
+      'Избраната тема се вижда и от другата страна',
 };
