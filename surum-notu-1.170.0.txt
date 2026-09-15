@@ -1,0 +1,126 @@
+# dizi.jpg 1.170.0 (252) - Play surum notlari (237/1.158.0'dan bu yana: 238-252)
+# Play sablonundaki dil sirasi: en-US, ar, de-DE, el-GR, es-ES, fr-FR, id,
+# it-IT, pt-BR, ru-RU, tr-TR
+# HER DIL 500 KARAKTERIN ALTINDA OLMALI (python len ile sayildi).
+# Acilis vitrini (245-248) yalniz WEB, mobil nota girmedi.
+
+<en-US>
+New chat media panel: recent photos grid, in-app camera, view-once photos/videos and location sharing.
+
+• Episode page redesigned; TMDB + dizi.jpg episode ratings with season average.
+• Chat: nicknames and shared themes, save media to gallery, screenshot alerts.
+• Swipe a bubble to reply, pull to see message times.
+• Search people when sharing a post.
+• Swipe the calendar to change month; feed shows "5 days ago".
+• Bug fixes and polish.
+</en-US>
+
+<ar>
+لوحة وسائط جديدة في الدردشة: شبكة أحدث الصور، كاميرا داخل التطبيق، صور وفيديوهات تُشاهد مرة واحدة ومشاركة الموقع.
+
+• صفحة الحلقة بتصميم جديد؛ تقييمات الحلقات من TMDB وdizi.jpg مع متوسط الموسم.
+• الدردشة: أسماء مستعارة وسمات مشتركة، حفظ الوسائط في المعرض، تنبيه لقطة الشاشة.
+• اسحب الفقاعة للرد، واسحب لرؤية وقت الرسالة.
+• البحث عن أشخاص عند المشاركة.
+• اسحب التقويم لتغيير الشهر؛ الخلاصة تعرض "قبل 5 أيام".
+• إصلاحات وتحسينات.
+</ar>
+
+<de-DE>
+Neues Medienpanel im Chat: Raster der letzten Fotos, In-App-Kamera, Einmal-Fotos/-Videos und Standortfreigabe.
+
+• Episodenseite neu gestaltet; TMDB- und dizi.jpg-Episodenwertungen mit Staffelschnitt.
+• Chat: Spitznamen und geteilte Themes, Medien in der Galerie speichern, Screenshot-Hinweis.
+• Blase wischen zum Antworten, ziehen für Uhrzeiten.
+• Personensuche beim Teilen eines Beitrags.
+• Kalender wischen für Monatswechsel; Feed zeigt „vor 5 Tagen“.
+• Fehlerbehebungen.
+</de-DE>
+
+<el-GR>
+Νέο πάνελ πολυμέσων στη συνομιλία: πλέγμα πρόσφατων φωτογραφιών, κάμερα στην εφαρμογή, φωτογραφίες/βίντεο μίας προβολής και κοινή χρήση τοποθεσίας.
+
+• Νέα σελίδα επεισοδίου· βαθμολογίες TMDB + dizi.jpg με μέσο όρο σεζόν.
+• Συνομιλία: ψευδώνυμα, κοινά θέματα, αποθήκευση στη συλλογή, ειδοποίηση στιγμιότυπου.
+• Σύρε το μήνυμα για απάντηση, τράβηξε για την ώρα.
+• Αναζήτηση ατόμων κατά την κοινοποίηση.
+• Σύρε το ημερολόγιο για αλλαγή μήνα· ροή «πριν 5 ημέρες».
+• Διορθώσεις.
+</el-GR>
+
+<es-ES>
+Nuevo panel de medios en el chat: cuadrícula de fotos recientes, cámara en la app, fotos/vídeos de un solo uso y ubicación.
+
+• Página de episodio rediseñada; notas de TMDB y dizi.jpg con media de temporada.
+• Chat: apodos y temas compartidos, guardar en la galería, aviso de captura de pantalla.
+• Desliza una burbuja para responder, tira para ver la hora.
+• Busca personas al compartir.
+• Desliza el calendario para cambiar de mes; el feed muestra "hace 5 días".
+• Corrección de errores.
+</es-ES>
+
+<fr-FR>
+Nouveau panneau média dans le chat : grille des photos récentes, appareil photo intégré, photos/vidéos à vue unique et partage de position.
+
+• Page d'épisode repensée ; notes TMDB + dizi.jpg avec moyenne de saison.
+• Chat : surnoms, thèmes partagés, enregistrer dans la galerie, alerte capture d'écran.
+• Glissez une bulle pour répondre, tirez pour voir l'heure.
+• Recherche de personnes lors du partage.
+• Glissez le calendrier pour changer de mois ; fil « il y a 5 jours ».
+• Corrections de bugs.
+</fr-FR>
+
+<id>
+Panel media chat baru: kisi foto terbaru, kamera dalam aplikasi, foto/video sekali lihat, dan berbagi lokasi.
+
+• Halaman episode didesain ulang; rating episode TMDB + dizi.jpg dengan rata-rata musim.
+• Chat: nama panggilan dan tema bersama, simpan media ke galeri, peringatan tangkapan layar.
+• Geser gelembung untuk membalas, tarik untuk melihat jam.
+• Cari orang saat membagikan kiriman.
+• Geser kalender untuk ganti bulan; beranda menampilkan "5 hari lalu".
+• Perbaikan bug.
+</id>
+
+<it-IT>
+Nuovo pannello media in chat: griglia delle foto recenti, fotocamera in-app, foto/video a visualizzazione singola e posizione.
+
+• Pagina episodio rinnovata; voti TMDB + dizi.jpg con media di stagione.
+• Chat: soprannomi e temi condivisi, salva nella galleria, avviso screenshot.
+• Scorri un fumetto per rispondere, tira per vedere l'ora.
+• Cerca persone quando condividi.
+• Scorri il calendario per cambiare mese; feed con "5 giorni fa".
+• Correzioni di bug.
+</it-IT>
+
+<pt-BR>
+Novo painel de mídia no chat: grade de fotos recentes, câmera no app, fotos/vídeos de visualização única e localização.
+
+• Página do episódio redesenhada; notas TMDB + dizi.jpg com média da temporada.
+• Chat: apelidos e temas compartilhados, salvar na galeria, aviso de captura de tela.
+• Deslize um balão para responder, puxe para ver a hora.
+• Busque pessoas ao compartilhar.
+• Deslize o calendário para mudar o mês; feed mostra "há 5 dias".
+• Correções de bugs.
+</pt-BR>
+
+<ru-RU>
+Новая медиапанель в чате: сетка последних фото, камера в приложении, фото и видео для одного просмотра, отправка геопозиции.
+
+• Страница серии обновлена; оценки серий TMDB + dizi.jpg со средним за сезон.
+• Чат: псевдонимы и общие темы, сохранение в галерею, уведомление о скриншоте.
+• Смахните пузырь, чтобы ответить; потяните, чтобы увидеть время.
+• Поиск людей при отправке.
+• Смахивание календаря для смены месяца; лента показывает «5 дней назад».
+• Исправления ошибок.
+</ru-RU>
+
+<tr-TR>
+Sohbet medya paneli yenilendi: son fotoğraflar ızgarası, uygulama içi kamera, tek kullanımlık fotoğraf/video ve konum paylaşımı.
+
+• Bölüm sayfası yeni tasarımda; TMDB + dizi.jpg bölüm puanları ve sezon ortalaması.
+• Sohbette takma ad ve paylaşılan tema, medyayı galeriye kaydet, ekran görüntüsü bildirimi.
+• Balonu çekerek yanıtla, saati görmek için çek.
+• Gönderi paylaşırken kişi arama.
+• Takvimde çekerek ay değiştir; akışta "5 gün önce".
+• Hata düzeltmeleri.
+</tr-TR>
