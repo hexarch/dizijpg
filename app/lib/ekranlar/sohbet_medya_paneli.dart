@@ -226,8 +226,19 @@ class _SohbetMedyaPaneliState extends State<SohbetMedyaPaneli> {
     Navigator.of(context).pop(SohbetEkMedya(dosyalar));
   }
 
-  void _secenek(SohbetEkTuru t) =>
-      Navigator.of(context).pop(SohbetEkSecenek(t));
+  /// Kamera karesinin durumu: kamera seçilince önizleme panel KAPANMADAN
+  /// önce bırakılır. CameraX eklentisi tek kamera oturumu tutar; panelin
+  /// çıkış animasyonu bitene kadar yaşayan önizleme, tam ekran kameranın
+  /// kurulumunu iptal ediyordu ("Kamera açılamadı", 15 Eyl 2026 gece).
+  final _kameraKaresi = GlobalKey<_KameraKaresiState>();
+
+  Future<void> _secenek(SohbetEkTuru t) async {
+    if (t == SohbetEkTuru.kamera) {
+      await _kameraKaresi.currentState?.kapat();
+      if (!mounted) return;
+    }
+    Navigator.of(context).pop(SohbetEkSecenek(t));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -320,7 +331,10 @@ class _SohbetMedyaPaneliState extends State<SohbetMedyaPaneli> {
           SizedBox(
             width: 110,
             height: 150,
-            child: _KameraKaresi(onTap: () => _secenek(SohbetEkTuru.kamera)),
+            child: _KameraKaresi(
+              key: _kameraKaresi,
+              onTap: () => _secenek(SohbetEkTuru.kamera),
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -425,6 +439,7 @@ class _SohbetMedyaPaneliState extends State<SohbetMedyaPaneli> {
                                 width: kare,
                                 height: kare * 2 + bosluk,
                                 child: _KameraKaresi(
+                                  key: _kameraKaresi,
                                   onTap: () => _secenek(SohbetEkTuru.kamera),
                                 ),
                               ),
@@ -663,7 +678,7 @@ class _GaleriKaresi extends StatelessWidget {
 /// masaüstü, test) kamera ikonu çizilir; dokunma her durumda kamera açar.
 class _KameraKaresi extends StatefulWidget {
   final VoidCallback onTap;
-  const _KameraKaresi({required this.onTap});
+  const _KameraKaresi({super.key, required this.onTap});
 
   @override
   State<_KameraKaresi> createState() => _KameraKaresiState();
@@ -671,17 +686,19 @@ class _KameraKaresi extends StatefulWidget {
 
 class _KameraKaresiState extends State<_KameraKaresi> {
   CameraController? _denetci;
+  Future<void>? _kurulum;
+  bool _kapatildi = false;
 
   @override
   void initState() {
     super.initState();
-    if (!kameraOnizlemeKapali && !kIsWeb) _kur();
+    if (!kameraOnizlemeKapali && !kIsWeb) _kurulum = _kur();
   }
 
   Future<void> _kur() async {
     try {
       final kameralar = await (kameraListesiSahte ?? availableCameras)();
-      if (kameralar.isEmpty) return;
+      if (kameralar.isEmpty || _kapatildi) return;
       final arka = kameralar.firstWhere(
         (k) => k.lensDirection == CameraLensDirection.back,
         orElse: () => kameralar.first,
@@ -692,7 +709,7 @@ class _KameraKaresiState extends State<_KameraKaresi> {
         enableAudio: false,
       );
       await d.initialize();
-      if (!mounted) {
+      if (!mounted || _kapatildi) {
         await d.dispose();
         return;
       }
@@ -702,8 +719,21 @@ class _KameraKaresiState extends State<_KameraKaresi> {
     }
   }
 
+  /// Önizlemeyi hemen bırakır (kurulum sürüyorsa bitmesini bekleyip
+  /// bırakır). Tam ekran kamera açılmadan önce çağrılır.
+  Future<void> kapat() async {
+    _kapatildi = true;
+    final k = _kurulum;
+    if (k != null) await k;
+    final d = _denetci;
+    _denetci = null;
+    if (mounted) setState(() {});
+    await d?.dispose();
+  }
+
   @override
   void dispose() {
+    _kapatildi = true;
     _denetci?.dispose();
     super.dispose();
   }

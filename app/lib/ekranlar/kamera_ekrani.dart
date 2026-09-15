@@ -49,6 +49,10 @@ class _KameraEkraniState extends State<KameraEkrani>
   FlashMode _flas = FlashMode.off;
   bool _hazir = false;
   bool _hata = false;
+
+  /// Kurulum hatasının kısa metni: ekranda küçük yazıyla gösterilir ki
+  /// "Kamera açılamadı" tek başına kalmasın (teşhis, 15 Eyl 2026).
+  String? _hataMesaji;
   bool _mesgul = false;
   bool _kaydediyor = false;
   Timer? _sureSayaci;
@@ -72,8 +76,16 @@ class _KameraEkraniState extends State<KameraEkrani>
       );
       _indeks = arka < 0 ? 0 : arka;
       await _denetciKur();
-    } catch (_) {
-      if (mounted) setState(() => _hata = true);
+    } catch (e) {
+      debugPrint('kamera kurulamadı: $e');
+      if (mounted) {
+        setState(() {
+          _hata = true;
+          _hataMesaji = e is CameraException
+              ? '${e.code}: ${e.description ?? ''}'
+              : e.toString();
+        });
+      }
     }
   }
 
@@ -86,7 +98,6 @@ class _KameraEkraniState extends State<KameraEkrani>
       _kameralar[_indeks],
       ResolutionPreset.high,
       enableAudio: true,
-      imageFormatGroup: ImageFormatGroup.jpeg,
     );
     await d.initialize();
     try {
@@ -235,10 +246,26 @@ class _KameraEkraniState extends State<KameraEkrani>
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text(
-                  'Kamera açılamadı'.c,
-                  style: const TextStyle(color: Colors.white70),
-                  textAlign: TextAlign.center,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Kamera açılamadı'.c,
+                      style: const TextStyle(color: Colors.white70),
+                      textAlign: TextAlign.center,
+                    ),
+                    if (_hataMesaji != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        _hataMesaji!,
+                        style: const TextStyle(
+                          color: Colors.white38,
+                          fontSize: 11,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ],
                 ),
               ),
             )
