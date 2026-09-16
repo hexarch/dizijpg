@@ -1837,4 +1837,18 @@ const Map<String, String> cevirilerMy = {
   'Dosya indirilemedi': 'ဖိုင် ဒေါင်းလုဒ်ဆွဲမရပါ',
   'Bu dosyayı açacak uygulama yok': 'ဤဖိုင်ကို ဖွင့်နိုင်သော အက်ပ်မရှိပါ',
   'Dosyanın yalnız başı gösteriliyor': 'ဖိုင်၏ အစပိုင်းကိုသာ ပြသထားသည်',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': 'မသေခင် ကြည့်သင့်သော ရုပ်ရှင် 100 ကား',
+  'Ölmeden İzlenmesi Gereken 250 Film': 'မသေခင် ကြည့်သင့်သော ရုပ်ရှင် 250 ကား',
+  'Ölmeden İzlenmesi Gereken 500 Film': 'မသေခင် ကြည့်သင့်သော ရုပ်ရှင် 500 ကား',
+  'Ölmeden İzlenmesi Gereken 1000 Film':
+      'မသေခင် ကြည့်သင့်သော ရုပ်ရှင် 1000 ကား',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': 'မသေခင် ကြည့်သင့်သော ဇာတ်လမ်းတွဲ 10 ခု',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': 'မသေခင် ကြည့်သင့်သော ဇာတ်လမ်းတွဲ 25 ခု',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': 'မသေခင် ကြည့်သင့်သော ဇာတ်လမ်းတွဲ 50 ခု',
+  'Ölmeden İzlenmesi Gereken 100 Dizi':
+      'မသေခင် ကြည့်သင့်သော ဇာတ်လမ်းတွဲ 100 ခု',
+  'İzlediklerimi gösterme': 'ကြည့်ပြီးသားများကို ဖျောက်ရန်',
+  'Bu listede izlemediğin yapım kalmamış':
+      'ဤစာရင်းတွင် မကြည့်ရသေးသည် မကျန်တော့ပါ',
 };

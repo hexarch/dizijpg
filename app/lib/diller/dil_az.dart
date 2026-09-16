@@ -1807,4 +1807,16 @@ const Map<String, String> cevirilerAz = {
   'Dosya indirilemedi': 'Fayl yüklənə bilmədi',
   'Bu dosyayı açacak uygulama yok': 'Bu faylı açacaq tətbiq yoxdur',
   'Dosyanın yalnız başı gösteriliyor': 'Faylın yalnız başı göstərilir',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': 'Ölmədən İzlənməli 100 Film',
+  'Ölmeden İzlenmesi Gereken 250 Film': 'Ölmədən İzlənməli 250 Film',
+  'Ölmeden İzlenmesi Gereken 500 Film': 'Ölmədən İzlənməli 500 Film',
+  'Ölmeden İzlenmesi Gereken 1000 Film': 'Ölmədən İzlənməli 1000 Film',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': 'Ölmədən İzlənməli 10 Serial',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': 'Ölmədən İzlənməli 25 Serial',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': 'Ölmədən İzlənməli 50 Serial',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': 'Ölmədən İzlənməli 100 Serial',
+  'İzlediklerimi gösterme': 'İzlədiklərimi göstərmə',
+  'Bu listede izlemediğin yapım kalmamış':
+      'Bu siyahıda izlənməmiş yapım qalmayıb',
 };

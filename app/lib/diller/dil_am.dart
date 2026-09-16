@@ -1757,4 +1757,15 @@ const Map<String, String> cevirilerAm = {
   'Dosya indirilemedi': 'ፋይሉን ማውረድ አልተቻለም',
   'Bu dosyayı açacak uygulama yok': 'ይህን ፋይል የሚከፍት መተግበሪያ የለም',
   'Dosyanın yalnız başı gösteriliyor': 'የፋይሉ መጀመሪያ ብቻ ይታያል',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': 'ከመሞትዎ በፊት መታየት ያለባቸው 100 ፊልሞች',
+  'Ölmeden İzlenmesi Gereken 250 Film': 'ከመሞትዎ በፊት መታየት ያለባቸው 250 ፊልሞች',
+  'Ölmeden İzlenmesi Gereken 500 Film': 'ከመሞትዎ በፊት መታየት ያለባቸው 500 ፊልሞች',
+  'Ölmeden İzlenmesi Gereken 1000 Film': 'ከመሞትዎ በፊት መታየት ያለባቸው 1000 ፊልሞች',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': 'ከመሞትዎ በፊት መታየት ያለባቸው 10 ተከታታዮች',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': 'ከመሞትዎ በፊት መታየት ያለባቸው 25 ተከታታዮች',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': 'ከመሞትዎ በፊት መታየት ያለባቸው 50 ተከታታዮች',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': 'ከመሞትዎ በፊት መታየት ያለባቸው 100 ተከታታዮች',
+  'İzlediklerimi gösterme': 'ያየኋቸውን ደብቅ',
+  'Bu listede izlemediğin yapım kalmamış': 'በዚህ ዝርዝር ያልታየ ምንም አልቀረም',
 };

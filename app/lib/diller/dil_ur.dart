@@ -1817,4 +1817,21 @@ const Map<String, String> cevirilerUr = {
   'Dosya indirilemedi': 'فائل ڈاؤن لوڈ نہیں ہو سکی',
   'Bu dosyayı açacak uygulama yok': 'اس فائل کو کھولنے والی کوئی ایپ نہیں',
   'Dosyanın yalnız başı gösteriliyor': 'صرف فائل کا آغاز دکھایا جا رہا ہے',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film':
+      '100 فلمیں جو مرنے سے پہلے دیکھنی چاہئیں',
+  'Ölmeden İzlenmesi Gereken 250 Film':
+      '250 فلمیں جو مرنے سے پہلے دیکھنی چاہئیں',
+  'Ölmeden İzlenmesi Gereken 500 Film':
+      '500 فلمیں جو مرنے سے پہلے دیکھنی چاہئیں',
+  'Ölmeden İzlenmesi Gereken 1000 Film':
+      '1000 فلمیں جو مرنے سے پہلے دیکھنی چاہئیں',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 سیریز جو مرنے سے پہلے دیکھنی چاہئیں',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 سیریز جو مرنے سے پہلے دیکھنی چاہئیں',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 سیریز جو مرنے سے پہلے دیکھنی چاہئیں',
+  'Ölmeden İzlenmesi Gereken 100 Dizi':
+      '100 سیریز جو مرنے سے پہلے دیکھنی چاہئیں',
+  'İzlediklerimi gösterme': 'دیکھی ہوئی چھپائیں',
+  'Bu listede izlemediğin yapım kalmamış':
+      'اس فہرست میں ان دیکھی کوئی چیز باقی نہیں',
 };

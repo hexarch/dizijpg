@@ -1,6 +1,31 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-16 — 🔨 KANON LİSTELERİ ("Ölmeden İzlenmesi Gereken") + RAF ÇARKI (1.172.0+259)
+
+**Tetik (birebir):** *"Ölmeden izlenmesi gereken 100/250/500/1000 film listeleri
+yap, ana sayfada ve akışta göster; dizi versiyonu 10/25/50/100; ana sayfada
+aralara serpiştir; Sana Özel'in sağında çark olsun, o listedeki yapımları
+rastgele seçsin (izleyeceğim çarkı gibi), 'izlediklerimi gösterme' seçeneği."*
+
+- **Sunucu (`backend/kanon.js` saf + server.js):** TMDB discover puan sıralı
+  (film oy ≥ 3000, dizi ≥ 1000), İÇ İÇE listeler (100 ⊂ 250 ⊂ 500 ⊂ 1000),
+  bellek içi, dil başına, 24 saatte bir; sayfalar `tmdb_onbellek`ten (tablo/
+  migrasyon YOK). Uçlar: `GET /kanon/:medya/:boy?page&adet(≤1000)` (girişliyse
+  `izlenen`), `GET /kanon/ozet` (8 raf × 10 kart), `GET /izlenen-idler`.
+  SEO_KESFET_RAFLARI'na 8 kanon rafı (`kanon:{medya,boy}`), bot da görür.
+- **İstemci:** `anaSayfaRaflari`ne 8 raf serpiştirildi (100F Türk Filmleri'nden
+  sonra, 10D … ; 1000F/100D 2027'lerin hemen üstünde — 2027'ler en altta
+  kalır). Akışta her 6 gönderide bir `KanonRafKarti` (dönüşümlü, `/kanon/ozet`).
+  `KatalogListeEkrani` sağ üstte çark (Sana Özel dahil): kanon rafında tüm
+  liste (`adet=1000`) + `/izlenen-idler`; `IzlemCarki`de "İzlediklerimi
+  gösterme" FilterChip (bayraklı öğelerde), hepsi izlenmişse SnackBar.
+- **Çeviri:** 8 başlık + 2 anahtar, 45 dil. Başlık = sunucu `kanonBasligi()`
+  ile BİREBİR (slug + çeviri anahtarı bu dizeden türer).
+- **Kanıt:** backend `kanon.test.js` (5), Flutter `kanon_cark_test` (3),
+  `katalog_cark_test` (3), `akis_kanon_raf_test` (2); raf_2027/sana_ozel testleri
+  yeşil.
+
 ## 2026-09-16 — 🔨 SOHBET ÇÖKMESİ: 108 MP FOTOĞRAF ALBÜMÜ (1.171.2+257)
 
 **Tetik:** *"kaniberkali görsel ve fotoğraf gönderdi 10 tane ve ağırlar,

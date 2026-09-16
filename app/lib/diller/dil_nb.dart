@@ -1818,4 +1818,16 @@ const Map<String, String> cevirilerNb = {
   'Dosya indirilemedi': 'Kunne ikke laste ned filen',
   'Bu dosyayı açacak uygulama yok': 'Ingen app kan åpne denne filen',
   'Dosyanın yalnız başı gösteriliyor': 'Bare begynnelsen av filen vises',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 filmer du må se før du dør',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 filmer du må se før du dør',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 filmer du må se før du dør',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 filmer du må se før du dør',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 serier du må se før du dør',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 serier du må se før du dør',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 serier du må se før du dør',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 serier du må se før du dør',
+  'İzlediklerimi gösterme': 'Skjul det jeg har sett',
+  'Bu listede izlemediğin yapım kalmamış':
+      'Ingenting usett igjen i denne listen',
 };

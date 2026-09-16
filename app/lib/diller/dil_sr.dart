@@ -1820,4 +1820,16 @@ const Map<String, String> cevirilerSr = {
   'Dosya indirilemedi': 'Datoteka nije preuzeta',
   'Bu dosyayı açacak uygulama yok': 'Nijedna aplikacija ne otvara ovu datoteku',
   'Dosyanın yalnız başı gösteriliyor': 'Prikazan je samo početak datoteke',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 filmova koje moraš pogledati',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 filmova koje moraš pogledati',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 filmova koje moraš pogledati',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 filmova koje moraš pogledati',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 serija koje moraš pogledati',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 serija koje moraš pogledati',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 serija koje moraš pogledati',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 serija koje moraš pogledati',
+  'İzlediklerimi gösterme': 'Sakrij odgledano',
+  'Bu listede izlemediğin yapım kalmamış':
+      'U ovoj listi nije ostalo ništa neodgledano',
 };

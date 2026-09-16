@@ -1871,4 +1871,16 @@ const Map<String, String> cevirilerEn = {
   'Bu dosyayı açacak uygulama yok': 'No app can open this file',
   'Dosyanın yalnız başı gösteriliyor':
       'Only the beginning of the file is shown',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 Films to Watch Before You Die',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 Films to Watch Before You Die',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 Films to Watch Before You Die',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 Films to Watch Before You Die',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 Series to Watch Before You Die',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 Series to Watch Before You Die',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 Series to Watch Before You Die',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 Series to Watch Before You Die',
+  'İzlediklerimi gösterme': 'Hide what I’ve watched',
+  'Bu listede izlemediğin yapım kalmamış':
+      'No unwatched titles left in this list',
 };

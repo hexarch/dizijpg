@@ -1827,4 +1827,16 @@ const Map<String, String> cevirilerBg = {
   'Bu dosyayı açacak uygulama yok':
       'Няма приложение, което да отвори този файл',
   'Dosyanın yalnız başı gösteriliyor': 'Показано е само началото на файла',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 филма, които трябва да видиш',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 филма, които трябва да видиш',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 филма, които трябва да видиш',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 филма, които трябва да видиш',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 сериала, които трябва да видиш',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 сериала, които трябва да видиш',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 сериала, които трябва да видиш',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 сериала, които трябва да видиш',
+  'İzlediklerimi gösterme': 'Скрий гледаните',
+  'Bu listede izlemediğin yapım kalmamış':
+      'В този списък не остана нищо негледано',
 };

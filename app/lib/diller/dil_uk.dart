@@ -1824,4 +1824,16 @@ const Map<String, String> cevirilerUk = {
   'Dosya indirilemedi': 'Не вдалося завантажити файл',
   'Bu dosyayı açacak uygulama yok': 'Немає застосунку, який відкриє цей файл',
   'Dosyanın yalnız başı gösteriliyor': 'Показано лише початок файлу',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 фільмів, які варто побачити',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 фільмів, які варто побачити',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 фільмів, які варто побачити',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 фільмів, які варто побачити',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 серіалів, які варто побачити',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 серіалів, які варто побачити',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 серіалів, які варто побачити',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 серіалів, які варто побачити',
+  'İzlediklerimi gösterme': 'Сховати переглянуте',
+  'Bu listede izlemediğin yapım kalmamış':
+      'У цьому списку не лишилося непереглянутого',
 };

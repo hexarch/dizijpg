@@ -1814,4 +1814,16 @@ const Map<String, String> cevirilerCs = {
   'Dosya indirilemedi': 'Soubor se nepodařilo stáhnout',
   'Bu dosyayı açacak uygulama yok': 'Tento soubor neotevře žádná aplikace',
   'Dosyanın yalnız başı gösteriliyor': 'Zobrazen je jen začátek souboru',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 filmů, které musíte vidět',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 filmů, které musíte vidět',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 filmů, které musíte vidět',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 filmů, které musíte vidět',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 seriálů, které musíte vidět',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 seriálů, které musíte vidět',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 seriálů, které musíte vidět',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 seriálů, které musíte vidět',
+  'İzlediklerimi gösterme': 'Skrýt zhlédnuté',
+  'Bu listede izlemediğin yapım kalmamış':
+      'V tomto seznamu nezbylo nic nezhlédnutého',
 };

@@ -1811,4 +1811,17 @@ const Map<String, String> cevirilerMr = {
   'Dosya indirilemedi': 'फाइल डाउनलोड होऊ शकली नाही',
   'Bu dosyayı açacak uygulama yok': 'ही फाइल उघडणारे कोणतेही अ‍ॅप नाही',
   'Dosyanın yalnız başı gösteriliyor': 'फाइलची फक्त सुरुवात दाखवली जात आहे',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': 'मरण्यापूर्वी पाहण्यासारखे 100 चित्रपट',
+  'Ölmeden İzlenmesi Gereken 250 Film': 'मरण्यापूर्वी पाहण्यासारखे 250 चित्रपट',
+  'Ölmeden İzlenmesi Gereken 500 Film': 'मरण्यापूर्वी पाहण्यासारखे 500 चित्रपट',
+  'Ölmeden İzlenmesi Gereken 1000 Film':
+      'मरण्यापूर्वी पाहण्यासारखे 1000 चित्रपट',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': 'मरण्यापूर्वी पाहण्यासारख्या 10 मालिका',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': 'मरण्यापूर्वी पाहण्यासारख्या 25 मालिका',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': 'मरण्यापूर्वी पाहण्यासारख्या 50 मालिका',
+  'Ölmeden İzlenmesi Gereken 100 Dizi':
+      'मरण्यापूर्वी पाहण्यासारख्या 100 मालिका',
+  'İzlediklerimi gösterme': 'पाहिलेले लपवा',
+  'Bu listede izlemediğin yapım kalmamış': 'या यादीत न पाहिलेले काही उरले नाही',
 };

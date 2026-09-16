@@ -1901,4 +1901,16 @@ const Map<String, String> cevirilerRo = {
   'Bu dosyayı açacak uygulama yok':
       'Nicio aplicație nu poate deschide acest fișier',
   'Dosyanın yalnız başı gösteriliyor': 'Se afișează doar începutul fișierului',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 filme de văzut înainte să mori',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 filme de văzut înainte să mori',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 filme de văzut înainte să mori',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 filme de văzut înainte să mori',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 seriale de văzut înainte să mori',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 seriale de văzut înainte să mori',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 seriale de văzut înainte să mori',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 seriale de văzut înainte să mori',
+  'İzlediklerimi gösterme': 'Ascunde ce am văzut',
+  'Bu listede izlemediğin yapım kalmamış':
+      'Nu a mai rămas nimic nevăzut în această listă',
 };

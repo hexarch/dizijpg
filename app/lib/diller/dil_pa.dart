@@ -1814,4 +1814,20 @@ const Map<String, String> cevirilerPa = {
   'Bu dosyayı açacak uygulama yok': 'ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਖੋਲ੍ਹਣ ਵਾਲੀ ਕੋਈ ਐਪ ਨਹੀਂ',
   'Dosyanın yalnız başı gösteriliyor':
       'ਫ਼ਾਈਲ ਦਾ ਸਿਰਫ਼ ਸ਼ੁਰੂਆਤੀ ਹਿੱਸਾ ਦਿਖਾਇਆ ਜਾ ਰਿਹਾ ਹੈ',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film':
+      'ਮਰਨ ਤੋਂ ਪਹਿਲਾਂ ਵੇਖਣ ਵਾਲੀਆਂ 100 ਫ਼ਿਲਮਾਂ',
+  'Ölmeden İzlenmesi Gereken 250 Film':
+      'ਮਰਨ ਤੋਂ ਪਹਿਲਾਂ ਵੇਖਣ ਵਾਲੀਆਂ 250 ਫ਼ਿਲਮਾਂ',
+  'Ölmeden İzlenmesi Gereken 500 Film':
+      'ਮਰਨ ਤੋਂ ਪਹਿਲਾਂ ਵੇਖਣ ਵਾਲੀਆਂ 500 ਫ਼ਿਲਮਾਂ',
+  'Ölmeden İzlenmesi Gereken 1000 Film':
+      'ਮਰਨ ਤੋਂ ਪਹਿਲਾਂ ਵੇਖਣ ਵਾਲੀਆਂ 1000 ਫ਼ਿਲਮਾਂ',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': 'ਮਰਨ ਤੋਂ ਪਹਿਲਾਂ ਵੇਖਣ ਵਾਲੀਆਂ 10 ਸੀਰੀਜ਼',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': 'ਮਰਨ ਤੋਂ ਪਹਿਲਾਂ ਵੇਖਣ ਵਾਲੀਆਂ 25 ਸੀਰੀਜ਼',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': 'ਮਰਨ ਤੋਂ ਪਹਿਲਾਂ ਵੇਖਣ ਵਾਲੀਆਂ 50 ਸੀਰੀਜ਼',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': 'ਮਰਨ ਤੋਂ ਪਹਿਲਾਂ ਵੇਖਣ ਵਾਲੀਆਂ 100 ਸੀਰੀਜ਼',
+  'İzlediklerimi gösterme': 'ਵੇਖੀਆਂ ਲੁਕਾਓ',
+  'Bu listede izlemediğin yapım kalmamış':
+      'ਇਸ ਸੂਚੀ ਵਿੱਚ ਕੋਈ ਅਣਵੇਖੀ ਚੀਜ਼ ਨਹੀਂ ਬਚੀ',
 };

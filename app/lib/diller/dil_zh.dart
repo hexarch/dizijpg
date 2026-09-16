@@ -1760,4 +1760,15 @@ const Map<String, String> cevirilerZh = {
   'Dosya indirilemedi': '无法下载文件',
   'Bu dosyayı açacak uygulama yok': '没有可打开此文件的应用',
   'Dosyanın yalnız başı gösteriliyor': '仅显示文件开头',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '死前必看的 100 部电影',
+  'Ölmeden İzlenmesi Gereken 250 Film': '死前必看的 250 部电影',
+  'Ölmeden İzlenmesi Gereken 500 Film': '死前必看的 500 部电影',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '死前必看的 1000 部电影',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '死前必看的 10 部剧集',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '死前必看的 25 部剧集',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '死前必看的 50 部剧集',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '死前必看的 100 部剧集',
+  'İzlediklerimi gösterme': '隐藏已看过的',
+  'Bu listede izlemediğin yapım kalmamış': '此列表中没有未看的作品了',
 };

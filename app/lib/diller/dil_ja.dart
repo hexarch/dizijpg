@@ -1728,4 +1728,15 @@ const Map<String, String> cevirilerJa = {
   'Dosya indirilemedi': 'ファイルをダウンロードできませんでした',
   'Bu dosyayı açacak uygulama yok': 'このファイルを開けるアプリがありません',
   'Dosyanın yalnız başı gösteriliyor': 'ファイルの先頭のみ表示しています',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '死ぬまでに観るべき映画100本',
+  'Ölmeden İzlenmesi Gereken 250 Film': '死ぬまでに観るべき映画250本',
+  'Ölmeden İzlenmesi Gereken 500 Film': '死ぬまでに観るべき映画500本',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '死ぬまでに観るべき映画1000本',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '死ぬまでに観るべきドラマ10本',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '死ぬまでに観るべきドラマ25本',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '死ぬまでに観るべきドラマ50本',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '死ぬまでに観るべきドラマ100本',
+  'İzlediklerimi gösterme': '視聴済みを隠す',
+  'Bu listede izlemediğin yapım kalmamış': 'このリストに未視聴の作品は残っていません',
 };

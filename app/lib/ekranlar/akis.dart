@@ -23,6 +23,7 @@ import 'etiket.dart';
 import 'gizlenen_ust_bar.dart';
 import 'gonderi_istatistik.dart' show gonderiIstatistikAc;
 import 'kabuk.dart' show SekmeTekrar, akisHedefi;
+import 'kesfet.dart' show rafSlug;
 import 'kesfet_akis.dart' show ReelsGorunumu, yanitlariAc;
 import 'paylas_yorum.dart';
 import 'giris_istem.dart';
@@ -218,6 +219,28 @@ class AkisEkrani extends StatefulWidget {
 class _AkisEkraniState extends State<AkisEkrani>
     with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   List<dynamic>? _akis;
+
+  /// KANON RAFLARI (16 Eyl 2026): "ölmeden izlenmesi gereken" listeleri
+  /// akışa her [_kanonAralik] gönderide bir, dönüşümlü serpiştirilir
+  /// (`/kanon/ozet`, misafir de görür). Yüklenemezse akış rafsız akar.
+  List<dynamic>? _kanonRaflar;
+  static const _kanonAralik = 6;
+
+  int get _kanonAdet {
+    final r = _kanonRaflar;
+    if (r == null || r.isEmpty || _akis == null) return 0;
+    return _akis!.length ~/ _kanonAralik;
+  }
+
+  Future<void> _kanonYukle() async {
+    try {
+      final d = await Api.get('/kanon/ozet');
+      final raflar = d['raflar'] as List<dynamic>?;
+      if (!mounted || raflar == null || raflar.isEmpty) return;
+      setState(() => _kanonRaflar = raflar);
+    } catch (_) {}
+  }
+
   Map<String, dynamic> _icerikler = {};
   String? _hata;
   int _bildirimSayi = 0;
@@ -250,6 +273,7 @@ class _AkisEkraniState extends State<AkisEkrani>
     super.initState();
     _onbellektenYukle();
     _yukle();
+    _kanonYukle();
     _kaydirma.addListener(() {
       _ustBar.kaydirmaDegisti(_kaydirma.position);
       if (_kaydirma.position.pixels >
@@ -537,13 +561,24 @@ class _AkisEkraniState extends State<AkisEkrani>
             // konmuştu ("üst barın altında" = sabit diye okunmuştu); o okuma
             // düzeltildi. Listenin içinde olduğu için [OrtaKolon] kısıtını
             // zaten alıyor — masaüstü hizası bozulmaz.
-            itemCount: _akis!.length + 1,
+            itemCount: _akis!.length + 1 + _kanonAdet,
             itemBuilder: (context, i) {
               if (i == 0) {
                 return PaylasKutusu(onPaylasildi: _yukle);
               }
               // Kart indeksi bir geride: 0 kutuya ayrıldı.
-              final k = i - 1;
+              // KANON RAFI (16 Eyl 2026): her (_kanonAralik+1). satır bir raf
+              // (6 gönderi + 1 raf); gönderi indeksi raf sayısı kadar geri.
+              final j = i - 1;
+              final kanonAdet = _kanonAdet;
+              if (kanonAdet > 0 && (j + 1) % (_kanonAralik + 1) == 0) {
+                final sira = (j + 1) ~/ (_kanonAralik + 1) - 1;
+                final raf =
+                    _kanonRaflar![sira % _kanonRaflar!.length]
+                        as Map<String, dynamic>;
+                return KanonRafKarti(key: ValueKey('kanon-$sira'), raf: raf);
+              }
+              final k = kanonAdet > 0 ? j - j ~/ (_kanonAralik + 1) : j;
               final y = _akis![k] as Map<String, dynamic>;
               // "Görüldü": kart GERÇEKTEN ekranda belirince işaretle —
               // build ≈ görüldü DEĞİL (ListView ekran dışı kartları da kurar).
@@ -1700,6 +1735,30 @@ class _KisaltilmisYorumState extends State<KisaltilmisYorum> {
           ),
         );
       },
+    );
+  }
+}
+
+/// Akıştaki kanon raf kartı (16 Eyl 2026): "Ölmeden İzlenmesi Gereken N
+/// Film/Dizi" — poster şeridi + başlığa dokununca tam liste (`/raf/<slug>`,
+/// kesfet.dart ile aynı slug → aynı sayfa, çark dahil).
+class KanonRafKarti extends StatelessWidget {
+  final Map<String, dynamic> raf;
+  const KanonRafKarti({super.key, required this.raf});
+
+  @override
+  Widget build(BuildContext context) {
+    final baslik = raf['baslik'] as String? ?? '';
+    final icerikler = raf['icerikler'] as List<dynamic>? ?? const [];
+    if (baslik.isEmpty || icerikler.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: PosterSeridi(
+        baslik: baslik,
+        icerikler: icerikler,
+        turZorla: raf['medya'] as String?,
+        onBaslikTap: () => context.push('/raf/${rafSlug(baslik)}'),
+      ),
     );
   }
 }

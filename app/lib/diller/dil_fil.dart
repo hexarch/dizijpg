@@ -1852,4 +1852,24 @@ const Map<String, String> cevirilerFil = {
   'Bu dosyayı açacak uygulama yok':
       'Walang app na makakapagbukas ng file na ito',
   'Dosyanın yalnız başı gösteriliyor': 'Simula lang ng file ang ipinapakita',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film':
+      '100 Pelikulang Dapat Panoorin Bago Mamatay',
+  'Ölmeden İzlenmesi Gereken 250 Film':
+      '250 Pelikulang Dapat Panoorin Bago Mamatay',
+  'Ölmeden İzlenmesi Gereken 500 Film':
+      '500 Pelikulang Dapat Panoorin Bago Mamatay',
+  'Ölmeden İzlenmesi Gereken 1000 Film':
+      '1000 Pelikulang Dapat Panoorin Bago Mamatay',
+  'Ölmeden İzlenmesi Gereken 10 Dizi':
+      '10 Serye na Dapat Panoorin Bago Mamatay',
+  'Ölmeden İzlenmesi Gereken 25 Dizi':
+      '25 Serye na Dapat Panoorin Bago Mamatay',
+  'Ölmeden İzlenmesi Gereken 50 Dizi':
+      '50 Serye na Dapat Panoorin Bago Mamatay',
+  'Ölmeden İzlenmesi Gereken 100 Dizi':
+      '100 Serye na Dapat Panoorin Bago Mamatay',
+  'İzlediklerimi gösterme': 'Itago ang napanood ko',
+  'Bu listede izlemediğin yapım kalmamış':
+      'Wala nang hindi napanood sa listahang ito',
 };

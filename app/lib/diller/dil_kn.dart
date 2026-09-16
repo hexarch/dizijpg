@@ -1818,4 +1818,16 @@ const Map<String, String> cevirilerKn = {
   'Dosya indirilemedi': 'ಫೈಲ್ ಡೌನ್‌ಲೋಡ್ ಆಗಲಿಲ್ಲ',
   'Bu dosyayı açacak uygulama yok': 'ಈ ಫೈಲ್ ತೆರೆಯುವ ಯಾವುದೇ ಆ್ಯಪ್ ಇಲ್ಲ',
   'Dosyanın yalnız başı gösteriliyor': 'ಫೈಲ್‌ನ ಆರಂಭ ಮಾತ್ರ ತೋರಿಸಲಾಗಿದೆ',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': 'ಸಾಯುವ ಮೊದಲು ನೋಡಬೇಕಾದ 100 ಚಿತ್ರಗಳು',
+  'Ölmeden İzlenmesi Gereken 250 Film': 'ಸಾಯುವ ಮೊದಲು ನೋಡಬೇಕಾದ 250 ಚಿತ್ರಗಳು',
+  'Ölmeden İzlenmesi Gereken 500 Film': 'ಸಾಯುವ ಮೊದಲು ನೋಡಬೇಕಾದ 500 ಚಿತ್ರಗಳು',
+  'Ölmeden İzlenmesi Gereken 1000 Film': 'ಸಾಯುವ ಮೊದಲು ನೋಡಬೇಕಾದ 1000 ಚಿತ್ರಗಳು',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': 'ಸಾಯುವ ಮೊದಲು ನೋಡಬೇಕಾದ 10 ಸರಣಿಗಳು',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': 'ಸಾಯುವ ಮೊದಲು ನೋಡಬೇಕಾದ 25 ಸರಣಿಗಳು',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': 'ಸಾಯುವ ಮೊದಲು ನೋಡಬೇಕಾದ 50 ಸರಣಿಗಳು',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': 'ಸಾಯುವ ಮೊದಲು ನೋಡಬೇಕಾದ 100 ಸರಣಿಗಳು',
+  'İzlediklerimi gösterme': 'ನೋಡಿದವನ್ನು ಮರೆಮಾಡಿ',
+  'Bu listede izlemediğin yapım kalmamış':
+      'ಈ ಪಟ್ಟಿಯಲ್ಲಿ ನೋಡದಿರುವುದು ಯಾವುದೂ ಉಳಿದಿಲ್ಲ',
 };

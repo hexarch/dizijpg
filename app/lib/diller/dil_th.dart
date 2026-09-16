@@ -1788,4 +1788,16 @@ const Map<String, String> cevirilerTh = {
   'Dosya indirilemedi': 'ดาวน์โหลดไฟล์ไม่สำเร็จ',
   'Bu dosyayı açacak uygulama yok': 'ไม่มีแอปที่เปิดไฟล์นี้ได้',
   'Dosyanın yalnız başı gösteriliyor': 'แสดงเฉพาะส่วนต้นของไฟล์',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 หนังที่ต้องดูก่อนตาย',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 หนังที่ต้องดูก่อนตาย',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 หนังที่ต้องดูก่อนตาย',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 หนังที่ต้องดูก่อนตาย',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 ซีรีส์ที่ต้องดูก่อนตาย',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 ซีรีส์ที่ต้องดูก่อนตาย',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 ซีรีส์ที่ต้องดูก่อนตาย',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 ซีรีส์ที่ต้องดูก่อนตาย',
+  'İzlediklerimi gösterme': 'ซ่อนที่ดูแล้ว',
+  'Bu listede izlemediğin yapım kalmamış':
+      'ไม่เหลือเรื่องที่ยังไม่ได้ดูในรายการนี้',
 };

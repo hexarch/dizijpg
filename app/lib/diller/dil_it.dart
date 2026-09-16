@@ -1833,4 +1833,16 @@ const Map<String, String> cevirilerIt = {
   'Dosya indirilemedi': 'Impossibile scaricare il file',
   'Bu dosyayı açacak uygulama yok': 'Nessuna app può aprire questo file',
   'Dosyanın yalnız başı gösteriliyor': 'Viene mostrato solo l’inizio del file',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 film da vedere prima di morire',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 film da vedere prima di morire',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 film da vedere prima di morire',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 film da vedere prima di morire',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 serie da vedere prima di morire',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 serie da vedere prima di morire',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 serie da vedere prima di morire',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 serie da vedere prima di morire',
+  'İzlediklerimi gösterme': 'Nascondi quelli visti',
+  'Bu listede izlemediğin yapım kalmamış':
+      'Non resta nulla di non visto in questa lista',
 };

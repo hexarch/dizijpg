@@ -1813,4 +1813,17 @@ const Map<String, String> cevirilerHi = {
   'Dosya indirilemedi': 'फ़ाइल डाउनलोड नहीं हो सकी',
   'Bu dosyayı açacak uygulama yok': 'इस फ़ाइल को खोलने वाला कोई ऐप नहीं',
   'Dosyanın yalnız başı gösteriliyor': 'फ़ाइल की सिर्फ़ शुरुआत दिखाई जा रही है',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': 'मरने से पहले देखने लायक 100 फ़िल्में',
+  'Ölmeden İzlenmesi Gereken 250 Film': 'मरने से पहले देखने लायक 250 फ़िल्में',
+  'Ölmeden İzlenmesi Gereken 500 Film': 'मरने से पहले देखने लायक 500 फ़िल्में',
+  'Ölmeden İzlenmesi Gereken 1000 Film':
+      'मरने से पहले देखने लायक 1000 फ़िल्में',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': 'मरने से पहले देखने लायक 10 सीरीज़',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': 'मरने से पहले देखने लायक 25 सीरीज़',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': 'मरने से पहले देखने लायक 50 सीरीज़',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': 'मरने से पहले देखने लायक 100 सीरीज़',
+  'İzlediklerimi gösterme': 'देखी हुई छिपाएँ',
+  'Bu listede izlemediğin yapım kalmamış':
+      'इस सूची में कोई अनदेखी चीज़ नहीं बची',
 };

@@ -1804,4 +1804,15 @@ const Map<String, String> cevirilerGu = {
   'Dosya indirilemedi': 'ફાઇલ ડાઉનલોડ થઈ શકી નહીં',
   'Bu dosyayı açacak uygulama yok': 'આ ફાઇલ ખોલી શકે તેવી કોઈ ઍપ નથી',
   'Dosyanın yalnız başı gösteriliyor': 'ફાઇલની ફક્ત શરૂઆત બતાવાય છે',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': 'મરતા પહેલા જોવા જેવી 100 ફિલ્મો',
+  'Ölmeden İzlenmesi Gereken 250 Film': 'મરતા પહેલા જોવા જેવી 250 ફિલ્મો',
+  'Ölmeden İzlenmesi Gereken 500 Film': 'મરતા પહેલા જોવા જેવી 500 ફિલ્મો',
+  'Ölmeden İzlenmesi Gereken 1000 Film': 'મરતા પહેલા જોવા જેવી 1000 ફિલ્મો',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': 'મરતા પહેલા જોવા જેવી 10 સિરીઝ',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': 'મરતા પહેલા જોવા જેવી 25 સિરીઝ',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': 'મરતા પહેલા જોવા જેવી 50 સિરીઝ',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': 'મરતા પહેલા જોવા જેવી 100 સિરીઝ',
+  'İzlediklerimi gösterme': 'જોયેલી છુપાવો',
+  'Bu listede izlemediğin yapım kalmamış': 'આ યાદીમાં કંઈ અણજોયું બાકી નથી',
 };

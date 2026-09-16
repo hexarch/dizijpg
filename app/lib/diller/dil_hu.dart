@@ -1831,4 +1831,16 @@ const Map<String, String> cevirilerHu = {
   'Bu dosyayı açacak uygulama yok':
       'Nincs alkalmazás, amely megnyitná ezt a fájlt',
   'Dosyanın yalnız başı gösteriliyor': 'Csak a fájl eleje látható',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 film, amit látnod kell',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 film, amit látnod kell',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 film, amit látnod kell',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 film, amit látnod kell',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 sorozat, amit látnod kell',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 sorozat, amit látnod kell',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 sorozat, amit látnod kell',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 sorozat, amit látnod kell',
+  'İzlediklerimi gösterme': 'Megnézettek elrejtése',
+  'Bu listede izlemediğin yapım kalmamış':
+      'Nincs több nem látott cím ebben a listában',
 };

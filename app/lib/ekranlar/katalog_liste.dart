@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'izlem_carki.dart';
 import 'ortak.dart';
 
 /// Ana Sayfa raflarının "Tümünü gör" ekranı.
@@ -127,6 +128,61 @@ class _KatalogListeEkraniState extends State<KatalogListeEkrani> {
     }
   }
 
+  /// "NE İZLESEM?" ÇARKI (16 Eyl 2026 isteği: "sana özelin sağında çark
+  /// olsun, tıklayınca o listedeki yapımları çark çevirerek rastgele seçsin,
+  /// izleyeceğim listesindeki gibi; izlediklerimi gösterme seçeneği olsun").
+  /// Havuz: kanon listelerinde TÜM liste (tek istek, adet=1000), diğer
+  /// raflarda o ana kadar yüklenen kartlar. Girişliyse `/izlenen-idler`
+  /// çekilir ve öğelere `izlenen` yazılır; çark bu bayrağa göre süzer.
+  bool _carkAciliyor = false;
+
+  Future<void> _carkAc() async {
+    if (_carkAciliyor) return;
+    setState(() => _carkAciliyor = true);
+    try {
+      List<dynamic> havuz = _icerikler;
+      if (widget.yol.startsWith('/kanon/')) {
+        try {
+          final d = await Api.get('${widget.yol}?page=1&adet=1000');
+          final tum = d['results'] as List<dynamic>?;
+          if (tum != null && tum.isNotEmpty) havuz = tum;
+        } catch (_) {}
+      }
+      Set<String>? izlenen;
+      if (Api.girisli) {
+        try {
+          final d = await Api.get('/izlenen-idler');
+          izlenen = {
+            for (final id in (d['movie'] as List<dynamic>? ?? const []))
+              'movie:$id',
+            for (final id in (d['tv'] as List<dynamic>? ?? const [])) 'tv:$id',
+          };
+        } catch (_) {}
+      }
+      final ogeler = <Map<String, dynamic>>[
+        for (final m in havuz)
+          if (m is Map<String, dynamic> && m['id'] is num)
+            {
+              'tur':
+                  widget.tur ??
+                  m['media_type'] as String? ??
+                  (m['title'] != null ? 'movie' : 'tv'),
+              'tmdb_id': (m['id'] as num).toInt(),
+              if (izlenen != null)
+                'izlenen':
+                    m['izlenen'] == true ||
+                    izlenen.contains(
+                      '${widget.tur ?? m['media_type'] ?? (m['title'] != null ? 'movie' : 'tv')}:${m['id']}',
+                    ),
+            },
+      ];
+      if (!mounted || ogeler.isEmpty) return;
+      await izlemCarkiniAc(context, ogeler);
+    } finally {
+      if (mounted) setState(() => _carkAciliyor = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget govde;
@@ -198,6 +254,15 @@ class _KatalogListeEkraniState extends State<KatalogListeEkrani> {
           maxLines: 2,
           style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
         ),
+        actions: [
+          if (_icerikler.isNotEmpty)
+            IconButton(
+              key: const Key('katalog-izlem-carki'),
+              tooltip: 'Ne izlesem?'.c,
+              onPressed: _carkAciliyor ? null : _carkAc,
+              icon: const Icon(Icons.attractions),
+            ),
+        ],
       ),
       // PC'de ızgara ortalanmış ve [masaustuIcerikGenisligi] (1080) ile sınırlı
       // (madde 26); mobilde kısıt bağlamaz.

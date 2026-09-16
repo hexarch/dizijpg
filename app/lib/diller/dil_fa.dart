@@ -1800,4 +1800,15 @@ const Map<String, String> cevirilerFa = {
   'Dosya indirilemedi': 'فایل دانلود نشد',
   'Bu dosyayı açacak uygulama yok': 'برنامه‌ای برای باز کردن این فایل نیست',
   'Dosyanın yalnız başı gösteriliyor': 'فقط ابتدای فایل نمایش داده می‌شود',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 فیلم که قبل از مرگ باید دید',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 فیلم که قبل از مرگ باید دید',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 فیلم که قبل از مرگ باید دید',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 فیلم که قبل از مرگ باید دید',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 سریال که قبل از مرگ باید دید',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 سریال که قبل از مرگ باید دید',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 سریال که قبل از مرگ باید دید',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 سریال که قبل از مرگ باید دید',
+  'İzlediklerimi gösterme': 'دیده‌شده‌ها را پنهان کن',
+  'Bu listede izlemediğin yapım kalmamış': 'در این فهرست چیز ندیده‌ای نمانده',
 };

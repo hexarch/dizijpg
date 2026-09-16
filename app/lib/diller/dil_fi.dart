@@ -1826,4 +1826,16 @@ const Map<String, String> cevirilerFi = {
   'Dosya indirilemedi': 'Tiedostoa ei voitu ladata',
   'Bu dosyayı açacak uygulama yok': 'Mikään sovellus ei avaa tätä tiedostoa',
   'Dosyanın yalnız başı gösteriliyor': 'Vain tiedoston alku näytetään',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 elokuvaa, jotka on nähtävä',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 elokuvaa, jotka on nähtävä',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 elokuvaa, jotka on nähtävä',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 elokuvaa, jotka on nähtävä',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 sarjaa, jotka on nähtävä',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 sarjaa, jotka on nähtävä',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 sarjaa, jotka on nähtävä',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 sarjaa, jotka on nähtävä',
+  'İzlediklerimi gösterme': 'Piilota katsotut',
+  'Bu listede izlemediğin yapım kalmamış':
+      'Tässä listassa ei ole enää katsomatonta',
 };

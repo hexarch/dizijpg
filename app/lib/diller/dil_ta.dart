@@ -1847,4 +1847,24 @@ const Map<String, String> cevirilerTa = {
   'Bu dosyayı açacak uygulama yok': 'இந்தக் கோப்பைத் திறக்கும் செயலி இல்லை',
   'Dosyanın yalnız başı gösteriliyor':
       'கோப்பின் தொடக்கம் மட்டும் காட்டப்படுகிறது',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film':
+      'இறப்பதற்கு முன் பார்க்க வேண்டிய 100 படங்கள்',
+  'Ölmeden İzlenmesi Gereken 250 Film':
+      'இறப்பதற்கு முன் பார்க்க வேண்டிய 250 படங்கள்',
+  'Ölmeden İzlenmesi Gereken 500 Film':
+      'இறப்பதற்கு முன் பார்க்க வேண்டிய 500 படங்கள்',
+  'Ölmeden İzlenmesi Gereken 1000 Film':
+      'இறப்பதற்கு முன் பார்க்க வேண்டிய 1000 படங்கள்',
+  'Ölmeden İzlenmesi Gereken 10 Dizi':
+      'இறப்பதற்கு முன் பார்க்க வேண்டிய 10 தொடர்கள்',
+  'Ölmeden İzlenmesi Gereken 25 Dizi':
+      'இறப்பதற்கு முன் பார்க்க வேண்டிய 25 தொடர்கள்',
+  'Ölmeden İzlenmesi Gereken 50 Dizi':
+      'இறப்பதற்கு முன் பார்க்க வேண்டிய 50 தொடர்கள்',
+  'Ölmeden İzlenmesi Gereken 100 Dizi':
+      'இறப்பதற்கு முன் பார்க்க வேண்டிய 100 தொடர்கள்',
+  'İzlediklerimi gösterme': 'பார்த்தவற்றை மறை',
+  'Bu listede izlemediğin yapım kalmamış':
+      'இந்தப் பட்டியலில் பார்க்காதது எதுவும் இல்லை',
 };

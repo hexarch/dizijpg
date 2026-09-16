@@ -1824,4 +1824,16 @@ const Map<String, String> cevirilerMs = {
   'Dosya indirilemedi': 'Fail tidak dapat dimuat turun',
   'Bu dosyayı açacak uygulama yok': 'Tiada aplikasi boleh membuka fail ini',
   'Dosyanın yalnız başı gösteriliyor': 'Hanya permulaan fail dipaparkan',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 Filem Wajib Tonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 Filem Wajib Tonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 Filem Wajib Tonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 Filem Wajib Tonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 Siri Wajib Tonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 Siri Wajib Tonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 Siri Wajib Tonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 Siri Wajib Tonton Sebelum Mati',
+  'İzlediklerimi gösterme': 'Sembunyikan yang sudah ditonton',
+  'Bu listede izlemediğin yapım kalmamış':
+      'Tiada yang belum ditonton dalam senarai ini',
 };

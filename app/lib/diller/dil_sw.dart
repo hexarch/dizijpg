@@ -1827,4 +1827,18 @@ const Map<String, String> cevirilerSw = {
   'Bu dosyayı açacak uygulama yok':
       'Hakuna programu inayoweza kufungua faili hii',
   'Dosyanın yalnız başı gösteriliyor': 'Mwanzo wa faili pekee unaonyeshwa',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': 'Filamu 100 za kutazama kabla ya kufa',
+  'Ölmeden İzlenmesi Gereken 250 Film': 'Filamu 250 za kutazama kabla ya kufa',
+  'Ölmeden İzlenmesi Gereken 500 Film': 'Filamu 500 za kutazama kabla ya kufa',
+  'Ölmeden İzlenmesi Gereken 1000 Film':
+      'Filamu 1000 za kutazama kabla ya kufa',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': 'Mfululizo 10 wa kutazama kabla ya kufa',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': 'Mfululizo 25 wa kutazama kabla ya kufa',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': 'Mfululizo 50 wa kutazama kabla ya kufa',
+  'Ölmeden İzlenmesi Gereken 100 Dizi':
+      'Mfululizo 100 wa kutazama kabla ya kufa',
+  'İzlediklerimi gösterme': 'Ficha nilizotazama',
+  'Bu listede izlemediğin yapım kalmamış':
+      'Hakuna kilichosalia bila kutazamwa katika orodha hii',
 };

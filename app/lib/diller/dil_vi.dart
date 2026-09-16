@@ -1813,4 +1813,16 @@ const Map<String, String> cevirilerVi = {
   'Dosya indirilemedi': 'Không thể tải tệp xuống',
   'Bu dosyayı açacak uygulama yok': 'Không có ứng dụng nào mở được tệp này',
   'Dosyanın yalnız başı gösteriliyor': 'Chỉ hiển thị phần đầu của tệp',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '100 phim phải xem trước khi chết',
+  'Ölmeden İzlenmesi Gereken 250 Film': '250 phim phải xem trước khi chết',
+  'Ölmeden İzlenmesi Gereken 500 Film': '500 phim phải xem trước khi chết',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '1000 phim phải xem trước khi chết',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '10 series phải xem trước khi chết',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '25 series phải xem trước khi chết',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '50 series phải xem trước khi chết',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '100 series phải xem trước khi chết',
+  'İzlediklerimi gösterme': 'Ẩn những gì đã xem',
+  'Bu listede izlemediğin yapım kalmamış':
+      'Danh sách này không còn gì chưa xem',
 };

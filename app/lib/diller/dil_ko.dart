@@ -1733,4 +1733,15 @@ const Map<String, String> cevirilerKo = {
   'Dosya indirilemedi': '파일을 다운로드할 수 없습니다',
   'Bu dosyayı açacak uygulama yok': '이 파일을 열 수 있는 앱이 없습니다',
   'Dosyanın yalnız başı gösteriliyor': '파일의 앞부분만 표시됩니다',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': '죽기 전에 봐야 할 영화 100편',
+  'Ölmeden İzlenmesi Gereken 250 Film': '죽기 전에 봐야 할 영화 250편',
+  'Ölmeden İzlenmesi Gereken 500 Film': '죽기 전에 봐야 할 영화 500편',
+  'Ölmeden İzlenmesi Gereken 1000 Film': '죽기 전에 봐야 할 영화 1000편',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': '죽기 전에 봐야 할 시리즈 10편',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': '죽기 전에 봐야 할 시리즈 25편',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': '죽기 전에 봐야 할 시리즈 50편',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': '죽기 전에 봐야 할 시리즈 100편',
+  'İzlediklerimi gösterme': '본 작품 숨기기',
+  'Bu listede izlemediğin yapım kalmamış': '이 목록에 안 본 작품이 없습니다',
 };

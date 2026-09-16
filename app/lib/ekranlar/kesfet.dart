@@ -28,6 +28,7 @@ const anaSayfaRaflari = <(String, String, String)>[
     '/tmdb/discover/movie?sort_by=popularity.desc&with_original_language=tr',
     'movie',
   ),
+  ('Ölmeden İzlenmesi Gereken 100 Film', '/kanon/movie/100', 'movie'),
   (
     'En Yüksek Puanlı Filmler',
     '/tmdb/discover/movie?sort_by=vote_average.desc&vote_count.gte=3000',
@@ -38,6 +39,7 @@ const anaSayfaRaflari = <(String, String, String)>[
     '/tmdb/discover/tv?sort_by=vote_average.desc&vote_count.gte=1000',
     'tv',
   ),
+  ('Ölmeden İzlenmesi Gereken 10 Dizi', '/kanon/tv/10', 'tv'),
   (
     'En Çok İzlenen Filmler',
     '/tmdb/discover/movie?sort_by=popularity.desc&vote_count.gte=500',
@@ -48,6 +50,7 @@ const anaSayfaRaflari = <(String, String, String)>[
     '/tmdb/discover/tv?sort_by=popularity.desc&vote_count.gte=200',
     'tv',
   ),
+  ('Ölmeden İzlenmesi Gereken 250 Film', '/kanon/movie/250', 'movie'),
   (
     'En Çok Kazanan Filmler',
     '/tmdb/discover/movie?sort_by=revenue.desc&vote_count.gte=500',
@@ -59,11 +62,13 @@ const anaSayfaRaflari = <(String, String, String)>[
         '&primary_release_date.lte=2005-12-31',
     'movie',
   ),
+  ('Ölmeden İzlenmesi Gereken 25 Dizi', '/kanon/tv/25', 'tv'),
   (
     'Tüm Zamanların En İyileri',
     '/tmdb/discover/movie?sort_by=vote_count.desc&vote_average.gte=8',
     'movie',
   ),
+  ('Ölmeden İzlenmesi Gereken 500 Film', '/kanon/movie/500', 'movie'),
   (
     'Yeni Diziler',
     '/tmdb/discover/tv?sort_by=first_air_date.desc&vote_count.gte=20',
@@ -75,6 +80,14 @@ const anaSayfaRaflari = <(String, String, String)>[
         '&vote_count.gte=100',
     'movie',
   ),
+  ('Ölmeden İzlenmesi Gereken 50 Dizi', '/kanon/tv/50', 'tv'),
+  // --- KANON (16 Eyl 2026): "Ölmeden izlenmesi gereken" 100/250/500/1000
+  // film ve 10/25/50/100 dizi; yukarıda aralara SERPİŞTİRİLMİŞ, en büyük
+  // ikisi 2027 raflarının hemen ÜSTÜNDE (2027'ler en altta kalır, raf_2027_test). Kaynak `/kanon/:medya/:boy` (backend/kanon.js; TMDB puan
+  // sıralı, iç içe listeler). Başlık = sunucudaki kanonBasligi() — slug ve
+  // çeviri anahtarı bu dizeden türer, sunucuyla birebir aynı kalmalı.
+  ('Ölmeden İzlenmesi Gereken 1000 Film', '/kanon/movie/1000', 'movie'),
+  ('Ölmeden İzlenmesi Gereken 100 Dizi', '/kanon/tv/100', 'tv'),
   // --- 2027'de vizyona girecekler (6 Eyl 2026) ---
   //
   // OY EŞİĞİ YOK, diğer rafların aksine: henüz gösterime girmemiş yapımın oyu

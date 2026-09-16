@@ -145,6 +145,11 @@ class _IzlemCarkiState extends State<IzlemCarki>
   /// 'hepsi' | 'tv' | 'movie'
   String _suzgec = 'hepsi';
 
+  /// "İzlediklerimi gösterme" (16 Eyl 2026): öğelerde `izlenen` bayrağı
+  /// varsa (katalog/kanon çarkı) anahtar görünür; açıkken izlenenler
+  /// havuzdan düşer. İzleyeceğim listesinde bayrak yok → anahtar da yok.
+  bool _izlenenGizle = false;
+
   /// 'tur:id' → kart bilgisi (ad, poster, puan). Çark adları buradan.
   final Map<String, Map<String, dynamic>> _kartlar = {};
   bool _kartlarYukleniyor = true;
@@ -216,8 +221,33 @@ class _IzlemCarkiState extends State<IzlemCarki>
 
   List<Map<String, dynamic>> get _suzulmus => [
     for (final o in widget.ogeler)
-      if (_suzgec == 'hepsi' || o['tur'] == _suzgec) o,
+      if ((_suzgec == 'hepsi' || o['tur'] == _suzgec) &&
+          !(_izlenenGizle && o['izlenen'] == true))
+        o,
   ];
+
+  bool get _izlenenBayragiVar =>
+      widget.ogeler.any((o) => o.containsKey('izlenen'));
+
+  void _izlenenGizleDegistir(bool acik) {
+    if (_donuyor) return;
+    if (acik &&
+        !widget.ogeler.any(
+          (o) =>
+              (_suzgec == 'hepsi' || o['tur'] == _suzgec) &&
+              o['izlenen'] != true,
+        )) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Bu listede izlemediğin yapım kalmamış'.c)),
+      );
+      return;
+    }
+    setState(() {
+      _izlenenGizle = acik;
+      _sonuc = null;
+      _detay = null;
+    });
+  }
 
   String _ad(Map<String, dynamic> o) =>
       (_kartlar[_anahtar(o)]?['name'] ?? _kartlar[_anahtar(o)]?['title'])
@@ -525,6 +555,19 @@ class _IzlemCarkiState extends State<IzlemCarki>
         parca('hepsi', 'Karışık'.c),
         parca('tv', 'Dizi'.c),
         parca('movie', 'Film'.c),
+        if (_izlenenBayragiVar)
+          FilterChip(
+            key: const Key('cark-izlenen-gizle'),
+            label: Text('İzlediklerimi gösterme'.c),
+            selected: _izlenenGizle,
+            onSelected: _izlenenGizleDegistir,
+            selectedColor: DiziRenkler.sari,
+            checkmarkColor: Colors.black,
+            labelStyle: TextStyle(
+              color: _izlenenGizle ? Colors.black : DiziRenkler.metin,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
       ],
     );
   }

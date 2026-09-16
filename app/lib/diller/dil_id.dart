@@ -1818,4 +1818,24 @@ const Map<String, String> cevirilerId = {
   'Bu dosyayı açacak uygulama yok':
       'Tidak ada aplikasi yang dapat membuka file ini',
   'Dosyanın yalnız başı gösteriliyor': 'Hanya awal file yang ditampilkan',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film':
+      '100 Film yang Wajib Ditonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 250 Film':
+      '250 Film yang Wajib Ditonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 500 Film':
+      '500 Film yang Wajib Ditonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 1000 Film':
+      '1000 Film yang Wajib Ditonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 10 Dizi':
+      '10 Serial yang Wajib Ditonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 25 Dizi':
+      '25 Serial yang Wajib Ditonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 50 Dizi':
+      '50 Serial yang Wajib Ditonton Sebelum Mati',
+  'Ölmeden İzlenmesi Gereken 100 Dizi':
+      '100 Serial yang Wajib Ditonton Sebelum Mati',
+  'İzlediklerimi gösterme': 'Sembunyikan yang sudah ditonton',
+  'Bu listede izlemediğin yapım kalmamış':
+      'Tidak ada yang belum ditonton di daftar ini',
 };

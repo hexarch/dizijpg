@@ -1817,4 +1817,16 @@ const Map<String, String> cevirilerTe = {
   'Dosya indirilemedi': 'ఫైల్ డౌన్‌లోడ్ కాలేదు',
   'Bu dosyayı açacak uygulama yok': 'ఈ ఫైల్‌ను తెరిచే యాప్ లేదు',
   'Dosyanın yalnız başı gösteriliyor': 'ఫైల్ ప్రారంభం మాత్రమే చూపబడుతోంది',
+  // Kanon listeleri + çark seçeneği (kanon, 16 Eyl 2026)
+  'Ölmeden İzlenmesi Gereken 100 Film': 'చనిపోయే ముందు చూడాల్సిన 100 సినిమాలు',
+  'Ölmeden İzlenmesi Gereken 250 Film': 'చనిపోయే ముందు చూడాల్సిన 250 సినిమాలు',
+  'Ölmeden İzlenmesi Gereken 500 Film': 'చనిపోయే ముందు చూడాల్సిన 500 సినిమాలు',
+  'Ölmeden İzlenmesi Gereken 1000 Film':
+      'చనిపోయే ముందు చూడాల్సిన 1000 సినిమాలు',
+  'Ölmeden İzlenmesi Gereken 10 Dizi': 'చనిపోయే ముందు చూడాల్సిన 10 సిరీస్',
+  'Ölmeden İzlenmesi Gereken 25 Dizi': 'చనిపోయే ముందు చూడాల్సిన 25 సిరీస్',
+  'Ölmeden İzlenmesi Gereken 50 Dizi': 'చనిపోయే ముందు చూడాల్సిన 50 సిరీస్',
+  'Ölmeden İzlenmesi Gereken 100 Dizi': 'చనిపోయే ముందు చూడాల్సిన 100 సిరీస్',
+  'İzlediklerimi gösterme': 'చూసినవి దాచు',
+  'Bu listede izlemediğin yapım kalmamış': 'ఈ జాబితాలో చూడనిది ఏదీ మిగల్లేదు',
 };

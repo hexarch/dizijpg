@@ -9,6 +9,10 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { execFile } from 'child_process';
 import { videoKareCikar, medyaBoyutOlc, videoSureOlc, kucukKopyaUret } from './video_kare.js';
+import {
+  KANON_BOYLAR, kanonGecerli, kanonBasligi, kanonSayfaYollari, kanonSirala,
+  kanonSayfaDilimi, kanonRafSirasi,
+} from './kanon.js';
 // İZLEME ODASI — saf mantık (senkron matematiği, kod, parça sözleşmesi,
 // yetki kararları). Ad çakışmasını önlemek için `oda*` öneki: `mesajTemizle`
 // gibi genel adlar server.js'te başka anlamlara gelebilir.
@@ -7062,6 +7066,12 @@ const SEO_KESFET_RAFLARI = [
   { baslik: 'Yeni Filmler', tur: 'movie', yol: '/discover/movie?sort_by=primary_release_date.desc&vote_count.gte=100' },
   { baslik: "2027'de Vizyona Girecek Filmler", tur: 'movie', yol: '/discover/movie?sort_by=popularity.desc&primary_release_date.gte=2027-01-01&primary_release_date.lte=2027-12-31' },
   { baslik: "2027'de Başlayacak Diziler", tur: 'tv', yol: '/discover/tv?sort_by=popularity.desc&first_air_date.gte=2027-01-01&first_air_date.lte=2027-12-31' },
+  // KANON RAFLARI (16 Eyl 2026): `yol` yok, `kanon` var — seoKesifBloklari
+  // bellek içi listeden okur. kesfet.dart'ta aynı başlıklar aralara
+  // serpiştirilmiştir; slug başlıktan türediği için başlık = kanonBasligi().
+  ...kanonRafSirasi().map((r) => ({
+    baslik: kanonBasligi(r.medya, r.boy), tur: r.medya, kanon: r,
+  })),
 ];
 
 // /gozat = katalog. Flutter ekranı (gozat.dart) tür çipleriyle süzülen bir
@@ -7097,17 +7107,107 @@ const SEO_GOZAT_KATALOG = [
 // olmayan bölüm ince içeriktir.
 async function seoKesifBloklari(tanimlar) {
   const harita = await tmdbTopluGetir(
-    tanimlar.map((t) => t.yol), ONBELLEK_TTL_SN.uzun);
+    tanimlar.filter((t) => t.yol).map((t) => t.yol), ONBELLEK_TTL_SN.uzun);
+  // Kanon rafları (16 Eyl 2026): bellek içi liste; bot da aynı ilk 8'i görür.
+  const kanon = tanimlar.some((t) => t.kanon) ? await kanonListeleri() : null;
   return tanimlar.map((t) => ({
     baslik: t.baslik,
     // poster_path süzgeci gozat.dart'takinin aynısı: postersiz kayıt
     // uygulamada da listelenmiyor, bot sayfası ondan fazlasını göstermesin.
-    ogeler: ((harita.get(t.yol) || {}).results || [])
+    ogeler: (t.kanon
+      ? (kanon?.[t.kanon.medya] || []).slice(0, t.kanon.boy)
+      : ((harita.get(t.yol) || {}).results || []))
       .filter((r) => r && r.poster_path && (r.name || r.title))
       .slice(0, SEO_KESIF_OGE)
       .map((r) => ({ ad: r.name || r.title, yol: `/icerik/${t.tur}/${r.id}` })),
   })).filter((b) => b.ogeler.length > 0);
 }
+
+// ===========================================================================
+// "ÖLMEDEN İZLENMESİ GEREKEN" KANON LİSTELERİ (16 Eyl 2026) — bkz. kanon.js
+// ===========================================================================
+// Bellek içi, dil başına, 24 saatte bir yeniden kurulur. TMDB sayfaları
+// `tmdb_onbellek`ten (7 gün TTL) gelir: ilk kurulum 65+7 istek, sonrakiler
+// ağsız. Kurulum sürerken ikinci istek aynı Promise'i bekler (fırtına yok).
+const KANON_TAZELEME_MS = 24 * 60 * 60 * 1000;
+const kanonOnbellek = new Map(); // dil → { zaman, listeler: {movie, tv} } | Promise
+
+async function kanonListeleri() {
+  const dil = istekBaglam.getStore()?.tmdbDil || 'tr-TR';
+  const eldeki = kanonOnbellek.get(dil);
+  if (eldeki instanceof Promise) return eldeki;
+  if (eldeki && Date.now() - eldeki.zaman < KANON_TAZELEME_MS) return eldeki.listeler;
+  const is = (async () => {
+    const listeler = {};
+    for (const medya of Object.keys(KANON_BOYLAR)) {
+      const yollar = kanonSayfaYollari(medya);
+      const harita = await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun);
+      listeler[medya] = kanonSirala(medya, yollar.map((y) => harita.get(y)));
+    }
+    kanonOnbellek.set(dil, { zaman: Date.now(), listeler });
+    return listeler;
+  })().catch((e) => {
+    kanonOnbellek.delete(dil);
+    throw e;
+  });
+  kanonOnbellek.set(dil, is);
+  return is;
+}
+
+/** Kullanıcının izlediği/izlemekte olduğu yapımlar: `tur:tmdb_id` kümesi. */
+async function izlenenAnahtarlari(kullaniciId) {
+  const { rows } = await havuz.query(
+    `SELECT tur, tmdb_id FROM izlemeler WHERE kullanici_id=$1
+     UNION SELECT tur, tmdb_id FROM durumlar
+       WHERE kullanici_id=$1 AND durum IN ('izliyorum','bitirdim')`,
+    [kullaniciId]);
+  return new Set(rows.map((r) => `${r.tur}:${r.tmdb_id}`));
+}
+
+// Akış/ana sayfa özeti: 8 raf, her birinde ilk 10 kart (misafir de görür).
+app.get('/kanon/ozet', sarici(async (req, res) => {
+  const listeler = await kanonListeleri();
+  res.setHeader('Cache-Control', 'public, max-age=1800');
+  res.json({
+    raflar: kanonRafSirasi().map((r) => ({
+      medya: r.medya, boy: r.boy, baslik: kanonBasligi(r.medya, r.boy),
+      yol: `/kanon/${r.medya}/${r.boy}`,
+      toplam: Math.min(r.boy, (listeler[r.medya] || []).length),
+      icerikler: (listeler[r.medya] || []).slice(0, Math.min(10, r.boy)),
+    })),
+  });
+}));
+
+// Liste sayfası: `page`/`sayfa` (1 tabanlı), `adet` (varsayılan 20, en çok
+// 1000 → çark tüm listeyi tek istekte alır). Girişliyse `izlenen` bayrağı
+// ("izlediklerimi gösterme" çark seçeneği için).
+app.get('/kanon/:medya/:boy', girisIsteğeBagli, sarici(async (req, res) => {
+  const { medya, boy } = req.params;
+  if (!kanonGecerli(medya, boy)) return res.status(404).json({ hata: 'Liste yok' });
+  const listeler = await kanonListeleri();
+  const liste = (listeler[medya] || []).slice(0, Number(boy));
+  const dilim = kanonSayfaDilimi(liste, req.query.page ?? req.query.sayfa, req.query.adet);
+  let ogeler = dilim.ogeler;
+  if (req.kullanici?.id) {
+    const izlenen = await izlenenAnahtarlari(req.kullanici.id);
+    ogeler = ogeler.map((r) => ({ ...r, izlenen: izlenen.has(`${medya}:${r.id}`) }));
+  }
+  res.json({
+    baslik: kanonBasligi(medya, boy), medya, boy: Number(boy),
+    results: ogeler, ogeler, toplam: dilim.toplam, sayfa: dilim.sayfa, devam: dilim.devam,
+  });
+}));
+
+// Çark "izlediklerimi gösterme" için: kullanıcının izlediği kimlikler (küçük).
+app.get('/izlenen-idler', girisZorunlu, sarici(async (req, res) => {
+  const k = await izlenenAnahtarlari(req.kullanici.id);
+  const cikti = { movie: [], tv: [] };
+  for (const a of k) {
+    const [tur, id] = a.split(':');
+    if (cikti[tur]) cikti[tur].push(Number(id));
+  }
+  res.json(cikti);
+}));
 
 const seoKesifGovde = (bloklar) =>
   bloklar.map((b) => seoBaglantiListesi(b.baslik, b.ogeler)).join('');
