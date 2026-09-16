@@ -29,10 +29,17 @@ int? tamEkranBellekGenisligi(BuildContext context) {
   return (en * oran * 2).ceil().clamp(1024, 4096);
 }
 
-/// Kalıcı önbellek anahtarı: imzalı medya adresinin sorgusu (`imza`, `son`)
-/// 12 saatlik kovada değişir; anahtar YOL olursa sohbet her açılışta aynı
-/// fotoğrafı yeniden indirmez. Sorgusuz adreste adresin kendisi.
+/// Kalıcı önbellek anahtarı. İmzalı medya adresi YOL biçimindedir:
+/// `/medya/i/<son>/<imza>/<dosya>` (medya_imza.js) ve `<son>` 12 saatlik
+/// kovada değişir → adres anahtar olsaydı disk önbelleği her kovada
+/// kaçırır, sohbet aynı fotoğrafı yeniden indirirdi. Anahtar
+/// `/medya/<dosya>`ya indirgenir; sorgu (varsa) atılır.
 String onbellekAnahtari(String url) {
-  final i = url.indexOf('?');
-  return i < 0 ? url : url.substring(0, i);
+  final soru = url.indexOf('?');
+  final temiz = soru < 0 ? url : url.substring(0, soru);
+  final e = _imzaliYol.firstMatch(temiz);
+  if (e == null) return temiz;
+  return '${e.group(1)}/medya/${e.group(2)}';
 }
+
+final _imzaliYol = RegExp(r'^(.*)/medya/i/[0-9a-z]{1,10}/[0-9a-f]+/([^/]+)$');

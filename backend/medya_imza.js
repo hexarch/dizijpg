@@ -86,7 +86,8 @@ export const IMZA_BAYT = 16;
 export const KOVA_MS = 12 * 60 * 60 * 1000;
 
 /**
- * Gerçek medya dosyası adı (+ video kapağı `.jpg`). İKİ ÖNEK:
+ * Gerçek medya dosyası adı (+ video kapağı `.jpg`, + KÜÇÜK KOPYA `.k.jpg`
+ * 16 Eyl 2026 — kalıp dışı kalınca imzalanmıyor, alıcı 403 alıyordu). İKİ ÖNEK:
  *
  *   `m<kullanıcı_id>-<16 hex>.<uzanti>`  — kullanıcı yüklemesi (`POST /medya`)
  *   `o<oda_id>-<16 hex>.<uzanti>`        — İZLEME ODASI videosu (3 Eyl 2026)
@@ -103,7 +104,7 @@ export const KOVA_MS = 12 * 60 * 60 * 1000;
  * yolla gitti, istemci 403 aldı ve video hiç açılmadı.
  */
 export const DOSYA_KALIP =
-  /^[mo][1-9][0-9]{0,9}-[0-9a-f]{16}\.(gif|png|jpg|jpeg|webp|mp4|webm|ogg|m4a|mp3|aac)(\.jpg)?$/;
+  /^[mo][1-9][0-9]{0,9}-[0-9a-f]{16}\.(gif|png|jpg|jpeg|webp|mp4|webm|ogg|m4a|mp3|aac)(\.jpg|\.k\.jpg)?$/;
 
 /**
  * Anahtar türetme: ayrı bir sır YÖNETMEMEK için JWT sırrından HKDF benzeri
