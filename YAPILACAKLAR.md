@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-16 — 🔨 PAYLAŞIMDA KOPYALA-YAPIŞTIR: panodaki görsel/GIF/video doğrudan eklenir (1.175.0+262)
+## 2026-09-16 — 🚀 PAYLAŞIMDA KOPYALA-YAPIŞTIR: panodaki görsel/GIF/video doğrudan eklenir (1.175.0+262, web CANLI)
 
 **Tetik (birebir):** *"paylaşımlarda tüm türleri desteklemeliyiz yani görsel
 video gif olarak ve kopyala yapıştır görsel desteği de olmalı"*
@@ -30,7 +30,14 @@ kaydetmek zorundaydı.
   varsayılan yalnız `image/png` olduğu için liste genişletildi).
 - ✅ Çeviri: 1 yeni anahtar ("Panoda görsel yok") × 45 dil.
 - ✅ Test: `pano_yapistir_test` (3: boş panoda düğme YOK, GIF yapıştırınca
-  şeride girer + gövde octet-stream, pano boşalmışsa tek cümle).
+  şeride girer + gövde octet-stream, pano boşalmışsa tek cümle). Native
+  derleme kanıtı: `:app:compileDebugKotlin` ve `flutter build ios --simulator`
+  geçti; web paketinde `addEventListener("paste")` + yeni anahtar doğrulandı.
+- 🚀 Web dağıtımı: `main.c92def4f43a7.dart.js` canlı (md5 eşleşti, brotli
+  üretildi). ⬜ ESKİ PAKET SUNUCUDA DURUYOR (asistanda `rm` engellendi):
+  `ssh keyubu 'cd /var/www/dizijpg && rm -f main.597d8629df01.dart.js{,.br} main.dart.js_1.16fd56e88d84.part.js{,.br}'`
+- ⬜ Cihazda elle denenmedi: Android'de Gboard GIF sekmesi / panodan görsel,
+  iOS'ta "Yapıştır?" izni, masaüstü webde gerçek Ctrl+V.
 
 ## 2026-09-16 — 🚀 KAYITTA 13 YAŞ SINIRI: doğum tarihinde küçük yaş seçilemez (1.174.0+261, API+web CANLI)
 
