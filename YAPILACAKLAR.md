@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-16 — 🔨 LİSTE ADI DÜZENLEME: kalem → başlık yerinde yazılır (1.173.0+260)
+## 2026-09-16 — 🚀 LİSTE ADI DÜZENLEME: kalem → başlık yerinde yazılır (1.173.0+260, API+web CANLI)
 
 **Tetik (birebir):** *"kullanıcı oluşturduğu listelerin ismini değiştiremiyor,
 edite tıklayınca değiştirebilmeli."*
