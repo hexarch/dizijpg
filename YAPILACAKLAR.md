@@ -1,6 +1,29 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-16 — 🔨 SOHBET ÇÖKMESİ: 108 MP FOTOĞRAF ALBÜMÜ (1.171.1+256)
+
+**Tetik:** *"kaniberkali görsel ve fotoğraf gönderdi 10 tane ve ağırlar,
+sohbeti her açtığımda sıfırdan yükleniyor, cihaz donuyor ve 10 görseli
+yükleyene kadar uygulama çöküyor"* (Galaxy S24, logcat: process died fg TOP,
+Java istisnası yok = bellek öldürmesi).
+
+- **Teşhis:** mesaj 773'ün 10 karesinin altısı 12000×9000 (108 MP, 12–30 MB),
+  üçü 4K. Albüm ızgarası `CachedNetworkImage`i `memCacheWidth`siz kuruyordu →
+  kare başı 432 MB kod çözme. Ayrıca imzalı adresin sorgusu 12 saatlik kovada
+  değiştiği için önbellek anahtarı kayıyor, dosyalar yeniden iniyordu.
+- **İstemci (`gorsel_bellek.dart`):** albüm karesi / tekli fotoğraf / tam
+  ekran görüntüleyici `memCacheWidth` = dp × piksel oranı (tam ekranda ×2,
+  4096 tavan); `cacheKey` = sorgusuz yol. Web'de null (ResizeImage yolu
+  tarayıcıda doğrulanmadı, ortak.dart notu).
+- **Sunucu (`video_kare.js resmiKucult`):** /medya yüklemesinde JPEG/PNG uzun
+  kenar > 3840 ise ffmpeg 8 ile yerinde küçültme (lanczos, q3, autorotate),
+  kota farkı iade, ölçü tek ffprobe'dan. GIF/WebP dokunulmaz.
+- **Mevcut 10 dosya:** `araclar/dm-medya-kucult.sh <mesaj_id>` sunucuda
+  yedekleyip (`/veri/medya/kucultme-yedek/`) küçültür + medya_olculer günceller.
+- **Kanıt:** `sohbet_gorsel_bellek_test` (2): memCacheWidth 720/600, anahtar
+  sorgusuz. Telefona 1.171.1+256 kuruldu.
+
 ## 2026-09-16 — 🔨 SOHBET: SAĞA ÇEKEREK ALINTI, GALERİ EN YENİ, SİLME (benden/herkesten), OKUNUNCA BİLDİRİM, BELGE UYGULAMA İÇİNDE (1.171.0+255)
 
 **Tetik (5 istek, aynı tur):** *"karşı tarafın mesajını sola iterek değil sağa

@@ -5,6 +5,7 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:video_player/video_player.dart';
 
 import '../altyazi.dart';
+import '../gorsel_bellek.dart';
 import '../ceviri.dart';
 import '../uyari.dart';
 import '../galeriye_kaydet.dart';
@@ -214,6 +215,10 @@ class _MedyaGorunumuState extends State<_MedyaGorunumu> {
                     child: Center(
                       child: CachedNetworkImage(
                         imageUrl: url,
+                        // Dev fotoğraf (108 MP) tam ekranda da ekran boyunun ×2'si
+                        // kadar çözülür; anahtar sorgusuz yol (gorsel_bellek.dart).
+                        cacheKey: onbellekAnahtari(url),
+                        memCacheWidth: tamEkranBellekGenisligi(context),
                         // Bu görüntüleyici İKİ KAYNAĞI da açıyor: TMDB arka
                         // planı/bölüm karesi (detay.dart, bolum.dart) ve kendi
                         // sunucumuzdaki yorum/mesaj medyası. Hangisi olduğu

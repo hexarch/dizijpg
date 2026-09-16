@@ -22,6 +22,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../oda/oda_sheet.dart';
 import '../dosya_indirici.dart';
+import '../gorsel_bellek.dart';
 import '../dosya_oku.dart';
 import '../ekran_goruntusu.dart';
 import '../emoji_efekti.dart';
@@ -5212,6 +5213,10 @@ class _MesajBaloncugu extends StatelessWidget {
                             )
                           : CachedNetworkImage(
                               imageUrl: dosyaUrl(medya)!,
+                              // Kare boyunda çöz + sorgusuz anahtar
+                              // (gorsel_bellek.dart, 16 Eyl 2026 çökme).
+                              cacheKey: onbellekAnahtari(dosyaUrl(medya)!),
+                              memCacheWidth: bellekGenisligi(context, 200),
                               width: 200,
                               fit: BoxFit.cover,
                               placeholder: (_, _) => Container(
@@ -5575,6 +5580,10 @@ class _AlbumIzgarasi extends StatelessWidget {
       // gerileme koruması (gorsel_webp_test) çağrı noktasında bunu arar.
       govde = CachedNetworkImage(
         imageUrl: dosyaUrl(y)!,
+        // 108 MP'lik kare 432 MB yerine kare boyunda çözülür; anahtar
+        // sorgusuz yol (imza kovası değişince yeniden inmez) — 16 Eyl 2026.
+        cacheKey: onbellekAnahtari(dosyaUrl(y)!),
+        memCacheWidth: bellekGenisligi(context, en),
         fit: BoxFit.cover,
         placeholder: (_, _) => Container(color: Colors.black54),
         errorWidget: (_, _, _) => Container(

@@ -8,7 +8,7 @@ import path from 'path';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { execFile } from 'child_process';
-import { videoKareCikar, medyaBoyutOlc, videoSureOlc } from './video_kare.js';
+import { videoKareCikar, medyaBoyutOlc, videoSureOlc, resmiKucult } from './video_kare.js';
 // İZLEME ODASI — saf mantık (senkron matematiği, kod, parça sözleşmesi,
 // yetki kararları). Ad çakışmasını önlemek için `oda*` öneki: `mesajTemizle`
 // gibi genel adlar server.js'te başka anlamlara gelebilir.
@@ -14773,12 +14773,24 @@ app.post('/medya',
     // Kare çıkarma yüklemeyi birkaç sn uzatır (parlaklık taraması + kare)
     // ama ızgarayı çok hafifletir ve kapak siyah çıkmaz.
     const kapakVar = videoMu ? await videoKaresiCikar(tamYol) : false;
+    // DEV FOTOĞRAF (16 Eyl 2026): uzun kenar 3840'ı aşan JPEG/PNG yerinde
+    // küçültülür (12000×9000, 30 MB → 4K, ~2 MB). Alıcı telefonu 108 MP'yi
+    // çözmeye kalkıp ölüyordu. Kota farkı iade edilir. GIF/WebP dokunulmaz.
+    let kucuk = null;
+    if (tur.uzanti === 'jpg' || tur.uzanti === 'png') {
+      kucuk = await resmiKucult(tamYol).catch(() => null);
+      if (kucuk?.kucultuldu && kucuk.bayt < veri.length) {
+        kotaIade(req.kullanici.id, veri.length - kucuk.bayt);
+      }
+    }
     // Oran kaydı (zıplama düzeltmesi, 26 Ağu 2026): akış kartı kutuyu ilk
     // kareden doğru boyda kurabilsin diye en/boy ölçülüp yazılır. ATEŞLE-UNUT
     // ve başarısızlık yüklemeyi BOZMAZ: oransız medyada istemci bugünkü gibi
     // kendisi ölçer (yalnız o kartta zıplama kalır).
     if (!SES_TURLERI.includes(tur)) {
-      medyaBoyutOlc(tamYol).then((b) => b && havuz.query(
+      // Küçültüldüyse ölçü zaten elde (ikinci ffprobe gereksiz).
+      const olcum = kucuk?.en ? Promise.resolve(kucuk) : medyaBoyutOlc(tamYol);
+      olcum.then((b) => b && havuz.query(
         `INSERT INTO medya_olculer (medya, en, boy) VALUES ($1, $2, $3)
          ON CONFLICT (medya) DO UPDATE SET en = EXCLUDED.en, boy = EXCLUDED.boy`,
         [`/medya/${dosya}`, b.en, b.boy],

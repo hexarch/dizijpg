@@ -17,6 +17,7 @@
 // aynı gerekçeyle "HİÇ" demişti. Kapak karesi kaynaktan ALINIR, icat edilmez.
 
 import { execFile } from 'node:child_process';
+import fs from 'node:fs';
 
 /** Kapak uzun kenar tavanı (px). Kaynak bundan küçükse büyütülmez. */
 export const VIDEO_KARE_UZUN_KENAR = 720;
@@ -234,4 +235,56 @@ export async function videoKareCikar(dosyaYolu, secenek = {}) {
       (hata) => bitti(!hata),
     );
   });
+}
+
+/** Yüklenen fotoğrafın uzun kenarı bu pikseli aşarsa küçültülür (16 Eyl 2026). */
+export const RESIM_AZAMI_KENAR = 3840;
+
+/**
+ * DEV FOTOĞRAFI KÜÇÜLT (16 Eyl 2026).
+ *
+ * OLAY: sohbete 12000×9000 (108 MP, 12–30 MB) fotoğraflar yüklendi; alıcı
+ * telefonunda tek karenin kod çözümü 432 MB → uygulama öldürüldü. İstemci
+ * kare boyunda çözmeye geçti (gorsel_bellek.dart) ama 30 MB'lık dosya yine
+ * de her cihaza inerdi; sunucuda uzun kenar [RESIM_AZAMI_KENAR]'a (4K)
+ * indirilir: ekranda fark yok, dosya ~30 MB → ~2 MB.
+ *
+ * · Yalnız JPEG/PNG; GIF (animasyon) ve WebP dokunulmaz.
+ * · ffmpeg 8 EXIF yönünü kendisi uygular (autorotate); çıktı piksel olarak
+ *   döndürülmüş, EXIF'siz.
+ * · Geçici dosyaya yazılır, başarıda ADIN ÜSTÜNE taşınır; hata olursa
+ *   orijinal olduğu gibi kalır (asla yarım dosya).
+ *
+ * Döner: `{ kucultuldu, en, boy, bayt? }` (ölçüm başarısız / tür dışıysa null).
+ */
+export async function resmiKucult(dosyaYolu, secenek = {}) {
+  const azami = secenek.azamiKenar ?? RESIM_AZAMI_KENAR;
+  const timeout = secenek.timeout ?? 60000;
+  const uzanti = dosyaYolu.split('.').pop().toLowerCase();
+  if (!['jpg', 'jpeg', 'png'].includes(uzanti)) return null;
+  const olcu = await medyaBoyutOlc(dosyaYolu, { timeout: 10000 });
+  if (!olcu) return null;
+  if (Math.max(olcu.en, olcu.boy) <= azami) return { kucultuldu: false, ...olcu };
+  const gecici = `${dosyaYolu}.kucuk.${uzanti}`;
+  const args = [
+    '-y', '-v', 'error', '-i', dosyaYolu,
+    '-vf', `scale=w='min(${azami},iw)':h='min(${azami},ih)':force_original_aspect_ratio=decrease:flags=lanczos`,
+    '-frames:v', '1', '-update', '1',
+  ];
+  if (uzanti !== 'png') args.push('-q:v', '3');
+  args.push(gecici);
+  const tamam = await new Promise((bitti) => {
+    execFile('ffmpeg', args, { timeout, maxBuffer: 1024 * 1024 }, (hata) => bitti(!hata));
+  });
+  if (!tamam) {
+    fs.unlink(gecici, () => {});
+    return { kucultuldu: false, ...olcu };
+  }
+  const yeni = await medyaBoyutOlc(gecici, { timeout: 10000 });
+  if (!yeni) {
+    fs.unlink(gecici, () => {});
+    return { kucultuldu: false, ...olcu };
+  }
+  fs.renameSync(gecici, dosyaYolu);
+  return { kucultuldu: true, ...yeni, bayt: fs.statSync(dosyaYolu).size };
 }
