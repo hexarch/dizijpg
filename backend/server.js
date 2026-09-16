@@ -8378,6 +8378,38 @@ const SEO_DIZI_OLCU_OBEK = 4000;
 const SEO_BOLUM_OLCU_OBEK = 800;
 const SEO_BOLUM_OLCU_BUTCE_MS = 25000;
 
+// ---------------------------------------------------------------------------
+// TMDB SAYI METNİ: BASAMAK TAVANI ŞART (17 Eyl 2026 — CANLIDA ÖLÇÜLDÜ)
+// ---------------------------------------------------------------------------
+// Aşağıdaki sorgular TMDB belgelerindeki METİN alanlarını (`episode_number`,
+// `season_number`, `episode_count`, firma/kişi `id`) `::int`e çeviriyor ve
+// çevirmeden önce `~ '^[0-9]+$'` ile "sayı mı?" diye bakıyordu. O süzgeç
+// SAYI OLDUĞUNU doğrular, INT'E SIĞDIĞINI doğrulamaz.
+//
+// ARIZA: 14 Eyl 19:48'de `/tv/308185/season/4` (Aşkın Gücü, TR yapımı ⇒ harita
+// kapsamında) belgesi tazelendi. TMDB'deki o sezonun 96 bölümünden 6'sının
+// `episode_number` değeri çöp: 10^13 … 10^18 (adları da boş). `10^18::int`
+// Postgres'te 22003 (`value "1000000000000000000" is out of range for type
+// integer`) atıyor ve TEK satır iki işi birden düşürdü:
+//   · `seo_bolum_olcu` tazelemesi ilk öbekte patladı ⇒ su seviyesi
+//     14 Eyl 12:14'te DONDU (3 gün boyunca her koşuda aynı hata; bölüm
+//     haritası dünkü kovayla yaşadı),
+//   · ısıtıcı `ISITMA_BOLUM_SORGU`da aynı yerden patladı ⇒ 324 koşu üst üste
+//     "koşu hatası" (14 Eyl 19:50'den beri HİÇ ısıtma yok).
+// Tazelemenin "ATMAZ" sözü hatayı yutmaya yeter ama SU SEVİYESİNİ ilerletmez:
+// zehirli satır öbekte durduğu sürece tablo kalıcı olarak donar. Çözüm kaynakta
+// olmalı — çöp satır sorguya HİÇ girmemeli.
+//
+// TAVANLAR (int4 sınırı 2.147.483.647 = 10 basamak; hepsi güvenli tarafta):
+//   · `episode_number`, `episode_count` → 6 basamak (en uzun gerçek dizi
+//     One Piece, 1.120 bölüm; mutlak numaralandırma 6 basamağa sığar),
+//   · `season_number` → 4 basamak (yıl ile numaralanan sezonlar var: 2024),
+//   · firma/kişi `id` → 9 basamak (TMDB kimlikleri 8 milyonun altında).
+// Tavanı aşan değer ÇÖPTÜR: satır sessizce değil, YOK SAYILARAK düşer —
+// haritaya ve ısıtma kuyruğuna girmemesi gereken zaten oydu.
+// Kilit: `backend/test/seo_bolum_haritasi.test.js` ("TMDB sayı süzgeçleri
+// basamak tavanlı") — kaynakta tavansız `~ '^[0-9]+$'` + `::int` çifti kalırsa
+// test kırmızıya döner.
 // Dizi düzeyi ölçü — eski `dizi_bilgi` CTE'sinin ifadeleri BİREBİR.
 // Kaynak süzgeci de eskisiyle aynı (`^/tv/[0-9]+\?` + tr-TR): harita eskiden
 // bu kümeden okuyordu, kapsam değişmesin.
@@ -8404,7 +8436,8 @@ const SEO_DIZI_OLCU_TAZELE = `
                              kaynak_zaman, olculdu)
   SELECT s.tmdb_id,
          coalesce((s.veri->'origin_country') ? 'TR', false),
-         CASE WHEN s.veri->'next_episode_to_air'->>'season_number' ~ '^[0-9]+$'
+         -- Basamak tavanı: bkz. "TMDB SAYI METNİ" notu (17 Eyl 2026).
+         CASE WHEN s.veri->'next_episode_to_air'->>'season_number' ~ '^[0-9]{1,4}$'
               THEN (s.veri->'next_episode_to_air'->>'season_number')::int
          END,
          s.anahtar, s.guncelleme, now()
@@ -8467,7 +8500,8 @@ const SEO_BOLUM_OLCU_TAZELE = `
                  FROM jsonb_array_elements(
                         CASE WHEN jsonb_typeof(s.veri->'episodes') = 'array'
                              THEN s.veri->'episodes' ELSE '[]'::jsonb END) e
-                WHERE e->>'episode_number' ~ '^[0-9]+$'
+                -- Basamak tavanı: bkz. "TMDB SAYI METNİ" notu (17 Eyl 2026).
+                WHERE e->>'episode_number' ~ '^[0-9]{1,6}$'
                   AND (e->>'episode_number')::int >= 1
                 GROUP BY 1
              ) b
@@ -8571,7 +8605,8 @@ const ISITMA_BOLUM_SORGU = `
   ), dizi_bilgi AS (
     SELECT DISTINCT ON (tv) tv AS tmdb_id,
            (veri->'origin_country') ? 'TR' AS tr_yapim,
-           CASE WHEN veri->'next_episode_to_air'->>'season_number' ~ '^[0-9]+$'
+           -- Basamak tavanı: bkz. "TMDB SAYI METNİ" notu (17 Eyl 2026).
+           CASE WHEN veri->'next_episode_to_air'->>'season_number' ~ '^[0-9]{1,4}$'
                 THEN (veri->'next_episode_to_air'->>'season_number')::int
            END AS sonraki_sezon
       FROM (
@@ -8590,8 +8625,9 @@ const ISITMA_BOLUM_SORGU = `
              jsonb_array_elements(coalesce(veri->'seasons', '[]'::jsonb)) s
        WHERE anahtar LIKE '/tv/%'
          AND anahtar ~ '^/tv/[0-9]+(\\?|$)'
-         AND s->>'season_number' ~ '^[0-9]+$'
-         AND s->>'episode_count' ~ '^[0-9]+$'
+         -- Basamak tavanı: bkz. "TMDB SAYI METNİ" notu (17 Eyl 2026).
+         AND s->>'season_number' ~ '^[0-9]{1,4}$'
+         AND s->>'episode_count' ~ '^[0-9]{1,6}$'
     ) t ORDER BY tv, sezon_no, bolum_adedi DESC
   ), sezon_belgesi AS (
     -- YALNIZ tr-TR: bölüm NUMARALANDIRMASI dilden bağımsızdır ve tek dil
@@ -8614,7 +8650,8 @@ const ISITMA_BOLUM_SORGU = `
         SELECT DISTINCT b.tv, b.sezon_no, (e->>'episode_number')::int AS bolum
           FROM sezon_belgesi b, jsonb_array_elements(b.veri->'episodes') e
          WHERE b.sezon_no >= 1
-           AND e->>'episode_number' ~ '^[0-9]+$'
+           -- Basamak tavanı: bkz. "TMDB SAYI METNİ" notu (17 Eyl 2026).
+           AND e->>'episode_number' ~ '^[0-9]{1,6}$'
            AND (e->>'episode_number')::int >= 1
       ) g
   ), kapsanan AS (
@@ -8953,7 +8990,8 @@ const SEO_YAPIM_SIRKET_TAZELE = `
                           AND coalesce(s.veri->>'poster_path', '') <> ''
                          THEN s.veri->'production_companies'
                          ELSE '[]'::jsonb END) c
-            WHERE (c->>'id') ~ '^[0-9]+$' AND coalesce(c->>'name', '') <> ''
+            -- Basamak tavanı: bkz. "TMDB SAYI METNİ" notu (17 Eyl 2026).
+            WHERE (c->>'id') ~ '^[0-9]{1,9}$' AND coalesce(c->>'name', '') <> ''
          ), '{}'::int[]),
          s.guncelleme, now()
     FROM tek s
@@ -20458,12 +20496,12 @@ const RAF_TABAN_SORGU = `
     (SELECT coalesce(jsonb_agg(DISTINCT jsonb_build_array((c->>'id')::int, c->>'name')), '[]'::jsonb)
        FROM jsonb_array_elements(d.veri->'production_companies') c
       WHERE jsonb_typeof(d.veri->'production_companies') = 'array'
-        AND (c->>'id') ~ '^[0-9]+$' AND coalesce(c->>'name', '') <> '') AS firmalar,
+        AND (c->>'id') ~ '^[0-9]{1,9}$' AND coalesce(c->>'name', '') <> '') AS firmalar,
     (SELECT coalesce(jsonb_agg(DISTINCT jsonb_build_array((p->>'id')::int, p->>'name')), '[]'::jsonb)
        FROM jsonb_array_elements(d.veri->'credits'->'crew') p
       WHERE jsonb_typeof(d.veri->'credits'->'crew') = 'array'
         AND p->>'job' = 'Director'
-        AND (p->>'id') ~ '^[0-9]+$' AND coalesce(p->>'name', '') <> '') AS yonetmenler
+        AND (p->>'id') ~ '^[0-9]{1,9}$' AND coalesce(p->>'name', '') <> '') AS yonetmenler
     FROM detay d`;
 
 /** SQL satırlarından katalog tabanını kurar (SAF — test doğrudan çağırır). */

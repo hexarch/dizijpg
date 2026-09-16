@@ -1,6 +1,47 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-17 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-17 — 🔨 İKİ SESSİZ ARIZA: KÖK ROTA TESTİ + TMDB ÇÖP SAYISI (int TAŞMASI)
+
+**Tetik (birebir):** *"seo_gizlilik testinde 'robots.txt'te kapatılmamış
+kişisel rota: /' — açılış vitrini işinden kalma, değişikliklerim olmadan da
+kırık. (2) Sunucu logunda seo_bolum_olcu_tazeleme hatası tekrarlıyor: value
+"1000000000000000000" is out of range for type integer"*
+
+- ✅ **(1) `seo_gizlilik` testi:** 15 Eyl'deki açılış vitrini `yonlendirme.dart`a
+  `path: '/'` ekledi; o güne kadar kök bir ROTA DEĞİLDİ (redirect'le
+  `/kesfet`e gidiyordu), bu yüzden testin "oturum gerektiren her rota
+  robots.txt'te kapalı" iddiası kökü hiç görmemişti. Kök KİŞİSEL DEĞİL
+  (oturumsuz ziyaretçi tanıtım sayfasını görür) ve kapatılması İMKÂNSIZ
+  (`Disallow: /` ön ek eşleşir ⇒ tüm site kapanır; ana sayfa
+  sitemap-genel.xml'de priority 1.0). Kök `ACIK_ROTALAR`a alındı **ve
+  istisnanın KOŞULU ayrı bir testle kilitlendi**: kök `acikTamYollar`da
+  duruyor + `AcilisEkrani` çiziyor + robots.txt kökü kapatmıyor. Kök giriş
+  duvarının arkasına dönerse muafiyet kendiliğinden kırmızıya döner.
+- ✅ **(2) TMDB çöp sayısı iki işi birden düşürdü** (kök sebep bulundu,
+  canlıda ölçüldü): 14 Eyl 19:48'de `/tv/308185/season/4` (Aşkın Gücü, TR
+  yapımı ⇒ harita kapsamında) tazelendi. TMDB'de o sezonun 96 bölümünden
+  6'sının `episode_number` değeri çöp: 10^13 … 10^18 (adları da boş). SQL
+  süzgeci `~ '^[0-9]+$'` "sayı mı?" diye bakıyor, **int'e sığdığına
+  bakmıyordu** ⇒ `::int` 22003 attı.
+  · `seo_bolum_olcu` tazelemesi İLK öbekte patladı ⇒ su seviyesi
+    **14 Eyl 12:14'te dondu** (3 gün, her koşuda aynı hata; bölüm haritası
+    dünkü kovayla yaşadı).
+  · Isıtıcı `ISITMA_BOLUM_SORGU`da aynı yerden patladı ⇒ **324 koşu üst üste
+    "koşu hatası"**, 14 Eyl 19:50'den beri hiç ısıtma yok.
+  · Tazelemenin "ATMAZ" sözü bu sınıfı kurtarmıyor: hata yutulur ama SU
+    SEVİYESİ ilerlemediği için zehirli satır öbekte durdukça tablo KALICI
+    donar. Çözüm kaynakta: çöp satır sorguya hiç girmemeli.
+  · **Basamak tavanı** eklendi (int4 sınırı 10 basamak): `episode_number` ve
+    `episode_count` 6, `season_number` 4, firma/kişi `id` 9 basamak. Gerçek
+    veri kesilmiyor (One Piece 1.120 bölüm, yıl numaralı sezon 2024).
+    Ölçüldü: zehirli belgede 96 bölümün 90'ı (çöp 6 hariç) yazılıyor.
+  · Kilit: `seo_bolum_haritasi.test.js` — kaynakta tavansız
+    `~ '^[0-9]+$'` + `::int` çifti kalırsa test kırmızıya döner; tavanların
+    hepsi int4'e sığmak zorunda.
+- ⬜ Dağıtım: `server.js` + imaj yeniden derlemesi (ısıtıcı kardeş konteyner
+  aynı imajdan koşuyor; scp tek başına yetmez).
+
 ## 2026-09-17 — 🚀 AKIŞTA ANA SAYFA RAFLARI + "BİR SÜRE GÖSTERME" TİKİ + dizi.jpg'DE EN ÇOK İZLENEN LİSTELERİ (1.176.0+263, web CANLI)
 
 **Tetik (birebir):** *"akışta ana sayfadaki listeleri de göster ve altında tik

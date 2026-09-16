@@ -663,3 +663,57 @@ test('ısıtıcının SEZON anahtarı haritanın OKUDUĞU anahtarla AYNI', () =>
     /anahtar ~ '\^\/tv\/\[0-9\]\+\/season\/\[0-9\]\+\\\\\?language=tr-TR\$'/,
     'ısıtıcı sezon belgesini haritadan FARKLI anahtarla arıyor');
 });
+
+// ===========================================================================
+// B4 — TMDB SAYI METNİ INT'E SIĞMALI (17 Eyl 2026, canlıda ölçülmüş arıza)
+// ===========================================================================
+// 14 Eyl 19:48'de TMDB'den gelen `/tv/308185/season/4` (Aşkın Gücü) belgesinde
+// 6 bölümün `episode_number` değeri çöptü: 10^13 … 10^18. `~ '^[0-9]+$'`
+// süzgeci "sayı mı?" diye bakıp geçiriyor, `::int` ise 22003 atıyordu
+// (`value "1000000000000000000" is out of range for type integer`). TEK satır
+// iki işi birden düşürdü: `seo_bolum_olcu` tazelemesi ilk öbekte patladığı için
+// SU SEVİYESİ 3 gün dondu (bölüm haritası tazelenmedi) ve ısıtıcı 324 koşu
+// üst üste "koşu hatası" verdi (hiç ısıtma yapılmadı).
+//
+// Tazelemenin "ATMAZ" sözü bu sınıfı kurtarmaz: hata yutulur ama su seviyesi
+// ilerlemediği için zehirli satır öbekte durdukça tablo KALICI olarak donar.
+// Bu yüzden kilit kaynakta: sayı süzgeci BASAMAK TAVANI taşımak zorunda.
+test('TMDB sayı süzgeçleri basamak tavanlı (int taşması geri gelmesin)', () => {
+  // 1) Kaynakta tavansız süzgeç KALMAMIŞ olmalı (yeni yazılan sorgu da dahil).
+  const tavansiz = KAYNAK.split('\n')
+    .map((s) => s.trim())
+    .filter((s) => !s.startsWith('//') && s.includes("~ '^[0-9]+$'"));
+  assert.deepEqual(tavansiz, [], 'tavansız TMDB sayı süzgeci: ::int taşabilir');
+
+  // 2) Kullanılan tavanların HEPSİ int4'e sığmalı (2.147.483.647 = 10 basamak),
+  //    yani en çok 9 basamak. Tavan sayısı da düşmesin: iddia boşa düşmesin.
+  const tavanlar = [...KAYNAK.matchAll(/~ '\^\[0-9\]\{1,(\d+)\}\$'/g)]
+    .map((m) => Number(m[1]));
+  assert.ok(tavanlar.length >= 7, `tavanlı süzgeç sayısı düştü: ${tavanlar.length}`);
+  for (const b of tavanlar) {
+    assert.ok(10 ** b - 1 <= 2147483647, `${b} basamaklı tavan int4'e sığmıyor`);
+  }
+
+  // 3) Arızanın geçtiği üç alan adını TEK TEK kilitle — tavan buralardan
+  //    silinirse 14 Eyl'in aynısı tekrarlar.
+  const bolumOlcu = bildirimCek('SEO_BOLUM_OLCU_TAZELE');
+  assert.match(bolumOlcu, /episode_number' ~ '\^\[0-9\]\{1,6\}\$'/,
+    'ölçü tazelemesinde bölüm numarası tavanı yok');
+  const diziOlcu = bildirimCek('SEO_DIZI_OLCU_TAZELE');
+  assert.match(diziOlcu, /season_number' ~ '\^\[0-9\]\{1,4\}\$'/,
+    'ölçü tazelemesinde sezon numarası tavanı yok');
+  const isitma = bildirimCek('ISITMA_BOLUM_SORGU');
+  assert.match(isitma, /episode_number' ~ '\^\[0-9\]\{1,6\}\$'/,
+    'ısıtma kuyruğunda bölüm numarası tavanı yok');
+  assert.match(isitma, /season_number' ~ '\^\[0-9\]\{1,4\}\$'/,
+    'ısıtma kuyruğunda sezon numarası tavanı yok');
+  assert.match(isitma, /episode_count' ~ '\^\[0-9\]\{1,6\}\$'/,
+    'ısıtma kuyruğunda bölüm adedi tavanı yok');
+
+  // 4) Tavan GERÇEK veriyi kesmemeli: en uzun dizi (One Piece) 1.120 bölüm,
+  //    yıl ile numaralanan sezonlar 4 basamak (2024). Tavanlar bunları geçirir.
+  const gecer = (tavan, deger) => new RegExp(`^[0-9]{1,${tavan}}$`).test(String(deger));
+  assert.ok(gecer(6, 1120) && gecer(6, 999999), 'bölüm tavanı gerçek diziyi kesiyor');
+  assert.ok(gecer(4, 2024), 'sezon tavanı yıl numaralı sezonu kesiyor');
+  assert.ok(!gecer(6, 1000000000000000000n), 'çöp değer tavandan geçiyor');
+});

@@ -130,6 +130,17 @@ const ROTALAR = [
 const ACIK_ROTALAR = new Set([
   '/icerik/x/x', '/kisi/x', '/gonderi/x', '/dizi/x/sezon/x/bolum/x',
   '/gozat', '/kesfet', '/gizlilik',
+  // 15 Eyl 2026 — AÇILIŞ VİTRİNİ: kök (`/`) artık bir ROTA. O güne kadar
+  // yonlendirme.dart'ta `path: '/'` YOKTU (kök `/kesfet`e çevriliyordu), bu
+  // yüzden liste kökü hiç görmüyordu; rota eklenince test "kapatılmamış
+  // kişisel rota: /" diyerek kırmızıya döndü. Kök KİŞİSEL DEĞİL: oturumsuz
+  // ziyaretçi tanıtım sayfasını (`ekranlar/acilis.dart`) görür, oturumlu
+  // kullanıcıyı `redirect` `/kesfet`e alır. Kapatmak da İMKÂNSIZ:
+  // `Disallow: /` robots.txt'te ÖN EK eşleşir, yani siteyi tamamen kapatırdı;
+  // ayrıca ana sayfa sitemap-genel.xml'de priority 1.0 ile ilan ediliyor ve
+  // 46 dilin ana sayfası da ondan türüyor. Aşağıdaki "açılış vitrini" testi
+  // bu istisnanın koşulunu (kökün gerçekten oturumsuz açılması) kilitliyor.
+  '/',
   // 7 Ağu 2026: /listeler/:id artık gerçek bir rota ve oturumsuz açılıyor.
   // Sunucu bu yol için indekslenebilir SSR basıyordu ama uygulamada rota
   // YOKTU (bot içerik, insan giriş formu = cloaking). Rota eklendiği için
@@ -290,6 +301,24 @@ test('oturum gerektiren HER rota robots.txt ile kapalı', () => {
   // eklenip robots.txt unutulursa kırmızıya döner.
   const acik = ROTALAR.filter((y) => !ACIK_ROTALAR.has(y) && !kapali(y));
   assert.deepEqual(acik, [], `robots.txt'te kapatılmamış kişisel rota: ${acik}`);
+});
+
+test('AÇILIŞ VİTRİNİ: kök rota oturumsuz açılıyor (ACIK_ROTALAR istisnası haklı)', () => {
+  // `/` yukarıda "kişisel değil" diye muaf tutuldu. O muafiyet kökün
+  // oturumsuz açılmasına DAYANIYOR: kök giriş duvarının arkasına dönerse
+  // robots.txt'te açık kalan ama insana giriş formu gösteren bir URL doğar
+  // (bot içerik, insan duvar = cloaking) ve ana sayfa sitemap'te priority
+  // 1.0 ile ilan edilmeye devam eder. Muafiyet ile koşulu birlikte düşsün.
+  const tam = /const acikTamYollar = <String>\[([^\]]*)\]/.exec(YONLENDIRME);
+  assert.ok(tam, 'acikTamYollar listesi bulunamadı');
+  assert.match(tam[1], /'\/'/,
+    "kök rota oturumsuz açılmıyor ama ACIK_ROTALAR'da muaf — ya muafiyeti"
+    + ' kaldır ya kökü herkese aç');
+  assert.match(YONLENDIRME, /GoRoute\(path: '\/', builder: \(_, __\) => const AcilisEkrani\(\)\)/,
+    'kök rota açılış vitrinini çizmiyor');
+  // Kök ASLA Disallow edilemez: `Disallow: /` ön ek eşleşir, siteyi kapatır.
+  assert.ok(!yildizBlogu.disallow.includes('/'),
+    'robots.txt kökü kapatmış — TÜM site taramaya kapalı olur');
 });
 
 test('SSR ile indekslenen yollar robots.txt ile yanlışlıkla kapatılmamış', () => {
