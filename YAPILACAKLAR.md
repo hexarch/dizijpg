@@ -1,5 +1,56 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-17 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-17 — 🚀 AKIŞTA ANA SAYFA RAFLARI + "BİR SÜRE GÖSTERME" TİKİ + dizi.jpg'DE EN ÇOK İZLENEN LİSTELERİ (1.176.0+263, web CANLI)
+
+**Tetik (birebir):** *"akışta ana sayfadaki listeleri de göster ve altında tik
+bir süre gösterme tiki bir kullanıcı onu seçerse ona bir daha o listeyi 1 ay
+gösterme"* + *"hem ana sayfa hem akışa şu listeleri de ekle dizi jpg
+kullanıcılarının bu hafta en çok izlediği 10 film en çok izlediği 10 dizi
+bunların aylık versiyonu da olsun yıllık versiyonu da ama şöyle 2026 yılında
+dizi jpg de en çok izlenen film en çok izlenen dizi listesi bu listede 50 dizi
+50 film olacak"* + *"bu listeler her gün güncellenmeli"*
+
+- ✅ `/akis/raflar` (16 Eyl'deki `/kanon/ozet`in yerine): akış artık ana
+  sayfanın **29 rafının hepsini** her 6 gönderide bir serpiştiriyor. Kaynak
+  TEK tablo (`SEO_KESFET_RAFLARI`) — bot sayfası, Keşfet ve akış aynı yerden
+  besleniyor. Dil başına 30 dk önbellek. `/kanon/ozet` eski istemciler için
+  DURUYOR.
+- ✅ Akıştaki raf başlığı artık ÇEVRİLİYOR (`.c`): 16 Eyl'de unutulmuştu,
+  her dilde Türkçe çıkıyordu (Keşfet'te doğruydu).
+- ✅ "Bir süre gösterme" tiki (`raf_gizleme` tablosu): `POST /raflar/gizle`
+  1 ay yazar, `DELETE` geri alır. Süzgeç SUNUCUDA (`bitis > now()`), süresi
+  geçen satır kendiliğinden düşer, temizlik işi yok. Kimlik rafın SLUG'ı
+  (`raf_slug.js` = `kesfet.dart`taki `rafSlug`), sıra numarası değil.
+  Yalnız AKIŞI etkiler (Keşfet katalog; bot/insan sayfası da ayrışmasın).
+  İstemci iyimser kaldırır, istek düşerse raf geri gelir + uyarı; başarıda
+  "Geri al" düğmeli bildirim.
+- ✅ `populer_raflar.js` — sitenin KENDİ izleme verisinden 6 raf: hafta/ay
+  (10'luk) ve 2026 (50'lik), film + dizi. Ana sayfada, akışta ve bot
+  sayfasında.
+  · Ölçü `COUNT(DISTINCT kullanici_id)` — ham satır sayısı "en çok bölümü
+    olan dizi" listesi üretirdi (`izlemeler` olay tablosu).
+  · `tarih_kesin` süzgeci ZORUNLU: içe aktarım `now()` damgalıyor, süzgeçsiz
+    tek bir 2.000 filmlik aktarım haftalık tabloyu doldururdu.
+  · HER GÜN tazelenir: iki katmanlı önbellek — sıralama (dilden bağımsız, 6
+    GROUP BY) + kartlar (dil başına). Gün anahtarı **İstanbul günü**
+    (konteyner UTC).
+  · Yıl SABİT 2026 (başlık = kalıcı adres + 45 dildeki çeviri anahtarı);
+    her 1 Ocak'ta ELDE yükseltilecek — 2027 raflarıyla aynı kural.
+- ✅ Çeviri: 9 yeni anahtar × 45 dil.
+- ✅ Test: `populer_raflar.test.js` (9 — sunucu raf tablosu ↔ `kesfet.dart`
+  eşleşmesi dahil), `akis_raf_test.dart` (4 — tik, geri alma, hata dönüşü),
+  `katalog_cark_test` genişletildi. Tüm takım: 3.074 Flutter + 2.541 backend.
+- ✅ Migrasyon `2026-09-17.sql` CANLIDA: `raf_gizleme` + `izlemeler(tur,
+  tarih) WHERE tarih_kesin` kısmi indeksi (417 bin satır, 633 kullanıcı).
+- 🚀 Canlı doğrulama (uçtan uca curl): 6 liste dolu (hafta film 35 izleyenle
+  başlıyor), geçersiz dönem 404, gizleme 1 ay yazıyor ve YALNIZ o kullanıcıda
+  düşüyor, oturumsuz 401, uydurma slug 400, geri alma rafı getiriyor;
+  `/kesfet` bot sayfasında 29 blok. Paket `main.28af5a1021fc.dart.js`
+  (md5 eşleşti, brotli üretildi, eski paket silindi).
+- ⬜ Mobil (Play/App Store) sürümü çıkmadı: özellik şu an WEB'de.
+- ⬜ Gizlenen rafları geri açacak bir AYARLAR ekranı yok — kayıt 1 ayda
+  kendiliğinden düşüyor, bilerek böyle.
 
 ## 2026-09-16 — 🚀 PAYLAŞIMDA KOPYALA-YAPIŞTIR: panodaki görsel/GIF/video doğrudan eklenir (1.175.0+262, web CANLI)
 
