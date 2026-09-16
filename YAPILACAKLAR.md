@@ -1,6 +1,39 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-17 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-17 — 🔨 NÖBETÇİ: ARKA PLAN İŞLERİ SESSİZCE DURAMASIN
+
+**Tetik (birebir):** *"yap"* — "bu sınıf hata sessiz; ölçü tablosu N saattir
+tazelenmedi nöbetçisi ekleyeyim mi?" teklifine.
+
+Aynı gün düzeltilen arızanın ASIL dersi hatanın kendisi değil SESSİZLİĞİYDİ:
+iki iş de hatayı düzgünce logladı, kimse 3 gün görmedi. `backend/nobet.js`
+bunu kapatıyor.
+
+- ✅ **İki bağımsız sinyal** (biri yalan söylerse diğeri yakalar):
+  · SÜREÇ — her koşu bitişinde işin NÖBET KAYDI (`ayarlar.nobet_<iş>`:
+    son koşu, son başarı, ardarda hata, son hata metni). "İş hiç koşmuyor /
+    koşuyor ama patlıyor."
+  · SONUÇ — ölçü tablosunun `max(olculdu)` yaşı. "İş 'başarılı' diyor ama
+    tabloya günlerdir tek satır yazmamış" (14 Eyl'de tam bu oldu: `catch`
+    hatayı yutuyor, su seviyesi ilerlemiyordu).
+- ✅ İzlenen işler: `seo_bolum_olcu`, `seo_dizi_olcu`, `seo_kisi_olcu`,
+  `seo_yapim_sirket` (eşik 24 saat — canlıda dördü de son 1 saatte
+  tazeleniyor, yani eşik rahat) ve `isitici` (eşik 3 saat; 10 dakikada bir
+  koşuyor). Ardarda 3 hatalı koşu da eşikten bağımsız alarm.
+- ✅ Nerede görünür: **yönetim panelinde kırmızı şerit + "Nöbetçi" kartı**
+  (`/admin/ozet` → `nobetci`) ve sorun VARKEN `seviye:'hata', olay:'nobetci'`
+  log satırı. Sessizlik disiplini: temiz turda log YAZILMAZ, yalnız
+  sorunludan temize geçişte tek satır (`nobetci_duzeldi`).
+- ✅ Yanlış alarm kapıları: yeni dağıtımda eşik dolmadan "kayıt yok" alarmı
+  verilmez (açılış anı hesaba katılır); okunamayan/olmayan ölçü tablosu
+  SUSAR; kilide takılıp dönen ısıtıcı kopyası "başarılı" damgası BASMAZ.
+- ✅ Şema değişikliği YOK: kayıtlar mevcut `ayarlar` tablosunda (migrasyon
+  gerekmiyor). 16 yeni test (`backend/test/nobet.test.js`) — 14 Eyl senaryosu
+  birebir kurulup nöbetçinin onu yakaladığı doğrulanıyor.
+- ⬜ Dağıtım: `server.js` + `isitici.js` + `nobet.js` + `admin.html` +
+  Dockerfile (COPY listesine `nobet.js`) → imaj yeniden derlemesi.
+
 ## 2026-09-17 — 🚀 İKİ SESSİZ ARIZA: KÖK ROTA TESTİ + TMDB ÇÖP SAYISI (int TAŞMASI, CANLI)
 
 **Tetik (birebir):** *"seo_gizlilik testinde 'robots.txt'te kapatılmamış

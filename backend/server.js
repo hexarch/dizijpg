@@ -167,6 +167,12 @@ import {
 // KURAL: hata loglarına şifre/token/Authorization/mesaj içeriği/e-posta/SDP
 // GEÇMEZ. Sızdırmamanın yolu ALMAMAKTIR — gunluk.js başındaki iki katman notu.
 import { yaz as logYaz, olumcul as logOlumcul } from './gunluk.js';
+// NÖBETÇİ (17 Eyl 2026): arka plan işleri sessizce durursa yakalar. Gerekçe
+// nobet.js başlığında (14 Eyl'de tek çöp satır iki işi 3 gün öldürdü, hata
+// loglandı ama kimse görmedi). SAF modül: içe aktarmanın yan etkisi yok.
+import {
+  NOBET_OZET_ANAHTAR, nobetKaydet, nobetKayitlari, olcuYaslari, nobetSorunlari,
+} from './nobet.js';
 // Küme (D1): bu süreç `kume.js`in forkladığı bir İŞÇİ olabilir. kume_ipc
 // kümesizken (node server.js, testler) tamamen etkisizdir: yayinla no-op,
 // RPC'ler null döner — yani tek-süreç davranışı BİREBİR korunur.
@@ -9265,6 +9271,7 @@ function bolumTavaniniUygula(rows) {
  */
 async function seoOlcuTazele(a) {
   const baslangic = Date.now();
+  let kosuHatasi = null;
   const suSeviyesi = async () => (await sitemapSorgu(
     `SELECT coalesce(max(kaynak_zaman), '-infinity'::timestamptz) AS su
        FROM ${a.tablo}`)).rows[0].su;
@@ -9285,7 +9292,14 @@ async function seoOlcuTazele(a) {
     silinen = (await sitemapSorgu(a.temizle)).rowCount;
   } catch (e) {
     logYaz({ seviye: 'hata', olay: `${a.ad}_tazeleme`, hata: e, obek, satir });
+    kosuHatasi = e;
   }
+  // NÖBET KAYDI (17 Eyl 2026): hata YUTULUYOR ama artık İZ BIRAKIYOR. 14 Eyl'de
+  // bu catch üç gün boyunca aynı satırı yazdı; su seviyesi ilerlemediği için
+  // tablo donmuştu ve dışarıdan her şey normal görünüyordu. Kayıt panelin
+  // okuduğu yere düşer (nobet.js), nöbetçi de oradan alarm verir.
+  await nobetKaydet((m, d) => havuz.query(m, d), a.ad, { hata: kosuHatasi })
+    .catch((e) => logYaz({ seviye: 'hata', olay: 'nobet_yazilamadi', is: a.ad, hata: e }));
   const sure = Date.now() - baslangic;
   logYaz({ seviye: 'bilgi', olay: a.ad, obek, satir, silinen, sure });
   return { obek, satir, silinen, sure };
@@ -9334,6 +9348,7 @@ async function sitemapBolumVerisi(zorla) {
  */
 async function seoKisiOlcuTazele() {
   const baslangic = Date.now();
+  let kosuHatasi = null;
   let obek = 0; let satir = 0; let silinen = 0;
   try {
     for (;;) {
@@ -9349,7 +9364,11 @@ async function seoKisiOlcuTazele() {
     silinen = (await sitemapSorgu(SEO_KISI_OLCU_TEMIZLE)).rowCount;
   } catch (e) {
     logYaz({ seviye: 'hata', olay: 'seo_kisi_olcu_tazeleme', hata: e, obek, satir });
+    kosuHatasi = e;
   }
+  // Nöbet kaydı — ortak sürücüdeki (seoOlcuTazele) gerekçenin aynısı.
+  await nobetKaydet((m, d) => havuz.query(m, d), 'seo_kisi_olcu', { hata: kosuHatasi })
+    .catch((e) => logYaz({ seviye: 'hata', olay: 'nobet_yazilamadi', is: 'seo_kisi_olcu', hata: e }));
   const sure = Date.now() - baslangic;
   logYaz({ seviye: 'bilgi', olay: 'seo_kisi_olcu', obek, satir, silinen, sure });
   return { obek, satir, silinen, sure };
@@ -9394,6 +9413,75 @@ async function sitemapSirketUret() {
 
 async function sitemapSirketVerisi(zorla) {
   return sitemapKovaOku(sitemapSirketKovasi, sitemapSirketUret, zorla);
+}
+
+// ===========================================================================
+// NÖBETÇİ — "arka plan işleri gerçekten koşuyor mu?" (17 Eyl 2026)
+// ===========================================================================
+// Gerekçe ve iki sinyalin (süreç + sonuç) anlatımı nobet.js başlığında.
+// Buradaki iş yalnız SORMAK ve CEVABI GÖRÜNÜR YERE YAZMAK:
+//   · log: sorun VARSA `seviye:'hata', olay:'nobetci'` (docker logs | jq),
+//   · `ayarlar.nobetci`: yönetim panelinin okuduğu satır (kümede HANGİ işçinin
+//     baktığı önemsiz olsun diye bellekte değil DB'de; panel isteği başka
+//     işçiye düşse de aynı cevabı görür).
+//
+// SESSİZLİK DİSİPLİNİ: her turda log yazmıyoruz (30 dakikada bir satır = günde
+// 48 gürültü). Yalnız (a) sorun varken ve (b) sorunlu durumdan TEMİZE geçişte
+// yazılır — düzelme de en az arıza kadar bilgidir.
+const NOBET_BAKIS_MS = 30 * 60 * 1000;
+const NOBET_ILK_BAKIS_MS = 2 * 60 * 1000;
+/** Sunucunun açılış anı: yeni dağıtımda "hiç koşmadı" yanlış alarmını keser. */
+const NOBET_ACILIS = Date.now();
+let nobetSonSorunSayisi = 0;
+
+async function nobetciBak() {
+  try {
+    const sorgu = (m, d) => havuz.query(m, d);
+    const [kayitlar, olculer] = await Promise.all([
+      nobetKayitlari(sorgu), olcuYaslari(sorgu),
+    ]);
+    const sorunlar = nobetSorunlari({
+      kayitlar, olculer, simdi: Date.now(), acilis: NOBET_ACILIS,
+    });
+    const ozet = { bakildi: new Date().toISOString(), sorunlar };
+    await havuz.query(
+      `INSERT INTO ayarlar (anahtar, deger, guncelleme) VALUES ($1, $2, now())
+         ON CONFLICT (anahtar) DO UPDATE SET deger = EXCLUDED.deger, guncelleme = now()`,
+      [NOBET_OZET_ANAHTAR, JSON.stringify(ozet)]);
+    if (sorunlar.length) {
+      logYaz({
+        seviye: 'hata',
+        olay: 'nobetci',
+        sorun: sorunlar.length,
+        sorunlar: sorunlar.map((x) => x.ozet),
+      });
+    } else if (nobetSonSorunSayisi) {
+      logYaz({ seviye: 'bilgi', olay: 'nobetci_duzeldi', onceki: nobetSonSorunSayisi });
+    }
+    nobetSonSorunSayisi = sorunlar.length;
+  } catch (e) {
+    // Nöbetçinin kendisi de sessizce ölmesin.
+    logYaz({ seviye: 'hata', olay: 'nobetci_bakamadi', hata: e });
+  }
+}
+
+/** Panelin okuduğu son nöbet özeti (yoksa boş liste). */
+async function nobetOzeti() {
+  try {
+    const { rows } = await havuz.query('SELECT deger FROM ayarlar WHERE anahtar = $1',
+      [NOBET_OZET_ANAHTAR]);
+    const o = rows[0]?.deger ? JSON.parse(rows[0].deger) : null;
+    return o && Array.isArray(o.sorunlar) ? o : { bakildi: null, sorunlar: [] };
+  } catch {
+    return { bakildi: null, sorunlar: [] };
+  }
+}
+
+// KÜME: yalnız görevli işçi bakar (aynı soruyu N işçi sormasın); sonuç DB'de
+// olduğu için panel hangi işçiye düşerse düşsün aynı cevabı okur.
+if (ISCI_GOREVLI) {
+  setInterval(nobetciBak, NOBET_BAKIS_MS);
+  setTimeout(nobetciBak, NOBET_ILK_BAKIS_MS);
 }
 
 function sitemapGonder(res, xml) {
@@ -23438,7 +23526,10 @@ app.get('/admin', adminKisit, (_req, res) => res.type('html').send(ADMIN_HTML));
 
 // Genel özet: kullanıcı/hata/şikayet sayıları + sistem + istek/dk + ülkeler.
 app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
-  const [ku, h24, hT, sy, sT, cv, gf] = await Promise.all([
+  // `nobet` (17 Eyl 2026): arka plan işleri sessizce durdu mu? Panelin ilk
+  // ekranında görünmesi ŞART — 14 Eyl arızası tam olarak "log'a yazıldı ama
+  // kimse bakmadı" diye 3 gün yaşadı.
+  const [ku, h24, hT, sy, sT, cv, gf, nobet] = await Promise.all([
     havuz.query('SELECT count(*)::int n, count(*) FILTER (WHERE misafir)::int misafir FROM kullanicilar'),
     havuz.query("SELECT count(*)::int n FROM hatalar WHERE tarih > now() - interval '24 hours'"),
     havuz.query('SELECT count(*)::int n FROM hatalar'),
@@ -23449,6 +23540,7 @@ app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
     // yüklediği GIF'ler herkese açık arşive HİÇ girmez (yalnız kendilerinde
     // görünür), yani rozet bir "unutma" alarmıdır.
     havuz.query("SELECT count(*)::int n FROM gifler WHERE durum='bekliyor'"),
+    nobetOzeti(),
   ]);
   // İZLEME ODASI (8 Eyl 2026) — "şu an kaç oda açık, kaç kişi izliyor".
   // Bu uç 3 saniyede bir çalışıyor: sorgu TEK ve indeksli (`izleme_odalari_biter`
@@ -23493,6 +23585,7 @@ app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
     sikayetYeni: sy.rows[0].n,
     sikayetToplam: sT.rows[0].n,
     gifBekleyen: gf.rows[0].n,
+    nobetci: nobet,
     odaAcik: odaSayac ? odaSayac.acik : null,
     odaIzleyici: odaSayac ? odaSayac.izleyici : null,
     istekToplam: IST.toplam,

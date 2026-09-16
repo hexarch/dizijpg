@@ -395,6 +395,11 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
 
 <div id="uyari" class="uyari-kutu gizli"></div>
 
+<!-- NÖBETÇİ ŞERİDİ (17 Eyl 2026): arka plan işleri sessizce durursa BURADA
+     görünür. `#uyari` bağlantı hatasına ayrılmış ve her başarılı yoklamada
+     temizleniyor; nöbetçi ayrı bir şerit olmalı ki ikisi birbirini silmesin. -->
+<div id="nobet-serit" class="uyari-kutu gizli"></div>
+
 <!-- GENEL -->
 <section id="s-genel">
   <div class="kucuk-kartlar" id="kartlar"></div>
@@ -1398,6 +1403,11 @@ function kartlar(d){
     {e:'İzleme Odası',v:d.odaAcik??'—',a:(d.odaIzleyici??0)+' kişi şu an izliyor',i:'🎬',vurgu:d.odaIzleyici>0},
     {e:'Toplam İstek',v:d.istekToplam.toLocaleString('tr'),a:anlik+'/dk şu an',i:'⚡'},
     {e:'Hata (24s)',v:d.hata24,a:d.hataToplam+' toplam',i:'🐞',uyari:d.hata24>0},
+    // NÖBETÇİ: "SEO ölçü tazelemeleri + ısıtıcı koşuyor mu?" Sorun yoksa kart
+    // sessiz kalır (yeşil değil, sade) — panelde gürültü üretmesin.
+    {e:'Nöbetçi',v:(d.nobetci&&d.nobetci.sorunlar.length)||0,
+     a:d.nobetci&&d.nobetci.sorunlar.length?'duran iş var — şeride bak':'arka plan işleri normal',
+     i:'🛎️',uyari:!!(d.nobetci&&d.nobetci.sorunlar.length)},
     {e:'Yeni Şikayet',v:d.sikayetYeni,a:d.sikayetToplam+' toplam',i:'🚩',uyari:d.sikayetYeni>0},
     {e:'CPU Yükü',v:'%'+yukPct,a:s.yuk.map(x=>x.toFixed(2)).join(' / ')+' · '+s.cpu+' çekirdek',i:'🖥️',bar:yukPct},
     {e:'Bellek',v:'%'+belPct,a:bytFmt(s.bellekToplam-s.bellekBos)+' / '+bytFmt(s.bellekToplam),i:'🧠',bar:belPct},
@@ -1418,6 +1428,14 @@ function kartlar(d){
   // herkese açık arşive HİÇ girmez (yalnız kendilerinde görünür).
   const gz=$('#gif-rozet'); if(gz){ gz.textContent=d.gifBekleyen??0; gz.classList.toggle('gizli',!d.gifBekleyen); }
   const cz=$('#cev-rozet'); cz.textContent=d.cevrimici??0; cz.classList.toggle('gizli',!d.cevrimici);
+  // Nöbetçi şeridi: sorunların TAM metni. Kart sayıyı, şerit NEDENİ söyler.
+  const nb=$('#nobet-serit'), nbS=(d.nobetci&&d.nobetci.sorunlar)||[];
+  if(nbS.length){
+    nb.innerHTML='🛎️ <b>Nöbetçi</b> — arka plan işi duruyor:<br>'
+      +nbS.map(x=>'• '+esc(x.ozet)).join('<br>')
+      +(d.nobetci.bakildi?'<br><span style="opacity:.7">son bakış: '+esc(new Date(d.nobetci.bakildi).toLocaleString('tr'))+'</span>':'');
+    nb.classList.remove('gizli');
+  } else nb.classList.add('gizli');
   // İzleme odası rozeti: KİŞİ sayısı (oda sayısı değil) — "şu an kaç kişi
   // birlikte izliyor" sorusu menüden okunsun.
   const oz=$('#oda-rozet'); if(oz){ oz.textContent=d.odaIzleyici??0; oz.classList.toggle('gizli',!d.odaIzleyici); }

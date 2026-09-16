@@ -80,6 +80,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import pg from 'pg';
+// NÖBET KAYDI (17 Eyl 2026): koşunun sonucu `ayarlar` tablosuna düşer ki
+// sunucudaki nöbetçi "ısıtıcı kaç saattir koşmuyor / kaç koşudur patlıyor"
+// diye sorabilsin. 14 Eyl'de ısıtıcı 324 koşu üst üste öldü ve tek izi kimsenin
+// açmadığı bir log dosyasıydı. Gerekçenin tamamı nobet.js başlığında.
+import { nobetKaydet } from './nobet.js';
 
 const BURASI = path.dirname(fileURLToPath(import.meta.url));
 const TMDB = 'https://api.themoviedb.org/3';
@@ -1444,6 +1449,7 @@ async function main(argv) {
   // bağlantıda alınamaz — koşu boyunca AYNI istemci elde tutulur.
   const istemci = await havuz.connect();
   let kilit = false;
+  let kosuHatasi = null;
   try {
     const { rows } = await istemci.query('SELECT pg_try_advisory_lock($1) AS alindi',
       [AYAR.KILIT_ANAHTARI]);
@@ -1537,8 +1543,16 @@ async function main(argv) {
       for (const a of ozet.ornekler) console.log(`  örnek anahtar: ${a}`);
     }
     if (konusmaliMi(ozet)) console.log(ozetSatiri(ozet, secim));
+  } catch (e) {
+    kosuHatasi = e;
+    throw e;
   } finally {
     if (kilit) {
+      // YALNIZ KİLİDİ ALMIŞ KOŞU YAZAR: kilide takılıp dönen kopya hiçbir şey
+      // denemedi, onun "başarılı koşu" damgası nöbetçiyi kör ederdi.
+      // Kayıt yazılamazsa (DB düştüyse) koşunun asıl hatası GİZLENMEZ.
+      await nobetKaydet((m, d) => istemci.query(m, d), 'isitici', { hata: kosuHatasi })
+        .catch((e) => console.error('isitici: nöbet kaydı yazılamadı:', e?.message || e));
       await istemci.query('SELECT pg_advisory_unlock($1)', [AYAR.KILIT_ANAHTARI])
         .catch(() => {});
     }
