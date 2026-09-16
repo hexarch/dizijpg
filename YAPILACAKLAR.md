@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-16 — 🔨 KAYITTA 13 YAŞ SINIRI: doğum tarihinde küçük yaş seçilemez (1.174.0+261)
+## 2026-09-16 — 🚀 KAYITTA 13 YAŞ SINIRI: doğum tarihinde küçük yaş seçilemez (1.174.0+261, API+web CANLI)
 
 **Tetik (birebir):** *"kaydolunca 2025 de doğdum olarak işaretlenebiliyor ama
 uygulama kullanım yaşı 13 o yüzden 13 yaşından küçük işaretlenemez olmalı"*
