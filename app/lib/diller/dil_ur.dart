@@ -1143,6 +1143,9 @@ const Map<String, String> cevirilerUr = {
   'Geçersiz ülke': 'غلط ملک',
   'Geçersiz sosyal bağlantı': 'غلط سوشل لنک',
   'Geçersiz doğum tarihi': 'غلط تاریخ پیدائش',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'dizi.jpg استعمال کرنے کے لیے آپ کی عمر کم از کم 13 سال ہونی چاہیے۔',
+  'En az 13 yaşında olmalısın': 'آپ کی عمر کم از کم 13 سال ہونی چاہیے',
   'Liste adı gerekli': 'فہرست کا نام ضروری ہے',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'نام زیادہ سے زیادہ 60، وضاحت 300 حروف',

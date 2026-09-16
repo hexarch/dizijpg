@@ -1132,6 +1132,9 @@ const Map<String, String> cevirilerGu = {
   'Geçersiz ülke': 'અમાન્ય દેશ',
   'Geçersiz sosyal bağlantı': 'અમાન્ય સોશિયલ લિંક',
   'Geçersiz doğum tarihi': 'અમાન્ય જન્મ તારીખ',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'dizi.jpg વાપરવા માટે તમારી ઉંમર ઓછામાં ઓછી 13 વર્ષ હોવી જોઈએ.',
+  'En az 13 yaşında olmalısın': 'તમારી ઉંમર ઓછામાં ઓછી 13 વર્ષ હોવી જોઈએ',
   'Liste adı gerekli': 'યાદીનું નામ જરૂરી છે',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'નામ વધુમાં વધુ 60, વર્ણન 300 અક્ષર',

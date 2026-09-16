@@ -1118,6 +1118,9 @@ const Map<String, String> cevirilerHe = {
   'Geçersiz ülke': 'מדינה לא תקפה',
   'Geçersiz sosyal bağlantı': 'קישור חברתי לא תקף',
   'Geçersiz doğum tarihi': 'תאריך לידה לא תקף',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'עליך להיות בן 13 לפחות כדי להשתמש ב-dizi.jpg.',
+  'En az 13 yaşında olmalısın': 'עליך להיות בן 13 לפחות',
   'Liste adı gerekli': 'נדרש שם לרשימה',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'השם יכול להיות 60 תווים, התיאור 300',

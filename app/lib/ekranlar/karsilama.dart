@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
@@ -123,6 +124,51 @@ int karsilamaAyGunSayisi(int ay, int? yil) {
   return [31, artik ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][ay - 1];
 }
 
+/// Kullanım yaşı alt sınırı. Mağaza derecelendirmesi ve gizlilik politikası
+/// "13 yaşından küçüklere yönelik değil" diyor; 16 Eyl 2026'ya kadar yıl
+/// listesi BU YILA kadar iniyordu ve 2025 doğumlu seçilebiliyordu. Sunucu
+/// da aynı sınırı uygular (`dogumYasiUygun`, server.js).
+const int karsilamaEnKucukYas = 13;
+
+/// [bugun] itibarıyla seçilebilen EN GEÇ doğum tarihi: 13 yaşını tam bugün
+/// dolduranın tarihi. 29 Şubat'ta 13 yıl geriye gidince tarih artık olmayan
+/// yılda 1 Mart'a taşar; `DateTime` bunu kendisi düzeltir.
+DateTime karsilamaSonDogum(DateTime bugun) =>
+    DateTime(bugun.year - karsilamaEnKucukYas, bugun.month, bugun.day);
+
+/// Seçilebilen ay sayısı: sınır yılında yalnız sınır ayına kadar, yoksa 12.
+int karsilamaAySayisi(int? yil, DateTime bugun) {
+  final sinir = karsilamaSonDogum(bugun);
+  return yil == sinir.year ? sinir.month : 12;
+}
+
+/// Seçilebilen gün sayısı: ayın günü; sınır yılının sınır ayında sınır günü.
+int karsilamaGunSayisi(int ay, int? yil, DateTime bugun) {
+  final sinir = karsilamaSonDogum(bugun);
+  final n = karsilamaAyGunSayisi(ay, yil);
+  return yil == sinir.year && ay == sinir.month ? min(n, sinir.day) : n;
+}
+
+/// Seçimi sınırlara KIRPAR: sınırı aşan yıl/ay/gün null olur. Yıl değişince
+/// artık seçilemeyen ay/gün seçili kalmasın; sunucudan gelen eski (kural
+/// öncesi) bir yıl da açılır listede olmayan bir değerle widget'ı düşürmesin.
+({int? gun, int? ay, int? yil}) karsilamaDogumKirp(
+  int? gun,
+  int? ay,
+  int? yil,
+  DateTime bugun,
+) {
+  final sinir = karsilamaSonDogum(bugun);
+  var y = yil;
+  if (y != null && (y > sinir.year || y < 1900)) y = null;
+  var a = ay;
+  if (a != null && (a < 1 || a > karsilamaAySayisi(y, bugun))) a = null;
+  var g = gun;
+  final enCok = a == null ? 31 : karsilamaGunSayisi(a, y, bugun);
+  if (g != null && (g < 1 || g > enCok)) g = null;
+  return (gun: g, ay: a, yil: y);
+}
+
 class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
   int _adim = 0;
   bool _kaydediyor = false;
@@ -230,10 +276,13 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
       final ay = (d['dogum_ay'] as num?)?.toInt();
       final yil = (d['dogum_yil'] as num?)?.toInt();
       if (mounted && gun != null && ay != null) {
+        // Kural öncesi kaydedilmiş 13 yaş altı bir tarih listede bulunmayan
+        // değerle seçiciyi düşürmesin: sınırı aşan parça boşa çekilir.
+        final k = karsilamaDogumKirp(gun, ay, yil, DateTime.now());
         setState(() {
-          _gun = gun;
-          _ay = ay;
-          _yil = yil;
+          _gun = k.gun;
+          _ay = k.ay;
+          _yil = k.yil;
           _yilGizli = yil == null;
         });
       }
@@ -829,12 +878,23 @@ class _DogumAdimi extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buYil = DateTime.now().year;
-    final gunSayisi = ay == null
+    final bugun = DateTime.now();
+    final sinir = karsilamaSonDogum(bugun);
+    final yilEtkin = yilGizli ? null : yil;
+    // 13 yaş sınırı: sınır yılında sınır ayından, sınır ayında sınır gününden
+    // sonrası LİSTEDE YOK — küçük yaş hiç seçilemez, hata mesajı gerekmez.
+    final aySayisi = karsilamaAySayisi(yilEtkin, bugun);
+    final gecerliAy = (ay != null && ay! <= aySayisi) ? ay : null;
+    final gunSayisi = gecerliAy == null
         ? 31
-        : karsilamaAyGunSayisi(ay!, yilGizli ? null : yil);
-    // Ay değişince 31 Şubat gibi imkânsız gün seçili kalmasın.
+        : karsilamaGunSayisi(gecerliAy, yilEtkin, bugun);
+    // Ay/yıl değişince 31 Şubat gibi imkânsız gün seçili kalmasın.
     final gecerliGun = (gun != null && gun! <= gunSayisi) ? gun : null;
+    void bildir(int? g, int? a, int? y, bool gizli) {
+      final k = karsilamaDogumKirp(g, a, gizli ? null : y, bugun);
+      onDegisti(k.gun, k.ay, k.yil, gizli);
+    }
+
     return ListView(
       padding: const EdgeInsets.only(bottom: 24),
       children: [
@@ -858,7 +918,7 @@ class _DogumAdimi extends StatelessWidget {
                     for (var g = 1; g <= gunSayisi; g++)
                       DropdownMenuItem(value: g, child: Text('$g')),
                   ],
-                  onDegisti: (v) => onDegisti(v, ay, yil, yilGizli),
+                  onDegisti: (v) => bildir(v, gecerliAy, yil, yilGizli),
                 ),
               ),
               const SizedBox(width: 10),
@@ -867,9 +927,9 @@ class _DogumAdimi extends StatelessWidget {
                 child: _Secici<int>(
                   key: const Key('karsilama_ay'),
                   etiket: 'Ay'.c,
-                  deger: ay,
+                  deger: gecerliAy,
                   ogeler: [
-                    for (var a = 1; a <= 12; a++)
+                    for (var a = 1; a <= aySayisi; a++)
                       DropdownMenuItem(
                         value: a,
                         child: Text(
@@ -878,16 +938,7 @@ class _DogumAdimi extends StatelessWidget {
                         ),
                       ),
                   ],
-                  onDegisti: (v) {
-                    final yeniGun =
-                        (gecerliGun != null &&
-                            v != null &&
-                            gecerliGun >
-                                karsilamaAyGunSayisi(v, yilGizli ? null : yil))
-                        ? null
-                        : gecerliGun;
-                    onDegisti(yeniGun, v, yil, yilGizli);
-                  },
+                  onDegisti: (v) => bildir(gecerliGun, v, yil, yilGizli),
                 ),
               ),
               const SizedBox(width: 10),
@@ -900,11 +951,11 @@ class _DogumAdimi extends StatelessWidget {
                         etiket: 'Yıl'.c,
                         deger: yil,
                         ogeler: [
-                          for (var y = buYil; y >= 1900; y--)
+                          for (var y = sinir.year; y >= 1900; y--)
                             DropdownMenuItem(value: y, child: Text('$y')),
                         ],
                         onDegisti: (v) =>
-                            onDegisti(gecerliGun, ay, v, yilGizli),
+                            bildir(gecerliGun, gecerliAy, v, yilGizli),
                       ),
               ),
             ],
@@ -917,7 +968,7 @@ class _DogumAdimi extends StatelessWidget {
           child: CheckboxListTile(
             value: yilGizli,
             onChanged: (v) =>
-                onDegisti(gun, ay, v == true ? null : yil, v == true),
+                bildir(gun, ay, v == true ? null : yil, v == true),
             controlAffinity: ListTileControlAffinity.leading,
             contentPadding: const EdgeInsets.symmetric(horizontal: 12),
             title: Text(
@@ -937,6 +988,26 @@ class _DogumAdimi extends StatelessWidget {
                 child: Text(
                   'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.'
                       .c,
+                  style: TextStyle(
+                    fontSize: 12,
+                    height: 1.4,
+                    color: DiziRenkler.metin54,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.cake_outlined, size: 18, color: DiziRenkler.metin54),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'dizi.jpg için en az 13 yaşında olmalısın.'.c,
                   style: TextStyle(
                     fontSize: 12,
                     height: 1.4,

@@ -1146,6 +1146,9 @@ const Map<String, String> cevirilerSw = {
   'Geçersiz ülke': 'Nchi si sahihi',
   'Geçersiz sosyal bağlantı': 'Kiungo cha kijamii si sahihi',
   'Geçersiz doğum tarihi': 'Tarehe ya kuzaliwa si sahihi',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'Lazima uwe na angalau miaka 13 ili kutumia dizi.jpg.',
+  'En az 13 yaşında olmalısın': 'Lazima uwe na angalau miaka 13',
   'Liste adı gerekli': 'Jina la orodha linahitajika',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'Jina si zaidi ya 60, maelezo 300',

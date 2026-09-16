@@ -1162,6 +1162,10 @@ const Map<String, String> cevirilerFil = {
   'Geçersiz ülke': 'Hindi wastong bansa',
   'Geçersiz sosyal bağlantı': 'Hindi wastong social link',
   'Geçersiz doğum tarihi': 'Hindi wastong petsa ng kapanganakan',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'Kailangan mong maging hindi bababa sa 13 taong gulang para gamitin ang dizi.jpg.',
+  'En az 13 yaşında olmalısın':
+      'Kailangan mong maging hindi bababa sa 13 taong gulang',
   'Liste adı gerekli': 'Kailangan ang pangalan ng listahan',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'Ang pangalan ay hanggang 60, ang paglalarawan 300 karakter',

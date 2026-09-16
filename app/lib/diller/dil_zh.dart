@@ -1082,6 +1082,8 @@ const Map<String, String> cevirilerZh = {
   'Geçersiz ülke': '国家无效',
   'Geçersiz sosyal bağlantı': '社交链接无效',
   'Geçersiz doğum tarihi': '出生日期无效',
+  'dizi.jpg için en az 13 yaşında olmalısın.': '使用 dizi.jpg 必须年满 13 岁。',
+  'En az 13 yaşında olmalısın': '你必须年满 13 岁',
   'Liste adı gerekli': '需要列表名称',
   'Ad en fazla 60, açıklama 300 karakter olabilir': '名称最多 60 字，简介 300 字',
   'Liste bulunamadı': '找不到列表',

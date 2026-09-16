@@ -1143,6 +1143,9 @@ const Map<String, String> cevirilerId = {
   'Geçersiz ülke': 'Negara tidak valid',
   'Geçersiz sosyal bağlantı': 'Tautan sosial tidak valid',
   'Geçersiz doğum tarihi': 'Tanggal lahir tidak valid',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'Kamu harus berusia minimal 13 tahun untuk menggunakan dizi.jpg.',
+  'En az 13 yaşında olmalısın': 'Kamu harus berusia minimal 13 tahun',
   'Liste adı gerekli': 'Nama daftar wajib',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'Nama paling banyak 60, deskripsi 300 karakter',

@@ -1144,6 +1144,9 @@ const Map<String, String> cevirilerVi = {
   'Geçersiz ülke': 'Quốc gia không hợp lệ',
   'Geçersiz sosyal bağlantı': 'Liên kết mạng xã hội không hợp lệ',
   'Geçersiz doğum tarihi': 'Ngày sinh không hợp lệ',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'Bạn phải đủ 13 tuổi để sử dụng dizi.jpg.',
+  'En az 13 yaşında olmalısın': 'Bạn phải đủ 13 tuổi',
   'Liste adı gerekli': 'Cần tên danh sách',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'Tên tối đa 60, mô tả 300 ký tự',

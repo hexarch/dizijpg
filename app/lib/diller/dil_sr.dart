@@ -1145,6 +1145,9 @@ const Map<String, String> cevirilerSr = {
   'Geçersiz ülke': 'Неважећа земља',
   'Geçersiz sosyal bağlantı': 'Неважећи друштвени линк',
   'Geçersiz doğum tarihi': 'Неважећи датум рођења',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'Мораш имати најмање 13 година да би користио dizi.jpg.',
+  'En az 13 yaşında olmalısın': 'Мораш имати најмање 13 година',
   'Liste adı gerekli': 'Име листе је обавезно',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'Име може имати највише 60, опис 300 знакова',

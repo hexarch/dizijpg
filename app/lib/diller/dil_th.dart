@@ -1126,6 +1126,9 @@ const Map<String, String> cevirilerTh = {
   'Geçersiz ülke': 'ประเทศไม่ถูกต้อง',
   'Geçersiz sosyal bağlantı': 'ลิงก์โซเชียลไม่ถูกต้อง',
   'Geçersiz doğum tarihi': 'วันเกิดไม่ถูกต้อง',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'คุณต้องมีอายุอย่างน้อย 13 ปีจึงจะใช้ dizi.jpg ได้',
+  'En az 13 yaşında olmalısın': 'คุณต้องมีอายุอย่างน้อย 13 ปี',
   'Liste adı gerekli': 'ต้องมีชื่อรายการ',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'ชื่อได้ไม่เกิน 60 คำอธิบาย 300 ตัวอักษร',

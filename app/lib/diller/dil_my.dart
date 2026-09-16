@@ -1152,6 +1152,9 @@ const Map<String, String> cevirilerMy = {
   'Geçersiz ülke': 'နိုင်ငံ မမှန်',
   'Geçersiz sosyal bağlantı': 'လူမှုလင့် မမှန်',
   'Geçersiz doğum tarihi': 'မွေးနေ့ မမှန်',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'dizi.jpg ကို အသုံးပြုရန် အနည်းဆုံး အသက် ၁၃ နှစ် ပြည့်ရမည်။',
+  'En az 13 yaşında olmalısın': 'အနည်းဆုံး အသက် ၁၃ နှစ် ပြည့်ရမည်',
   'Liste adı gerekli': 'စာရင်းအမည် လိုသည်',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'အမည် အများဆုံး 60၊ ဖော်ပြချက် 300',

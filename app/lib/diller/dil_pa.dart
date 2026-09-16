@@ -1140,6 +1140,9 @@ const Map<String, String> cevirilerPa = {
   'Geçersiz ülke': 'ਗਲਤ ਦੇਸ਼',
   'Geçersiz sosyal bağlantı': 'ਗਲਤ ਸੋਸ਼ਲ ਲਿੰਕ',
   'Geçersiz doğum tarihi': 'ਗਲਤ ਜਨਮ ਤਾਰੀਖ',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'dizi.jpg ਵਰਤਣ ਲਈ ਤੁਹਾਡੀ ਉਮਰ ਘੱਟੋ-ਘੱਟ 13 ਸਾਲ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ।',
+  'En az 13 yaşında olmalısın': 'ਤੁਹਾਡੀ ਉਮਰ ਘੱਟੋ-ਘੱਟ 13 ਸਾਲ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ',
   'Liste adı gerekli': 'ਸੂਚੀ ਦਾ ਨਾਂ ਲੋੜੀਂਦਾ ਹੈ',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'ਨਾਂ ਵੱਧ ਤੋਂ ਵੱਧ 60, ਵੇਰਵਾ 300 ਅੱਖਰ',

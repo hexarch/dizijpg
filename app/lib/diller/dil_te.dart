@@ -1142,6 +1142,9 @@ const Map<String, String> cevirilerTe = {
   'Geçersiz ülke': 'చెల్లని దేశం',
   'Geçersiz sosyal bağlantı': 'చెల్లని సోషల్ లింక్',
   'Geçersiz doğum tarihi': 'చెల్లని పుట్టిన తేదీ',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'dizi.jpg ఉపయోగించడానికి మీ వయస్సు కనీసం 13 సంవత్సరాలు ఉండాలి.',
+  'En az 13 yaşında olmalısın': 'మీ వయస్సు కనీసం 13 సంవత్సరాలు ఉండాలి',
   'Liste adı gerekli': 'జాబితా పేరు అవసరం',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'పేరు గరిష్టంగా 60, వివరణ 300 అక్షరాలు',

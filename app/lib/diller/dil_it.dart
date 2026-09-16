@@ -1151,6 +1151,9 @@ const Map<String, String> cevirilerIt = {
   'Geçersiz ülke': 'Paese non valido',
   'Geçersiz sosyal bağlantı': 'Link social non valido',
   'Geçersiz doğum tarihi': 'Data di nascita non valida',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'Devi avere almeno 13 anni per usare dizi.jpg.',
+  'En az 13 yaşında olmalısın': 'Devi avere almeno 13 anni',
   'Liste adı gerekli': 'Il nome dell\'elenco è obbligatorio',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'Il nome può avere 60 caratteri, la descrizione 300',

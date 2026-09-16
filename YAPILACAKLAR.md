@@ -1,6 +1,29 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-16 — 🔨 KAYITTA 13 YAŞ SINIRI: doğum tarihinde küçük yaş seçilemez (1.174.0+261)
+
+**Tetik (birebir):** *"kaydolunca 2025 de doğdum olarak işaretlenebiliyor ama
+uygulama kullanım yaşı 13 o yüzden 13 yaşından küçük işaretlenemez olmalı"*
+
+**Kök sebep:** karşılama doğum adımında yıl listesi BU YILA kadar iniyordu;
+sunucu da yalnız biçime bakıyordu (1900..bu yıl), yaşa hiç bakmıyordu.
+
+- ✅ `karsilama.dart`: `karsilamaSonDogum(bugün)` = bugünden tam 13 yıl önce.
+  Yıl listesi sınır yılında biter; sınır yılında ay listesi sınır ayına,
+  sınır ayında gün listesi sınır gününe kadar (küçük yaş HİÇ seçilemez, hata
+  mesajı gerekmez). Yıl/ay değişince artık listede olmayan ay/gün
+  `karsilamaDogumKirp` ile boşa çekilir; sunucudan gelen kural öncesi yıl da
+  kırpılır (açılır liste dışı değer widget'ı düşürmesin). Yıl gizliyse
+  (isteğe bağlı) sınır uygulanmaz. Seçicinin altında pasta ikonlu not.
+- ✅ Backend `dogumYasiUygun(gun, ay, yil, bugün)`: yıl verildiyse gün
+  hassasiyetinde 13 yaş; aksi 400 `En az 13 yaşında olmalısın` + kod
+  `YAS_KUCUK`. Biçim kuralı (`gecerliDogum`) değişmedi. Migrasyon YOK.
+- ✅ Çeviri: 2 anahtar × 45 dil.
+- ✅ Test: `karsilama_dogum_yasi_test` (13: saf sınır/kırpma + 4 widget: yıl
+  listesi, sınır yılında ay listesi, yıl gizliyken 12 ay, not); backend
+  `dogum_yasi.test.js` (6: yıl gizli, sınır günü/ay/yıl, 29 Şubat, biçim ayrı).
+
 ## 2026-09-16 — 🚀 LİSTE ADI DÜZENLEME: kalem → başlık yerinde yazılır (1.173.0+260, API+web CANLI)
 
 **Tetik (birebir):** *"kullanıcı oluşturduğu listelerin ismini değiştiremiyor,

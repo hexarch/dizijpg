@@ -1150,6 +1150,9 @@ const Map<String, String> cevirilerHu = {
   'Geçersiz ülke': 'Érvénytelen ország',
   'Geçersiz sosyal bağlantı': 'Érvénytelen közösségi hivatkozás',
   'Geçersiz doğum tarihi': 'Érvénytelen születési dátum',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'A dizi.jpg használatához legalább 13 évesnek kell lenned.',
+  'En az 13 yaşında olmalısın': 'Legalább 13 évesnek kell lenned',
   'Liste adı gerekli': 'A lista neve kötelező',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'A név legfeljebb 60, a leírás 300 karakter lehet',

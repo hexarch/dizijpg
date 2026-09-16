@@ -25646,6 +25646,22 @@ function gecerliDogum(gun, ay, yil) {
   return gun <= [31, artik ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][ay - 1];
 }
 
+// KULLANIM YAŞI 13+ (mağaza derecelendirmesi + gizlilik politikası). Yıl
+// verilmişse doğum tarihi bugünden tam 13 yıl önceye eşit ya da daha eski
+// olmalı; yıl gizliyse doğrulanacak bir şey yok (istemcideki seçici de
+// sınırı geçirmez, `karsilamaSonDogum`). `bugun` UTC takvim günü; sınırdaki
+// ±1 günlük saat dilimi sapması dogumGunuMu ile aynı kararla kabul edilir.
+// 16 Eyl 2026: kullanıcı 2025 doğumlu seçebildiğini bildirdi.
+function dogumYasiUygun(gun, ay, yil, bugun = new Date()) {
+  if (yil === null || yil === undefined) return true;
+  const sinirYil = bugun.getUTCFullYear() - 13;
+  const sinirAy = bugun.getUTCMonth() + 1;
+  const sinirGun = bugun.getUTCDate();
+  if (yil !== sinirYil) return yil < sinirYil;
+  if (ay !== sinirAy) return ay < sinirAy;
+  return gun <= sinirGun;
+}
+
 const karsilamaLimiti = hizLimiti(120, (req) => `kr:${req.kullanici.id}`);
 
 // Akışın durumu — YALNIZ SAHİBİNE. Doğum tarihi kişisel veridir: herkese açık
@@ -25686,6 +25702,8 @@ app.post('/karsilama', girisZorunlu, karsilamaLimiti, sarici(async (req, res) =>
       alanlar.push('dogum_gun=NULL', 'dogum_ay=NULL', 'dogum_yil=NULL');
     } else if (!gecerliDogum(gun, ay, yil)) {
       return res.status(400).json({ hata: 'Geçersiz doğum tarihi' });
+    } else if (!dogumYasiUygun(gun, ay, yil)) {
+      return res.status(400).json({ hata: 'En az 13 yaşında olmalısın', kod: 'YAS_KUCUK' });
     } else {
       alanlar.push(`dogum_gun=${yerTutucu()}`); degerler.push(gun);
       alanlar.push(`dogum_ay=${yerTutucu()}`); degerler.push(ay);

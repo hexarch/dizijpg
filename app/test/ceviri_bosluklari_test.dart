@@ -33,6 +33,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // karsilama.dart — doğum tarihinde 13 yaş sınırı (16 Eyl 2026): seçici
+  // altındaki not + sunucunun 400 mesajı.
+  'dizi.jpg için en az 13 yaşında olmalısın.',
+  'En az 13 yaşında olmalısın',
   // liste.dart — düzenleme kipinde liste ADI yerinde düzenlenir (16 Eyl 2026):
   // boş ad uyarısı + sunucu reddi.
   'Liste adı boş olamaz',

@@ -1095,6 +1095,9 @@ const Map<String, String> cevirilerKo = {
   'Geçersiz ülke': '국가가 유효하지 않습니다',
   'Geçersiz sosyal bağlantı': '소셜 링크가 유효하지 않습니다',
   'Geçersiz doğum tarihi': '생년월일이 유효하지 않습니다',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'dizi.jpg를 이용하려면 만 13세 이상이어야 합니다.',
+  'En az 13 yaşında olmalısın': '만 13세 이상이어야 합니다',
   'Liste adı gerekli': '목록 이름이 필요합니다',
   'Ad en fazla 60, açıklama 300 karakter olabilir': '이름은 최대 60자, 설명은 300자입니다',
   'Liste bulunamadı': '목록을 찾을 수 없습니다',

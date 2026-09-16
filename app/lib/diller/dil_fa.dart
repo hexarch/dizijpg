@@ -1132,6 +1132,9 @@ const Map<String, String> cevirilerFa = {
   'Geçersiz ülke': 'کشور نامعتبر',
   'Geçersiz sosyal bağlantı': 'پیوند اجتماعی نامعتبر',
   'Geçersiz doğum tarihi': 'تاریخ تولد نامعتبر',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'برای استفاده از dizi.jpg باید حداقل ۱۳ سال داشته باشید.',
+  'En az 13 yaşında olmalısın': 'باید حداقل ۱۳ سال داشته باشید',
   'Liste adı gerekli': 'نام فهرست لازم است',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'نام حداکثر ۶۰، توضیح ۳۰۰ نویسه',

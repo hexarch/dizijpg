@@ -1143,6 +1143,9 @@ const Map<String, String> cevirilerMl = {
   'Geçersiz ülke': 'അസാധുവായ രാജ്യം',
   'Geçersiz sosyal bağlantı': 'അസാധുവായ സോഷ്യൽ ലിങ്ക്',
   'Geçersiz doğum tarihi': 'അസാധുവായ ജനനത്തീയതി',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'dizi.jpg ഉപയോഗിക്കാൻ നിങ്ങൾക്ക് കുറഞ്ഞത് 13 വയസ്സ് ഉണ്ടായിരിക്കണം.',
+  'En az 13 yaşında olmalısın': 'നിങ്ങൾക്ക് കുറഞ്ഞത് 13 വയസ്സ് ഉണ്ടായിരിക്കണം',
   'Liste adı gerekli': 'ലിസ്റ്റ് പേര് ആവശ്യമാണ്',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'പേര് പരമാവധി 60, വിവരണം 300 അക്ഷരം',

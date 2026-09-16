@@ -1147,6 +1147,9 @@ const Map<String, String> cevirilerFi = {
   'Geçersiz ülke': 'Virheellinen maa',
   'Geçersiz sosyal bağlantı': 'Virheellinen some-linkki',
   'Geçersiz doğum tarihi': 'Virheellinen syntymäaika',
+  'dizi.jpg için en az 13 yaşında olmalısın.':
+      'Sinun on oltava vähintään 13-vuotias käyttääksesi dizi.jpg:tä.',
+  'En az 13 yaşında olmalısın': 'Sinun on oltava vähintään 13-vuotias',
   'Liste adı gerekli': 'Luettelon nimi on pakollinen',
   'Ad en fazla 60, açıklama 300 karakter olabilir':
       'Nimi saa olla enintään 60, kuvaus 300 merkkiä',
