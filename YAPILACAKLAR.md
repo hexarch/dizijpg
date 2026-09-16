@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-17 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-17 — 🔨 İKİ SESSİZ ARIZA: KÖK ROTA TESTİ + TMDB ÇÖP SAYISI (int TAŞMASI)
+## 2026-09-17 — 🚀 İKİ SESSİZ ARIZA: KÖK ROTA TESTİ + TMDB ÇÖP SAYISI (int TAŞMASI, CANLI)
 
 **Tetik (birebir):** *"seo_gizlilik testinde 'robots.txt'te kapatılmamış
 kişisel rota: /' — açılış vitrini işinden kalma, değişikliklerim olmadan da
@@ -39,8 +39,14 @@ kırık. (2) Sunucu logunda seo_bolum_olcu_tazeleme hatası tekrarlıyor: value
   · Kilit: `seo_bolum_haritasi.test.js` — kaynakta tavansız
     `~ '^[0-9]+$'` + `::int` çifti kalırsa test kırmızıya döner; tavanların
     hepsi int4'e sığmak zorunda.
-- ⬜ Dağıtım: `server.js` + imaj yeniden derlemesi (ısıtıcı kardeş konteyner
-  aynı imajdan koşuyor; scp tek başına yetmez).
+- 🚀 Dağıtım 17 Eyl 01:54: `server.js` + imaj yeniden derlemesi (ısıtıcı
+  kardeş konteyner aynı imajdan koşuyor; scp tek başına yetmez).
+  **Canlı doğrulama:** `/api/saglik` 200 · `seo_bolum_olcu` 3 öbek / 1.244
+  satır, hata yok · su seviyesi 14 Eyl 12:14 → 16 Eyl 22:54 (7.349 → 7.506
+  satır) · zehirli belgede 96 bölümün 90'ı yazıldı (en uzun bölüm no 2
+  basamak) · `/sitemap-bolum-1.xml` 200, harita 7.980 URL · **ısıtıcı 02:00
+  koşusu `hata=0`**, 420 anahtar tazelendi (3 günlük birikme yüzünden 420 sn
+  sürdü, istek tavanına dayandı).
 
 ## 2026-09-17 — 🚀 AKIŞTA ANA SAYFA RAFLARI + "BİR SÜRE GÖSTERME" TİKİ + dizi.jpg'DE EN ÇOK İZLENEN LİSTELERİ (1.176.0+263, web CANLI)
 
