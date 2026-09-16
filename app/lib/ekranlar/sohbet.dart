@@ -5599,12 +5599,13 @@ class _AlbumIzgarasi extends StatelessWidget {
       // Adres BURADA `dosyaUrl` ile kurulur (kendi sunucumuz) — WebP başlık
       // gerileme koruması (gorsel_webp_test) çağrı noktasında bunu arar.
       final kucuk = i < kucukler.length ? kucukler[i] : null;
-      final adres = dosyaUrl(kucuk ?? y)!;
+      // `dosyaUrl(` BURADA, satır içinde: gorsel_webp_test her
+      // CachedNetworkImage çağrısında bunu (ya da httpHeaders) arar.
       govde = CachedNetworkImage(
-        imageUrl: adres,
+        imageUrl: dosyaUrl(kucuk ?? y)!,
         // 108 MP'lik kare 432 MB yerine kare boyunda çözülür; anahtar
         // sorgusuz yol (imza kovası değişince yeniden inmez) — 16 Eyl 2026.
-        cacheKey: onbellekAnahtari(adres),
+        cacheKey: onbellekAnahtari(dosyaUrl(kucuk ?? y)!),
         memCacheWidth: bellekGenisligi(context, en),
         fit: BoxFit.cover,
         placeholder: (_, _) => Container(color: Colors.black54),
