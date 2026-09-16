@@ -237,54 +237,47 @@ export async function videoKareCikar(dosyaYolu, secenek = {}) {
   });
 }
 
-/** Yüklenen fotoğrafın uzun kenarı bu pikseli aşarsa küçültülür (16 Eyl 2026). */
-export const RESIM_AZAMI_KENAR = 3840;
+/** Küçük kopyanın uzun kenarı (piksel): ızgara karesi ≤ 240 dp × 3 = 720 px;
+ *  web'de daha geniş kart olabilir, 1600 pay bırakır. */
+export const KUCUK_KOPYA_UZUN_KENAR = 1600;
 
 /**
- * DEV FOTOĞRAFI KÜÇÜLT (16 Eyl 2026).
+ * KÜÇÜK KOPYA ÜRET (16 Eyl 2026) — ORİJİNAL DOKUNULMAZ.
  *
  * OLAY: sohbete 12000×9000 (108 MP, 12–30 MB) fotoğraflar yüklendi; alıcı
- * telefonunda tek karenin kod çözümü 432 MB → uygulama öldürüldü. İstemci
+ * telefonunda ızgara her kareyi tam çözünürlükte çözüp ölüyordu. İstemci
  * kare boyunda çözmeye geçti (gorsel_bellek.dart) ama 30 MB'lık dosya yine
- * de her cihaza inerdi; sunucuda uzun kenar [RESIM_AZAMI_KENAR]'a (4K)
- * indirilir: ekranda fark yok, dosya ~30 MB → ~2 MB.
+ * de her cihaza inerdi. KULLANICI KURALI: "tek tek açınca ya da indirince
+ * ORİJİNAL kalite" → orijinal aynen kalır; yanına video kapağı gibi
+ * `<dosya>.k.jpg` (uzun kenar [KUCUK_KOPYA_UZUN_KENAR]) yazılır, ızgara
+ * onu kullanır, tam ekran + galeriye kaydet orijinali alır.
  *
- * · Yalnız JPEG/PNG; GIF (animasyon) ve WebP dokunulmaz.
- * · ffmpeg 8 EXIF yönünü kendisi uygular (autorotate); çıktı piksel olarak
- *   döndürülmüş, EXIF'siz.
- * · Geçici dosyaya yazılır, başarıda ADIN ÜSTÜNE taşınır; hata olursa
- *   orijinal olduğu gibi kalır (asla yarım dosya).
+ * · JPEG/PNG/WebP kaynak; çıktı hep JPEG. GIF (animasyon) atlanır.
+ * · Uzun kenar eşiği aşmıyorsa kopya ÜRETİLMEZ (istemci orijinali kullanır).
+ * · ffmpeg 8 EXIF yönünü uygular (autorotate). Geçici ad → rename.
  *
- * Döner: `{ kucultuldu, en, boy, bayt? }` (ölçüm başarısız / tür dışıysa null).
+ * Döner: `{ yol, en, boy }` (üretilmedi / hata → null).
  */
-export async function resmiKucult(dosyaYolu, secenek = {}) {
-  const azami = secenek.azamiKenar ?? RESIM_AZAMI_KENAR;
+export async function kucukKopyaUret(dosyaYolu, secenek = {}) {
+  const uzunKenar = secenek.uzunKenar ?? KUCUK_KOPYA_UZUN_KENAR;
   const timeout = secenek.timeout ?? 60000;
   const uzanti = dosyaYolu.split('.').pop().toLowerCase();
-  if (!['jpg', 'jpeg', 'png'].includes(uzanti)) return null;
+  if (!['jpg', 'jpeg', 'png', 'webp'].includes(uzanti)) return null;
   const olcu = await medyaBoyutOlc(dosyaYolu, { timeout: 10000 });
-  if (!olcu) return null;
-  if (Math.max(olcu.en, olcu.boy) <= azami) return { kucultuldu: false, ...olcu };
-  const gecici = `${dosyaYolu}.kucuk.${uzanti}`;
+  if (!olcu || Math.max(olcu.en, olcu.boy) <= uzunKenar) return null;
+  const hedef = `${dosyaYolu}.k.jpg`;
+  const gecici = `${dosyaYolu}.k.gecici.jpg`;
   const args = [
     '-y', '-v', 'error', '-i', dosyaYolu,
-    '-vf', `scale=w='min(${azami},iw)':h='min(${azami},ih)':force_original_aspect_ratio=decrease:flags=lanczos`,
-    '-frames:v', '1', '-update', '1',
+    '-vf', `scale=w='min(${uzunKenar},iw)':h='min(${uzunKenar},ih)':force_original_aspect_ratio=decrease:flags=lanczos`,
+    '-frames:v', '1', '-update', '1', '-q:v', '4', gecici,
   ];
-  if (uzanti !== 'png') args.push('-q:v', '3');
-  args.push(gecici);
   const tamam = await new Promise((bitti) => {
     execFile('ffmpeg', args, { timeout, maxBuffer: 1024 * 1024 }, (hata) => bitti(!hata));
   });
-  if (!tamam) {
-    fs.unlink(gecici, () => {});
-    return { kucultuldu: false, ...olcu };
-  }
+  if (!tamam) { fs.unlink(gecici, () => {}); return null; }
   const yeni = await medyaBoyutOlc(gecici, { timeout: 10000 });
-  if (!yeni) {
-    fs.unlink(gecici, () => {});
-    return { kucultuldu: false, ...olcu };
-  }
-  fs.renameSync(gecici, dosyaYolu);
-  return { kucultuldu: true, ...yeni, bayt: fs.statSync(dosyaYolu).size };
+  if (!yeni) { fs.unlink(gecici, () => {}); return null; }
+  fs.renameSync(gecici, hedef);
+  return { yol: hedef, ...yeni };
 }

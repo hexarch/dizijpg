@@ -27,24 +27,31 @@ http.Response _json(Object govde) => http.Response(
   headers: {'content-type': 'application/json; charset=utf-8'},
 );
 
-Map<String, dynamic> _mesaj(int id, {String? medya, List<String>? medyalar}) =>
-    {
-      'id': id,
-      'metin': null,
-      'medya': medya ?? medyalar?.first,
-      'medyalar': medyalar,
-      'ses_dalga': null,
-      'icerik_tur': null,
-      'icerik_id': null,
-      'yorum_id': null,
-      'yanit_id': null,
-      'silindi': false,
-      'duzenlendi': false,
-      'okundu': false,
-      'iletildi': false,
-      'tarih': '2026-09-16T10:1$id:00Z',
-      'gonderen_id': 2,
-    };
+Map<String, dynamic> _mesaj(
+  int id, {
+  String? medya,
+  List<String>? medyalar,
+  List<String?>? kucukler,
+  String? medyaKucuk,
+}) => {
+  'id': id,
+  'metin': null,
+  'medya': medya ?? medyalar?.first,
+  'medyalar': medyalar,
+  'medyalar_kucuk': kucukler,
+  'medya_kucuk': medyaKucuk,
+  'ses_dalga': null,
+  'icerik_tur': null,
+  'icerik_id': null,
+  'yorum_id': null,
+  'yanit_id': null,
+  'silindi': false,
+  'duzenlendi': false,
+  'okundu': false,
+  'iletildi': false,
+  'tarih': '2026-09-16T10:1$id:00Z',
+  'gonderen_id': 2,
+};
 
 Future<void> _kur(
   WidgetTester tester,
@@ -158,4 +165,46 @@ void main() {
     expect(g.cacheKey, endsWith('/medya/m152-tek.jpg'));
     await _kapat(tester);
   });
+
+  testWidgets(
+    'sunucu küçük kopyası varsa ızgara ONU çizer, tam ekran orijinali',
+    (tester) async {
+      await _kur(tester, [
+        _mesaj(
+          1,
+          medyalar: ['/medya/m152-a.jpg?imza=1', '/medya/m152-b.jpg?imza=1'],
+          kucukler: ['/medya/m152-a.jpg.k.jpg?imza=1', null],
+        ),
+        _mesaj(
+          2,
+          medya: '/medya/m152-t.jpg?imza=1',
+          medyaKucuk: '/medya/m152-t.jpg.k.jpg?imza=1',
+        ),
+      ]);
+      final adresler = tester
+          .widgetList<CachedNetworkImage>(find.byType(CachedNetworkImage))
+          .map((g) => g.imageUrl)
+          .where((u) => u.contains('m152-'))
+          .toList();
+      expect(
+        adresler.where((u) => u.endsWith('m152-a.jpg.k.jpg?imza=1')),
+        hasLength(1),
+      );
+      expect(
+        adresler.where((u) => u.endsWith('m152-b.jpg?imza=1')),
+        hasLength(1),
+        reason: 'kopyası olmayan orijinali çizer',
+      );
+      expect(
+        adresler.where((u) => u.endsWith('m152-t.jpg.k.jpg?imza=1')),
+        hasLength(1),
+      );
+      expect(
+        adresler.any((u) => u.endsWith('m152-a.jpg?imza=1')),
+        isFalse,
+        reason: 'orijinal ızgarada YOK',
+      );
+      await _kapat(tester);
+    },
+  );
 }

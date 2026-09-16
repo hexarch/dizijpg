@@ -8,7 +8,7 @@ import path from 'path';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { execFile } from 'child_process';
-import { videoKareCikar, medyaBoyutOlc, videoSureOlc, resmiKucult } from './video_kare.js';
+import { videoKareCikar, medyaBoyutOlc, videoSureOlc, kucukKopyaUret } from './video_kare.js';
 // İZLEME ODASI — saf mantık (senkron matematiği, kod, parça sözleşmesi,
 // yetki kararları). Ad çakışmasını önlemek için `oda*` öneki: `mesajTemizle`
 // gibi genel adlar server.js'te başka anlamlara gelebilir.
@@ -502,6 +502,7 @@ const ozelMedyaEkle = (yol) => {
   if (!ad) return;
   OZEL_MEDYA.add(ad);
   OZEL_MEDYA.add(`${ad}.jpg`);
+  OZEL_MEDYA.add(`${ad}.k.jpg`); // küçük kopya (16 Eyl 2026) da özel
 };
 // KÜME: küme GİZLİLİK sınırıdır ve işçiler arasında anında eşitlenmek
 // zorundadır — DM medyası işçi A'da kümeye girerken B/C/D onu "genel" sayar
@@ -513,6 +514,7 @@ abone('ozel_medya_sil', (ad) => {
   if (typeof ad !== 'string' || !ad) return;
   OZEL_MEDYA.delete(ad);
   OZEL_MEDYA.delete(`${ad}.jpg`);
+  OZEL_MEDYA.delete(`${ad}.k.jpg`);
 });
 // İki sorgu: birincisi oda videolarını da toplar, ikincisi ONLARSIZ eşidir.
 // NEDEN İKİSİ: `izleme_odalari` migrasyonu uygulanmadan yeni server.js
@@ -14773,24 +14775,16 @@ app.post('/medya',
     // Kare çıkarma yüklemeyi birkaç sn uzatır (parlaklık taraması + kare)
     // ama ızgarayı çok hafifletir ve kapak siyah çıkmaz.
     const kapakVar = videoMu ? await videoKaresiCikar(tamYol) : false;
-    // DEV FOTOĞRAF (16 Eyl 2026): uzun kenar 3840'ı aşan JPEG/PNG yerinde
-    // küçültülür (12000×9000, 30 MB → 4K, ~2 MB). Alıcı telefonu 108 MP'yi
-    // çözmeye kalkıp ölüyordu. Kota farkı iade edilir. GIF/WebP dokunulmaz.
+    // DEV FOTOĞRAF (16 Eyl 2026): ORİJİNAL KALIR (kullanıcı kuralı: tek tek
+    // açınca / indirince orijinal kalite); yanına `<dosya>.k.jpg` küçük kopya
+    // yazılır, sohbet ızgarası onu çeker. Bekletir (≤ birkaç sn) ki mesaj
+    // gönderildiğinde kopya hazır olsun. GIF atlanır.
     let kucuk = null;
-    if (tur.uzanti === 'jpg' || tur.uzanti === 'png') {
-      kucuk = await resmiKucult(tamYol).catch(() => null);
-      if (kucuk?.kucultuldu && kucuk.bayt < veri.length) {
-        kotaIade(req.kullanici.id, veri.length - kucuk.bayt);
-      }
+    if (!videoMu && tur.uzanti !== 'gif') {
+      kucuk = await kucukKopyaUret(tamYol).catch(() => null);
     }
-    // Oran kaydı (zıplama düzeltmesi, 26 Ağu 2026): akış kartı kutuyu ilk
-    // kareden doğru boyda kurabilsin diye en/boy ölçülüp yazılır. ATEŞLE-UNUT
-    // ve başarısızlık yüklemeyi BOZMAZ: oransız medyada istemci bugünkü gibi
-    // kendisi ölçer (yalnız o kartta zıplama kalır).
     if (!SES_TURLERI.includes(tur)) {
-      // Küçültüldüyse ölçü zaten elde (ikinci ffprobe gereksiz).
-      const olcum = kucuk?.en ? Promise.resolve(kucuk) : medyaBoyutOlc(tamYol);
-      olcum.then((b) => b && havuz.query(
+      medyaBoyutOlc(tamYol).then((b) => b && havuz.query(
         `INSERT INTO medya_olculer (medya, en, boy) VALUES ($1, $2, $3)
          ON CONFLICT (medya) DO UPDATE SET en = EXCLUDED.en, boy = EXCLUDED.boy`,
         [`/medya/${dosya}`, b.en, b.boy],
@@ -14812,6 +14806,7 @@ app.post('/medya',
       video: videoMu,
       ses: SES_TURLERI.includes(tur),
       kapak: kapakVar ? `/medya/${dosya}.jpg` : null,
+      kucuk: kucuk ? `/medya/${dosya}.k.jpg` : null,
     });
   }));
 
@@ -17383,8 +17378,18 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
         ? medyaImzali(`/medya/${ad}`, MEDYA_IMZA_ANAHTARI) : null;
     };
     r.medya_kapak = kapakYolu(r.medya);
+    // KÜÇÜK KOPYA (16 Eyl 2026): varsa ızgara bunu çizer; tam ekran ve
+    // galeriye kaydet orijinali (medya/medyalar) kullanmaya devam eder.
+    const kucukYolu = (y) => {
+      if (typeof y !== 'string') return null;
+      const ad = `${path.basename(y)}.k.jpg`;
+      return fs.existsSync(path.join(MEDYA_DIZIN, ad))
+        ? medyaImzali(`/medya/${ad}`, MEDYA_IMZA_ANAHTARI) : null;
+    };
+    r.medya_kucuk = kucukYolu(r.medya);
     if (Array.isArray(r.medyalar)) {
       r.medyalar_kapak = r.medyalar.map(kapakYolu);
+      r.medyalar_kucuk = r.medyalar.map(kucukYolu);
       r.medyalar = r.medyalar.map((y) => medyaImzali(y, MEDYA_IMZA_ANAHTARI));
     }
     r.dosya = dosyaImzali(r.dosya, DOSYA_IMZA_ANAHTARI);
@@ -17956,8 +17961,10 @@ function mesajEkleriniSil(row) {
     fs.unlink(path.join(MEDYA_DIZIN, ad), () => {});
     // Dosya gittiği için kümede kalması zararsız olurdu (404 döner) ama küme
     // sonsuza dek büyümesin: kaydı da düş. Video kapağı da aynı anda gider.
+    fs.unlink(path.join(MEDYA_DIZIN, `${ad}.k.jpg`), () => {}); // küçük kopya
     OZEL_MEDYA.delete(ad);
     OZEL_MEDYA.delete(`${ad}.jpg`);
+    OZEL_MEDYA.delete(`${ad}.k.jpg`);
     yayinla('ozel_medya_sil', ad);
   }
   // BELGE: ayrı dizinden silinir. Kota iadesi medya silmede de yapılmıyor;

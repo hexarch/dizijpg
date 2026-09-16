@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-16 — 🔨 SOHBET ÇÖKMESİ: 108 MP FOTOĞRAF ALBÜMÜ (1.171.1+256)
+## 2026-09-16 — 🔨 SOHBET ÇÖKMESİ: 108 MP FOTOĞRAF ALBÜMÜ (1.171.2+257)
 
 **Tetik:** *"kaniberkali görsel ve fotoğraf gönderdi 10 tane ve ağırlar,
 sohbeti her açtığımda sıfırdan yükleniyor, cihaz donuyor ve 10 görseli
@@ -16,11 +16,14 @@ Java istisnası yok = bellek öldürmesi).
   ekran görüntüleyici `memCacheWidth` = dp × piksel oranı (tam ekranda ×2,
   4096 tavan); `cacheKey` = sorgusuz yol. Web'de null (ResizeImage yolu
   tarayıcıda doğrulanmadı, ortak.dart notu).
-- **Sunucu (`video_kare.js resmiKucult`):** /medya yüklemesinde JPEG/PNG uzun
-  kenar > 3840 ise ffmpeg 8 ile yerinde küçültme (lanczos, q3, autorotate),
-  kota farkı iade, ölçü tek ffprobe'dan. GIF/WebP dokunulmaz.
+- **Sunucu (`video_kare.js kucukKopyaUret`, 1.171.2+257):** KULLANICI KURALI
+  *"tek tek açınca / indirince orijinal kalite"* → orijinal DOKUNULMAZ; /medya
+  yüklemesinde uzun kenar > 1600 ise yanına `<ad>.k.jpg` küçük kopya (ffmpeg 8,
+  lanczos, q4). GET /mesajlar `medya_kucuk` / `medyalar_kucuk` (imzalı, özel
+  küme) verir; ızgara kopyayı, tam ekran + galeriye kaydet orijinali kullanır.
+  Silmede kopya da gider. (İlk deneme 256'da yerinde 3840 küçültmeydi, geri alındı.)
 - **Mevcut 10 dosya:** `araclar/dm-medya-kucult.sh <mesaj_id>` sunucuda
-  yedekleyip (`/veri/medya/kucultme-yedek/`) küçültür + medya_olculer günceller.
+  kopya üretir (orijinal yerinde), API restart gerekmez.
 - **Kanıt:** `sohbet_gorsel_bellek_test` (2): memCacheWidth 720/600, anahtar
   sorgusuz. Telefona 1.171.1+256 kuruldu.
 

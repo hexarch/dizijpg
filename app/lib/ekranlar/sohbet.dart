@@ -5141,6 +5141,14 @@ class _MesajBaloncugu extends StatelessWidget {
                               const []))
                         k as String?,
                     ],
+                    // Sunucu küçük kopyaları (ızgara için); tam ekran
+                    // aşağıda ORİJİNAL `album` adreslerini alır.
+                    kucukler: [
+                      for (final k
+                          in (m['medyalar_kucuk'] as List<dynamic>? ??
+                              const []))
+                        k as String?,
+                    ],
                     yerel: yerel.isNotEmpty,
                     ilerleme: bekliyor ? ilerleme : null,
                     onTap: yerel.isNotEmpty
@@ -5212,10 +5220,17 @@ class _MesajBaloncugu extends StatelessWidget {
                               yukseklik: 160,
                             )
                           : CachedNetworkImage(
-                              imageUrl: dosyaUrl(medya)!,
+                              // Varsa sunucunun KÜÇÜK KOPYASI (<ad>.k.jpg);
+                              // dokununca açılan tam ekran ve galeriye
+                              // kaydet ORİJİNALİ kullanır (16 Eyl 2026).
+                              imageUrl: dosyaUrl(
+                                m['medya_kucuk'] as String? ?? medya,
+                              )!,
                               // Kare boyunda çöz + sorgusuz anahtar
                               // (gorsel_bellek.dart, 16 Eyl 2026 çökme).
-                              cacheKey: onbellekAnahtari(dosyaUrl(medya)!),
+                              cacheKey: onbellekAnahtari(
+                                dosyaUrl(m['medya_kucuk'] as String? ?? medya)!,
+                              ),
                               memCacheWidth: bellekGenisligi(context, 200),
                               width: 200,
                               fit: BoxFit.cover,
@@ -5538,6 +5553,10 @@ class _AlbumIzgarasi extends StatelessWidget {
   /// Video karelerinin ilk-kare kapakları (`medyalar_kapak`, imzalı yol);
   /// indeks [urller] ile hizalı, kapağı olmayanda null.
   final List<String?> kapaklar;
+
+  /// Sunucunun küçük kopyaları (`<ad>.k.jpg`, 16 Eyl 2026); null/eksikse
+  /// orijinal adres çizilir (küçük dosyada kopya üretilmez).
+  final List<String?> kucukler;
   final bool yerel;
   final double? ilerleme;
   final void Function(int)? onTap;
@@ -5546,6 +5565,7 @@ class _AlbumIzgarasi extends StatelessWidget {
     required this.urller,
     required this.yerel,
     this.kapaklar = const [],
+    this.kucukler = const [],
     this.ilerleme,
     this.onTap,
   });
@@ -5578,11 +5598,13 @@ class _AlbumIzgarasi extends StatelessWidget {
     } else {
       // Adres BURADA `dosyaUrl` ile kurulur (kendi sunucumuz) — WebP başlık
       // gerileme koruması (gorsel_webp_test) çağrı noktasında bunu arar.
+      final kucuk = i < kucukler.length ? kucukler[i] : null;
+      final adres = dosyaUrl(kucuk ?? y)!;
       govde = CachedNetworkImage(
-        imageUrl: dosyaUrl(y)!,
+        imageUrl: adres,
         // 108 MP'lik kare 432 MB yerine kare boyunda çözülür; anahtar
         // sorgusuz yol (imza kovası değişince yeniden inmez) — 16 Eyl 2026.
-        cacheKey: onbellekAnahtari(dosyaUrl(y)!),
+        cacheKey: onbellekAnahtari(adres),
         memCacheWidth: bellekGenisligi(context, en),
         fit: BoxFit.cover,
         placeholder: (_, _) => Container(color: Colors.black54),
