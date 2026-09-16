@@ -215,6 +215,7 @@ class _MedyaGorunumuState extends State<_MedyaGorunumu> {
                     child: Center(
                       child: CachedNetworkImage(
                         imageUrl: url,
+                        httpHeaders: gorselBasliklari(url),
                         // Dev fotoğraf (108 MP) tam ekranda da ekran boyunun ×2'si
                         // kadar çözülür; anahtar sorgusuz yol (gorsel_bellek.dart).
                         cacheKey: onbellekAnahtari(url),
@@ -223,7 +224,6 @@ class _MedyaGorunumuState extends State<_MedyaGorunumu> {
                         // planı/bölüm karesi (detay.dart, bolum.dart) ve kendi
                         // sunucumuzdaki yorum/mesaj medyası. Hangisi olduğu
                         // ancak ÇALIŞMA ANINDA bilinir; kararı adres veriyor.
-                        httpHeaders: gorselBasliklari(url),
                         filterQuality: kullaniciGorselKalitesi,
                         fit: BoxFit.contain,
                         progressIndicatorBuilder: (_, __, ___) =>
