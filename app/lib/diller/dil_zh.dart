@@ -9,6 +9,7 @@ const Map<String, String> cevirilerZh = {
       '粘贴链接或上传视频，邀请好友，一起观看。',
   'URL yapıştır': '粘贴 URL',
   'Yapıştır': '粘贴',
+  'Panoda görsel yok': '剪贴板中没有图片',
   'Video bağlantısı': '视频链接',
   'Odada aç': '在房间中打开',
   'Doğrudan video adresi': '直接视频地址',

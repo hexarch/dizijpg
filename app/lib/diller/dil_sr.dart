@@ -9,6 +9,7 @@ const Map<String, String> cevirilerSr = {
       'Налепите линк или отпремите видео, позовите пријатеље и гледајте заједно.',
   'URL yapıştır': 'Налепи линк',
   'Yapıştır': 'Налепи',
+  'Panoda görsel yok': 'Нема слике у привременој меморији',
   'Video bağlantısı': 'Линк видеа',
   'Odada aç': 'Отвори у соби',
   'Doğrudan video adresi': 'Директна адреса видеа',

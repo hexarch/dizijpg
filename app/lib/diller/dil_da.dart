@@ -9,6 +9,7 @@ const Map<String, String> cevirilerDa = {
       'Indsæt et link eller upload en video, inviter venner, og se sammen.',
   'URL yapıştır': 'Indsæt link',
   'Yapıştır': 'Indsæt',
+  'Panoda görsel yok': 'Der er intet billede i udklipsholderen',
   'Video bağlantısı': 'Videolink',
   'Odada aç': 'Åbn i rummet',
   'Doğrudan video adresi': 'Direkte videoadresse',

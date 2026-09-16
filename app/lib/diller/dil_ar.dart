@@ -9,6 +9,7 @@ const Map<String, String> cevirilerAr = {
       'الصق رابطًا أو ارفع فيديو، وادعُ أصدقاءك، وشاهدوا معًا.',
   'URL yapıştır': 'الصق عنوان URL',
   'Yapıştır': 'لصق',
+  'Panoda görsel yok': 'لا توجد صورة في الحافظة',
   'Video bağlantısı': 'رابط الفيديو',
   'Odada aç': 'افتح في الغرفة',
   'Doğrudan video adresi': 'رابط فيديو مباشر',

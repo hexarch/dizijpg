@@ -9,6 +9,7 @@ const Map<String, String> cevirilerCs = {
       'Vlož odkaz nebo nahraj video, pozvi přátele a dívejte se společně.',
   'URL yapıştır': 'Vložit odkaz',
   'Yapıştır': 'Vložit',
+  'Panoda görsel yok': 'Ve schránce není žádný obrázek',
   'Video bağlantısı': 'Odkaz na video',
   'Odada aç': 'Otevřít v místnosti',
   'Doğrudan video adresi': 'Přímá adresa videa',

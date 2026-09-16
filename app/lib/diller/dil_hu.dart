@@ -9,6 +9,7 @@ const Map<String, String> cevirilerHu = {
       'Illessz be egy linket vagy tölts fel videót, hívd meg a barátaidat, és nézzétek együtt.',
   'URL yapıştır': 'Link beillesztése',
   'Yapıştır': 'Beillesztés',
+  'Panoda görsel yok': 'Nincs kép a vágólapon',
   'Video bağlantısı': 'Videó link',
   'Odada aç': 'Megnyitás a szobában',
   'Doğrudan video adresi': 'Közvetlen videócím',

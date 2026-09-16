@@ -9,6 +9,7 @@ const Map<String, String> cevirilerPt = {
       'Cole um link ou envie um vídeo, convide amigos e assistam juntos.',
   'URL yapıştır': 'Colar link',
   'Yapıştır': 'Colar',
+  'Panoda görsel yok': 'Nenhuma imagem na área de transferência',
   'Video bağlantısı': 'Link do vídeo',
   'Odada aç': 'Abrir na sala',
   'Doğrudan video adresi': 'Endereço direto do vídeo',

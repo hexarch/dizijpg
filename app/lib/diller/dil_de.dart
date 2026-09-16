@@ -9,6 +9,7 @@ const Map<String, String> cevirilerDe = {
       'Link einfügen oder Video hochladen, Freunde einladen und gemeinsam schauen.',
   'URL yapıştır': 'Link einfügen',
   'Yapıştır': 'Einfügen',
+  'Panoda görsel yok': 'Keine Bilder in der Zwischenablage',
   'Video bağlantısı': 'Video-Link',
   'Odada aç': 'Im Raum öffnen',
   'Doğrudan video adresi': 'Direkte Video-Adresse',

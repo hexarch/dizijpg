@@ -9,6 +9,7 @@ const Map<String, String> cevirilerUr = {
       'لنک پیسٹ کریں یا ویڈیو اپ لوڈ کریں، دوستوں کو مدعو کریں اور ساتھ دیکھیں۔',
   'URL yapıştır': 'لنک پیسٹ کریں',
   'Yapıştır': 'پیسٹ کریں',
+  'Panoda görsel yok': 'کلپ بورڈ میں کوئی تصویر نہیں ہے',
   'Video bağlantısı': 'ویڈیو لنک',
   'Odada aç': 'روم میں کھولیں',
   'Doğrudan video adresi': 'براہ راست ویڈیو ایڈریس',

@@ -1,6 +1,37 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-16 — 🔨 PAYLAŞIMDA KOPYALA-YAPIŞTIR: panodaki görsel/GIF/video doğrudan eklenir (1.175.0+262)
+
+**Tetik (birebir):** *"paylaşımlarda tüm türleri desteklemeliyiz yani görsel
+video gif olarak ve kopyala yapıştır görsel desteği de olmalı"*
+
+**Durum tespiti (varsayım değil, ölçüldü):** TÜRLER ZATEN TAMDI — canlı
+`/medya` ucuna PNG/GIF/WebP/MP4 curl'lendi, dördü de 200 döndü (video kapak
+karesiyle) ve üçü tek gönderide (`POST /yorumlar`) yayımlanıp silindi. Eksik
+olan tek şey PANO yoluydu: ekran görüntüsü alan kullanıcı dosyayı önce diske
+kaydetmek zorundaydı.
+
+- ✅ `pano_medya.dart` (+ `_io` / `_web`): tek sözleşme, üç mekanizma —
+  webde belge `paste` olayı (Ctrl/⌘+V; dosya ÖZGÜN türünde gelir, GIF
+  animasyonu korunur) ve yedek olarak Async Clipboard; Android'de
+  `ClipboardManager`; iOS'ta `UIPasteboard` (GIF ham veri olarak, `image`
+  tek kareye indirgemesin diye önce denenir).
+- ✅ Native: `MainActivity.kt` + `AppDelegate.swift` `dizijpg/pano` kanalı.
+  `varMi` panonun İÇERİĞİNİ OKUMAZ (Android 12+ "panodan yapıştırdı"
+  bildirimi, iOS 16 "Yapıştır?" izni yalnız gerçek okumada çıksın); içerik
+  ancak düğmeye basılınca okunur. Bayt kanaldan geçmez: native önbelleğe
+  yazar, Dart yolu `XFile` ile tembel okur.
+- ✅ `paylas_yorum.dart`: pano dosyaları seçiciyle AYNI hatta girer
+  (`_ekleriYukle` → `/medya`), inceleme ekranından geçmez (yapıştırma tek
+  tuş olmalı; kaldırma/sıralama zaten şeritte). "Yapıştır" düğmesi yalnız
+  pano doluyken çizilir. Klavyeden gelen içerik de bağlandı
+  (`contentInsertionConfiguration`: Gboard GIF sekmesi artık çalışıyor;
+  varsayılan yalnız `image/png` olduğu için liste genişletildi).
+- ✅ Çeviri: 1 yeni anahtar ("Panoda görsel yok") × 45 dil.
+- ✅ Test: `pano_yapistir_test` (3: boş panoda düğme YOK, GIF yapıştırınca
+  şeride girer + gövde octet-stream, pano boşalmışsa tek cümle).
+
 ## 2026-09-16 — 🚀 KAYITTA 13 YAŞ SINIRI: doğum tarihinde küçük yaş seçilemez (1.174.0+261, API+web CANLI)
 
 **Tetik (birebir):** *"kaydolunca 2025 de doğdum olarak işaretlenebiliyor ama

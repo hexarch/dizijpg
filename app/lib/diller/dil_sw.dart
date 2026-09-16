@@ -9,6 +9,7 @@ const Map<String, String> cevirilerSw = {
       'Bandika kiungo au pakia video, alika marafiki, na tazameni pamoja.',
   'URL yapıştır': 'Bandika kiungo',
   'Yapıştır': 'Bandika',
+  'Panoda görsel yok': 'Hakuna picha kwenye ubao wa kunakili',
   'Video bağlantısı': 'Kiungo cha video',
   'Odada aç': 'Fungua kwenye chumba',
   'Doğrudan video adresi': 'Anwani ya moja kwa moja ya video',

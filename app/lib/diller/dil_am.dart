@@ -9,6 +9,7 @@ const Map<String, String> cevirilerAm = {
       'አገናኝ ይለጥፉ ወይም ቪዲዮ ይጫኑ፣ ጓደኞችዎን ይጋብዙ እና በአንድ ላይ ይመልከቱ።',
   'URL yapıştır': 'አገናኝ ለጥፍ',
   'Yapıştır': 'ለጥፍ',
+  'Panoda görsel yok': 'በቅንጥብ ሰሌዳው ላይ ምስል የለም',
   'Video bağlantısı': 'የቪዲዮ አገናኝ',
   'Odada aç': 'በክፍሉ ውስጥ ክፈት',
   'Doğrudan video adresi': 'ቀጥተኛ የቪዲዮ አድራሻ',

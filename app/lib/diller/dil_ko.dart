@@ -9,6 +9,7 @@ const Map<String, String> cevirilerKo = {
       '링크를 붙여넣거나 동영상을 올리고, 친구를 초대해 함께 보세요.',
   'URL yapıştır': '링크 붙여넣기',
   'Yapıştır': '붙여넣기',
+  'Panoda görsel yok': '클립보드에 이미지가 없습니다',
   'Video bağlantısı': '동영상 링크',
   'Odada aç': '방에서 열기',
   'Doğrudan video adresi': '직접 동영상 주소',

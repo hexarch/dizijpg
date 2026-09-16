@@ -9,6 +9,7 @@ const Map<String, String> cevirilerNl = {
       'Plak een link of upload een video, nodig vrienden uit en kijk samen.',
   'URL yapıştır': 'Link plakken',
   'Yapıştır': 'Plakken',
+  'Panoda görsel yok': 'Geen afbeelding op het klembord',
   'Video bağlantısı': 'Videolink',
   'Odada aç': 'Openen in de room',
   'Doğrudan video adresi': 'Direct videoadres',

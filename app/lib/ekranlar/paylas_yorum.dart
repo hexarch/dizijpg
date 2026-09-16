@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart' show XFile;
@@ -6,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
+import '../pano_medya.dart';
 import '../tema.dart';
 import 'akis.dart' show AkisKarti;
 import 'bolum_sec.dart';
@@ -174,6 +177,15 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
   /// yükleniyor" sayacı vardı: tek videoda dosya bitene kadar 0 kalıyor,
   /// kullanıcı "takıldı, yüklemiyor" sanıyordu (15 Eyl 2026 bildirimi).
   int _ekYuzde = 0;
+
+  /// Panoda görsel/video var mı — "Yapıştır" düğmesi buna bakar. Mobilde
+  /// panonun türüne bakılarak bulunur, webde yalnız API'nin varlığına
+  /// (bkz. `pano_medya_web.dart`).
+  bool _panoVar = false;
+
+  /// Web'deki `paste` dinleyicisinin sökücüsü.
+  void Function()? _panoSokucu;
+
   bool _spoiler = false;
   bool _gonderiliyor = false;
 
@@ -184,13 +196,31 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
   void initState() {
     super.initState();
     _metin.addListener(() => setState(() {}));
+    // WEB: Ctrl/⌘+V ile yapıştırılan dosyayı YAKALA. Dinleyici yalnız bu
+    // ekran ayaktayken kurulur ve [dispose]'da sökülür — kapalı bir ekranın
+    // yapıştırmayı yemesi, kullanıcının metni başka yere yapıştıramaması
+    // demek olurdu.
+    _panoSokucu = PanoMedya.dinle(_panodanEkle);
+    _panoyuYokla();
+    // Uygulamaya geri dönen / kutuya dokunan kullanıcı arada başka bir
+    // uygulamada görsel kopyalamış olabilir; düğme o an tazelenir.
+    _odak.addListener(() {
+      if (_odak.hasFocus) _panoyuYokla();
+    });
   }
 
   @override
   void dispose() {
+    _panoSokucu?.call();
     _metin.dispose();
     _odak.dispose();
     super.dispose();
+  }
+
+  /// Yapıştır düğmesinin görünürlüğünü tazeler.
+  Future<void> _panoyuYokla() async {
+    final var_ = await PanoMedya.yapistirilabilir();
+    if (mounted && var_ != _panoVar) setState(() => _panoVar = var_);
   }
 
   /// ETİKET ARTIK KAPI DEĞİL — tek koşul metin (sunucu da boş metni reddediyor).
@@ -283,6 +313,69 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
     if (kalan <= 0 || _ekYukleniyor) return;
     final secim = await medyaSecici(context, azami: kalan);
     if (secim.isEmpty || !mounted) return;
+    await _ekleriYukle(secim);
+  }
+
+  /// PANODAN (kopyala-yapıştır) gelen dosyalar — 16 Eyl 2026 kullanıcı isteği.
+  ///
+  /// SEÇİCİDEN GELENLE AYNI HATTA girer ([_ekleriYukle]): tür kapısı, boyut
+  /// sınırı, kısmi başarı bildirimi ve sıralanabilir şerit tek yerde kalsın.
+  /// İNCELEME EKRANINDAN GEÇMEZ: yapıştırmanın tamamı tek tuştur, araya tam
+  /// ekran bir adım koymak onu seçiciden yavaş hâle getirirdi — kaldırma ve
+  /// sıralama zaten alttaki şeritte.
+  ///
+  /// SESSİZ YUTMA YOK: tavan dolduysa kullanıcı NEDENİNİ öğrenir. (Seçici
+  /// yolunda düğme zaten kapanıyor; yapıştırmada kapatılacak bir düğme yok.)
+  Future<void> _panodanEkle(List<XFile> dosyalar) async {
+    if (dosyalar.isEmpty || !mounted || _ekYukleniyor) return;
+    if (!girisGerekli(context)) return;
+    final kalan = 10 - _ekler.length;
+    if (kalan <= 0) {
+      _uyar('En fazla {} medya seçebilirsin'.cf([10]));
+      return;
+    }
+    await _ekleriYukle(dosyalar.take(kalan).toList());
+  }
+
+  /// "Yapıştır" düğmesi: panoyu OKUR (mobilde izin diyaloğu çıkarsa bu
+  /// dokunuşun karşılığıdır) ve boşsa tek cümleyle söyler.
+  Future<void> _yapistir() async {
+    if (_ekYukleniyor) return;
+    final dosyalar = await PanoMedya.oku();
+    if (!mounted) return;
+    if (dosyalar.isEmpty) {
+      _uyar('Panoda görsel yok'.c);
+      // Pano bu arada boşalmış olabilir: düğme yalan söylemesin.
+      unawaited(_panoyuYokla());
+      return;
+    }
+    await _panodanEkle(dosyalar);
+  }
+
+  /// KLAVYEDEN GELEN İÇERİK (Android): Gboard'un GIF/çıkartma/görsel
+  /// gönderme yolu `commitContent`tir, panodan geçmez. Flutter bunu
+  /// `contentInsertionConfiguration` ile veriyor; bağlamazsak Gboard'un GIF
+  /// sekmesi bu kutuda SESSİZCE hiçbir şey yapmaz.
+  void _klavyedenEkle(KeyboardInsertedContent icerik) {
+    final veri = icerik.data;
+    if (veri == null || veri.isEmpty) return;
+    final uzanti = icerik.mimeType.split('/').last.split(';').first;
+    unawaited(
+      _panodanEkle([
+        XFile.fromData(
+          veri,
+          name: 'pano.${uzanti == 'jpeg' ? 'jpg' : uzanti}',
+          mimeType: icerik.mimeType,
+          length: veri.length,
+        ),
+      ]),
+    );
+  }
+
+  /// Seçiciden / panodan / klavyeden gelen dosyaları `/medya`ya yükler ve
+  /// şeride ekler.
+  Future<void> _ekleriYukle(List<XFile> secim) async {
+    if (secim.isEmpty) return;
     setState(() {
       _ekYukleniyor = true;
       _ekToplam = secim.length;
@@ -711,6 +804,19 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
       maxLength: 1000,
       keyboardType: TextInputType.multiline,
       textAlignVertical: TextAlignVertical.top,
+      // Klavyeden gelen görsel/GIF (Gboard'un GIF sekmesi, çıkartma,
+      // "panodan görsel yapıştır"). VARSAYILAN YALNIZ `image/png`dir;
+      // listeyi genişletmezsek Gboard GIF'i hiç göndermez.
+      contentInsertionConfiguration: ContentInsertionConfiguration(
+        allowedMimeTypes: const [
+          'image/png',
+          'image/jpeg',
+          'image/gif',
+          'image/webp',
+          'video/mp4',
+        ],
+        onContentInserted: _klavyedenEkle,
+      ),
       // Sayaç alt çubukta; buradaki yerleşik sayaç ikinci kez yazardı.
       buildCounter:
           (_, {required currentLength, required isFocused, maxLength}) => null,
@@ -879,6 +985,17 @@ class _PaylasYorumEkraniState extends State<PaylasYorumEkrani> {
             onPressed: _ekYukleniyor ? null : _gifSec,
             icon: Icon(Icons.gif_box_outlined, color: DiziRenkler.sariMetin),
           ),
+          // YAPIŞTIR — yalnız panodan medya alınabilen yüzeyde çizilir
+          // (mobilde pano BOŞSA hiç çıkmaz; bkz. `pano_medya.dart`).
+          // Webde Ctrl/⌘+V zaten çalışıyor, düğme dokunmatik/mobil web ve
+          // kısayolu bilmeyen kullanıcı için ikinci kapı.
+          if (_panoVar)
+            IconButton(
+              key: const Key('ek-yapistir'),
+              tooltip: 'Yapıştır'.c,
+              onPressed: _ekYukleniyor ? null : _yapistir,
+              icon: Icon(Icons.content_paste, color: DiziRenkler.sariMetin),
+            ),
           const Spacer(),
           if (_ekYukleniyor)
             // SAYAÇ + YÜZDE + ÇUBUK: "0/1 yükleniyor" tek başına dosya bitene

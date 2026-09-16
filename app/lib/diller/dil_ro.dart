@@ -9,6 +9,7 @@ const Map<String, String> cevirilerRo = {
       'Lipește un link sau încarcă un videoclip, invită prieteni și priviți împreună.',
   'URL yapıştır': 'Lipește URL-ul',
   'Yapıştır': 'Lipește',
+  'Panoda görsel yok': 'Nicio imagine în clipboard',
   'Video bağlantısı': 'Link video',
   'Odada aç': 'Deschide în cameră',
   'Doğrudan video adresi': 'Adresă video directă',

@@ -9,6 +9,7 @@ const Map<String, String> cevirilerBn = {
       'লিঙ্ক পেস্ট করুন বা ভিডিও আপলোড করুন, বন্ধুদের আমন্ত্রণ জানান, একসাথে দেখুন।',
   'URL yapıştır': 'লিঙ্ক পেস্ট করুন',
   'Yapıştır': 'পেস্ট',
+  'Panoda görsel yok': 'ক্লিপবোর্ডে কোনো ছবি নেই',
   'Video bağlantısı': 'ভিডিও লিঙ্ক',
   'Odada aç': 'রুমে খুলুন',
   'Doğrudan video adresi': 'সরাসরি ভিডিও ঠিকানা',

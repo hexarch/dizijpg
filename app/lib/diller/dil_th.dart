@@ -9,6 +9,7 @@ const Map<String, String> cevirilerTh = {
       'วางลิงก์หรืออัปโหลดวิดีโอ ชวนเพื่อน แล้วดูไปพร้อมกัน',
   'URL yapıştır': 'วางลิงก์',
   'Yapıştır': 'วาง',
+  'Panoda görsel yok': 'ไม่มีรูปภาพในคลิปบอร์ด',
   'Video bağlantısı': 'ลิงก์วิดีโอ',
   'Odada aç': 'เปิดในห้อง',
   'Doğrudan video adresi': 'ที่อยู่วิดีโอโดยตรง',

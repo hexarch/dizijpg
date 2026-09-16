@@ -9,6 +9,7 @@ const Map<String, String> cevirilerSv = {
       'Klistra in en länk eller ladda upp en video, bjud in vänner och titta tillsammans.',
   'URL yapıştır': 'Klistra in länk',
   'Yapıştır': 'Klistra in',
+  'Panoda görsel yok': 'Ingen bild i urklipp',
   'Video bağlantısı': 'Videolänk',
   'Odada aç': 'Öppna i rummet',
   'Doğrudan video adresi': 'Direkt videoadress',

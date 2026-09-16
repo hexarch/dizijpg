@@ -9,6 +9,7 @@ const Map<String, String> cevirilerFa = {
       'پیوندی بچسبانید یا ویدیویی بارگذاری کنید، دوستان را دعوت کنید و با هم تماشا کنید.',
   'URL yapıştır': 'چسباندن پیوند',
   'Yapıştır': 'چسباندن',
+  'Panoda görsel yok': 'تصویری در بریده‌دان نیست',
   'Video bağlantısı': 'پیوند ویدیو',
   'Odada aç': 'باز کردن در اتاق',
   'Doğrudan video adresi': 'نشانی مستقیم ویدیو',

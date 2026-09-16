@@ -9,6 +9,7 @@ const Map<String, String> cevirilerMs = {
       'Tampal pautan atau muat naik video, jemput rakan, dan tonton bersama.',
   'URL yapıştır': 'Tampal pautan',
   'Yapıştır': 'Tampal',
+  'Panoda görsel yok': 'Tiada imej dalam papan keratan',
   'Video bağlantısı': 'Pautan video',
   'Odada aç': 'Buka dalam bilik',
   'Doğrudan video adresi': 'Alamat video terus',

@@ -9,6 +9,7 @@ const Map<String, String> cevirilerVi = {
       'Dán liên kết hoặc tải video lên, mời bạn bè và cùng xem.',
   'URL yapıştır': 'Dán liên kết',
   'Yapıştır': 'Dán',
+  'Panoda görsel yok': 'Không có hình ảnh trong bảng nhớ tạm',
   'Video bağlantısı': 'Liên kết video',
   'Odada aç': 'Mở trong phòng',
   'Doğrudan video adresi': 'Địa chỉ video trực tiếp',

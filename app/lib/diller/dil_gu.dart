@@ -9,6 +9,7 @@ const Map<String, String> cevirilerGu = {
       'લિંક પેસ્ટ કરો અથવા વિડિયો અપલોડ કરો, મિત્રોને આમંત્રિત કરો અને સાથે જુઓ.',
   'URL yapıştır': 'લિંક પેસ્ટ કરો',
   'Yapıştır': 'પેસ્ટ કરો',
+  'Panoda görsel yok': 'ક્લિપબોર્ડમાં કોઈ છબી નથી',
   'Video bağlantısı': 'વિડિયો લિંક',
   'Odada aç': 'રૂમમાં ખોલો',
   'Doğrudan video adresi': 'સીધું વિડિયો સરનામું',

@@ -9,6 +9,7 @@ const Map<String, String> cevirilerHe = {
       'הדביקו קישור או העלו סרטון, הזמינו חברים וצפו יחד.',
   'URL yapıştır': 'הדבק קישור',
   'Yapıştır': 'הדבק',
+  'Panoda görsel yok': 'אין תמונה בלוח',
   'Video bağlantısı': 'קישור לסרטון',
   'Odada aç': 'פתח בחדר',
   'Doğrudan video adresi': 'כתובת וידאו ישירה',

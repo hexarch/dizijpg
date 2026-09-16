@@ -9,6 +9,7 @@ const Map<String, String> cevirilerAz = {
       'Link yapışdır və ya video yüklə, dostlarını dəvət et, birlikdə izləyin.',
   'URL yapıştır': 'Linki yapışdır',
   'Yapıştır': 'Yapışdır',
+  'Panoda görsel yok': 'Mübadilə buferində şəkil yoxdur',
   'Video bağlantısı': 'Video linki',
   'Odada aç': 'Otaqda aç',
   'Doğrudan video adresi': 'Birbaşa video ünvanı',

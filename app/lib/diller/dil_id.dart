@@ -9,6 +9,7 @@ const Map<String, String> cevirilerId = {
       'Tempel tautan atau unggah video, undang teman, dan tonton bersama.',
   'URL yapıştır': 'Tempel tautan',
   'Yapıştır': 'Tempel',
+  'Panoda görsel yok': 'Tidak ada gambar di papan klip',
   'Video bağlantısı': 'Tautan video',
   'Odada aç': 'Buka di ruang',
   'Doğrudan video adresi': 'Alamat video langsung',

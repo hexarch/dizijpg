@@ -9,6 +9,7 @@ const Map<String, String> cevirilerFil = {
       'Mag-paste ng link o mag-upload ng video, mag-imbita ng mga kaibigan, at manood nang sabay.',
   'URL yapıştır': 'I-paste ang link',
   'Yapıştır': 'I-paste',
+  'Panoda görsel yok': 'Walang larawan sa clipboard',
   'Video bağlantısı': 'Link ng video',
   'Odada aç': 'Buksan sa room',
   'Doğrudan video adresi': 'Direktang address ng video',
