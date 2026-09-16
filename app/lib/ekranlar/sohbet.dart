@@ -156,20 +156,31 @@ const double _satirDikeyDolgu = 8;
 /// yalnız balonun (Align'ın çocuğu) altındaki parmak buraya düşer; boşluk
 /// listeyi saran [RawGestureDetector]'e kalır.
 ///
-/// Satır sola sürüklenince yanıt oku belirir; [esik] geçilince titreşim +
-/// bırakınca [onYanitla]. Dikey kaydırmayı yutmaz: yalnız yatay eşiği aşan
-/// parmakta arenayı kazanır. Kenardan başlayan sürüklemeye karışmaz
-/// (Android geri jesti için 24 dp pay).
+/// YÖN (16 Eyl 2026 isteği: "karşı tarafın mesajını sola değil sağa iterek
+/// alıntılayabilmeliyim"): balon EKRANIN ORTASINA doğru çekilir. Karşı
+/// tarafın balonu solda durur → SAĞA çekilir, ok balonun solunda belirir;
+/// benim balonum sağda durur → SOLA çekilir, ok sağda belirir ([saga]).
+/// Ters yöne çekmek hiçbir şey yapmaz (balon kımıldamaz).
+///
+/// Balon çekilince yanıt oku belirir; [esik] geçilince titreşim + bırakınca
+/// [onYanitla]. Dikey kaydırmayı yutmaz: yalnız yatay eşiği aşan parmakta
+/// arenayı kazanır. Kenardan başlayan sürüklemeye karışmaz (Android geri
+/// jesti / iOS kenar kaydırması için 24 dp pay; o sürükleme baştan sona
+/// yok sayılır).
 class _KaydirYanitla extends StatefulWidget {
   final Widget child;
   final bool etkin;
   final VoidCallback onYanitla;
+
+  /// true: balon SAĞA çekilir (karşı tarafın balonu); false: SOLA (benim).
+  final bool saga;
 
   const _KaydirYanitla({
     super.key,
     required this.child,
     required this.etkin,
     required this.onYanitla,
+    this.saga = false,
   });
 
   static const esik = 64.0;
@@ -187,6 +198,10 @@ class _KaydirYanitlaState extends State<_KaydirYanitla>
   // ancestor is unsafe" (aynı tuzak 7 Ağu 2026'da saat sütununda yaşandı).
   late final AnimationController _c;
   bool _titredi = false;
+
+  /// Kenar payından başlayan sürükleme: sistem jestine bırakılır, buradaki
+  /// güncellemeler yok sayılır.
+  bool _kenardan = false;
 
   @override
   void initState() {
@@ -206,7 +221,11 @@ class _KaydirYanitlaState extends State<_KaydirYanitla>
   }
 
   void _guncelle(DragUpdateDetails d) {
-    final yeni = (_c.value - d.delta.dx).clamp(0.0, _KaydirYanitla.tavan);
+    if (_kenardan) return;
+    // Sağa çekilen balonda +dx, sola çekilende -dx ilerletir; ters yön geri
+    // sarar (0'ın altına inmez, balon yerinde kalır).
+    final ilerleme = widget.saga ? d.delta.dx : -d.delta.dx;
+    final yeni = (_c.value + ilerleme).clamp(0.0, _KaydirYanitla.tavan);
     _c.value = yeni;
     if (yeni >= _KaydirYanitla.esik && !_titredi) {
       _titredi = true;
@@ -217,8 +236,9 @@ class _KaydirYanitlaState extends State<_KaydirYanitla>
   }
 
   void _birak([DragEndDetails? _]) {
-    final yanitla = _c.value >= _KaydirYanitla.esik;
+    final yanitla = !_kenardan && _c.value >= _KaydirYanitla.esik;
     _titredi = false;
+    _kenardan = false;
     _c.animateBack(0, curve: Curves.easeOutCubic);
     if (yanitla) widget.onYanitla();
   }
@@ -234,7 +254,8 @@ class _KaydirYanitlaState extends State<_KaydirYanitla>
       dragStartBehavior: DragStartBehavior.down,
       onHorizontalDragStart: (d) {
         // Kenar payı: sistem geri jesti (sol 24 dp) rakipsiz kalsın.
-        if (d.globalPosition.dx < 24) return;
+        _kenardan = d.globalPosition.dx < 24;
+        if (_kenardan) return;
         _c.stop();
       },
       onHorizontalDragUpdate: _guncelle,
@@ -245,13 +266,20 @@ class _KaydirYanitlaState extends State<_KaydirYanitla>
         builder: (context, child) {
           final k = _c.value;
           final oran = (k / _KaydirYanitla.esik).clamp(0.0, 1.0);
+          final saga = widget.saga;
           return Stack(
-            alignment: Alignment.centerRight,
+            alignment: saga ? Alignment.centerLeft : Alignment.centerRight,
             children: [
-              Transform.translate(offset: Offset(-k, 0), child: child),
+              Transform.translate(
+                offset: Offset(saga ? k : -k, 0),
+                child: child,
+              ),
               if (k > 0)
                 Positioned(
-                  right: 8,
+                  // Ok, balonun boşalttığı tarafta: sağa çekilende solda,
+                  // sola çekilende sağda.
+                  left: saga ? 8 : null,
+                  right: saga ? null : 8,
                   child: Opacity(
                     opacity: oran,
                     child: Transform.scale(
@@ -3157,10 +3185,12 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                           ? () => _yerelTekrarDene(m)
                                           : null,
                                     );
-                                    // Kaydırarak yanıtla (Telegram): BALON sola
-                                    // sürüklenince ok belirir, eşik geçilince
-                                    // yanıt. Dışındaki _SaatSutunu boşluk
-                                    // jestiyle saati getirir.
+                                    // Kaydırarak yanıtla: BALON ekranın
+                                    // ortasına doğru sürüklenince ok belirir,
+                                    // eşik geçilince yanıt (karşı tarafınki
+                                    // SAĞA, benimki SOLA — 16 Eyl 2026).
+                                    // Dışındaki _SaatSutunu boşluk jestiyle
+                                    // saati getirir.
                                     final satir = _SaatSutunu(
                                       kaydirma: _saatKaydirici,
                                       saat: m['_bekliyor'] == true
@@ -3170,6 +3200,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                         key: _satirAnahtari(m, i),
                                         etkin:
                                             m['id'] != null && _istek == null,
+                                        saga: !benimMi,
                                         onYanitla: () => _yanitBaslat(m),
                                         child: baloncuk,
                                       ),

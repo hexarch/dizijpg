@@ -22,8 +22,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// çekince". Bu dosya o kararı kilitler:
 ///   1. Saat balonda YOK; liste boşluğu sola çekilince sağda belirir, parmak
 ///      kalkınca kaybolur. Boşluk jesti yanıt AÇMAZ.
-///   2. BALONU sola sürükleyip eşiği geçince YANIT şeridi açılır; bu jest
-///      saat sütununu açmaz.
+///   2. BALONU ekranın ORTASINA doğru sürükleyip eşiği geçince YANIT şeridi
+///      açılır; bu jest saat sütununu açmaz. YÖN (16 Eyl 2026: "karşı tarafın
+///      mesajını sola değil sağa iterek alıntılayabilmeliyim"): karşı tarafın
+///      balonu (solda) SAĞA, benim balonum (sağda) SOLA çekilir; ters yön
+///      hiçbir şey yapmaz.
 ///   3. Kısa sürükleme yanıt açmaz; liste yerine döner.
 ///   4. Dikey kaydırma bozulmadı — yatay jest onu yutmuyor.
 ///   5. "düzenlendi" balonun içinde kalır; "Görüldü" YAZISI YOK, balonun
@@ -212,27 +215,99 @@ void main() {
     },
   );
 
-  testWidgets('sola sürükleyip EŞİĞİ GEÇİNCE yanıt şeridi açılır', (
+  testWidgets(
+    'KARŞI TARAFIN balonu SAĞA sürüklenip EŞİĞİ GEÇİNCE yanıt şeridi açılır',
+    (tester) async {
+      await _kur(tester, [
+        _mesaj(1, metin: 'selam', benim: false),
+        _mesaj(2, metin: 'naber', saat: '10:15'),
+      ]);
+      expect(find.text('Yanıtlanıyor'), findsNothing);
+      final once = tester.getTopLeft(find.text('selam'));
+      final balon = tester.getCenter(find.text('selam'));
+      final jest = await tester.startGesture(balon);
+      await jest.moveBy(const Offset(30, 0));
+      await tester.pump();
+      // Balon SAĞA kaydı, jest saat sütununu AÇMAZ.
+      expect(tester.getTopLeft(find.text('selam')).dx, greaterThan(once.dx));
+      expect(find.text('10:15'), findsNothing);
+      // Ok balonun SOLUNDA (boşalan tarafta) belirir.
+      final ok = tester.getCenter(find.byIcon(Icons.reply));
+      expect(ok.dx, lessThan(tester.getTopLeft(find.text('selam')).dx));
+      await jest.moveBy(const Offset(60, 0)); // toplam 90 > 64 eşik
+      await tester.pump();
+      expect(find.text('10:15'), findsNothing);
+      await jest.up();
+      await tester.pumpAndSettle();
+      expect(find.text('Yanıtlanıyor'), findsOneWidget);
+      expect(find.text('selam'), findsWidgets); // balon + alıntı
+      await _kapat(tester);
+    },
+  );
+
+  testWidgets('KARŞI TARAFIN balonunu SOLA çekmek hiçbir şey yapmaz', (
     tester,
   ) async {
     await _kur(tester, [
       _mesaj(1, metin: 'selam', benim: false),
       _mesaj(2, metin: 'naber', saat: '10:15'),
     ]);
-    expect(find.text('Yanıtlanıyor'), findsNothing);
-    final balon = tester.getCenter(find.text('selam'));
-    final jest = await tester.startGesture(balon);
-    await jest.moveBy(const Offset(-30, 0));
+    final once = tester.getTopLeft(find.text('selam'));
+    final jest = await tester.startGesture(
+      tester.getCenter(find.text('selam')),
+    );
+    await jest.moveBy(const Offset(-90, 0)); // eşiğin çok üstünde ama ters yön
     await tester.pump();
-    // Balon jesti saat sütununu AÇMAZ.
-    expect(find.text('10:15'), findsNothing);
-    await jest.moveBy(const Offset(-60, 0)); // toplam 90 > 64 eşik
-    await tester.pump();
+    expect(tester.getTopLeft(find.text('selam')), once, reason: 'kımıldamaz');
+    expect(find.byIcon(Icons.reply), findsNothing);
+    // Balon jesti olduğu için saat sütunu da açılmaz.
     expect(find.text('10:15'), findsNothing);
     await jest.up();
     await tester.pumpAndSettle();
+    expect(find.text('Yanıtlanıyor'), findsNothing);
+    await _kapat(tester);
+  });
+
+  testWidgets('BENİM balonum SOLA sürüklenip eşiği geçince yanıt açılır', (
+    tester,
+  ) async {
+    await _kur(tester, [
+      _mesaj(1, metin: 'selam', benim: false),
+      _mesaj(2, metin: 'naber', saat: '10:15'),
+    ]);
+    final once = tester.getTopLeft(find.text('naber'));
+    final jest = await tester.startGesture(
+      tester.getCenter(find.text('naber')),
+    );
+    await jest.moveBy(const Offset(-30, 0));
+    await tester.pump();
+    expect(tester.getTopLeft(find.text('naber')).dx, lessThan(once.dx));
+    // Ok balonun SAĞINDA belirir.
+    final ok = tester.getCenter(find.byIcon(Icons.reply));
+    expect(ok.dx, greaterThan(tester.getBottomRight(find.text('naber')).dx));
+    expect(find.text('10:15'), findsNothing);
+    await jest.moveBy(const Offset(-60, 0));
+    await tester.pump();
+    await jest.up();
+    await tester.pumpAndSettle();
     expect(find.text('Yanıtlanıyor'), findsOneWidget);
-    expect(find.text('selam'), findsWidgets); // balon + alıntı
+    // Benim balonumu SAĞA çekmek yanıt açmaz (ters yön).
+    await _kapat(tester);
+  });
+
+  testWidgets('BENİM balonumu SAĞA çekmek hiçbir şey yapmaz', (tester) async {
+    await _kur(tester, [_mesaj(2, metin: 'naber', saat: '10:15')]);
+    final once = tester.getTopLeft(find.text('naber'));
+    final jest = await tester.startGesture(
+      tester.getCenter(find.text('naber')),
+    );
+    await jest.moveBy(const Offset(90, 0));
+    await tester.pump();
+    expect(tester.getTopLeft(find.text('naber')), once);
+    expect(find.byIcon(Icons.reply), findsNothing);
+    await jest.up();
+    await tester.pumpAndSettle();
+    expect(find.text('Yanıtlanıyor'), findsNothing);
     await _kapat(tester);
   });
 
@@ -242,7 +317,7 @@ void main() {
     final jest = await tester.startGesture(
       tester.getCenter(find.text('selam')),
     );
-    await jest.moveBy(const Offset(-30, 0));
+    await jest.moveBy(const Offset(30, 0));
     await tester.pump();
     await jest.up();
     await tester.pumpAndSettle();

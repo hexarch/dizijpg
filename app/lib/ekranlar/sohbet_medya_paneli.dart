@@ -89,9 +89,16 @@ Future<List<GaleriOgesi>?> _galeriYukle(int sayfa) async {
   if (galeriSahte != null) return sayfa == 0 ? galeriSahte!() : const [];
   final izin = await PhotoManager.requestPermissionExtend();
   if (!izin.hasAccess) return null;
+  // EN YENİ ÖNCE (16 Eyl 2026: "gelen görseller eski, en yenileri açılmalı").
+  // Sıralama verilmezse Android sorgusu ORDER BY'sız gider ve MediaStore
+  // eskiden yeniye döndürür; ilk sayfa yılların dibindeki kareler olur.
+  // Yol nesnesi bu süzgeci taşır, getAssetListPaged aynı sırayla sayfalar.
   final yollar = await PhotoManager.getAssetPathList(
     onlyAll: true,
     type: RequestType.common,
+    filterOption: FilterOptionGroup(
+      orders: const [OrderOption(type: OrderOptionType.createDate, asc: false)],
+    ),
   );
   if (yollar.isEmpty) return const [];
   final liste = await yollar.first.getAssetListPaged(
