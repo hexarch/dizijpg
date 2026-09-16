@@ -1817,4 +1817,20 @@ const Map<String, String> cevirilerFa = {
   'Bu listede izlemediğin yapım kalmamış': 'در این فهرست چیز ندیده‌ای نمانده',
   'Liste adı kaydedilemedi': 'نام فهرست ذخیره نشد',
   'Liste adı boş olamaz': 'نام فهرست نمی‌تواند خالی باشد',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "پربیننده‌ترین 10 فیلم این هفته در dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "پربیننده‌ترین 10 سریال این هفته در dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "پربیننده‌ترین 10 فیلم این ماه در dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "پربیننده‌ترین 10 سریال این ماه در dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "پربیننده‌ترین 50 فیلم سال 2026 در dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "پربیننده‌ترین 50 سریال سال 2026 در dizi.jpg",
+  "Bir süre gösterme": "مدتی پنهان کن",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "این فهرست تا یک ماه در خوراک شما نمایش داده نمی‌شود",
+  "Liste gizlenemedi": "پنهان کردن فهرست ممکن نشد",
 };

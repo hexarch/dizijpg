@@ -1873,4 +1873,20 @@ const Map<String, String> cevirilerTa = {
       'இந்தப் பட்டியலில் பார்க்காதது எதுவும் இல்லை',
   'Liste adı kaydedilemedi': 'பட்டியலின் பெயரைச் சேமிக்க முடியவில்லை',
   'Liste adı boş olamaz': 'பட்டியலின் பெயர் காலியாக இருக்கக் கூடாது',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg இல் இந்த வாரம் அதிகம் பார்க்கப்பட்ட 10 திரைப்படங்கள்",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg இல் இந்த வாரம் அதிகம் பார்க்கப்பட்ட 10 தொடர்கள்",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "dizi.jpg இல் இந்த மாதம் அதிகம் பார்க்கப்பட்ட 10 திரைப்படங்கள்",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "dizi.jpg இல் இந்த மாதம் அதிகம் பார்க்கப்பட்ட 10 தொடர்கள்",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg இல் 2026 இல் அதிகம் பார்க்கப்பட்ட 50 திரைப்படங்கள்",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg இல் 2026 இல் அதிகம் பார்க்கப்பட்ட 50 தொடர்கள்",
+  "Bir süre gösterme": "சிறிது காலம் காட்ட வேண்டாம்",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "இந்தப் பட்டியல் ஒரு மாதத்திற்கு உங்கள் ஊட்டத்தில் தோன்றாது",
+  "Liste gizlenemedi": "பட்டியலை மறைக்க முடியவில்லை",
 };

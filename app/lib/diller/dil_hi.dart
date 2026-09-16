@@ -1832,4 +1832,20 @@ const Map<String, String> cevirilerHi = {
       'इस सूची में कोई अनदेखी चीज़ नहीं बची',
   'Liste adı kaydedilemedi': 'लिस्ट का नाम सेव नहीं हो सका',
   'Liste adı boş olamaz': 'लिस्ट का नाम खाली नहीं हो सकता',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg पर इस हफ़्ते सबसे ज़्यादा देखी गईं 10 फ़िल्में",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg पर इस हफ़्ते सबसे ज़्यादा देखी गईं 10 सीरीज़",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "dizi.jpg पर इस महीने सबसे ज़्यादा देखी गईं 10 फ़िल्में",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "dizi.jpg पर इस महीने सबसे ज़्यादा देखी गईं 10 सीरीज़",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg पर 2026 में सबसे ज़्यादा देखी गईं 50 फ़िल्में",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg पर 2026 में सबसे ज़्यादा देखी गईं 50 सीरीज़",
+  "Bir süre gösterme": "कुछ समय के लिए छिपाएँ",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "यह सूची एक महीने तक आपकी फ़ीड में नहीं दिखेगी",
+  "Liste gizlenemedi": "सूची छिपाई नहीं जा सकी",
 };

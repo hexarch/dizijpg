@@ -1836,4 +1836,20 @@ const Map<String, String> cevirilerPa = {
       'ਇਸ ਸੂਚੀ ਵਿੱਚ ਕੋਈ ਅਣਵੇਖੀ ਚੀਜ਼ ਨਹੀਂ ਬਚੀ',
   'Liste adı kaydedilemedi': 'ਲਿਸਟ ਦਾ ਨਾਮ ਸੇਵ ਨਹੀਂ ਹੋ ਸਕਿਆ',
   'Liste adı boş olamaz': 'ਲਿਸਟ ਦਾ ਨਾਮ ਖਾਲੀ ਨਹੀਂ ਹੋ ਸਕਦਾ',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg ’ਤੇ ਇਸ ਹਫ਼ਤੇ ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੀਆਂ ਗਈਆਂ 10 ਫ਼ਿਲਮਾਂ",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg ’ਤੇ ਇਸ ਹਫ਼ਤੇ ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੀਆਂ ਗਈਆਂ 10 ਸੀਰੀਜ਼",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "dizi.jpg ’ਤੇ ਇਸ ਮਹੀਨੇ ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੀਆਂ ਗਈਆਂ 10 ਫ਼ਿਲਮਾਂ",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "dizi.jpg ’ਤੇ ਇਸ ਮਹੀਨੇ ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੀਆਂ ਗਈਆਂ 10 ਸੀਰੀਜ਼",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg ’ਤੇ 2026 ਵਿੱਚ ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੀਆਂ ਗਈਆਂ 50 ਫ਼ਿਲਮਾਂ",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg ’ਤੇ 2026 ਵਿੱਚ ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੀਆਂ ਗਈਆਂ 50 ਸੀਰੀਜ਼",
+  "Bir süre gösterme": "ਕੁਝ ਸਮੇਂ ਲਈ ਲੁਕਾਓ",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "ਇਹ ਸੂਚੀ ਇੱਕ ਮਹੀਨੇ ਤੱਕ ਤੁਹਾਡੀ ਫੀਡ ਵਿੱਚ ਨਹੀਂ ਦਿਖੇਗੀ",
+  "Liste gizlenemedi": "ਸੂਚੀ ਲੁਕਾਈ ਨਹੀਂ ਜਾ ਸਕੀ",
 };

@@ -1825,4 +1825,20 @@ const Map<String, String> cevirilerAz = {
       'Bu siyahıda izlənməmiş yapım qalmayıb',
   'Liste adı kaydedilemedi': 'Siyahı adı yadda saxlanmadı',
   'Liste adı boş olamaz': 'Siyahı adı boş ola bilməz',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg-də bu həftə ən çox baxılan 10 film",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg-də bu həftə ən çox baxılan 10 serial",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "dizi.jpg-də bu ay ən çox baxılan 10 film",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "dizi.jpg-də bu ay ən çox baxılan 10 serial",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg-də 2026-cı ildə ən çox baxılan 50 film",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg-də 2026-cı ildə ən çox baxılan 50 serial",
+  "Bir süre gösterme": "Bir müddət göstərmə",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Bu siyahı bir ay boyunca lentində görünməyəcək",
+  "Liste gizlenemedi": "Siyahını gizlətmək mümkün olmadı",
 };

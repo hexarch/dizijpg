@@ -1845,4 +1845,20 @@ const Map<String, String> cevirilerBg = {
       'В този списък не остана нищо негледано',
   'Liste adı kaydedilemedi': 'Името на списъка не беше запазено',
   'Liste adı boş olamaz': 'Името на списъка не може да е празно',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Топ 10 филма на седмицата в dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Топ 10 сериала на седмицата в dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Топ 10 филма на месеца в dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Топ 10 сериала на месеца в dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Топ 50 филма на 2026 г. в dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Топ 50 сериала на 2026 г. в dizi.jpg",
+  "Bir süre gösterme": "Скрий за известно време",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Този списък няма да се показва в потока ти един месец",
+  "Liste gizlenemedi": "Списъкът не можа да бъде скрит",
 };

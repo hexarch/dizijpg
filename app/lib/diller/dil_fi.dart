@@ -1844,4 +1844,20 @@ const Map<String, String> cevirilerFi = {
       'Tässä listassa ei ole enää katsomatonta',
   'Liste adı kaydedilemedi': 'Listan nimeä ei voitu tallentaa',
   'Liste adı boş olamaz': 'Listan nimi ei voi olla tyhjä',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Tämän viikon katsotuimmat 10 elokuvaa dizi.jpg:ssä",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Tämän viikon katsotuimmat 10 sarjaa dizi.jpg:ssä",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Tämän kuun katsotuimmat 10 elokuvaa dizi.jpg:ssä",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Tämän kuun katsotuimmat 10 sarjaa dizi.jpg:ssä",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Vuoden 2026 katsotuimmat 50 elokuvaa dizi.jpg:ssä",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Vuoden 2026 katsotuimmat 50 sarjaa dizi.jpg:ssä",
+  "Bir süre gösterme": "Piilota joksikin aikaa",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Tämä lista ei näy syötteessäsi kuukauteen",
+  "Liste gizlenemedi": "Listan piilottaminen epäonnistui",
 };

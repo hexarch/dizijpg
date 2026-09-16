@@ -1745,4 +1745,13 @@ const Map<String, String> cevirilerJa = {
   'Bu listede izlemediğin yapım kalmamış': 'このリストに未視聴の作品は残っていません',
   'Liste adı kaydedilemedi': 'リスト名を保存できませんでした',
   'Liste adı boş olamaz': 'リスト名は空にできません',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film": "dizi.jpgで今週最も見られた映画10作",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi": "dizi.jpgで今週最も見られたドラマ10作",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film": "dizi.jpgで今月最も見られた映画10作",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi": "dizi.jpgで今月最も見られたドラマ10作",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film": "dizi.jpgで2026年に最も見られた映画50作",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi": "dizi.jpgで2026年に最も見られたドラマ50作",
+  "Bir süre gösterme": "しばらく表示しない",
+  "Bu liste bir ay boyunca akışta görünmeyecek": "このリストは1か月間フィードに表示されません",
+  "Liste gizlenemedi": "リストを非表示にできませんでした",
 };

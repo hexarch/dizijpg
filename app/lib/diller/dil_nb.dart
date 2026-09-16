@@ -1836,4 +1836,20 @@ const Map<String, String> cevirilerNb = {
       'Ingenting usett igjen i denne listen',
   'Liste adı kaydedilemedi': 'Listenavnet kunne ikke lagres',
   'Liste adı boş olamaz': 'Listenavnet kan ikke være tomt',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Topp 10 filmer denne uken på dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Topp 10 serier denne uken på dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Topp 10 filmer denne måneden på dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Topp 10 serier denne måneden på dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Topp 50 filmer i 2026 på dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Topp 50 serier i 2026 på dizi.jpg",
+  "Bir süre gösterme": "Skjul en stund",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Denne listen vises ikke i strømmen din på en måned",
+  "Liste gizlenemedi": "Listen kunne ikke skjules",
 };

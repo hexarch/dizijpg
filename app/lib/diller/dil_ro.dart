@@ -1919,4 +1919,20 @@ const Map<String, String> cevirilerRo = {
       'Nu a mai rămas nimic nevăzut în această listă',
   'Liste adı kaydedilemedi': 'Numele listei nu a putut fi salvat',
   'Liste adı boş olamaz': 'Numele listei nu poate fi gol',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Top 10 filme ale săptămânii pe dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Top 10 seriale ale săptămânii pe dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Top 10 filme ale lunii pe dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Top 10 seriale ale lunii pe dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Top 50 filme ale anului 2026 pe dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Top 50 seriale ale anului 2026 pe dizi.jpg",
+  "Bir süre gösterme": "Ascunde o vreme",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Această listă nu va apărea în flux timp de o lună",
+  "Liste gizlenemedi": "Lista nu a putut fi ascunsă",
 };

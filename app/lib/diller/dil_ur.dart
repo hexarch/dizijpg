@@ -1840,4 +1840,20 @@ const Map<String, String> cevirilerUr = {
       'اس فہرست میں ان دیکھی کوئی چیز باقی نہیں',
   'Liste adı kaydedilemedi': 'فہرست کا نام محفوظ نہیں ہو سکا',
   'Liste adı boş olamaz': 'فہرست کا نام خالی نہیں ہو سکتا',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg پر اس ہفتے سب سے زیادہ دیکھی گئی 10 فلمیں",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg پر اس ہفتے سب سے زیادہ دیکھی گئی 10 سیریز",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "dizi.jpg پر اس مہینے سب سے زیادہ دیکھی گئی 10 فلمیں",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "dizi.jpg پر اس مہینے سب سے زیادہ دیکھی گئی 10 سیریز",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg پر 2026 میں سب سے زیادہ دیکھی گئی 50 فلمیں",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg پر 2026 میں سب سے زیادہ دیکھی گئی 50 سیریز",
+  "Bir süre gösterme": "کچھ عرصے کے لیے چھپائیں",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "یہ فہرست ایک مہینے تک آپ کی فیڈ میں نہیں دکھے گی",
+  "Liste gizlenemedi": "فہرست چھپائی نہیں جا سکی",
 };

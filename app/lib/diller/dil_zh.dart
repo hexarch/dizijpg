@@ -1776,4 +1776,13 @@ const Map<String, String> cevirilerZh = {
   'Bu listede izlemediğin yapım kalmamış': '此列表中没有未看的作品了',
   'Liste adı kaydedilemedi': '无法保存片单名称',
   'Liste adı boş olamaz': '片单名称不能为空',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film": "dizi.jpg 本周观看最多的 10 部电影",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi": "dizi.jpg 本周观看最多的 10 部剧集",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film": "dizi.jpg 本月观看最多的 10 部电影",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi": "dizi.jpg 本月观看最多的 10 部剧集",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film": "dizi.jpg 2026 年观看最多的 50 部电影",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi": "dizi.jpg 2026 年观看最多的 50 部剧集",
+  "Bir süre gösterme": "暂时不显示",
+  "Bu liste bir ay boyunca akışta görünmeyecek": "此列表一个月内不会出现在你的动态中",
+  "Liste gizlenemedi": "无法隐藏该列表",
 };

@@ -17,6 +17,7 @@ import '../sira_tercihi.dart';
 import '../spoiler_tercihi.dart';
 import '../sohbet_olay.dart';
 import '../tema.dart';
+import '../uyari.dart';
 import 'begenenler.dart';
 import 'ek_etiket_seridi.dart';
 import 'etiket.dart';
@@ -220,25 +221,76 @@ class _AkisEkraniState extends State<AkisEkrani>
     with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   List<dynamic>? _akis;
 
-  /// KANON RAFLARI (16 Eyl 2026): "ölmeden izlenmesi gereken" listeleri
-  /// akışa her [_kanonAralik] gönderide bir, dönüşümlü serpiştirilir
-  /// (`/kanon/ozet`, misafir de görür). Yüklenemezse akış rafsız akar.
-  List<dynamic>? _kanonRaflar;
-  static const _kanonAralik = 6;
+  /// AKIŞ RAFLARI: ana sayfanın (Keşfet) listeleri akışa her [_rafAralik]
+  /// gönderide bir, sırayla serpiştirilir (`/akis/raflar`). Yüklenemezse
+  /// akış rafsız akar — raf ikincil bir zenginleştirme, hatası akışı bozmaz.
+  ///
+  /// 16 Eyl 2026'da yalnız KANON rafları geliyordu (`/kanon/ozet`, "ölmeden
+  /// izlenmesi gereken…"). 17 Eyl'de kullanıcı *"akışta ana sayfadaki
+  /// listeleri de göster"* dedi: uç genelleşti, artık haftanın dizileri,
+  /// kanon ve "dizi.jpg'de en çok izlenen" rafları da aynı listeden geliyor.
+  /// Kullanıcının GİZLEDİĞİ raflar sunucuda süzülür, buraya hiç gelmez.
+  List<dynamic>? _raflar;
+  static const _rafAralik = 6;
 
-  int get _kanonAdet {
-    final r = _kanonRaflar;
+  int get _rafAdet {
+    final r = _raflar;
     if (r == null || r.isEmpty || _akis == null) return 0;
-    return _akis!.length ~/ _kanonAralik;
+    return _akis!.length ~/ _rafAralik;
   }
 
-  Future<void> _kanonYukle() async {
+  Future<void> _raflariYukle() async {
     try {
-      final d = await Api.get('/kanon/ozet');
+      final d = await Api.get('/akis/raflar');
       final raflar = d['raflar'] as List<dynamic>?;
       if (!mounted || raflar == null || raflar.isEmpty) return;
-      setState(() => _kanonRaflar = raflar);
+      setState(() => _raflar = raflar);
     } catch (_) {}
+  }
+
+  /// "Bir süre gösterme" tiki: rafı akıştan kaldır, 1 ay boyunca gösterme.
+  ///
+  /// İYİMSER: raf ekrandan ANINDA çıkar (tik bir onay penceresi açmaz).
+  /// İstek düşerse liste ESKİ HÂLİNE döner ve kullanıcı uyarılır — sessiz
+  /// başarısızlıkta kullanıcı rafın gizlendiğini sanır, ertesi gün yine
+  /// karşısına çıkınca "tik çalışmıyor" der.
+  Future<void> _rafGizle(Map<String, dynamic> raf) async {
+    final slug = raf['slug'] as String?;
+    if (slug == null || slug.isEmpty) return;
+    final eski = _raflar;
+    setState(() {
+      _raflar = [
+        for (final r in eski ?? const <dynamic>[])
+          if ((r as Map<String, dynamic>)['slug'] != slug) r,
+      ];
+    });
+    try {
+      await Api.post('/raflar/gizle', {'slug': slug});
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _raflar = eski);
+      uyar(context, 'Liste gizlenemedi'.c);
+      return;
+    }
+    if (!mounted) return;
+    // `eylemliUyar`: "Geri al" bildirimi ekrana dokununca KAPANMAZ (uyari.dart).
+    eylemliUyar(
+      context,
+      SnackBar(
+        content: Text('Bu liste bir ay boyunca akışta görünmeyecek'.c),
+        action: SnackBarAction(
+          label: 'Geri al'.c,
+          onPressed: () async {
+            try {
+              await Api.delete('/raflar/gizle/$slug');
+              if (mounted) setState(() => _raflar = eski);
+            } catch (_) {
+              /* geri alma düşerse raf 1 ay sonra kendiliğinden döner */
+            }
+          },
+        ),
+      ),
+    );
   }
 
   Map<String, dynamic> _icerikler = {};
@@ -273,7 +325,7 @@ class _AkisEkraniState extends State<AkisEkrani>
     super.initState();
     _onbellektenYukle();
     _yukle();
-    _kanonYukle();
+    _raflariYukle();
     _kaydirma.addListener(() {
       _ustBar.kaydirmaDegisti(_kaydirma.position);
       if (_kaydirma.position.pixels >
@@ -561,24 +613,30 @@ class _AkisEkraniState extends State<AkisEkrani>
             // konmuştu ("üst barın altında" = sabit diye okunmuştu); o okuma
             // düzeltildi. Listenin içinde olduğu için [OrtaKolon] kısıtını
             // zaten alıyor — masaüstü hizası bozulmaz.
-            itemCount: _akis!.length + 1 + _kanonAdet,
+            itemCount: _akis!.length + 1 + _rafAdet,
             itemBuilder: (context, i) {
               if (i == 0) {
                 return PaylasKutusu(onPaylasildi: _yukle);
               }
               // Kart indeksi bir geride: 0 kutuya ayrıldı.
-              // KANON RAFI (16 Eyl 2026): her (_kanonAralik+1). satır bir raf
+              // RAF (16 Eyl 2026): her (_rafAralik+1). satır bir raf
               // (6 gönderi + 1 raf); gönderi indeksi raf sayısı kadar geri.
               final j = i - 1;
-              final kanonAdet = _kanonAdet;
-              if (kanonAdet > 0 && (j + 1) % (_kanonAralik + 1) == 0) {
-                final sira = (j + 1) ~/ (_kanonAralik + 1) - 1;
+              final rafAdet = _rafAdet;
+              if (rafAdet > 0 && (j + 1) % (_rafAralik + 1) == 0) {
+                final sira = (j + 1) ~/ (_rafAralik + 1) - 1;
                 final raf =
-                    _kanonRaflar![sira % _kanonRaflar!.length]
-                        as Map<String, dynamic>;
-                return KanonRafKarti(key: ValueKey('kanon-$sira'), raf: raf);
+                    _raflar![sira % _raflar!.length] as Map<String, dynamic>;
+                // ANAHTAR RAFIN KİMLİĞİNDEN: sıradan türeseydi bir rafı
+                // gizlemek alttaki rafları kaydırır, Flutter da eski durumu
+                // (kaydırma konumu) yanlış karta bağlardı.
+                return AkisRafKarti(
+                  key: ValueKey('raf-$sira-${raf['slug']}'),
+                  raf: raf,
+                  onGizle: Api.girisli ? () => _rafGizle(raf) : null,
+                );
               }
-              final k = kanonAdet > 0 ? j - j ~/ (_kanonAralik + 1) : j;
+              final k = rafAdet > 0 ? j - j ~/ (_rafAralik + 1) : j;
               final y = _akis![k] as Map<String, dynamic>;
               // "Görüldü": kart GERÇEKTEN ekranda belirince işaretle —
               // build ≈ görüldü DEĞİL (ListView ekran dışı kartları da kurar).
@@ -1739,25 +1797,88 @@ class _KisaltilmisYorumState extends State<KisaltilmisYorum> {
   }
 }
 
-/// Akıştaki kanon raf kartı (16 Eyl 2026): "Ölmeden İzlenmesi Gereken N
-/// Film/Dizi" — poster şeridi + başlığa dokununca tam liste (`/raf/<slug>`,
-/// kesfet.dart ile aynı slug → aynı sayfa, çark dahil).
-class KanonRafKarti extends StatelessWidget {
+/// Akıştaki raf kartı (16 Eyl 2026; 17 Eyl'de ana sayfanın TÜM raflarına
+/// genişledi): poster şeridi + başlığa dokununca tam liste (`/raf/<slug>`,
+/// kesfet.dart ile aynı slug → aynı sayfa, çark dahil) + altında
+/// "Bir süre gösterme" tiki.
+class AkisRafKarti extends StatelessWidget {
   final Map<String, dynamic> raf;
-  const KanonRafKarti({super.key, required this.raf});
+
+  /// Tik yalnız GİRİŞLİDE anlamlıdır (gizleme kaydı kullanıcıya yazılıyor);
+  /// null verilirse tik çizilmez.
+  final VoidCallback? onGizle;
+
+  const AkisRafKarti({super.key, required this.raf, this.onGizle});
 
   @override
   Widget build(BuildContext context) {
     final baslik = raf['baslik'] as String? ?? '';
     final icerikler = raf['icerikler'] as List<dynamic>? ?? const [];
     if (baslik.isEmpty || icerikler.isEmpty) return const SizedBox.shrink();
+    final slug = raf['slug'] as String? ?? rafSlug(baslik);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
-      child: PosterSeridi(
-        baslik: baslik,
-        icerikler: icerikler,
-        turZorla: raf['medya'] as String?,
-        onBaslikTap: () => context.push('/raf/${rafSlug(baslik)}'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PosterSeridi(
+            // BAŞLIK ÇEVRİLİR: sunucu 45 dilin ORTAK ANAHTARINI (Türkçe
+            // başlık) gönderiyor. 16 Eyl'de `.c` unutulmuştu — akıştaki raf
+            // başlığı her dilde Türkçe çıkıyordu (Keşfet'te doğruydu).
+            baslik: baslik.c,
+            icerikler: icerikler,
+            turZorla: raf['medya'] as String?,
+            onBaslikTap: () => context.push('/raf/$slug'),
+          ),
+          if (onGizle != null) _RafGizleTiki(onTap: onGizle!),
+        ],
+      ),
+    );
+  }
+}
+
+/// Rafın altındaki "Bir süre gösterme" tiki (17 Eyl 2026).
+///
+/// TİK KUTUSU AMA `Checkbox` DEĞİL: Material `Checkbox` işaretli/işaretsiz iki
+/// hâl taşır ve geri döndürülebilir bir tercih anlatır; buradaki eylem TEK
+/// YÖNLÜ — basıldığı an raf akıştan çıkar (geri alma bildirimin düğmesinde).
+/// İşaretli hâli hiç çizilmeyeceği için ikon + metin yeterli, üstelik dokunma
+/// hedefini (44 px) dolgu ile kendimiz kuruyoruz.
+class _RafGizleTiki extends StatelessWidget {
+  final VoidCallback onTap;
+  const _RafGizleTiki({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        // 20 (ikon) + 12×2 = 44 px dokunma hedefi (ux md.2).
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // RENK `acikGri`: tik ikincil bir denetim, rafın BAŞLIĞIYLA
+            // yarışmamalı — `metin54` bu projede tam kontrast metinle aynı
+            // renk (tema.dart). `acikGri` iki temada da 4.5:1'in üstünde
+            // (koyu #9E9EA3, açık #6E6E76) ama sessiz durur.
+            Icon(
+              Icons.check_box_outline_blank,
+              size: 20,
+              color: DiziRenkler.acikGri,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Bir süre gösterme'.c,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: DiziRenkler.acikGri,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

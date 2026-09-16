@@ -1832,4 +1832,19 @@ const Map<String, String> cevirilerCs = {
       'V tomto seznamu nezbylo nic nezhlédnutého',
   'Liste adı kaydedilemedi': 'Název seznamu se nepodařilo uložit',
   'Liste adı boş olamaz': 'Název seznamu nemůže být prázdný',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Top 10 filmů týdne na dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Top 10 seriálů týdne na dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film": "Top 10 filmů měsíce na dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Top 10 seriálů měsíce na dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Top 50 filmů roku 2026 na dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Top 50 seriálů roku 2026 na dizi.jpg",
+  "Bir süre gösterme": "Na čas skrýt",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Tento seznam se ti měsíc nezobrazí v kanálu",
+  "Liste gizlenemedi": "Seznam se nepodařilo skrýt",
 };

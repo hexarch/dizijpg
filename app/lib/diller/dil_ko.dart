@@ -1750,4 +1750,17 @@ const Map<String, String> cevirilerKo = {
   'Bu listede izlemediğin yapım kalmamış': '이 목록에 안 본 작품이 없습니다',
   'Liste adı kaydedilemedi': '목록 이름을 저장하지 못했습니다',
   'Liste adı boş olamaz': '목록 이름은 비워 둘 수 없습니다',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg에서 이번 주 가장 많이 본 영화 10편",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg에서 이번 주 가장 많이 본 시리즈 10편",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film": "dizi.jpg에서 이번 달 가장 많이 본 영화 10편",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi": "dizi.jpg에서 이번 달 가장 많이 본 시리즈 10편",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg에서 2026년에 가장 많이 본 영화 50편",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg에서 2026년에 가장 많이 본 시리즈 50편",
+  "Bir süre gösterme": "당분간 숨기기",
+  "Bu liste bir ay boyunca akışta görünmeyecek": "이 목록은 한 달 동안 피드에 표시되지 않습니다",
+  "Liste gizlenemedi": "목록을 숨길 수 없습니다",
 };

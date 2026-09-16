@@ -1889,4 +1889,20 @@ const Map<String, String> cevirilerEn = {
       'No unwatched titles left in this list',
   'Liste adı kaydedilemedi': 'List name could not be saved',
   'Liste adı boş olamaz': 'List name can\'t be empty',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Most Watched 10 Movies on dizi.jpg This Week",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Most Watched 10 Shows on dizi.jpg This Week",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Most Watched 10 Movies on dizi.jpg This Month",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Most Watched 10 Shows on dizi.jpg This Month",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Most Watched 50 Movies on dizi.jpg in 2026",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Most Watched 50 Shows on dizi.jpg in 2026",
+  "Bir süre gösterme": "Hide for a while",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "This list won't appear in your feed for a month",
+  "Liste gizlenemedi": "The list could not be hidden",
 };

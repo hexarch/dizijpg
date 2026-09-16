@@ -13,6 +13,13 @@ import {
   KANON_BOYLAR, kanonGecerli, kanonBasligi, kanonSayfaYollari, kanonSirala,
   kanonSayfaDilimi, kanonRafSirasi,
 } from './kanon.js';
+// SİTENİN KENDİ İZLEME VERİSİNDEN raflar (17 Eyl 2026) — bkz. populer_raflar.js
+import {
+  POPULER_PAY, populerGecerli, populerBasligi, populerYolu, populerBoy,
+  populerAralik, populerRafSirasi, populerGunu, populerSirala,
+  populerSayfaDilimi,
+} from './populer_raflar.js';
+import { rafSlug } from './raf_slug.js';
 // İZLEME ODASI — saf mantık (senkron matematiği, kod, parça sözleşmesi,
 // yetki kararları). Ad çakışmasını önlemek için `oda*` öneki: `mesajTemizle`
 // gibi genel adlar server.js'te başka anlamlara gelebilir.
@@ -7072,6 +7079,13 @@ const SEO_KESFET_RAFLARI = [
   ...kanonRafSirasi().map((r) => ({
     baslik: kanonBasligi(r.medya, r.boy), tur: r.medya, kanon: r,
   })),
+  // SİTENİN KENDİ İZLEME VERİSİ (17 Eyl 2026): `yol` yok, `populer` var —
+  // içerik `izlemeler` tablosundan günlük kuruluyor (populer_raflar.js).
+  // Bot sayfasında da DURUYORLAR: /kesfet'i kullanıcıya gösterirken bota
+  // göstermemek 3.1'in cloaking kilidini çiğnerdi.
+  ...populerRafSirasi().map((r) => ({
+    baslik: populerBasligi(r.donem, r.medya), tur: r.medya, populer: r,
+  })),
 ];
 
 // /gozat = katalog. Flutter ekranı (gozat.dart) tür çipleriyle süzülen bir
@@ -7110,13 +7124,19 @@ async function seoKesifBloklari(tanimlar) {
     tanimlar.filter((t) => t.yol).map((t) => t.yol), ONBELLEK_TTL_SN.uzun);
   // Kanon rafları (16 Eyl 2026): bellek içi liste; bot da aynı ilk 8'i görür.
   const kanon = tanimlar.some((t) => t.kanon) ? await kanonListeleri() : null;
+  // Site verisinden raflar (17 Eyl 2026). HATA YUTULUR: `izlemeler` sorgusu
+  // tökezlerse bot sayfası o iki rafsız çıkar — SSR'ın tamamı düşmez.
+  const populer = tanimlar.some((t) => t.populer)
+    ? await populerListeleri().catch(() => null) : null;
   return tanimlar.map((t) => ({
     baslik: t.baslik,
     // poster_path süzgeci gozat.dart'takinin aynısı: postersiz kayıt
     // uygulamada da listelenmiyor, bot sayfası ondan fazlasını göstermesin.
     ogeler: (t.kanon
       ? (kanon?.[t.kanon.medya] || []).slice(0, t.kanon.boy)
-      : ((harita.get(t.yol) || {}).results || []))
+      : t.populer
+        ? (populer?.[`${t.populer.donem}:${t.populer.medya}`] || [])
+        : ((harita.get(t.yol) || {}).results || []))
       .filter((r) => r && r.poster_path && (r.name || r.title))
       .slice(0, SEO_KESIF_OGE)
       .map((r) => ({ ad: r.name || r.title, yol: `/icerik/${t.tur}/${r.id}` })),
@@ -7207,6 +7227,229 @@ app.get('/izlenen-idler', girisZorunlu, sarici(async (req, res) => {
     if (cikti[tur]) cikti[tur].push(Number(id));
   }
   res.json(cikti);
+}));
+
+// ===========================================================================
+// SİTENİN KENDİ İZLEME VERİSİNDEN RAFLAR (17 Eyl 2026) — bkz. populer_raflar.js
+// ===========================================================================
+//
+// İKİ KATMANLI ÖNBELLEK, İKİSİ DE GÜNLÜK ("her gün yeni veriyle tazelensin"):
+//   1. SIRALAMA — dilden BAĞIMSIZ. `izlemeler` üzerinde dönem başına bir
+//      GROUP BY; çıktısı yalnız tmdb_id + kişi sayısı. Günde bir koşar.
+//   2. KARTLAR — dil BAŞINA. Kimlikler `icerikKartlari` ile ada/afişe çevrilir;
+//      bu adım TMDB'ye değil `tmdb_onbellek`e gider (eksikler 8'li öbekte).
+//
+// GÜN ANAHTARI İSTANBUL GÜNÜ (`populerGunu`): konteyner UTC koşuyor, kova
+// sınırı gece yarısı TSİ olmalı.
+const populerSiraDurum = { gun: null, is: null, siralama: null };
+
+/** Dönem/medya başına ham sıra: [{ tmdb_id, kisi, satir }]. */
+async function populerSiralamalari() {
+  const gun = populerGunu();
+  if (populerSiraDurum.gun === gun && populerSiraDurum.siralama) {
+    return populerSiraDurum.siralama;
+  }
+  if (populerSiraDurum.gun === gun && populerSiraDurum.is) return populerSiraDurum.is;
+  const is = (async () => {
+    const siralama = {};
+    // SIRAYLA, Promise.all DEĞİL: altı sorgunun hepsi `izlemeler`i tarıyor;
+    // aynı anda açmak küçük havuzu (max 10) tek bir günlük iş için doldururdu.
+    for (const { donem, medya } of populerRafSirasi()) {
+      const { bas, bit } = populerAralik(donem);
+      const { rows } = await havuz.query(
+        `SELECT tmdb_id,
+                COUNT(DISTINCT kullanici_id) AS kisi,
+                COUNT(*) AS satir
+           FROM izlemeler
+          WHERE tur = $1 AND tarih_kesin AND tarih >= $2 AND tarih < $3
+          GROUP BY tmdb_id
+          ORDER BY kisi DESC, satir DESC, tmdb_id
+          LIMIT $4`,
+        [medya, bas, bit, populerBoy(donem) * POPULER_PAY]);
+      // node-pg COUNT'u METİN döndürür (bigint) — sayıya burada çevrilir,
+      // yoksa '9' > '10' sıralaması istemciye sızardı.
+      siralama[`${donem}:${medya}`] = rows.map((r) => ({
+        tmdb_id: r.tmdb_id, kisi: Number(r.kisi), satir: Number(r.satir),
+      }));
+    }
+    populerSiraDurum.gun = gun;
+    populerSiraDurum.siralama = siralama;
+    populerSiraDurum.is = null;
+    return siralama;
+  })().catch((e) => { populerSiraDurum.is = null; throw e; });
+  populerSiraDurum.gun = gun;
+  populerSiraDurum.is = is;
+  return is;
+}
+
+const populerOnbellek = new Map(); // dil → { gun, listeler } | Promise
+
+/** Dil başına hazır raflar: `${donem}:${medya}` → kart listesi. */
+async function populerListeleri() {
+  const dil = istekBaglam.getStore()?.tmdbDil || 'tr-TR';
+  const gun = populerGunu();
+  const eldeki = populerOnbellek.get(dil);
+  if (eldeki instanceof Promise) return eldeki;
+  if (eldeki && eldeki.gun === gun) return eldeki.listeler;
+  const is = (async () => {
+    const siralama = await populerSiralamalari();
+    // TEK `icerikKartlari` çağrısı: altı rafın adayları tekrarsız birleştirilir
+    // (aynı film hem haftalıkta hem yıllıkta olabilir) — yoksa aynı kimlik
+    // altı kez çözülürdü.
+    const anahtarlar = new Set();
+    for (const { donem, medya } of populerRafSirasi()) {
+      for (const r of siralama[`${donem}:${medya}`] || []) {
+        anahtarlar.add(`${medya}:${r.tmdb_id}`);
+      }
+    }
+    const kartlar = anahtarlar.size ? await icerikKartlari([...anahtarlar]) : {};
+    const listeler = {};
+    for (const { donem, medya } of populerRafSirasi()) {
+      listeler[`${donem}:${medya}`] = populerSirala(
+        medya, siralama[`${donem}:${medya}`], kartlar, populerBoy(donem));
+    }
+    populerOnbellek.set(dil, { gun, listeler });
+    return listeler;
+  })().catch((e) => { populerOnbellek.delete(dil); throw e; });
+  populerOnbellek.set(dil, is);
+  return is;
+}
+
+// Liste sayfası — `/kanon/:medya/:boy` ile AYNI sözleşme (`results`/`ogeler`,
+// `sayfa`, `devam`), çünkü istemcide ikisini de aynı ekran gösteriyor
+// (`KatalogListeEkrani`) ve aynı çark süzüyor.
+app.get('/populer/:donem/:medya', girisIsteğeBagli, sarici(async (req, res) => {
+  const { donem, medya } = req.params;
+  if (!populerGecerli(donem, medya)) return res.status(404).json({ hata: 'Liste yok' });
+  const listeler = await populerListeleri();
+  const liste = listeler[`${donem}:${medya}`] || [];
+  const dilim = populerSayfaDilimi(liste, req.query.page ?? req.query.sayfa, req.query.adet);
+  let ogeler = dilim.ogeler;
+  if (req.kullanici?.id) {
+    const izlenen = await izlenenAnahtarlari(req.kullanici.id);
+    ogeler = ogeler.map((r) => ({ ...r, izlenen: izlenen.has(`${medya}:${r.id}`) }));
+  }
+  // Kişiye özel alan (`izlenen`) yalnız girişlide var; o yanıt paylaşılmamalı.
+  res.setHeader('Cache-Control', req.kullanici?.id
+    ? 'private, no-store' : 'public, max-age=1800');
+  res.json({
+    baslik: populerBasligi(donem, medya), donem, medya,
+    results: ogeler, ogeler,
+    toplam: dilim.toplam, sayfa: dilim.sayfa, devam: dilim.devam,
+  });
+}));
+
+// ===========================================================================
+// AKIŞ RAFLARI + "BİR SÜRE GÖSTERME" (17 Eyl 2026)
+// ===========================================================================
+//
+// İSTEK (birebir): "akışta ana sayfadaki listeleri de göster ve altında bir
+// süre gösterme tiki [olsun]; bir kullanıcı onu seçerse ona bir daha o listeyi
+// 1 ay gösterme."
+//
+// 16 Eyl'de akışa yalnız KANON rafları serpiştiriliyordu (`/kanon/ozet`); bu
+// uç onun yerine geçti ve ana sayfanın (Keşfet) BÜTÜN raflarını taşıyor.
+//
+// KAYNAK TEK: raf tablosu `SEO_KESFET_RAFLARI` — bot sayfası (/kesfet SSR),
+// akış ve Keşfet ekranı aynı listeden besleniyor. Ayrı bir akış tablosu
+// açmak, aralarında sessizce eskiyecek DÖRDÜNCÜ bir kopya olurdu.
+//
+// SLUG = KİMLİK: gizleme kaydı rafın slug'ına yazılıyor (`rafSlug`, istemcinin
+// `/raf/<slug>` adresiyle aynı dize). Sıraya (indekse) yazılsaydı tabloya
+// araya bir raf eklemek herkesin gizlediği rafı kaydırırdı.
+const AKIS_RAF_OGE = 10;        // akış kartında gösterilen afiş sayısı
+const AKIS_RAF_TTL_MS = 30 * 60 * 1000;
+const akisRafOnbellek = new Map(); // dil → { zaman, gun, raflar } | Promise
+
+/** Slug → raf tanımı (gizleme doğrulaması bu beyaz listeden geçer). */
+const rafTanimHaritasi = () => new Map(
+  SEO_KESFET_RAFLARI.map((t) => [rafSlug(t.baslik), t]));
+
+async function akisRaflari() {
+  const dil = istekBaglam.getStore()?.tmdbDil || 'tr-TR';
+  const gun = populerGunu();
+  const eldeki = akisRafOnbellek.get(dil);
+  if (eldeki instanceof Promise) return eldeki;
+  if (eldeki && eldeki.gun === gun && Date.now() - eldeki.zaman < AKIS_RAF_TTL_MS) {
+    return eldeki.raflar;
+  }
+  const is = (async () => {
+    const tanimlar = SEO_KESFET_RAFLARI;
+    const harita = await tmdbTopluGetir(
+      tanimlar.filter((t) => t.yol).map((t) => t.yol), ONBELLEK_TTL_SN.uzun);
+    const kanon = await kanonListeleri().catch(() => null);
+    const populer = await populerListeleri().catch(() => null);
+    const raflar = tanimlar.map((t) => {
+      const ham = t.kanon
+        ? (kanon?.[t.kanon.medya] || []).slice(0, t.kanon.boy)
+        : t.populer
+          ? (populer?.[`${t.populer.donem}:${t.populer.medya}`] || [])
+          : ((harita.get(t.yol) || {}).results || []);
+      return {
+        slug: rafSlug(t.baslik),
+        baslik: t.baslik,   // TÜRKÇE anahtar; istemci `.c` ile çeviriyor
+        medya: t.tur,
+        icerikler: ham
+          .filter((r) => r && r.poster_path && (r.name || r.title))
+          .slice(0, AKIS_RAF_OGE),
+      };
+    // Boş raf DÜŞER: başlığı olup afişi olmayan kart akışta boşluk olurdu
+    // (yeni sitede "bu hafta en çok izlenen" listesi bir süre boş kalacak).
+    }).filter((r) => r.icerikler.length > 0);
+    akisRafOnbellek.set(dil, { zaman: Date.now(), gun, raflar });
+    return raflar;
+  })().catch((e) => { akisRafOnbellek.delete(dil); throw e; });
+  akisRafOnbellek.set(dil, is);
+  return is;
+}
+
+const rafGizlemeLimiti = hizLimiti(120, (req) => `rg:${req.kullanici.id}`);
+
+// Akışa serpiştirilecek raflar. Kullanıcının GİZLEDİĞİ raflar düşürülmüş
+// hâlde döner — süzgeç sunucuda, çünkü istemcinin gizleme listesini
+// taşıması her akış açılışında ikinci bir istek demekti.
+app.get('/akis/raflar', girisIsteğeBagli, sarici(async (req, res) => {
+  const [raflar, gizli] = await Promise.all([
+    akisRaflari(),
+    req.kullanici?.id
+      ? havuz.query(
+        `SELECT slug FROM raf_gizleme WHERE kullanici_id = $1 AND bitis > now()`,
+        [req.kullanici.id]).then((r) => new Set(r.rows.map((x) => x.slug)))
+      : Promise.resolve(new Set()),
+  ]);
+  res.setHeader('Cache-Control', 'private, no-store');
+  res.json({ raflar: raflar.filter((r) => !gizli.has(r.slug)) });
+}));
+
+// "Bir süre gösterme" — rafı bu kullanıcıya 1 AY kapat.
+//
+// ÜST SINIR 1 AY, SONSUZ DEĞİL: kullanıcı "şimdilik ilgilenmiyorum" diyor;
+// kalıcı olsaydı ürün bir yıl sonra kimsenin hatırlamadığı bir kara listeye
+// dönerdi ve geri açmanın ARAYÜZÜ olmazdı (ayarlarda böyle bir ekran yok).
+app.post('/raflar/gizle', girisZorunlu, rafGizlemeLimiti, sarici(async (req, res) => {
+  const slug = String(req.body?.slug ?? '').slice(0, 120);
+  // BEYAZ LİSTE: rastgele dize yazılırsa tablo çöplüğe döner ve gizleme
+  // "çalışmıyor" gibi görünürdü (yazılan slug hiçbir rafla eşleşmez).
+  if (!rafTanimHaritasi().has(slug)) {
+    return res.status(400).json({ hata: 'Geçersiz raf' });
+  }
+  const { rows } = await havuz.query(
+    `INSERT INTO raf_gizleme (kullanici_id, slug, bitis)
+     VALUES ($1, $2, now() + interval '1 month')
+     ON CONFLICT (kullanici_id, slug)
+     DO UPDATE SET bitis = EXCLUDED.bitis
+     RETURNING bitis`,
+    [req.kullanici.id, slug]);
+  res.json({ tamam: true, bitis: rows[0].bitis });
+}));
+
+// Geri alma (bildirimdeki "Geri al"). Kayıt yoksa da 200: eylem
+// ÇİFT TIKLANABİLİR olmalı, ikinci istek hata göstermemeli.
+app.delete('/raflar/gizle/:slug', girisZorunlu, rafGizlemeLimiti, sarici(async (req, res) => {
+  await havuz.query(
+    'DELETE FROM raf_gizleme WHERE kullanici_id = $1 AND slug = $2',
+    [req.kullanici.id, String(req.params.slug).slice(0, 120)]);
+  res.json({ tamam: true });
 }));
 
 const seoKesifGovde = (bloklar) =>

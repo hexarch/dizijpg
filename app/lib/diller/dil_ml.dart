@@ -1845,4 +1845,20 @@ const Map<String, String> cevirilerMl = {
       'ഈ പട്ടികയിൽ കാണാത്തതൊന്നും ബാക്കിയില്ല',
   'Liste adı kaydedilemedi': 'ലിസ്റ്റിന്റെ പേര് സേവ് ചെയ്യാനായില്ല',
   'Liste adı boş olamaz': 'ലിസ്റ്റിന്റെ പേര് ശൂന്യമാകരുത്',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg-ൽ ഈ ആഴ്ച ഏറ്റവും കൂടുതൽ കണ്ട 10 സിനിമകൾ",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg-ൽ ഈ ആഴ്ച ഏറ്റവും കൂടുതൽ കണ്ട 10 സീരീസുകൾ",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "dizi.jpg-ൽ ഈ മാസം ഏറ്റവും കൂടുതൽ കണ്ട 10 സിനിമകൾ",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "dizi.jpg-ൽ ഈ മാസം ഏറ്റവും കൂടുതൽ കണ്ട 10 സീരീസുകൾ",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg-ൽ 2026-ൽ ഏറ്റവും കൂടുതൽ കണ്ട 50 സിനിമകൾ",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg-ൽ 2026-ൽ ഏറ്റവും കൂടുതൽ കണ്ട 50 സീരീസുകൾ",
+  "Bir süre gösterme": "കുറച്ചുകാലം കാണിക്കരുത്",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "ഈ ലിസ്റ്റ് ഒരു മാസത്തേക്ക് നിങ്ങളുടെ ഫീഡിൽ കാണില്ല",
+  "Liste gizlenemedi": "ലിസ്റ്റ് മറയ്ക്കാനായില്ല",
 };

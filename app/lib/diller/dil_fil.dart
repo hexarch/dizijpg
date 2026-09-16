@@ -1879,4 +1879,20 @@ const Map<String, String> cevirilerFil = {
       'Wala nang hindi napanood sa listahang ito',
   'Liste adı kaydedilemedi': 'Hindi ma-save ang pangalan ng listahan',
   'Liste adı boş olamaz': 'Hindi puwedeng blangko ang pangalan ng listahan',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Top 10 Pelikula Ngayong Linggo sa dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Top 10 Serye Ngayong Linggo sa dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Top 10 Pelikula Ngayong Buwan sa dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Top 10 Serye Ngayong Buwan sa dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Top 50 Pelikula noong 2026 sa dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Top 50 Serye noong 2026 sa dizi.jpg",
+  "Bir süre gösterme": "Itago muna",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Hindi lalabas ang listahang ito sa feed mo sa loob ng isang buwan",
+  "Liste gizlenemedi": "Hindi naitago ang listahan",
 };

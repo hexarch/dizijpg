@@ -18,6 +18,22 @@ import 'ortak.dart';
 const anaSayfaRaflari = <(String, String, String)>[
   ('Haftanın Dizileri', '/tmdb/trending/tv/week', 'tv'),
   ('Haftanın Filmleri', '/tmdb/trending/movie/week', 'movie'),
+  // --- SİTENİN KENDİ İZLEME VERİSİ (17 Eyl 2026) ---
+  //
+  // Kaynak `izlemeler` tablosu (`backend/populer_raflar.js`), TMDB DEĞİL:
+  // "en çok izlenen" burada dizi.jpg kullanıcılarının izlediğidir. Başlıklar
+  // SUNUCUDAKİ `populerBasligi()` ile BİREBİR aynı olmalı — akıştaki raf
+  // başlığına dokununca `/raf/<slug>` bu tabloda aranıyor (`rafBul`).
+  //
+  // "Haftanın Dizileri/Filmleri"NİN HEMEN ALTINDA: ikisi de "bu hafta"
+  // diyor, biri dünyanın biri bizim verimiz — yan yana durunca fark
+  // okunuyor, araya on raf girse iki ayrı özellik gibi görünürdü.
+  (
+    "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film",
+    '/populer/hafta/movie',
+    'movie',
+  ),
+  ("dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi", '/populer/hafta/tv', 'tv'),
   (
     'Türk Dizileri',
     '/tmdb/discover/tv?sort_by=popularity.desc&with_original_language=tr',
@@ -50,6 +66,8 @@ const anaSayfaRaflari = <(String, String, String)>[
     '/tmdb/discover/tv?sort_by=popularity.desc&vote_count.gte=200',
     'tv',
   ),
+  ("dizi.jpg'de Bu Ay En Çok İzlenen 10 Film", '/populer/ay/movie', 'movie'),
+  ("dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi", '/populer/ay/tv', 'tv'),
   ('Ölmeden İzlenmesi Gereken 250 Film', '/kanon/movie/250', 'movie'),
   (
     'En Çok Kazanan Filmler',
@@ -88,6 +106,11 @@ const anaSayfaRaflari = <(String, String, String)>[
   // çeviri anahtarı bu dizeden türer, sunucuyla birebir aynı kalmalı.
   ('Ölmeden İzlenmesi Gereken 1000 Film', '/kanon/movie/1000', 'movie'),
   ('Ölmeden İzlenmesi Gereken 100 Dizi', '/kanon/tv/100', 'tv'),
+  // Yıllık liste 50'lik: haftalık/aylıktan büyük olduğu için listenin
+  // derinine kondu — üstteki raflar "şu an ne izleniyor"u, bu "yılın
+  // tablosu"nu anlatıyor.
+  ("dizi.jpg'de 2026'da En Çok İzlenen 50 Film", '/populer/yil/movie', 'movie'),
+  ("dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi", '/populer/yil/tv', 'tv'),
   // --- 2027'de vizyona girecekler (6 Eyl 2026) ---
   //
   // OY EŞİĞİ YOK, diğer rafların aksine: henüz gösterime girmemiş yapımın oyu

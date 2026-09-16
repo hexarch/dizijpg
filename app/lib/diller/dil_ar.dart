@@ -1857,4 +1857,20 @@ const Map<String, String> cevirilerAr = {
       'لم يبقَ شيء لم تشاهده في هذه القائمة',
   'Liste adı kaydedilemedi': 'تعذر حفظ اسم القائمة',
   'Liste adı boş olamaz': 'لا يمكن أن يكون اسم القائمة فارغًا',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "أكثر 10 أفلام مشاهدة هذا الأسبوع على dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "أكثر 10 مسلسلات مشاهدة هذا الأسبوع على dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "أكثر 10 أفلام مشاهدة هذا الشهر على dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "أكثر 10 مسلسلات مشاهدة هذا الشهر على dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "أكثر 50 فيلمًا مشاهدة في 2026 على dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "أكثر 50 مسلسلًا مشاهدة في 2026 على dizi.jpg",
+  "Bir süre gösterme": "إخفاء لبعض الوقت",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "لن تظهر هذه القائمة في موجزك لمدة شهر",
+  "Liste gizlenemedi": "تعذّر إخفاء القائمة",
 };

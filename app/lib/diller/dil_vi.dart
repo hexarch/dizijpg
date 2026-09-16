@@ -1831,4 +1831,20 @@ const Map<String, String> cevirilerVi = {
       'Danh sách này không còn gì chưa xem',
   'Liste adı kaydedilemedi': 'Không thể lưu tên danh sách',
   'Liste adı boş olamaz': 'Tên danh sách không được để trống',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Top 10 phim điện ảnh xem nhiều nhất tuần này trên dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Top 10 phim bộ xem nhiều nhất tuần này trên dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Top 10 phim điện ảnh xem nhiều nhất tháng này trên dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Top 10 phim bộ xem nhiều nhất tháng này trên dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Top 50 phim điện ảnh xem nhiều nhất năm 2026 trên dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Top 50 phim bộ xem nhiều nhất năm 2026 trên dizi.jpg",
+  "Bir süre gösterme": "Ẩn một thời gian",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Danh sách này sẽ không xuất hiện trong bảng tin của bạn trong một tháng",
+  "Liste gizlenemedi": "Không thể ẩn danh sách",
 };

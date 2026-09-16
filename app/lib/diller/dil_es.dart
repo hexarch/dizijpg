@@ -1916,4 +1916,20 @@ const Map<String, String> cevirilerEs = {
       'No queda nada sin ver en esta lista',
   'Liste adı kaydedilemedi': 'No se pudo guardar el nombre de la lista',
   'Liste adı boş olamaz': 'El nombre de la lista no puede estar vacío',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Las 10 películas más vistas esta semana en dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Las 10 series más vistas esta semana en dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Las 10 películas más vistas este mes en dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Las 10 series más vistas este mes en dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Las 50 películas más vistas en dizi.jpg en 2026",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Las 50 series más vistas en dizi.jpg en 2026",
+  "Bir süre gösterme": "Ocultar por un tiempo",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Esta lista no aparecerá en tu feed durante un mes",
+  "Liste gizlenemedi": "No se pudo ocultar la lista",
 };

@@ -1774,4 +1774,20 @@ const Map<String, String> cevirilerAm = {
   'Bu listede izlemediğin yapım kalmamış': 'በዚህ ዝርዝር ያልታየ ምንም አልቀረም',
   'Liste adı kaydedilemedi': 'የዝርዝሩ ስም አልተቀመጠም',
   'Liste adı boş olamaz': 'የዝርዝሩ ስም ባዶ መሆን አይችልም',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "በdizi.jpg ላይ በዚህ ሳምንት በብዛት የታዩ 10 ፊልሞች",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "በdizi.jpg ላይ በዚህ ሳምንት በብዛት የታዩ 10 ተከታታይ ድራማዎች",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "በdizi.jpg ላይ በዚህ ወር በብዛት የታዩ 10 ፊልሞች",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "በdizi.jpg ላይ በዚህ ወር በብዛት የታዩ 10 ተከታታይ ድራማዎች",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "በdizi.jpg ላይ በ2026 በብዛት የታዩ 50 ፊልሞች",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "በdizi.jpg ላይ በ2026 በብዛት የታዩ 50 ተከታታይ ድራማዎች",
+  "Bir süre gösterme": "ለተወሰነ ጊዜ ደብቅ",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "ይህ ዝርዝር ለአንድ ወር በምግብህ ውስጥ አይታይም",
+  "Liste gizlenemedi": "ዝርዝሩን መደበቅ አልተቻለም",
 };

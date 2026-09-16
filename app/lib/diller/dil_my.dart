@@ -1857,4 +1857,20 @@ const Map<String, String> cevirilerMy = {
       'ဤစာရင်းတွင် မကြည့်ရသေးသည် မကျန်တော့ပါ',
   'Liste adı kaydedilemedi': 'စာရင်းအမည်ကို သိမ်း၍မရပါ',
   'Liste adı boş olamaz': 'စာရင်းအမည် ဗလာမဖြစ်ရပါ',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg တွင် ဤအပတ် အကြည့်အများဆုံး ရုပ်ရှင် 10 ခု",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg တွင် ဤအပတ် အကြည့်အများဆုံး စီးရီး 10 ခု",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "dizi.jpg တွင် ဤလ အကြည့်အများဆုံး ရုပ်ရှင် 10 ခု",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "dizi.jpg တွင် ဤလ အကြည့်အများဆုံး စီးရီး 10 ခု",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg တွင် 2026 ခုနှစ် အကြည့်အများဆုံး ရုပ်ရှင် 50 ခု",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg တွင် 2026 ခုနှစ် အကြည့်အများဆုံး စီးရီး 50 ခု",
+  "Bir süre gösterme": "ခဏ မပြပါနှင့်",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "ဤစာရင်းသည် တစ်လကြာ သင့်ဖီးဒ်တွင် ပေါ်မည်မဟုတ်ပါ",
+  "Liste gizlenemedi": "စာရင်းကို ဖျောက်၍မရပါ",
 };

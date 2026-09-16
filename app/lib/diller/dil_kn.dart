@@ -1836,4 +1836,20 @@ const Map<String, String> cevirilerKn = {
       'ಈ ಪಟ್ಟಿಯಲ್ಲಿ ನೋಡದಿರುವುದು ಯಾವುದೂ ಉಳಿದಿಲ್ಲ',
   'Liste adı kaydedilemedi': 'ಪಟ್ಟಿಯ ಹೆಸರನ್ನು ಉಳಿಸಲಾಗಲಿಲ್ಲ',
   'Liste adı boş olamaz': 'ಪಟ್ಟಿಯ ಹೆಸರು ಖಾಲಿ ಇರುವಂತಿಲ್ಲ',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg ನಲ್ಲಿ ಈ ವಾರ ಹೆಚ್ಚು ವೀಕ್ಷಿಸಲಾದ 10 ಸಿನಿಮಾಗಳು",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg ನಲ್ಲಿ ಈ ವಾರ ಹೆಚ್ಚು ವೀಕ್ಷಿಸಲಾದ 10 ಸರಣಿಗಳು",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "dizi.jpg ನಲ್ಲಿ ಈ ತಿಂಗಳು ಹೆಚ್ಚು ವೀಕ್ಷಿಸಲಾದ 10 ಸಿನಿಮಾಗಳು",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "dizi.jpg ನಲ್ಲಿ ಈ ತಿಂಗಳು ಹೆಚ್ಚು ವೀಕ್ಷಿಸಲಾದ 10 ಸರಣಿಗಳು",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg ನಲ್ಲಿ 2026ರಲ್ಲಿ ಹೆಚ್ಚು ವೀಕ್ಷಿಸಲಾದ 50 ಸಿನಿಮಾಗಳು",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg ನಲ್ಲಿ 2026ರಲ್ಲಿ ಹೆಚ್ಚು ವೀಕ್ಷಿಸಲಾದ 50 ಸರಣಿಗಳು",
+  "Bir süre gösterme": "ಸ್ವಲ್ಪ ಸಮಯ ತೋರಿಸಬೇಡ",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "ಈ ಪಟ್ಟಿ ಒಂದು ತಿಂಗಳ ಕಾಲ ನಿಮ್ಮ ಫೀಡ್‌ನಲ್ಲಿ ಕಾಣಿಸುವುದಿಲ್ಲ",
+  "Liste gizlenemedi": "ಪಟ್ಟಿಯನ್ನು ಮರೆಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ",
 };

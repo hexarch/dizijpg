@@ -1849,4 +1849,20 @@ const Map<String, String> cevirilerHu = {
       'Nincs több nem látott cím ebben a listában',
   'Liste adı kaydedilemedi': 'A lista nevét nem sikerült menteni',
   'Liste adı boş olamaz': 'A lista neve nem lehet üres',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "A hét top 10 filmje a dizi.jpg-n",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "A hét top 10 sorozata a dizi.jpg-n",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "A hónap top 10 filmje a dizi.jpg-n",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "A hónap top 10 sorozata a dizi.jpg-n",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "2026 top 50 filmje a dizi.jpg-n",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "2026 top 50 sorozata a dizi.jpg-n",
+  "Bir süre gösterme": "Elrejtés egy időre",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Ez a lista egy hónapig nem jelenik meg a hírfolyamodban",
+  "Liste gizlenemedi": "A listát nem sikerült elrejteni",
 };

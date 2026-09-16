@@ -1835,4 +1835,20 @@ const Map<String, String> cevirilerTe = {
   'Bu listede izlemediğin yapım kalmamış': 'ఈ జాబితాలో చూడనిది ఏదీ మిగల్లేదు',
   'Liste adı kaydedilemedi': 'జాబితా పేరును సేవ్ చేయలేకపోయాం',
   'Liste adı boş olamaz': 'జాబితా పేరు ఖాళీగా ఉండకూడదు',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg లో ఈ వారం అత్యధికంగా చూసిన 10 సినిమాలు",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg లో ఈ వారం అత్యధికంగా చూసిన 10 సిరీస్‌లు",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "dizi.jpg లో ఈ నెల అత్యధికంగా చూసిన 10 సినిమాలు",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "dizi.jpg లో ఈ నెల అత్యధికంగా చూసిన 10 సిరీస్‌లు",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg లో 2026లో అత్యధికంగా చూసిన 50 సినిమాలు",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg లో 2026లో అత్యధికంగా చూసిన 50 సిరీస్‌లు",
+  "Bir süre gösterme": "కొంతకాలం చూపవద్దు",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "ఈ జాబితా ఒక నెల పాటు మీ ఫీడ్‌లో కనిపించదు",
+  "Liste gizlenemedi": "జాబితాను దాచలేకపోయాం",
 };

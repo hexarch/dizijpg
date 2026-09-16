@@ -1838,4 +1838,20 @@ const Map<String, String> cevirilerSr = {
       'U ovoj listi nije ostalo ništa neodgledano',
   'Liste adı kaydedilemedi': 'Назив листе није сачуван',
   'Liste adı boş olamaz': 'Назив листе не може бити празан',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Top 10 filmova nedelje na dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Top 10 serija nedelje na dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Top 10 filmova meseca na dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Top 10 serija meseca na dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Top 50 filmova 2026. godine na dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Top 50 serija 2026. godine na dizi.jpg",
+  "Bir süre gösterme": "Sakrij na neko vreme",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Ova lista se mesec dana neće pojavljivati u tvom fidu",
+  "Liste gizlenemedi": "Lista nije mogla da se sakrije",
 };

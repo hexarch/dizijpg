@@ -33,6 +33,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // akis.dart — akışa serpiştirilen ana sayfa rafları ve "bir süre gösterme"
+  // tiki (17 Eyl 2026).
+  'Bir süre gösterme',
+  'Bu liste bir ay boyunca akışta görünmeyecek',
+  'Liste gizlenemedi',
+  // kesfet.dart — sitenin kendi izleme verisinden raflar (17 Eyl 2026).
+  // Başlıklar AYNI ZAMANDA sunucudaki `populerBasligi()` çıktısıdır.
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi",
   // karsilama.dart — doğum tarihinde 13 yaş sınırı (16 Eyl 2026): seçici
   // altındaki not + sunucunun 400 mesajı.
   'dizi.jpg için en az 13 yaşında olmalısın.',

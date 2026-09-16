@@ -1830,4 +1830,20 @@ const Map<String, String> cevirilerMr = {
   'Bu listede izlemediğin yapım kalmamış': 'या यादीत न पाहिलेले काही उरले नाही',
   'Liste adı kaydedilemedi': 'लिस्टचं नाव सेव्ह होऊ शकलं नाही',
   'Liste adı boş olamaz': 'लिस्टचं नाव रिकामं असू शकत नाही',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg वर या आठवड्यात सर्वाधिक पाहिलेले 10 चित्रपट",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg वर या आठवड्यात सर्वाधिक पाहिलेले 10 मालिका",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "dizi.jpg वर या महिन्यात सर्वाधिक पाहिलेले 10 चित्रपट",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "dizi.jpg वर या महिन्यात सर्वाधिक पाहिलेले 10 मालिका",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg वर 2026 मध्ये सर्वाधिक पाहिलेले 50 चित्रपट",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg वर 2026 मध्ये सर्वाधिक पाहिलेले 50 मालिका",
+  "Bir süre gösterme": "काही काळ दाखवू नका",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "ही यादी एक महिना तुमच्या फीडमध्ये दिसणार नाही",
+  "Liste gizlenemedi": "यादी लपवता आली नाही",
 };

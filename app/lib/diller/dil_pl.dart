@@ -1856,4 +1856,20 @@ const Map<String, String> cevirilerPl = {
       'W tej liście nie zostało nic nieobejrzanego',
   'Liste adı kaydedilemedi': 'Nie udało się zapisać nazwy listy',
   'Liste adı boş olamaz': 'Nazwa listy nie może być pusta',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Top 10 filmów tygodnia na dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Top 10 seriali tygodnia na dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Top 10 filmów miesiąca na dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Top 10 seriali miesiąca na dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Top 50 filmów 2026 roku na dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Top 50 seriali 2026 roku na dizi.jpg",
+  "Bir süre gösterme": "Ukryj na jakiś czas",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Ta lista nie pojawi się w twoim kanale przez miesiąc",
+  "Liste gizlenemedi": "Nie udało się ukryć listy",
 };

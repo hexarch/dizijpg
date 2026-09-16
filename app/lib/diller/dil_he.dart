@@ -1798,4 +1798,20 @@ const Map<String, String> cevirilerHe = {
       'לא נשאר שום דבר שלא נצפה ברשימה הזו',
   'Liste adı kaydedilemedi': 'לא ניתן היה לשמור את שם הרשימה',
   'Liste adı boş olamaz': 'שם הרשימה לא יכול להיות ריק',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "10 הסרטים הנצפים ביותר השבוע ב-dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "10 הסדרות הנצפים ביותר השבוע ב-dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "10 הסרטים הנצפים ביותר החודש ב-dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "10 הסדרות הנצפים ביותר החודש ב-dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "50 הסרטים הנצפים ביותר ב-2026 ב-dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "50 הסדרות הנצפים ביותר ב-2026 ב-dizi.jpg",
+  "Bir süre gösterme": "להסתיר לזמן מה",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "הרשימה הזו לא תופיע בפיד שלך במשך חודש",
+  "Liste gizlenemedi": "לא ניתן היה להסתיר את הרשימה",
 };

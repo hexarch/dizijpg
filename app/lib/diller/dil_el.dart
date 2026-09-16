@@ -1871,4 +1871,20 @@ const Map<String, String> cevirilerEl = {
       'Δεν έμεινε τίποτα αθέατο σε αυτή τη λίστα',
   'Liste adı kaydedilemedi': 'Το όνομα της λίστας δεν αποθηκεύτηκε',
   'Liste adı boş olamaz': 'Το όνομα της λίστας δεν μπορεί να είναι κενό',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Top 10 ταινίες της εβδομάδας στο dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Top 10 σειρές της εβδομάδας στο dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Top 10 ταινίες του μήνα στο dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Top 10 σειρές του μήνα στο dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Top 50 ταινίες του 2026 στο dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Top 50 σειρές του 2026 στο dizi.jpg",
+  "Bir süre gösterme": "Απόκρυψη για λίγο",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Αυτή η λίστα δεν θα εμφανίζεται στη ροή σου για έναν μήνα",
+  "Liste gizlenemedi": "Η λίστα δεν μπόρεσε να αποκρυφτεί",
 };

@@ -1844,4 +1844,20 @@ const Map<String, String> cevirilerId = {
       'Tidak ada yang belum ditonton di daftar ini',
   'Liste adı kaydedilemedi': 'Nama daftar tidak dapat disimpan',
   'Liste adı boş olamaz': 'Nama daftar tidak boleh kosong',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "10 Film Paling Banyak Ditonton Minggu Ini di dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "10 Serial Paling Banyak Ditonton Minggu Ini di dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "10 Film Paling Banyak Ditonton Bulan Ini di dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "10 Serial Paling Banyak Ditonton Bulan Ini di dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "50 Film Paling Banyak Ditonton di dizi.jpg pada 2026",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "50 Serial Paling Banyak Ditonton di dizi.jpg pada 2026",
+  "Bir süre gösterme": "Sembunyikan sementara",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Daftar ini tidak akan muncul di beranda selama sebulan",
+  "Liste gizlenemedi": "Daftar tidak dapat disembunyikan",
 };

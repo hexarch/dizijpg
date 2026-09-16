@@ -1847,4 +1847,20 @@ const Map<String, String> cevirilerNl = {
   'Bu listede izlemediğin yapım kalmamış': 'Niets ongeziens meer in deze lijst',
   'Liste adı kaydedilemedi': 'Lijstnaam kon niet worden opgeslagen',
   'Liste adı boş olamaz': 'Lijstnaam mag niet leeg zijn',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Top 10 films van deze week op dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Top 10 series van deze week op dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Top 10 films van deze maand op dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Top 10 series van deze maand op dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Top 50 films van 2026 op dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Top 50 series van 2026 op dizi.jpg",
+  "Bir süre gösterme": "Even verbergen",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Deze lijst verschijnt een maand lang niet in je feed",
+  "Liste gizlenemedi": "De lijst kon niet worden verborgen",
 };

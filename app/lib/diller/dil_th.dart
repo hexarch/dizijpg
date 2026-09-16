@@ -1806,4 +1806,20 @@ const Map<String, String> cevirilerTh = {
       'ไม่เหลือเรื่องที่ยังไม่ได้ดูในรายการนี้',
   'Liste adı kaydedilemedi': 'บันทึกชื่อรายการไม่สำเร็จ',
   'Liste adı boş olamaz': 'ชื่อรายการต้องไม่ว่างเปล่า',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "10 ภาพยนตร์ ที่ดูมากที่สุดสัปดาห์นี้บน dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "10 ซีรีส์ ที่ดูมากที่สุดสัปดาห์นี้บน dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "10 ภาพยนตร์ ที่ดูมากที่สุดเดือนนี้บน dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "10 ซีรีส์ ที่ดูมากที่สุดเดือนนี้บน dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "50 ภาพยนตร์ ที่ดูมากที่สุดในปี 2026 บน dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "50 ซีรีส์ ที่ดูมากที่สุดในปี 2026 บน dizi.jpg",
+  "Bir süre gösterme": "ซ่อนไว้สักพัก",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "รายการนี้จะไม่ปรากฏในฟีดของคุณเป็นเวลาหนึ่งเดือน",
+  "Liste gizlenemedi": "ซ่อนรายการไม่สำเร็จ",
 };

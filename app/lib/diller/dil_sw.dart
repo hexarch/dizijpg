@@ -1847,4 +1847,20 @@ const Map<String, String> cevirilerSw = {
       'Hakuna kilichosalia bila kutazamwa katika orodha hii',
   'Liste adı kaydedilemedi': 'Jina la orodha halikuweza kuhifadhiwa',
   'Liste adı boş olamaz': 'Jina la orodha haliwezi kuwa tupu',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Filamu 10 Zilizotazamwa Zaidi Wiki Hii kwenye dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Mfululizo 10 Zilizotazamwa Zaidi Wiki Hii kwenye dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Filamu 10 Zilizotazamwa Zaidi Mwezi Huu kwenye dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Mfululizo 10 Zilizotazamwa Zaidi Mwezi Huu kwenye dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Filamu 50 Zilizotazamwa Zaidi Mwaka 2026 kwenye dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Mfululizo 50 Zilizotazamwa Zaidi Mwaka 2026 kwenye dizi.jpg",
+  "Bir süre gösterme": "Ficha kwa muda",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Orodha hii haitaonekana kwenye mlisho wako kwa mwezi mmoja",
+  "Liste gizlenemedi": "Orodha haikuweza kufichwa",
 };

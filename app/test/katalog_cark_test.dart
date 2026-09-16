@@ -117,11 +117,55 @@ void main() {
         if (anaSayfaRaflari[i].$2.startsWith('/kanon/')) i,
     ];
     expect(indeksler.first, greaterThan(1));
-    // 2027 rafları en altta kalır (raf_2027_test); kanon onların hemen üstünde.
-    expect(indeksler.last, anaSayfaRaflari.length - 3);
+    // 2027 rafları en altta KALIR (raf_2027_test). 17 Eyl 2026'da kanon ile
+    // 2027'nin arasına yıllık "en çok izlenen" rafları girdi; iddia sıra
+    // SAYISINA değil SIRALAMAYA bakıyor artık (araya raf eklemek testi
+    // kırmadan geçsin, ama 2027 dibe çakılı kalsın).
+    final ikiBinYirmiYedi = [
+      for (var i = 0; i < anaSayfaRaflari.length; i++)
+        if (anaSayfaRaflari[i].$1.startsWith('2027')) i,
+    ];
+    expect(ikiBinYirmiYedi.length, 2);
+    expect(ikiBinYirmiYedi.last, anaSayfaRaflari.length - 1);
+    expect(indeksler.last, lessThan(ikiBinYirmiYedi.first));
     for (final r in kanon) {
       expect(rafBul(rafSlug(r.$1))?.$2, r.$2, reason: 'slug geri çözülür');
     }
+  });
+
+  // 17 Eyl 2026 — sitenin kendi izleme verisinden 6 raf. Başlık SUNUCUDAKİ
+  // `populerBasligi()` ile birebir aynı olmalı: akıştaki rafın başlığına
+  // dokunmak `/raf/<slug>`e gidiyor ve slug bu tabloda aranıyor.
+  test('ana sayfa tablosunda 6 "en çok izlenen" rafı, slug geri çözülür', () {
+    final populer = anaSayfaRaflari.where((r) => r.$2.startsWith('/populer/'));
+    expect(populer.length, 6);
+    expect(
+      populer.map((r) => r.$2),
+      containsAll([
+        '/populer/hafta/movie',
+        '/populer/hafta/tv',
+        '/populer/ay/movie',
+        '/populer/ay/tv',
+        '/populer/yil/movie',
+        '/populer/yil/tv',
+      ]),
+    );
+    expect(
+      populer.map((r) => r.$1),
+      containsAll([
+        "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film",
+        "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi",
+      ]),
+    );
+    for (final r in populer) {
+      expect(rafBul(rafSlug(r.$1))?.$2, r.$2, reason: 'slug geri çözülür');
+    }
+    // Haftalık raf, TMDB'nin "Haftanın …" raflarının hemen ardında olmalı:
+    // ikisi de "bu hafta" diyor, fark ancak yan yana okununca anlaşılıyor.
+    final haftalik = anaSayfaRaflari.indexWhere(
+      (r) => r.$2 == '/populer/hafta/movie',
+    );
+    expect(haftalik, 2);
   });
 
   testWidgets('kanon rafında çark: tüm liste + izlenen idler, anahtar var', (

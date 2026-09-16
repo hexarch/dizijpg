@@ -1824,4 +1824,20 @@ const Map<String, String> cevirilerBn = {
   'Bu listede izlemediğin yapım kalmamış': 'এই তালিকায় না দেখা কিছু বাকি নেই',
   'Liste adı kaydedilemedi': 'লিস্টের নাম সেভ করা যায়নি',
   'Liste adı boş olamaz': 'লিস্টের নাম খালি রাখা যাবে না',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "dizi.jpg-এ এই সপ্তাহে সবচেয়ে বেশি দেখা 10টি সিনেমা",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "dizi.jpg-এ এই সপ্তাহে সবচেয়ে বেশি দেখা 10টি সিরিজ",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "dizi.jpg-এ এই মাসে সবচেয়ে বেশি দেখা 10টি সিনেমা",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "dizi.jpg-এ এই মাসে সবচেয়ে বেশি দেখা 10টি সিরিজ",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "dizi.jpg-এ 2026 সালে সবচেয়ে বেশি দেখা 50টি সিনেমা",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "dizi.jpg-এ 2026 সালে সবচেয়ে বেশি দেখা 50টি সিরিজ",
+  "Bir süre gösterme": "কিছু সময়ের জন্য লুকান",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "এই তালিকাটি এক মাস আপনার ফিডে দেখা যাবে না",
+  "Liste gizlenemedi": "তালিকাটি লুকানো যায়নি",
 };

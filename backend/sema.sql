@@ -1944,3 +1944,23 @@ CREATE TABLE IF NOT EXISTS surum_notlari (
   guncelleme  timestamptz NOT NULL DEFAULT now(),
   PRIMARY KEY (surum, dil)
 );
+
+-- ---------------------------------------------------------------------------
+-- AKIŞTA RAF GİZLEME (17 Eyl 2026, migrasyon-2026-09-17.sql)
+-- ---------------------------------------------------------------------------
+-- Akışa serpiştirilen ana sayfa raflarının altındaki "Bir süre gösterme"
+-- tiki. Kayıt YALNIZ AKIŞI etkiler (Keşfet katalogdur), süresi 1 aydır ve
+-- okuma sorgusu `bitis > now()` ile süzdüğü için temizlik işi gerekmez.
+-- `slug` = rafın kalıcı kimliği (`raf_slug.js`, `/raf/<slug>` ile aynı dize).
+CREATE TABLE IF NOT EXISTS raf_gizleme (
+  kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  slug         TEXT NOT NULL,
+  bitis        TIMESTAMPTZ NOT NULL,
+  PRIMARY KEY (kullanici_id, slug)
+);
+
+-- "dizi.jpg'de en çok izlenen" rafları (populer_raflar.js): tur + tarih
+-- aralığında GROUP BY. Diğer izleme indekslerinin ikisi de kullanici_id ile
+-- başladığı için bu sorgu onlardan yararlanamıyor.
+CREATE INDEX IF NOT EXISTS izlemeler_tur_tarih_kesin
+  ON izlemeler (tur, tarih DESC) WHERE tarih_kesin;

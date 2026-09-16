@@ -1847,4 +1847,20 @@ const Map<String, String> cevirilerSv = {
   'Bu listede izlemediğin yapım kalmamış': 'Inget osett kvar i den här listan',
   'Liste adı kaydedilemedi': 'Listnamnet kunde inte sparas',
   'Liste adı boş olamaz': 'Listnamnet får inte vara tomt',
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Film":
+      "Topp 10 filmer den här veckan på dizi.jpg",
+  "dizi.jpg'de Bu Hafta En Çok İzlenen 10 Dizi":
+      "Topp 10 serier den här veckan på dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Film":
+      "Topp 10 filmer den här månaden på dizi.jpg",
+  "dizi.jpg'de Bu Ay En Çok İzlenen 10 Dizi":
+      "Topp 10 serier den här månaden på dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Film":
+      "Topp 50 filmer under 2026 på dizi.jpg",
+  "dizi.jpg'de 2026'da En Çok İzlenen 50 Dizi":
+      "Topp 50 serier under 2026 på dizi.jpg",
+  "Bir süre gösterme": "Dölj ett tag",
+  "Bu liste bir ay boyunca akışta görünmeyecek":
+      "Den här listan visas inte i ditt flöde på en månad",
+  "Liste gizlenemedi": "Listan kunde inte döljas",
 };
