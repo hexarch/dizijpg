@@ -2167,6 +2167,47 @@ const BILDIRIM_TERCIH_KOLON = {
   kisi: 'bildir_kisi',
 };
 
+/**
+ * SESSİZ VERİ PUSH'U — kullanıcının KENDİ cihazlarına, bildirim göstermeden
+ * (16 Eyl 2026). İlk kullanım: `mesaj_okundu` — kullanıcı bir sohbeti bir
+ * cihazda (ya da webde) okuyunca diğer telefonlarındaki o kişiye ait mesaj
+ * bildirimi kendiliğinden kapansın ("mesajı okursa bildirim otomatik
+ * silinmeli"). `pushBildirim` bu iş için uygun değil: aktör = alıcı olduğunda
+ * susar, şablon metni ister ve iOS'ta görünür bildirim üretir.
+ *
+ * Android: data-only + priority high → arka plan izolatı `pushArkaplan`
+ * yerel bildirimi iptal eder. iOS: content-available (arka plan) paketi;
+ * APNs'in kendi gösterdiği bildirim istemciden seçici kapatılamaz, bu
+ * yüzden orada etkisi sınırlıdır (bkz. push.dart notu).
+ */
+async function sessizPush(kullaniciId, veri) {
+  if (!fcmHazir || !kullaniciId) return;
+  try {
+    const tok = await havuz.query(
+      'SELECT token, platform FROM cihaz_tokenlari WHERE kullanici_id=$1', [kullaniciId]);
+    if (!tok.rows.length) return;
+    const data = Object.fromEntries(Object.entries(veri).map(([k, v]) => [k, String(v ?? '')]));
+    const ios = tok.rows.filter((r) => r.platform === 'ios').map((r) => r.token);
+    const diger = tok.rows.filter((r) => r.platform !== 'ios').map((r) => r.token);
+    const gonderimler = [];
+    if (diger.length) gonderimler.push({ tokens: diger, data, android: { priority: 'high' } });
+    if (ios.length) {
+      gonderimler.push({
+        tokens: ios, data,
+        apns: {
+          headers: { 'apns-priority': '5', 'apns-push-type': 'background' },
+          payload: { aps: { 'content-available': 1 } },
+        },
+      });
+    }
+    for (const g of gonderimler) {
+      await admin.messaging().sendEachForMulticast(g).catch(() => {});
+    }
+  } catch (e) {
+    console.error('sessizPush:', e.message);
+  }
+}
+
 async function bildirimEkle(aliciId, tur, aktorId, yorumId = null, pushEkstra = null) {
   if (!aliciId || aliciId === aktorId) return;
   // Alıcı bu türü kapattıysa ne uygulama-içi bildirim ne de push gönder.
@@ -16664,7 +16705,7 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
             -- icerik_tur yok) — kullanici "bir postu birine gonderince
             -- mesajlar kisminda bos gozukuyor" diye bildirdi (1 Eyl 2026).
             m.id, m.metin, m.medya, m.icerik_tur, m.yorum_id, m.tarih, m.gonderen_id,
-            m.dosya_ad, m.tek_kullanimlik,
+            m.dosya_ad, m.tek_kullanimlik, m.silindi,
             k.id AS partner_id, k.kullanici_adi AS partner, k.avatar AS partner_avatar,
             ta.takma_ad AS partner_takma_ad,
             -- Çevrimiçi HESABI SUNUCUDA yapılır: gizleyen kullanıcının
@@ -16691,10 +16732,13 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
      ) by ON by.alici_id = k.id
      LEFT JOIN (
        SELECT gonderen_id, count(*)::int AS adet FROM mesajlar
-       WHERE alici_id=$1 AND NOT okundu
+       WHERE alici_id=$1 AND NOT okundu AND NOT ($1 = ANY(gizleyenler))
        GROUP BY gonderen_id
      ) o ON o.gonderen_id = k.id
      WHERE (m.gonderen_id=$1 OR m.alici_id=$1)
+       -- "Benden sil"/"Sohbeti sil" ile gizlenen satırlar sayılmaz: tüm
+       -- sohbet gizlendiyse sohbet listeden düşer (16 Eyl 2026).
+       AND NOT ($1 = ANY(m.gizleyenler))
        AND ${engelSuzgec('k.id', '$1')}
      ORDER BY LEAST(m.gonderen_id,m.alici_id), GREATEST(m.gonderen_id,m.alici_id), m.id DESC`,
     [req.kullanici.id, CEVRIMICI_ESIK_SN],
@@ -16735,6 +16779,7 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
   const toplam = await havuz.query(
     `SELECT count(*)::int AS adet FROM mesajlar
      WHERE alici_id=$1 AND NOT okundu AND ${engelSuzgec('gonderen_id', '$1')}
+       AND NOT ($1 = ANY(gizleyenler))
        AND NOT EXISTS (SELECT 1 FROM mesaj_istek_kararlari rk
                        WHERE rk.kullanici_id=$1 AND rk.partner_id=gonderen_id
                          AND rk.karar='red')`,
@@ -16784,6 +16829,7 @@ app.get('/sohbetler/okunmamis', girisZorunlu, sarici(async (req, res) => {
   const toplam = await havuz.query(
     `SELECT count(*)::int AS adet FROM mesajlar
      WHERE alici_id=$1 AND NOT okundu AND ${engelSuzgec('gonderen_id', '$1')}
+       AND NOT ($1 = ANY(gizleyenler))
        AND NOT EXISTS (SELECT 1 FROM mesaj_istek_kararlari rk
                        WHERE rk.kullanici_id=$1 AND rk.partner_id=gonderen_id
                          AND rk.karar='red')`,
@@ -17262,6 +17308,9 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
             -- ALBÜM + BELGE (2 Eyl 2026)
             m.medyalar, m.dosya, m.dosya_ad, m.dosya_boyut, m.dosya_tur,
             m.tek_kullanimlik, m.tek_acildi,
+            -- SİLME (16 Eyl 2026): herkesten silinen satır yer tutucu olur;
+            -- alıntılanan mesaj silindiyse alıntı kutusu da "silindi" der.
+            m.silindi, y.silindi AS yanit_silindi,
             y.metin AS yanit_metin, y.gonderen_id AS yanit_gonderen,
             y.medya AS yanit_medya, y.icerik_tur AS yanit_icerik_tur,
             y.dosya_ad AS yanit_dosya_ad,
@@ -17271,7 +17320,9 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
             y.yorum_id AS yanit_yorum_id
      FROM mesajlar m
      LEFT JOIN mesajlar y ON y.id = m.yanit_id
-     WHERE ((m.gonderen_id=$1 AND m.alici_id=$2) OR (m.gonderen_id=$2 AND m.alici_id=$1))`;
+     WHERE ((m.gonderen_id=$1 AND m.alici_id=$2) OR (m.gonderen_id=$2 AND m.alici_id=$1))
+       -- "Benden sil" denen satırlar bu kullanıcıya hiç gitmez.
+       AND NOT ($1 = ANY(m.gizleyenler))`;
   let rows;
   if (sonra) {
     // Yoklama: yalnız son görülen id'den YENİLER. ASC = istemci sona ekler,
@@ -17334,9 +17385,10 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   let tepkiIdler = rows.map((r) => r.id);
   if (sonra) {
     const pencere = await havuz.query(
-      `SELECT m.id, m.okundu, m.iletildi, m.duzenlendi
+      `SELECT m.id, m.okundu, m.iletildi, m.duzenlendi, m.silindi
        FROM mesajlar m
        WHERE ((m.gonderen_id=$1 AND m.alici_id=$2) OR (m.gonderen_id=$2 AND m.alici_id=$1))
+         AND NOT ($1 = ANY(m.gizleyenler))
        ORDER BY m.id DESC LIMIT 50`,
       [req.kullanici.id, partnerId],
     );
@@ -17353,6 +17405,9 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
       okundu: r.okundu,
       iletildi: r.iletildi,
       duzenlendi: r.duzenlendi,
+      // Karşı taraf "herkesten sil" dediyse yoklama bunu taşır; istemci
+      // satırı yer tutucuya çevirir (yeniden yükleme beklenmez).
+      silindi: r.silindi === true,
       tepkiler: tepkiHaritasi[r.id] || [],
     }));
   }
@@ -17394,8 +17449,15 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   }
   havuz.query(
     `UPDATE mesajlar SET okundu=true, iletildi=true
-     WHERE alici_id=$1 AND gonderen_id=$2 AND NOT okundu`,
-    [req.kullanici.id, partnerId]).catch(() => {});
+     WHERE alici_id=$1 AND gonderen_id=$2 AND NOT okundu RETURNING id`,
+    [req.kullanici.id, partnerId]).then((o) => {
+      // OKUNDU → okuyanın DİĞER cihazlarındaki bildirim kapansın (16 Eyl
+      // 2026). Yalnız gerçekten okunmamış mesaj varken gider; her
+      // yoklamada boş push yağmasın.
+      if (o.rowCount > 0) {
+        sessizPush(req.kullanici.id, { tur: 'mesaj_okundu', ad: k.rows[0].kullanici_adi });
+      }
+    }).catch(() => {});
   // Sohbeti okumak zildeki 'mesaj' bildirimini de düşürür; yoksa
   // kullanıcı DM'i okuduğu halde rozette 1 görmeye devam ediyordu.
   havuz.query(
@@ -17869,16 +17931,14 @@ app.post('/mesajlar/:id/tek-acildi', girisZorunlu, sarici(async (req, res) => {
 }));
 
 // Kendi mesajını sil (iki taraftan da kalkar; medyası varsa dosyayı da temizler)
-app.delete('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id)) return res.status(400).json({ hata: 'Geçersiz id' });
-  const { rows } = await havuz.query(
-    'DELETE FROM mesajlar WHERE id=$1 AND gonderen_id=$2 RETURNING medya, medyalar, dosya',
-    [id, req.kullanici.id],
-  );
-  if (!rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı' });
+/**
+ * Bir mesaj satırının diskteki eklerini siler (medya, albüm kareleri, video
+ * kapağı, belge). DELETE ve "herkesten sil" (yer tutucu) ortak kullanır.
+ */
+function mesajEkleriniSil(row) {
+  if (!row) return;
   // ALBÜM (2 Eyl 2026): dizideki her kare silinir; `medya` = medyalar[1].
-  const yollar = new Set([rows[0].medya, ...(rows[0].medyalar || [])].filter(Boolean));
+  const yollar = new Set([row.medya, ...(row.medyalar || [])].filter(Boolean));
   for (const yol of yollar) {
     const ad = path.basename(yol);
     fs.unlink(path.join(MEDYA_DIZIN, ad), () => {});
@@ -17890,9 +17950,129 @@ app.delete('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
   }
   // BELGE: ayrı dizinden silinir. Kota iadesi medya silmede de yapılmıyor;
   // aynı davranış korundu (ayrı karar).
-  const belge = dosyaEkAdi(rows[0].dosya);
+  const belge = dosyaEkAdi(row.dosya);
   if (belge) fs.unlink(path.join(DOSYA_EK_DIZIN, belge), () => {});
+}
+
+const MESAJ_EK_KOLONLARI = 'medya, medyalar, dosya';
+
+// ESKİ UÇ (yayındaki istemciler): kendi mesajını satırıyla birlikte siler.
+// Yeni istemci aşağıdaki `POST /mesajlar/:id/sil`i kullanır.
+app.delete('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const { rows } = await havuz.query(
+    `DELETE FROM mesajlar WHERE id=$1 AND gonderen_id=$2 RETURNING ${MESAJ_EK_KOLONLARI}`,
+    [id, req.kullanici.id],
+  );
+  if (!rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı' });
+  mesajEkleriniSil(rows[0]);
   res.json({ tamam: true });
+}));
+
+// ===========================================================================
+// MESAJ / SOHBET SİLME — "benden sil" · "herkesten sil" (16 Eyl 2026)
+// ===========================================================================
+// İSTEK (birebir): "sohbete basılı tutunca silme seçeneği olmalı ve karşı
+// taraftan da sil seçeneği gelmeli ve sohbetin içinde de mesaja basılı
+// tutunca benden sil veya karşı taraftan sil seçeneği olmalı eğer sadece 1
+// mesajı silerse veya belirli mesajları silerse sohbette bu mesaj silindi
+// yazmalı"
+//
+// KAPSAM 'ben'   : satır kalır, `gizleyenler`e kullanıcı eklenir; listeleme
+//                  süzer. İki taraf da gizlediyse satır + ekler gerçekten
+//                  silinir (çöp birikmesin).
+// KAPSAM 'herkes': yalnız GÖNDEREN. Satır KALIR, `silindi=true`, içerik
+//                  alanları NULL, ekler diskten gider → iki tarafta da
+//                  "Bu mesaj silindi" yer tutucusu. Alıntılar kopmaz (yanit_id
+//                  yerinde), alıntı kutusu da "silindi" yazar.
+// Karşı tarafa yayılım: yoklama penceresi (`guncellemeler.silindi`).
+
+const MESAJ_SIL_KAPSAM = new Set(['ben', 'herkes']);
+
+/** İki tarafın da gizlediği satırları gerçekten siler (eklerle birlikte). */
+async function ciftGizliMesajlariTemizle(idler) {
+  if (!idler.length) return;
+  const { rows } = await havuz.query(
+    `DELETE FROM mesajlar
+     WHERE id = ANY($1::int[])
+       AND gonderen_id = ANY(gizleyenler) AND alici_id = ANY(gizleyenler)
+     RETURNING ${MESAJ_EK_KOLONLARI}`,
+    [idler],
+  );
+  for (const r of rows) mesajEkleriniSil(r);
+}
+
+app.post('/mesajlar/:id/sil', girisZorunlu, sarici(async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const kapsam = String(req.body?.kapsam || 'ben');
+  if (!MESAJ_SIL_KAPSAM.has(kapsam)) return res.status(400).json({ hata: 'Geçersiz kapsam' });
+  const ben = req.kullanici.id;
+  if (kapsam === 'ben') {
+    const { rows } = await havuz.query(
+      `UPDATE mesajlar SET gizleyenler = array_append(gizleyenler, $2)
+       WHERE id=$1 AND (gonderen_id=$2 OR alici_id=$2) AND NOT ($2 = ANY(gizleyenler))
+       RETURNING id`,
+      [id, ben],
+    );
+    if (!rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı' });
+    await ciftGizliMesajlariTemizle([id]);
+    return res.json({ tamam: true, kapsam });
+  }
+  // herkes: yalnız gönderen. Ekler ÖNCE okunur (UPDATE sonrası NULL olur),
+  // sonra satır yer tutucuya çevrilir. Yarış zararsız: ikinci istek 404.
+  const eski = await havuz.query(
+    `SELECT ${MESAJ_EK_KOLONLARI} FROM mesajlar
+     WHERE id=$1 AND gonderen_id=$2 AND NOT silindi`,
+    [id, ben]);
+  if (!eski.rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı' });
+  const { rowCount } = await havuz.query(
+    `UPDATE mesajlar
+     SET silindi=true, metin=NULL, medya=NULL, medyalar=NULL, ses_dalga=NULL,
+         icerik_tur=NULL, icerik_id=NULL, yorum_id=NULL,
+         dosya=NULL, dosya_ad=NULL, dosya_boyut=NULL, dosya_tur=NULL,
+         duzenlendi=false, tek_kullanimlik=false
+     WHERE id=$1 AND gonderen_id=$2 AND NOT silindi`,
+    [id, ben]);
+  if (!rowCount) return res.status(404).json({ hata: 'Mesaj bulunamadı' });
+  mesajEkleriniSil(eski.rows[0]);
+  res.json({ tamam: true, kapsam });
+}));
+
+/**
+ * Sohbetin tamamı: 'ben' → bu ana kadarki tüm satırlar benden gizlenir
+ * (sohbet listeden düşer, yeni mesaj gelirse yeniden belirir); 'herkes' →
+ * çiftin TÜM mesajları iki taraftan da silinir (Telegram "her ikimiz için
+ * sil"). İkisi de istemcide onay penceresinden geçer.
+ */
+app.post('/sohbetler/:kullaniciAdi/sil', girisZorunlu, sarici(async (req, res) => {
+  const kapsam = String(req.body?.kapsam || 'ben');
+  if (!MESAJ_SIL_KAPSAM.has(kapsam)) return res.status(400).json({ hata: 'Geçersiz kapsam' });
+  const k = await havuz.query(
+    'SELECT id FROM kullanicilar WHERE kullanici_adi=$1', [req.params.kullaniciAdi]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const ben = req.kullanici.id;
+  const partnerId = k.rows[0].id;
+  if (kapsam === 'ben') {
+    const { rows } = await havuz.query(
+      `UPDATE mesajlar SET gizleyenler = array_append(gizleyenler, $1)
+       WHERE ((gonderen_id=$1 AND alici_id=$2) OR (gonderen_id=$2 AND alici_id=$1))
+         AND NOT ($1 = ANY(gizleyenler))
+       RETURNING id`,
+      [ben, partnerId],
+    );
+    await ciftGizliMesajlariTemizle(rows.map((r) => r.id));
+    return res.json({ tamam: true, kapsam, adet: rows.length });
+  }
+  const { rows } = await havuz.query(
+    `DELETE FROM mesajlar
+     WHERE (gonderen_id=$1 AND alici_id=$2) OR (gonderen_id=$2 AND alici_id=$1)
+     RETURNING ${MESAJ_EK_KOLONLARI}`,
+    [ben, partnerId],
+  );
+  for (const r of rows) mesajEkleriniSil(r);
+  res.json({ tamam: true, kapsam, adet: rows.length });
 }));
 
 // ===========================================================================

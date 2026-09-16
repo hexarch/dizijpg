@@ -1786,4 +1786,22 @@ const Map<String, String> cevirilerGu = {
   '{} gün önce~tekil': '{} દિવસ પહેલાં',
   '{} hafta önce': '{} અઠવાડિયા પહેલાં',
   '{} hafta önce~tekil': '{} અઠવાડિયું પહેલાં',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'આ સંદેશ કાઢી નાખવામાં આવ્યો',
+  'Benden sil': 'મારા માટે કાઢો',
+  'Herkesten sil': 'બધા માટે કાઢો',
+  'Sohbeti sil': 'ચેટ કાઢો',
+  'Karşı taraftan da sil': 'બીજી બાજુથી પણ કાઢો',
+  'Yalnız senden silinir': 'ફક્ત તમારા માટે કઢાશે',
+  '{} için de silinir': '{} માટે પણ કઢાશે',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'આ ચેટ તમારા માટે કઢાઈ જશે. પાછું લાવી શકાશે નહીં.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'આ ચેટ બંને બાજુથી કઢાઈ જશે. પાછું લાવી શકાશે નહીં.',
+  'Sohbet silinemedi': 'ચેટ કાઢી શકાઈ નહીં',
+  'İndiriliyor': 'ડાઉનલોડ થઈ રહ્યું છે',
+  'İndirildi': 'ડાઉનલોડ થયું',
+  'Dosya indirilemedi': 'ફાઇલ ડાઉનલોડ થઈ શકી નહીં',
+  'Bu dosyayı açacak uygulama yok': 'આ ફાઇલ ખોલી શકે તેવી કોઈ ઍપ નથી',
+  'Dosyanın yalnız başı gösteriliyor': 'ફાઇલની ફક્ત શરૂઆત બતાવાય છે',
 };

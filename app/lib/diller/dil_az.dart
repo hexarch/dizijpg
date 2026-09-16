@@ -1789,4 +1789,22 @@ const Map<String, String> cevirilerAz = {
   '{} gün önce~tekil': '{} gün əvvəl',
   '{} hafta önce': '{} həftə əvvəl',
   '{} hafta önce~tekil': '{} həftə əvvəl',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Bu mesaj silindi',
+  'Benden sil': 'Məndən sil',
+  'Herkesten sil': 'Hamıdan sil',
+  'Sohbeti sil': 'Söhbəti sil',
+  'Karşı taraftan da sil': 'Qarşı tərəfdən də sil',
+  'Yalnız senden silinir': 'Yalnız səndən silinir',
+  '{} için de silinir': '{} üçün də silinir',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Bu söhbət səndən silinəcək. Geri qaytarıla bilməz.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Bu söhbət hər iki tərəfdən silinəcək. Geri qaytarıla bilməz.',
+  'Sohbet silinemedi': 'Söhbət silinə bilmədi',
+  'İndiriliyor': 'Yüklənir',
+  'İndirildi': 'Yükləndi',
+  'Dosya indirilemedi': 'Fayl yüklənə bilmədi',
+  'Bu dosyayı açacak uygulama yok': 'Bu faylı açacaq tətbiq yoxdur',
+  'Dosyanın yalnız başı gösteriliyor': 'Faylın yalnız başı göstərilir',
 };

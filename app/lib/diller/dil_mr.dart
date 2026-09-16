@@ -1793,4 +1793,22 @@ const Map<String, String> cevirilerMr = {
   '{} gün önce~tekil': '{} दिवसापूर्वी',
   '{} hafta önce': '{} आठवड्यांपूर्वी',
   '{} hafta önce~tekil': '{} आठवड्यापूर्वी',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'हा संदेश हटवला गेला',
+  'Benden sil': 'माझ्यासाठी हटवा',
+  'Herkesten sil': 'सर्वांसाठी हटवा',
+  'Sohbeti sil': 'चॅट हटवा',
+  'Karşı taraftan da sil': 'समोरच्या बाजूनेही हटवा',
+  'Yalnız senden silinir': 'फक्त तुमच्याकडून हटेल',
+  '{} için de silinir': '{} कडूनही हटेल',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'ही चॅट तुमच्याकडून हटेल. परत आणता येणार नाही.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'ही चॅट दोन्ही बाजूंनी हटेल. परत आणता येणार नाही.',
+  'Sohbet silinemedi': 'चॅट हटवता आली नाही',
+  'İndiriliyor': 'डाउनलोड होत आहे',
+  'İndirildi': 'डाउनलोड झाले',
+  'Dosya indirilemedi': 'फाइल डाउनलोड होऊ शकली नाही',
+  'Bu dosyayı açacak uygulama yok': 'ही फाइल उघडणारे कोणतेही अ‍ॅप नाही',
+  'Dosyanın yalnız başı gösteriliyor': 'फाइलची फक्त सुरुवात दाखवली जात आहे',
 };

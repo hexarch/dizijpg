@@ -1799,4 +1799,23 @@ const Map<String, String> cevirilerId = {
   '{} gün önce~tekil': '{} hari lalu',
   '{} hafta önce': '{} minggu lalu',
   '{} hafta önce~tekil': '{} minggu lalu',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Pesan ini telah dihapus',
+  'Benden sil': 'Hapus untuk saya',
+  'Herkesten sil': 'Hapus untuk semua',
+  'Sohbeti sil': 'Hapus obrolan',
+  'Karşı taraftan da sil': 'Hapus juga di pihak lain',
+  'Yalnız senden silinir': 'Hanya dihapus di sisi Anda',
+  '{} için de silinir': 'Juga dihapus di sisi {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Obrolan ini akan dihapus di sisi Anda. Tidak dapat dibatalkan.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Obrolan ini akan dihapus di kedua sisi. Tidak dapat dibatalkan.',
+  'Sohbet silinemedi': 'Obrolan tidak dapat dihapus',
+  'İndiriliyor': 'Mengunduh',
+  'İndirildi': 'Terunduh',
+  'Dosya indirilemedi': 'File tidak dapat diunduh',
+  'Bu dosyayı açacak uygulama yok':
+      'Tidak ada aplikasi yang dapat membuka file ini',
+  'Dosyanın yalnız başı gösteriliyor': 'Hanya awal file yang ditampilkan',
 };

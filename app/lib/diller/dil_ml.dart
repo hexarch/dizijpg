@@ -1808,4 +1808,23 @@ const Map<String, String> cevirilerMl = {
   '{} gün önce~tekil': '{} ദിവസം മുമ്പ്',
   '{} hafta önce': '{} ആഴ്ച മുമ്പ്',
   '{} hafta önce~tekil': '{} ആഴ്ച മുമ്പ്',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'ഈ സന്ദേശം ഇല്ലാതാക്കി',
+  'Benden sil': 'എനിക്കായി ഇല്ലാതാക്കുക',
+  'Herkesten sil': 'എല്ലാവർക്കും ഇല്ലാതാക്കുക',
+  'Sohbeti sil': 'ചാറ്റ് ഇല്ലാതാക്കുക',
+  'Karşı taraftan da sil': 'മറുവശത്തുനിന്നും ഇല്ലാതാക്കുക',
+  'Yalnız senden silinir': 'നിങ്ങളിൽ നിന്ന് മാത്രം ഇല്ലാതാകും',
+  '{} için de silinir': '{} എന്നയാളിൽ നിന്നും ഇല്ലാതാകും',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'ഈ ചാറ്റ് നിങ്ങളിൽ നിന്ന് ഇല്ലാതാകും. പഴയപടിയാക്കാനാവില്ല.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'ഈ ചാറ്റ് ഇരുവശത്തുനിന്നും ഇല്ലാതാകും. പഴയപടിയാക്കാനാവില്ല.',
+  'Sohbet silinemedi': 'ചാറ്റ് ഇല്ലാതാക്കാനായില്ല',
+  'İndiriliyor': 'ഡൗൺലോഡ് ചെയ്യുന്നു',
+  'İndirildi': 'ഡൗൺലോഡ് ചെയ്തു',
+  'Dosya indirilemedi': 'ഫയൽ ഡൗൺലോഡ് ചെയ്യാനായില്ല',
+  'Bu dosyayı açacak uygulama yok': 'ഈ ഫയൽ തുറക്കാൻ ആപ്പ് ഇല്ല',
+  'Dosyanın yalnız başı gösteriliyor':
+      'ഫയലിന്റെ തുടക്കം മാത്രമേ കാണിക്കുന്നുള്ളൂ',
 };

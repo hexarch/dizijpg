@@ -1796,4 +1796,22 @@ const Map<String, String> cevirilerCs = {
   '{} gün önce~tekil': 'před {} dnem',
   '{} hafta önce': 'před {} týdny',
   '{} hafta önce~tekil': 'před {} týdnem',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Tato zpráva byla smazána',
+  'Benden sil': 'Smazat u mě',
+  'Herkesten sil': 'Smazat u všech',
+  'Sohbeti sil': 'Smazat chat',
+  'Karşı taraftan da sil': 'Smazat i u druhé strany',
+  'Yalnız senden silinir': 'Smaže se jen u vás',
+  '{} için de silinir': 'Smaže se i u {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Tento chat se u vás smaže. Nelze vzít zpět.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Tento chat se smaže na obou stranách. Nelze vzít zpět.',
+  'Sohbet silinemedi': 'Chat se nepodařilo smazat',
+  'İndiriliyor': 'Stahování',
+  'İndirildi': 'Staženo',
+  'Dosya indirilemedi': 'Soubor se nepodařilo stáhnout',
+  'Bu dosyayı açacak uygulama yok': 'Tento soubor neotevře žádná aplikace',
+  'Dosyanın yalnız başı gösteriliyor': 'Zobrazen je jen začátek souboru',
 };

@@ -166,6 +166,11 @@ class Api {
   @visibleForTesting
   static set istemci(http.Client c) => _istemci = c;
 
+  /// Akışlı (streaming) istekler için aynı kalıcı istemci — sohbet belge
+  /// indiricisi (dosya_indirici_io.dart) ilerlemeyi parça parça okur; testte
+  /// yukarıdaki setter'la takılan sahte istemciyi görür.
+  static http.Client get istemci => _istemci;
+
   static Future<void> tokenYukle() async {
     final prefs = await SharedPreferences.getInstance();
     _token = prefs.getString('token');
@@ -711,7 +716,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.170.0+254';
+  static const surum = '1.171.0+255';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

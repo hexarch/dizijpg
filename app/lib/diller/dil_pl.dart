@@ -1820,4 +1820,22 @@ const Map<String, String> cevirilerPl = {
   '{} gün önce~tekil': '{} dzień temu',
   '{} hafta önce': '{} tyg. temu',
   '{} hafta önce~tekil': '{} tydzień temu',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Ta wiadomość została usunięta',
+  'Benden sil': 'Usuń u mnie',
+  'Herkesten sil': 'Usuń u wszystkich',
+  'Sohbeti sil': 'Usuń czat',
+  'Karşı taraftan da sil': 'Usuń także u drugiej osoby',
+  'Yalnız senden silinir': 'Usunięte tylko u Ciebie',
+  '{} için de silinir': 'Usunięte także u {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Ten czat zostanie usunięty u Ciebie. Nie można tego cofnąć.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Ten czat zostanie usunięty po obu stronach. Nie można tego cofnąć.',
+  'Sohbet silinemedi': 'Nie udało się usunąć czatu',
+  'İndiriliyor': 'Pobieranie',
+  'İndirildi': 'Pobrano',
+  'Dosya indirilemedi': 'Nie udało się pobrać pliku',
+  'Bu dosyayı açacak uygulama yok': 'Żadna aplikacja nie otwiera tego pliku',
+  'Dosyanın yalnız başı gösteriliyor': 'Wyświetlany jest tylko początek pliku',
 };

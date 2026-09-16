@@ -1795,4 +1795,22 @@ const Map<String, String> cevirilerVi = {
   '{} gün önce~tekil': '{} ngày trước',
   '{} hafta önce': '{} tuần trước',
   '{} hafta önce~tekil': '{} tuần trước',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Tin nhắn này đã bị xóa',
+  'Benden sil': 'Xóa ở phía tôi',
+  'Herkesten sil': 'Xóa ở cả hai phía',
+  'Sohbeti sil': 'Xóa cuộc trò chuyện',
+  'Karşı taraftan da sil': 'Xóa cả ở phía người kia',
+  'Yalnız senden silinir': 'Chỉ xóa ở phía bạn',
+  '{} için de silinir': 'Cũng xóa ở phía {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Cuộc trò chuyện này sẽ bị xóa ở phía bạn. Không thể hoàn tác.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Cuộc trò chuyện này sẽ bị xóa ở cả hai phía. Không thể hoàn tác.',
+  'Sohbet silinemedi': 'Không thể xóa cuộc trò chuyện',
+  'İndiriliyor': 'Đang tải xuống',
+  'İndirildi': 'Đã tải xuống',
+  'Dosya indirilemedi': 'Không thể tải tệp xuống',
+  'Bu dosyayı açacak uygulama yok': 'Không có ứng dụng nào mở được tệp này',
+  'Dosyanın yalnız başı gösteriliyor': 'Chỉ hiển thị phần đầu của tệp',
 };

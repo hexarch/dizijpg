@@ -1,5 +1,47 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-16 — 🔨 SOHBET: SAĞA ÇEKEREK ALINTI, GALERİ EN YENİ, SİLME (benden/herkesten), OKUNUNCA BİLDİRİM, BELGE UYGULAMA İÇİNDE (1.171.0+255)
+
+**Tetik (5 istek, aynı tur):** *"karşı tarafın mesajını sola iterek değil sağa
+iterek alıntılayabilmeliyim"* · *"dosya kısmına tıklayınca galeriden gelen
+görseller eski, en yenileri açılmalı"* · *"sohbete basılı tutunca silme +
+karşı taraftan da sil; mesaja basılı tutunca benden sil / karşı taraftan sil;
+silinen mesajda 'bu mesaj silindi' yazmalı"* · *"karşı taraf mesajı okursa
+bildirim otomatik silinmeli"* · *"dosya indir tarayıcıya yönlendiriyor;
+WhatsApp/Telegram gibi uygulama içinde inmeli, tıklayınca destekliyorsak
+bizde aç, desteklemiyorsak destekleyecek uygulamaları göster"*.
+
+- **Alıntı yönü:** `_KaydirYanitla.saga` — balon ekranın ORTASINA çekilir
+  (karşı tarafınki sağa, benimki sola); ters yön kımıldatmaz. Kenar payından
+  (24 dp) başlayan sürükleme artık baştan sona yok sayılıyor.
+- **Galeri:** `getAssetPathList(filterOption: createDate DESC)` — ORDER BY'sız
+  MediaStore eskiden yeniye dönüyordu. (Yalnız mobil derlemede etkili.)
+- **Silme (migrasyon-2026-09-16.sql):** `mesajlar.silindi` (yer tutucu) +
+  `gizleyenler INT[]` (benden sil). Uçlar `POST /mesajlar/:id/sil {kapsam}`,
+  `POST /sohbetler/:ad/sil {kapsam}`; eski `DELETE /mesajlar/:id` yayındaki
+  istemci için duruyor. Listeleme/okunmamış sayaçları `NOT ($1 = ANY(gizleyenler))`
+  ile süzer; iki taraf da gizlerse satır+ekler gerçekten silinir. Karşı tarafa
+  yayılım yoklama penceresi `guncellemeler.silindi`. İstemci: uzun basma
+  menüsünde "Benden sil" (her mesaj) + "Herkesten sil" (kendi mesajım); yer
+  tutucu balon italik + üstü çizili daire; alıntısı da "Bu mesaj silindi";
+  sohbet listesinde uzun basma → alt sayfa + ONAY penceresi.
+- **Okununca bildirim:** GET /mesajlar okundu işaretlerken satır güncellendiyse
+  okuyanın KENDİ cihazlarına sessiz veri push'u `mesaj_okundu` (`sessizPush`);
+  istemci (ön plan + arka plan izolatı) o kişinin yerel bildirimini kapatır,
+  başka sohbet kalmadıysa özet demetini de. iOS'ta APNs bildirimi seçici
+  kapatılamıyor (sınır, kodda not).
+- **Belge indirme:** `lib/dosya_indirici*.dart` (koşullu içe aktarma): akışlı
+  indirme `<belgeler>/sohbet_dosyalari/<sunucu adı>__<gerçek ad>`, halka +
+  yüzde, "İndirildi" + aç ikonu; açma: görsel/düz metin uygulama içi
+  (`dosya_goruntule.dart`), diğerleri `open_filex`, açacak uygulama yoksa
+  paylaşım sayfası. Web'de eski tarayıcı yolu.
+- **Kanıt:** `sohbet_kaydir_yanitla_test` (4 yön), `sohbet_silme_test` (5),
+  `mesajlar_sohbet_sil_test` (3), `sohbet_belge_indir_test` (3, sahte
+  indirici), `dosya_indirici_test` (2, gerçek disk+akış). 45 dile 15 anahtar.
+- **Açık:** galeri sırası, belge indirme ve bildirim kapatma MOBİL derleme
+  ister (mağaza sürümü 1.171.0+255 henüz yüklenmedi). `robots.txt` testi
+  kök `/` rotası yüzünden bu turdan ÖNCE de kırmızıydı (dokunulmadı).
 
 ## 2026-09-15 — ✅ DİSK %90 → %41: yedek ikiye ayrıldı, Mac çekmesi onarıldı
 

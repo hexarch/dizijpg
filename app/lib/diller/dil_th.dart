@@ -1770,4 +1770,22 @@ const Map<String, String> cevirilerTh = {
   '{} gün önce~tekil': '{} วันที่แล้ว',
   '{} hafta önce': '{} สัปดาห์ที่แล้ว',
   '{} hafta önce~tekil': '{} สัปดาห์ที่แล้ว',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'ข้อความนี้ถูกลบแล้ว',
+  'Benden sil': 'ลบสำหรับฉัน',
+  'Herkesten sil': 'ลบสำหรับทุกคน',
+  'Sohbeti sil': 'ลบแชท',
+  'Karşı taraftan da sil': 'ลบฝั่งอีกฝ่ายด้วย',
+  'Yalnız senden silinir': 'ลบเฉพาะฝั่งคุณ',
+  '{} için de silinir': 'ลบฝั่ง {} ด้วย',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'แชทนี้จะถูกลบฝั่งคุณ ไม่สามารถย้อนกลับได้',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'แชทนี้จะถูกลบทั้งสองฝั่ง ไม่สามารถย้อนกลับได้',
+  'Sohbet silinemedi': 'ลบแชทไม่สำเร็จ',
+  'İndiriliyor': 'กำลังดาวน์โหลด',
+  'İndirildi': 'ดาวน์โหลดแล้ว',
+  'Dosya indirilemedi': 'ดาวน์โหลดไฟล์ไม่สำเร็จ',
+  'Bu dosyayı açacak uygulama yok': 'ไม่มีแอปที่เปิดไฟล์นี้ได้',
+  'Dosyanın yalnız başı gösteriliyor': 'แสดงเฉพาะส่วนต้นของไฟล์',
 };

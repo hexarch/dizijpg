@@ -1808,4 +1808,22 @@ const Map<String, String> cevirilerFi = {
   '{} gün önce~tekil': '{} päivä sitten',
   '{} hafta önce': '{} viikkoa sitten',
   '{} hafta önce~tekil': '{} viikko sitten',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Tämä viesti on poistettu',
+  'Benden sil': 'Poista minulta',
+  'Herkesten sil': 'Poista kaikilta',
+  'Sohbeti sil': 'Poista keskustelu',
+  'Karşı taraftan da sil': 'Poista myös toiselta',
+  'Yalnız senden silinir': 'Poistetaan vain sinulta',
+  '{} için de silinir': 'Poistetaan myös käyttäjältä {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Keskustelu poistetaan sinulta. Tätä ei voi kumota.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Keskustelu poistetaan molemmilta. Tätä ei voi kumota.',
+  'Sohbet silinemedi': 'Keskustelua ei voitu poistaa',
+  'İndiriliyor': 'Ladataan',
+  'İndirildi': 'Ladattu',
+  'Dosya indirilemedi': 'Tiedostoa ei voitu ladata',
+  'Bu dosyayı açacak uygulama yok': 'Mikään sovellus ei avaa tätä tiedostoa',
+  'Dosyanın yalnız başı gösteriliyor': 'Vain tiedoston alku näytetään',
 };

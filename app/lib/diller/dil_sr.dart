@@ -1802,4 +1802,22 @@ const Map<String, String> cevirilerSr = {
   '{} gün önce~tekil': 'пре {} дан',
   '{} hafta önce': 'пре {} недеља',
   '{} hafta önce~tekil': 'пре {} недељу',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Ova poruka je obrisana',
+  'Benden sil': 'Obriši kod mene',
+  'Herkesten sil': 'Obriši kod svih',
+  'Sohbeti sil': 'Obriši ćaskanje',
+  'Karşı taraftan da sil': 'Obriši i kod druge osobe',
+  'Yalnız senden silinir': 'Briše se samo kod tebe',
+  '{} için de silinir': 'Briše se i kod {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Ovo ćaskanje biće obrisano kod tebe. Ne može se opozvati.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Ovo ćaskanje biće obrisano na obe strane. Ne može se opozvati.',
+  'Sohbet silinemedi': 'Ćaskanje nije obrisano',
+  'İndiriliyor': 'Preuzimanje',
+  'İndirildi': 'Preuzeto',
+  'Dosya indirilemedi': 'Datoteka nije preuzeta',
+  'Bu dosyayı açacak uygulama yok': 'Nijedna aplikacija ne otvara ovu datoteku',
+  'Dosyanın yalnız başı gösteriliyor': 'Prikazan je samo početak datoteke',
 };

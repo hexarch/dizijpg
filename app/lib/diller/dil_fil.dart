@@ -1833,4 +1833,23 @@ const Map<String, String> cevirilerFil = {
   '{} gün önce~tekil': '{} araw ang nakalipas',
   '{} hafta önce': '{} linggo ang nakalipas',
   '{} hafta önce~tekil': '{} linggo ang nakalipas',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Binura ang mensaheng ito',
+  'Benden sil': 'Burahin para sa akin',
+  'Herkesten sil': 'Burahin para sa lahat',
+  'Sohbeti sil': 'Burahin ang chat',
+  'Karşı taraftan da sil': 'Burahin din sa kabilang panig',
+  'Yalnız senden silinir': 'Mabubura lang sa iyo',
+  '{} için de silinir': 'Mabubura din kay {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Mabubura ang chat na ito sa iyo. Hindi na maibabalik.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Mabubura ang chat na ito sa magkabilang panig. Hindi na maibabalik.',
+  'Sohbet silinemedi': 'Hindi mabura ang chat',
+  'İndiriliyor': 'Nagda-download',
+  'İndirildi': 'Na-download',
+  'Dosya indirilemedi': 'Hindi ma-download ang file',
+  'Bu dosyayı açacak uygulama yok':
+      'Walang app na makakapagbukas ng file na ito',
+  'Dosyanın yalnız başı gösteriliyor': 'Simula lang ng file ang ipinapakita',
 };

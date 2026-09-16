@@ -1862,4 +1862,22 @@ const Map<String, String> cevirilerRu = {
   '{} gün önce~tekil': '{} дн. назад',
   '{} hafta önce': '{} нед. назад',
   '{} hafta önce~tekil': '{} нед. назад',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Это сообщение удалено',
+  'Benden sil': 'Удалить у меня',
+  'Herkesten sil': 'Удалить у всех',
+  'Sohbeti sil': 'Удалить чат',
+  'Karşı taraftan da sil': 'Удалить и у собеседника',
+  'Yalnız senden silinir': 'Удаляется только у вас',
+  '{} için de silinir': 'Удаляется также у {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Этот чат будет удалён у вас. Это нельзя отменить.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Этот чат будет удалён у обеих сторон. Это нельзя отменить.',
+  'Sohbet silinemedi': 'Не удалось удалить чат',
+  'İndiriliyor': 'Загрузка',
+  'İndirildi': 'Загружено',
+  'Dosya indirilemedi': 'Не удалось загрузить файл',
+  'Bu dosyayı açacak uygulama yok': 'Нет приложения, открывающего этот файл',
+  'Dosyanın yalnız başı gösteriliyor': 'Показано только начало файла',
 };

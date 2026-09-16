@@ -1782,4 +1782,22 @@ const Map<String, String> cevirilerFa = {
   '{} gün önce~tekil': '{} روز پیش',
   '{} hafta önce': '{} هفته پیش',
   '{} hafta önce~tekil': '{} هفته پیش',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'این پیام حذف شد',
+  'Benden sil': 'حذف برای من',
+  'Herkesten sil': 'حذف برای همه',
+  'Sohbeti sil': 'حذف گفتگو',
+  'Karşı taraftan da sil': 'حذف برای طرف مقابل هم',
+  'Yalnız senden silinir': 'فقط برای شما حذف می‌شود',
+  '{} için de silinir': 'برای {} هم حذف می‌شود',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'این گفتگو برای شما حذف می‌شود. قابل بازگشت نیست.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'این گفتگو برای هر دو طرف حذف می‌شود. قابل بازگشت نیست.',
+  'Sohbet silinemedi': 'گفتگو حذف نشد',
+  'İndiriliyor': 'در حال دانلود',
+  'İndirildi': 'دانلود شد',
+  'Dosya indirilemedi': 'فایل دانلود نشد',
+  'Bu dosyayı açacak uygulama yok': 'برنامه‌ای برای باز کردن این فایل نیست',
+  'Dosyanın yalnız başı gösteriliyor': 'فقط ابتدای فایل نمایش داده می‌شود',
 };

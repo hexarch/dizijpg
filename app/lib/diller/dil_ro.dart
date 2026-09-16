@@ -1882,4 +1882,23 @@ const Map<String, String> cevirilerRo = {
   '{} gün önce~tekil': 'acum {} zi',
   '{} hafta önce': 'acum {} săptămâni',
   '{} hafta önce~tekil': 'acum {} săptămână',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Acest mesaj a fost șters',
+  'Benden sil': 'Șterge pentru mine',
+  'Herkesten sil': 'Șterge pentru toți',
+  'Sohbeti sil': 'Șterge conversația',
+  'Karşı taraftan da sil': 'Șterge și la cealaltă persoană',
+  'Yalnız senden silinir': 'Se șterge doar la tine',
+  '{} için de silinir': 'Se șterge și la {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Această conversație va fi ștearsă la tine. Nu se poate anula.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Această conversație va fi ștearsă de ambele părți. Nu se poate anula.',
+  'Sohbet silinemedi': 'Conversația nu a putut fi ștearsă',
+  'İndiriliyor': 'Se descarcă',
+  'İndirildi': 'Descărcat',
+  'Dosya indirilemedi': 'Fișierul nu a putut fi descărcat',
+  'Bu dosyayı açacak uygulama yok':
+      'Nicio aplicație nu poate deschide acest fișier',
+  'Dosyanın yalnız başı gösteriliyor': 'Se afișează doar începutul fișierului',
 };

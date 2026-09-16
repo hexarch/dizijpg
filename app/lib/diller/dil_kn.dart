@@ -1800,4 +1800,22 @@ const Map<String, String> cevirilerKn = {
   '{} gün önce~tekil': '{} ದಿನ ಹಿಂದೆ',
   '{} hafta önce': '{} ವಾರ ಹಿಂದೆ',
   '{} hafta önce~tekil': '{} ವಾರ ಹಿಂದೆ',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'ಈ ಸಂದೇಶವನ್ನು ಅಳಿಸಲಾಗಿದೆ',
+  'Benden sil': 'ನನಗಾಗಿ ಅಳಿಸಿ',
+  'Herkesten sil': 'ಎಲ್ಲರಿಗೂ ಅಳಿಸಿ',
+  'Sohbeti sil': 'ಚಾಟ್ ಅಳಿಸಿ',
+  'Karşı taraftan da sil': 'ಎದುರು ಕಡೆಯಿಂದಲೂ ಅಳಿಸಿ',
+  'Yalnız senden silinir': 'ನಿಮ್ಮಲ್ಲಿ ಮಾತ್ರ ಅಳಿಸಲಾಗುತ್ತದೆ',
+  '{} için de silinir': '{} ಅವರಲ್ಲೂ ಅಳಿಸಲಾಗುತ್ತದೆ',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'ಈ ಚಾಟ್ ನಿಮ್ಮಲ್ಲಿ ಅಳಿಸಲಾಗುತ್ತದೆ. ಹಿಂತಿರುಗಿಸಲಾಗದು.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'ಈ ಚಾಟ್ ಎರಡೂ ಕಡೆ ಅಳಿಸಲಾಗುತ್ತದೆ. ಹಿಂತಿರುಗಿಸಲಾಗದು.',
+  'Sohbet silinemedi': 'ಚಾಟ್ ಅಳಿಸಲಾಗಲಿಲ್ಲ',
+  'İndiriliyor': 'ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ',
+  'İndirildi': 'ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ',
+  'Dosya indirilemedi': 'ಫೈಲ್ ಡೌನ್‌ಲೋಡ್ ಆಗಲಿಲ್ಲ',
+  'Bu dosyayı açacak uygulama yok': 'ಈ ಫೈಲ್ ತೆರೆಯುವ ಯಾವುದೇ ಆ್ಯಪ್ ಇಲ್ಲ',
+  'Dosyanın yalnız başı gösteriliyor': 'ಫೈಲ್‌ನ ಆರಂಭ ಮಾತ್ರ ತೋರಿಸಲಾಗಿದೆ',
 };

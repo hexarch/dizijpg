@@ -1831,4 +1831,22 @@ const Map<String, String> cevirilerPt = {
   '{} gün önce~tekil': 'há {} dia',
   '{} hafta önce': 'há {} semanas',
   '{} hafta önce~tekil': 'há {} semana',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Esta mensagem foi apagada',
+  'Benden sil': 'Apagar para mim',
+  'Herkesten sil': 'Apagar para todos',
+  'Sohbeti sil': 'Apagar conversa',
+  'Karşı taraftan da sil': 'Apagar também para a outra pessoa',
+  'Yalnız senden silinir': 'Apagada só para você',
+  '{} için de silinir': 'Apagada também para {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Esta conversa será apagada para você. Não é possível desfazer.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Esta conversa será apagada para ambos. Não é possível desfazer.',
+  'Sohbet silinemedi': 'Não foi possível apagar a conversa',
+  'İndiriliyor': 'Baixando',
+  'İndirildi': 'Baixado',
+  'Dosya indirilemedi': 'Não foi possível baixar o arquivo',
+  'Bu dosyayı açacak uygulama yok': 'Nenhum app consegue abrir este arquivo',
+  'Dosyanın yalnız başı gösteriliyor': 'Apenas o início do arquivo é mostrado',
 };

@@ -1795,4 +1795,23 @@ const Map<String, String> cevirilerPa = {
   '{} gün önce~tekil': '{} ਦਿਨ ਪਹਿਲਾਂ',
   '{} hafta önce': '{} ਹਫ਼ਤੇ ਪਹਿਲਾਂ',
   '{} hafta önce~tekil': '{} ਹਫ਼ਤਾ ਪਹਿਲਾਂ',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'ਇਹ ਸੁਨੇਹਾ ਮਿਟਾ ਦਿੱਤਾ ਗਿਆ',
+  'Benden sil': 'ਮੇਰੇ ਲਈ ਮਿਟਾਓ',
+  'Herkesten sil': 'ਸਭ ਲਈ ਮਿਟਾਓ',
+  'Sohbeti sil': 'ਚੈਟ ਮਿਟਾਓ',
+  'Karşı taraftan da sil': 'ਦੂਜੇ ਪਾਸੇ ਤੋਂ ਵੀ ਮਿਟਾਓ',
+  'Yalnız senden silinir': 'ਸਿਰਫ਼ ਤੁਹਾਡੇ ਲਈ ਮਿਟੇਗਾ',
+  '{} için de silinir': '{} ਲਈ ਵੀ ਮਿਟੇਗਾ',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'ਇਹ ਚੈਟ ਤੁਹਾਡੇ ਲਈ ਮਿਟ ਜਾਵੇਗੀ। ਵਾਪਸ ਨਹੀਂ ਹੋ ਸਕਦੀ।',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'ਇਹ ਚੈਟ ਦੋਵਾਂ ਪਾਸਿਆਂ ਤੋਂ ਮਿਟ ਜਾਵੇਗੀ। ਵਾਪਸ ਨਹੀਂ ਹੋ ਸਕਦੀ।',
+  'Sohbet silinemedi': 'ਚੈਟ ਮਿਟਾਈ ਨਹੀਂ ਜਾ ਸਕੀ',
+  'İndiriliyor': 'ਡਾਊਨਲੋਡ ਹੋ ਰਿਹਾ ਹੈ',
+  'İndirildi': 'ਡਾਊਨਲੋਡ ਹੋ ਗਿਆ',
+  'Dosya indirilemedi': 'ਫ਼ਾਈਲ ਡਾਊਨਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀ',
+  'Bu dosyayı açacak uygulama yok': 'ਇਸ ਫ਼ਾਈਲ ਨੂੰ ਖੋਲ੍ਹਣ ਵਾਲੀ ਕੋਈ ਐਪ ਨਹੀਂ',
+  'Dosyanın yalnız başı gösteriliyor':
+      'ਫ਼ਾਈਲ ਦਾ ਸਿਰਫ਼ ਸ਼ੁਰੂਆਤੀ ਹਿੱਸਾ ਦਿਖਾਇਆ ਜਾ ਰਿਹਾ ਹੈ',
 };

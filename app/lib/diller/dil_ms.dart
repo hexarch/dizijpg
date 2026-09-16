@@ -1806,4 +1806,22 @@ const Map<String, String> cevirilerMs = {
   '{} gün önce~tekil': '{} hari lalu',
   '{} hafta önce': '{} minggu lalu',
   '{} hafta önce~tekil': '{} minggu lalu',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Mesej ini telah dipadam',
+  'Benden sil': 'Padam untuk saya',
+  'Herkesten sil': 'Padam untuk semua',
+  'Sohbeti sil': 'Padam sembang',
+  'Karşı taraftan da sil': 'Padam juga di pihak lain',
+  'Yalnız senden silinir': 'Hanya dipadam di pihak anda',
+  '{} için de silinir': 'Juga dipadam di pihak {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Sembang ini akan dipadam di pihak anda. Tidak boleh dibuat asal.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Sembang ini akan dipadam di kedua-dua pihak. Tidak boleh dibuat asal.',
+  'Sohbet silinemedi': 'Sembang tidak dapat dipadam',
+  'İndiriliyor': 'Memuat turun',
+  'İndirildi': 'Dimuat turun',
+  'Dosya indirilemedi': 'Fail tidak dapat dimuat turun',
+  'Bu dosyayı açacak uygulama yok': 'Tiada aplikasi boleh membuka fail ini',
+  'Dosyanın yalnız başı gösteriliyor': 'Hanya permulaan fail dipaparkan',
 };

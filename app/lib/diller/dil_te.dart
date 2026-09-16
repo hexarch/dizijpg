@@ -1799,4 +1799,22 @@ const Map<String, String> cevirilerTe = {
   '{} gün önce~tekil': '{} రోజు క్రితం',
   '{} hafta önce': '{} వారాల క్రితం',
   '{} hafta önce~tekil': '{} వారం క్రితం',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'ఈ సందేశం తొలగించబడింది',
+  'Benden sil': 'నా కోసం తొలగించు',
+  'Herkesten sil': 'అందరికీ తొలగించు',
+  'Sohbeti sil': 'చాట్ తొలగించు',
+  'Karşı taraftan da sil': 'అవతలి వైపు నుంచీ తొలగించు',
+  'Yalnız senden silinir': 'మీ వద్ద మాత్రమే తొలగించబడుతుంది',
+  '{} için de silinir': '{} వద్ద కూడా తొలగించబడుతుంది',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'ఈ చాట్ మీ వద్ద తొలగించబడుతుంది. వెనక్కి తీసుకోలేరు.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'ఈ చాట్ ఇరువైపులా తొలగించబడుతుంది. వెనక్కి తీసుకోలేరు.',
+  'Sohbet silinemedi': 'చాట్ తొలగించలేకపోయాం',
+  'İndiriliyor': 'డౌన్‌లోడ్ అవుతోంది',
+  'İndirildi': 'డౌన్‌లోడ్ అయింది',
+  'Dosya indirilemedi': 'ఫైల్ డౌన్‌లోడ్ కాలేదు',
+  'Bu dosyayı açacak uygulama yok': 'ఈ ఫైల్‌ను తెరిచే యాప్ లేదు',
+  'Dosyanın yalnız başı gösteriliyor': 'ఫైల్ ప్రారంభం మాత్రమే చూపబడుతోంది',
 };

@@ -1812,4 +1812,23 @@ const Map<String, String> cevirilerHu = {
   '{} gün önce~tekil': '{} napja',
   '{} hafta önce': '{} hete',
   '{} hafta önce~tekil': '{} hete',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Ezt az üzenetet törölték',
+  'Benden sil': 'Törlés nálam',
+  'Herkesten sil': 'Törlés mindenkinél',
+  'Sohbeti sil': 'Csevegés törlése',
+  'Karşı taraftan da sil': 'Törlés a másik félnél is',
+  'Yalnız senden silinir': 'Csak nálad törlődik',
+  '{} için de silinir': '{} oldalán is törlődik',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Ez a csevegés nálad törlődik. Nem vonható vissza.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Ez a csevegés mindkét oldalon törlődik. Nem vonható vissza.',
+  'Sohbet silinemedi': 'A csevegést nem sikerült törölni',
+  'İndiriliyor': 'Letöltés',
+  'İndirildi': 'Letöltve',
+  'Dosya indirilemedi': 'A fájlt nem sikerült letölteni',
+  'Bu dosyayı açacak uygulama yok':
+      'Nincs alkalmazás, amely megnyitná ezt a fájlt',
+  'Dosyanın yalnız başı gösteriliyor': 'Csak a fájl eleje látható',
 };

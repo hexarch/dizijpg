@@ -280,11 +280,28 @@ Future<void> bildirimYanitArkaplan(NotificationResponse yanit) async {
 /// Sohbet açılınca o kişinin biriken bildirim geçmişini sıfırlar ve
 /// bildirimini kapatır (bir sonraki mesaj yeni listeyle başlar).
 Future<void> mesajBildirimleriniTemizle(String ad) async {
-  if (kIsWeb) return;
+  if (kIsWeb || ad.isEmpty) return;
   try {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('bildirim_mesajlari_$ad');
     await _yerel.cancel(ad.hashCode);
+    // ÖZET DEMETİ (id 0): başka sohbetin bildirimi kalmadıysa o da kapanır;
+    // yoksa tek başına boş bir "dizi.jpg" satırı asılı kalıyordu (16 Eyl
+    // 2026, "okununca bildirim otomatik silinmeli").
+    final android = _yerel
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+    if (android != null) {
+      final aktif = await android.getActiveNotifications();
+      final baskaSohbetVar = aktif.any(
+        (b) => b.id != null && b.id != 0 && b.groupKey == _mesajGrubu,
+      );
+      if (!baskaSohbetVar) await _yerel.cancel(0);
+    }
+    // iOS NOTU: APNs'in kendi gösterdiği FCM bildirimi seçici olarak
+    // kapatılamaz (flutter_local_notifications yalnız kendi bildirimlerini
+    // bilir); orada bu çağrı yalnız geçmişi sıfırlar.
   } catch (_) {}
 }
 
@@ -294,7 +311,7 @@ Future<void> mesajBildirimleriniTemizle(String ad) async {
 @pragma('vm:entry-point')
 Future<void> pushArkaplan(RemoteMessage mesaj) async {
   final tur = mesaj.data['tur'];
-  if (tur != 'mesaj' && tur != 'arama') return;
+  if (tur != 'mesaj' && tur != 'arama' && tur != 'mesaj_okundu') return;
   try {
     // Arka plan izolatında eklenti kanalları KENDİLİĞİNDEN kaydolmaz.
     DartPluginRegistrant.ensureInitialized();
@@ -303,6 +320,12 @@ Future<void> pushArkaplan(RemoteMessage mesaj) async {
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       ),
     );
+    // OKUNDU (16 Eyl 2026): sohbet başka cihazda/webde okundu → bu
+    // telefondaki o kişiye ait bildirim kendiliğinden kapanır.
+    if (tur == 'mesaj_okundu') {
+      await mesajBildirimleriniTemizle(mesaj.data['ad'] as String? ?? '');
+      return;
+    }
     // Bildirim GÖVDESİ sunucudan alıcının dilinde geliyor (PUSH_SABLON); ama
     // eylem etiketleri İSTEMCİDEN gidiyor ve bu izolatta `Ceviri` henüz
     // yüklenmedi — yükle, yoksa Cevapla/Reddet ("arama") ve Yanıtla /
@@ -392,6 +415,11 @@ Future<void> pushBaslat() async {
           // Ön planda BİLDİRİM DEĞİL, doğrudan tam ekran gelen arama:
           // uygulama zaten kullanıcının elinde.
           rotayaGit(gelenAramaYolu);
+          return;
+        }
+        if (m.data['tur'] == 'mesaj_okundu') {
+          // Başka cihazda okundu (16 Eyl 2026): buradaki bildirim de kapansın.
+          mesajBildirimleriniTemizle(m.data['ad'] as String? ?? '');
           return;
         }
         if (m.data['tur'] == 'mesaj') {

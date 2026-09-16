@@ -1835,4 +1835,22 @@ const Map<String, String> cevirilerEl = {
   '{} gün önce~tekil': 'πριν {} μέρα',
   '{} hafta önce': 'πριν {} εβδομάδες',
   '{} hafta önce~tekil': 'πριν {} εβδομάδα',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Αυτό το μήνυμα διαγράφηκε',
+  'Benden sil': 'Διαγραφή για μένα',
+  'Herkesten sil': 'Διαγραφή για όλους',
+  'Sohbeti sil': 'Διαγραφή συνομιλίας',
+  'Karşı taraftan da sil': 'Διαγραφή και από τον άλλον',
+  'Yalnız senden silinir': 'Διαγράφεται μόνο σε σένα',
+  '{} için de silinir': 'Διαγράφεται και για {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Η συνομιλία θα διαγραφεί σε σένα. Δεν μπορεί να αναιρεθεί.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Η συνομιλία θα διαγραφεί και από τις δύο πλευρές. Δεν μπορεί να αναιρεθεί.',
+  'Sohbet silinemedi': 'Η συνομιλία δεν διαγράφηκε',
+  'İndiriliyor': 'Λήψη',
+  'İndirildi': 'Λήφθηκε',
+  'Dosya indirilemedi': 'Το αρχείο δεν λήφθηκε',
+  'Bu dosyayı açacak uygulama yok': 'Καμία εφαρμογή δεν ανοίγει αυτό το αρχείο',
+  'Dosyanın yalnız başı gösteriliyor': 'Εμφανίζεται μόνο η αρχή του αρχείου',
 };

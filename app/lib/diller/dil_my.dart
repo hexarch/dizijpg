@@ -1819,4 +1819,22 @@ const Map<String, String> cevirilerMy = {
   '{} gün önce~tekil': 'လွန်ခဲ့သော {} ရက်',
   '{} hafta önce': 'လွန်ခဲ့သော {} ပတ်',
   '{} hafta önce~tekil': 'လွန်ခဲ့သော {} ပတ်',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'ဤစာကို ဖျက်လိုက်ပါပြီ',
+  'Benden sil': 'ကျွန်ုပ်ဘက်မှ ဖျက်ရန်',
+  'Herkesten sil': 'အားလုံးဘက်မှ ဖျက်ရန်',
+  'Sohbeti sil': 'စကားပြောခန်း ဖျက်ရန်',
+  'Karşı taraftan da sil': 'တစ်ဖက်လူဘက်မှလည်း ဖျက်ရန်',
+  'Yalnız senden silinir': 'သင့်ဘက်မှသာ ဖျက်မည်',
+  '{} için de silinir': '{} ဘက်မှလည်း ဖျက်မည်',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'ဤစကားပြောခန်းကို သင့်ဘက်မှ ဖျက်ပါမည်။ ပြန်ယူ၍မရပါ။',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'ဤစကားပြောခန်းကို နှစ်ဖက်စလုံးမှ ဖျက်ပါမည်။ ပြန်ယူ၍မရပါ။',
+  'Sohbet silinemedi': 'စကားပြောခန်း ဖျက်မရပါ',
+  'İndiriliyor': 'ဒေါင်းလုဒ်ဆွဲနေသည်',
+  'İndirildi': 'ဒေါင်းလုဒ်ဆွဲပြီး',
+  'Dosya indirilemedi': 'ဖိုင် ဒေါင်းလုဒ်ဆွဲမရပါ',
+  'Bu dosyayı açacak uygulama yok': 'ဤဖိုင်ကို ဖွင့်နိုင်သော အက်ပ်မရှိပါ',
+  'Dosyanın yalnız başı gösteriliyor': 'ဖိုင်၏ အစပိုင်းကိုသာ ပြသထားသည်',
 };

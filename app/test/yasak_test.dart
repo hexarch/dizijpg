@@ -663,7 +663,9 @@ void main() {
     await tester.pumpAndSettle();
     // Kendini şikayet etmek anlamsız; backend de yalnız ALICIYA izin veriyor.
     expect(find.text('Şikayet et'), findsNothing);
-    expect(find.text('Mesajı sil'), findsOneWidget);
+    // 16 Eyl 2026: kendi mesajımda "Benden sil" + "Herkesten sil"
+    expect(find.text('Benden sil'), findsOneWidget);
+    expect(find.text('Herkesten sil'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(seconds: 1));

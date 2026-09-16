@@ -1799,4 +1799,22 @@ const Map<String, String> cevirilerUr = {
   '{} gün önce~tekil': '{} دن پہلے',
   '{} hafta önce': '{} ہفتے پہلے',
   '{} hafta önce~tekil': '{} ہفتہ پہلے',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'یہ پیغام حذف کر دیا گیا',
+  'Benden sil': 'میرے لیے حذف کریں',
+  'Herkesten sil': 'سب کے لیے حذف کریں',
+  'Sohbeti sil': 'چیٹ حذف کریں',
+  'Karşı taraftan da sil': 'دوسرے فریق سے بھی حذف کریں',
+  'Yalnız senden silinir': 'صرف آپ کے پاس سے حذف ہوگا',
+  '{} için de silinir': '{} کے پاس سے بھی حذف ہوگا',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'یہ چیٹ آپ کے پاس سے حذف ہو جائے گی۔ واپس نہیں ہو سکتی۔',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'یہ چیٹ دونوں طرف سے حذف ہو جائے گی۔ واپس نہیں ہو سکتی۔',
+  'Sohbet silinemedi': 'چیٹ حذف نہیں ہو سکی',
+  'İndiriliyor': 'ڈاؤن لوڈ ہو رہا ہے',
+  'İndirildi': 'ڈاؤن لوڈ ہو گیا',
+  'Dosya indirilemedi': 'فائل ڈاؤن لوڈ نہیں ہو سکی',
+  'Bu dosyayı açacak uygulama yok': 'اس فائل کو کھولنے والی کوئی ایپ نہیں',
+  'Dosyanın yalnız başı gösteriliyor': 'صرف فائل کا آغاز دکھایا جا رہا ہے',
 };

@@ -1808,4 +1808,23 @@ const Map<String, String> cevirilerSw = {
   '{} gün önce~tekil': 'siku {} iliyopita',
   '{} hafta önce': 'wiki {} zilizopita',
   '{} hafta önce~tekil': 'wiki {} iliyopita',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Ujumbe huu umefutwa',
+  'Benden sil': 'Futa kwangu',
+  'Herkesten sil': 'Futa kwa wote',
+  'Sohbeti sil': 'Futa mazungumzo',
+  'Karşı taraftan da sil': 'Futa pia kwa mtu mwingine',
+  'Yalnız senden silinir': 'Hufutwa kwako tu',
+  '{} için de silinir': 'Hufutwa pia kwa {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Mazungumzo haya yatafutwa kwako. Haiwezi kutenduliwa.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Mazungumzo haya yatafutwa pande zote mbili. Haiwezi kutenduliwa.',
+  'Sohbet silinemedi': 'Mazungumzo hayakuweza kufutwa',
+  'İndiriliyor': 'Inapakua',
+  'İndirildi': 'Imepakuliwa',
+  'Dosya indirilemedi': 'Faili haikuweza kupakuliwa',
+  'Bu dosyayı açacak uygulama yok':
+      'Hakuna programu inayoweza kufungua faili hii',
+  'Dosyanın yalnız başı gösteriliyor': 'Mwanzo wa faili pekee unaonyeshwa',
 };

@@ -1711,4 +1711,21 @@ const Map<String, String> cevirilerJa = {
   '{} gün önce~tekil': '{}日前',
   '{} hafta önce': '{}週間前',
   '{} hafta önce~tekil': '{}週間前',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'このメッセージは削除されました',
+  'Benden sil': '自分側で削除',
+  'Herkesten sil': '全員側で削除',
+  'Sohbeti sil': 'チャットを削除',
+  'Karşı taraftan da sil': '相手側でも削除',
+  'Yalnız senden silinir': '自分側のみ削除されます',
+  '{} için de silinir': '{} 側でも削除されます',
+  'Bu sohbet senden silinecek. Geri alınamaz.': 'このチャットは自分側で削除されます。元に戻せません。',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'このチャットは双方で削除されます。元に戻せません。',
+  'Sohbet silinemedi': 'チャットを削除できませんでした',
+  'İndiriliyor': 'ダウンロード中',
+  'İndirildi': 'ダウンロード済み',
+  'Dosya indirilemedi': 'ファイルをダウンロードできませんでした',
+  'Bu dosyayı açacak uygulama yok': 'このファイルを開けるアプリがありません',
+  'Dosyanın yalnız başı gösteriliyor': 'ファイルの先頭のみ表示しています',
 };

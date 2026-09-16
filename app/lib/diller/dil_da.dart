@@ -1800,4 +1800,22 @@ const Map<String, String> cevirilerDa = {
   '{} gün önce~tekil': 'for {} dag siden',
   '{} hafta önce': 'for {} uger siden',
   '{} hafta önce~tekil': 'for {} uge siden',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Denne besked er slettet',
+  'Benden sil': 'Slet for mig',
+  'Herkesten sil': 'Slet for alle',
+  'Sohbeti sil': 'Slet chat',
+  'Karşı taraftan da sil': 'Slet også hos den anden',
+  'Yalnız senden silinir': 'Slettes kun hos dig',
+  '{} için de silinir': 'Slettes også hos {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Denne chat slettes hos dig. Det kan ikke fortrydes.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Denne chat slettes på begge sider. Det kan ikke fortrydes.',
+  'Sohbet silinemedi': 'Chatten kunne ikke slettes',
+  'İndiriliyor': 'Downloader',
+  'İndirildi': 'Downloadet',
+  'Dosya indirilemedi': 'Filen kunne ikke downloades',
+  'Bu dosyayı açacak uygulama yok': 'Ingen app kan åbne denne fil',
+  'Dosyanın yalnız başı gösteriliyor': 'Kun begyndelsen af filen vises',
 };

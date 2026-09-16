@@ -1811,4 +1811,23 @@ const Map<String, String> cevirilerNl = {
   '{} gün önce~tekil': '{} dag geleden',
   '{} hafta önce': '{} weken geleden',
   '{} hafta önce~tekil': '{} week geleden',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Dit bericht is verwijderd',
+  'Benden sil': 'Verwijderen voor mij',
+  'Herkesten sil': 'Verwijderen voor iedereen',
+  'Sohbeti sil': 'Chat verwijderen',
+  'Karşı taraftan da sil': 'Ook bij de ander verwijderen',
+  'Yalnız senden silinir': 'Alleen bij jou verwijderd',
+  '{} için de silinir': 'Ook verwijderd bij {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Deze chat wordt bij jou verwijderd. Dit kan niet ongedaan worden gemaakt.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Deze chat wordt aan beide kanten verwijderd. Dit kan niet ongedaan worden gemaakt.',
+  'Sohbet silinemedi': 'Chat kon niet worden verwijderd',
+  'İndiriliyor': 'Downloaden',
+  'İndirildi': 'Gedownload',
+  'Dosya indirilemedi': 'Bestand kon niet worden gedownload',
+  'Bu dosyayı açacak uygulama yok': 'Geen app kan dit bestand openen',
+  'Dosyanın yalnız başı gösteriliyor':
+      'Alleen het begin van het bestand wordt getoond',
 };

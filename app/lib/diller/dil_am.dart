@@ -1739,4 +1739,22 @@ const Map<String, String> cevirilerAm = {
   '{} gün önce~tekil': 'ከ{} ቀን በፊት',
   '{} hafta önce': 'ከ{} ሳምንት በፊት',
   '{} hafta önce~tekil': 'ከ{} ሳምንት በፊት',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'ይህ መልእክት ተሰርዟል',
+  'Benden sil': 'ለእኔ ሰርዝ',
+  'Herkesten sil': 'ለሁሉም ሰርዝ',
+  'Sohbeti sil': 'ውይይቱን ሰርዝ',
+  'Karşı taraftan da sil': 'ከሌላውም ወገን ሰርዝ',
+  'Yalnız senden silinir': 'ከእርስዎ ብቻ ይሰረዛል',
+  '{} için de silinir': 'ከ{} ም ይሰረዛል',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'ይህ ውይይት ከእርስዎ ይሰረዛል። መመለስ አይቻልም።',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'ይህ ውይይት ከሁለቱም ወገን ይሰረዛል። መመለስ አይቻልም።',
+  'Sohbet silinemedi': 'ውይይቱን መሰረዝ አልተቻለም',
+  'İndiriliyor': 'በመውረድ ላይ',
+  'İndirildi': 'ወርዷል',
+  'Dosya indirilemedi': 'ፋይሉን ማውረድ አልተቻለም',
+  'Bu dosyayı açacak uygulama yok': 'ይህን ፋይል የሚከፍት መተግበሪያ የለም',
+  'Dosyanın yalnız başı gösteriliyor': 'የፋይሉ መጀመሪያ ብቻ ይታያል',
 };

@@ -1716,4 +1716,21 @@ const Map<String, String> cevirilerKo = {
   '{} gün önce~tekil': '{}일 전',
   '{} hafta önce': '{}주 전',
   '{} hafta önce~tekil': '{}주 전',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': '이 메시지는 삭제되었습니다',
+  'Benden sil': '나에게서 삭제',
+  'Herkesten sil': '모두에게서 삭제',
+  'Sohbeti sil': '채팅 삭제',
+  'Karşı taraftan da sil': '상대방에게서도 삭제',
+  'Yalnız senden silinir': '나에게서만 삭제됩니다',
+  '{} için de silinir': '{}에게서도 삭제됩니다',
+  'Bu sohbet senden silinecek. Geri alınamaz.': '이 채팅이 나에게서 삭제됩니다. 되돌릴 수 없습니다.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      '이 채팅이 양쪽 모두에서 삭제됩니다. 되돌릴 수 없습니다.',
+  'Sohbet silinemedi': '채팅을 삭제할 수 없습니다',
+  'İndiriliyor': '다운로드 중',
+  'İndirildi': '다운로드됨',
+  'Dosya indirilemedi': '파일을 다운로드할 수 없습니다',
+  'Bu dosyayı açacak uygulama yok': '이 파일을 열 수 있는 앱이 없습니다',
+  'Dosyanın yalnız başı gösteriliyor': '파일의 앞부분만 표시됩니다',
 };

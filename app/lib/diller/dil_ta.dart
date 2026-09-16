@@ -1828,4 +1828,23 @@ const Map<String, String> cevirilerTa = {
   '{} gün önce~tekil': '{} நாள் முன்',
   '{} hafta önce': '{} வாரம் முன்',
   '{} hafta önce~tekil': '{} வாரம் முன்',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'இந்தச் செய்தி நீக்கப்பட்டது',
+  'Benden sil': 'எனக்காக நீக்கு',
+  'Herkesten sil': 'எல்லோருக்கும் நீக்கு',
+  'Sohbeti sil': 'அரட்டையை நீக்கு',
+  'Karşı taraftan da sil': 'மறுபக்கத்திலும் நீக்கு',
+  'Yalnız senden silinir': 'உங்களிடமிருந்து மட்டும் நீக்கப்படும்',
+  '{} için de silinir': '{} இடமிருந்தும் நீக்கப்படும்',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'இந்த அரட்டை உங்களிடமிருந்து நீக்கப்படும். மீட்டெடுக்க முடியாது.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'இந்த அரட்டை இரு பக்கத்திலும் நீக்கப்படும். மீட்டெடுக்க முடியாது.',
+  'Sohbet silinemedi': 'அரட்டையை நீக்க முடியவில்லை',
+  'İndiriliyor': 'பதிவிறக்கம் ஆகிறது',
+  'İndirildi': 'பதிவிறக்கப்பட்டது',
+  'Dosya indirilemedi': 'கோப்பைப் பதிவிறக்க முடியவில்லை',
+  'Bu dosyayı açacak uygulama yok': 'இந்தக் கோப்பைத் திறக்கும் செயலி இல்லை',
+  'Dosyanın yalnız başı gösteriliyor':
+      'கோப்பின் தொடக்கம் மட்டும் காட்டப்படுகிறது',
 };

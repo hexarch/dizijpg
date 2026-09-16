@@ -188,7 +188,9 @@ void main() {
     expect(find.byType(TepkiIkonu), findsNWidgets(mesajTepkiEmojileri.length));
     // GERİLEME TESTİ: menü ezilmedi
     expect(find.text('Yanıtla'), findsOneWidget);
-    expect(find.text('Mesajı sil'), findsOneWidget);
+    // 16 Eyl 2026: "Mesajı sil" → "Benden sil" + (kendi mesajımda) "Herkesten sil"
+    expect(find.text('Benden sil'), findsOneWidget);
+    expect(find.text('Herkesten sil'), findsOneWidget);
 
     await tester.tap(find.byType(TepkiIkonu).at(2)); // 😂 (kalp, 😍, 😂)
     // Rozet `oynat:true` sonsuz Lottie ticker'ı kurar; pumpAndSettle bitmez.

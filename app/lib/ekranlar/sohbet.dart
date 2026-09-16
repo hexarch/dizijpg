@@ -21,6 +21,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../oda/oda_sheet.dart';
+import '../dosya_indirici.dart';
 import '../dosya_oku.dart';
 import '../ekran_goruntusu.dart';
 import '../emoji_efekti.dart';
@@ -499,6 +500,99 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani>
 
   void _olay() => _yukle(sessiz: true);
 
+  /// Sohbete uzun basınca (16 Eyl 2026): "Sohbeti sil" (yalnız benden) ve
+  /// "Karşı taraftan da sil" (iki taraftan). İkisi de GERİ ALINAMAZ → onay
+  /// penceresi. İYİMSER: satır listeden düşer, sunucu hata verirse geri
+  /// gelir. 'ben' kapsamı sohbeti gizler; karşı taraf yeni mesaj yazarsa
+  /// sohbet yalnız yeni mesajlarla yeniden belirir (WhatsApp kalıbı).
+  Future<void> _sohbetSilMenusu(Map<String, dynamic> sohbet) async {
+    final ad = sohbet['partner'] as String? ?? '';
+    if (ad.isEmpty) return;
+    final kapsam = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      showDragHandle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(
+                Icons.delete_outline,
+                color: Colors.redAccent,
+              ),
+              title: Text(
+                'Sohbeti sil'.c,
+                style: const TextStyle(color: Colors.redAccent),
+              ),
+              subtitle: Text('Yalnız senden silinir'.c),
+              onTap: () => Navigator.pop(sheetCtx, 'ben'),
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.delete_forever_outlined,
+                color: Colors.redAccent,
+              ),
+              title: Text(
+                'Karşı taraftan da sil'.c,
+                style: const TextStyle(color: Colors.redAccent),
+              ),
+              subtitle: Text('{} için de silinir'.cf(['@$ad'])),
+              onTap: () => Navigator.pop(sheetCtx, 'herkes'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (kapsam == null || !mounted) return;
+    final herkes = kapsam == 'herkes';
+    final onay = await showDialog<bool>(
+      context: context,
+      builder: (dCtx) => AlertDialog(
+        title: Text(herkes ? 'Karşı taraftan da sil'.c : 'Sohbeti sil'.c),
+        content: Text(
+          herkes
+              ? 'Bu sohbet iki taraftan da silinecek. Geri alınamaz.'.c
+              : 'Bu sohbet senden silinecek. Geri alınamaz.'.c,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dCtx, false),
+            child: Text('Vazgeç'.c),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dCtx, true),
+            child: Text(
+              'Sil'.c,
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (onay != true || !mounted) return;
+    final yedek = _sohbetler;
+    setState(() {
+      _sohbetler = [
+        for (final s in _sohbetler ?? const <dynamic>[])
+          if ((s as Map<String, dynamic>)['partner'] != ad) s,
+      ];
+    });
+    try {
+      await Api.post('/sohbetler/$ad/sil', {'kapsam': kapsam});
+      unawaited(SohbetOlaylari.okunmamisYenile());
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _sohbetler = yedek);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Sohbet silinemedi'.c)));
+    }
+  }
+
   Future<void> _yukle({bool sessiz = false}) async {
     if (_cekiliyor) {
       _bekleyenYukle = true;
@@ -574,6 +668,8 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani>
               await context.push('/sohbet/${_sohbetler![i]['partner']}');
               _yukle();
             },
+            onLongPress: () =>
+                _sohbetSilMenusu(_sohbetler![i] as Map<String, dynamic>),
           ),
         ),
       );
@@ -918,7 +1014,15 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani>
 class SohbetSatiri extends StatelessWidget {
   final Map<String, dynamic> sohbet;
   final VoidCallback onTap;
-  const SohbetSatiri({super.key, required this.sohbet, required this.onTap});
+
+  /// Uzun basma: sohbeti silme menüsü (16 Eyl 2026). Null ise jest yok.
+  final VoidCallback? onLongPress;
+  const SohbetSatiri({
+    super.key,
+    required this.sohbet,
+    required this.onTap,
+    this.onLongPress,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -927,6 +1031,7 @@ class SohbetSatiri extends StatelessWidget {
     final canli = sohbetDurumYazi(sohbetDurumCoz(sohbet));
     return InkWell(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: 16,
@@ -2225,6 +2330,15 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     Map<String, dynamic>? g,
   ) {
     if (g == null) return ham;
+    // Karşı taraf (ya da başka cihazım) "herkesten sil" dedi: satır yer
+    // tutucuya döner; okundu/iletildi bilgisi korunur (16 Eyl 2026).
+    if (g['silindi'] == true && ham['silindi'] != true) {
+      return silinmisMesaj({
+        ...ham,
+        'okundu': g['okundu'] ?? ham['okundu'],
+        'iletildi': g['iletildi'] ?? ham['iletildi'],
+      });
+    }
     final id = (ham['id'] as num?)?.toInt();
     // Uçuştaki kendi tepkimiz bayat boş listeyle ezilmesin.
     if (id != null && id == _tepkiUcusId) {
@@ -2244,16 +2358,37 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     };
   }
 
-  /// Kendi mesajını sil: önce yerelde kaldır (iyimser), hata olursa geri getir.
-  Future<void> _mesajSil(int id) async {
+  /// Mesajı sil (16 Eyl 2026, WhatsApp kalıbı):
+  /// · `herkesten: false` ("Benden sil") → satır yalnız bende kaybolur;
+  ///   karşı taraf hiçbir şey görmez. Her iki tarafın mesajı için geçerli.
+  /// · `herkesten: true` ("Herkesten sil") → yalnız KENDİ mesajım; satır iki
+  ///   tarafta da "Bu mesaj silindi" yer tutucusuna döner (sunucu içerik
+  ///   alanlarını boşaltır, karşı tarafa yoklama penceresiyle yayılır).
+  /// İYİMSER: önce yerelde uygula, sunucu hata verirse geri al + SnackBar.
+  Future<void> _mesajSil(
+    Map<String, dynamic> m, {
+    required bool herkesten,
+  }) async {
+    final id = (m['id'] as num).toInt();
     final yedek = List<dynamic>.from(_mesajlar);
-    setState(
-      () => _mesajlar = _mesajlar
-          .where((m) => (m as Map<String, dynamic>)['id'] != id)
-          .toList(),
-    );
+    setState(() {
+      _mesajlar = herkesten
+          ? [
+              for (final ham in _mesajlar)
+                if (ham is Map<String, dynamic> &&
+                    (ham['id'] as num?)?.toInt() == id)
+                  silinmisMesaj(ham)
+                else
+                  ham,
+            ]
+          : _mesajlar
+                .where((x) => (x as Map<String, dynamic>)['id'] != id)
+                .toList();
+    });
     try {
-      await Api.delete('/mesajlar/$id');
+      await Api.post('/mesajlar/$id/sil', {
+        'kapsam': herkesten ? 'herkes' : 'ben',
+      });
     } catch (e) {
       if (!mounted) return;
       setState(() => _mesajlar = yedek);
@@ -3143,13 +3278,22 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                           : null,
                                       // "Görüldü" YALNIZ son okunan kendi mesajımda.
                                       gorulduGoster: i == gorulduIndeksi,
-                                      yanitla: m['id'] != null
+                                      yanitla:
+                                          m['id'] != null &&
+                                              m['silindi'] != true
                                           ? () => _yanitBaslat(m)
                                           : null,
-                                      sil: benimMi && m['id'] != null
-                                          ? () => _mesajSil(
-                                              (m['id'] as num).toInt(),
-                                            )
+                                      // "Benden sil" her satırda; "Herkesten
+                                      // sil" yalnız kendi, henüz silinmemiş
+                                      // mesajımda (16 Eyl 2026).
+                                      sil: m['id'] != null
+                                          ? () => _mesajSil(m, herkesten: false)
+                                          : null,
+                                      herkestenSil:
+                                          benimMi &&
+                                              m['id'] != null &&
+                                              m['silindi'] != true
+                                          ? () => _mesajSil(m, herkesten: true)
                                           : null,
                                       duzenle: benimMi && metinMi
                                           ? () => _duzenlemeBaslat(m)
@@ -4334,7 +4478,39 @@ int sonGorulenIndeks(List<dynamic> mesajlar, Object? benimId) {
 
 /// Metinsiz mesajın (ses/foto/video/içerik) kısa özeti: ikon + söz.
 /// Hem sohbet listesindeki son mesaj satırında hem alıntı kutusunda kullanılır.
+/// Satırı "herkesten silindi" yer tutucusuna çevirir: sunucunun UPDATE'iyle
+/// aynı alanlar boşalır; kimlik, gönderen, tarih, okundu kalır. Alıntı da
+/// düşer (silinen mesajın kendi alıntısı artık anlamsız).
+Map<String, dynamic> silinmisMesaj(Map<String, dynamic> m) => {
+  ...m,
+  'silindi': true,
+  'metin': null,
+  'medya': null,
+  'medyalar': null,
+  'medya_yerel': null,
+  'medya_kapak': null,
+  'medyalar_kapak': null,
+  'ses_dalga': null,
+  'icerik_tur': null,
+  'icerik_id': null,
+  'yorum_id': null,
+  'dosya': null,
+  'dosya_ad': null,
+  'dosya_boyut': null,
+  'dosya_tur': null,
+  'yanit_id': null,
+  'yanit_metin': null,
+  'duzenlendi': false,
+  'tek_kullanimlik': false,
+  'tepkiler': const <dynamic>[],
+};
+
 ({IconData? ikon, String metin}) mesajOzeti(Map<String, dynamic> m) {
+  // Herkesten silinen mesaj (ya da alıntılanan mesaj silinmişse) — sohbet
+  // listesinde ve alıntı kutusunda aynı yer tutucu metin (16 Eyl 2026).
+  if (m['silindi'] == true || m['yanit_silindi'] == true) {
+    return (ikon: Icons.not_interested, metin: 'Bu mesaj silindi'.c);
+  }
   final metin = (m['metin'] as String?)?.trim();
   if (metin != null && metin.isNotEmpty) return (ikon: null, metin: metin);
   // BELGE (2 Eyl 2026): sohbet listesi/alıntı "Dosya: ad" der.
@@ -4378,6 +4554,9 @@ class _MesajBaloncugu extends StatelessWidget {
   final Map<String, dynamic> icerikler;
   final Map<String, dynamic> gonderiler; // paylaşılan gönderi önizlemeleri
   final VoidCallback? sil;
+
+  /// "Herkesten sil" — yalnız kendi, silinmemiş mesajımda (16 Eyl 2026).
+  final VoidCallback? herkestenSil;
   final VoidCallback? yanitla;
   final VoidCallback? duzenle;
 
@@ -4435,6 +4614,7 @@ class _MesajBaloncugu extends StatelessWidget {
     required this.benim,
     required this.icerikler,
     this.sil,
+    this.herkestenSil,
     this.yanitla,
     this.duzenle,
     this.sikayet,
@@ -4629,6 +4809,8 @@ class _MesajBaloncugu extends StatelessWidget {
                   duzenle!();
                 },
               ),
+            // SİLME (16 Eyl 2026): "Benden sil" her mesajda (karşı tarafınki
+            // dahil), "Herkesten sil" yalnız kendi mesajımda.
             if (sil != null)
               ListTile(
                 leading: const Icon(
@@ -4636,12 +4818,27 @@ class _MesajBaloncugu extends StatelessWidget {
                   color: Colors.redAccent,
                 ),
                 title: Text(
-                  'Mesajı sil'.c,
+                  'Benden sil'.c,
                   style: const TextStyle(color: Colors.redAccent),
                 ),
                 onTap: () {
                   Navigator.pop(sheetCtx);
                   sil!();
+                },
+              ),
+            if (herkestenSil != null)
+              ListTile(
+                leading: const Icon(
+                  Icons.delete_forever_outlined,
+                  color: Colors.redAccent,
+                ),
+                title: Text(
+                  'Herkesten sil'.c,
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  herkestenSil!();
                 },
               ),
             // DM sikayet yolu. Buraya kadar `sikayetEtSheet` 'mesaj' turunu
@@ -4666,9 +4863,73 @@ class _MesajBaloncugu extends StatelessWidget {
     );
   }
 
+  /// "Bu mesaj silindi" yer tutucusu (16 Eyl 2026): balon rengi ve köşeleri
+  /// normal balonla aynı; içerik üstü çizili daire + italik metin. Uzun
+  /// basınca yalnız "Benden sil" (WhatsApp: yer tutucu da kaldırılabilir).
+  Widget _silinmisBalon(BuildContext context) {
+    final renk = (benim ? balonYazi : DiziRenkler.metin).withValues(alpha: 0.7);
+    return GestureDetector(
+      onLongPress: sil == null ? null : () => _silMenusuAc(context),
+      child: Container(
+        margin: EdgeInsets.only(top: grupBasi ? 8 : 3),
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+        decoration: BoxDecoration(
+          color: benim ? balonRenk : karsiRenk,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(16),
+            topRight: const Radius.circular(16),
+            bottomLeft: Radius.circular(benim || !grupSonu ? 16 : 4),
+            bottomRight: Radius.circular(!benim || !grupSonu ? 16 : 4),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.not_interested, size: 16, color: renk),
+            const SizedBox(width: 6),
+            Text(
+              'Bu mesaj silindi'.c,
+              style: TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+                color: renk,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Yer tutucunun menüsü: tek seçenek, "Benden sil".
+  void _silMenusuAc(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      showDragHandle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      ),
+      builder: (sheetCtx) => SafeArea(
+        child: ListTile(
+          leading: const Icon(Icons.delete_outline, color: Colors.redAccent),
+          title: Text(
+            'Benden sil'.c,
+            style: const TextStyle(color: Colors.redAccent),
+          ),
+          onTap: () {
+            Navigator.pop(sheetCtx);
+            sil!();
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final m = mesaj;
+    if (m['silindi'] == true) return _silinmisBalon(context);
     final metin = m['metin'] as String?;
     final medya = m['medya'] as String?;
     final video =
@@ -4760,6 +5021,7 @@ class _MesajBaloncugu extends StatelessWidget {
           (yanitla == null &&
               duzenle == null &&
               sil == null &&
+              herkestenSil == null &&
               sikayet == null &&
               tepkiVer == null)
           ? null
@@ -4836,6 +5098,7 @@ class _MesajBaloncugu extends StatelessWidget {
                   ),
                   child: Text(
                     _yanitOnizleme({
+                      'yanit_silindi': m['yanit_silindi'],
                       'metin': m['yanit_metin'],
                       'yanit_medya': m['yanit_medya'],
                       'yanit_dosya_ad': m['yanit_dosya_ad'],
@@ -5490,7 +5753,17 @@ class _VideoKapak extends StatelessWidget {
 /// imzalı bağlantı tarayıcıda/sistemde açılır — sunucu `attachment` verdiği
 /// için indirme olarak gelir; uygulama içinde görüntüleme yok (her tür
 /// olabilir, PDF görüntüleyici ayrı iş).
-class _BelgeKutusu extends StatelessWidget {
+/// BELGE KUTUSU — uygulama içi indirme (16 Eyl 2026).
+///
+/// İSTEK: "indire basınca tarayıcıya yönlendiriyor … uygulama içinde
+/// indirmeli, WhatsApp/Telegram gibi; tıklayınca formatı destekliyorsak
+/// bizde aç, desteklemiyorsak destekleyecek uygulamaları göster."
+///
+/// Durumlar: gönderiliyor (yükleme halkası, [ilerleme]) → indirilmemiş
+/// (indirme oku) → indiriliyor (halka + yüzde) → indirildi (aç ikonu).
+/// Dokunma: indirilmemişse indirir, indirilmişse [dosyaAc] ile açar.
+/// Web'de indirme tarayıcıya kalır (eski `launchUrl` yolu).
+class _BelgeKutusu extends StatefulWidget {
   final String ad;
   final int? boyut;
   final String? tur;
@@ -5509,7 +5782,6 @@ class _BelgeKutusu extends StatelessWidget {
     this.ilerleme,
   });
 
-  /// Uzantıdan kısa etiket + renk (Telegram'ın karosu). Bilinmeyen → 'DOSYA'.
   static ({String etiket, Color renk}) _karo(String ad) {
     final u = ad.contains('.') ? ad.split('.').last.toLowerCase() : '';
     return switch (u) {
@@ -5558,34 +5830,128 @@ class _BelgeKutusu extends StatelessWidget {
     return '${(b / 1024 / 1024 / 1024).toStringAsFixed(2)} GB';
   }
 
-  Future<void> _ac(BuildContext context) async {
-    final u = url;
-    if (u == null) return;
-    final ok = await launchUrl(
-      Uri.parse(u),
-      mode: LaunchMode.externalApplication,
-    );
-    if (!ok && context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Dosya açılamadı'.c)));
+  @override
+  State<_BelgeKutusu> createState() => _BelgeKutusuState();
+}
+
+class _BelgeKutusuState extends State<_BelgeKutusu> {
+  /// İndirilmiş yerel yol; null = henüz inmedi (ya da web).
+  String? _yerel;
+  DosyaIndirme? _indirme;
+
+  @override
+  void initState() {
+    super.initState();
+    _durumuYukle();
+  }
+
+  @override
+  void didUpdateWidget(covariant _BelgeKutusu eski) {
+    super.didUpdateWidget(eski);
+    if (eski.url != widget.url) {
+      _yerel = null;
+      _indirmeyiBirak();
+      _durumuYukle();
     }
   }
 
   @override
+  void dispose() {
+    _indirmeyiBirak();
+    super.dispose();
+  }
+
+  Future<void> _durumuYukle() async {
+    final u = widget.url;
+    if (u == null || !DosyaIndirici.destekli) return;
+    // Balon yeniden kurulduysa süren indirmeye yeniden bağlan.
+    final suren = DosyaIndirici.aktif(u);
+    if (suren != null) {
+      _indirmeyeBaglan(suren);
+      return;
+    }
+    final yol = await DosyaIndirici.yerelYol(u, widget.ad);
+    if (mounted && yol != null) setState(() => _yerel = yol);
+  }
+
+  void _indirmeyeBaglan(DosyaIndirme d) {
+    _indirmeyiBirak();
+    _indirme = d;
+    d.ilerleme.addListener(_yenile);
+    d.bitti.addListener(_bitti);
+    if (mounted) setState(() {});
+    if (d.bitti.value) _bitti();
+  }
+
+  void _indirmeyiBirak() {
+    _indirme?.ilerleme.removeListener(_yenile);
+    _indirme?.bitti.removeListener(_bitti);
+    _indirme = null;
+  }
+
+  void _yenile() {
+    if (mounted) setState(() {});
+  }
+
+  void _bitti() {
+    final d = _indirme;
+    if (d == null || !d.bitti.value) return;
+    _indirmeyiBirak();
+    if (!mounted) return;
+    setState(() => _yerel = d.yol);
+    if (d.yol == null) {
+      ScaffoldMessenger.maybeOf(
+        context,
+      )?.showSnackBar(SnackBar(content: Text('Dosya indirilemedi'.c)));
+    }
+  }
+
+  Future<void> _dokun(BuildContext context) async {
+    final u = widget.url;
+    if (u == null) return;
+    if (!DosyaIndirici.destekli) {
+      // WEB: tarayıcının indirme akışı tek yol.
+      final ok = await launchUrl(
+        Uri.parse(u),
+        mode: LaunchMode.externalApplication,
+      );
+      if (!ok && context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Dosya açılamadı'.c)));
+      }
+      return;
+    }
+    if (_indirme != null) return; // sürüyor
+    final yerel = _yerel ?? await DosyaIndirici.yerelYol(u, widget.ad);
+    if (yerel != null) {
+      if (context.mounted) await dosyaAc(context, yerel, widget.ad);
+      return;
+    }
+    _indirmeyeBaglan(DosyaIndirici.indir(u, widget.ad));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final k = _karo(ad);
+    final ad = widget.ad;
+    final url = widget.url;
+    final yaziRengi = widget.yaziRengi;
+    final yukleme = widget.ilerleme; // gönderim (yükleme) ilerlemesi
+    final indiriliyor = _indirme != null;
+    final indirmeOrani = _indirme?.ilerleme.value;
+    final k = _BelgeKutusu._karo(ad);
+    final mesgul = yukleme != null || indiriliyor;
     return Semantics(
       button: url != null,
       label: '${'Dosya'.c}: $ad',
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
-        onTap: url == null || ilerleme != null ? null : () => _ac(context),
+        onTap: url == null || mesgul ? null : () => _dokun(context),
         child: Container(
           width: 240,
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: (benim ? yaziRengi : DiziRenkler.metin).withValues(
+            color: (widget.benim ? yaziRengi : DiziRenkler.metin).withValues(
               alpha: 0.08,
             ),
             borderRadius: BorderRadius.circular(10),
@@ -5604,7 +5970,7 @@ class _BelgeKutusu extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       alignment: Alignment.center,
-                      child: ilerleme != null
+                      child: mesgul
                           ? const SizedBox.shrink()
                           : Text(
                               k.etiket,
@@ -5615,8 +5981,19 @@ class _BelgeKutusu extends StatelessWidget {
                               ),
                             ),
                     ),
-                    if (ilerleme != null)
-                      _YuklemeHalkasi(ilerleme: ilerleme!, cap: 30),
+                    if (yukleme != null)
+                      _YuklemeHalkasi(ilerleme: yukleme, cap: 30)
+                    else if (indiriliyor)
+                      SizedBox(
+                        key: const ValueKey('belge-indirme-halkasi'),
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator(
+                          value: indirmeOrani,
+                          strokeWidth: 2.5,
+                          color: Colors.white,
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -5638,12 +6015,18 @@ class _BelgeKutusu extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      // Yüklenirken boyutun yanında yüzde: karodaki halka
-                      // 30 dp'de rakamı zor okutur, satır okutur.
                       [
-                        if (boyut != null) boyutMetni(boyut!),
-                        if (ilerleme != null && ilerleme! > 0)
-                          '%{}'.cf([(ilerleme! * 100).clamp(0, 100).round()]),
+                        if (widget.boyut != null)
+                          _BelgeKutusu.boyutMetni(widget.boyut!),
+                        if (yukleme != null && yukleme > 0)
+                          '%{}'.cf([(yukleme * 100).clamp(0, 100).round()]),
+                        if (indiriliyor)
+                          indirmeOrani == null
+                              ? 'İndiriliyor'.c
+                              : '%{}'.cf([
+                                  (indirmeOrani * 100).clamp(0, 100).round(),
+                                ]),
+                        if (!indiriliyor && _yerel != null) 'İndirildi'.c,
                       ].join(' · '),
                       style: TextStyle(
                         fontSize: 11,
@@ -5653,9 +6036,9 @@ class _BelgeKutusu extends StatelessWidget {
                   ],
                 ),
               ),
-              if (url != null && ilerleme == null)
+              if (url != null && !mesgul)
                 Icon(
-                  Icons.download_outlined,
+                  _yerel != null ? Icons.open_in_new : Icons.download_outlined,
                   size: 18,
                   color: yaziRengi.withValues(alpha: 0.6),
                 ),
@@ -5667,28 +6050,6 @@ class _BelgeKutusu extends StatelessWidget {
   }
 }
 
-/// Sohbette paylaşılan gönderinin ÇIPLAK önizlemesi.
-///
-/// KULLANICI İSTEĞİ (1 Eyl 2026): *"akışta gezerken sohbette gönderdiği
-/// gönderiler güzel gözükmüyor tasarım olarak. Öncelikle arka planı olmasın
-/// ve video/görsel yani içeriğin boyutunda olacak — tabii orijinal boyut
-/// değil, sohbeti kapatmayacak şekilde. Videoysa kapak resmi gözükecek,
-/// yoksa başlangıç sahnesi. Paylaşanın adı içeriğin İÇİNDE sol altta
-/// gözükecek beyaz yazıyla."*
-///
-/// Eski kart üç yerde yanlıştı ve üçü de burada düzeltildi:
-///   1. **Zemin**: kapağın altında `black18` bir kutu + 8 dp dolgulu yazı
-///      şeridi vardı; medya bir kartın İÇİNDE duruyor gibi görünüyordu.
-///      Artık zemin YOK — medya doğrudan sohbetin üstünde durur.
-///   2. **Oran**: kapak `AspectRatio(1)` ile KARE'ye kırpılıyordu; dikey bir
-///      Reels'in yarısı kesiliyordu. Artık gönderinin KENDİ oranı kullanılır
-///      (sunucudan `medya_oran`, bkz. /sohbet yanıtı). Oran bilinmiyorsa
-///      dikey varsayılır (4:5) — akış kartıyla aynı varsayım.
-///   3. **Video kapağı**: siyah kutu + oynat ikonu çiziliyordu, yani
-///      gönderinin neyi gösterdiği belli olmuyordu. Sunucu her videonun ilk
-///      karesini `<dosya>.jpg` olarak üretiyor (backend/video_kare.js) ve
-///      486/486 videoda dosya MEVCUT (1 Eyl 2026'da sayıldı); kapak artık o.
-///      Kare yoksa eski siyah kutuya düşülür — akış hiç boş kalmaz.
 class PaylasilanGonderi extends StatelessWidget {
   /// Sunucudan gelen önizleme (`gonderiler['<id>']`). Yoklama henüz
   /// dönmediyse null gelebilir — o zaman iskelet çizilir.

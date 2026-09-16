@@ -1879,4 +1879,22 @@ const Map<String, String> cevirilerEs = {
   '{} gün önce~tekil': 'hace {} día',
   '{} hafta önce': 'hace {} semanas',
   '{} hafta önce~tekil': 'hace {} semana',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Este mensaje fue eliminado',
+  'Benden sil': 'Eliminar para mí',
+  'Herkesten sil': 'Eliminar para todos',
+  'Sohbeti sil': 'Eliminar chat',
+  'Karşı taraftan da sil': 'Eliminar también para la otra persona',
+  'Yalnız senden silinir': 'Se elimina solo para ti',
+  '{} için de silinir': 'También se elimina para {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Este chat se eliminará para ti. No se puede deshacer.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Este chat se eliminará para ambos. No se puede deshacer.',
+  'Sohbet silinemedi': 'No se pudo eliminar el chat',
+  'İndiriliyor': 'Descargando',
+  'İndirildi': 'Descargado',
+  'Dosya indirilemedi': 'No se pudo descargar el archivo',
+  'Bu dosyayı açacak uygulama yok': 'Ninguna app puede abrir este archivo',
+  'Dosyanın yalnız başı gösteriliyor': 'Solo se muestra el inicio del archivo',
 };

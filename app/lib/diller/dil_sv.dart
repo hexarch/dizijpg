@@ -1812,4 +1812,22 @@ const Map<String, String> cevirilerSv = {
   '{} gün önce~tekil': 'för {} dag sedan',
   '{} hafta önce': 'för {} veckor sedan',
   '{} hafta önce~tekil': 'för {} vecka sedan',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'Det här meddelandet har raderats',
+  'Benden sil': 'Radera för mig',
+  'Herkesten sil': 'Radera för alla',
+  'Sohbeti sil': 'Radera chatt',
+  'Karşı taraftan da sil': 'Radera även hos den andra',
+  'Yalnız senden silinir': 'Raderas bara hos dig',
+  '{} için de silinir': 'Raderas även hos {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'Chatten raderas hos dig. Det kan inte ångras.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'Chatten raderas på båda sidor. Det kan inte ångras.',
+  'Sohbet silinemedi': 'Chatten kunde inte raderas',
+  'İndiriliyor': 'Laddar ner',
+  'İndirildi': 'Nedladdad',
+  'Dosya indirilemedi': 'Filen kunde inte laddas ner',
+  'Bu dosyayı açacak uygulama yok': 'Ingen app kan öppna den här filen',
+  'Dosyanın yalnız başı gösteriliyor': 'Bara början av filen visas',
 };

@@ -1762,4 +1762,22 @@ const Map<String, String> cevirilerHe = {
   '{} gün önce~tekil': 'לפני {} יום',
   '{} hafta önce': 'לפני {} שבועות',
   '{} hafta önce~tekil': 'לפני {} שבוע',
+  // Mesaj/sohbet silme + belge indirme (16 Eyl 2026)
+  'Bu mesaj silindi': 'ההודעה הזו נמחקה',
+  'Benden sil': 'מחיקה אצלי',
+  'Herkesten sil': 'מחיקה אצל כולם',
+  'Sohbeti sil': 'מחיקת הצ׳אט',
+  'Karşı taraftan da sil': 'מחיקה גם אצל הצד השני',
+  'Yalnız senden silinir': 'נמחק רק אצלך',
+  '{} için de silinir': 'נמחק גם אצל {}',
+  'Bu sohbet senden silinecek. Geri alınamaz.':
+      'הצ׳אט ימחק אצלך. לא ניתן לבטל.',
+  'Bu sohbet iki taraftan da silinecek. Geri alınamaz.':
+      'הצ׳אט ימחק בשני הצדדים. לא ניתן לבטל.',
+  'Sohbet silinemedi': 'לא ניתן למחוק את הצ׳אט',
+  'İndiriliyor': 'מוריד',
+  'İndirildi': 'הורד',
+  'Dosya indirilemedi': 'לא ניתן להוריד את הקובץ',
+  'Bu dosyayı açacak uygulama yok': 'אין אפליקציה שפותחת את הקובץ הזה',
+  'Dosyanın yalnız başı gösteriliyor': 'מוצגת רק תחילת הקובץ',
 };
