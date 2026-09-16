@@ -1829,4 +1829,6 @@ const Map<String, String> cevirilerTe = {
   'Ölmeden İzlenmesi Gereken 100 Dizi': 'చనిపోయే ముందు చూడాల్సిన 100 సిరీస్',
   'İzlediklerimi gösterme': 'చూసినవి దాచు',
   'Bu listede izlemediğin yapım kalmamış': 'ఈ జాబితాలో చూడనిది ఏదీ మిగల్లేదు',
+  'Liste adı kaydedilemedi': 'జాబితా పేరును సేవ్ చేయలేకపోయాం',
+  'Liste adı boş olamaz': 'జాబితా పేరు ఖాళీగా ఉండకూడదు',
 };

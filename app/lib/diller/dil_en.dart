@@ -1883,4 +1883,6 @@ const Map<String, String> cevirilerEn = {
   'İzlediklerimi gösterme': 'Hide what I’ve watched',
   'Bu listede izlemediğin yapım kalmamış':
       'No unwatched titles left in this list',
+  'Liste adı kaydedilemedi': 'List name could not be saved',
+  'Liste adı boş olamaz': 'List name can\'t be empty',
 };

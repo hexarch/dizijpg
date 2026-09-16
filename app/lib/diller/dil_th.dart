@@ -1800,4 +1800,6 @@ const Map<String, String> cevirilerTh = {
   'İzlediklerimi gösterme': 'ซ่อนที่ดูแล้ว',
   'Bu listede izlemediğin yapım kalmamış':
       'ไม่เหลือเรื่องที่ยังไม่ได้ดูในรายการนี้',
+  'Liste adı kaydedilemedi': 'บันทึกชื่อรายการไม่สำเร็จ',
+  'Liste adı boş olamaz': 'ชื่อรายการต้องไม่ว่างเปล่า',
 };

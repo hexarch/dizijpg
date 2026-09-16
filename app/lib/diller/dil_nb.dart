@@ -1830,4 +1830,6 @@ const Map<String, String> cevirilerNb = {
   'İzlediklerimi gösterme': 'Skjul det jeg har sett',
   'Bu listede izlemediğin yapım kalmamış':
       'Ingenting usett igjen i denne listen',
+  'Liste adı kaydedilemedi': 'Listenavnet kunne ikke lagres',
+  'Liste adı boş olamaz': 'Listenavnet kan ikke være tomt',
 };

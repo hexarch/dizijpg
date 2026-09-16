@@ -1872,4 +1872,6 @@ const Map<String, String> cevirilerFil = {
   'İzlediklerimi gösterme': 'Itago ang napanood ko',
   'Bu listede izlemediğin yapım kalmamış':
       'Wala nang hindi napanood sa listahang ito',
+  'Liste adı kaydedilemedi': 'Hindi ma-save ang pangalan ng listahan',
+  'Liste adı boş olamaz': 'Hindi puwedeng blangko ang pangalan ng listahan',
 };

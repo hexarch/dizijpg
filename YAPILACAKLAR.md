@@ -1,6 +1,34 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-09-16 — 🔨 LİSTE ADI DÜZENLEME: kalem → başlık yerinde yazılır (1.173.0+260)
+
+**Tetik (birebir):** *"kullanıcı oluşturduğu listelerin ismini değiştiremiyor,
+edite tıklayınca değiştirebilmeli."*
+
+**Kök sebep:** 19 Ağu düzenleme kipi yalnız İÇERİĞİ (sıra/gizle/kaldır)
+açıyordu; liste adını yazan sunucu ucu HİÇ yoktu (`POST /listeler` oluşturur,
+`DELETE` siler, arada güncelleme yok). Kalem vardı, ad donuktu.
+
+- ✅ Backend `PUT /listeler/:id {ad}`: doğrulama oluşturmayla AYNI (boş → 400
+  "Liste adı gerekli", 60 karakter tavanı), sahiplik UPDATE'in WHERE'inde,
+  eşleşme yoksa 404 (varlık sızdırılmaz). Yalnız `ad` yazılır. Migrasyon YOK.
+- ✅ `liste.dart`: düzenleme kipinde AppBar başlığı `TextField`e döner
+  (`liste-ad-alani`, mevcut adla dolu, autofocus, 60 sınır, sayaç gizli,
+  AppBar başlık stili). "Bitti" (onay ikonu) ya da klavye TAMAM → ad
+  değiştiyse PUT, başlık anında yeni ad, kip kapanır. Aynı ad → istek yok.
+  Boş → "Liste adı boş olamaz", kip açık. Sunucu reddi → "Liste adı
+  kaydedilemedi", kip AÇIK kalır (yazılan kaybolmaz). Yazılırken
+  `ListeDuzenleDugmesi` spinner + kilit (`yaziliyor`). Kipte çark ve paylaş
+  ikonları gizlenir (dar telefonda alana yer).
+- ✅ Profil: liste sayfasından dönüşte `_yukle()` (şerit eski adı göstermesin).
+- ✅ Çeviri: 2 anahtar × 45 dil ('Liste adı kaydedilemedi', 'Liste adı boş
+  olamaz'); 'Liste adı' ipucu zaten vardı.
+- ✅ Test: `liste_duzenleme_test` +7 (alan mevcut adla, PUT gövdesi + başlık,
+  klavye TAMAM, aynı ad istek yok, boş ad, sunucu reddi kip açık, başkasının
+  listesinde alan yok); backend `liste_duzenleme.test.js` +3 (sahiplik/404,
+  doğrulama oluşturmayla aynı, yalnız ad yazılır).
+
 ## 2026-09-16 — 🔨 KANON LİSTELERİ ("Ölmeden İzlenmesi Gereken") + RAF ÇARKI (1.172.0+259)
 
 **Tetik (birebir):** *"Ölmeden izlenmesi gereken 100/250/500/1000 film listeleri

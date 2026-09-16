@@ -2625,10 +2625,16 @@ class ListeDuzenleDugmesi extends StatelessWidget {
   final bool duzenleme;
   final VoidCallback onDegis;
 
+  /// "Bitti" liste adını sunucuya yazarken TRUE: ikon spinner'a döner ve
+  /// düğme kilitlenir (16 Eyl 2026 — ad düzenleme). İkinci dokunuş aynı adı
+  /// bir daha yazar ya da ilk yanıt gelmeden kipi kapatırdı.
+  final bool yaziliyor;
+
   const ListeDuzenleDugmesi({
     super.key,
     required this.duzenleme,
     required this.onDegis,
+    this.yaziliyor = false,
   });
 
   @override
@@ -2637,11 +2643,20 @@ class ListeDuzenleDugmesi extends StatelessWidget {
     child: IconButton(
       key: const Key('liste-duzenle'),
       tooltip: duzenleme ? 'Bitti'.c : 'Listeyi düzenle'.c,
-      onPressed: onDegis,
-      icon: Icon(
-        duzenleme ? Icons.check : Icons.edit_outlined,
-        color: duzenleme ? DiziRenkler.sari : DiziRenkler.sariMetin,
-      ),
+      onPressed: yaziliyor ? null : onDegis,
+      icon: yaziliyor
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: DiziRenkler.sari,
+              ),
+            )
+          : Icon(
+              duzenleme ? Icons.check : Icons.edit_outlined,
+              color: duzenleme ? DiziRenkler.sari : DiziRenkler.sariMetin,
+            ),
     ),
   );
 }

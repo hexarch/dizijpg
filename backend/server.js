@@ -13393,6 +13393,30 @@ app.post('/listeler', girisZorunlu, sarici(async (req, res) => {
   res.json(rows[0]);
 }));
 
+// LİSTE ADINI DEĞİŞTİR (16 Eyl 2026 isteği): "kullanıcı oluşturduğu
+// listelerin ismini değiştiremiyor, edite tıklayınca değiştirebilmeli".
+// Düzenleme kipi 19 Ağu'dan beri sıra/gizle/kaldır yapıyordu ama adı yazan
+// uç HİÇ yoktu — kalem ikonu vardı, ad yine de donuktu.
+//
+// Doğrulama `POST /listeler` ile AYNI (boş ad 400, 60 karakter tavanı) ki
+// yeniden adlandırmayla oluşturma farklı kurallara düşmesin. Sahiplik
+// UPDATE'in WHERE'inde: başkasının listesi 404 (403 değil — varlığını bile
+// sızdırmayalım, `GET /listeler/:id`nin gizli listeye verdiğiyle aynı).
+app.put('/listeler/:id', girisZorunlu, sarici(async (req, res) => {
+  const { ad } = req.body || {};
+  const temiz = typeof ad === 'string' ? ad.trim() : '';
+  if (!temiz) return res.status(400).json({ hata: 'Liste adı gerekli' });
+  if (temiz.length > 60) {
+    return res.status(400).json({ hata: 'Ad en fazla 60, açıklama 300 karakter olabilir' });
+  }
+  const { rows } = await havuz.query(
+    'UPDATE listeler SET ad=$3 WHERE id=$1 AND kullanici_id=$2 RETURNING *',
+    [req.params.id, req.kullanici.id, temiz],
+  );
+  if (!rows.length) return res.status(404).json({ hata: 'Liste bulunamadı' });
+  res.json(rows[0]);
+}));
+
 app.delete('/listeler/:id', girisZorunlu, sarici(async (req, res) => {
   await havuz.query('DELETE FROM listeler WHERE id=$1 AND kullanici_id=$2',
     [req.params.id, req.kullanici.id]);

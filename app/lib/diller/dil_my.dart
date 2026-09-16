@@ -1851,4 +1851,6 @@ const Map<String, String> cevirilerMy = {
   'İzlediklerimi gösterme': 'ကြည့်ပြီးသားများကို ဖျောက်ရန်',
   'Bu listede izlemediğin yapım kalmamış':
       'ဤစာရင်းတွင် မကြည့်ရသေးသည် မကျန်တော့ပါ',
+  'Liste adı kaydedilemedi': 'စာရင်းအမည်ကို သိမ်း၍မရပါ',
+  'Liste adı boş olamaz': 'စာရင်းအမည် ဗလာမဖြစ်ရပါ',
 };

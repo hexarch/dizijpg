@@ -1913,4 +1913,6 @@ const Map<String, String> cevirilerRo = {
   'İzlediklerimi gösterme': 'Ascunde ce am văzut',
   'Bu listede izlemediğin yapım kalmamış':
       'Nu a mai rămas nimic nevăzut în această listă',
+  'Liste adı kaydedilemedi': 'Numele listei nu a putut fi salvat',
+  'Liste adı boş olamaz': 'Numele listei nu poate fi gol',
 };

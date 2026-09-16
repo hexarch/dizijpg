@@ -1834,4 +1834,6 @@ const Map<String, String> cevirilerUr = {
   'İzlediklerimi gösterme': 'دیکھی ہوئی چھپائیں',
   'Bu listede izlemediğin yapım kalmamış':
       'اس فہرست میں ان دیکھی کوئی چیز باقی نہیں',
+  'Liste adı kaydedilemedi': 'فہرست کا نام محفوظ نہیں ہو سکا',
+  'Liste adı boş olamaz': 'فہرست کا نام خالی نہیں ہو سکتا',
 };

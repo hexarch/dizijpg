@@ -401,7 +401,13 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     for (final l in _listeler)
       ListeSeridi(
         liste: l as Map<String, dynamic>,
-        onAc: () => context.push('/profil/liste/${(l['id'] as num).toInt()}'),
+        // Dönüşte YENİLE: liste sayfasında ad değiştirilmiş (16 Eyl 2026)
+        // ya da öğe kaldırılmış olabilir; şerit eski adı/önizlemeyi
+        // göstermeye devam ederdi. SWR: eski görünüm kalır, taze veri arkadan.
+        onAc: () =>
+            context.push('/profil/liste/${(l['id'] as num).toInt()}').then((_) {
+              if (mounted) _yukle();
+            }),
         onSil: () async {
           // Silmeden önce onay iste; hatayı kullanıcıya göster
           final onay = await showDialog<bool>(

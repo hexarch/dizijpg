@@ -33,6 +33,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // liste.dart — düzenleme kipinde liste ADI yerinde düzenlenir (16 Eyl 2026):
+  // boş ad uyarısı + sunucu reddi.
+  'Liste adı boş olamaz',
+  'Liste adı kaydedilemedi',
   // tarih.dart goreliZaman — akış/Reels/yorum damgası göreli zaman (15 Eyl 2026).
   'az önce',
   '{} dk önce',

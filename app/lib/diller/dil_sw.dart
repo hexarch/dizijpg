@@ -1841,4 +1841,6 @@ const Map<String, String> cevirilerSw = {
   'İzlediklerimi gösterme': 'Ficha nilizotazama',
   'Bu listede izlemediğin yapım kalmamış':
       'Hakuna kilichosalia bila kutazamwa katika orodha hii',
+  'Liste adı kaydedilemedi': 'Jina la orodha halikuweza kuhifadhiwa',
+  'Liste adı boş olamaz': 'Jina la orodha haliwezi kuwa tupu',
 };

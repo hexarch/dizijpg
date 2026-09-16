@@ -1859,4 +1859,6 @@ const Map<String, String> cevirilerFr = {
   'İzlediklerimi gösterme': 'Masquer ce que j’ai vu',
   'Bu listede izlemediğin yapım kalmamış':
       'Plus rien de non vu dans cette liste',
+  'Liste adı kaydedilemedi': 'Le nom de la liste n\'a pas pu être enregistré',
+  'Liste adı boş olamaz': 'Le nom de la liste ne peut pas être vide',
 };

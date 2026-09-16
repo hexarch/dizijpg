@@ -1867,4 +1867,6 @@ const Map<String, String> cevirilerTa = {
   'İzlediklerimi gösterme': 'பார்த்தவற்றை மறை',
   'Bu listede izlemediğin yapım kalmamış':
       'இந்தப் பட்டியலில் பார்க்காதது எதுவும் இல்லை',
+  'Liste adı kaydedilemedi': 'பட்டியலின் பெயரைச் சேமிக்க முடியவில்லை',
+  'Liste adı boş olamaz': 'பட்டியலின் பெயர் காலியாக இருக்கக் கூடாது',
 };

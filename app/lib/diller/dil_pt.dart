@@ -1861,4 +1861,6 @@ const Map<String, String> cevirilerPt = {
   'İzlediklerimi gösterme': 'Ocultar o que já vi',
   'Bu listede izlemediğin yapım kalmamış':
       'Não sobrou nada por ver nesta lista',
+  'Liste adı kaydedilemedi': 'Não foi possível salvar o nome da lista',
+  'Liste adı boş olamaz': 'O nome da lista não pode ficar vazio',
 };

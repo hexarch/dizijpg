@@ -181,6 +181,38 @@ test('gizle ucu SİLMEZ: öğe listede kalır', () => {
 });
 
 // ---------------------------------------------------------------------------
+// AD UCU (16 Eyl 2026): "kullanıcı oluşturduğu listelerin ismini
+// değiştiremiyor, edite tıklayınca değiştirebilmeli." Kalem vardı, adı yazan
+// uç YOKTU.
+// ---------------------------------------------------------------------------
+test('PUT /listeler/:id giriş ZORUNLU, sahiplik WHERE`de, eşleşme yoksa 404', () => {
+  const govde = ucGovdesi('/listeler/:id', 'put');
+  assert.match(govde, /girisZorunlu/);
+  assert.match(
+    govde,
+    /UPDATE listeler SET ad=\$3 WHERE id=\$1 AND kullanici_id=\$2 RETURNING \*/,
+    'başkasının listesi yeniden adlandırılabiliyor',
+  );
+  assert.match(govde, /status\(404\)/, 'sahip değilse 404 dönmüyor');
+});
+
+test('PUT /listeler/:id doğrulaması oluşturmayla AYNI (boş 400, 60 tavan)', () => {
+  const govde = ucGovdesi('/listeler/:id', 'put');
+  assert.match(govde, /typeof ad === 'string' \? ad\.trim\(\) : ''/, 'ad kırpılmıyor / tip denetlenmiyor');
+  assert.match(govde, /if \(!temiz\) return res\.status\(400\)/, 'boş ad kabul ediliyor');
+  assert.match(govde, /temiz\.length > 60/, '60 karakter tavanı yok');
+  // Oluşturma ucuyla aynı hata metinleri — istemci ikisini de aynı anahtarla çeviriyor.
+  assert.match(govde, /Liste adı gerekli/);
+  assert.match(govde, /Ad en fazla 60, açıklama 300 karakter olabilir/);
+});
+
+test('PUT /listeler/:id yalnız ADI yazar (sahip/gizlilik gövdeyle değişmez)', () => {
+  const govde = ucGovdesi('/listeler/:id', 'put');
+  assert.doesNotMatch(govde, /kullanici_id=\$3|herkese_acik=\$/);
+  assert.doesNotMatch(govde, /DELETE FROM/);
+});
+
+// ---------------------------------------------------------------------------
 // SAF YARDIMCI — kaynaktan çekilip GERÇEKTEN çalıştırılıyor
 // ---------------------------------------------------------------------------
 test('listeOgesiGecerli: tür beyaz listesi + tmdb_id doğrulaması', () => {

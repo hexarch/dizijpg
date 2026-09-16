@@ -1850,4 +1850,6 @@ const Map<String, String> cevirilerPl = {
   'İzlediklerimi gösterme': 'Ukryj obejrzane',
   'Bu listede izlemediğin yapım kalmamış':
       'W tej liście nie zostało nic nieobejrzanego',
+  'Liste adı kaydedilemedi': 'Nie udało się zapisać nazwy listy',
+  'Liste adı boş olamaz': 'Nazwa listy nie może być pusta',
 };

@@ -1825,4 +1825,6 @@ const Map<String, String> cevirilerVi = {
   'İzlediklerimi gösterme': 'Ẩn những gì đã xem',
   'Bu listede izlemediğin yapım kalmamış':
       'Danh sách này không còn gì chưa xem',
+  'Liste adı kaydedilemedi': 'Không thể lưu tên danh sách',
+  'Liste adı boş olamaz': 'Tên danh sách không được để trống',
 };

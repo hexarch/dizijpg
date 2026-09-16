@@ -1739,4 +1739,6 @@ const Map<String, String> cevirilerJa = {
   'Ölmeden İzlenmesi Gereken 100 Dizi': '死ぬまでに観るべきドラマ100本',
   'İzlediklerimi gösterme': '視聴済みを隠す',
   'Bu listede izlemediğin yapım kalmamış': 'このリストに未視聴の作品は残っていません',
+  'Liste adı kaydedilemedi': 'リスト名を保存できませんでした',
+  'Liste adı boş olamaz': 'リスト名は空にできません',
 };

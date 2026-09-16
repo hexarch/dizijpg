@@ -1843,4 +1843,6 @@ const Map<String, String> cevirilerHu = {
   'İzlediklerimi gösterme': 'Megnézettek elrejtése',
   'Bu listede izlemediğin yapım kalmamış':
       'Nincs több nem látott cím ebben a listában',
+  'Liste adı kaydedilemedi': 'A lista nevét nem sikerült menteni',
+  'Liste adı boş olamaz': 'A lista neve nem lehet üres',
 };

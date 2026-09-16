@@ -1838,4 +1838,6 @@ const Map<String, String> cevirilerId = {
   'İzlediklerimi gösterme': 'Sembunyikan yang sudah ditonton',
   'Bu listede izlemediğin yapım kalmamış':
       'Tidak ada yang belum ditonton di daftar ini',
+  'Liste adı kaydedilemedi': 'Nama daftar tidak dapat disimpan',
+  'Liste adı boş olamaz': 'Nama daftar tidak boleh kosong',
 };

@@ -1830,4 +1830,6 @@ const Map<String, String> cevirilerKn = {
   'İzlediklerimi gösterme': 'ನೋಡಿದವನ್ನು ಮರೆಮಾಡಿ',
   'Bu listede izlemediğin yapım kalmamış':
       'ಈ ಪಟ್ಟಿಯಲ್ಲಿ ನೋಡದಿರುವುದು ಯಾವುದೂ ಉಳಿದಿಲ್ಲ',
+  'Liste adı kaydedilemedi': 'ಪಟ್ಟಿಯ ಹೆಸರನ್ನು ಉಳಿಸಲಾಗಲಿಲ್ಲ',
+  'Liste adı boş olamaz': 'ಪಟ್ಟಿಯ ಹೆಸರು ಖಾಲಿ ಇರುವಂತಿಲ್ಲ',
 };

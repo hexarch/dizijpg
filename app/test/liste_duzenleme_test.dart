@@ -276,4 +276,133 @@ void main() {
 
     expect(find.byIcon(Icons.drag_handle), findsNothing);
   });
+
+  // =====================================================================
+  // LİSTE ADI (16 Eyl 2026): "kullanıcı oluşturduğu listelerin ismini
+  // değiştiremiyor, edite tıklayınca değiştirebilmeli."
+  // =====================================================================
+  //  7) Düzenleme kipinde başlık METİN ALANINA döner ve mevcut adla dolu
+  //     gelir; kip kapalıyken alan YOK (ad sade metin).
+  //  8) "Bitti" değişen adı `PUT /listeler/:id` ile yazar, gövde {ad} ve
+  //     başlık yeni adı gösterir.
+  //  9) Ad DEĞİŞMEDİYSE istek atılmaz (boş PUT sunucuyu meşgul etmesin).
+  // 10) BOŞ ad sunucuya gitmez: uyarı çıkar, kip açık kalır.
+  // 11) Sunucu REDDEDERSE eski ad kalır, kip AÇIK KALIR (yazılan kaybolmaz).
+  /// Son `PUT /listeler/7` gövdesindeki ad.
+  String? sonAd() {
+    final put = _istekler.where(
+      (i) => i.metot == 'PUT' && i.yol == '/listeler/7',
+    );
+    if (put.isEmpty) return null;
+    return (jsonDecode(put.last.govde) as Map<String, dynamic>)['ad']
+        as String?;
+  }
+
+  testWidgets('düzenleme kipinde başlık AD ALANINA döner (mevcut adla)', (
+    tester,
+  ) async {
+    await _kur(tester);
+    expect(find.byKey(const Key('liste-ad-alani')), findsNothing);
+    expect(find.text('Favorilerim'), findsOneWidget);
+
+    await _duzenlemeAc(tester);
+
+    final alan = tester.widget<TextField>(
+      find.byKey(const Key('liste-ad-alani')),
+    );
+    expect(alan.controller!.text, 'Favorilerim');
+  });
+
+  testWidgets('"Bitti" yeni adı PUT ile yazar ve başlık güncellenir', (
+    tester,
+  ) async {
+    await _kur(tester);
+    await _duzenlemeAc(tester);
+
+    await tester.enterText(
+      find.byKey(const Key('liste-ad-alani')),
+      '  En iyiler  ',
+    );
+    await tester.tap(find.byKey(const Key('liste-duzenle')));
+    await tester.pumpAndSettle();
+
+    expect(sonAd(), 'En iyiler', reason: 'ad kırpılıp sunucuya yazılmadı');
+    // Kip kapandı, başlık yeni ad.
+    expect(find.byKey(const Key('liste-ad-alani')), findsNothing);
+    expect(find.text('En iyiler'), findsOneWidget);
+    expect(find.text('Favorilerim'), findsNothing);
+  });
+
+  testWidgets('klavyedeki TAMAM da kaydeder', (tester) async {
+    await _kur(tester);
+    await _duzenlemeAc(tester);
+
+    await tester.enterText(find.byKey(const Key('liste-ad-alani')), 'Klavye');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+
+    expect(sonAd(), 'Klavye');
+    expect(find.byKey(const Key('liste-ad-alani')), findsNothing);
+  });
+
+  testWidgets('ad DEĞİŞMEDİYSE "Bitti" istek atmaz', (tester) async {
+    await _kur(tester);
+    await _duzenlemeAc(tester);
+
+    await tester.tap(find.byKey(const Key('liste-duzenle')));
+    await tester.pumpAndSettle();
+
+    expect(sonAd(), isNull, reason: 'aynı ad için PUT atıldı');
+    expect(find.byKey(const Key('liste-ad-alani')), findsNothing);
+    expect(find.text('Favorilerim'), findsOneWidget);
+  });
+
+  testWidgets('BOŞ ad sunucuya gitmez; uyarı + kip açık kalır', (tester) async {
+    await _kur(tester);
+    await _duzenlemeAc(tester);
+
+    await tester.enterText(find.byKey(const Key('liste-ad-alani')), '   ');
+    await tester.tap(find.byKey(const Key('liste-duzenle')));
+    await tester.pumpAndSettle();
+
+    expect(sonAd(), isNull);
+    expect(find.text('Liste adı boş olamaz'), findsOneWidget);
+    expect(find.byKey(const Key('liste-ad-alani')), findsOneWidget);
+  });
+
+  testWidgets('sunucu REDDEDERSE eski ad kalır ve kip AÇIK kalır', (
+    tester,
+  ) async {
+    await _kur(tester);
+    await _duzenlemeAc(tester);
+    _reddet = {'/listeler/7'};
+
+    await tester.enterText(find.byKey(const Key('liste-ad-alani')), 'Yeni');
+    await tester.tap(find.byKey(const Key('liste-duzenle')));
+    await tester.pumpAndSettle();
+
+    expect(sonAd(), 'Yeni', reason: 'istek hiç atılmadı');
+    expect(find.text('Liste adı kaydedilemedi'), findsOneWidget);
+    // Yazılan KAYBOLMADI: alan hâlâ açık ve "Yeni" yazıyor.
+    final alan = tester.widget<TextField>(
+      find.byKey(const Key('liste-ad-alani')),
+    );
+    expect(alan.controller!.text, 'Yeni');
+
+    // Kipten çıkınca (aynı ada geri yazıp Bitti) başlık ESKİ ad.
+    await tester.enterText(
+      find.byKey(const Key('liste-ad-alani')),
+      'Favorilerim',
+    );
+    await tester.tap(find.byKey(const Key('liste-duzenle')));
+    await tester.pumpAndSettle();
+    expect(find.text('Favorilerim'), findsOneWidget);
+    expect(find.text('Yeni'), findsNothing);
+  });
+
+  testWidgets('BAŞKASININ listesinde ad alanı hiç çizilmez', (tester) async {
+    await _kur(tester, sahibiyim: false);
+    expect(find.byKey(const Key('liste-ad-alani')), findsNothing);
+    expect(find.text('Favorilerim'), findsOneWidget);
+  });
 }

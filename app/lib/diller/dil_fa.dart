@@ -1811,4 +1811,6 @@ const Map<String, String> cevirilerFa = {
   'Ölmeden İzlenmesi Gereken 100 Dizi': '100 سریال که قبل از مرگ باید دید',
   'İzlediklerimi gösterme': 'دیده‌شده‌ها را پنهان کن',
   'Bu listede izlemediğin yapım kalmamış': 'در این فهرست چیز ندیده‌ای نمانده',
+  'Liste adı kaydedilemedi': 'نام فهرست ذخیره نشد',
+  'Liste adı boş olamaz': 'نام فهرست نمی‌تواند خالی باشد',
 };

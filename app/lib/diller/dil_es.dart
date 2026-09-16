@@ -1910,4 +1910,6 @@ const Map<String, String> cevirilerEs = {
   'İzlediklerimi gösterme': 'Ocultar lo que ya vi',
   'Bu listede izlemediğin yapım kalmamış':
       'No queda nada sin ver en esta lista',
+  'Liste adı kaydedilemedi': 'No se pudo guardar el nombre de la lista',
+  'Liste adı boş olamaz': 'El nombre de la lista no puede estar vacío',
 };

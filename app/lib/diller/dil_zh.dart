@@ -1771,4 +1771,6 @@ const Map<String, String> cevirilerZh = {
   'Ölmeden İzlenmesi Gereken 100 Dizi': '死前必看的 100 部剧集',
   'İzlediklerimi gösterme': '隐藏已看过的',
   'Bu listede izlemediğin yapım kalmamış': '此列表中没有未看的作品了',
+  'Liste adı kaydedilemedi': '无法保存片单名称',
+  'Liste adı boş olamaz': '片单名称不能为空',
 };

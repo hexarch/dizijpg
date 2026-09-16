@@ -1815,4 +1815,6 @@ const Map<String, String> cevirilerGu = {
   'Ölmeden İzlenmesi Gereken 100 Dizi': 'મરતા પહેલા જોવા જેવી 100 સિરીઝ',
   'İzlediklerimi gösterme': 'જોયેલી છુપાવો',
   'Bu listede izlemediğin yapım kalmamış': 'આ યાદીમાં કંઈ અણજોયું બાકી નથી',
+  'Liste adı kaydedilemedi': 'લિસ્ટનું નામ સેવ થઈ શક્યું નહીં',
+  'Liste adı boş olamaz': 'લિસ્ટનું નામ ખાલી ન હોઈ શકે',
 };

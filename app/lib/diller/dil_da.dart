@@ -1829,4 +1829,6 @@ const Map<String, String> cevirilerDa = {
   'Ölmeden İzlenmesi Gereken 100 Dizi': '100 serier du skal se, før du dør',
   'İzlediklerimi gösterme': 'Skjul det jeg har set',
   'Bu listede izlemediğin yapım kalmamış': 'Intet uset tilbage på denne liste',
+  'Liste adı kaydedilemedi': 'Listenavnet kunne ikke gemmes',
+  'Liste adı boş olamaz': 'Listenavnet må ikke være tomt',
 };

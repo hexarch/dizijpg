@@ -1819,4 +1819,6 @@ const Map<String, String> cevirilerAz = {
   'İzlediklerimi gösterme': 'İzlədiklərimi göstərmə',
   'Bu listede izlemediğin yapım kalmamış':
       'Bu siyahıda izlənməmiş yapım qalmayıb',
+  'Liste adı kaydedilemedi': 'Siyahı adı yadda saxlanmadı',
+  'Liste adı boş olamaz': 'Siyahı adı boş ola bilməz',
 };

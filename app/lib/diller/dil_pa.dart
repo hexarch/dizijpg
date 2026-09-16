@@ -1830,4 +1830,6 @@ const Map<String, String> cevirilerPa = {
   'İzlediklerimi gösterme': 'ਵੇਖੀਆਂ ਲੁਕਾਓ',
   'Bu listede izlemediğin yapım kalmamış':
       'ਇਸ ਸੂਚੀ ਵਿੱਚ ਕੋਈ ਅਣਵੇਖੀ ਚੀਜ਼ ਨਹੀਂ ਬਚੀ',
+  'Liste adı kaydedilemedi': 'ਲਿਸਟ ਦਾ ਨਾਮ ਸੇਵ ਨਹੀਂ ਹੋ ਸਕਿਆ',
+  'Liste adı boş olamaz': 'ਲਿਸਟ ਦਾ ਨਾਮ ਖਾਲੀ ਨਹੀਂ ਹੋ ਸਕਦਾ',
 };

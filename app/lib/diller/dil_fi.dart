@@ -1838,4 +1838,6 @@ const Map<String, String> cevirilerFi = {
   'İzlediklerimi gösterme': 'Piilota katsotut',
   'Bu listede izlemediğin yapım kalmamış':
       'Tässä listassa ei ole enää katsomatonta',
+  'Liste adı kaydedilemedi': 'Listan nimeä ei voitu tallentaa',
+  'Liste adı boş olamaz': 'Listan nimi ei voi olla tyhjä',
 };

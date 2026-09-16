@@ -1818,4 +1818,6 @@ const Map<String, String> cevirilerBn = {
   'Ölmeden İzlenmesi Gereken 100 Dizi': 'মৃত্যুর আগে দেখার মতো 100টি সিরিজ',
   'İzlediklerimi gösterme': 'দেখা হয়েছে এমন লুকান',
   'Bu listede izlemediğin yapım kalmamış': 'এই তালিকায় না দেখা কিছু বাকি নেই',
+  'Liste adı kaydedilemedi': 'লিস্টের নাম সেভ করা যায়নি',
+  'Liste adı boş olamaz': 'লিস্টের নাম খালি রাখা যাবে না',
 };

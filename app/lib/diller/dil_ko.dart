@@ -1744,4 +1744,6 @@ const Map<String, String> cevirilerKo = {
   'Ölmeden İzlenmesi Gereken 100 Dizi': '죽기 전에 봐야 할 시리즈 100편',
   'İzlediklerimi gösterme': '본 작품 숨기기',
   'Bu listede izlemediğin yapım kalmamış': '이 목록에 안 본 작품이 없습니다',
+  'Liste adı kaydedilemedi': '목록 이름을 저장하지 못했습니다',
+  'Liste adı boş olamaz': '목록 이름은 비워 둘 수 없습니다',
 };

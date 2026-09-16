@@ -1826,4 +1826,6 @@ const Map<String, String> cevirilerHi = {
   'İzlediklerimi gösterme': 'देखी हुई छिपाएँ',
   'Bu listede izlemediğin yapım kalmamış':
       'इस सूची में कोई अनदेखी चीज़ नहीं बची',
+  'Liste adı kaydedilemedi': 'लिस्ट का नाम सेव नहीं हो सका',
+  'Liste adı boş olamaz': 'लिस्ट का नाम खाली नहीं हो सकता',
 };

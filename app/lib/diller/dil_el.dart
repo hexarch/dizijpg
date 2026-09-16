@@ -1865,4 +1865,6 @@ const Map<String, String> cevirilerEl = {
   'İzlediklerimi gösterme': 'Απόκρυψη όσων είδα',
   'Bu listede izlemediğin yapım kalmamış':
       'Δεν έμεινε τίποτα αθέατο σε αυτή τη λίστα',
+  'Liste adı kaydedilemedi': 'Το όνομα της λίστας δεν αποθηκεύτηκε',
+  'Liste adı boş olamaz': 'Το όνομα της λίστας δεν μπορεί να είναι κενό',
 };

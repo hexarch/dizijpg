@@ -1839,4 +1839,6 @@ const Map<String, String> cevirilerBg = {
   'İzlediklerimi gösterme': 'Скрий гледаните',
   'Bu listede izlemediğin yapım kalmamış':
       'В този списък не остана нищо негледано',
+  'Liste adı kaydedilemedi': 'Името на списъка не беше запазено',
+  'Liste adı boş olamaz': 'Името на списъка не може да е празно',
 };

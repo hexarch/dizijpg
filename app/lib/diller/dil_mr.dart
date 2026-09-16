@@ -1824,4 +1824,6 @@ const Map<String, String> cevirilerMr = {
       'मरण्यापूर्वी पाहण्यासारख्या 100 मालिका',
   'İzlediklerimi gösterme': 'पाहिलेले लपवा',
   'Bu listede izlemediğin yapım kalmamış': 'या यादीत न पाहिलेले काही उरले नाही',
+  'Liste adı kaydedilemedi': 'लिस्टचं नाव सेव्ह होऊ शकलं नाही',
+  'Liste adı boş olamaz': 'लिस्टचं नाव रिकामं असू शकत नाही',
 };
