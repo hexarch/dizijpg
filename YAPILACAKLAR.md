@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-17 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-17 — 🔨 NÖBETÇİ: ARKA PLAN İŞLERİ SESSİZCE DURAMASIN
+## 2026-09-17 — 🚀 NÖBETÇİ: ARKA PLAN İŞLERİ SESSİZCE DURAMASIN (CANLI)
 
 **Tetik (birebir):** *"yap"* — "bu sınıf hata sessiz; ölçü tablosu N saattir
 tazelenmedi nöbetçisi ekleyeyim mi?" teklifine.
@@ -31,8 +31,15 @@ bunu kapatıyor.
 - ✅ Şema değişikliği YOK: kayıtlar mevcut `ayarlar` tablosunda (migrasyon
   gerekmiyor). 16 yeni test (`backend/test/nobet.test.js`) — 14 Eyl senaryosu
   birebir kurulup nöbetçinin onu yakaladığı doğrulanıyor.
-- ⬜ Dağıtım: `server.js` + `isitici.js` + `nobet.js` + `admin.html` +
-  Dockerfile (COPY listesine `nobet.js`) → imaj yeniden derlemesi.
+- 🚀 Dağıtım 17 Eyl 02:33: `server.js` + `isitici.js` + `nobet.js` +
+  `admin.html` + Dockerfile (COPY listesine `nobet.js`) → imaj yeniden
+  derlemesi. **Canlı doğrulama:** dört ölçü işi de koşu sonucunu yazdı
+  (`nobet_seo_*`), ısıtıcı 02:50 koşusunda kendi kaydını attı
+  (`ardarda_hata: 0`), açılış+2 dk turu `{"sorunlar":[]}` yazdı ve temiz
+  turda log'a TEK SATIR düşmedi, `/admin/ozet` → `nobetci` dolu geliyor.
+  Alarm provası (salt okuma, dağıtılmış modül + canlı kayıtlar, saat 3 gün
+  ileri): dördü de "3,0 gündür başarılı koşu yok" diyor, şimdiki saatle
+  liste boş.
 
 ## 2026-09-17 — 🚀 İKİ SESSİZ ARIZA: KÖK ROTA TESTİ + TMDB ÇÖP SAYISI (int TAŞMASI, CANLI)
 
