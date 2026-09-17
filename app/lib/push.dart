@@ -361,8 +361,11 @@ Future<void> pushCekirdek() async {
   try {
     await Firebase.initializeApp();
     FirebaseMessaging.onBackgroundMessage(pushArkaplan);
-  } catch (_) {
-    // Firebase yoksa/başarısızsa uygulama normal çalışır
+  } catch (hata, yigin) {
+    // Firebase yoksa/başarısızsa uygulama normal çalışır — ama SESSİZ DEĞİL
+    // (15 Eyl 2026): bu blok yutunca `pushBaslat` sonradan "No Firebase App
+    // '[DEFAULT]'" diye düşüyor ve asıl sebep hiçbir yerde görünmüyordu.
+    Api.hataBildir(hata, yigin, yol: 'push/cekirdek');
   }
 }
 
@@ -461,31 +464,62 @@ Future<void> pushBaslat() async {
       FirebaseMessaging.onMessageOpenedApp.listen(
         (m) => _bildirimVerisiyleGit(m.data),
       );
-      // Uygulama bildirimle açıldıysa hedefe git (yönlendirici kurulduktan sonra)
-      final ilkMesaj = await mesajlasma.getInitialMessage();
-      final ilkYerel = await _yerel.getNotificationAppLaunchDetails();
-      if (ilkMesaj != null || ilkYerel?.didNotificationLaunchApp == true) {
-        Future.delayed(const Duration(milliseconds: 600), () {
-          if (ilkMesaj != null) {
-            _bildirimVerisiyleGit(ilkMesaj.data);
-          } else {
-            _payloadIleGit(ilkYerel?.notificationResponse?.payload);
-          }
-        });
-      }
 
-      mesajlasma.onTokenRefresh.listen(_tokenGonder);
+      mesajlasma.onTokenRefresh.listen((t) => _tokenGonder(t));
       _kuruldu = true;
     }
 
-    final token = await _tokenAl(mesajlasma);
-    if (token != null) await _tokenGonder(token);
+    // JETON ÖNCE, AÇILIŞ BİLDİRİMİ SONRA (15 Eyl 2026). Eskiden sıra tersti ve
+    // iOS'ta `getInitialMessage()` (firebase_messaging 15.x + Flutter 3.44'ün
+    // UIScene şablonu) HİÇ DÖNMÜYORDU: bayrağı yalnız
+    // `UIApplicationDidFinishLaunchingNotification` gözlemcisi set ediyor, eklenti
+    // ise sahne bağlanınca — bildirim geçtikten sonra — kaydoluyordu. Sonuç:
+    // bu fonksiyon o satırda sonsuza dek askıda kaldı, jeton hiç alınmadı, hata
+    // da fırlamadı (`cihaz_tokenlari`: 773 android, 0 ios). Eklenti 16.x'e
+    // yükseltildi; bu sıra ve aşağıdaki zaman aşımı ikinci sigortadır: açılış
+    // bildirimi askıda kalsa bile jeton kaydı ondan bağımsız yürür.
+    await _jetonKaydet(mesajlasma);
+
+    await _acilisBildiriminiIsle(mesajlasma);
   } catch (hata, yigin) {
     // ARTIK SESSİZ DEĞİL (13 Eyl 2026): iOS'ta HİÇ jeton kaydolmadığı
     // `cihaz_tokenlari` sayımıyla ortaya çıktı (714 android, 0 ios) ve
     // sebebini gösterecek TEK iz bu blokta yutuluyordu. Kullanıcıya bir şey
     // gösterilmez (izin reddi normaldir), ama sunucu günlüğüne düşer.
     Api.hataBildir(hata, yigin, yol: 'push/baslat');
+  }
+}
+
+bool _acilisIslendi = false;
+
+/// Uygulama bir bildirime dokunularak açıldıysa hedefe gider (yönlendirici
+/// kurulduktan sonra). Süreç başına BİR kez; her iki sorgu da ZAMAN AŞIMLI —
+/// bkz. [pushBaslat] içindeki sıra notu: bu bekleme iOS'ta bir kez sonsuza
+/// dek askıda kaldı ve jeton kaydını da beraberinde götürdü.
+Future<void> _acilisBildiriminiIsle(FirebaseMessaging mesajlasma) async {
+  if (_acilisIslendi) return;
+  _acilisIslendi = true;
+  try {
+    const bekleme = Duration(seconds: 5);
+    final ilkMesaj = await mesajlasma.getInitialMessage().timeout(
+      bekleme,
+      onTimeout: () => null,
+    );
+    final ilkYerel = await _yerel.getNotificationAppLaunchDetails().timeout(
+      bekleme,
+      onTimeout: () => null,
+    );
+    if (ilkMesaj != null || ilkYerel?.didNotificationLaunchApp == true) {
+      Future.delayed(const Duration(milliseconds: 600), () {
+        if (ilkMesaj != null) {
+          _bildirimVerisiyleGit(ilkMesaj.data);
+        } else {
+          _payloadIleGit(ilkYerel?.notificationResponse?.payload);
+        }
+      });
+    }
+  } catch (hata, yigin) {
+    Api.hataBildir(hata, yigin, yol: 'push/acilis');
   }
 }
 
@@ -510,15 +544,62 @@ Future<String?> _tokenAl(FirebaseMessaging mesajlasma) async {
   if (Platform.isIOS) {
     // ~9 sn'lik pencere: APNS kaydı ağ gerektirir, ilk açılışta yavaş olabilir.
     for (var deneme = 0; deneme < 12; deneme++) {
-      final apns = await mesajlasma.getAPNSToken();
+      // ZAMAN AŞIMI ŞART: bu fonksiyonun İÇİNDEKİ bir askı, 15 Eyl'de
+      // `getInitialMessage()`in yaptığının aynısını yapar — jeton hiç
+      // kaydolmaz ve ortada hata da olmaz. Eklentiye süresiz güvenilmez.
+      final apns = await mesajlasma.getAPNSToken().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () => null,
+      );
       if (apns != null) break;
       await Future.delayed(const Duration(milliseconds: 750));
     }
   }
-  return mesajlasma.getToken();
+  return mesajlasma.getToken().timeout(const Duration(seconds: 15));
 }
 
-Future<void> _tokenGonder(String token) async {
+/// Jetonu alıp sunucuya yazar; olmazsa artan aralıklarla YENİDEN dener.
+///
+/// ÜÇÜNCÜ DENEME NOTU (17 Eyl 2026): iOS jeton kaydı iki ayrı turda düştü ve
+/// ikisinde de sunucuda tek bir iz yoktu — biri `catch (_) {}` yüzünden, biri
+/// askıda kalan `await` yüzünden. Teşhis ancak `cihaz_tokenlari` sayılarak
+/// yapılabildi. Bu yüzden artık: (a) TEK seferlik yarışı kaybetmek oturumun
+/// tamamını bildirimsiz bırakmıyor, (b) son deneme de başarısızsa sunucu
+/// günlüğüne HANGİ adımda düştüğü yazılıyor.
+Future<void> _jetonKaydet(FirebaseMessaging mesajlasma) async {
+  const araliklar = [
+    Duration.zero,
+    Duration(seconds: 20),
+    Duration(minutes: 2),
+  ];
+  Object? sonHata;
+  StackTrace? sonYigin;
+  for (var tur = 0; tur < araliklar.length; tur++) {
+    if (araliklar[tur] > Duration.zero) await Future.delayed(araliklar[tur]);
+    try {
+      final token = await _tokenAl(mesajlasma);
+      if (token == null) {
+        sonHata = StateError('jeton null (tur ${tur + 1})');
+        sonYigin = StackTrace.current;
+        continue;
+      }
+      if (await _tokenGonder(token)) return;
+      sonHata = StateError('jeton sunucuya yazılamadı (tur ${tur + 1})');
+      sonYigin = StackTrace.current;
+    } catch (hata, yigin) {
+      sonHata = hata;
+      sonYigin = yigin;
+    }
+  }
+  // Tüm turlar bittiğinde TEK rapor: izin reddi de buraya düşer, o yüzden
+  // kullanıcıya bir şey gösterilmez — ama sunucu artık kör kalmaz.
+  if (sonHata != null) {
+    Api.hataBildir(sonHata, sonYigin, yol: 'push/jeton');
+  }
+}
+
+/// Jetonu sunucuya yazar. Başarıysa `true`.
+Future<bool> _tokenGonder(String token) async {
   try {
     await Api.cihazTokenKaydet(
       token,
@@ -528,7 +609,10 @@ Future<void> _tokenGonder(String token) async {
     // Push ADRESİ artık var: iOS'ta açılan yedek yoklama kanalı kapansın
     // (bkz. bildirim_canli.dart). Android'de o kanal zaten hiç açılmıyor.
     BildirimCanli.pushCalisiyorBildir();
-  } catch (_) {}
+    return true;
+  } catch (_) {
+    return false;
+  }
 }
 
 /// Çıkışta token'ı sunucudan siler (bu cihaza artık bildirim gitmesin).
