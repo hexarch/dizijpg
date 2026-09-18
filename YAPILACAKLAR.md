@@ -1,5 +1,31 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-17 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-18 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-18 — 🚀 GÖNDERİ SAYFASINDA YORUMLAR GÖRÜNMÜYORDU (CANLI, 1.177.1+265)
+
+**Tetik (birebir):** *"gönderiyi açtığımda yorumları gözükmüyor
+https://dizijpg.com/gonderi/5862"*
+
+Tek bir arıza gibi duruyordu, İKİ ayrı eksikti:
+
+- ✅ **`GET /yorum/:id` yanıt sayısını döndürmüyordu.** `/akis`,
+  `/kesfet-akis` ve profil ucu `yanit` alanını döndürüyor; TEK GÖNDERİ ucu
+  unutulmuştu. Alan gelmeyince `AkisKarti` 0 sayıyor ve konuşma balonuna
+  "Yorum yap" yazıyor — 2 yanıtlı gönderi paylaşılan bağlantıdan YORUMSUZ
+  görünüyordu. Sayım akıştakinin aynısı (`count(*) WHERE ust_id=y.id`);
+  yanıtın yanıtı da `ust_id`de KÖKÜ taşıdığı için tüm konuşma tek sayıda.
+- ✅ **Adres bir YANITI gösteriyorsa ekran onu tek başına açıyordu.** 5862
+  tam da böyleydi: 5820'nin altındaki bir yanıt. Üst gönderiye çıkma yolu
+  YALNIZ `?yanit=1` bayrağına bağlıydı; beğeni bildirimi sorgusuz adres
+  üretiyor, elle kopyalanan adresten de sorgu düşüyor. Artık satırın
+  `ust_id`si doluysa bayraksız da konuşma açılır (`kesfet_akis.dart`,
+  `_yukle` → `_ustuCoz`). Normal gönderide `ust_id` null → EK İSTEK YOK,
+  paylaşım yolunun gerileme koruması testi duruyor.
+- ✅ Yan düzeltme: Reels devam listesinin süzgeci artık EKRANDAKİ gönderinin
+  id'sine bakıyor (üst gönderiye çıkıldığında kaydırmada ikinci kez çıkardı).
+- ✅ Kanıt: `app/test/bildirim_yanit_yolu_test.dart` yeni grup + canlı curl
+  (`/api/yorum/5820` → `yanit: 2`) + tarayıcıda /gonderi/5862 üst gönderiyi
+  ve iki yanıtı açıyor.
 
 ## 2026-09-17 — 🚀 NÖBETÇİ: ARKA PLAN İŞLERİ SESSİZCE DURAMASIN (CANLI)
 
