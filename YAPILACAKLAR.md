@@ -26,6 +26,23 @@ Tek bir arıza gibi duruyordu, İKİ ayrı eksikti:
 - ✅ Kanıt: `app/test/bildirim_yanit_yolu_test.dart` yeni grup + canlı curl
   (`/api/yorum/5820` → `yanit: 2`) + tarayıcıda /gonderi/5862 üst gönderiyi
   ve iki yanıtı açıyor.
+- ✅ **AYNI GÜN, İKİNCİ TUR (1.177.2+266) — açık bırakılan tuzak kapatıldı.**
+  `YanitlarSheet` yanıtları yapımın TÜM yorum listesinden çekip süzüyordu; o
+  listenin `ustler` CTE'si üst yorumları `LIMIT 100` ile kırpıyor, yani çok
+  yorumlu bir yapımda pencerenin dışında kalan gönderinin yanıtları HİÇ
+  gelmiyor ve sheet boş açılıyordu (aynı şikâyetin ikinci sebebi, sunucuda
+  hata yok). Yeni uç: **`GET /yorum/:id/yanitlar`** — tek koşul (`ust_id`)
+  tüm iş parçacığını verir, tavan 500, hız limiti 300, görüntülenme saymaz.
+  Eski yol GERİ DÜŞÜŞ olarak duruyor (dağıtım penceresinde eski sunucuya
+  düşen istemci yanıtsız kalmasın); 404 İSTİSNASI YETMEZ, alanı gelmeyen 200
+  de geri düşüşe gider.
+- ✅ Yan iş: 15-16 Eyl'den beri commit'siz duran dört dosya (kabuk mesaj
+  sekmesi düzeltmesi, profilde görsele basılı tutunca büyütme, ızgara araya
+  bırakma toleransı, `MAGAZA` kipi) + iki izlenmeyen test dosyası depoya
+  alındı. Davranış değişmedi: hepsi 1.176.0+263 ile zaten canlıya gitmişti,
+  ama depoda durmadıkça bir sonraki temiz derlemede sessizce geri giderdi.
+- ✅ `Api.surum` pubspec ile eşitlendi (1.177.1'de atlanmıştı → admin
+  panelindeki sürüm dağılımı yanlış sürümü sayacaktı).
 
 ## 2026-09-17 — 🚀 NÖBETÇİ: ARKA PLAN İŞLERİ SESSİZCE DURAMASIN (CANLI)
 
