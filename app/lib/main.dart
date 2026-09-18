@@ -64,6 +64,9 @@ Future<void> acilisAdimi(String ad, Future<void> Function() calistir) async {
   }
 }
 
+/// Mağaza görseli/videosu çekim kipi (`--dart-define=MAGAZA=true`).
+const bool magazaKipi = bool.fromEnvironment('MAGAZA');
+
 Future<void> main() async {
   // Yakalanan Flutter hataları önce konsola, sonra sunucuya (self-hosted günlük).
   FlutterError.onError = (ayrinti) {
@@ -144,8 +147,13 @@ Future<void> main() async {
     await acilisAdimi('cubuk-katlama', KabukKatlama.yukle);
     final oturum = Oturum();
     await acilisAdimi('oturum', oturum.yukle);
-    // Girişli kullanıcıda push'u başlat (izin + token kaydı)
-    if (oturum.girisli) pushBaslat();
+    // Girişli kullanıcıda push'u başlat (izin + token kaydı).
+    // MAĞAZA KİPİ (`--dart-define=MAGAZA=true`): mağaza karesi/videosu çekerken
+    // iOS bildirim izni penceresi HER soğuk açılışta ekranı kaplıyor ve
+    // uygulama pencere etkin olmadığı için ilk kareyi hiç çizmiyordu (kare
+    // simsiyah çıkıyordu). Yalnız bu izin isteği atlanır; başka hiçbir şey
+    // değişmez. Bkz. magaza-ios/EKRAN-GORUNTUSU-TARIFI-IOS.md
+    if (oturum.girisli && !magazaKipi) pushBaslat();
     // Webde anlık bildirim penceresinin TEK kaynağı bu yoklamadır (FCM yok);
     // mobilde `baslat` kendiliğinden geri döner. Bkz. bildirim_canli.dart.
     if (oturum.girisli) BildirimCanli.baslat();

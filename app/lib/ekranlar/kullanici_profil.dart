@@ -11,6 +11,7 @@ import '../tema.dart';
 import 'begenenler.dart';
 import 'ek_etiket_seridi.dart';
 import 'gonderi_istatistik.dart' show IstatistikGirisi;
+import 'medya_goster.dart';
 import 'ortak.dart';
 import 'profil.dart'
     show
@@ -194,15 +195,25 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
           padding: EdgeInsets.only(bottom: altGuvenli(context)),
           children: [
             if (kapak != null)
-              SizedBox(
-                height: 130,
-                width: double.infinity,
-                // Kapak GIF olabilir ve OYNAMALI: web'de CachedNetworkImage
-                // <img> yolundan tek kareye düşüyor (bkz. AgGorsel).
-                child: AgGorsel(
-                  url: kapak,
-                  yerTutucu: Container(color: DiziRenkler.koyuGri),
-                  hata: Container(color: DiziRenkler.koyuGri),
+              // UZUN BASMA = BÜYÜT (13 Eyl 2026, kullanıcı isteği). Ziyaretçi
+              // profilinde kapak 130 dp'ye SIĞDIRILMIŞ (BoxFit.cover), yani
+              // kadrajın dışı kırpılıyor; basılı tutmak tam görseli çimdikle
+              // yakınlaştırılabilir şekilde açar. `onTap` BİLEREK BOŞ: tek
+              // dokunma bu ekranda hiçbir şey yapmıyordu, uzun basmanın
+              // yanına bir de ona bağlanmamış tıklama koymak kaydırmayı
+              // yanlışlıkla tetiklerdi.
+              GestureDetector(
+                onLongPress: () => medyaGoster(context, [kapak]),
+                child: SizedBox(
+                  height: 130,
+                  width: double.infinity,
+                  // Kapak GIF olabilir ve OYNAMALI: web'de CachedNetworkImage
+                  // <img> yolundan tek kareye düşüyor (bkz. AgGorsel).
+                  child: AgGorsel(
+                    url: kapak,
+                    yerTutucu: Container(color: DiziRenkler.koyuGri),
+                    hata: Container(color: DiziRenkler.koyuGri),
+                  ),
                 ),
               ),
             Padding(
@@ -212,13 +223,23 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                 children: [
                   Row(
                     children: [
-                      KullaniciAvatari(
-                        url: avatar,
-                        kullaniciAdi: p['kullanici_adi'] as String?,
-                        yaricap: 40,
-                        arkaplan: DiziRenkler.kart,
-                        // Profil başlığı: GIF avatar BURADA oynasın.
-                        hareketli: true,
+                      // Kapakla aynı kural: basılı tutunca tam boy açılır.
+                      // Avatarı OLMAYANDA (kişi ikonu) jest BAĞLANMAZ —
+                      // `onLongPress: null` GestureDetector'ı saydam bırakır,
+                      // yoksa boş bir ikona basılı tutmak siyah bir ekran
+                      // açardı.
+                      GestureDetector(
+                        onLongPress: avatar == null
+                            ? null
+                            : () => medyaGoster(context, [avatar]),
+                        child: KullaniciAvatari(
+                          url: avatar,
+                          kullaniciAdi: p['kullanici_adi'] as String?,
+                          yaricap: 40,
+                          arkaplan: DiziRenkler.kart,
+                          // Profil başlığı: GIF avatar BURADA oynasın.
+                          hareketli: true,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(

@@ -543,24 +543,47 @@ class _SiralanabilirPosterIzgarasiState
     itemBuilder: (context, i) {
       final o = gorunen[i] as Map<String, dynamic>;
       final anahtar = _anahtar(o);
-      // Zaten en üstteki öğeye "en üste taşı" çizilmez (işlevsiz düğme).
-      final ustteDegil = _ogeler.indexOf(o) > 0;
+      final sira = _ogeler.indexOf(o);
+      // Zaten en üstteki öğeye "en üste taşı", en alttakine "en aşağıya
+      // gönder" çizilmez (işlevsiz düğme).
+      final ustteDegil = sira > 0;
+      final alttaDegil = sira >= 0 && sira < _ogeler.length - 1;
       return IcerikSatiri(
         key: ValueKey(anahtar),
         tur: o['tur'] as String,
         tmdbId: (o['tmdb_id'] as num).toInt(),
         // İlerleme çubuğunun payı — afiş ızgarasındaki çubukla AYNI kaynak.
         izlenenSayi: widget.izlenenSayi?.call(o),
-        sonEk: widget.siralamaKipi && ustteDegil
-            ? IconButton(
-                key: Key('sira-uste-satir-$anahtar'),
-                tooltip: 'En üste taşı'.c,
-                onPressed: _yaziliyor ? null : () => _usteTasi(o),
-                icon: Icon(
-                  Icons.vertical_align_top,
-                  size: 20,
-                  color: DiziRenkler.sariMetin,
-                ),
+        // Izgaradaki çiftin satır karşılığı: yukarı ok + aşağı ok.
+        sonEk: widget.siralamaKipi && (ustteDegil || alttaDegil)
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (ustteDegil)
+                    IconButton(
+                      key: Key('sira-uste-satir-$anahtar'),
+                      tooltip: 'En üste taşı'.c,
+                      visualDensity: VisualDensity.compact,
+                      onPressed: _yaziliyor ? null : () => _usteTasi(o),
+                      icon: Icon(
+                        Icons.vertical_align_top,
+                        size: 20,
+                        color: DiziRenkler.sariMetin,
+                      ),
+                    ),
+                  if (alttaDegil)
+                    IconButton(
+                      key: Key('sira-alta-satir-$anahtar'),
+                      tooltip: 'En aşağıya gönder'.c,
+                      visualDensity: VisualDensity.compact,
+                      onPressed: _yaziliyor ? null : () => _altaTasi(o),
+                      icon: Icon(
+                        Icons.vertical_align_bottom,
+                        size: 20,
+                        color: DiziRenkler.sariMetin,
+                      ),
+                    ),
+                ],
               )
             : null,
       );
@@ -622,6 +645,34 @@ class _SiralanabilirPosterIzgarasiState
     ),
   );
 
+  /// Afişin üstündeki taşıma oku (yukarı/aşağı). İkisi de AYNI kalıp:
+  /// 44 px dokunma hedefi, yarı saydam siyah zemin, 20 px ikon.
+  Widget _okDugmesi({
+    required Key anahtar,
+    required IconData ikon,
+    required String ipucu,
+    required VoidCallback onTap,
+  }) => Material(
+    // 0.62 tek düğme içindi; ikisi alt alta gelince afişin rengi aradan
+    // sızıyor ve çift düğme "iki ok" değil "lekeli afiş" gibi duruyordu.
+    color: DiziRenkler.siyah.withValues(alpha: 0.78),
+    borderRadius: BorderRadius.circular(10),
+    child: InkWell(
+      key: anahtar,
+      borderRadius: BorderRadius.circular(10),
+      onTap: _yaziliyor ? null : onTap,
+      // Dokunma hedefi 44 px: ikon 20, gerisi dolgu.
+      child: SizedBox(
+        width: 44,
+        height: 44,
+        child: Tooltip(
+          message: ipucu,
+          child: Icon(ikon, size: 20, color: DiziRenkler.metin),
+        ),
+      ),
+    ),
+  );
+
   Widget _hucre(Map<String, dynamic> oge, double hucreGenisligi) {
     final anahtar = _anahtar(oge);
     // Sürükleme indeksleri TAM listeye göre; süzgeçliyken sürükleme kapalı.
@@ -640,36 +691,54 @@ class _SiralanabilirPosterIzgarasiState
 
     Widget govde = kart;
     if (widget.siralamaKipi) {
+      // OKLAR ÇİFT (13 Eyl 2026 kullanıcı bildirimi: "afişlerde yukarı ok
+      // var ama aşağı ok yok"). "En aşağıya gönder" 26 Ağu'dan beri VARDI
+      // ama yalnız afişi basılı tutup kımıldatmadan bırakınca çıkıyordu —
+      // keşfedilmeyen bir jest. Sıralama kipinde artık ikisi de afişin sol
+      // üst köşesinde alt alta duruyor; alttaki düğme uzun basmalı olanla
+      // AYNI eylemi ([_altaTasi]) çağırır.
+      //
+      // ANAHTAR ÇAKIŞMASI: uzun basma düğmesi de `sira-alta-$anahtar`
+      // anahtarını taşıyor. İkisi aynı anda çizilseydi Flutter aynı
+      // anahtardan iki tane bulurdu; bu yüzden uzun basma düğmesi sıralama
+      // kipinde ARTIK ÇİZİLMİYOR (bkz. aşağıdaki `!widget.siralamaKipi`).
+      // Kip kapalıyken eski davranış olduğu gibi duruyor.
       govde = Stack(
         fit: StackFit.expand,
         children: [
           kart,
-          Positioned(
-            top: 0,
-            left: 0,
-            child: Material(
-              color: DiziRenkler.siyah.withValues(alpha: 0.62),
-              borderRadius: BorderRadius.circular(10),
-              child: InkWell(
-                key: Key('sira-uste-$anahtar'),
-                borderRadius: BorderRadius.circular(10),
+          // İşlevsiz düğme çizilmez: en üstteki afişte "en üste", en
+          // alttakinde "en aşağıya" gidecek yer yok.
+          if (i > 0)
+            Positioned(
+              top: 0,
+              left: 0,
+              child: _okDugmesi(
+                anahtar: Key('sira-uste-$anahtar'),
+                ikon: Icons.vertical_align_top,
+                ipucu: 'En üste taşı'.c,
                 onTap: () => _usteTasi(oge),
-                // Dokunma hedefi 44 px: ikon 20, gerisi dolgu.
-                child: SizedBox(
-                  width: 44,
-                  height: 44,
-                  child: Tooltip(
-                    message: 'En üste taşı'.c,
-                    child: Icon(
-                      Icons.vertical_align_top,
-                      size: 20,
-                      color: DiziRenkler.metin,
-                    ),
-                  ),
-                ),
               ),
             ),
-          ),
+          if (i >= 0 && i < _ogeler.length - 1)
+            Positioned(
+              // AFİŞİN ALT UCUNDA, yukarı okun hemen altında DEĞİL (13 Eyl
+              // 2026 kullanıcı isteği: "aşağı ok keşke afişin iç bölümünde
+              // altında olsa, yukarı ok ile aralarında boşluk olur").
+              // İki ok afişin iki ucuna yaslanınca yönleri de anlatıyor.
+              //
+              // `bottom` afişin altına değil HÜCRENİN altına göredir; hücre
+              // = 2:3 afiş + başlık şeridi. Şerit kadar yukarı kaldırılmazsa
+              // düğme afişten taşıp yapımın ADININ üstüne otururdu.
+              bottom: widget.baslikYuksekligi,
+              left: 0,
+              child: _okDugmesi(
+                anahtar: Key('sira-alta-$anahtar'),
+                ikon: Icons.vertical_align_bottom,
+                ipucu: 'En aşağıya gönder'.c,
+                onTap: () => _altaTasi(oge),
+              ),
+            ),
         ],
       );
     }
@@ -754,7 +823,10 @@ class _SiralanabilirPosterIzgarasiState
         );
         // Uzun basıldı ve parmak kımıldamadı → "En aşağıya gönder".
         // Sürükleme başlarsa (`_suruklendi`) düğme çizilmez.
-        if (_uzunBasilan == anahtar && !_suruklendi && i < _ogeler.length - 1) {
+        if (!widget.siralamaKipi &&
+            _uzunBasilan == anahtar &&
+            !_suruklendi &&
+            i < _ogeler.length - 1) {
           cerceve = Stack(
             fit: StackFit.expand,
             children: [

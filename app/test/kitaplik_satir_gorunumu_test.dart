@@ -427,6 +427,20 @@ void main() {
     expect(satirlar, [104, 101, 102, 103]);
   });
 
+  testWidgets('SATIR görünümünde "En aşağıya gönder" de var', (tester) async {
+    await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
+    await _satirKipineGec(tester);
+    await _seridiAc(tester, 'kitaplik-sirala');
+
+    // En alttaki öğede aşağı ok YOK (işlevsiz olurdu).
+    expect(find.byKey(const Key('sira-alta-satir-tv-104')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('sira-alta-satir-tv-101')));
+    await tester.pumpAndSettle();
+
+    expect(_sonSira(), [102, 103, 104, 101]);
+  });
+
   testWidgets('"Bitti"ye basınca SATIR görünümü KALIR', (tester) async {
     await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
     await _satirKipineGec(tester);

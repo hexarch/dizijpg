@@ -6,7 +6,7 @@
 // ekranı o kabuğun İÇİNE `push` ediliyor. `push`, `currentConfiguration.uri`yi
 // DEĞİŞTİRMEZ ve kabuk kendiliğinden yeniden çizilmez — yani "yolu okuyup
 // gizle" kodu gözle doğru görünüp ekranda HİÇ ÇALIŞMAYABİLİR (29 Ağu'da tam
-// bu tuzağa düşülmüştü, bkz. KabukEkrani `_mesajda` notu). Burada gerçek
+// bu tuzağa düşülmüştü, bkz. KabukEkrani `_mesajYuzeyindeMi` notu). Burada gerçek
 // yönlendirici ve gerçek kabuk ağacıyla ölçülür.
 import 'dart:convert';
 

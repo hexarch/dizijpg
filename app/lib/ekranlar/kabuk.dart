@@ -638,18 +638,51 @@ class KabukEkrani extends StatefulWidget {
 }
 
 class _KabukEkraniState extends State<KabukEkrani> {
-  /// Mesajlar yüzeyi şu an açık mı — çubuğun boyayacağı hedefi belirler.
+  /// Mesajlar yüzeyi (`/sohbetler`, `/mesaj-istekleri`, `/sohbet/:ad`) şu an
+  /// yığının ÜSTÜNDE mi — çubuğun boyayacağı hedefi belirler.
   ///
-  /// NEDEN DURUM, ROTA OKUMASI DEĞİL (29 Ağu 2026): Mesajlar bir dal değil,
-  /// `push` ile açılıyor; `shell.currentIndex` değişmiyor. İlk denemede
-  /// `routerDelegate.currentConfiguration.uri.path` okundu — EMÜLATÖRDE
-  /// ÇALIŞMADI, çubuk dalın hedefinde kaldı.
+  /// ROTADAN OKUNUR, BAYRAK DEĞİL (16 Eyl 2026). Eskiden `push`ın Future'ı
+  /// çözülene kadar açık tutulan bir `_mesajda` bayrağı vardı; iki hata
+  /// üretiyordu (kullanıcı bildirdi):
+  ///   1. Mesajlardayken Mesajlar'a tekrar basınca `/sohbetler` üst üste bir
+  ///      daha açılıyordu — bayrak "zaten açık" bilgisini taşımıyordu ve üst
+  ///      bardaki DM kısayolundan açılan liste bayrağı hiç kaldırmıyordu.
+  ///   2. `/mesaj-istekleri`ndeyken Profil'e basınca yalnız istekler sayfası
+  ///      kapanıyor, altındaki `/sohbetler` kalıyor, Future çözülmüyor ve
+  ///      bayrak sonsuza kadar true kalıyordu — profil açıkken sarı Mesajlar'da.
   ///
-  /// NEDEN GLOBAL DEĞİL: ikinci denemede üst düzey bir `ValueNotifier`
-  /// kullanıldı ve TESTLER ARASINDA SIZDI — `akis_gorunum_secici_test`
-  /// bayrak açık kaldığı için Mesajlar'ı seçili gördü. Durum artık kabuğun
-  /// kendi `State`inde; sızıntı imkânsız.
-  bool _mesajda = false;
+  /// 29 Ağu'daki ilk rota-okuma denemesi emülatörde çalışmamıştı; sebebi
+  /// rotanın DİNLENMEMESİYDİ. `build` artık `routerDelegate`i
+  /// [ListenableBuilder] ile dinliyor (1 Eyl'den beri konuşmada çubuğu
+  /// gizlemek için canlıda çalışıyor), aynı okuma burada da güvenilir.
+  bool _mesajYuzeyindeMi(BuildContext context) =>
+      mesajYuzeyiMi(sohbetUstKonum(GoRouter.maybeOf(context)) ?? '');
+
+  /// Yığının üstündeki mesaj yüzeyi sayfalarını KAPATIR — hepsini, yalnız
+  /// en üsttekini değil. İstekler + sohbetler ikisi de gider; altta ne varsa
+  /// (dalın kökü ya da daha önce açılmış başka bir sayfa) ona dokunulmaz.
+  ///
+  /// [listeKalsin] true ise `/sohbetler` yerinde bırakılır: Mesajlar'a tekrar
+  /// basınca istekler/konuşma kapanır, liste açık kalır.
+  ///
+  /// `pop` EŞZAMANLI: go_router `Navigator.onPopPage` üzerinden aynı çağrıda
+  /// `currentConfiguration`ı güncelliyor, döngü her turda taze yolu görür.
+  /// Tavan, beklenmedik bir yapılandırmada sonsuz döngüye karşı sigorta.
+  ///
+  /// En az bir sayfa kapandıysa true döner.
+  bool _mesajYuzeyiniKapat(GoRouter router, {bool listeKalsin = false}) {
+    var kapandi = false;
+    for (var tur = 0; tur < 8; tur++) {
+      final ust = sohbetUstKonum(router) ?? '';
+      if (!mesajYuzeyiMi(ust)) break;
+      if (listeKalsin && ust == '/sohbetler') break;
+      if (!router.canPop()) break;
+      router.pop();
+      if ((sohbetUstKonum(router) ?? '') == ust) break; // yığın değişmedi
+      kapandi = true;
+    }
+    return kapandi;
+  }
 
   StatefulNavigationShell get shell => widget.shell;
 
@@ -714,38 +747,46 @@ class _KabukEkraniState extends State<KabukEkrani> {
     // Dal → hedef çevirisi ŞART: Keşfet dalındayken (3) çeviri olmadan
     // çubukta Mesajlar seçili görünürdü (bkz. [hedefIndeksi]).
     // Üstüne mesaj yüzeyi kontrolü (bkz. [kabukSecili]).
-    secili: _mesajda ? mesajIndeksi : hedefIndeksi(shell.currentIndex),
+    secili: _mesajYuzeyindeMi(context)
+        ? mesajIndeksi
+        : hedefIndeksi(shell.currentIndex),
     onSec: (i) async {
+      final router = GoRouter.of(context);
+      // BASILDIĞI ANDA okunur, çizim anında değil: çubuk yeniden
+      // çizilmeden önce yığın değişmiş olabilir.
+      final mesajda = mesajYuzeyiMi(sohbetUstKonum(router) ?? '');
       // Mesajlar bir dal DEĞİL: `push` ile üste açılır (üst bardaki DM
       // düğmeleriyle aynı davranış), dönünce rozet tazelenir. `go`
       // kullansaydık kullanıcı geri tuşuyla bulunduğu sayfaya dönemezdi.
       if (i == mesajIndeksi) {
-        setState(() => _mesajda = true);
-        try {
-          await context.push('/sohbetler');
-        } finally {
-          // `finally`: geri tuşuyla çıkılsa da hata atsa da bayrak
-          // MUTLAKA iner; yoksa çubuk Mesajlar'da takılı kalırdı.
-          if (mounted) setState(() => _mesajda = false);
+        if (mesajda) {
+          // ZATEN MESAJLARDA — ikinci bir `/sohbetler` AÇILMAZ (16 Eyl
+          // 2026, kullanıcı: "mesajlaşma kısmında olsam bile tekrar tekrar
+          // açıyor"). Listenin üstünde istekler/konuşma varsa listeye dön.
+          _mesajYuzeyiniKapat(router, listeKalsin: true);
+          return;
         }
+        await context.push('/sohbetler');
         await SohbetOlaylari.okunmamisYenile();
         return;
       }
-      // MESAJLAR AÇIKKEN BAŞKA SEKMEYE BASILDI (29 Ağu 2026 regresyonu,
-      // kullanıcı bildirdi: "mesajlara tıklayınca sarı oluyor ama sonra
-      // diğer tuşlara tıklayınca onlar sarı olmuyor").
-      //
-      // KÖK: `/sohbetler` üste `push` edilmiş ve yukarıdaki `await` hâlâ
-      // bekliyor. `goBranch` alttaki dalı değiştirse de mesaj sayfası
-      // ÜSTTE kalıyor, `await` çözülmediği için `finally` çalışmıyor ve
-      // `_mesajda` true kalıyordu — çubuk sonsuza kadar Mesajlar'ı
-      // boyuyordu.
-      //
-      // ÇÖZÜM: önce mesaj sayfasını KAPAT. `pop` yukarıdaki `await`i
-      // çözer, `finally` bayrağı indirir; sonra dal değişir. Bayrağı
-      // burada elle indirmiyoruz — tek kaynak `finally` olsun, yoksa iki
-      // yerden yönetilen bir durum doğar.
-      if (_mesajda && context.canPop()) context.pop();
+      // MESAJLAR AÇIKKEN BAŞKA SEKMEYE BASILDI: mesaj yüzeyinin TÜM
+      // sayfaları kapanır (istekler + liste), sonra dal değişir. Tek `pop`
+      // yetmiyordu — `/mesaj-istekleri`nden Profil'e basınca `/sohbetler`
+      // altta kalıyor ve çubuk Mesajlar'ı boyamaya devam ediyordu (16 Eyl
+      // 2026, kullanıcı bildirdi). Kapatılmasaydı Akış'a dönünce liste
+      // yeniden karşıya çıkardı.
+      if (mesajda && _mesajYuzeyiniKapat(router)) {
+        // BİR KARE BEKLE, SONRA DAL DEĞİŞTİR. `StatefulNavigationShell`
+        // dalın yığınını `didUpdateWidget`ta (bir sonraki çizimde)
+        // yapılandırmadan kopyalar; `goBranch` hemen çağrılırsa akış
+        // dalı için BAYAT yığın (istekler + liste) saklanır ve Akış'a
+        // dönünce istekler sayfası yeniden karşıya çıkar (widget testi
+        // yakaladı). `pop` yapılandırmayı anında güncellediği için sarı
+        // seçim bu beklemeden etkilenmez.
+        await WidgetsBinding.instance.endOfFrame;
+        if (!mounted) return;
+      }
       if (i == profilHedefi) profilYenileTetik.value++;
       // AYNI DAL MI — `goBranch`ten ÖNCE ölçülür (sonra `currentIndex`
       // zaten değişmiş olurdu). Keşfet dalındayken (3) Akış'a (2) basmak

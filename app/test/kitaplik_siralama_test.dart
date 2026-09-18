@@ -255,6 +255,54 @@ void main() {
     },
   );
 
+  // 13 Eyl 2026 kullanıcı bildirimi: "afişlerin de yukarı ok var ama aşağı ok
+  // yok". "En aşağıya gönder" vardı ama yalnız UZUN BASINCA çıkıyordu.
+  testWidgets('SIRALAMA KİPİ: her afişte yukarı okun ALTINDA aşağı ok da var', (
+    tester,
+  ) async {
+    await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
+    // Kip kapalıyken düğme YOK (normal ızgara temiz kalsın).
+    expect(find.byKey(const Key('sira-alta-tv-101')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('kitaplik-sirala')));
+    await tester.pumpAndSettle();
+
+    // İşlevsiz düğme çizilmez: en üstte yukarı ok, en altta aşağı ok yok.
+    expect(find.byKey(const Key('sira-uste-tv-101')), findsNothing);
+    expect(find.byKey(const Key('sira-alta-tv-104')), findsNothing);
+    expect(find.byKey(const Key('sira-alta-tv-101')), findsOneWidget);
+    expect(find.byKey(const Key('sira-uste-tv-104')), findsOneWidget);
+
+    // Aşağı ok, uzun basmalı düğmeyle AYNI eylemi yapar.
+    await tester.tap(find.byKey(const Key('sira-alta-tv-101')));
+    await tester.pumpAndSettle();
+
+    expect(_ekrandakiSira(tester), ['tv-102', 'tv-103', 'tv-104', 'tv-101']);
+    expect(_sonSira(), [102, 103, 104, 101]);
+  });
+
+  // 13 Eyl 2026, aynı gün ikinci istek: "aşağı ok keşke afişin iç bölümünde
+  // altında olsa, yukarı ok ile aralarında boşluk olur." Yani ikisi afişin
+  // İKİ UCUNDA; dip dibe duran iki ok tek düğme gibi görünüyordu.
+  testWidgets('oklar afişin İKİ UCUNDA: aralarında boşluk var', (tester) async {
+    await _kur(tester, const KitaplikListesiEkrani(durum: 'izliyorum'));
+    await tester.tap(find.byKey(const Key('kitaplik-sirala')));
+    await tester.pumpAndSettle();
+
+    // 102 ne ilk ne son: iki ok da çizilir.
+    final ust = tester.getRect(find.byKey(const Key('sira-uste-tv-102')));
+    final alt = tester.getRect(find.byKey(const Key('sira-alta-tv-102')));
+    expect(
+      alt.top - ust.bottom,
+      greaterThan(40),
+      reason: 'aşağı ok yukarı okun dibinde kalmış',
+    );
+    // Afişin İÇİNDE: hücreden taşmıyor, adın üstüne oturmuyor.
+    final hucre = tester.getRect(find.byType(MiniIcerik).at(1));
+    expect(alt.bottom, lessThanOrEqualTo(hucre.bottom));
+    expect(ust.left, alt.left, reason: 'oklar aynı kenara yaslanmalı');
+  });
+
   testWidgets('SÜZGEÇ listeyi daraltır ve süzgeçliyken SÜRÜKLEME KAPANIR', (
     tester,
   ) async {
