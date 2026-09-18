@@ -3274,26 +3274,53 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
       ? '?sezon=${widget.yorum['sezon']}&bolum=${widget.yorum['bolum']}'
       : '';
 
+  /// Yanıtları çeker.
+  ///
+  /// 18 EYL 2026 — KAYNAK DEĞİŞTİ. Eskiden YAPIMIN TÜM yorum listesi
+  /// (`/yorumlar/:tur/:tmdbId`) indirilip `ust_id` ile süzülüyordu; o listenin
+  /// `ustler` CTE'si üst yorumları 100'de kırptığı için, çok yorumlu bir
+  /// yapımda pencerenin dışında kalan bir gönderinin yanıtları HİÇ gelmiyor ve
+  /// sheet boş açılıyordu ("yorumlar gözükmüyor", sunucuda hata yok). Artık
+  /// gönderinin kendi ucu var: `GET /yorum/:id/yanitlar`.
+  ///
+  /// [_eskiYoldanYukle] DURUYOR: mağazadaki eski istemci değil, dağıtım
+  /// penceresinde ESKİ SUNUCUYA düşen yeni istemci için — o uçta yeni rota
+  /// yokken 404 gelir ve sheet yanıtsız kalırdı.
   Future<void> _yukle() async {
+    List<dynamic>? satirlar;
+    try {
+      final d = await Api.get('/yorum/${widget.yorum['id']}/yanitlar');
+      // ALAN YOKSA DA ESKİ YOLA DÜŞ: 404 istisna atar ama eski sunucunun
+      // yakalayıcı rotası 200 + boş gövde de döndürebilir. `yanitlar` alanını
+      // görmeden "yanıt yok" demek, dolu bir konuşmayı sessizce boş gösterirdi.
+      final liste = d['yanitlar'];
+      satirlar = liste is List ? liste : await _eskiYoldanYukle();
+    } catch (_) {
+      satirlar = await _eskiYoldanYukle();
+    }
+    if (!mounted) return;
+    setState(() {
+      // AĞAÇ SIRASI (13 Eyl 2026): bir yanıta verilen yanıt artık listenin
+      // sonuna değil, yanıtladığı satırın HEMEN ALTINA ve bir kademe içeri
+      // çizilir. Sıralama + derinlik [yorumAgaci]'nda (saf Dart, test
+      // edilebilir); kardeşler eskiden yeniye — eski düz sıranın aynısı.
+      _yanitlar = yorumAgaci(satirlar ?? const [], widget.yorum['id'] as int);
+    });
+  }
+
+  /// Eski yol: yapımın yorum listesinden `ust_id` ile süzme. Yalnız yeni uç
+  /// yanıt vermezse çalışır. Kendi hatasını YUTAR (boş liste) — sheet zaten
+  /// "Henüz yorum yok" boş durumunu çiziyor.
+  Future<List<dynamic>?> _eskiYoldanYukle() async {
     try {
       final d = await Api.get(
         '/yorumlar/${widget.yorum['tur']}/${widget.yorum['tmdb_id']}$_sorgu',
       );
-      if (!mounted) return;
-      setState(() {
-        // AĞAÇ SIRASI (13 Eyl 2026): bir yanıta verilen yanıt artık listenin
-        // sonuna değil, yanıtladığı satırın HEMEN ALTINA ve bir kademe içeri
-        // çizilir. Sıralama + derinlik [yorumAgaci]'nda (saf Dart, test
-        // edilebilir); kardeşler eskiden yeniye — eski düz sıranın aynısı.
-        _yanitlar = yorumAgaci(
-          (d['yorumlar'] as List<dynamic>).where(
-            (c) => c['ust_id'] == widget.yorum['id'],
-          ),
-          widget.yorum['id'] as int,
-        );
-      });
+      return (d['yorumlar'] as List<dynamic>? ?? const [])
+          .where((c) => c['ust_id'] == widget.yorum['id'])
+          .toList();
     } catch (_) {
-      if (mounted) setState(() => _yanitlar = []);
+      return null;
     }
   }
 

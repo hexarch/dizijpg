@@ -15747,6 +15747,50 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
   res.json({ yorum: ceviriUygula(y), icerikler });
 }));
 
+// Bir GÖNDERİNİN YANITLARI — konuşma sheet'inin (YanitlarSheet) tek kaynağı.
+//
+// NEDEN AYRI UÇ (18 Eyl 2026): sheet yanıtları eskiden YAPIMIN TÜM yorum
+// listesinden (`GET /yorumlar/:tur/:tmdbId`) çekip `ust_id` ile SÜZÜYORDU.
+// O listenin `ustler` CTE'si üst yorumları `ORDER BY tarih DESC LIMIT 100`
+// ile kırpıyor; yani çok yorumlu bir yapımda 100'lük pencerenin DIŞINDA
+// kalmış bir gönderinin yanıtları hiç dönmüyor ve sheet BOŞ açılıyordu.
+// Kullanıcı "yorumlar gözükmüyor" der, sunucuda hata da yoktur. Ayrıca
+// 2 yanıtı çizmek için ~40 yorumluk (20 KB) bir gövde indiriliyordu.
+//
+// KAPSAM: `ust_id` KÖKÜ taşıdığı için (bkz. migrasyon-2026-09-13.sql) tek
+// koşul tüm iş parçacığını getirir — yanıtın yanıtı dahil. Ağacı istemci
+// `yorumAgaci` ile `yanit_id`den kurar.
+//
+// TAVAN 500: bugünkü en uzun parçacık 3 satır; tavan bir veri kazasında
+// (bot seli) sheet'i kilitlememek için var, sayfalama için değil.
+const YANIT_TAVANI = 500;
+const yanitListeLimiti = hizLimiti(300, (req) => `yl:${req.kullanici?.id || req.ip}`);
+
+app.get('/yorum/:id/yanitlar', girisIsteğeBagli, yanitListeLimiti, sarici(async (req, res) => {
+  const yorumId = parseInt(req.params.id, 10);
+  if (!gecerliTmdb(yorumId)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const benId = req.kullanici?.id || 0;
+  const { rows } = await havuz.query(
+    `SELECT y.id, y.kullanici_id, y.metin, y.medya, y.tarih, y.sezon, y.bolum,
+            y.ust_id, y.yanit_id, y.goruntulenme, y.spoiler, y.kaynak_dil,
+            k.kullanici_adi, k.avatar, k.testci,
+            (SELECT c.metin FROM metin_cevirileri c
+                   WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $3) AS ceviri_metin,
+            (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
+            EXISTS(SELECT 1 FROM yorum_begeniler b
+                   WHERE b.yorum_id=y.id AND b.kullanici_id=$2) AS begendim
+     FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+     WHERE y.ust_id = $1 AND NOT k.yasakli
+       AND ${engelSuzgec('y.kullanici_id', '$2')}
+     ORDER BY y.id LIMIT ${YANIT_TAVANI}`,
+    [yorumId, benId, istekBaglam.getStore()?.dil || 'tr'],
+  );
+  // GÖRÜNTÜLENME BURADA SAYILMAZ: sayaç gönderinin kendisine aittir ve
+  // `GET /yorum/:id` onu zaten +1 yapıyor. Burada da saymak, sheet'i açıp
+  // kapatan kişiyi iki kez sayardı.
+  res.json({ yanitlar: rows.map(ceviriUygula) });
+}));
+
 // ROTA SIRASI ONEMLI: bu uç /yorumlar/:tur/:tmdbId'den ÖNCE kaydedilmeli.
 // Sonra kaydedilseydi Express /yorumlar/4927/begenenler adresini
 // tur=4927, tmdbId='begenenler' diye eşleştirir ve 400 dönerdi

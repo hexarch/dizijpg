@@ -73,13 +73,27 @@ List<Map<String, dynamic>> get _isParcacigi => [
   _yorum(4, metin: 'gönderiye ikinci yorum', ad: 'zeynep', ustId: 1),
 ];
 
-void _ag(List<Map<String, dynamic>> yorumlar) {
+/// [yeniUc] FALSE ise `GET /yorum/:id/yanitlar` 404 döner — dağıtım
+/// penceresinde ESKİ SUNUCUYA düşen yeni istemcinin hâli. Sheet o durumda
+/// yapımın yorum listesine geri düşmeli (bkz. `_eskiYoldanYukle`).
+List<String> _ag(List<Map<String, dynamic>> yorumlar, {bool yeniUc = true}) {
+  final cagrilar = <String>[];
   Api.istemci = MockClient((istek) async {
-    if (istek.url.path.contains('/yorumlar/')) {
+    final yol = istek.url.path;
+    cagrilar.add(yol);
+    if (yol.endsWith('/yanitlar')) {
+      if (!yeniUc) return http.Response('yok', 404);
+      // Uç YALNIZ yanıtları döndürür (kök gönderi listede YOKTUR).
+      return _json({
+        'yanitlar': yorumlar.where((y) => y['ust_id'] != null).toList(),
+      });
+    }
+    if (yol.contains('/yorumlar/')) {
       return _json({'yorumlar': yorumlar});
     }
     return _json(const {});
   });
+  return cagrilar;
 }
 
 Future<void> _oturum(WidgetTester tester) async {
@@ -98,11 +112,14 @@ Widget _agac(Widget govde) => ChangeNotifierProvider<Oturum>.value(
 
 void main() {
   group('yorumAgaci', () {
-    test('yanıtın yanıtı, yanıtladığı satırın ALTINDA ve bir kademe içeride', () {
-      final agac = yorumAgaci(_isParcacigi.sublist(1), 1);
-      expect(agac.map((d) => d.id).toList(), [2, 3, 4]);
-      expect(agac.map((d) => d.derinlik).toList(), [0, 1, 0]);
-    });
+    test(
+      'yanıtın yanıtı, yanıtladığı satırın ALTINDA ve bir kademe içeride',
+      () {
+        final agac = yorumAgaci(_isParcacigi.sublist(1), 1);
+        expect(agac.map((d) => d.id).toList(), [2, 3, 4]);
+        expect(agac.map((d) => d.derinlik).toList(), [0, 1, 0]);
+      },
+    );
 
     test('zincir derinleşir: yanıtın yanıtının yanıtı 2. kademe', () {
       final agac = yorumAgaci([
@@ -144,9 +161,7 @@ void main() {
   ) async {
     await _oturum(tester);
     _ag(_isParcacigi);
-    await tester.pumpWidget(
-      _agac(YanitlarSheet(yorum: _isParcacigi.first)),
-    );
+    await tester.pumpWidget(_agac(YanitlarSheet(yorum: _isParcacigi.first)));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
@@ -176,6 +191,63 @@ void main() {
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump(const Duration(seconds: 1));
+  });
+
+  // 18 EYL 2026 — YANITLARIN KAYNAĞI.
+  // Sheet eskiden YAPIMIN TÜM yorum listesini indirip `ust_id` ile süzüyordu;
+  // o listenin `ustler` CTE'si üst yorumları 100'de kırpıyor, yani pencerenin
+  // dışında kalan bir gönderinin yanıtları HİÇ gelmiyor ve sheet boş açılıyordu
+  // (kullanıcı için "yorumlar gözükmüyor", sunucuda hata yok).
+  group('YANITLAR GÖNDERİNİN KENDİ UCUNDAN gelir', () {
+    testWidgets('yapımın yorum listesi İNDİRİLMEZ', (tester) async {
+      await _oturum(tester);
+      final cagrilar = _ag(_isParcacigi);
+      await tester.pumpWidget(_agac(YanitlarSheet(yorum: _isParcacigi.first)));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('@ayse'), findsOneWidget);
+      expect(find.text('@mehmet'), findsOneWidget);
+      expect(
+        cagrilar.any((y) => y.endsWith('/yorum/1/yanitlar')),
+        isTrue,
+        reason: 'Yanıtlar gönderinin kendi ucundan çekilmeli.',
+      );
+      expect(
+        cagrilar.any((y) => y.contains('/yorumlar/movie/550')),
+        isFalse,
+        reason:
+            'Yapımın 100 üst yorumla kırpılan listesi ARTIK indirilmiyor; '
+            'sheet ona bağlı kaldığı sürece eski gönderilerin yanıtları '
+            'sessizce kayboluyordu.',
+      );
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(seconds: 1));
+    });
+
+    testWidgets('eski sunucuda (uç 404) liste ucuna geri düşer', (
+      tester,
+    ) async {
+      await _oturum(tester);
+      final cagrilar = _ag(_isParcacigi, yeniUc: false);
+      await tester.pumpWidget(_agac(YanitlarSheet(yorum: _isParcacigi.first)));
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(
+        find.text('@ayse'),
+        findsOneWidget,
+        reason:
+            'Dağıtım penceresinde yeni istemci eski sunucuya düşebilir; '
+            'sheet o birkaç dakika boyunca yanıtsız kalmamalı.',
+      );
+      expect(cagrilar.any((y) => y.contains('/yorumlar/movie/550')), isTrue);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump(const Duration(seconds: 1));
+    });
   });
 
   testWidgets('İÇERİK SAYFASI yorum kartı: aynı girinti orada da var', (
