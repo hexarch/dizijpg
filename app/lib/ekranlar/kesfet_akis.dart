@@ -776,6 +776,11 @@ bool gonderiYaziliMi(Map<String, dynamic>? y) {
 /// ekran üst gönderiyi çözer, onu (medyasına göre Reels veya kart) gösterir
 /// ve üstüne normal yorum ekranını ([yanitlariAc]) açar — akış kartındaki
 /// konuşma balonuna basmakla AYNI yüzey. Bkz. [_ustuCoz].
+///
+/// Bayrak GELMESE DE aynı yol işler: sunucudan dönen satırın `ust_id`si
+/// doluysa (yani adres bir yanıtı gösteriyorsa) ekran yine üst gönderiye
+/// çıkar. Bayrak, sorgunun düştüğü bağlantılarda (beğeni bildirimi, elle
+/// kopyalanan adres) tek başına yeterli değildi.
 class GonderiEkrani extends StatefulWidget {
   final int yorumId;
   final bool yanitBildirimi;
@@ -821,7 +826,16 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
       var yorum = d['yorum'] as Map<String, dynamic>;
       var icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
       var yorumlarAc = false;
-      if (widget.yanitBildirimi) {
+      // ÜST GÖNDERİYE ÇIK: `?yanit=1` taşıyan bildirim/paylaşım bağlantısında
+      // ZATEN yapılıyordu; 18 Eyl 2026'dan beri adres sorgusuz gelse de
+      // (beğeni bildirimi `/gonderi/:id` üretir, kopyalanan adresten sorgu
+      // düşer) satırın `ust_id`si doluysa aynı yol işler. Eski hâlde yanıt
+      // TEK BAŞINA açılıyordu: ne yanıtladığı, ne de kardeş yanıtlar
+      // görünüyordu — kullanıcı bildirimi: /gonderi/5862'de "yorumlar
+      // gözükmüyor" (o gönderi 2 yanıtlı bir konuşmanın içindeki yanıttı).
+      // MALİYET: ek istek YALNIZ yanıt bağlantılarında; normal gönderide
+      // `ust_id` null olduğu için [_ustuCoz] hiç çağrılmaz.
+      if (widget.yanitBildirimi || yorum['ust_id'] != null) {
         final ust = await _ustuCoz(yorum);
         if (!mounted) return;
         if (ust != null) {
@@ -840,7 +854,7 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
       });
       // Yazılı gönderi akış kartı olarak kalır; keşfet devam listesi
       // Reels kaydırması içindir, kartın altına medyalı Reels karışmasın.
-      if (!gonderiYaziliMi(yorum)) _devamYukle();
+      if (!gonderiYaziliMi(yorum)) _devamYukle(yorum['id'] as int);
     } catch (e) {
       if (!mounted) return;
       setState(() => _hata = e.toString());
@@ -893,12 +907,16 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
     }
   }
 
-  Future<void> _devamYukle() async {
+  /// [gosterilenId] EKRANDAKİ gönderinin id'si — [GonderiEkrani.yorumId] ile
+  /// aynı olmayabilir: adres bir yanıtı gösteriyorsa ekranda ÜST gönderi
+  /// durur. Süzgeç `widget.yorumId`ye baksaydı o üst gönderi Reels
+  /// kaydırmasında bir kez daha çıkardı.
+  Future<void> _devamYukle(int gosterilenId) async {
     try {
       final d = await Api.get('/kesfet-akis');
       if (!mounted) return;
       final liste = (d['akis'] as List<dynamic>? ?? [])
-          .where((y) => (y as Map<String, dynamic>)['id'] != widget.yorumId)
+          .where((y) => (y as Map<String, dynamic>)['id'] != gosterilenId)
           .toList();
       setState(() {
         _devam = liste;

@@ -15698,6 +15698,15 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
             (SELECT c.metin FROM metin_cevirileri c
                    WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $3) AS ceviri_metin,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
+            -- YANIT SAYISI (18 Eyl 2026 hatasi): akis/kesfet/profil uclari bu
+            -- alani donduruyordu, TEK GONDERI ucu dondurmuyordu. Alan gelmeyince
+            -- AkisKarti sayaci 0 sayip konusma balonuna "Yorum yap" yaziyor ve
+            -- paylasilan baglantiyla gelen kisi 2 yaniti olan gonderiyi
+            -- YORUMSUZ saniyordu (kullanici bildirimi: /gonderi/5862'de
+            -- "yorumlar gozukmuyor"). Sayim akistaki ile AYNI: yanitin yaniti
+            -- da ust_id'de KOKU tasidigi icin tum konusma tek sayida toplanir.
+            -- (Sablon dizesi: BACKTICK YAZMA.)
+            (SELECT count(*)::int FROM yorumlar c WHERE c.ust_id=y.id) AS yanit,
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$2) AS begendim,
             EXISTS(SELECT 1 FROM takipler

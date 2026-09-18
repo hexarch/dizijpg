@@ -102,15 +102,18 @@ http.Response _json(Object govde) => http.Response(
 
 /// Çağrılan yolları kaydeden sahte sunucu.
 ///
-/// `/yorum/:id` yanıtı CANLIDAKİ GİBİ `ust_id` TAŞIMAZ — düzeltmenin bağı
-/// gerçekten liste ucundan kurduğunu doğrulamak için şart.
-List<String> _sunucu() {
+/// VARSAYILAN: `/yorum/:id` yanıtı ESKİ SUNUCU gibi `ust_id` TAŞIMAZ —
+/// düzeltmenin bağı liste ucundan da kurabildiğini doğrulamak için şart.
+/// [ustIdDon] TRUE ise bugünkü sunucu taklit edilir (alan 13 Eyl 2026'da
+/// eklendi): yanıt satırı `ust_id` ile gelir.
+List<String> _sunucu({bool ustIdDon = false}) {
   final cagrilar = <String>[];
   Api.istemci = MockClient((istek) async {
     final yol = istek.url.path;
     cagrilar.add(yol);
     if (yol.endsWith('/yorum/$_yanitId')) {
-      final y = _yanitGonderi()..remove('ust_id');
+      final y = _yanitGonderi();
+      if (!ustIdDon) y.remove('ust_id');
       return _json({'yorum': y, 'icerikler': _icerikler});
     }
     if (yol.endsWith('/yorum/$_ustId')) {
@@ -237,6 +240,37 @@ void main() {
         cagrilar.any((y) => y.endsWith('/yorum/$_ustId')),
         isTrue,
         reason: 'Üst gönderi TAM alanlarıyla (medya, sayaçlar) çekilmeli.',
+      );
+    });
+  });
+
+  // 18 EYL 2026 — BAYRAKSIZ YANIT BAĞLANTISI.
+  // Kullanıcı bildirimi: "gönderiyi açtığımda yorumları gözükmüyor —
+  // /gonderi/5862". O adres 2 yanıtlı bir konuşmanın İÇİNDEKİ yanıttı ve
+  // `?yanit=1` taşımıyordu (beğeni bildirimi sorgusuz adres üretiyor, elle
+  // kopyalanan adresten de sorgu düşüyor). Ekran yanıtı TEK BAŞINA açıyor,
+  // ne üst gönderi ne kardeş yanıtlar görünüyordu.
+  group('BAYRAKSIZ YANIT BAĞLANTISI da konuşmayı açar', () {
+    testWidgets('ust_id doluysa üst gönderi çözülür ve sheet açılır', (
+      tester,
+    ) async {
+      final cagrilar = _sunucu(ustIdDon: true);
+      await _kur(tester, const GonderiEkrani(yorumId: _yanitId));
+      expect(
+        find.byType(YanitlarSheet),
+        findsOneWidget,
+        reason:
+            'Yanıt bağlantısı sorgusuz gelse de konuşma yüzeyi açılmalı; '
+            'yalnız yanıtı göstermek "yorumlar gözükmüyor" demekti.',
+      );
+      final reels = tester.widget<ReelsGorunumu>(find.byType(ReelsGorunumu));
+      expect((reels.liste.first as Map)['id'], _ustId);
+      expect(
+        cagrilar.any((y) => y.endsWith('/yorum/$_ustId')),
+        isTrue,
+        reason:
+            'Üst gönderi TAM alanlarıyla çekilmeli; sheet zaten üstün '
+            'id\'sine göre süzüyor.',
       );
     });
   });
