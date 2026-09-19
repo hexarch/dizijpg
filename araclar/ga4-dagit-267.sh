@@ -120,17 +120,31 @@ if yap 4; then
   echo "### 4/7  brotli (.br) üretimi — AYRIK OTURUM"
   # Uzun süren işi ssh oturumuna BAĞLAMA: setsid ile kopar, logla, sonra KISA
   # bağlantılarla yokla. Kopan bir ssh artık işi yarıda bırakmıyor.
-  $SSH "$S" 'setsid nohup bash /opt/dizijpg/web_brotli.sh > /tmp/ga4-brotli.log 2>&1 < /dev/null & sleep 1; echo "  ayrik baslatildi"'
-  bitti=0
+  #
+  # BİTİŞ `pgrep` İLE ARANMAZ — 19 Eyl'de ölçüldü: `pgrep -f
+  # "bash /opt/dizijpg/web_brotli.sh"` hiçbir brotli koşmadığı hâlde 4 eşleşme
+  # döndürüyordu, çünkü desen ESKİ OTURUMLARDAN kalan bekleyici kabukların
+  # KOMUT SATIRINDAKİ metni de yakalıyor. O kabuklar da aynı deseni beklediği
+  # için birbirlerini sonsuza kilitlemişler; buradaki yoklama da öyle olurdu.
+  # Onun yerine işin kendisi bitince bir BİTİŞ DOSYASI yazıyor: kendi kendini
+  # eşleştirmesi imkânsız, çıkış kodunu da taşıyor.
+  $SSH "$S" 'bash -s' <<'UZAKTA3'
+rm -f /tmp/ga4-brotli.bitti /tmp/ga4-brotli.log
+setsid nohup bash -c 'bash /opt/dizijpg/web_brotli.sh > /tmp/ga4-brotli.log 2>&1; echo $? > /tmp/ga4-brotli.bitti' < /dev/null > /dev/null 2>&1 &
+sleep 1
+echo "  ayrik baslatildi"
+UZAKTA3
+  kod=""
   for i in $(seq 1 90); do
     sleep 10
-    if $SSH "$S" '! pgrep -f "bash /opt/dizijpg/web_brotli.sh" > /dev/null'; then
-      echo "  brotli bitti (~$((i * 10)) sn)"
-      bitti=1
+    kod=$($SSH "$S" 'cat /tmp/ga4-brotli.bitti 2>/dev/null || true')
+    if [ -n "$kod" ]; then
+      echo "  brotli bitti (~$((i * 10)) sn, çıkış kodu $kod)"
       break
     fi
   done
-  [ "$bitti" = 1 ] || { echo "HATA: brotli 15 dk'da bitmedi, DURDU"; exit 1; }
+  [ -n "$kod" ] || { echo "HATA: brotli 15 dk'da bitmedi, DURDU"; exit 1; }
+  [ "$kod" = "0" ] || { echo "HATA: brotli hata verdi (kod $kod), log:"; $SSH "$S" 'tail -20 /tmp/ga4-brotli.log'; exit 1; }
   $SSH "$S" 'tail -3 /tmp/ga4-brotli.log'
 fi
 
