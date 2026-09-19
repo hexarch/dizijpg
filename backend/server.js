@@ -16021,6 +16021,15 @@ const AKIS_GOVDE = `
      -- (kendini takip etmiyorsun), yani skoru digerleriyle ayni yarisir.
      -- NOT: bu blok bir SABLON DIZESI icinde; buraya BACKTICK YAZMA.
      WHERE NOT k.yasakli
+       -- AI HESABI AKISTA VE KESFET'TE YOK (19 Eyl 2026 kullanici karari):
+       -- dizi.jpg.ai 2.484 yapim yorumu yazdi; hepsi akisa dusunce akis bir
+       -- SOSYAL yuzey olmaktan cikip robot duvarina donuyordu. Metinler
+       -- YERINDE KALIYOR -- yapim sayfasinin yorum listesinde, SSR bot
+       -- sayfasinda ve sitemap kapsaminda (ozgunIcerikVar) aynen gorunur;
+       -- yalnizca akis/Kesfet kartlari uretilmez. Suzgec BURADA cunku
+       -- /akis ve /kesfet-akis bu govdeyi PAYLASIYOR; uclara ayri ayri
+       -- yazilsaydi biri unutulurdu. (Sablon dizesi: BACKTICK YOK.)
+       AND NOT coalesce(k.ai, false)
        AND ${engelSuzgec('y.kullanici_id', '$1')}
        -- GIZLI HESAP (8 Eyl 2026): ozel hesabin gonderisi yalniz takipcisinin
        -- akisina/Kesfet'ine duser (gerekce gizliHesapSuzgec basliginda).
