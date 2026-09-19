@@ -335,6 +335,24 @@
     (function () {
       'use strict';
 
+      // KENDİ ZİYARETLERİNİ SAYMAMA ANAHTARI — tarayıcı başına, kalıcı.
+      // Konsola `localStorage.setItem('olcum-kapali', '1')` yazan tarayıcı bir
+      // daha ölçülmez; `localStorage.removeItem('olcum-kapali')` geri açar.
+      // NEDEN IP SÜZGECİ DEĞİL: GA4'ün "dahili trafik" kuralı YALNIZ IP
+      // adresine bakıyor, buradan çıkan genel IP ise gün içinde değişiyor
+      // (19 Eyl'de 20 dakikada 46.221.249.99 -> 46.106.106.26). IP'ye kurulan
+      // süzgeç sessizce bayatlar ve "kendi trafiğim hariç" YANLIŞ güvenini
+      // verir. Bayrağın adı GA4'ün resmi kapısı: `ga-disable-<ÖLÇÜM KİMLİĞİ>`.
+      // try/catch ŞART: gizli sekmede ve site verisi kapalıyken localStorage
+      // erişimin KENDİSİ atar; ölçüm açık kalsın ama sayfa kırılmasın.
+      try {
+        if (window.localStorage && window.localStorage.getItem('olcum-kapali')) {
+          window['ga-disable-G-9P6MTX343J'] = true;
+        }
+      } catch (hata) {
+        // yoksay
+      }
+
       // GOOGLE ANALYTICS 4 ÖLÇÜM KOMUTLARI — etiketin kendisi kafada (async).
       // Burada yalnız kuyruk kurulup `config` bırakılıyor; gtag.js indiğinde
       // kuyruğu boşaltıp ilk `page_view`i yolluyor.

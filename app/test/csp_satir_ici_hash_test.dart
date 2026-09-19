@@ -31,7 +31,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// nginx CSP'sinde `script-src` içinde duran değer.
 const String beklenenHash =
-    'sha256-p/xJp3p6Le6vk1RK2BbFTfd80YTI7kLSRICxU8kBtrU=';
+    'sha256-fc31gdGabzcBjV0R44f1g5oqhpAkLCNfpDJVqjgee9g=';
 
 /// `index.html` içindeki `src` TAŞIMAYAN tek `<script>` bloğunun gövdesi.
 String _satirIciBetik(String html) {

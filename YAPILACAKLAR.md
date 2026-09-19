@@ -39,7 +39,15 @@
   kabukta da var, eski paketler silindi, eski hash CSP'den düşürüldü.
   Tarayıcıda kanıt: googletagmanager'dan betik enjekte edildi → **0 CSP
   ihlali**; sayfada `dataLayer` = [js, config] ve `window.gtag` tanımlı.
-- ⬜ **UÇTAN UCA HİT HÂLÂ KANITLANMADI — sebep test tarayıcısı.** Bağlı tarayıcı
+- ✅ **UÇTAN UCA KANITLANDI (temiz Chrome + CDP).** Ölçüm isteği gidiyor:
+  `www.google-analytics.com/g/collect?v=2&tid=G-9P6MTX343J`, `_ga` ve
+  `_ga_9P6MTX343J` çerezleri `.dizijpg.com` için yazılıyor, olaylar
+  `page_view` + `scroll` + `user_engagement`. **SPA sayımı da çalışıyor:**
+  `pushState` -> `/takvim` için YENİ `page_view`, `history.back()` -> geri
+  dönülen sayfa için bir tane daha. Açılıştaki `/` -> `/kesfet` yönlendirmesi
+  `replaceState` olduğu için AYRI sayılmıyor; bu doğru davranış (iniş sayfası
+  bir kez sayılır) ama raporda iniş sayfası `/kesfet` değil `/` görünür.
+- ✅ **Brave tuzağı belgelendi (bu bir hata değil).** Bağlı tarayıcı
   Brave (`typeof navigator.brave === 'object'`) ve Shields, Google Analytics'i
   varsayılan olarak engelliyor: `gtag.js` 200 dönüyor ama gelen şey Brave'in
   İŞLEVSİZ TAKLİDİ — `google_tag_manager`/`google_tag_data` yok, `_ga` çerezi
@@ -52,6 +60,20 @@
   hash'i BİRLİKTE yazıyor, doğrulamadan sonra eskiyi düşürüyor. CSP'ye
   eklenenler: `script-src` googletagmanager, `connect-src`/`img-src`
   google-analytics.
+- ✅ **8. madde — kendi ziyaretlerin (1.178.1+268).** IP SÜZGECİ YAPILMADI:
+  GA4'ün "dahili trafik" kuralı yalnız IP'ye bakıyor, buradan çıkan genel IP
+  ise gün içinde değişiyor (20 dakikada 46.221.249.99 -> 46.106.106.26), yani
+  süzgeç sessizce bayatlayıp "hariç tuttum" yanlış güvenini verirdi. Yerine
+  index.html'e IP'den bağımsız, kalıcı kapatma anahtarı kondu: konsolda
+  `localStorage.setItem('olcum-kapali', '1')` diyen tarayıcı bir daha
+  ölçülmez (GA4'ün resmi `ga-disable-<ID>` kapısı), `removeItem` geri açar.
+  Not: kullanıcının kendi tarayıcısı Brave olduğu için bugün ZATEN
+  sayılmıyordu; bu anahtar Chrome/diğerleri için.
+- ✅ **Dağıtım betiği GENELLEŞTİRİLDİ: `araclar/web-dagit.sh`.** Hash ve paket
+  adları artık ELLE GÖMÜLÜ DEĞİL; satır içi betiğin sha256'sı derleme
+  çıktısından hesaplanıyor, paket adları yerelden okunuyor, nginx'te duran
+  eski hash'ler sunucudan okunup dağıtım doğrulandıktan sonra atılıyor.
+  Tek kullanımlık `ga4-dagit-267.sh` yerine bundan sonra bu kullanılacak.
 - ⬜ **Açık karar:** mobil uygulama ölçümü (Android/iOS akışı) KURULMADI —
   `firebase_analytics` paketi + Firebase bağlantısı gerekir, ayrı iş.
 
