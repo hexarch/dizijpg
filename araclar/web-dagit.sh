@@ -143,8 +143,14 @@ if yap 5; then
   ana=$(echo "$PAKETLER" | tr ' ' '\n' | grep -E '^main\.[a-f0-9]+\.dart\.js$' | head -1)
 
   # Düz gövde
-  curl -s "https://dizijpg.com/?dagit=$RANDOM" | grep -q "$ana" \
-    || { echo "HATA: canlı HTML yeni paketi göstermiyor, DURDU"; exit 1; }
+  # `curl ... | grep -q` KULLANILMAZ: `grep -q` ilk eşleşmede çıkar, `curl`
+  # SIGPIPE alıp 23 döner ve `set -o pipefail` EŞLEŞMİŞ pipeline'ı başarısız
+  # sayar (19 Eyl 2026: dağıtım canlıya çıkmışken 5. adım "yeni paket yok"
+  # diye durdu). Gövde önce değişkene alınır; grep'in erken çıkışı artık
+  # curl'ü öldüremez.
+  govde=$(curl -s "https://dizijpg.com/?dagit=$RANDOM")
+  case "$govde" in *"$ana"*) ;; *)
+    echo "HATA: canlı HTML yeni paketi göstermiyor, DURDU"; exit 1;; esac
   echo "  düz index.html -> $ana TAMAM"
 
   # BROTLI GÖVDESİ AYRI KONTROL: nginx `brotli_static on`, yani gerçek tarayıcı
@@ -156,13 +162,14 @@ if yap 5; then
 
   csp=$(curl -sI https://dizijpg.com/ | tr -d '\r' | grep -i '^content-security-policy' || true)
   [ -n "$csp" ] || { echo "HATA: CSP başlığı gelmedi, DURDU"; exit 1; }
-  echo "$csp" | grep -q "$YENI_HASH" \
-    || { echo "HATA: CSP'de yeni hash yok, DURDU"; exit 1; }
+  case "$csp" in *"$YENI_HASH"*) ;; *)
+    echo "HATA: CSP'de yeni hash yok, DURDU"; exit 1;; esac
   echo "  CSP yeni hash  -> TAMAM"
 
   # Dil kabuğu örneği (46 dilin hepsi aynı üreticiden çıkıyor)
-  curl -s https://dizijpg.com/de/ | grep -q "$ana" \
-    && echo "  /de/ kabuğu    -> TAMAM" || echo "  UYARI: /de/ kabuğu eski"
+  de=$(curl -s https://dizijpg.com/de/)
+  case "$de" in *"$ana"*) echo "  /de/ kabuğu    -> TAMAM";;
+    *) echo "  UYARI: /de/ kabuğu eski";; esac
 
   kod=$(curl -s -o /dev/null -w '%{http_code}' https://dizijpg.com/api/saglik)
   echo "  /api/saglik    -> $kod"
