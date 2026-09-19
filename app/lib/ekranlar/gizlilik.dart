@@ -162,17 +162,20 @@ class GizlilikEkrani extends StatelessWidget {
             ),
             _Baslik('Çerezler ve Yerel Depolama'),
             _Govde(
-              'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini '
-              'hatırlamak için yerel depolama kullanırız. Reklam veya '
-              'izleme çerezi yoktur.',
+              'Oturumunu açık tutmak ve dil/tema gibi tercihlerini '
+              'hatırlamak için yerel depolama kullanırız. Sitenin hangi '
+              'bölümlerinin ne kadar kullanıldığını toplu olarak görmek için '
+              'web tarafında Google Analytics çalışır; bu araç tarayıcına '
+              'kendi ölçüm çerezini yazar. Reklam veya reklam hedefleme '
+              'çerezi yoktur.',
             ),
             _Baslik('Üçüncü Taraf Hizmetler'),
             _Govde(
               'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi '
               'JustWatch\'tan alınır. Push bildirimleri Google Firebase '
-              'üzerinden iletilir, site trafiği Cloudflare tarafından '
-              'korunur. Bu hizmetler kendi gizlilik politikalarına '
-              'tabidir.',
+              'üzerinden iletilir, web trafiği ölçümü Google Analytics ile '
+              'yapılır, site trafiği Cloudflare tarafından korunur. Bu '
+              'hizmetler kendi gizlilik politikalarına tabidir.',
             ),
             _Baslik('Saklama ve Silme'),
             _Govde(

@@ -1,5 +1,47 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-09-18 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-09-19 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-09-19 — 🔨 GOOGLE ANALYTICS 4 KURULDU (1.178.0+267, DAĞITIM BEKLİYOR)
+
+**Tetik (birebir):** *"dizi jpg projesine google analistic kuralım"*
+
+- ✅ **Analytics hesabı + mülk + web akışı açıldı.** Hesap "dizi.jpg", mülk
+  "dizijpg.com" (saat dilimi GMT+03:00 Türkiye, para birimi TRY, sektör
+  "Sanat ve Eğlence"), akış "dizi.jpg Web" (akış no 15807095960),
+  **ölçüm kimliği `G-9P6MTX343J`**. Geliştirilmiş ölçüm AÇIK; "Google
+  ürünleri ve hizmetleri" veri paylaşımı KAPALI bırakıldı (reklam
+  kişiselleştirmeye veri gitmesin — gizlilik metni "reklam amacıyla
+  kimseyle paylaşmayız" diyor, o cümle doğru kalsın). GDPR Veri İşleme
+  Şartları kabul edildi.
+- ✅ **Etiket `app/web/index.html` kafasına** (`async`, üçüncü taraf
+  el sıkışmalarının altına); ölçüm komutları MEVCUT satır içi bloğa eklendi.
+  İkinci bir satır içi blok AÇILMADI: CSP hash istiyor,
+  `test/csp_satir_ici_hash_test.dart` de sayfada tek blok şart koşuyor.
+  Yeni hash `sha256-p/xJp3p6Le6vk1RK2BbFTfd80YTI7kLSRICxU8kBtrU=`, test
+  sabiti güncellendi (3/3 geçiyor).
+- ✅ **Sayfa geçişleri için Dart tarafında kod YOK:** `usePathUrlStrategy()`
+  gerçek history girişi yazıyor, GA4 geliştirilmiş ölçümü tarayıcı geçmişi
+  olaylarını dinliyor → SPA rotaları kendiliğinden sayılıyor.
+- ✅ **BOT SAYILMIYOR:** nginx arama motorlarını `/og$uri` ile SSR kabuğuna
+  yönlendiriyor ve etiket oraya BİLEREK konmadı; Googlebot'un taraması
+  oturum üretmez.
+- ✅ **Gizlilik metni 46 dilde düzeltildi.** Eski cümle "Reklam veya izleme
+  çerezi yoktur" GA4 ile YANLIŞLAŞIYORDU (`_ga` çerezi yazılıyor). Yeni
+  metin ölçüm çerezini açıkça söylüyor, reklam/hedefleme çerezi olmadığını
+  koruyor; üçüncü taraf listesine de Google Analytics eklendi. ÜÇ yüzey
+  birlikte: `app/web/gizlilik.html` (46 dil), `lib/ekranlar/gizlilik.dart`
+  ekran metni, 45 `lib/diller/dil_*.dart` anahtarı+çevirisi.
+  TUZAK: ekran metni ile çeviri anahtarı BİREBİR aynı olmak zorunda —
+  Türkçe kesme işareti `'` (ASCII) kaldı, `’` yazılırsa 45 dilde çeviri
+  düşer ve metin Türkçe görünür.
+- ⬜ **Dağıtım:** `araclar/ga4-dagit-267.sh` (kullanıcı koşar). nginx CSP ile
+  web dağıtımı AYRILAMAZ: satır içi betik değişti, yani hash de değişti;
+  yalnız biri yapılırsa açılış katmanı hiç kalkmaz. Betik 1. adımda eski+yeni
+  hash'i BİRLİKTE yazıyor, doğrulamadan sonra eskiyi düşürüyor. CSP'ye
+  eklenenler: `script-src` googletagmanager, `connect-src`/`img-src`
+  google-analytics.
+- ⬜ **Açık karar:** mobil uygulama ölçümü (Android/iOS akışı) KURULMADI —
+  `firebase_analytics` paketi + Firebase bağlantısı gerekir, ayrı iş.
 
 ## 2026-09-18 — 🚀 GÖNDERİ SAYFASINDA YORUMLAR GÖRÜNMÜYORDU (CANLI, 1.177.1+265)
 

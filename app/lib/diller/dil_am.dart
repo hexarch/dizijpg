@@ -359,11 +359,11 @@ const Map<String, String> cevirilerAm = {
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
       'ውሂብህን አገልግሎቱን ለመስጠት፣ መለያህን ለመጠበቅ፣ ማሳወቂያ ለመላክ፣ ስህተቶችን ለማስተካከል እና አላግባብ መጠቀምን ለመከላከል ብቻ እንጠቀማለን። ውሂብህን አንሸጥም፤ ለማስታወቂያ ዓላማ ከማንም ጋር አናጋራም።',
   'Çerezler ve Yerel Depolama': 'ኩኪዎች እና አካባቢያዊ ማከማቻ',
-  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
-      'አካባቢያዊ ማከማቻን የምንጠቀመው አንተን ገብተህ እንድትቆይ እና እንደ ቋንቋና ገጽታ ያሉ ምርጫዎችህን ለማስታወስ ብቻ ነው። የማስታወቂያ ወይም የመከታተያ ኩኪ የለም።',
+  'Oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Sitenin hangi bölümlerinin ne kadar kullanıldığını toplu olarak görmek için web tarafında Google Analytics çalışır; bu araç tarayıcına kendi ölçüm çerezini yazar. Reklam veya reklam hedefleme çerezi yoktur.':
+      'ወደ መግቢያህ እንድትቆይ እና እንደ ቋንቋና ገጽታ ያሉ ምርጫዎችህን ለማስታወስ የአካባቢ ማከማቻን እንጠቀማለን። በዌብ ላይ የጣቢያው የትኞቹ ክፍሎች እንደሚጠቀሙ በጥቅል ለማየት Google Analytics ይሠራል፤ ይህ መሣሪያ በአሳሽህ ውስጥ የራሱን የመለኪያ ኩኪ ይጽፋል። የማስታወቂያ ወይም የማስታወቂያ ዒላማ ኩኪ የለም።',
   'Üçüncü Taraf Hizmetler': 'የሶስተኛ ወገን አገልግሎቶች',
-  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
-      'የተከታታይ ድራማዎችና ፊልሞች ውሂብ ከ TMDB፣ የዥረት መድረኮች መረጃ ከ JustWatch ይመጣል። የግፊት ማሳወቂያዎች በ Google Firebase በኩል ይደርሳሉ፤ የድረ-ገጹን ትራፊክ Cloudflare ይጠብቃል። እነዚህ አገልግሎቶች የራሳቸው የግላዊነት መመሪያዎች አሏቸው።',
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, web trafiği ölçümü Google Analytics ile yapılır, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
+      'የተከታታይ ድራማና ፊልም መረጃ ከTMDB፣ የመልቀቅ አቅራቢ መረጃ ከJustWatch ይገኛል። የግፊት ማሳወቂያዎች በGoogle Firebase በኩል ይላላሉ፤ የዌብ ትራፊክ በGoogle Analytics ይለካል፤ የጣቢያው ትራፊክ በCloudflare ይጠበቃል። እነዚህ አገልግሎቶች በራሳቸው የግላዊነት ፖሊሲዎች ይመራሉ።',
   'Saklama ve Silme': 'ማቆየትና መሰረዝ',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'ውሂብህ መለያህ እስካለ ድረስ ይቆያል። በቅንብሮች ውስጥ ባለው "መለያዬን ሰርዝ" መለያህን ለዘለቄታው መሰረዝ ትችላለህ፤ ውሂብህ ወዲያውኑ፣ በመጠባበቂያዎች ውስጥ ያሉ ቅጂዎች ደግሞ ቢበዛ በ14 ቀናት ውስጥ ይሰረዛሉ። የስህተት መዝገቦች ከ30 ቀናት በኋላ በራስ-ሰር ይሰረዛሉ።',

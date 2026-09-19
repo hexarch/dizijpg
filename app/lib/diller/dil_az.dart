@@ -363,11 +363,11 @@ const Map<String, String> cevirilerAz = {
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
       'Məlumatlarından yalnız xidməti təqdim etmək, hesabını qorumaq, bildiriş göndərmək, xətaları düzəltmək və sui-istifadənin qarşısını almaq üçün istifadə edirik. Məlumatlarını satmırıq və reklam məqsədilə heç kimlə paylaşmırıq.',
   'Çerezler ve Yerel Depolama': 'Kukilər və Lokal Yaddaş',
-  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
-      'Lokal yaddaşdan yalnız sessiyanı açıq saxlamaq və dil/tema kimi seçimlərini yadda saxlamaq üçün istifadə edirik. Reklam və ya izləmə kukiləri yoxdur.',
+  'Oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Sitenin hangi bölümlerinin ne kadar kullanıldığını toplu olarak görmek için web tarafında Google Analytics çalışır; bu araç tarayıcına kendi ölçüm çerezini yazar. Reklam veya reklam hedefleme çerezi yoktur.':
+      'Yerli yaddaşdan səni hesabda saxlamaq və dil, tema kimi seçimlərini xatırlamaq üçün istifadə edirik. Veb tərəfdə saytın hansı hissələrinin nə qədər istifadə olunduğunu ümumi şəkildə görmək üçün Google Analytics işləyir; bu alət brauzerinə öz ölçmə kukisini yazır. Reklam və ya reklam hədəfləmə kukisi yoxdur.',
   'Üçüncü Taraf Hizmetler': 'Üçüncü Tərəf Xidmətləri',
-  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
-      'Serial və film məlumatları TMDB-dən, izləmə platforması məlumatları JustWatch-dan alınır. Push bildirişləri Google Firebase vasitəsilə çatdırılır, sayt trafiki Cloudflare tərəfindən qorunur. Bu xidmətlər öz məxfilik siyasətlərinə tabedir.',
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, web trafiği ölçümü Google Analytics ile yapılır, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
+      'Serial və film məlumatları TMDB-dən, yayım platforması məlumatları JustWatch-dan alınır. Push bildirişləri Google Firebase vasitəsilə çatdırılır, veb trafik Google Analytics ilə ölçülür, saytın trafiki Cloudflare tərəfindən qorunur. Bu xidmətlər öz məxfilik siyasətlərinə tabedir.',
   'Saklama ve Silme': 'Saxlama və Silinmə',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Məlumatların hesabın mövcud olduğu müddətdə saxlanılır. Parametrlərdəki "Hesabımı Sil" ilə hesabını həmişəlik silə bilərsən; məlumatların dərhal, ehtiyat nüsxələrdəki kopyaları isə ən geci 14 gün ərzində silinir. Xəta qeydləri 30 gündən sonra avtomatik silinir.',

@@ -357,11 +357,11 @@ const Map<String, String> cevirilerZh = {
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
       '我们仅将你的数据用于提供服务、保护账号、发送通知、修复错误和防止滥用。我们不会出售你的数据，也不会出于广告目的与任何人共享。',
   'Çerezler ve Yerel Depolama': 'Cookie 与本地存储',
-  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
-      '本地存储仅用于保持你的登录状态，以及记住语言、主题等偏好。没有任何广告或跟踪 Cookie。',
+  'Oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Sitenin hangi bölümlerinin ne kadar kullanıldığını toplu olarak görmek için web tarafında Google Analytics çalışır; bu araç tarayıcına kendi ölçüm çerezini yazar. Reklam veya reklam hedefleme çerezi yoktur.':
+      '我们使用本地存储来保持你的登录状态，并记住语言和主题等偏好设置。在网页端，我们运行 Google Analytics，以便汇总查看网站的哪些部分被使用；该工具会在你的浏览器中写入它自己的衡量 Cookie。没有广告或广告定向 Cookie。',
   'Üçüncü Taraf Hizmetler': '第三方服务',
-  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
-      '剧集和电影数据来自 TMDB，流媒体平台信息来自 JustWatch。推送通知通过 Google Firebase 送达，网站流量由 Cloudflare 保护。这些服务适用其各自的隐私政策。',
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, web trafiği ölçümü Google Analytics ile yapılır, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
+      '剧集和电影信息来自 TMDB，流媒体平台信息来自 JustWatch。推送通知通过 Google Firebase 发送，网页流量使用 Google Analytics 进行衡量，网站流量由 Cloudflare 保护。这些服务受其各自的隐私政策约束。',
   'Saklama ve Silme': '保存与删除',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       '你的数据在账号存续期间保留。通过设置中的“删除我的账号”可以永久删除账号；数据会立即删除，备份中的副本最迟在 14 天内清除。错误日志在 30 天后自动删除。',

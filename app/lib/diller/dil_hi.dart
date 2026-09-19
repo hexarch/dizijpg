@@ -364,11 +364,11 @@ const Map<String, String> cevirilerHi = {
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
       'तुम्हारा डेटा सिर्फ़ सेवा देने, खाता सुरक्षित रखने, सूचनाएँ भेजने, गड़बड़ियाँ ठीक करने और दुरुपयोग रोकने के लिए इस्तेमाल होता है। हम तुम्हारा डेटा न बेचते हैं, न विज्ञापन के लिए किसी से साझा करते हैं।',
   'Çerezler ve Yerel Depolama': 'कुकीज़ और लोकल स्टोरेज',
-  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
-      'लोकल स्टोरेज सिर्फ़ तुम्हें लॉग-इन रखने और भाषा/थीम जैसी पसंद याद रखने के लिए इस्तेमाल होता है। कोई विज्ञापन या ट्रैकिंग कुकी नहीं है।',
+  'Oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Sitenin hangi bölümlerinin ne kadar kullanıldığını toplu olarak görmek için web tarafında Google Analytics çalışır; bu araç tarayıcına kendi ölçüm çerezini yazar. Reklam veya reklam hedefleme çerezi yoktur.':
+      'हम लोकल स्टोरेज का उपयोग आपको साइन इन रखने और भाषा तथा थीम जैसी पसंद याद रखने के लिए करते हैं। वेब पर Google Analytics चलता है ताकि हम कुल मिलाकर देख सकें कि साइट के कौन-से हिस्से इस्तेमाल होते हैं; यह टूल आपके ब्राउज़र में अपनी मापन कुकी लिखता है। कोई विज्ञापन या विज्ञापन-टारगेटिंग कुकी नहीं है।',
   'Üçüncü Taraf Hizmetler': 'थर्ड-पार्टी सेवाएँ',
-  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
-      'सीरीज़ और फ़िल्मों का डेटा TMDB से और स्ट्रीमिंग प्लैटफ़ॉर्म की जानकारी JustWatch से आती है। पुश सूचनाएँ Google Firebase से पहुँचती हैं और साइट का ट्रैफ़िक Cloudflare सुरक्षित रखता है। इन सेवाओं पर उनकी अपनी गोपनीयता नीतियाँ लागू होती हैं।',
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, web trafiği ölçümü Google Analytics ile yapılır, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
+      'शो और फ़िल्मों की जानकारी TMDB से और स्ट्रीमिंग प्रदाताओं की जानकारी JustWatch से आती है। पुश नोटिफ़िकेशन Google Firebase के ज़रिए भेजे जाते हैं, वेब ट्रैफ़िक Google Analytics से मापा जाता है, और साइट का ट्रैफ़िक Cloudflare द्वारा सुरक्षित रखा जाता है। ये सेवाएँ अपनी-अपनी गोपनीयता नीतियों के अधीन हैं।',
   'Saklama ve Silme': 'संग्रहण और हटाना',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'तुम्हारा डेटा तब तक रहता है जब तक तुम्हारा खाता है। सेटिंग्स में "मेरा खाता हटाएँ" से खाता हमेशा के लिए हटा सकते हो; डेटा तुरंत और बैकअप की प्रतियाँ ज़्यादा से ज़्यादा 14 दिन में मिट जाती हैं। एरर लॉग 30 दिन बाद अपने आप मिट जाते हैं।',

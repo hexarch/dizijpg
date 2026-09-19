@@ -117,6 +117,39 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://accounts.google.com">
 
+  <!-- GOOGLE ANALYTICS 4 — 19 Eyl 2026'da kuruldu.
+       Mülk "dizijpg.com" (saat dilimi GMT+03:00 Türkiye, para birimi TRY),
+       akış "dizi.jpg Web", ölçüm kimliği G-9P6MTX343J.
+
+       YALNIZ İNSAN TRAFİĞİ ÖLÇÜLÜR: bot bu dosyayı HİÇ görmüyor. nginx arama
+       motoru ve önizleme çekicilerini `proxy_pass .../og$uri` ile backend'in
+       SSR kabuğuna yönlendiriyor (server.js `ogSayfa`) ve etiket oraya
+       BİLEREK konmadı — konsaydı Googlebot'un her taraması oturum sayılırdı.
+
+       KONUM: üçüncü taraf el sıkışmalarının hemen altında, hâlâ kafada —
+       tarayıcının ön tarama adımı adresi en erken burada görür. `async`
+       olduğu için ayrıştırmayı ENGELLEMEZ; açılış ekranının boyanması (FCP)
+       bu yüzden gecikmiyor. Ayrıca preconnect YAZILMADI: bu satırın kendisi
+       bağlantıyı zaten kafanın başında açtırıyor, ikinci bir ipucu boşta
+       duran bir sokete çıkardı.
+
+       ÖLÇÜM KOMUTLARI BURADA DEĞİL, gövdedeki satır içi blokta. Gerekçe: CSP
+       `script-src` satır içi koda yalnız sha256 hash'iyle izin veriyor ve
+       test/csp_satir_ici_hash_test.dart sayfada TEK bir satır içi blok
+       olmasını şart koşuyor. İkinci blok açmak nginx'te ikinci bir hash
+       demekti; mevcut bloğa dört satır eklemek tek hash'in güncellenmesiyle
+       yetiniyor. Sıra sorun değil: gtag.js indiğinde `dataLayer` dizisini
+       DEVRALIR, sonradan bırakılan `config` komutunu da işler.
+
+       CSP (nginx dizijpg.com bloğu) aynı turda güncellendi:
+         script-src  += https://www.googletagmanager.com
+         connect-src += https://*.google-analytics.com
+                        https://*.analytics.google.com
+         img-src     += https://*.google-analytics.com
+       Atlanırsa etiket iner ama ölçüm isteği engellenir: panel boş kalır,
+       ihlaller /api/csp-rapor'a sessizce birikir. -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9P6MTX343J"></script>
+
 
   <!-- Google ile giriş (GIS); istemci kimliği Dart tarafında da veriliyor.
        SDK BETİĞİ BURADA YÜKLENMEZ: `google_sign_in_web` eklentisi betiği
@@ -301,6 +334,22 @@
     // özniteliği yok; ileride CSP açılırsa yalnız hash/nonce eklemek yeter.
     (function () {
       'use strict';
+
+      // GOOGLE ANALYTICS 4 ÖLÇÜM KOMUTLARI — etiketin kendisi kafada (async).
+      // Burada yalnız kuyruk kurulup `config` bırakılıyor; gtag.js indiğinde
+      // kuyruğu boşaltıp ilk `page_view`i yolluyor.
+      //
+      // SAYFA GEÇİŞLERİ ELLE GÖNDERİLMİYOR: uygulama `usePathUrlStrategy()`
+      // kullanıyor (main.dart), yani GoRouter her gezinmede gerçek bir
+      // history girişi yazıyor; GA4'ün "geliştirilmiş ölçüm" ayarı tarayıcı
+      // geçmişi olaylarını dinlediği için SPA rotaları kendiliğinden sayılır.
+      //
+      // `window.gtag` GLOBAL bırakıldı: ileride Dart tarafından (js_interop)
+      // özel olay göndermek gerekirse tutamaç hazır dursun.
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', 'G-9P6MTX343J');
 
       var SOLMA_MS = 200;
       // Emniyet süresi: `flutter-first-frame` hiç gelmezse (JS hatası, çok

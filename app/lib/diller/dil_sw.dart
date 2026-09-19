@@ -363,11 +363,11 @@ const Map<String, String> cevirilerSw = {
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
       'Tunatumia data yako tu kutoa huduma, kulinda akaunti yako, kutuma arifa, kurekebisha hitilafu na kuzuia matumizi mabaya. Hatuuzi data yako wala kuishiriki na yeyote kwa madhumuni ya matangazo.',
   'Çerezler ve Yerel Depolama': 'Vidakuzi na Hifadhi ya Ndani',
-  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
-      'Tunatumia hifadhi ya ndani tu kukuweka umeingia na kukumbuka mapendeleo kama lugha na mandhari. Hakuna vidakuzi vya matangazo wala vya ufuatiliaji.',
+  'Oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Sitenin hangi bölümlerinin ne kadar kullanıldığını toplu olarak görmek için web tarafında Google Analytics çalışır; bu araç tarayıcına kendi ölçüm çerezini yazar. Reklam veya reklam hedefleme çerezi yoktur.':
+      'Tunatumia hifadhi ya ndani ili uendelee kuwa umeingia na ili kukumbuka mapendeleo kama lugha na mandhari. Kwenye wavuti, Google Analytics inaendeshwa ili tuone kwa ujumla sehemu zipi za tovuti zinatumika; chombo hiki huandika kidakuzi chake cha kupima katika kivinjari chako. Hakuna vidakuzi vya matangazo au vya kulenga matangazo.',
   'Üçüncü Taraf Hizmetler': 'Huduma za Wahusika Wengine',
-  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
-      'Data ya vipindi na filamu hutoka TMDB, taarifa za majukwaa ya kutiririsha kutoka JustWatch. Arifa za papo hapo huwasilishwa kupitia Google Firebase, na trafiki ya tovuti hulindwa na Cloudflare. Huduma hizi zinafuata sera zao za faragha.',
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, web trafiği ölçümü Google Analytics ile yapılır, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
+      'Taarifa za vipindi na filamu zinatoka TMDB, na taarifa za watoa huduma za utiririshaji kutoka JustWatch. Arifa za push zinatumwa kupitia Google Firebase, trafiki ya wavuti inapimwa kwa Google Analytics, na trafiki ya tovuti inalindwa na Cloudflare. Huduma hizi zinafuata sera zao za faragha.',
   'Saklama ve Silme': 'Uhifadhi na Ufutaji',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Data yako huhifadhiwa muda wote akaunti yako ipo. Kupitia "Futa Akaunti Yangu" kwenye mipangilio unaweza kufuta akaunti kabisa; data yako hufutwa mara moja, na nakala kwenye hifadhi rudufu ndani ya siku 14 zaidi. Kumbukumbu za hitilafu hufutwa kiotomatiki baada ya siku 30.',

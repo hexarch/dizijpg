@@ -364,11 +364,11 @@ const Map<String, String> cevirilerSr = {
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
       'Твоје податке користимо искључиво за пружање услуге, заштиту налога, слање обавештења, исправљање грешака и спречавање злоупотребе. Не продајемо твоје податке и не делимо их ни са ким у рекламне сврхе.',
   'Çerezler ve Yerel Depolama': 'Колачићи и локално складиште',
-  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
-      'Локално складиште користимо само да останеш пријављен и да запамтимо изборе попут језика и теме. Нема рекламних ни колачића за праћење.',
+  'Oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Sitenin hangi bölümlerinin ne kadar kullanıldığını toplu olarak görmek için web tarafında Google Analytics çalışır; bu araç tarayıcına kendi ölçüm çerezini yazar. Reklam veya reklam hedefleme çerezi yoktur.':
+      'Локално складиште користимо да останеш пријављен и да запамтимо подешавања као што су језик и тема. На вебу ради Google Analytics да бисмо збирно видели који делови сајта се користе; та алатка у твој прегледач уписује сопствени колачић за мерење. Рекламних колачића и колачића за циљање нема.',
   'Üçüncü Taraf Hizmetler': 'Услуге трећих страна',
-  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
-      'Подаци о серијама и филмовима долазе са TMDB, информације о стриминг платформама са JustWatch. Пуш обавештења испоручује Google Firebase, а саобраћај сајта штити Cloudflare. На ове услуге примењују се њихове сопствене политике приватности.',
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, web trafiği ölçümü Google Analytics ile yapılır, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
+      'Подаци о серијама и филмовима долазе са TMDB-а, а подаци о стриминг сервисима са JustWatch-а. Push обавештења се достављају преко Google Firebase-а, веб саобраћај се мери помоћу Google Analytics-а, а саобраћај сајта штити Cloudflare. Ове услуге подлежу сопственим политикама приватности.',
   'Saklama ve Silme': 'Чување и брисање',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Твоји подаци се чувају док твој налог постоји. Преко „Обриши мој налог" у подешавањима можеш трајно обрисати налог; подаци се бришу одмах, а њихове копије у резервним копијама најкасније за 14 дана. Евиденције грешака аутоматски се бришу после 30 дана.',

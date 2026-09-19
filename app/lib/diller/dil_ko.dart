@@ -358,11 +358,11 @@ const Map<String, String> cevirilerKo = {
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
       '데이터는 서비스 제공, 계정 보호, 알림 전송, 오류 수정, 악용 방지를 위해서만 사용해요. 데이터를 판매하지 않고, 광고 목적으로 누구와도 공유하지 않아요.',
   'Çerezler ve Yerel Depolama': '쿠키와 로컬 저장소',
-  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
-      '로컬 저장소는 로그인 상태 유지와 언어·테마 같은 설정 기억에만 사용해요. 광고용이나 추적용 쿠키는 없어요.',
+  'Oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Sitenin hangi bölümlerinin ne kadar kullanıldığını toplu olarak görmek için web tarafında Google Analytics çalışır; bu araç tarayıcına kendi ölçüm çerezini yazar. Reklam veya reklam hedefleme çerezi yoktur.':
+      '로그인 상태를 유지하고 언어, 테마 같은 설정을 기억하기 위해 로컬 저장소를 사용합니다. 웹에서는 사이트의 어느 부분이 사용되는지 집계해서 보기 위해 Google Analytics가 작동하며, 이 도구는 브라우저에 자체 측정 쿠키를 기록합니다. 광고 또는 광고 타겟팅 쿠키는 없습니다.',
   'Üçüncü Taraf Hizmetler': '제3자 서비스',
-  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
-      '드라마와 영화 데이터는 TMDB에서, 스트리밍 플랫폼 정보는 JustWatch에서 가져와요. 푸시 알림은 Google Firebase를 통해 전달되고, 사이트 트래픽은 Cloudflare가 보호해요. 이 서비스들에는 각자의 개인정보 처리방침이 적용돼요.',
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, web trafiği ölçümü Google Analytics ile yapılır, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
+      '시리즈와 영화 정보는 TMDB에서, 스트리밍 제공업체 정보는 JustWatch에서 가져옵니다. 푸시 알림은 Google Firebase를 통해 전달되고, 웹 트래픽은 Google Analytics로 측정하며, 사이트 트래픽은 Cloudflare가 보호합니다. 이러한 서비스에는 각자의 개인정보처리방침이 적용됩니다.',
   'Saklama ve Silme': '보관과 삭제',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       '데이터는 계정이 있는 동안 보관돼요. 설정의 "내 계정 삭제"로 계정을 영구 삭제할 수 있어요. 데이터는 즉시, 백업 속 사본은 늦어도 14일 안에 삭제돼요. 오류 로그는 30일 후 자동으로 삭제돼요.',

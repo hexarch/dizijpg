@@ -364,11 +364,11 @@ const Map<String, String> cevirilerDa = {
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
       'Vi bruger kun dine data til at levere tjenesten, beskytte din konto, sende notifikationer, rette fejl og forhindre misbrug. Vi sælger ikke dine data og deler dem ikke med nogen til reklameformål.',
   'Çerezler ve Yerel Depolama': 'Cookies og lokal lagring',
-  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
-      'Vi bruger kun lokal lagring til at holde dig logget ind og huske valg som sprog og tema. Der er ingen reklame- eller sporingscookies.',
+  'Oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Sitenin hangi bölümlerinin ne kadar kullanıldığını toplu olarak görmek için web tarafında Google Analytics çalışır; bu araç tarayıcına kendi ölçüm çerezini yazar. Reklam veya reklam hedefleme çerezi yoktur.':
+      'Vi bruger lokal lagring til at holde dig logget ind og huske indstillinger som sprog og tema. På nettet kører Google Analytics, så vi samlet kan se, hvilke dele af siden der bruges; værktøjet skriver sin egen målingscookie i din browser. Der er ingen reklame- eller målretningscookies.',
   'Üçüncü Taraf Hizmetler': 'Tredjepartstjenester',
-  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
-      'Serie- og filmdata kommer fra TMDB, oplysninger om streamingtjenester fra JustWatch. Push-notifikationer leveres via Google Firebase, og webstedets trafik beskyttes af Cloudflare. For disse tjenester gælder deres egne privatlivspolitikker.',
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, web trafiği ölçümü Google Analytics ile yapılır, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
+      'Oplysninger om serier og film kommer fra TMDB, og oplysninger om streamingudbydere fra JustWatch. Push-notifikationer leveres via Google Firebase, webtrafikken måles med Google Analytics, og sidens trafik beskyttes af Cloudflare. Disse tjenester er underlagt deres egne privatlivspolitikker.',
   'Saklama ve Silme': 'Opbevaring og sletning',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Dine data gemmes, så længe din konto findes. Med "Slet min konto" i indstillingerne kan du slette kontoen permanent; dine data slettes straks, og kopier i sikkerhedskopier senest inden for 14 dage. Fejllogfiler slettes automatisk efter 30 dage.',
