@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-09-19 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-09-19 — 🔨 GOOGLE ANALYTICS 4 KURULDU (1.178.0+267, DAĞITIM BEKLİYOR)
+## 2026-09-19 — 🚀 GOOGLE ANALYTICS 4 KURULDU (CANLI, 1.178.0+267)
 
 **Tetik (birebir):** *"dizi jpg projesine google analistic kuralım"*
 
@@ -34,7 +34,19 @@
   TUZAK: ekran metni ile çeviri anahtarı BİREBİR aynı olmak zorunda —
   Türkçe kesme işareti `'` (ASCII) kaldı, `’` yazılırsa 45 dilde çeviri
   düşer ve metin Türkçe görünür.
-- ⬜ **Dağıtım:** `araclar/ga4-dagit-267.sh` (kullanıcı koşar). nginx CSP ile
+- ✅ **Dağıtım yapıldı** (`araclar/ga4-dagit-267.sh`): brotli 230 dosya,
+  canlı HTML'de ve `index.html.br` gövdesinde ölçüm kimliği 3 kez, Almanca
+  kabukta da var, eski paketler silindi, eski hash CSP'den düşürüldü.
+  Tarayıcıda kanıt: googletagmanager'dan betik enjekte edildi → **0 CSP
+  ihlali**; sayfada `dataLayer` = [js, config] ve `window.gtag` tanımlı.
+- ⬜ **UÇTAN UCA HİT HÂLÂ KANITLANMADI — sebep test tarayıcısı.** Bağlı tarayıcı
+  Brave (`typeof navigator.brave === 'object'`) ve Shields, Google Analytics'i
+  varsayılan olarak engelliyor: `gtag.js` 200 dönüyor ama gelen şey Brave'in
+  İŞLEVSİZ TAKLİDİ — `google_tag_manager`/`google_tag_data` yok, `_ga` çerezi
+  yok, `/g/collect` isteği hiç gitmiyor. Doğrulama için dizijpg.com'da Shields
+  indirilmeli ya da Chrome bağlanmalı. (Yan gerçek: Brave kullanıcıları hiçbir
+  analitikte sayılmaz, bu bir hata değil.)
+- ⬜ Dağıtım betiğinin kendi tuzakları: nginx CSP ile
   web dağıtımı AYRILAMAZ: satır içi betik değişti, yani hash de değişti;
   yalnız biri yapılırsa açılış katmanı hiç kalkmaz. Betik 1. adımda eski+yeni
   hash'i BİRLİKTE yazıyor, doğrulamadan sonra eskiyi düşürüyor. CSP'ye
